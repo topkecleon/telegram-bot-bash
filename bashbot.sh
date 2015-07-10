@@ -10,24 +10,32 @@
 
 #!/bin/bash
 
-TOKEN='94209408:AAHkmfpwpTkXQg7GRdRmLgIWdSMt0b3TYqk'
+TOKEN=''
 URL='https://api.telegram.org/bot'$TOKEN
 MSG_URL=$URL'/sendMessage?chat_id='
 UPD_URL=$URL'/getUpdates?offset='
 OFFSET=0
 
+function send_message {
+	res=$(curl --data-urlencode "text=$2" "$MSG_URL$1&")
+}
+
 while true; do {
 
-	wget $UPD_URL$OFFSET -O bashbot_temp
+	res=$(curl $UPD_URL$OFFSET)
 
-	TARGET=$(cat bashbot_temp | ./JSON.sh | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
-	OFFSET=$(cat bashbot_temp | ./JSON.sh | egrep '\["result",0,"update_id"\]' | cut -f 2)
-	MESSAGE=$(cat bashbot_temp | ./JSON.sh | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
+	TARGET=$(echo $res | ./JSON.sh | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
+	OFFSET=$(echo $res | ./JSON.sh | egrep '\["result",0,"update_id"\]' | cut -f 2)
+	MESSAGE=$(echo $res | ./JSON.sh -s | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
 
 	OFFSET=$((OFFSET+1))
 
-	wget "$MSG_URL$TARGET&text=$MESSAGE" -O bashbot_temp
+	if [ $OFFSET != 1 ]; then
+		case $MESSAGE in
+			'/info') msg="This is bashbot, the Telegram bot written entirely in bash.";;
+			*) msg="$MESSAGE";;
+		esac
+		send_message "$TARGET" "$msg"
+	fi
 
 } &>/dev/null; done
-
-rm bashbot_temp
