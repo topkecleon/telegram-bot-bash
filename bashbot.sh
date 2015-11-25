@@ -1,5 +1,5 @@
 # bashbot, the Telegram bot written in bash.
-# Written by @topkecleon.
+# Written by @topkecleon and Juan Potato (@awkward_potato)
 # http://github.com/topkecleon/bashbot
 
 # Depends on JSON.sh (http://github.com/dominictarr/JSON.sh),
@@ -12,12 +12,17 @@
 
 TOKEN=''
 URL='https://api.telegram.org/bot'$TOKEN
-MSG_URL=$URL'/sendMessage?chat_id='
+MSG_URL=$URL'/sendMessage'
+PHO_URL=$URL'/sendPhoto'
 UPD_URL=$URL'/getUpdates?offset='
 OFFSET=0
 
 function send_message {
-	res=$(curl --data-urlencode "text=$2" "$MSG_URL$1&")
+	res=$(curl "$MSG_URL" -F "chat_id=$1" -F "text=$2")
+}
+
+function send_photo() {
+	res=$(curl "$PHO_URL" -F "chat_id=$1" -F "photo=@$2")
 }
 
 while true; do {
