@@ -1,5 +1,5 @@
 # bashbot, the Telegram bot written in bash.
-# Written by @topkecleon and Juan Potato (@awkward_potato)
+# Written by @topkecleon, Juan Potato (@awkward_potato) and Lorenzo Santina (BigNerd95)
 # http://github.com/topkecleon/bashbot
 
 # Depends on JSON.sh (http://github.com/dominictarr/JSON.sh),
