@@ -1,3 +1,4 @@
+#!/bin/bash
 # bashbot, the Telegram bot written in bash.
 # Written by @topkecleon, Juan Potato (@awkward_potato) and Lorenzo Santina (BigNerd95)
 # http://github.com/topkecleon/bashbot
@@ -8,7 +9,6 @@
 # This file is public domain in the USA and all free countries.
 # If you're in Europe, and public domain does not exist, then haha.
 
-#!/bin/bash
 
 TOKEN=''
 URL='https://api.telegram.org/bot'$TOKEN
@@ -25,15 +25,21 @@ send_photo() {
 	res=$(curl "$PHO_URL" -F "chat_id=$1" -F "photo=@$2")
 }
 
+readproc() {
+	cur=test
+	coproc="coproc$1"
+	while [ "$cur" != "" ];do read cur <&${coproc["0"]};echo "$cur";done
+}
 process_client() {
 	local MESSAGE=$1
 	local TARGET=$2
 	local msg=""
 	case $MESSAGE in
 		'/info') msg="This is bashbot, the Telegram bot written entirely in bash.";;
+		'/question') coproc "coproc$TARGET" { question; }; msg="$(readproc $TARGET)"
 		*) msg="$MESSAGE";;
 	esac
-	send_message "$TARGET" "$msg"
+	send_message "$TARGET" "$msg"&
 }
 
 while true; do {
@@ -47,7 +53,8 @@ while true; do {
 	OFFSET=$((OFFSET+1))
 
 	if [ $OFFSET != 1 ]; then
-		process_client "$MESSAGE" "$TARGET" &
+		process_client "$MESSAGE" "$TARGET"
+		
 	fi
 
 } &>/dev/null; done
