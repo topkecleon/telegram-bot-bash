@@ -26,9 +26,8 @@ send_photo() {
 }
 
 readproc() {
-	cur=test
 	coproc="coproc$1"
-	while [ "$cur" != "" ];do read cur <&${coproc["0"]};echo "$cur";done
+	while true;do read msg <&${coproc["0"]}; [ "$?" != "0" ] && return || send_message "$TARGET" "$msg";done
 }
 process_client() {
 	local MESSAGE=$1
@@ -36,7 +35,7 @@ process_client() {
 	local msg=""
 	case $MESSAGE in
 		'/info') msg="This is bashbot, the Telegram bot written entirely in bash.";;
-		'/question') coproc "coproc$TARGET" { question; }; msg="$(readproc $TARGET)"
+		'/question') coproc "coproc$TARGET" { question; }; readproc $TARGET; return;
 		*) msg="$MESSAGE";;
 	esac
 	send_message "$TARGET" "$msg"&
@@ -53,7 +52,7 @@ while true; do {
 	OFFSET=$((OFFSET+1))
 
 	if [ $OFFSET != 1 ]; then
-		process_client "$MESSAGE" "$TARGET"
+		process_client "$MESSAGE" "$TARGET"&
 		
 	fi
 
