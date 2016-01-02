@@ -26,19 +26,35 @@ send_photo() {
 }
 
 readproc() {
-	coproc="coproc$1"
+	coproc="$1"
+	msg2send="${@/$1/}"
+	echo $msg2send >&${coproc["0"]}
+}
+
+sendproc() {
+	coproc="$1"
 	while true;do read msg <&${coproc["0"]}; [ "$?" != "0" ] && return || send_message "$TARGET" "$msg";done
 }
+
+
 process_client() {
 	local MESSAGE=$1
 	local TARGET=$2
 	local msg=""
-	case $MESSAGE in
-		'/info') msg="This is bashbot, the Telegram bot written entirely in bash.";;
-		'/question') coproc "coproc$TARGET" { question; }; readproc $TARGET; return;
-		*) msg="$MESSAGE";;
-	esac
-	send_message "$TARGET" "$msg"&
+	local pid="coproc$TARGET"
+	[ "$pid" = "" ] {
+		case $MESSAGE in
+			'/info') msg="This is bashbot, the Telegram bot written entirely in bash.";;
+			'/question') coproc "$pid" { question; } &>&1; readproc $TARGET; return;;
+			*) msg="$MESSAGE";;
+		esac
+		send_message "$TARGET" "$msg"&
+	} || {
+		
+		case $MESSAGE in
+			'/cancel') kill ${$pid};;
+			*) sendproc "$pid" "$MESSAGE";;
+		esac
 }
 
 while true; do {
