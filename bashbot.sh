@@ -85,6 +85,12 @@ Features background tasks and interactive chats.
 Can serve as an interface for cli programs.
 Currently can send messages, custom keyboards and photos.
 
+Available commands:
+/start: Start bot and get this message.
+/info: Get shorter info message about this bot.
+/question: Start interactive chat.
+/cancel: Cancel any currently running interactive chats.
+
 Written by @topkecleon, Juan Potato (@awkward_potato), Lorenzo Santina (BigNerd95) and Daniil Gentili (danog)
 http://github.com/topkecleon/bashbot
 "
