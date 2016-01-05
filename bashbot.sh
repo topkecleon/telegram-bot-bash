@@ -1,15 +1,18 @@
 #!/bin/bash
 # bashbot, the Telegram bot written in bash.
 # Written by @topkecleon, Juan Potato (@awkward_potato), Lorenzo Santina (BigNerd95) and Daniil Gentili (danog)
-# http://github.com/topkecleon/bashbot
+# https://github.com/topkecleon/telegram-bot-bash
 
-# Depends on JSON.sh (http://github.com/dominictarr/JSON.sh),
-# which is MIT/Apache-licensed.
+# Depends on ./JSON.sh (http://github.com/dominictarr/./JSON.sh),
+# which is MIT/Apache-licensed
+# And on tmux (https://github.com/tmux/tmux),
+# which is BSD-licensed
+
 
 # This file is public domain in the USA and all free countries.
 # If you're in Europe, and public domain does not exist, then haha.
 
-TOKEN=''
+TOKEN='tokenhere'
 URL='https://api.telegram.org/bot'$TOKEN
 MSG_URL=$URL'/sendMessage'
 PHO_URL=$URL'/sendPhoto'
@@ -18,12 +21,19 @@ OFFSET=0
 
 send_message() {
 	local chat="$1"
-	local text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g')"
-	local keyboard="$(echo "$2" | sed '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g')"
-	if [ "$keyboard" = "" ]; then
-		res=$(curl -s "$MSG_URL" -F "chat_id=$chat" -F "text=$text")
-	else
+	local text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myimagelocationstartshere.*//g')"
+	local keyboard="$(echo "$2" | sed '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ myimagelocationstartshere.*//g')"
+	local image="$(echo "$2" | sed '/myimagelocationstartshere /!d;s/.*myimagelocationstartshere //g;s/ mykeyboardstartshere.*//g;')"
+	if [ "$keyboard" != "" ]; then
 		send_keyboard "$chat" "$text" "$keyboard"
+		local sent=y
+	fi
+	if [ "$image" != "" ]; then
+		send_photo "$chat" "$image"
+		local sent=y
+	fi
+	if [ "$sent" != "y" ];then
+		res=$(curl -s "$MSG_URL" -F "chat_id=$chat" -F "text=$text")
 	fi
 }
 
@@ -31,9 +41,9 @@ send_keyboard() {
 	local chat="$1"
 	local text="$2"
 	shift 2
-	keyboard=init
-	for f in $*;do keyboard="$keyboard, [\"$f\"]";done
-	keyboard=${keyboard/init, /}
+	local keyboard=init
+	for f in $*;do local keyboard="$keyboard, [\"$f\"]";done
+	local keyboard=${keyboard/init, /}
 	res=$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")
 }
 
@@ -46,7 +56,7 @@ startproc() {
 	local TARGET="$2"
 	mkdir -p "$copname"
 	mkfifo $copname/out
-	tmux new-session -d -n $copname "./question $TARGET 2>&1>$copname/out"
+	tmux new-session -d -n $copname "./question 2>&1>$copname/out"
 	local pid=$(ps aux | sed '/tmux/!d;/'$copname'/!d;/sed/d;s/'$USER'\s*//g;s/\s.*//g')
 	echo $pid>$copname/pid
 	while ps aux | grep -v grep | grep -q $pid;do
@@ -92,7 +102,7 @@ Available commands:
 /cancel: Cancel any currently running interactive chats.
 
 Written by @topkecleon, Juan Potato (@awkward_potato), Lorenzo Santina (BigNerd95) and Daniil Gentili (danog)
-http://github.com/topkecleon/bashbot
+https://github.com/topkecleon/telegram-bot-bash
 "
 				;;
 			*)
@@ -114,9 +124,9 @@ while true; do {
 
 	res=$(curl -s $UPD_URL$OFFSET)
 
-	TARGET=$(echo $res | JSON.sh | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
-	OFFSET=$(echo $res | JSON.sh | egrep '\["result",0,"update_id"\]' | cut -f 2)
-	MESSAGE=$(echo $res | JSON.sh -s | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
+	TARGET=$(echo $res | ./JSON.sh | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
+	OFFSET=$(echo $res | ./JSON.sh | egrep '\["result",0,"update_id"\]' | cut -f 2)
+	MESSAGE=$(echo $res | ./JSON.sh -s | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
 
 	OFFSET=$((OFFSET+1))
 

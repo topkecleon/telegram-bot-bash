@@ -9,7 +9,7 @@ until [ "$SUCCESS" = "y" ] ;do
 	read answer
 	case $answer in
 		'Yass!') echo "Goody!";SUCCESS=y;;
-		'No') echo "Well that's weird";SUCCESS=y;;
+		'No') echo "Well that's weird.";SUCCESS=y;;
 		*) SUCCESS=n;;
 	esac
 done
