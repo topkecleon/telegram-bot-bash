@@ -16,6 +16,7 @@ TOKEN='tokenhere'
 URL='https://api.telegram.org/bot'$TOKEN
 MSG_URL=$URL'/sendMessage'
 PHO_URL=$URL'/sendPhoto'
+FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
 UPD_URL=$URL'/getUpdates?offset='
 OFFSET=0
 
@@ -68,8 +69,10 @@ startproc() {
 inproc() {
 	local copname="$1"
 	local copid="$2"
+	local MESSAGE="$3"
+	local PHOTO_ID="$4"
 	shift 2
-	tmux send-keys -t $copname "$@
+	tmux send-keys -t $copname "$MESSAGE
 "
 	ps aux | grep -v grep | grep -q "$copid" || { rm -r $copname; };
 }
@@ -77,6 +80,7 @@ inproc() {
 process_client() {
 	local MESSAGE=$1
 	local TARGET=$2
+	local PHOTO_ID=$3
 	local msg=""
 	local copname="CO$TARGET"
 	local copidname="$copname/pid"
@@ -115,7 +119,7 @@ https://github.com/topkecleon/telegram-bot-bash
 				rm -r $copname
 				send_message "$TARGET" "Command canceled."
 				;;
-			*) inproc "$copname" "$copid" "$MESSAGE";;
+			*) inproc "$copname" "$copid" "$MESSAGE" "$PHOTO_ID";;
 		esac
 	fi
 }
@@ -127,11 +131,12 @@ while true; do {
 	TARGET=$(echo $res | ./JSON.sh | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
 	OFFSET=$(echo $res | ./JSON.sh | egrep '\["result",0,"update_id"\]' | cut -f 2)
 	MESSAGE=$(echo $res | ./JSON.sh -s | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
+	PHOTO_ID=$(echo $res | ./JSON.sh -s | egrep '\["result",0,"message","photo",.*,"file_id"\]' | cut -f 2 | cut -d '"' -f 2 | sed -n '$p')
 
 	OFFSET=$((OFFSET+1))
 
 	if [ $OFFSET != 1 ]; then
-		process_client "$MESSAGE" "$TARGET"&
+		process_client "$MESSAGE" "$TARGET" "$PHOTO_ID"&
 	fi
 
 }; done
