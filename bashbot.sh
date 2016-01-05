@@ -79,6 +79,16 @@ process_client() {
 			'/info')
 				send_message "$TARGET" "This is bashbot, the Telegram bot written entirely in bash."
 				;;
+			'/start')
+				send_message "$TARGET" "This is bashbot, the Telegram bot written entirely in bash.
+Features background tasks and interactive chats.
+Can serve as an interface for cli programs.
+Currently can send messages, custom keyboards and photos.
+
+Written by @topkecleon, Juan Potato (@awkward_potato), Lorenzo Santina (BigNerd95) and Daniil Gentili (danog)
+http://github.com/topkecleon/bashbot
+"
+				;;
 			*)
 				send_message "$TARGET" "$MESSAGE"
 		esac
