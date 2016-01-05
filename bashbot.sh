@@ -1,6 +1,6 @@
 #!/bin/bash
 # bashbot, the Telegram bot written in bash.
-# Written by @topkecleon, Juan Potato (@awkward_potato) and Lorenzo Santina (BigNerd95)
+# Written by @topkecleon, Juan Potato (@awkward_potato), Lorenzo Santina (BigNerd95) and Daniil Gentili (danog)
 # http://github.com/topkecleon/bashbot
 
 # Depends on JSON.sh (http://github.com/dominictarr/JSON.sh),
@@ -8,7 +8,6 @@
 
 # This file is public domain in the USA and all free countries.
 # If you're in Europe, and public domain does not exist, then haha.
-
 
 TOKEN=''
 URL='https://api.telegram.org/bot'$TOKEN
@@ -18,77 +17,90 @@ UPD_URL=$URL'/getUpdates?offset='
 OFFSET=0
 
 send_message() {
-	[ "$2" != "" ] && res=$(curl "$MSG_URL" -F "chat_id=$1" -F "text=$2")
+	local chat="$1"
+	local text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g')"
+	local keyboard="$(echo "$2" | sed '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g')"
+	if [ "$keyboard" = "" ]; then
+		res=$(curl -s "$MSG_URL" -F "chat_id=$chat" -F "text=$text")
+	else
+		send_keyboard "$chat" "$text" "$keyboard"
+	fi
 }
+
 send_keyboard() {
-	for f in ${@/1\|2/};do keyboard="$keyboard, [\"$f\"]";done
-	keyboard=${keyboard/^, /}
-	res=$(curl "$MSG_URL" -F "chat_id=$1" -F "text=$2" -F "reply_markup={\"keyboard\": $keyboard, \"one_time_keyboard\": true}")
+	local chat="$1"
+	local text="$2"
+	shift 2
+	keyboard=init
+	for f in $*;do keyboard="$keyboard, [\"$f\"]";done
+	keyboard=${keyboard/init, /}
+	res=$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")
 }
 
 send_photo() {
-	res=$(curl "$PHO_URL" -F "chat_id=$1" -F "photo=@$2")
+	res=$(curl -s "$PHO_URL" -F "chat_id=$1" -F "photo=@$2")
 }
 
-question() {
-	TARGET="$1'
-	echo "Why hello there.
-Would you like some tea (y/n)?"
-	read answer
-	[[ $answer =~ ^([yY][eE][sS]|[yY])$ ]] && echo "OK then, here you go: http://www.rivertea.com/blog/wp-content/uploads/2013/12/Green-Tea.jpg" || echo "OK then."
-	until [ "$SUCCESS" = "y" ] ;do
-		send_keyboard "$TARGET" "Do you like Music?" "Yass!" "No"
-		read answer
-		case $answer in
-			'Yass!') echo "Goody!";SUCCESS=y;;
-			'No') echo "Well that's weird";SUCCESS=y;;
-			*) SUCCESS=n;;
-		esac
-	done
+startproc() {
+	local copname="$1"
+	local TARGET="$2"
+	mkdir -p "$copname"
+	mkfifo $copname/out
+	tmux new-session -d -n $copname "./question $TARGET 2>&1>$copname/out"
+	local pid=$(ps aux | sed '/tmux/!d;/'$copname'/!d;/sed/d;s/'$USER'\s*//g;s/\s.*//g')
+	echo $pid>$copname/pid
+	while ps aux | grep -v grep | grep -q $pid;do
+		read -t 10 line
+		[ "$line" != "" ] && send_message "$TARGET" "$line"
+		line=
+	done <$copname/out
 }
-
 inproc() {
-	copname="$1"
-	msg="${@/1/}"
-	echo "$msg" >&${$1["0"]}
+	local copname="$1"
+	local copid="$2"
+	shift 2
+	tmux send-keys -t $copname "$@
+"
+	ps aux | grep -v grep | grep -q "$copid" || { rm -r $copname; };
 }
-
-outproc() {
-	copname="$1"
-	TARGET="$2"
-	while true; do read msg <&${$copname["0"]}; [ "$?" != "0" ] && return || send_message "$TARGET" "$msg";done
-}
-
 
 process_client() {
 	local MESSAGE=$1
 	local TARGET=$2
 	local msg=""
-	local copname="coproc$TARGET"
-	local copidname="$copname"_PID
-	local copid="${$copid}"
-	[ "$copid" = "" ] {
+	local copname="CO$TARGET"
+	local copidname="$copname/pid"
+	local copid="$(cat $copidname 2>/dev/null)"
+	if [ "$copid" = "" ]; then
 		case $MESSAGE in
-			'/info') send_message "$TARGET" "This is bashbot, the Telegram bot written entirely in bash.";;
-			'/question') coproc "$copname" { question "$TARGET"; } &>&1; outproc "$copname" "$TARGET"; return;;
-			*) send_message "$TARGET" "$MESSAGE";;
+			'/question')
+				startproc "$copname" "$TARGET"&
+				;;
+			'/info')
+				send_message "$TARGET" "This is bashbot, the Telegram bot written entirely in bash."
+				;;
+			*)
+				send_message "$TARGET" "$MESSAGE"
 		esac
-	} || {
-		
+	else
 		case $MESSAGE in
-			'/cancel') kill $copid;;
-			*) inproc "$copname" "$MESSAGE";;
+			'/cancel')
+				kill $copid
+				rm -r $copname
+				send_message "$TARGET" "Command canceled."
+				;;
+			*) inproc "$copname" "$copid" "$MESSAGE";;
 		esac
-	}
+	fi
 }
 
 while true; do {
 
-	res=$(curl $UPD_URL$OFFSET)
+	res=$(curl -s $UPD_URL$OFFSET)
 
-	TARGET=$(echo $res | ./JSON.sh | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
-	OFFSET=$(echo $res | ./JSON.sh | egrep '\["result",0,"update_id"\]' | cut -f 2)
-	MESSAGE=$(echo $res | ./JSON.sh -s | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
+	TARGET=$(echo $res | JSON.sh | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
+	OFFSET=$(echo $res | JSON.sh | egrep '\["result",0,"update_id"\]' | cut -f 2)
+	MESSAGE=$(echo $res | JSON.sh -s | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
 
 	OFFSET=$((OFFSET+1))
 
@@ -96,4 +108,5 @@ while true; do {
 		process_client "$MESSAGE" "$TARGET"&
 	fi
 
-} &>/dev/null; done
+}; done
+
