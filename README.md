@@ -72,7 +72,32 @@ git clone https://github.com/topkecleon/telegram-bot-bash
 
 Paste the token on line 12 (instead of tokenhere).  
 Then start editing the commands.  
+  
+### Recieve data  
+You can read incoming data using the following variables:  
 
+* ```$MESSAGE```: Incoming messages  
+* ```$CAPTION```: Captions  
+* ```$USER```: This array contains the First name, last name, username and user id of the sender of the current message.
+ * ```${USER[ID]}```: User id  
+ * ```${USER[FIRST_NAME]}```: User's first name  
+ * ```${USER[LAST_NAME]}```: User's last name  
+ * ```${USER[USERNAME]}```: Username  
+* ```$URLS```: This array contains documents, audio files, stickers, voice recordings and stickers stored in the form of URLs.
+ * ```${URLS[AUDIO]}```: Audio files  
+ * ```${URLS[VIDEO]}```: Videos  
+ * ```${URLS[PHOTO]}```: Photos (maximum quality)  
+ * ```${URLS[VOICE]}```: Voice recordings  
+ * ```${URLS[STICKER]}```: Stickers  
+ * ```${URLS[DOCUMENT]}```: Any other file  
+* ```$CONTACT```: This array contains info about contacts sent in a chat.
+ * ```${CONTACT[NUMBER]}```: Phone number  
+ * ```${CONTACT[FIRST_NAME]}```: First name  
+ * ```${CONTACT[LAST_NAME]}```: Last name  
+ * ```${CONTACT[ID]}```: User id  
+* ```$LOCATION```: This array contains info about locations sent in a chat.
+ * ```${LOCATION[LONGITUDE]}```: Longitude  
+ * ```${LOCATION[LATITUDE]}```: Latitude  
 
 ### Usage  
 To send messages use the ```send_message``` function:  
@@ -102,6 +127,7 @@ Or both:
 ```
 echo "Text that will appear in chat? mykeyboardstartshere Yep No myimagelocationstartshere /home/user/doge.jpg"
 ```  
+
 
 Once you're done editing start the bot with ```tmux new-session -d -s bashbot "./bashbot.sh"```.  
 To stop the bot run ```tmux kill-session -t bashbot```.  
