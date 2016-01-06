@@ -103,6 +103,10 @@ Or both:
 echo "Text that will appear in chat? mykeyboardstartshere Yep No myimagelocationstartshere /home/user/doge.jpg"
 ```  
 
+Once you're done editing start the bot with ```tmux new-session -d -s bashbot "./bashbot.sh"```.  
+To stop the bot run ```tmux kill-session -t bashbot```.
+If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```.  
+
 That's it!
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
