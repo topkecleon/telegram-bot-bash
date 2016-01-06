@@ -104,7 +104,7 @@ echo "Text that will appear in chat? mykeyboardstartshere Yep No myimagelocation
 ```  
 
 Once you're done editing start the bot with ```tmux new-session -d -s bashbot "./bashbot.sh"```.  
-To stop the bot run ```tmux kill-session -t bashbot```.
+To stop the bot run ```tmux kill-session -t bashbot```.  
 If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```.  
 
 That's it!
