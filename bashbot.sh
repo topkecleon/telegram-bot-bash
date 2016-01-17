@@ -26,7 +26,7 @@ VIDEO_URL=$URL'/sendVideo'
 VOICE_URL=$URL'/sendVoice'
 LOCATION_URL=$URL'/sendLocation'
 ACTION_URL=$URL'/sendChatAction'
-
+FORWARD_URL=$URL'/forwardMessage'
 
 FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
 UPD_URL=$URL'/getUpdates?offset='
@@ -62,12 +62,6 @@ send_keyboard() {
 	res=$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")
 }
 
-send_photo() {
-	res=$(curl -s "$PHO_URL" -F "chat_id=$1" -F "photo=@$2")
-}
-
-send_audio() {
-}
 
 get_file() {
 	[ "$1" != "" ] && echo $FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh -s | egrep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)
@@ -75,12 +69,66 @@ get_file() {
 }
 
 send_file() {
-	
+	[ "$2" = "" ] && return
+	chat_id=$1
+	file=$2
+	ext="${file##*.}"
+	case $ext in 
+        	"mp3")
+			CUR_URL=$AUDIO_URL
+			WHAT=audio
+			STATUS=upload_audio
+			;;
+		png|jpg|jpeg|gif)
+			CUR_URL=$PHO_URL
+			WHAT=photo
+			STATUS=upload_photo
+			;;
+		webp)
+			CUR_URL=$STICKER_URL
+			WHAT=sticker
+			STATUS=
+			;;
+		mp4)
+			CUR_URL=$VIDEO_URL
+			WHAT=video
+			STATUS=upload_video
+			;;
+
+		ogg)
+			CUR_URL=$VOICE_URL
+			WHAT=voice
+			STATUS=
+			;;
+		*)
+			CUR_URL=$DOCUMENT_URL
+			WHAT=document
+			STATUS=upload_document
+			;;
+	esac
+	send_action $chat_id $STATUS
+	res=$(curl -s "$CUR_URL" -F "chat_id=$chat_id" -F "$WHAT=@$file")
 }
 
+# typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
+
+send_action() {
+	[ "$2" = "" ] && return 
+	res=$(curl -s "$ACTION_URL" -F "chat_id=$1" -F "action=$2")
+}
+
+send_location() {
+	[ "$3" = "" ] && return
+	res=$(curl -s "$LOCATION_URL" -F "chat_id=$1" -F "latitude=$2" -F "longitude=$3")
+}
+
+forward() {
+	[ "$3" = "" ] && return
+	res=$(curl -s "$FORWARD_URL" -F "chat_id=$1" -F "from_chat_id=$2" -F "message_id=$3")	
+}
+
+
 startproc() {
-	local copname="$1"
-	local USER="$2"
 	mkdir -p "$copname"
 	mkfifo $copname/out
 	tmux new-session -d -s $copname "./question 2>&1>$copname/out"
@@ -94,23 +142,52 @@ startproc() {
 }
 
 inproc() {
-	local copname="$1"
-	local copid="$2"
-	local MESSAGE="$3"
-	shift 2
 	tmux send-keys -t $copname "$MESSAGE
 "
 	ps aux | grep -v grep | grep -q "$copid" || { rm -r $copname; };
 }
 
 process_client() {
-	local copname="CO${USER[ID]}"
-	local copidname="$copname/pid"
-	local copid="$(cat $copidname 2>/dev/null)"
+	# User
+	USER[FIRST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
+	USER[LAST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","last_name"\]' | cut -f 2 | cut -d '"' -f 2)
+	USER[USERNAME]=$(echo "$res" | egrep '\["result",0,"message","chat","username"\]' | cut -f 2 | cut -d '"' -f 2)
+
+	# Audio
+	URLS[AUDIO]=$(get_file $(echo "$res" | egrep '\["result",0,"message","audio","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
+	# Documenr
+	URLS[DOCUMENT]=$(get_file $(echo "$res" | egrep '\["result",0,"message","document","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
+	# Photo
+	URLS[PHOTO]=$(get_file $(echo "$res" | egrep '\["result",0,"message","photo",.*,"file_id"\]' | cut -f 2 | cut -d '"' -f 2 | sed -n '$p'))
+	# Sticker
+	URLS[STICKER]=$(get_file $(echo "$res" | egrep '\["result",0,"message","sticker","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
+	# Video
+	URLS[VIDEO]=$(get_file $(echo "$res" | egrep '\["result",0,"message","video","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
+	# Voice
+	URLS[VOICE]=$(get_file $(echo "$res" | egrep '\["result",0,"message","voice","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
+
+	# Contact
+	CONTACT[NUMBER]=$(echo "$res" | egrep '\["result",0,"message","contact","phone_number"\]' | cut -f 2 | cut -d '"' -f 2)
+	CONTACT[FIRST_NAME]=$(echo "$res" | egrep '\["result",0,"message","contact","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
+	CONTACT[LAST_NAME]=$(echo "$res" | egrep '\["result",0,"message","contact","last_name"\]' | cut -f 2 | cut -d '"' -f 2)
+	CONTACT[USER_ID]=$(echo "$res" | egrep '\["result",0,"message","contact","user_id"\]' | cut -f 2 | cut -d '"' -f 2)
+
+	# Caption
+	CAPTION=$(echo "$res" | egrep '\["result",0,"message","caption"\]' | cut -f 2 | cut -d '"' -f 2)
+
+	# Location
+	LOCATION[LONGITUDE]=$(echo "$res" | egrep '\["result",0,"message","location","longitude"\]' | cut -f 2 | cut -d '"' -f 2)
+	LOCATION[LATITUDE]=$(echo "$res" | egrep '\["result",0,"message","location","latitude"\]' | cut -f 2 | cut -d '"' -f 2)
+
+	# Tmux 
+	copname="CO${USER[ID]}"
+	copidname="$copname/pid"
+	copid="$(cat $copidname 2>/dev/null)"
+
 	if [ "$copid" = "" ]; then
 		case $MESSAGE in
 			'/question')
-				startproc "$copname" "${USER[ID]}"&
+				startproc&
 				;;
 			'/info')
 				send_message "${USER[ID]}" "This is bashbot, the Telegram bot written entirely in bash."
@@ -120,13 +197,11 @@ process_client() {
 Features background tasks and interactive chats.
 Can serve as an interface for cli programs.
 Currently can send messages, custom keyboards and photos.
-
 Available commands:
 /start: Start bot and get this message.
 /info: Get shorter info message about this bot.
 /question: Start interactive chat.
 /cancel: Cancel any currently running interactive chats.
-
 Written by @topkecleon, Juan Potato (@awkward_potato), Lorenzo Santina (BigNerd95) and Daniil Gentili (danog)
 https://github.com/topkecleon/telegram-bot-bash
 "
@@ -141,7 +216,7 @@ https://github.com/topkecleon/telegram-bot-bash
 				rm -r $copname
 				send_message "${USER[ID]}" "Command canceled."
 				;;
-			*) inproc "$copname" "$copid" "$MESSAGE";;
+			*) inproc;;
 		esac
 	fi
 }
@@ -160,43 +235,6 @@ while true; do {
 	OFFSET=$((OFFSET+1))
 
 	if [ $OFFSET != 1 ]; then
-		# User
-		USER[FIRST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
-		USER[LAST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","last_name"\]' | cut -f 2 | cut -d '"' -f 2)
-		USER[USERNAME]=$(echo "$res" | egrep '\["result",0,"message","chat","username"\]' | cut -f 2 | cut -d '"' -f 2)
-
-		# Audio
-		AUDIO_ID=$(echo "$res" | egrep '\["result",0,"message","audio","file_id"\]' | cut -f 2 | cut -d '"' -f 2)
-		URLS[AUDIO]=$(get_file "$AUDIO_ID")
-		# Document
-		DOCUMENT_ID=$(echo "$res" | egrep '\["result",0,"message","document","file_id"\]' | cut -f 2 | cut -d '"' -f 2)
-		URLS[DOCUMENT]=$(get_file "$DOCUMENT_ID")
-		# Photo
-		PHOTO_ID=$(echo "$res" | egrep '\["result",0,"message","photo",.*,"file_id"\]' | cut -f 2 | cut -d '"' -f 2 | sed -n '$p')
-		URLS[PHOTO]=$(get_file "$PHOTO_ID")
-		# Sticker
-		STICKER_ID=$(echo "$res" | egrep '\["result",0,"message","sticker","file_id"\]' | cut -f 2 | cut -d '"' -f 2)
-		URLS[STICKER]=$(get_file "$STICKER_ID")
-		# Video
-		VIDEO_ID=$(echo "$res" | egrep '\["result",0,"message","video","file_id"\]' | cut -f 2 | cut -d '"' -f 2)
-		URLS[VIDEO]=$(get_file "$VIDEO_ID")
-		# Voice
-		VOICE_ID=$(echo "$res" | egrep '\["result",0,"message","voice","file_id"\]' | cut -f 2 | cut -d '"' -f 2)
-		URLS[VOICE]=$(get_file "$VOICE_ID")
-
-		# Contact
-		CONTACT[NUMBER]=$(echo "$res" | egrep '\["result",0,"message","contact","phone_number"\]' | cut -f 2 | cut -d '"' -f 2)
-		CONTACT[FIRST_NAME]=$(echo "$res" | egrep '\["result",0,"message","contact","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
-		CONTACT[LAST_NAME]=$(echo "$res" | egrep '\["result",0,"message","contact","last_name"\]' | cut -f 2 | cut -d '"' -f 2)
-		CONTACT[USER_ID]=$(echo "$res" | egrep '\["result",0,"message","contact","user_id"\]' | cut -f 2 | cut -d '"' -f 2)
-
-		# Caption
-		CAPTION=$(echo "$res" | egrep '\["result",0,"message","caption"\]' | cut -f 2 | cut -d '"' -f 2)
-
-		# Location
-		LOCATION[LONGITUDE]=$(echo "$res" | egrep '\["result",0,"message","location","longitude"\]' | cut -f 2 | cut -d '"' -f 2)
-		LOCATION[LATITUDE]=$(echo "$res" | egrep '\["result",0,"message","location","latitude"\]' | cut -f 2 | cut -d '"' -f 2)
-
 		process_client&
 
 	fi
