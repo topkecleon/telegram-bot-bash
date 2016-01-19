@@ -102,16 +102,29 @@ You can read incoming data using the following variables:
 ### Usage  
 To send messages use the ```send_message``` function:  
 ```
-send_message "$TARGET" "lol" 
+send_message "${USER[ID]}" "lol" 
 ```   
-To send images use the ```send_photo``` function:  
+To send images, videos, voice files, photos ecc use the ```send_photo``` function:  
 ```
-send_photo "$TARGET" "/home/user/doge.jpg"  
+send_file "${USER[ID]}" "/home/user/doge.jpg" "Lool"
 ```
-To send custom keyboards use the ```send_keyboard``` function or the ```send_message``` function:  
+To send custom keyboards use the ```send_keyboard``` function:  
 ```
-send_keyboard "$TARGET" "Text that will appear in chat?" "Yep" "No"
+send_keyboard "${USER[ID]}" "Text that will appear in chat?" "Yep" "No"
 ```  
+To send locations use the ```send_location``` function:  
+```
+send_location "${USER[ID]}" "Latitude" "Longitude"
+```  
+To forward messages use the ```forward``` function:  
+```
+forward "${USER[ID]}" "from_chat_id" "message_id"
+```  
+To send a chat action use the ```send_action``` function.
+Allowed values: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for locations.  
+```
+send_action "${USER[ID]}" "action"
+```   
 
 To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then substitute ./question @ line 49 with the command you usually use to start the script.  
 The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).   
@@ -119,13 +132,17 @@ To open up a keyboard in an interactive script, print out the keyboard layout in
 ```
 echo "Text that will appear in chat? mykeyboardstartshere Yep No"
 ```  
-Same goes for images:
+Same goes for files:
 ```
-echo "Text that will appear in chat? myimagelocationstartshere /home/user/doge.jpg"
+echo "Text that will appear in chat? myfilelocationstartshere /home/user/doge.jpg"
 ```  
-Or both:
+And locations:  
 ```
-echo "Text that will appear in chat? mykeyboardstartshere Yep No myimagelocationstartshere /home/user/doge.jpg"
+echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45"
+```  
+You can combine them:
+```
+echo "Text that will appear in chat? mykeyboardstartshere Yep No myfilelocationstartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
 ```  
 
 
