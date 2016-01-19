@@ -32,23 +32,35 @@ FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
 UPD_URL=$URL'/getUpdates?offset='
 GET_URL=$URL'/getFile'
 OFFSET=0
-declare -A USER URLS CONTACT LOCATION
+declare -A USER MESSAGE
 
 send_message() {
 	local chat="$1"
-	local text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myimagelocationstartshere.*//g')"
-	local keyboard="$(echo "$2" | sed '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ myimagelocationstartshere.*//g')"
-	local image="$(echo "$2" | sed '/myimagelocationstartshere /!d;s/.*myimagelocationstartshere //g;s/ mykeyboardstartshere.*//g;')"
+	local text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
+
+	local keyboard="$(echo "$2" | sed '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
+
+	local file="$(echo "$2" | sed '/myfilelocationstartshere /!d;s/.*myfilelocationstartshere //g;s/ mykeyboardstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
+
+	local lat="$(echo "$2" | sed '/mylatstartshere /!d;s/.*mylatstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylongstartshere.*//g')"
+
+	local long="$(echo "$2" | sed '/mylongstartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g')"
+
 	if [ "$keyboard" != "" ]; then
 		send_keyboard "$chat" "$text" "$keyboard"
 		local sent=y
 	fi
-	if [ "$image" != "" ]; then
-		send_photo "$chat" "$image"
+	if [ "$file" != "" ]; then
+		send_file "$chat" "$file"
 		local sent=y
 	fi
 	if [ "$sent" != "y" ];then
 		res=$(curl -s "$MSG_URL" -F "chat_id=$chat" -F "text=$text")
+	fi
+
+	if [ "$lat" != "" -a "$long" != "" ]; then
+		send_location "$chat" "$lat" "$long"
+		local sent=y
 	fi
 }
 
@@ -70,9 +82,9 @@ get_file() {
 
 send_file() {
 	[ "$2" = "" ] && return
-	chat_id=$1
-	file=$2
-	ext="${file##*.}"
+	local chat_id=$1
+	local file=$2
+	local ext="${file##*.}"
 	case $ext in 
         	"mp3")
 			CUR_URL=$AUDIO_URL
@@ -154,11 +166,11 @@ process_client() {
 	USER[USERNAME]=$(echo "$res" | egrep '\["result",0,"message","chat","username"\]' | cut -f 2 | cut -d '"' -f 2)
 
 	# Audio
-	URLS[AUDIO]=$(get_file $(echo "$res" | egrep '\["result",0,"message","audio","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
+	MESSAGE[AUDIO]=$(get_file $(echo "$res" | egrep '\["result",0,"message","audio","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
 	# Documenr
-	URLS[DOCUMENT]=$(get_file $(echo "$res" | egrep '\["result",0,"message","document","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
+	MESSAGE[DOCUMENT]=$(get_file $(echo "$res" | egrep '\["result",0,"message","document","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
 	# Photo
-	URLS[PHOTO]=$(get_file $(echo "$res" | egrep '\["result",0,"message","photo",.*,"file_id"\]' | cut -f 2 | cut -d '"' -f 2 | sed -n '$p'))
+	MESSAGE[PHOTO]=$(get_file $(echo "$res" | egrep '\["result",0,"message","photo",.*,"file_id"\]' | cut -f 2 | cut -d '"' -f 2 | sed -n '$p'))
 	# Sticker
 	URLS[STICKER]=$(get_file $(echo "$res" | egrep '\["result",0,"message","sticker","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
 	# Video
@@ -230,7 +242,7 @@ while true; do {
 	# Offset
 	OFFSET=$(echo "$res" | egrep '\["result",0,"update_id"\]' | cut -f 2)
 	# Message
-	MESSAGE=$(echo "$res" | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
+	MESSAGE[MESSAGE]=$(echo "$res" | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
 	
 	OFFSET=$((OFFSET+1))
 
@@ -240,5 +252,4 @@ while true; do {
 	fi
 
 }; done
-
 
