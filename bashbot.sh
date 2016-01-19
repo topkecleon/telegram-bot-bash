@@ -155,7 +155,7 @@ startproc() {
 }
 
 inproc() {
-	tmux send-keys -t $copname "$MESSAGE
+	tmux send-keys -t $copname "$MESSAGE ${URLS[*]}
 "
 	ps aux | grep -v grep | grep -q "$copid" || { rm -r $copname; };
 }
