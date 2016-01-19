@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # If you're in Europe, and public domain does not exist, then haha.
 
-TOKEN='tokenhere'
+TOKEN='179533649:AAHR470oLFSDD8WXy8L87uZFofxM6IDp5oU'
 URL='https://api.telegram.org/bot'$TOKEN
 
 FORWARD_URL=$URL'/forwardMessage'
@@ -32,7 +32,7 @@ FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
 UPD_URL=$URL'/getUpdates?offset='
 GET_URL=$URL'/getFile'
 OFFSET=0
-declare -A USER MESSAGE
+declare -A USER MESSAGE URLS CONTACT LOCATION
 
 send_message() {
 	local chat="$1"
@@ -54,14 +54,15 @@ send_message() {
 		send_file "$chat" "$file"
 		local sent=y
 	fi
-	if [ "$sent" != "y" ];then
-		res=$(curl -s "$MSG_URL" -F "chat_id=$chat" -F "text=$text")
-	fi
-
 	if [ "$lat" != "" -a "$long" != "" ]; then
 		send_location "$chat" "$lat" "$long"
 		local sent=y
 	fi
+
+	if [ "$sent" != "y" ];then
+		res=$(curl -s "$MSG_URL" -F "chat_id=$chat" -F "text=$text")
+	fi
+
 }
 
 send_keyboard() {
@@ -119,7 +120,7 @@ send_file() {
 			;;
 	esac
 	send_action $chat_id $STATUS
-	res=$(curl -s "$CUR_URL" -F "chat_id=$chat_id" -F "$WHAT=@$file")
+	res=$(curl -s "$CUR_URL" -F "chat_id=$chat_id" -F "$WHAT=@$file" -F "caption=$3")
 }
 
 # typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
@@ -166,11 +167,11 @@ process_client() {
 	USER[USERNAME]=$(echo "$res" | egrep '\["result",0,"message","chat","username"\]' | cut -f 2 | cut -d '"' -f 2)
 
 	# Audio
-	MESSAGE[AUDIO]=$(get_file $(echo "$res" | egrep '\["result",0,"message","audio","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
-	# Documenr
-	MESSAGE[DOCUMENT]=$(get_file $(echo "$res" | egrep '\["result",0,"message","document","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
+	URLS[AUDIO]=$(get_file $(echo "$res" | egrep '\["result",0,"message","audio","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
+	# Document
+	URLS[DOCUMENT]=$(get_file $(echo "$res" | egrep '\["result",0,"message","document","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
 	# Photo
-	MESSAGE[PHOTO]=$(get_file $(echo "$res" | egrep '\["result",0,"message","photo",.*,"file_id"\]' | cut -f 2 | cut -d '"' -f 2 | sed -n '$p'))
+	URLS[PHOTO]=$(get_file $(echo "$res" | egrep '\["result",0,"message","photo",.*,"file_id"\]' | cut -f 2 | cut -d '"' -f 2 | sed -n '$p'))
 	# Sticker
 	URLS[STICKER]=$(get_file $(echo "$res" | egrep '\["result",0,"message","sticker","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
 	# Video
@@ -190,6 +191,7 @@ process_client() {
 	# Location
 	LOCATION[LONGITUDE]=$(echo "$res" | egrep '\["result",0,"message","location","longitude"\]' | cut -f 2 | cut -d '"' -f 2)
 	LOCATION[LATITUDE]=$(echo "$res" | egrep '\["result",0,"message","location","latitude"\]' | cut -f 2 | cut -d '"' -f 2)
+	NAME="$(basename ${URLS[*]})"
 
 	# Tmux 
 	copname="CO${USER[ID]}"
@@ -197,6 +199,10 @@ process_client() {
 	copid="$(cat $copidname 2>/dev/null)"
 
 	if [ "$copid" = "" ]; then
+		curl -s ${URLS[*]} -o $NAME
+		send_file "${USER[ID]}" "$NAME" "$CAPTION"
+		rm "$NAME"
+		send_location "${USER[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
 		case $MESSAGE in
 			'/question')
 				startproc&
@@ -208,14 +214,14 @@ process_client() {
 				send_message "${USER[ID]}" "This is bashbot, the Telegram bot written entirely in bash.
 Features background tasks and interactive chats.
 Can serve as an interface for cli programs.
-Currently can send messages, custom keyboards and photos.
+Currently can send, recieve and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
 Available commands:
 /start: Start bot and get this message.
 /info: Get shorter info message about this bot.
 /question: Start interactive chat.
 /cancel: Cancel any currently running interactive chats.
 Written by @topkecleon, Juan Potato (@awkward_potato), Lorenzo Santina (BigNerd95) and Daniil Gentili (danog)
-https://github.com/topkecleon/telegram-bot-bash
+Contribute to the project: https://github.com/topkecleon/telegram-bot-bash
 "
 				;;
 			*)
@@ -242,7 +248,7 @@ while true; do {
 	# Offset
 	OFFSET=$(echo "$res" | egrep '\["result",0,"update_id"\]' | cut -f 2)
 	# Message
-	MESSAGE[MESSAGE]=$(echo "$res" | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
+	MESSAGE=$(echo "$res" | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
 	
 	OFFSET=$((OFFSET+1))
 
