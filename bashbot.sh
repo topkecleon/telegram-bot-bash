@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # If you're in Europe, and public domain does not exist, then haha.
 
-TOKEN='179533649:AAHR470oLFSDD8WXy8L87uZFofxM6IDp5oU'
+TOKEN='tokenhere'
 URL='https://api.telegram.org/bot'$TOKEN
 
 FORWARD_URL=$URL'/forwardMessage'
@@ -199,10 +199,12 @@ process_client() {
 	copid="$(cat $copidname 2>/dev/null)"
 
 	if [ "$copid" = "" ]; then
-		curl -s ${URLS[*]} -o $NAME
-		send_file "${USER[ID]}" "$NAME" "$CAPTION"
-		rm "$NAME"
-		send_location "${USER[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
+		[ "${URLS[*]}" != "" ] && {
+			curl -s ${URLS[*]} -o $NAME
+			send_file "${USER[ID]}" "$NAME" "$CAPTION"
+			rm "$NAME"
+		}
+		[ "${LOCATION[*]}" != "" ] && send_location "${USER[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
 		case $MESSAGE in
 			'/question')
 				startproc&
@@ -223,6 +225,8 @@ Available commands:
 Written by @topkecleon, Juan Potato (@awkward_potato), Lorenzo Santina (BigNerd95) and Daniil Gentili (danog)
 Contribute to the project: https://github.com/topkecleon/telegram-bot-bash
 "
+				;;
+			'')
 				;;
 			*)
 				send_message "${USER[ID]}" "$MESSAGE"
