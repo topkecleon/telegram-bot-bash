@@ -72,7 +72,7 @@ send_keyboard() {
 	local keyboard=init
 	OLDIFS=$IFS
 	IFS=$(echo -en "\"")
-	for f in $*;do [ ! -z "$f" ] && local keyboard="$keyboard, [\"$f\"]";done
+	for f in $*;do [ "$f" != " " ] && local keyboard="$keyboard, [\"$f\"]";done
 	IFS=$OLDIFS
 	local keyboard=${keyboard/init, /}
 	res=$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")
