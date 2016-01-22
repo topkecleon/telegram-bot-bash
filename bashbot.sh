@@ -70,11 +70,13 @@ send_keyboard() {
 	local text="$2"
 	shift 2
 	local keyboard=init
-	for f in $*;do local keyboard="$keyboard, [\"$f\"]";done
+	OLDIFS=$IFS
+	IFS=$(echo -en "\"")
+	for f in $*;do [ ! -z "$f" ] && local keyboard="$keyboard, [\"$f\"]";done
+	IFS=$OLDIFS
 	local keyboard=${keyboard/init, /}
 	res=$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")
 }
-
 
 get_file() {
 	[ "$1" != "" ] && echo $FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh -s | egrep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)
