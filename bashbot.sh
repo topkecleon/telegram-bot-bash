@@ -146,7 +146,7 @@ forward() {
 startproc() {
 	mkdir -p "$copname"
 	mkfifo $copname/out
-	tmux kill -s $copname
+	tmux kill-session -t $copname
 	tmux new-session -d -s $copname "./question &>$copname/out"
 	local pid=$(ps aux | sed '/tmux/!d;/'$copname'/!d;/sed/d;s/'$USER'\s*//g;s/\s.*//g')
 	echo $pid>$copname/pid
