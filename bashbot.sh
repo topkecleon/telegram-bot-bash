@@ -144,7 +144,7 @@ forward() {
 startproc() {
 	mkdir -p "$copname"
 	mkfifo $copname/out
-	tmux new-session -d -s $copname "./question 2>&1>$copname/out"
+	tmux new-session -d -s $copname "./question &>$copname/out"
 	local pid=$(ps aux | sed '/tmux/!d;/'$copname'/!d;/sed/d;s/'$USER'\s*//g;s/\s.*//g')
 	echo $pid>$copname/pid
 	while ps aux | grep -v grep | grep -q $pid;do
@@ -191,7 +191,7 @@ process_client() {
 	# Location
 	LOCATION[LONGITUDE]=$(echo "$res" | egrep '\["result",0,"message","location","longitude"\]' | cut -f 2 | cut -d '"' -f 2)
 	LOCATION[LATITUDE]=$(echo "$res" | egrep '\["result",0,"message","location","latitude"\]' | cut -f 2 | cut -d '"' -f 2)
-	NAME="$(basename ${URLS[*]})"
+	NAME="$(basename ${URLS[*]} &>/dev/null)"
 
 	# Tmux 
 	copname="CO${USER[ID]}"
@@ -199,12 +199,12 @@ process_client() {
 	copid="$(cat $copidname 2>/dev/null)"
 
 	if [ "$copid" = "" ]; then
-		[ "${URLS[*]}" != "" ] && {
+		[ ! -z "${URLS[*]}" ] && {
 			curl -s ${URLS[*]} -o $NAME
 			send_file "${USER[ID]}" "$NAME" "$CAPTION"
 			rm "$NAME"
 		}
-		[ "${LOCATION[*]}" != "" ] && send_location "${USER[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
+		[ ! -z "${LOCATION[*]}" ] && send_location "${USER[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
 		case $MESSAGE in
 			'/question')
 				startproc&
