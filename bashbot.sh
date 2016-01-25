@@ -142,25 +142,22 @@ forward() {
 	res=$(curl -s "$FORWARD_URL" -F "chat_id=$1" -F "from_chat_id=$2" -F "message_id=$3")	
 }
 
-
 startproc() {
-	mkdir -p "$copname"
-	mkfifo $copname/out
+	rm -r $copname
+	mkfifo $copname
 	tmux kill-session -t $copname
-	tmux new-session -d -s $copname "./question &>$copname/out"
-	local pid=$(ps aux | sed '/tmux/!d;/'$copname'/!d;/sed/d;s/'$USER'\s*//g;s/\s.*//g')
-	echo $pid>$copname/pid
-	while ps aux | grep -v grep | grep -q $pid;do
+	tmux new-session -d -s $copname "./question &>$copname"
+	while tmux ls | grep -q $copname;do
 		read -t 10 line
 		[ "$line" != "" ] && send_message "${USER[ID]}" "$line"
 		line=
-	done <$copname/out
+	done <$copname
+	rm -r $copname
 }
 
 inproc() {
 	tmux send-keys -t $copname "$MESSAGE ${URLS[*]}
 "
-	ps aux | grep -v grep | grep -q "$copid" || { rm -r $copname; };
 }
 
 process_client() {
@@ -198,16 +195,14 @@ process_client() {
 
 	# Tmux 
 	copname="CO${USER[ID]}"
-	copidname="$copname/pid"
-	copid="$(cat $copidname 2>/dev/null)"
 
-	if [ "$copid" = "" ]; then
-		[ ! -z "${URLS[*]}" ] && {
+	if ! tmux ls | grep -q $copname; then
+		[ ! -z ${URLS[*]} ] && {
 			curl -s ${URLS[*]} -o $NAME
 			send_file "${USER[ID]}" "$NAME" "$CAPTION"
 			rm "$NAME"
 		}
-		[ ! -z "${LOCATION[*]}" ] && send_location "${USER[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
+		[ ! -z ${LOCATION[*]} ] && send_location "${USER[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
 		case $MESSAGE in
 			'/question')
 				startproc&
