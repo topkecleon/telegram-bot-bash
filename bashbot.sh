@@ -70,11 +70,13 @@ send_keyboard() {
 	local text="$2"
 	shift 2
 	local keyboard=init
-	for f in $*;do local keyboard="$keyboard, [\"$f\"]";done
+	OLDIFS=$IFS
+	IFS=$(echo -en "\"")
+	for f in $*;do [ "$f" != " " ] && local keyboard="$keyboard, [\"$f\"]";done
+	IFS=$OLDIFS
 	local keyboard=${keyboard/init, /}
 	res=$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")
 }
-
 
 get_file() {
 	[ "$1" != "" ] && echo $FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh -s | egrep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)
@@ -140,24 +142,22 @@ forward() {
 	res=$(curl -s "$FORWARD_URL" -F "chat_id=$1" -F "from_chat_id=$2" -F "message_id=$3")	
 }
 
-
 startproc() {
-	mkdir -p "$copname"
-	mkfifo $copname/out
-	tmux new-session -d -s $copname "./question 2>&1>$copname/out"
-	local pid=$(ps aux | sed '/tmux/!d;/'$copname'/!d;/sed/d;s/'$USER'\s*//g;s/\s.*//g')
-	echo $pid>$copname/pid
-	while ps aux | grep -v grep | grep -q $pid;do
+	rm -r $copname
+	mkfifo $copname
+	tmux kill-session -t $copname
+	tmux new-session -d -s $copname "./question &>$copname"
+	while tmux ls | grep -q $copname;do
 		read -t 10 line
 		[ "$line" != "" ] && send_message "${USER[ID]}" "$line"
 		line=
-	done <$copname/out
+	done <$copname
+	rm -r $copname
 }
 
 inproc() {
 	tmux send-keys -t $copname "$MESSAGE ${URLS[*]}
 "
-	ps aux | grep -v grep | grep -q "$copid" || { rm -r $copname; };
 }
 
 process_client() {
@@ -191,20 +191,18 @@ process_client() {
 	# Location
 	LOCATION[LONGITUDE]=$(echo "$res" | egrep '\["result",0,"message","location","longitude"\]' | cut -f 2 | cut -d '"' -f 2)
 	LOCATION[LATITUDE]=$(echo "$res" | egrep '\["result",0,"message","location","latitude"\]' | cut -f 2 | cut -d '"' -f 2)
-	NAME="$(basename ${URLS[*]})"
+	NAME="$(basename ${URLS[*]} &>/dev/null)"
 
 	# Tmux 
 	copname="CO${USER[ID]}"
-	copidname="$copname/pid"
-	copid="$(cat $copidname 2>/dev/null)"
 
-	if [ "$copid" = "" ]; then
-		[ "${URLS[*]}" != "" ] && {
+	if ! tmux ls | grep -q $copname; then
+		[ ! -z ${URLS[*]} ] && {
 			curl -s ${URLS[*]} -o $NAME
 			send_file "${USER[ID]}" "$NAME" "$CAPTION"
 			rm "$NAME"
 		}
-		[ "${LOCATION[*]}" != "" ] && send_location "${USER[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
+		[ ! -z ${LOCATION[*]} ] && send_location "${USER[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
 		case $MESSAGE in
 			'/question')
 				startproc&
