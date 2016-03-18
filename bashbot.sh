@@ -60,7 +60,7 @@ send_message() {
 	fi
 
 	if [ "$sent" != "y" ];then
-		res=$(curl -s "$MSG_URL" -F "chat_id=$chat" -F "text=$text")
+		res=$(curl -s "$MSG_URL" -F "chat_id=$chat" -F "text=$text" -F "parse_mode=markdown")
 	fi
 
 }
