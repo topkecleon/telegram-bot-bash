@@ -60,9 +60,13 @@ send_message() {
 	fi
 
 	if [ "$sent" != "y" ];then
-		res=$(curl -s "$MSG_URL" -F "chat_id=$chat" -F "text=$text" -F "parse_mode=markdown")
+		res=$(curl -s "$MSG_URL" -F "chat_id=$chat" -F "text=$text")
 	fi
 
+}
+
+send_markdown_message() {
+	res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$2" -F "parse_mode=markdown")
 }
 
 send_keyboard() {
