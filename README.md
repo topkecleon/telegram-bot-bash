@@ -150,6 +150,9 @@ Once you're done editing start the bot with ```tmux new-session -d -s bashbot ".
 To stop the bot run ```tmux kill-session -t bashbot```.  
 If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```.  
 
+To use the functions provided in this script in other scripts source bashbot.sh: ```source bashbot.sh source```  
+
+
 That's it!
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
