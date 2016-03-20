@@ -1,6 +1,6 @@
 #!/bin/bash
 # bashbot, the Telegram bot written in bash.
-# Written by @topkecleon, Juan Potato (@awkward_potato), Lorenzo Santina (BigNerd95) and Daniil Gentili (danog)
+# Written by @topkecleon, Juan Potato (@awkward_potato), Lorenzo Santina (BigNerd95) and Daniil Gentili (@danog)
 # https://github.com/topkecleon/telegram-bot-bash
 
 # Depends on ./JSON.sh (http://github.com/dominictarr/./JSON.sh),
@@ -51,7 +51,7 @@ send_message() {
 		local sent=y
 	fi
 	if [ "$file" != "" ]; then
-		send_file "$chat" "$file"
+		send_file "$chat" "$file" "$text"
 		local sent=y
 	fi
 	if [ "$lat" != "" -a "$long" != "" ]; then
@@ -232,7 +232,7 @@ Contribute to the project: https://github.com/topkecleon/telegram-bot-bash
 	else
 		case $MESSAGE in
 			'/cancel')
-				kill $copid
+				tmux kill-session -t $copname
 				rm -r $copname
 				send_message "${USER[ID]}" "Command canceled."
 				;;
@@ -241,7 +241,8 @@ Contribute to the project: https://github.com/topkecleon/telegram-bot-bash
 	fi
 }
 
-while true; do {
+# source the script with source as param to use functions in other scripts
+while [ "$1" != "source" ]; do {
 
 	res=$(curl -s $UPD_URL$OFFSET | ./JSON.sh -s)
 
