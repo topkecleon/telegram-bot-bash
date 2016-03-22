@@ -130,7 +130,7 @@ To create interactive chats, write (or edit the question script) a normal bash (
 The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).   
 To open up a keyboard in an interactive script, print out the keyboard layout in the following way:  
 ```
-echo "Text that will appear in chat? mykeyboardstartshere Yep No"
+echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, highly unlikely\""
 ```  
 Same goes for files:
 ```
@@ -142,13 +142,16 @@ echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45"
 ```  
 You can combine them:
 ```
-echo "Text that will appear in chat? mykeyboardstartshere Yep No myfilelocationstartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
+echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, highly unlikely\" myfilelocationstartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
 ```  
 
 
 Once you're done editing start the bot with ```tmux new-session -d -s bashbot "./bashbot.sh"```.  
 To stop the bot run ```tmux kill-session -t bashbot```.  
 If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```.  
+
+To use the functions provided in this script in other scripts source bashbot.sh: ```source bashbot.sh source```  
+
 
 That's it!
 
