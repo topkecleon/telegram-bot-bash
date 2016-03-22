@@ -65,6 +65,10 @@ send_message() {
 
 }
 
+send_markdown_message() {
+	res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$2" -F "parse_mode=markdown")
+}
+
 send_keyboard() {
 	local chat="$1"
 	local text="$2"
