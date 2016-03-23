@@ -37,15 +37,15 @@ declare -A USER MESSAGE URLS CONTACT LOCATION
 send_message() {
 	local chat="$1"
 	local text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
+	[ "$3" != "text" ] && {
+		local keyboard="$(echo "$2" | sed '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
 
-	local keyboard="$(echo "$2" | sed '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
+		local file="$(echo "$2" | sed '/myfilelocationstartshere /!d;s/.*myfilelocationstartshere //g;s/ mykeyboardstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
 
-	local file="$(echo "$2" | sed '/myfilelocationstartshere /!d;s/.*myfilelocationstartshere //g;s/ mykeyboardstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
+		local lat="$(echo "$2" | sed '/mylatstartshere /!d;s/.*mylatstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylongstartshere.*//g')"
 
-	local lat="$(echo "$2" | sed '/mylatstartshere /!d;s/.*mylatstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylongstartshere.*//g')"
-
-	local long="$(echo "$2" | sed '/mylongstartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g')"
-
+		local long="$(echo "$2" | sed '/mylongstartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g')"
+	}
 	if [ "$keyboard" != "" ]; then
 		send_keyboard "$chat" "$text" "$keyboard"
 		local sent=y
@@ -91,6 +91,7 @@ send_file() {
 	[ "$2" = "" ] && return
 	local chat_id=$1
 	local file=$2
+	echo "$file" | grep -qE '/home/allowed/.*' || return
 	local ext="${file##*.}"
 	case $ext in 
         	"mp3")
@@ -231,7 +232,7 @@ Contribute to the project: https://github.com/topkecleon/telegram-bot-bash
 			'')
 				;;
 			*)
-				send_message "${USER[ID]}" "$MESSAGE"
+				send_message "${USER[ID]}" "$MESSAGE" "text"
 		esac
 	else
 		case $MESSAGE in
@@ -265,4 +266,3 @@ while [ "$1" != "source" ]; do {
 	fi
 
 }; done
-

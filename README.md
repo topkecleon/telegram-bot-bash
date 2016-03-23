@@ -104,7 +104,11 @@ To send messages use the ```send_message``` function:
 ```
 send_message "${USER[ID]}" "lol" 
 ```   
-To send images, videos, voice files, photos ecc use the ```send_photo``` function:  
+This function also allows a third parameter that disables additional function parsing (for safety use this when reprinting user input):  
+```
+send_message "${USER[ID]}" "lol" "text"
+```   
+To send images, videos, voice files, photos ecc use the ```send_photo``` function (remember to change the safety Regex @ line 94 to allow sending files only from certain directories):    
 ```
 send_file "${USER[ID]}" "/home/user/doge.jpg" "Lool"
 ```
