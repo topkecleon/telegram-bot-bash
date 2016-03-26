@@ -151,7 +151,7 @@ startproc() {
 	rm -r $copname
 	mkfifo $copname
 	tmux kill-session -t $copname
-	tmux new-session -d -s $copname "./question &>$copname"
+	TMUX= tmux new-session -d -s $copname "./question &>$copname"
 	while tmux ls | grep -q $copname;do
 		read -t 10 line
 		[ "$line" != "" ] && send_message "${USER[ID]}" "$line"
@@ -169,7 +169,7 @@ process_client() {
 	# User
 	USER[FIRST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
 	USER[LAST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","last_name"\]' | cut -f 2 | cut -d '"' -f 2)
-	USER[USERNAME]=$(echo "$res" | egrep '\["result",0,"message","chat","username"\]' | cut -f 2 | cut -d '"' -f 2)
+	USER[USERNAME]=$(echo "$res" | sed 's/^.*\(username.*\)/\1/g' | cut -d '"' -f3)
 
 	# Audio
 	URLS[AUDIO]=$(get_file $(echo "$res" | egrep '\["result",0,"message","audio","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
