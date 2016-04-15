@@ -148,9 +148,7 @@ forward() {
 }
 
 startproc() {
-	(rm -r $copname
-	tmux kill-session -t $copname)2>/dev/null
-
+	killproc
 	mkfifo $copname
 	TMUX= tmux new-session -d -s $copname "$* &>$copname; echo >$copname; sleep 5; rm -r $copname"
 	while [ -p "$copname" ];do
@@ -158,6 +156,11 @@ startproc() {
 		[ "$line" != "" ] && send_message "${USER[ID]}" "$line"
 		line=
 	done <$copname
+}
+
+killproc() {
+	(rm -r $copname
+	tmux kill-session -t $copname)2>/dev/null
 }
 
 inproc() {
@@ -237,8 +240,7 @@ Contribute to the project: https://github.com/topkecleon/telegram-bot-bash
 	else
 		case $MESSAGE in
 			'/cancel')
-				tmux kill-session -t $copname
-				rm -r $copname
+				killproc
 				send_message "${USER[ID]}" "Command canceled."
 				;;
 			*) inproc;;
