@@ -130,7 +130,7 @@ Allowed values: typing for text messages, upload_photo for photos, record_video 
 send_action "${USER[ID]}" "action"
 ```   
 
-To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then substitute ./question @ line 49 with the command you usually use to start the script.  
+To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.  
 The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).   
 To open up a keyboard in an interactive script, print out the keyboard layout in the following way:  
 ```

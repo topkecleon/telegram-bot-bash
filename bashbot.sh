@@ -152,7 +152,7 @@ startproc() {
 	tmux kill-session -t $copname)2>/dev/null
 
 	mkfifo $copname
-	TMUX= tmux new-session -d -s $copname "./question &>$copname; sleep 10; rm -r $copname"
+	TMUX= tmux new-session -d -s $copname "$* &>$copname; echo >$copname; sleep 5; rm -r $copname"
 	while [ -p "$copname" ];do
 		read -t 10 line
 		[ "$line" != "" ] && send_message "${USER[ID]}" "$line"
@@ -210,7 +210,7 @@ process_client() {
 		[ ! -z ${LOCATION[*]} ] && send_location "${USER[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
 		case $MESSAGE in
 			'/question')
-				startproc&
+				startproc "./question"&
 				;;
 			'/info')
 				send_message "${USER[ID]}" "This is bashbot, the Telegram bot written entirely in bash."
