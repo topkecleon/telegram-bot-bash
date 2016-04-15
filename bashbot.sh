@@ -148,16 +148,16 @@ forward() {
 }
 
 startproc() {
-	rm -r $copname
+	(rm -r $copname
+	tmux kill-session -t $copname)2>/dev/null
+
 	mkfifo $copname
-	tmux kill-session -t $copname
-	TMUX= tmux new-session -d -s $copname "./question &>$copname"
-	while tmux ls | grep -q $copname;do
+	TMUX= tmux new-session -d -s $copname "./question &>$copname; sleep 10; rm -r $copname"
+	while [ -p "$copname" ];do
 		read -t 10 line
 		[ "$line" != "" ] && send_message "${USER[ID]}" "$line"
 		line=
 	done <$copname
-	rm -r $copname
 }
 
 inproc() {
@@ -225,7 +225,7 @@ Available commands:
 /info: Get shorter info message about this bot.
 /question: Start interactive chat.
 /cancel: Cancel any currently running interactive chats.
-Written by @topkecleon, Juan Potato (@awkward_potato), Lorenzo Santina (BigNerd95) and Daniil Gentili (danog)
+Written by @topkecleon, Juan Potato (@awkward_potato), Lorenzo Santina (BigNerd95) and Daniil Gentili (@danogentili)
 Contribute to the project: https://github.com/topkecleon/telegram-bot-bash
 "
 				;;
