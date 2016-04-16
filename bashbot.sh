@@ -13,6 +13,7 @@
 # If you're in Europe, and public domain does not exist, then haha.
 
 TOKEN='tokenhere'
+
 URL='https://api.telegram.org/bot'$TOKEN
 
 # Set INLINE to 1 in order to receive inline queries. 
@@ -31,6 +32,9 @@ LOCATION_URL=$URL'/sendLocation'
 ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
 INLINE_QUERY=$URL'/answerInlineQuery'
+ME_URL=$URL'/getMe'
+ME=$(curl -s $ME_URL | ./JSON.sh -s | egrep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
+
 
 FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
 UPD_URL=$URL'/getUpdates?offset='
@@ -41,7 +45,8 @@ declare -A USER MESSAGE URLS CONTACT LOCATION
 send_message() {
 	local chat="$1"
 	local text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
-	[ "$3" != "text" ] && {
+	local arg="$3"
+	[ "$3" != "safe" ] && {
 		local keyboard="$(echo "$2" | sed '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
 
 		local file="$(echo "$2" | sed '/myfilelocationstartshere /!d;s/.*myfilelocationstartshere //g;s/ mykeyboardstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
@@ -64,9 +69,15 @@ send_message() {
 	fi
 
 	if [ "$sent" != "y" ];then
-		res=$(curl -s "$MSG_URL" -F "chat_id=$chat" -F "text=$text")
+		send_text "$chat" "$text"
 	fi
 
+}
+
+send_text() {
+	echo "$2" | grep -q '^html_parse_mode' && local add="-F \"parse_mode=html\""
+	echo "$2" | grep -q '^markdown_parse_mode' && local add="-F \"parse_mode=markdown\""
+	res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$2" $add)
 }
 
 send_markdown_message() {
@@ -74,9 +85,7 @@ send_markdown_message() {
 }
 
 answer_inline_query() {
-
 	case $2 in
-	
 		"article")
 			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","title":"'$3'","message_text":"'$4'"}]'
 		;;
@@ -106,10 +115,10 @@ answer_inline_query() {
 		;;
 		"venue")
 			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","latitude":"'$3'","longitude":"'$4'","title":"'$5'","address":"'$6'"}]'
-		;;		
+		;;
 		"contact")
 			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","phone_number":"'$3'","first_name":"'$4'"}]'
-		;;		
+		;;
 		
 		# Cached media stored in Telegram server
 
@@ -224,18 +233,13 @@ forward() {
 
 startproc() {
 	killproc
-	mkfifo $copname
-	TMUX= tmux new-session -d -s $copname "$* &>$copname; echo >$copname; sleep 5; rm -r $copname"
-	while [ -p "$copname" ];do
-		read -t 10 line
-		[ "$line" != "" ] && send_message "${USER[ID]}" "$line"
-		line=
-	done <$copname
+	mkfifo /tmp/$copname
+	TMUX= tmux new-session -d -s $copname "$* &>/tmp/$copname; echo imprettydarnsuredatdisisdaendofdacmd>/tmp/$copname"
+	TMUX= tmux new-session -d -s sendprocess_$copname "bash bashbot.sh outproc ${USER[ID]} $copname"
 }
 
 killproc() {
-	(rm -r $copname
-	tmux kill-session -t $copname)2>/dev/null
+	(tmux kill-session -t $copname; echo imprettydarnsuredatdisisdaendofdacmd>/tmp/$copname; sleep 1; tmux kill-session -t send$copname; rm -r /tmp/$copname)2>/dev/null
 }
 
 inproc() {
@@ -244,10 +248,14 @@ inproc() {
 }
 
 process_client() {
+	# Message
+	MESSAGE=$(echo "$res" | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
+	
 	# User
+	USER[ID]=$(echo "$res" | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
 	USER[FIRST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
 	USER[LAST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","last_name"\]' | cut -f 2 | cut -d '"' -f 2)
-	USER[USERNAME]=$(echo "$res" | sed 's/^.*\(username.*\)/\1/g' | cut -d '"' -f3)
+	USER[USERNAME]=$(echo "$res" | egrep '\["result",0,"message","chat","username"\]' | cut -f 2 | cut -d '"' -f 2)
 
 	# Audio
 	URLS[AUDIO]=$(get_file $(echo "$res" | egrep '\["result",0,"message","audio","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
@@ -277,9 +285,9 @@ process_client() {
 	NAME="$(basename ${URLS[*]} &>/dev/null)"
 
 	# Tmux 
-	copname="CO${USER[ID]}"
+	copname="$ME"_"${USER[USERNAME]}"
 
-	if ! tmux ls | grep -q $copname; then
+	if ! tmux ls | grep -v send | grep -q $copname; then
 		[ ! -z ${URLS[*]} ] && {
 			curl -s ${URLS[*]} -o $NAME
 			send_file "${USER[ID]}" "$NAME" "$CAPTION"
@@ -316,7 +324,7 @@ process_client() {
 		
 		case $MESSAGE in
 			'/question')
-				startproc "./question"&
+				startproc "./question"
 				;;
 			'/info')
 				send_message "${USER[ID]}" "This is bashbot, the Telegram bot written entirely in bash."
@@ -338,7 +346,7 @@ Contribute to the project: https://github.com/topkecleon/telegram-bot-bash
 			'')
 				;;
 			*)
-				send_message "${USER[ID]}" "$MESSAGE" "text"
+				send_message "${USER[ID]}" "$MESSAGE" "safe"
 		esac
 	else
 		case $MESSAGE in
@@ -349,25 +357,45 @@ Contribute to the project: https://github.com/topkecleon/telegram-bot-bash
 			*) inproc;;
 		esac
 	fi
+	if [ "$MESSAGE" = "/start" ]; then
+		tmpcount="COUNT${USER[ID]}"
+		cat count | grep -q "$tmpcount" || echo "$tmpcount">>count
+	fi
+	# To get user count execute bash bashbot.sh count
 }
 
 # source the script with source as param to use functions in other scripts
-while [ "$1" != "source" ]; do {
+while [ "$1" == "" ]; do {
 
 	res=$(curl -s $UPD_URL$OFFSET | ./JSON.sh -s)
 
-	# Target
-	USER[ID]=$(echo "$res" | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
 	# Offset
 	OFFSET=$(echo "$res" | egrep '\["result",0,"update_id"\]' | cut -f 2)
-	# Message
-	MESSAGE=$(echo "$res" | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
-	
 	OFFSET=$((OFFSET+1))
 
 	if [ $OFFSET != 1 ]; then
 		process_client&
-
 	fi
 
 }; done
+
+
+case "$1" in
+	"outproc")
+		until [ "$line" = "imprettydarnsuredatdisisdaendofdacmd" ];do
+			line=
+			read -t 10 line
+			[ "$line" != "" -a "$line" != "imprettydarnsuredatdisisdaendofdacmd" ] && send_message "$2" "$line"
+		done </tmp/$3
+		rm -r /tmp/$3
+		;;
+	"count")
+		wc -l count
+		;;
+	"broadcast")
+		[ $(wc -l count) -gt 300 ] && sleep="sleep 0.5"
+		shift
+		for f in $(cat count);do send_message ${f//COUNT} "$*"; $sleep;done
+		;;
+
+esac
