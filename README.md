@@ -70,7 +70,7 @@ Clone the repository:
 git clone https://github.com/topkecleon/telegram-bot-bash
 ```
 
-Paste the token on line 12 (instead of tokenhere).  
+Paste the token on line 15 (instead of tokenhere).  
 Then start editing the commands.  
   
 ### Recieve data  
@@ -104,9 +104,16 @@ To send messages use the ```send_message``` function:
 ```
 send_message "${USER[ID]}" "lol" 
 ```   
+To send html or markdown put the following strings before the text, depending on the parsing mode you want to enable:  
+```
+send_message "${USER[ID]}" "markdown_parse_mode lol <b>bold</b>" 
+```   
+```
+send_message "${USER[ID]}" "html_parse_mode lol <b>bold</b>" 
+```   
 This function also allows a third parameter that disables additional function parsing (for safety use this when reprinting user input):  
 ```
-send_message "${USER[ID]}" "lol" "text"
+send_message "${USER[ID]}" "lol" "safe"
 ```   
 To send images, videos, voice files, photos ecc use the ```send_photo``` function (remember to change the safety Regex @ line 94 to allow sending files only from certain directories):    
 ```
@@ -155,6 +162,15 @@ To stop the bot run ```tmux kill-session -t bashbot```.
 If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```.  
 
 To use the functions provided in this script in other scripts source bashbot.sh: ```source bashbot.sh source```  
+
+
+## User count  
+To enable the user counting function set the COUNT variable to 1 @ line 15. This will create a count file in the current directory with the hashes of the user ids that used the bot. To count the total number of users that ever used the bot run the following command:   
+```
+wc -l count
+```  
+
+
 
 
 That's it!

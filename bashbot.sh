@@ -13,10 +13,12 @@
 # If you're in Europe, and public domain does not exist, then haha.
 
 TOKEN='tokenhere'
+COUNT=1 # Change to 1 to enable user count
+
 URL='https://api.telegram.org/bot'$TOKEN
 
+ME_URL=$URL'/getMe'
 FORWARD_URL=$URL'/forwardMessage'
-
 MSG_URL=$URL'/sendMessage'
 PHO_URL=$URL'/sendPhoto'
 AUDIO_URL=$URL'/sendAudio'
@@ -34,10 +36,14 @@ GET_URL=$URL'/getFile'
 OFFSET=0
 declare -A USER MESSAGE URLS CONTACT LOCATION
 
+ME=$(curl -s $ME_URL | ./JSON.sh -s | egrep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
+
 send_message() {
 	local chat="$1"
 	local text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
-	[ "$3" != "text" ] && {
+	local arg="$3"
+
+	[ "$arg" != "safe" ] && {
 		local keyboard="$(echo "$2" | sed '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
 
 		local file="$(echo "$2" | sed '/myfilelocationstartshere /!d;s/.*myfilelocationstartshere //g;s/ mykeyboardstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
@@ -60,15 +66,19 @@ send_message() {
 	fi
 
 	if [ "$sent" != "y" ];then
-		res=$(curl -s "$MSG_URL" -F "chat_id=$chat" -F "text=$text")
+		send_text "$chat" "$text"
 	fi
 
 }
-
-send_markdown_message() {
-	res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$2" -F "parse_mode=markdown")
+send_text() {
+        echo "$2" | grep -q '^html_parse_mode' && add="-F \"parse_mode=html\""
+        echo "$2" | grep -q '^markdown_parse_mode' && add="-F \"parse_mode=markdown\""
+	res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$2" $add)
 }
 
+send_markdown_text() {
+	res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$2" -F "parse_mode=markdown")
+}
 send_keyboard() {
 	local chat="$1"
 	local text="$2"
@@ -149,18 +159,13 @@ forward() {
 
 startproc() {
 	killproc
-	mkfifo $copname
-	TMUX= tmux new-session -d -s $copname "$* &>$copname; echo >$copname; sleep 5; rm -r $copname"
-	while [ -p "$copname" ];do
-		read -t 10 line
-		[ "$line" != "" ] && send_message "${USER[ID]}" "$line"
-		line=
-	done <$copname
+	mkfifo /tmp/$copname
+	TMUX= tmux new-session -d -s $copname "$* &>/tmp/$copname; echo imprettydarnsuredatdisisdaendofdacmd>/tmp/$copname"
+	TMUX= tmux new-session -d -s sendprocess_$copname "bash bashbot.sh outproc ${USER[ID]} $copname"
 }
 
 killproc() {
-	(rm -r $copname
-	tmux kill-session -t $copname)2>/dev/null
+	(tmux kill-session -t $copname; echo imprettydarnsuredatdisisdaendofdacmd>/tmp/$copname; sleep 1; tmux kill-session -t send$copname; rm -r /tmp/$copname)2>/dev/null
 }
 
 inproc() {
@@ -169,10 +174,14 @@ inproc() {
 }
 
 process_client() {
+	# Message
+	MESSAGE=$(echo "$res" | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
+
 	# User
+	USER[ID]=$(echo "$res" | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
 	USER[FIRST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
 	USER[LAST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","last_name"\]' | cut -f 2 | cut -d '"' -f 2)
-	USER[USERNAME]=$(echo "$res" | sed 's/^.*\(username.*\)/\1/g' | cut -d '"' -f3)
+	USER[USERNAME]=$(echo "$res" | egrep '\["result",0,"message","chat","username"\]' | cut -f 2 | cut -d '"' -f 2)
 
 	# Audio
 	URLS[AUDIO]=$(get_file $(echo "$res" | egrep '\["result",0,"message","audio","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
@@ -202,9 +211,9 @@ process_client() {
 	NAME="$(basename ${URLS[*]} &>/dev/null)"
 
 	# Tmux 
-	copname="CO${USER[ID]}"
+	copname="$ME"_"${USER[USERNAME]}"
 
-	if ! tmux ls | grep -q $copname; then
+	if ! tmux ls | grep -v send | grep -q $copname; then
 		[ ! -z ${URLS[*]} ] && {
 			curl -s ${URLS[*]} -o $NAME
 			send_file "${USER[ID]}" "$NAME" "$CAPTION"
@@ -213,7 +222,7 @@ process_client() {
 		[ ! -z ${LOCATION[*]} ] && send_location "${USER[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
 		case $MESSAGE in
 			'/question')
-				startproc "./question"&
+				startproc "./question"
 				;;
 			'/info')
 				send_message "${USER[ID]}" "This is bashbot, the Telegram bot written entirely in bash."
@@ -235,7 +244,7 @@ Contribute to the project: https://github.com/topkecleon/telegram-bot-bash
 			'')
 				;;
 			*)
-				send_message "${USER[ID]}" "$MESSAGE" "text"
+				send_message "${USER[ID]}" "$MESSAGE" "safe"
 		esac
 	else
 		case $MESSAGE in
@@ -246,25 +255,34 @@ Contribute to the project: https://github.com/topkecleon/telegram-bot-bash
 			*) inproc;;
 		esac
 	fi
+	if [ "$COUNT" = "1" ]; then
+		tmpcount=$(echo "C${USER[ID]}" | sha256sum | sed 's/\s.*//g')
+		cat count | grep -q "$tmpcount" || echo "$tmpcount">>count
+	fi
+	# To get user count execute wc -l count
+
+
 }
 
 # source the script with source as param to use functions in other scripts
-while [ "$1" != "source" ]; do {
+while [ "$1" == "" ]; do {
 
 	res=$(curl -s $UPD_URL$OFFSET | ./JSON.sh -s)
-
-	# Target
-	USER[ID]=$(echo "$res" | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
 	# Offset
 	OFFSET=$(echo "$res" | egrep '\["result",0,"update_id"\]' | cut -f 2)
-	# Message
-	MESSAGE=$(echo "$res" | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
-	
 	OFFSET=$((OFFSET+1))
 
 	if [ $OFFSET != 1 ]; then
 		process_client&
-
 	fi
 
 }; done
+
+if [ "$1" == "outproc" ]; then
+	until [ "$line" = "imprettydarnsuredatdisisdaendofdacmd" ];do
+		line=
+		read -t 10 line
+		[ "$line" != "" -a "$line" != "imprettydarnsuredatdisisdaendofdacmd" ] && send_message "$2" "$line"
+	done </tmp/$3
+	rm -r /tmp/$3
+fi
