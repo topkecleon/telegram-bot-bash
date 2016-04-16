@@ -15,7 +15,10 @@
 TOKEN='tokenhere'
 URL='https://api.telegram.org/bot'$TOKEN
 
-FORWARD_URL=$URL'/forwardMessage'
+# Set INLINE to 1 in order to receive inline queries. 
+# To enable this option in your bot, send the /setinline command to @BotFather.
+INLINE=0 
+
 
 MSG_URL=$URL'/sendMessage'
 PHO_URL=$URL'/sendPhoto'
@@ -27,6 +30,7 @@ VOICE_URL=$URL'/sendVoice'
 LOCATION_URL=$URL'/sendLocation'
 ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
+INLINE_QUERY=$URL'/answerInlineQuery'
 
 FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
 UPD_URL=$URL'/getUpdates?offset='
@@ -67,6 +71,77 @@ send_message() {
 
 send_markdown_message() {
 	res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$2" -F "parse_mode=markdown")
+}
+
+answer_inline_query() {
+
+	case $2 in
+	
+		"article")
+			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","title":"'$3'","message_text":"'$4'"}]'
+		;;
+		"photo")
+			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","photo_url":"'$3'","thumb_url":"'$4'"}]'
+		;;
+		"gif")
+			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","gif_url":"'$3'"}]'
+		;;
+		"mpeg4_gif")
+			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","mpeg4_url":"'$3'"}]'
+		;;
+		"video")
+			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","video_url":"'$3'","mime_type":"'$4'","thumb_url":"'$5'","title":"'$6'"}]'
+		;;
+		"audio")
+			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","audio_url":"'$3'","title":"'$4'"}]'
+		;;
+		"voice")
+			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","voice_url":"'$3'","title":"'$4'"}]'
+		;;
+		"document")
+			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","title":"'$3'","caption":"'$4'","document_url":"'$5'","mime_type":"'$6'"}]'
+		;;
+		"location")
+			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","latitude":"'$3'","longitude":"'$4'","title":"'$5'"}]'
+		;;
+		"venue")
+			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","latitude":"'$3'","longitude":"'$4'","title":"'$5'","address":"'$6'"}]'
+		;;		
+		"contact")
+			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","phone_number":"'$3'","first_name":"'$4'"}]'
+		;;		
+		
+		# Cached media stored in Telegram server
+
+		"cached_photo")
+			InlineQueryResult='[{"type":"photo","id":"$RANDOM","photo_file_id":"'$3'"}]'
+		;;
+		"cached_gif")
+			InlineQueryResult='[{"type":"gif","id":"$RANDOM","gif_file_id":"'$3'"}]'
+		;;
+		"cached_mpeg4_gif")
+			InlineQueryResult='[{"type":"mpeg4_gif","id":"$RANDOM","mpeg4_file_id":"'$3'"}]'
+		;;
+		"cached_sticker")
+			InlineQueryResult='[{"type":"sticker","id":"$RANDOM","sticker_file_id":"'$3'"}]'
+		;;
+		"cached_document")
+			InlineQueryResult='[{"type":"document","id":"$RANDOM","title":"'$3'","document_file_id":"'$4'"}]'
+		;;
+		"cached_video")
+			InlineQueryResult='[{"type":"video","id":"$RANDOM","video_file_id":"'$3'","title":"'$4'"}]'
+		;;
+		"cached_voice")
+			InlineQueryResult='[{"type":"voice","id":"$RANDOM","voice_file_id":"'$3'","title":"'$4'"}]'
+		;;
+		"cached_audio")
+			InlineQueryResult='[{"type":"audio","id":"$RANDOM","audio_file_id":"'$3'"}]'
+		;;
+		
+	esac
+	
+	res=$(curl -s "$INLINE_QUERY" -F "inline_query_id=$1" -F "results=$InlineQueryResult")
+	
 }
 
 send_keyboard() {
@@ -211,6 +286,34 @@ process_client() {
 			rm "$NAME"
 		}
 		[ ! -z ${LOCATION[*]} ] && send_location "${USER[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
+		
+		# Inline 
+		if [ $INLINE == 1 ]; then
+			# inline query data
+			iUSER[FIRST_NAME]=$(echo "$res" | sed 's/^.*\(first_name.*\)/\1/g' | cut -d '"' -f3 | tail -1)
+			iUSER[LAST_NAME]=$(echo "$res" | sed 's/^.*\(last_name.*\)/\1/g' | cut -d '"' -f3)
+			iUSER[USERNAME]=$(echo "$res" | sed 's/^.*\(username.*\)/\1/g' | cut -d '"' -f3 | tail -1)
+			iQUERY_ID=$(echo "$res" | sed 's/^.*\(inline_query.*\)/\1/g' | cut -d '"' -f5 | tail -1)
+			iQUERY_MSG=$(echo "$res" | sed 's/^.*\(inline_query.*\)/\1/g' | cut -d '"' -f5 | tail -6 | head -1)
+		
+			# Inline examples
+			if [[ $iQUERY_MSG == photo ]]; then
+				answer_inline_query "$iQUERY_ID" "photo" "http://blog.techhysahil.com/wp-content/uploads/2016/01/Bash_Scripting.jpeg" "http://blog.techhysahil.com/wp-content/uploads/2016/01/Bash_Scripting.jpeg"
+			fi
+		
+			if [[ $iQUERY_MSG == sticker ]]; then
+				answer_inline_query "$iQUERY_ID" "cached_sticker" "BQADBAAD_QEAAiSFLwABWSYyiuj-g4AC"
+			fi
+		
+			if [[ $iQUERY_MSG == gif ]]; then
+				answer_inline_query "$iQUERY_ID" "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
+			fi
+			if [[ $iQUERY_MSG == web ]]; then
+				answer_inline_query "$iQUERY_ID" "article" "Telegram" "https://telegram.org/"
+			fi
+		
+		fi
+		
 		case $MESSAGE in
 			'/question')
 				startproc "./question"&
