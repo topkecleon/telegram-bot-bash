@@ -13,14 +13,13 @@
 # If you're in Europe, and public domain does not exist, then haha.
 
 TOKEN='tokenhere'
-
 URL='https://api.telegram.org/bot'$TOKEN
 
 # Set INLINE to 1 in order to receive inline queries. 
 # To enable this option in your bot, send the /setinline command to @BotFather.
 INLINE=0 
 
-
+SCRIPT="$0"
 MSG_URL=$URL'/sendMessage'
 PHO_URL=$URL'/sendPhoto'
 AUDIO_URL=$URL'/sendAudio'
@@ -43,6 +42,7 @@ OFFSET=0
 declare -A USER MESSAGE URLS CONTACT LOCATION
 
 send_message() {
+	[ "$2" = "" ] && return 1
 	local chat="$1"
 	local text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
 	local arg="$3"
@@ -75,13 +75,25 @@ send_message() {
 }
 
 send_text() {
-	echo "$2" | grep -q '^html_parse_mode' && local add="-F \"parse_mode=html\""
-	echo "$2" | grep -q '^markdown_parse_mode' && local add="-F \"parse_mode=markdown\""
-	res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$2" $add)
+	case "$2" in
+		html_parse_mode*)
+			send_html_message "$1" "${2//html_parse_mode}"
+			;;
+		markdown_parse_mode*)
+			send_markdown_message "$1" "${2//markdown_parse_mode}"
+			;;
+		*)
+			res=$(curl -s "$MSG_URL" -d "chat_id=$1" -d "text=$2")
+			;;
+	esac
 }
 
 send_markdown_message() {
-	res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$2" -F "parse_mode=markdown")
+	res=$(curl -s "$MSG_URL" -d "chat_id=$1" -d "text=$2" -d "parse_mode=markdown")
+}
+
+send_html_message() {
+	res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$2" -F "parse_mode=html")
 }
 
 answer_inline_query() {
@@ -168,7 +180,6 @@ send_keyboard() {
 
 get_file() {
 	[ "$1" != "" ] && echo $FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh -s | egrep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)
-
 }
 
 send_file() {
@@ -235,11 +246,11 @@ startproc() {
 	killproc
 	mkfifo /tmp/$copname
 	TMUX= tmux new-session -d -s $copname "$* &>/tmp/$copname; echo imprettydarnsuredatdisisdaendofdacmd>/tmp/$copname"
-	TMUX= tmux new-session -d -s sendprocess_$copname "bash bashbot.sh outproc ${USER[ID]} $copname"
+	TMUX= tmux new-session -d -s sendprocess_$copname "bash $SCRIPT outproc ${USER[ID]} $copname"
 }
 
 killproc() {
-	(tmux kill-session -t $copname; echo imprettydarnsuredatdisisdaendofdacmd>/tmp/$copname; sleep 1; tmux kill-session -t send$copname; rm -r /tmp/$copname)2>/dev/null
+	(tmux kill-session -t $copname; echo imprettydarnsuredatdisisdaendofdacmd>/tmp/$copname; tmux kill-session -t sendprocess_$copname; rm -r /tmp/$copname)2>/dev/null
 }
 
 inproc() {
@@ -285,7 +296,7 @@ process_client() {
 	NAME="$(basename ${URLS[*]} &>/dev/null)"
 
 	# Tmux 
-	copname="$ME"_"${USER[USERNAME]}"
+	copname="$ME"_"${USER[ID]}"
 
 	if ! tmux ls | grep -v send | grep -q $copname; then
 		[ ! -z ${URLS[*]} ] && {
@@ -319,18 +330,17 @@ process_client() {
 			if [[ $iQUERY_MSG == web ]]; then
 				answer_inline_query "$iQUERY_ID" "article" "Telegram" "https://telegram.org/"
 			fi
-		
 		fi
-		
-		case $MESSAGE in
-			'/question')
-				startproc "./question"
-				;;
-			'/info')
-				send_message "${USER[ID]}" "This is bashbot, the Telegram bot written entirely in bash."
-				;;
-			'/start')
-				send_message "${USER[ID]}" "This is bashbot, the Telegram bot written entirely in bash.
+	fi
+	case $MESSAGE in
+		'/question')
+			startproc "./question"
+			;;
+		'/info')
+			send_message "${USER[ID]}" "This is bashbot, the Telegram bot written entirely in bash."
+			;;
+		'/start')
+			send_message "${USER[ID]}" "This is bashbot, the Telegram bot written entirely in bash.
 Features background tasks and interactive chats.
 Can serve as an interface for cli programs.
 Currently can send, recieve and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
@@ -342,25 +352,17 @@ Available commands:
 Written by @topkecleon, Juan Potato (@awkward_potato), Lorenzo Santina (BigNerd95) and Daniil Gentili (@danogentili)
 Contribute to the project: https://github.com/topkecleon/telegram-bot-bash
 "
-				;;
-			'')
-				;;
-			*)
-				send_message "${USER[ID]}" "$MESSAGE" "safe"
-		esac
-	else
-		case $MESSAGE in
-			'/cancel')
-				killproc
-				send_message "${USER[ID]}" "Command canceled."
-				;;
-			*) inproc;;
-		esac
-	fi
-	if [ "$MESSAGE" = "/start" ]; then
-		tmpcount="COUNT${USER[ID]}"
-		cat count | grep -q "$tmpcount" || echo "$tmpcount">>count
-	fi
+			;;
+		'/cancel')
+			if tmux ls | grep -q $copname; then killproc && send_message "${USER[ID]}" "Command canceled.";else send_message "${USER[ID]}" "No command is currently running.";fi
+			;;
+		*)
+			if tmux ls | grep -v send | grep -q $copname;then inproc; else send_message "${USER[ID]}" "$MESSAGE" "safe";fi
+			;;
+	esac
+	
+	tmpcount="COUNT${USER[ID]}"
+	cat count | grep -q "$tmpcount" || echo "$tmpcount">>count
 	# To get user count execute bash bashbot.sh count
 }
 
@@ -390,10 +392,11 @@ case "$1" in
 		rm -r /tmp/$3
 		;;
 	"count")
-		wc -l count
+		echo "A total of $(wc -l count | sed 's/count//g')users used me."
 		;;
 	"broadcast")
-		[ $(wc -l count) -gt 300 ] && sleep="sleep 0.5"
+		echo "Sending the broadcast $* to $(wc -l count | sed 's/count//g')users."
+		[ $(wc -l count | sed 's/ count//g') -gt 300 ] && sleep="sleep 0.5"
 		shift
 		for f in $(cat count);do send_message ${f//COUNT} "$*"; $sleep;done
 		;;
