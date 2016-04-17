@@ -29,6 +29,7 @@ STICKER_URL=$URL'/sendSticker'
 VIDEO_URL=$URL'/sendVideo'
 VOICE_URL=$URL'/sendVoice'
 LOCATION_URL=$URL'/sendLocation'
+VENUE_URL=$URL'/sendVenue'
 ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
 INLINE_QUERY=$URL'/answerInlineQuery'
@@ -45,16 +46,21 @@ declare -A USER MESSAGE URLS CONTACT LOCATION
 send_message() {
 	[ "$2" = "" ] && return 1
 	local chat="$1"
-	local text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
+	local text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g')"
 	local arg="$3"
 	[ "$3" != "safe" ] && {
-		local keyboard="$(echo "$2" | sed '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
+		local keyboard="$(echo "$2" | sed '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g')"
 
-		local file="$(echo "$2" | sed '/myfilelocationstartshere /!d;s/.*myfilelocationstartshere //g;s/ mykeyboardstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g')"
+		local file="$(echo "$2" | sed '/myfilelocationstartshere /!d;s/.*myfilelocationstartshere //g;s/ mykeyboardstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g')"
 
-		local lat="$(echo "$2" | sed '/mylatstartshere /!d;s/.*mylatstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylongstartshere.*//g')"
+		local lat="$(echo "$2" | sed '/mylatstartshere /!d;s/.*mylatstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g')"
 
-		local long="$(echo "$2" | sed '/mylongstartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g')"
+		local long="$(echo "$2" | sed '/mylongstartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g')"
+		
+		local title="$(echo "$2" | sed '/mytitlestartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ myaddressstartshere.*//g')"
+		
+		local address="$(echo "$2" | sed '/myaddressstartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mytitlestartshere.*//g')"
+		
 	}
 	if [ "$keyboard" != "" ]; then
 		send_keyboard "$chat" "$text" "$keyboard"
@@ -64,11 +70,14 @@ send_message() {
 		send_file "$chat" "$file" "$text"
 		local sent=y
 	fi
-	if [ "$lat" != "" -a "$long" != "" ]; then
+	if [ "$lat" != "" -a "$long" != "" -a "$address" = "" -a "$title" = "" ]; then
 		send_location "$chat" "$lat" "$long"
 		local sent=y
 	fi
-
+	if [ "$lat" != "" -a "$long" != "" -a "$address" != "" -a "$title" != "" ]; then
+		send_venue "$chat" "$lat" "$long" "$title" "$address"
+		local sent=y
+	fi
 	if [ "$sent" != "y" ];then
 		send_text "$chat" "$text"
 	fi
@@ -238,6 +247,13 @@ send_location() {
 	res=$(curl -s "$LOCATION_URL" -F "chat_id=$1" -F "latitude=$2" -F "longitude=$3")
 }
 
+send_venue() {
+	[ "$5" = "" ] && return
+	[ "$6" != "" ] add="-F \"foursquare_id=$6\""
+	res=$(curl -s "$VENUE_URL" -F "chat_id=$1" -F "latitude=$2" -F "longitude=$3" -F "title=$4" -F "address=$5" $add)
+}
+
+
 forward() {
 	[ "$3" = "" ] && return
 	res=$(curl -s "$FORWARD_URL" -F "chat_id=$1" -F "from_chat_id=$2" -F "message_id=$3")	
@@ -299,68 +315,7 @@ process_client() {
 	# Tmux 
 	copname="$ME"_"${USER[ID]}"
 
-	if ! tmux ls | grep -v send | grep -q $copname; then
-		[ ! -z ${URLS[*]} ] && {
-			curl -s ${URLS[*]} -o $NAME
-			send_file "${USER[ID]}" "$NAME" "$CAPTION"
-			rm "$NAME"
-		}
-		[ ! -z ${LOCATION[*]} ] && send_location "${USER[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
-		
-		# Inline 
-		if [ $INLINE == 1 ]; then
-			# inline query data
-			iUSER[FIRST_NAME]=$(echo "$res" | sed 's/^.*\(first_name.*\)/\1/g' | cut -d '"' -f3 | tail -1)
-			iUSER[LAST_NAME]=$(echo "$res" | sed 's/^.*\(last_name.*\)/\1/g' | cut -d '"' -f3)
-			iUSER[USERNAME]=$(echo "$res" | sed 's/^.*\(username.*\)/\1/g' | cut -d '"' -f3 | tail -1)
-			iQUERY_ID=$(echo "$res" | sed 's/^.*\(inline_query.*\)/\1/g' | cut -d '"' -f5 | tail -1)
-			iQUERY_MSG=$(echo "$res" | sed 's/^.*\(inline_query.*\)/\1/g' | cut -d '"' -f5 | tail -6 | head -1)
-		
-			# Inline examples
-			if [[ $iQUERY_MSG == photo ]]; then
-				answer_inline_query "$iQUERY_ID" "photo" "http://blog.techhysahil.com/wp-content/uploads/2016/01/Bash_Scripting.jpeg" "http://blog.techhysahil.com/wp-content/uploads/2016/01/Bash_Scripting.jpeg"
-			fi
-		
-			if [[ $iQUERY_MSG == sticker ]]; then
-				answer_inline_query "$iQUERY_ID" "cached_sticker" "BQADBAAD_QEAAiSFLwABWSYyiuj-g4AC"
-			fi
-		
-			if [[ $iQUERY_MSG == gif ]]; then
-				answer_inline_query "$iQUERY_ID" "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
-			fi
-			if [[ $iQUERY_MSG == web ]]; then
-				answer_inline_query "$iQUERY_ID" "article" "Telegram" "https://telegram.org/"
-			fi
-		fi
-	fi
-	case $MESSAGE in
-		'/question')
-			startproc "./question"
-			;;
-		'/info')
-			send_message "${USER[ID]}" "This is bashbot, the Telegram bot written entirely in bash."
-			;;
-		'/start')
-			send_message "${USER[ID]}" "This is bashbot, the Telegram bot written entirely in bash.
-Features background tasks and interactive chats.
-Can serve as an interface for cli programs.
-Currently can send, recieve and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
-Available commands:
-/start: Start bot and get this message.
-/info: Get shorter info message about this bot.
-/question: Start interactive chat.
-/cancel: Cancel any currently running interactive chats.
-Written by @topkecleon, Juan Potato (@awkward_potato), Lorenzo Santina (BigNerd95) and Daniil Gentili (@danogentili)
-Contribute to the project: https://github.com/topkecleon/telegram-bot-bash
-"
-			;;
-		'/cancel')
-			if tmux ls | grep -q $copname; then killproc && send_message "${USER[ID]}" "Command canceled.";else send_message "${USER[ID]}" "No command is currently running.";fi
-			;;
-		*)
-			if tmux ls | grep -v send | grep -q $copname;then inproc; else send_message "${USER[ID]}" "$MESSAGE" "safe";fi
-			;;
-	esac
+	source commands.sh
 	
 	tmpcount="COUNT${USER[ID]}"
 	cat count | grep -q "$tmpcount" || echo "$tmpcount">>count

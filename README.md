@@ -127,6 +127,10 @@ To send locations use the ```send_location``` function:
 ```
 send_location "${USER[ID]}" "Latitude" "Longitude"
 ```  
+To send venues use the ```send_venue``` function:  
+```
+send_venue "${USER[ID]}" "Latitude" "Longitude" "Title" "Address" "optional foursquare id"
+```  
 To forward messages use the ```forward``` function:  
 ```
 forward "${USER[ID]}" "from_chat_id" "message_id"
@@ -151,13 +155,19 @@ And locations:
 ```
 echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45"
 ```  
+And venues:  
+```
+echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45 mytitlestartshere my home myaddressstartshere Diagon Alley N. 37"
+```  
 You can combine them:
 ```
 echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, highly unlikely\" myfilelocationstartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
 ```  
+Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.  
 
+To modify the responses to commands edit the commands.sh file (this should ease upgrades of the bot core).  
 
-Once you're done editing start the bot with ```./bashbot.sh start```.  
+Once you're done editing start the bot with ```./bashbot.sh start```. If you want to do some more changes make them and then rerun the same command.  
 To stop the bot run ```./bashbot.sh kill```.  
 If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```.  
 
