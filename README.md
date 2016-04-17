@@ -161,7 +161,7 @@ Once you're done editing start the bot with ```./bashbot.sh start```.
 To stop the bot run ```./bashbot.sh kill```.  
 If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```.  
 
-To use the functions provided in this script in other scripts source bashbot.sh: ```source bashbot.sh source```  
+To use the functions provided in this script in other scripts simply source bashbot: ```source bashbot.sh```  
 
 
 ## User count  
