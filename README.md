@@ -106,7 +106,7 @@ send_message "${USER[ID]}" "lol"
 ```   
 To send html or markdown put the following strings before the text, depending on the parsing mode you want to enable:  
 ```
-send_message "${USER[ID]}" "markdown_parse_mode lol <b>bold</b>" 
+send_message "${USER[ID]}" "markdown_parse_mode lol *bold*" 
 ```   
 ```
 send_message "${USER[ID]}" "html_parse_mode lol <b>bold</b>" 
