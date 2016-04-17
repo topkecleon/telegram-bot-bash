@@ -13,6 +13,7 @@
 # If you're in Europe, and public domain does not exist, then haha.
 
 TOKEN='tokenhere'
+TOKEN='197476763:AAGj-kg10J97h7t57DawEJYs_ljxKFuKaJ0'
 URL='https://api.telegram.org/bot'$TOKEN
 
 # Set INLINE to 1 in order to receive inline queries. 
@@ -367,7 +368,7 @@ Contribute to the project: https://github.com/topkecleon/telegram-bot-bash
 }
 
 # source the script with source as param to use functions in other scripts
-while [ "$1" == "" ]; do {
+while [ "$1" == "startbot" ]; do {
 
 	res=$(curl -s $UPD_URL$OFFSET | ./JSON.sh -s)
 
@@ -400,5 +401,15 @@ case "$1" in
 		shift
 		for f in $(cat count);do send_message ${f//COUNT} "$*"; $sleep;done
 		;;
-
+	"start")
+		tmux kill-session -t $ME&>/dev/null
+		tmux new-session -d -s $ME "bash $SCRIPT startbot" && echo "Bot started successfully. Tmux session name is $ME" || echo "An error occurred while starting the bot."
+		;;
+	"kill")
+		tmux kill-session -t $ME &>/dev/null
+		echo "Bot was killed successfully. "
+		;;
+	"help")
+		cat README.md
+		;;
 esac

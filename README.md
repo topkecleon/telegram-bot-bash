@@ -157,8 +157,8 @@ echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, hi
 ```  
 
 
-Once you're done editing start the bot with ```tmux new-session -d -s bashbot "./bashbot.sh"```.  
-To stop the bot run ```tmux kill-session -t bashbot```.  
+Once you're done editing start the bot with ```./bashbot.sh start```.  
+To stop the bot run ```./bashbot.sh kill```.  
 If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```.  
 
 To use the functions provided in this script in other scripts source bashbot.sh: ```source bashbot.sh source```  
