@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Telegram-bot-bash by danog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Telegram-bot-bash</h1>
+      <h2 class="project-tagline">Telegram bot written in bash</h2>
+      <a href="https://github.com/danog/telegram-bot-bash" class="btn">View on GitHub</a>
+      <a href="https://github.com/danog/telegram-bot-bash/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/danog/telegram-bot-bash/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="bashbot" class="anchor" href="#bashbot" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>bashbot</h1>
+
+<p>A Telegram bot written in bash.</p>
+
+<p>Uses <a href="https://github.com/dominictarr/JSON.sh">json.sh</a> and tmux (for interactive chats).</p>
+
+<h2>
+<a id="instructions" class="anchor" href="#instructions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Instructions</h2>
+
+<h3>
+<a id="create-your-first-bot" class="anchor" href="#create-your-first-bot" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create your first bot</h3>
+
+<ol>
+<li>
+<p>Message <a href="https://github.com/botfather" class="user-mention">@botfather</a> <a href="https://telegram.me/botfather">https://telegram.me/botfather</a> with the following
+text: <code>/newbot</code>
+If you don't know how to message by username, click the search
+field on your Telegram app and type <code>@botfather</code>, you should be able
+to initiate a conversation. Be careful not to send it to the wrong
+contact, because some users has similar usernames to <code>botfather</code>.</p>
+
+<p><img src="http://i.imgur.com/aI26ixR.png" alt="botfather initial conversation"></p>
+</li>
+<li><p><a href="https://github.com/botfather" class="user-mention">@botfather</a> replies with <code>Alright, a new bot. How are we going to
+call it? Please choose a name for your bot.</code></p></li>
+<li><p>Type whatever name you want for your bot.</p></li>
+<li><p><a href="https://github.com/botfather" class="user-mention">@botfather</a> replies with <code>Good. Now let's choose a username for your
+bot. It must end in</code>bot<code>. Like this, for example: TetrisBot or
+tetris_bot.</code></p></li>
+<li><p>Type whatever username you want for your bot, minimum 5 characters,
+and must end with <code>bot</code>. For example: <code>telesample_bot</code></p></li>
+<li>
+<p><a href="https://github.com/botfather" class="user-mention">@botfather</a> replies with:</p>
+
+<p>Done! Congratulations on your new bot. You will find it at
+telegram.me/telesample_bot. You can now add a description, about
+section and profile picture for your bot, see /help for a list of
+commands.</p>
+
+<p>Use this token to access the HTTP API:
+<b>123456789:AAG90e14-0f8-40183D-18491dDE</b></p>
+
+<p>For a description of the Bot API, see this page:
+<a href="https://core.telegram.org/bots/api">https://core.telegram.org/bots/api</a></p>
+</li>
+<li><p>Note down the 'token' mentioned above.</p></li>
+<li>
+<p>Type <code>/setprivacy</code> to <a href="https://github.com/botfather" class="user-mention">@botfather</a>.</p>
+
+<p><img src="http://i.imgur.com/tWDVvh4.png" alt="botfather later conversation"></p>
+</li>
+<li><p><a href="https://github.com/botfather" class="user-mention">@botfather</a> replies with <code>Choose a bot to change group messages settings.</code></p></li>
+<li><p>Type <code>@telesample_bot</code> (change to the username you set at step 5
+above, but start it with <code>@</code>)</p></li>
+<li>
+<p><a href="https://github.com/botfather" class="user-mention">@botfather</a> replies with</p>
+
+<p>'Enable' - your bot will only receive messages that either start
+with the '/' symbol or mention the bot by username.
+'Disable' - your bot will receive all messages that people send to groups.
+Current status is: ENABLED</p>
+</li>
+<li><p>Type <code>Disable</code> to let your bot receive all messages sent to a
+group. This step is up to you actually.</p></li>
+<li><p><a href="https://github.com/botfather" class="user-mention">@botfather</a> replies with <code>Success! The new status is: DISABLED. /help</code></p></li>
+</ol>
+
+<h3>
+<a id="install-bashbot" class="anchor" href="#install-bashbot" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install bashbot</h3>
+
+<p>Clone the repository:  </p>
+
+<pre><code>git clone https://github.com/topkecleon/telegram-bot-bash
+</code></pre>
+
+<p>Paste the token on line 15 (instead of tokenhere).<br>
+Then start editing the commands.  </p>
+
+<h3>
+<a id="recieve-data" class="anchor" href="#recieve-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Recieve data</h3>
+
+<p>You can read incoming data using the following variables:  </p>
+
+<ul>
+<li>
+<code>$MESSAGE</code>: Incoming messages<br>
+</li>
+<li>
+<code>$CAPTION</code>: Captions<br>
+</li>
+<li>
+<code>$USER</code>: This array contains the First name, last name, username and user id of the sender of the current message.
+
+<ul>
+<li>
+<code>${USER[ID]}</code>: User id<br>
+</li>
+<li>
+<code>${USER[FIRST_NAME]}</code>: User's first name<br>
+</li>
+<li>
+<code>${USER[LAST_NAME]}</code>: User's last name<br>
+</li>
+<li>
+<code>${USER[USERNAME]}</code>: Username<br>
+</li>
+</ul>
+</li>
+<li>
+<code>$URLS</code>: This array contains documents, audio files, stickers, voice recordings and stickers stored in the form of URLs.
+
+<ul>
+<li>
+<code>${URLS[AUDIO]}</code>: Audio files<br>
+</li>
+<li>
+<code>${URLS[VIDEO]}</code>: Videos<br>
+</li>
+<li>
+<code>${URLS[PHOTO]}</code>: Photos (maximum quality)<br>
+</li>
+<li>
+<code>${URLS[VOICE]}</code>: Voice recordings<br>
+</li>
+<li>
+<code>${URLS[STICKER]}</code>: Stickers<br>
+</li>
+<li>
+<code>${URLS[DOCUMENT]}</code>: Any other file<br>
+</li>
+</ul>
+</li>
+<li>
+<code>$CONTACT</code>: This array contains info about contacts sent in a chat.
+
+<ul>
+<li>
+<code>${CONTACT[NUMBER]}</code>: Phone number<br>
+</li>
+<li>
+<code>${CONTACT[FIRST_NAME]}</code>: First name<br>
+</li>
+<li>
+<code>${CONTACT[LAST_NAME]}</code>: Last name<br>
+</li>
+<li>
+<code>${CONTACT[ID]}</code>: User id<br>
+</li>
+</ul>
+</li>
+<li>
+<code>$LOCATION</code>: This array contains info about locations sent in a chat.
+
+<ul>
+<li>
+<code>${LOCATION[LONGITUDE]}</code>: Longitude<br>
+</li>
+<li>
+<code>${LOCATION[LATITUDE]}</code>: Latitude<br>
+</li>
+</ul>
+</li>
+</ul>
+
+<h3>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h3>
+
+<p>To send messages use the <code>send_message</code> function:  </p>
+
+<pre><code>send_message "${USER[ID]}" "lol" 
+</code></pre>
+
+<p>To send html or markdown put the following strings before the text, depending on the parsing mode you want to enable:  </p>
+
+<pre><code>send_message "${USER[ID]}" "markdown_parse_mode lol &lt;b&gt;bold&lt;/b&gt;" 
+</code></pre>
+
+<pre><code>send_message "${USER[ID]}" "html_parse_mode lol &lt;b&gt;bold&lt;/b&gt;" 
+</code></pre>
+
+<p>This function also allows a third parameter that disables additional function parsing (for safety use this when reprinting user input):  </p>
+
+<pre><code>send_message "${USER[ID]}" "lol" "safe"
+</code></pre>
+
+<p>To send images, videos, voice files, photos ecc use the <code>send_photo</code> function (remember to change the safety Regex @ line 94 to allow sending files only from certain directories):    </p>
+
+<pre><code>send_file "${USER[ID]}" "/home/user/doge.jpg" "Lool"
+</code></pre>
+
+<p>To send custom keyboards use the <code>send_keyboard</code> function:  </p>
+
+<pre><code>send_keyboard "${USER[ID]}" "Text that will appear in chat?" "Yep" "No"
+</code></pre>
+
+<p>To send locations use the <code>send_location</code> function:  </p>
+
+<pre><code>send_location "${USER[ID]}" "Latitude" "Longitude"
+</code></pre>
+
+<p>To forward messages use the <code>forward</code> function:  </p>
+
+<pre><code>forward "${USER[ID]}" "from_chat_id" "message_id"
+</code></pre>
+
+<p>To send a chat action use the <code>send_action</code> function.
+Allowed values: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for locations.  </p>
+
+<pre><code>send_action "${USER[ID]}" "action"
+</code></pre>
+
+<p>To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.<br>
+The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).<br>
+To open up a keyboard in an interactive script, print out the keyboard layout in the following way:  </p>
+
+<pre><code>echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, highly unlikely\""
+</code></pre>
+
+<p>Same goes for files:</p>
+
+<pre><code>echo "Text that will appear in chat? myfilelocationstartshere /home/user/doge.jpg"
+</code></pre>
+
+<p>And locations:  </p>
+
+<pre><code>echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45"
+</code></pre>
+
+<p>You can combine them:</p>
+
+<pre><code>echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, highly unlikely\" myfilelocationstartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
+</code></pre>
+
+<p>Once you're done editing start the bot with <code>./bashbot.sh start</code>.<br>
+To stop the bot run <code>./bashbot.sh kill</code>.<br>
+If some thing doesn't work as it should, debug with <code>bash -x bashbot.sh</code>.  </p>
+
+<p>To use the functions provided in this script in other scripts simply source bashbot: <code>source bashbot.sh</code>  </p>
+
+<h2>
+<a id="user-count" class="anchor" href="#user-count" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>User count</h2>
+
+<p>To count the total number of users that ever used the bot run the following command:   </p>
+
+<pre><code>bash bashbot.sh count
+</code></pre>
+
+<h2>
+<a id="sending-broadcasts-to-all-users" class="anchor" href="#sending-broadcasts-to-all-users" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Sending broadcasts to all users</h2>
+
+<p>To send a broadcast to all of users that ever used the bot run the following command:   </p>
+
+<pre><code>bash bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
+</code></pre>
+
+<p>That's it!</p>
+
+<p>If you feel that there's something missing or if you found a bug, feel free to submit a pull request!</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/danog/telegram-bot-bash">Telegram-bot-bash</a> is maintained by <a href="https://github.com/danog">danog</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
