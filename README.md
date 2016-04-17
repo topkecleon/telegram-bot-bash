@@ -73,7 +73,7 @@ git clone https://github.com/topkecleon/telegram-bot-bash
 Paste the token on line 15 (instead of tokenhere).  
 Then start editing the commands.  
   
-### Recieve data  
+### Receive data  
 You can read incoming data using the following variables:  
 
 * ```$MESSAGE```: Incoming messages  
@@ -164,6 +164,49 @@ You can combine them:
 echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, highly unlikely\" myfilelocationstartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
 ```  
 Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.  
+
+The following commands allows users to interact with your bot via *inline queries*.
+In order to enable **inline mode**, send `/setinline` command to [@BotFather](https://telegram.me/botfather) and provide the placeholder text that the user will see in the input field after typing your bot’s name.
+Also, edit line 21 from `bashbot.sh` putting a "1".         
+Note that you can't modify the first two parameters of the function `answer_inline_query`, only the ones after them.
+
+To send messsages or links through an *inline query*:
+```
+answer_inline_query "$iQUERY_ID" "article" "Title of the result" "Content of the message to be sent"
+```
+To send photos in jpeg format and less than 5MB, from a website through an *inline query*:
+```
+answer_inline_query "$iQUERY_ID" "photo" "A valid URL of the photo" "URL of the thumbnail"
+```
+To send standard gifs from a website (less than 1MB) through an *inline query*:
+```
+answer_inline_query "$iQUERY_ID" "gif" "gif url"
+```
+To send mpeg4 gifs from a website (less than 1MB) through an *inline query*:
+```
+answer_inline_query "$iQUERY_ID" "mpeg4_gif" "mpeg4 gif url"
+```
+To send videos from a website through an *inline query*:
+```
+answer_inline_query "$iQUERY_ID" "video" "valid video url" "Select one mime type: text/html or video/mp4" "URL of the thumbnail" "Title for the result"
+```
+To send photos stored in Telegram servers through an *inline query*:
+```
+answer_inline_query "$iQUERY_ID" "cached_photo" "identifier for the photo"
+```
+To send gifs stored in Telegram servers through an *inline query*:
+```
+answer_inline_query "$iQUERY_ID" "cached_gif" "identifier for the gif"
+```
+To send mpeg4 gifs stored in Telegram servers through an *inline query*:
+```
+answer_inline_query "$iQUERY_ID" "cached_mpeg4_gif" "identifier for the gif"
+```
+To send stickers through an *inline query*:
+```
+answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
+```
+
 
 To modify the responses to commands edit the commands.sh file (this should ease upgrades of the bot core).  
 
