@@ -99,7 +99,7 @@ group. This step is up to you actually.</p></li>
 Then start editing the commands.  </p>
 
 <h3>
-<a id="recieve-data" class="anchor" href="#recieve-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Recieve data</h3>
+<a id="receive-data" class="anchor" href="#receive-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Receive data</h3>
 
 <p>You can read incoming data using the following variables:  </p>
 
@@ -194,7 +194,7 @@ Then start editing the commands.  </p>
 
 <p>To send html or markdown put the following strings before the text, depending on the parsing mode you want to enable:  </p>
 
-<pre><code>send_message "${USER[ID]}" "markdown_parse_mode lol &lt;b&gt;bold&lt;/b&gt;" 
+<pre><code>send_message "${USER[ID]}" "markdown_parse_mode lol *bold*" 
 </code></pre>
 
 <pre><code>send_message "${USER[ID]}" "html_parse_mode lol &lt;b&gt;bold&lt;/b&gt;" 
@@ -218,6 +218,11 @@ Then start editing the commands.  </p>
 <p>To send locations use the <code>send_location</code> function:  </p>
 
 <pre><code>send_location "${USER[ID]}" "Latitude" "Longitude"
+</code></pre>
+
+<p>To send venues use the <code>send_venue</code> function:  </p>
+
+<pre><code>send_venue "${USER[ID]}" "Latitude" "Longitude" "Title" "Address" "optional foursquare id"
 </code></pre>
 
 <p>To forward messages use the <code>forward</code> function:  </p>
@@ -248,12 +253,71 @@ To open up a keyboard in an interactive script, print out the keyboard layout in
 <pre><code>echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45"
 </code></pre>
 
+<p>And venues:  </p>
+
+<pre><code>echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45 mytitlestartshere my home myaddressstartshere Diagon Alley N. 37"
+</code></pre>
+
 <p>You can combine them:</p>
 
 <pre><code>echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, highly unlikely\" myfilelocationstartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
 </code></pre>
 
-<p>Once you're done editing start the bot with <code>./bashbot.sh start</code>.<br>
+<p>Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.  </p>
+
+<p>The following commands allows users to interact with your bot via <em>inline queries</em>.
+In order to enable <strong>inline mode</strong>, send <code>/setinline</code> command to <a href="https://telegram.me/botfather">@BotFather</a> and provide the placeholder text that the user will see in the input field after typing your bot’s name.
+Also, edit line 21 from <code>bashbot.sh</code> putting a "1".<br>
+Note that you can't modify the first two parameters of the function <code>answer_inline_query</code>, only the ones after them.</p>
+
+<p>To send messsages or links through an <em>inline query</em>:</p>
+
+<pre><code>answer_inline_query "$iQUERY_ID" "article" "Title of the result" "Content of the message to be sent"
+</code></pre>
+
+<p>To send photos in jpeg format and less than 5MB, from a website through an <em>inline query</em>:</p>
+
+<pre><code>answer_inline_query "$iQUERY_ID" "photo" "A valid URL of the photo" "URL of the thumbnail"
+</code></pre>
+
+<p>To send standard gifs from a website (less than 1MB) through an <em>inline query</em>:</p>
+
+<pre><code>answer_inline_query "$iQUERY_ID" "gif" "gif url"
+</code></pre>
+
+<p>To send mpeg4 gifs from a website (less than 1MB) through an <em>inline query</em>:</p>
+
+<pre><code>answer_inline_query "$iQUERY_ID" "mpeg4_gif" "mpeg4 gif url"
+</code></pre>
+
+<p>To send videos from a website through an <em>inline query</em>:</p>
+
+<pre><code>answer_inline_query "$iQUERY_ID" "video" "valid video url" "Select one mime type: text/html or video/mp4" "URL of the thumbnail" "Title for the result"
+</code></pre>
+
+<p>To send photos stored in Telegram servers through an <em>inline query</em>:</p>
+
+<pre><code>answer_inline_query "$iQUERY_ID" "cached_photo" "identifier for the photo"
+</code></pre>
+
+<p>To send gifs stored in Telegram servers through an <em>inline query</em>:</p>
+
+<pre><code>answer_inline_query "$iQUERY_ID" "cached_gif" "identifier for the gif"
+</code></pre>
+
+<p>To send mpeg4 gifs stored in Telegram servers through an <em>inline query</em>:</p>
+
+<pre><code>answer_inline_query "$iQUERY_ID" "cached_mpeg4_gif" "identifier for the gif"
+</code></pre>
+
+<p>To send stickers through an <em>inline query</em>:</p>
+
+<pre><code>answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
+</code></pre>
+
+<p>To modify the responses to commands edit the commands.sh file (this should ease upgrades of the bot core).  </p>
+
+<p>Once you're done editing start the bot with <code>./bashbot.sh start</code>. If you want to do some more changes make them and then rerun the same command.<br>
 To stop the bot run <code>./bashbot.sh kill</code>.<br>
 If some thing doesn't work as it should, debug with <code>bash -x bashbot.sh</code>.  </p>
 
