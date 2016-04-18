@@ -12,13 +12,9 @@
 # This file is public domain in the USA and all free countries.
 # If you're in Europe, and public domain does not exist, then haha.
 
-TOKEN='tokenhere'
-TOKEN='197476763:AAGj-kg10J97h7t57DawEJYs_ljxKFuKaJ0'
+source commands.sh source
 URL='https://api.telegram.org/bot'$TOKEN
 
-# Set INLINE to 1 in order to receive inline queries. 
-# To enable this option in your bot, send the /setinline command to @BotFather.
-INLINE=0 
 
 SCRIPT="$0"
 MSG_URL=$URL'/sendMessage'
@@ -196,7 +192,7 @@ send_file() {
 	[ "$2" = "" ] && return
 	local chat_id=$1
 	local file=$2
-	echo "$file" | grep -qE '/home/allowed/.*' || return
+	echo "$file" | grep -qE $FILE_REGEX || return
 	local ext="${file##*.}"
 	case $ext in 
         	"mp3")
