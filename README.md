@@ -1,7 +1,11 @@
 #bashbot
 A Telegram bot written in bash.
 
-Uses [json.sh](https://github.com/dominictarr/JSON.sh) and tmux (for interactive chats).
+Depends on [tmux](http://github.com/tmux/tmux).
+Uses [JSON.sh](http://github.com/dominictarr/JSON.sh).
+
+Released to the public domain wherever applicable.
+Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/copying/).
 
 
 ## Instructions
@@ -64,110 +68,110 @@ group. This step is up to you actually.
 
 13. @botfather replies with `Success! The new status is: DISABLED. /help`
 
-### Install bashbot  
-Clone the repository:  
+### Install bashbot
+Clone the repository:
 ```
 git clone https://github.com/topkecleon/telegram-bot-bash
 ```
 
-Paste the token on line 6 of commands.sh (instead of tokenhere).  
-Then start editing the commands.  
-  
-### Receive data  
-You can read incoming data using the following variables:  
+Paste the token on line 6 of commands.sh (instead of tokenhere).
+Then start editing the commands.
 
-* ```$MESSAGE```: Incoming messages  
-* ```$CAPTION```: Captions  
+### Receive data
+You can read incoming data using the following variables:
+
+* ```$MESSAGE```: Incoming messages
+* ```$CAPTION```: Captions
 * ```$USER```: This array contains the First name, last name, username and user id of the sender of the current message.
- * ```${USER[ID]}```: User id  
- * ```${USER[FIRST_NAME]}```: User's first name  
- * ```${USER[LAST_NAME]}```: User's last name  
- * ```${USER[USERNAME]}```: Username  
+ * ```${USER[ID]}```: User id
+ * ```${USER[FIRST_NAME]}```: User's first name
+ * ```${USER[LAST_NAME]}```: User's last name
+ * ```${USER[USERNAME]}```: Username
 * ```$URLS```: This array contains documents, audio files, stickers, voice recordings and stickers stored in the form of URLs.
- * ```${URLS[AUDIO]}```: Audio files  
- * ```${URLS[VIDEO]}```: Videos  
- * ```${URLS[PHOTO]}```: Photos (maximum quality)  
- * ```${URLS[VOICE]}```: Voice recordings  
- * ```${URLS[STICKER]}```: Stickers  
- * ```${URLS[DOCUMENT]}```: Any other file  
+ * ```${URLS[AUDIO]}```: Audio files
+ * ```${URLS[VIDEO]}```: Videos
+ * ```${URLS[PHOTO]}```: Photos (maximum quality)
+ * ```${URLS[VOICE]}```: Voice recordings
+ * ```${URLS[STICKER]}```: Stickers
+ * ```${URLS[DOCUMENT]}```: Any other file
 * ```$CONTACT```: This array contains info about contacts sent in a chat.
- * ```${CONTACT[NUMBER]}```: Phone number  
- * ```${CONTACT[FIRST_NAME]}```: First name  
- * ```${CONTACT[LAST_NAME]}```: Last name  
- * ```${CONTACT[ID]}```: User id  
+ * ```${CONTACT[NUMBER]}```: Phone number
+ * ```${CONTACT[FIRST_NAME]}```: First name
+ * ```${CONTACT[LAST_NAME]}```: Last name
+ * ```${CONTACT[ID]}```: User id
 * ```$LOCATION```: This array contains info about locations sent in a chat.
- * ```${LOCATION[LONGITUDE]}```: Longitude  
- * ```${LOCATION[LATITUDE]}```: Latitude  
+ * ```${LOCATION[LONGITUDE]}```: Longitude
+ * ```${LOCATION[LATITUDE]}```: Latitude
 
-### Usage  
-To send messages use the ```send_message``` function:  
+### Usage
+To send messages use the ```send_message``` function:
 ```
-send_message "${USER[ID]}" "lol" 
-```   
-To send html or markdown put the following strings before the text, depending on the parsing mode you want to enable:  
+send_message "${USER[ID]}" "lol"
 ```
-send_message "${USER[ID]}" "markdown_parse_mode lol *bold*" 
-```   
+To send html or markdown put the following strings before the text, depending on the parsing mode you want to enable:
 ```
-send_message "${USER[ID]}" "html_parse_mode lol <b>bold</b>" 
-```   
-This function also allows a third parameter that disables additional function parsing (for safety use this when reprinting user input):  
+send_message "${USER[ID]}" "markdown_parse_mode lol *bold*"
+```
+```
+send_message "${USER[ID]}" "html_parse_mode lol <b>bold</b>"
+```
+This function also allows a third parameter that disables additional function parsing (for safety use this when reprinting user input):
 ```
 send_message "${USER[ID]}" "lol" "safe"
-```   
-To send images, videos, voice files, photos ecc use the ```send_photo``` function (remember to change the safety Regex @ line 11 of command.sh to allow sending files only from certain directories):    
+```
+To send images, videos, voice files, photos ecc use the ```send_photo``` function (remember to change the safety Regex @ line 11 of command.sh to allow sending files only from certain directories):
 ```
 send_file "${USER[ID]}" "/home/user/doge.jpg" "Lool"
 ```
-To send custom keyboards use the ```send_keyboard``` function:  
+To send custom keyboards use the ```send_keyboard``` function:
 ```
 send_keyboard "${USER[ID]}" "Text that will appear in chat?" "Yep" "No"
-```  
-To send locations use the ```send_location``` function:  
+```
+To send locations use the ```send_location``` function:
 ```
 send_location "${USER[ID]}" "Latitude" "Longitude"
-```  
-To send venues use the ```send_venue``` function:  
+```
+To send venues use the ```send_venue``` function:
 ```
 send_venue "${USER[ID]}" "Latitude" "Longitude" "Title" "Address" "optional foursquare id"
-```  
-To forward messages use the ```forward``` function:  
+```
+To forward messages use the ```forward``` function:
 ```
 forward "${USER[ID]}" "from_chat_id" "message_id"
-```  
+```
 To send a chat action use the ```send_action``` function.
-Allowed values: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for locations.  
+Allowed values: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for locations.
 ```
 send_action "${USER[ID]}" "action"
-```   
+```
 
-To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.  
-The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).   
-To open up a keyboard in an interactive script, print out the keyboard layout in the following way:  
+To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.
+The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).
+To open up a keyboard in an interactive script, print out the keyboard layout in the following way:
 ```
 echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, highly unlikely\""
-```  
+```
 Same goes for files:
 ```
 echo "Text that will appear in chat? myfilelocationstartshere /home/user/doge.jpg"
-```  
-And locations:  
+```
+And locations:
 ```
 echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45"
-```  
-And venues:  
+```
+And venues:
 ```
 echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45 mytitlestartshere my home myaddressstartshere Diagon Alley N. 37"
-```  
+```
 You can combine them:
 ```
 echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, highly unlikely\" myfilelocationstartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
-```  
-Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.  
+```
+Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.
 
 The following commands allows users to interact with your bot via *inline queries*.
 In order to enable **inline mode**, send `/setinline` command to [@BotFather](https://telegram.me/botfather) and provide the placeholder text that the user will see in the input field after typing your bot’s name.
-Also, edit line 9 from `commands.sh` putting a "1".         
+Also, edit line 9 from `commands.sh` putting a "1".
 Note that you can't modify the first two parameters of the function `answer_inline_query`, only the ones after them.
 
 To send messsages or links through an *inline query*:
@@ -208,27 +212,27 @@ answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 ```
 
 
-To modify the responses to commands edit the commands.sh file (this should ease upgrades of the bot core).  
+To modify the responses to commands edit the commands.sh file (this should ease upgrades of the bot core).
 
-Once you're done editing start the bot with ```./bashbot.sh start```. If you want to do some more changes make them and then rerun the same command.  
-To stop the bot run ```./bashbot.sh kill```.  
-If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```.  
+Once you're done editing start the bot with ```./bashbot.sh start```. If you want to do some more changes make them and then rerun the same command.
+To stop the bot run ```./bashbot.sh kill```.
+If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```.
 
-To use the functions provided in this script in other scripts simply source bashbot: ```source bashbot.sh```  
+To use the functions provided in this script in other scripts simply source bashbot: ```source bashbot.sh```
 
 
-## User count  
-To count the total number of users that ever used the bot run the following command:   
+## User count
+To count the total number of users that ever used the bot run the following command:
 ```
 bash bashbot.sh count
-```  
+```
 
 
-## Sending broadcasts to all users  
-To send a broadcast to all of users that ever used the bot run the following command:   
+## Sending broadcasts to all users
+To send a broadcast to all of users that ever used the bot run the following command:
 ```
 bash bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
-```  
+```
 
 
 

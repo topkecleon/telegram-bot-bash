@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# This file is public domain in the USA and all free countries.
+# Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
+
 echo "Why hello there.
 Would you like some tea (y/n)?"
 read answer

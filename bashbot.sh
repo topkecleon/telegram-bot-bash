@@ -1,16 +1,15 @@
 #!/bin/bash
+
 # bashbot, the Telegram bot written in bash.
-# Written by @topkecleon, Juan Potato (@awkward_potato), Lorenzo Santina (BigNerd95) and Daniil Gentili (@danog)
+# Written by Drew (@topkecleon) and Daniil Gentili (@danogentili).
+# Also contributed: JuanPotato, BigNerd95, TiagoDanin, iicc1.
 # https://github.com/topkecleon/telegram-bot-bash
 
-# Depends on ./JSON.sh (http://github.com/dominictarr/./JSON.sh),
-# which is MIT/Apache-licensed
-# And on tmux (https://github.com/tmux/tmux),
-# which is BSD-licensed
-
+# Depends on JSON.sh (http://github.com/dominictarr/JSON.sh) (MIT/Apache),
+# and on tmux (http://github.com/tmux/tmux) (BSD).
 
 # This file is public domain in the USA and all free countries.
-# If you're in Europe, and public domain does not exist, then haha.
+# Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 
 source commands.sh source
 URL='https://api.telegram.org/bot'$TOKEN
@@ -30,7 +29,7 @@ ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
 INLINE_QUERY=$URL'/answerInlineQuery'
 ME_URL=$URL'/getMe'
-ME=$(curl -s $ME_URL | ./JSON.sh -s | egrep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
+ME=$(curl -s $ME_URL | ./JSON.sh/JSON.sh -s | egrep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
 
 
 FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
@@ -52,11 +51,11 @@ send_message() {
 		local lat="$(echo "$2" | sed '/mylatstartshere /!d;s/.*mylatstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g')"
 
 		local long="$(echo "$2" | sed '/mylongstartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g')"
-		
+
 		local title="$(echo "$2" | sed '/mytitlestartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ myaddressstartshere.*//g')"
-		
+
 		local address="$(echo "$2" | sed '/myaddressstartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mytitlestartshere.*//g')"
-		
+
 	}
 	if [ "$keyboard" != "" ]; then
 		send_keyboard "$chat" "$text" "$keyboard"
@@ -137,7 +136,7 @@ answer_inline_query() {
 		"contact")
 			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","phone_number":"'$3'","first_name":"'$4'"}]'
 		;;
-		
+
 		# Cached media stored in Telegram server
 
 		"cached_photo")
@@ -164,11 +163,11 @@ answer_inline_query() {
 		"cached_audio")
 			InlineQueryResult='[{"type":"audio","id":"$RANDOM","audio_file_id":"'$3'"}]'
 		;;
-		
+
 	esac
-	
+
 	res=$(curl -s "$INLINE_QUERY" -F "inline_query_id=$1" -F "results=$InlineQueryResult")
-	
+
 }
 
 send_keyboard() {
@@ -185,7 +184,7 @@ send_keyboard() {
 }
 
 get_file() {
-	[ "$1" != "" ] && echo $FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh -s | egrep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)
+	[ "$1" != "" ] && echo $FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh/JSON.sh -s | egrep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)
 }
 
 send_file() {
@@ -194,7 +193,7 @@ send_file() {
 	local file=$2
 	echo "$file" | grep -qE $FILE_REGEX || return
 	local ext="${file##*.}"
-	case $ext in 
+	case $ext in
         	"mp3")
 			CUR_URL=$AUDIO_URL
 			WHAT=audio
@@ -234,7 +233,7 @@ send_file() {
 # typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
 
 send_action() {
-	[ "$2" = "" ] && return 
+	[ "$2" = "" ] && return
 	res=$(curl -s "$ACTION_URL" -F "chat_id=$1" -F "action=$2")
 }
 
@@ -252,7 +251,7 @@ send_venue() {
 
 forward() {
 	[ "$3" = "" ] && return
-	res=$(curl -s "$FORWARD_URL" -F "chat_id=$1" -F "from_chat_id=$2" -F "message_id=$3")	
+	res=$(curl -s "$FORWARD_URL" -F "chat_id=$1" -F "from_chat_id=$2" -F "message_id=$3")
 }
 
 startproc() {
@@ -274,7 +273,7 @@ inproc() {
 process_client() {
 	# Message
 	MESSAGE=$(echo "$res" | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
-	
+
 	# User
 	USER[ID]=$(echo "$res" | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
 	USER[FIRST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
@@ -308,11 +307,11 @@ process_client() {
 	LOCATION[LATITUDE]=$(echo "$res" | egrep '\["result",0,"message","location","latitude"\]' | cut -f 2 | cut -d '"' -f 2)
 	NAME="$(basename ${URLS[*]} &>/dev/null)"
 
-	# Tmux 
+	# Tmux
 	copname="$ME"_"${USER[ID]}"
 
 	source commands.sh
-	
+
 	tmpcount="COUNT${USER[ID]}"
 	cat count | grep -q "$tmpcount" || echo "$tmpcount">>count
 	# To get user count execute bash bashbot.sh count
@@ -321,7 +320,7 @@ process_client() {
 # source the script with source as param to use functions in other scripts
 while [ "$1" == "startbot" ]; do {
 
-	res=$(curl -s $UPD_URL$OFFSET | ./JSON.sh -s)
+	res=$(curl -s $UPD_URL$OFFSET | ./JSON.sh/JSON.sh -s)
 
 	# Offset
 	OFFSET=$(echo "$res" | egrep '\["result",0,"update_id"\]' | cut -f 2)
@@ -361,6 +360,12 @@ case "$1" in
 		echo "Bot was killed successfully. "
 		;;
 	"help")
-		cat README.md
+		less README.md
+		;;
+	"attach")
+		tmux attach -t $ME
+		;;
+	*)
+		echo "Available arguments: outproc, count, broadcast, start, kill, help, attach"
 		;;
 esac

@@ -1,0 +1,3 @@
+[submodule "JSON.sh"]
+	path = JSON.sh
+	url = http://github.com/dominictarr/JSON.sh
