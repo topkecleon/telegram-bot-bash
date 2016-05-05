@@ -74,7 +74,7 @@ Clone the repository:
 git clone --recursive https://github.com/topkecleon/telegram-bot-bash
 ```
 
-Paste the token on line 6 of commands.sh (instead of tokenhere).
+Paste the token on line 9 of commands.sh (instead of tokenhere).
 Then start editing the commands.
 
 ### Receive data
@@ -119,7 +119,7 @@ This function also allows a third parameter that disables additional function pa
 ```
 send_message "${USER[ID]}" "lol" "safe"
 ```
-To send images, videos, voice files, photos ecc use the ```send_photo``` function (remember to change the safety Regex @ line 11 of command.sh to allow sending files only from certain directories):
+To send images, videos, voice files, photos ecc use the ```send_photo``` function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):
 ```
 send_file "${USER[ID]}" "/home/user/doge.jpg" "Lool"
 ```
@@ -171,7 +171,7 @@ Please note that you can either send a location or a venue, not both. To send a 
 
 The following commands allows users to interact with your bot via *inline queries*.
 In order to enable **inline mode**, send `/setinline` command to [@BotFather](https://telegram.me/botfather) and provide the placeholder text that the user will see in the input field after typing your bot’s name.
-Also, edit line 9 from `commands.sh` putting a "1".
+Also, edit line 12 from `commands.sh` putting a "1".
 Note that you can't modify the first two parameters of the function `answer_inline_query`, only the ones after them.
 
 To send messsages or links through an *inline query*:
