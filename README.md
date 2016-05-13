@@ -74,7 +74,7 @@ Clone the repository:
 git clone --recursive https://github.com/topkecleon/telegram-bot-bash
 ```
 
-Paste the token on line 9 of commands.sh (instead of tokenhere).
+Create a file called token and paste the token in there.
 Then start editing the commands.
 
 ### Receive data
