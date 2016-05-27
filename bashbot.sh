@@ -9,7 +9,6 @@
 # and on tmux (http://github.com/tmux/tmux) (BSD).
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
-INLINE=0
 
 if [ ! -f "JSON.sh/JSON.sh" ]; then
 	echo "You did not clone recursively! Downloading JSON.sh..."
@@ -116,7 +115,7 @@ answer_inline_query() {
 			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","photo_url":"'$3'","thumb_url":"'$4'"}]'
 		;;
 		"gif")
-			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","gif_url":"'$3'"}]'
+			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","gif_url":"'$3'", "thumb_url":"'$4'"}]'
 		;;
 		"mpeg4_gif")
 			InlineQueryResult='[{"type":"'$2'","id":"$RANDOM","mpeg4_url":"'$3'"}]'
@@ -311,7 +310,7 @@ process_client() {
 	# Location
 	LOCATION[LONGITUDE]=$(echo "$res" | egrep '\["result",0,"message","location","longitude"\]' | cut -f 2 | cut -d '"' -f 2)
 	LOCATION[LATITUDE]=$(echo "$res" | egrep '\["result",0,"message","location","latitude"\]' | cut -f 2 | cut -d '"' -f 2)
-	NAME="$(basename ${URLS[*]} &>/dev/null)"
+	NAME="$(echo ${URLS[*]} | sed 's/.*\///g')"
 
 	# Tmux
 	copname="$ME"_"${USER[ID]}"
