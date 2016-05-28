@@ -24,7 +24,11 @@
 
 <p>A Telegram bot written in bash.</p>
 
-<p>Uses <a href="https://github.com/dominictarr/JSON.sh">json.sh</a> and tmux (for interactive chats).</p>
+<p>Depends on <a href="http://github.com/tmux/tmux">tmux</a>.
+Uses <a href="http://github.com/dominictarr/JSON.sh">JSON.sh</a>.</p>
+
+<p>Released to the public domain wherever applicable.
+Elsewhere, consider it released under the <a href="http://www.wtfpl.net/txt/copying/">WTFPLv2</a>.</p>
 
 <h2>
 <a id="instructions" class="anchor" href="#instructions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Instructions</h2>
@@ -90,42 +94,36 @@ group. This step is up to you actually.</p></li>
 <h3>
 <a id="install-bashbot" class="anchor" href="#install-bashbot" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install bashbot</h3>
 
-<p>Clone the repository:  </p>
+<p>Clone the repository:</p>
 
-<pre><code>git clone https://github.com/topkecleon/telegram-bot-bash
+<pre><code>git clone --recursive https://github.com/topkecleon/telegram-bot-bash
 </code></pre>
 
-<p>Paste the token on line 15 (instead of tokenhere).<br>
-Then start editing the commands.  </p>
+<p>Create a file called token and paste the token in there.
+Then start editing the commands.</p>
 
 <h3>
 <a id="receive-data" class="anchor" href="#receive-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Receive data</h3>
 
-<p>You can read incoming data using the following variables:  </p>
+<p>You can read incoming data using the following variables:</p>
 
 <ul>
 <li>
-<code>$MESSAGE</code>: Incoming messages<br>
-</li>
+<code>$MESSAGE</code>: Incoming messages</li>
 <li>
-<code>$CAPTION</code>: Captions<br>
-</li>
+<code>$CAPTION</code>: Captions</li>
 <li>
 <code>$USER</code>: This array contains the First name, last name, username and user id of the sender of the current message.
 
 <ul>
 <li>
-<code>${USER[ID]}</code>: User id<br>
-</li>
+<code>${USER[ID]}</code>: User id</li>
 <li>
-<code>${USER[FIRST_NAME]}</code>: User's first name<br>
-</li>
+<code>${USER[FIRST_NAME]}</code>: User's first name</li>
 <li>
-<code>${USER[LAST_NAME]}</code>: User's last name<br>
-</li>
+<code>${USER[LAST_NAME]}</code>: User's last name</li>
 <li>
-<code>${USER[USERNAME]}</code>: Username<br>
-</li>
+<code>${USER[USERNAME]}</code>: Username</li>
 </ul>
 </li>
 <li>
@@ -133,23 +131,17 @@ Then start editing the commands.  </p>
 
 <ul>
 <li>
-<code>${URLS[AUDIO]}</code>: Audio files<br>
-</li>
+<code>${URLS[AUDIO]}</code>: Audio files</li>
 <li>
-<code>${URLS[VIDEO]}</code>: Videos<br>
-</li>
+<code>${URLS[VIDEO]}</code>: Videos</li>
 <li>
-<code>${URLS[PHOTO]}</code>: Photos (maximum quality)<br>
-</li>
+<code>${URLS[PHOTO]}</code>: Photos (maximum quality)</li>
 <li>
-<code>${URLS[VOICE]}</code>: Voice recordings<br>
-</li>
+<code>${URLS[VOICE]}</code>: Voice recordings</li>
 <li>
-<code>${URLS[STICKER]}</code>: Stickers<br>
-</li>
+<code>${URLS[STICKER]}</code>: Stickers</li>
 <li>
-<code>${URLS[DOCUMENT]}</code>: Any other file<br>
-</li>
+<code>${URLS[DOCUMENT]}</code>: Any other file</li>
 </ul>
 </li>
 <li>
@@ -157,17 +149,13 @@ Then start editing the commands.  </p>
 
 <ul>
 <li>
-<code>${CONTACT[NUMBER]}</code>: Phone number<br>
-</li>
+<code>${CONTACT[NUMBER]}</code>: Phone number</li>
 <li>
-<code>${CONTACT[FIRST_NAME]}</code>: First name<br>
-</li>
+<code>${CONTACT[FIRST_NAME]}</code>: First name</li>
 <li>
-<code>${CONTACT[LAST_NAME]}</code>: Last name<br>
-</li>
+<code>${CONTACT[LAST_NAME]}</code>: Last name</li>
 <li>
-<code>${CONTACT[ID]}</code>: User id<br>
-</li>
+<code>${CONTACT[ID]}</code>: User id</li>
 </ul>
 </li>
 <li>
@@ -175,11 +163,9 @@ Then start editing the commands.  </p>
 
 <ul>
 <li>
-<code>${LOCATION[LONGITUDE]}</code>: Longitude<br>
-</li>
+<code>${LOCATION[LONGITUDE]}</code>: Longitude</li>
 <li>
-<code>${LOCATION[LATITUDE]}</code>: Latitude<br>
-</li>
+<code>${LOCATION[LATITUDE]}</code>: Latitude</li>
 </ul>
 </li>
 </ul>
@@ -187,58 +173,58 @@ Then start editing the commands.  </p>
 <h3>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h3>
 
-<p>To send messages use the <code>send_message</code> function:  </p>
+<p>To send messages use the <code>send_message</code> function:</p>
 
-<pre><code>send_message "${USER[ID]}" "lol" 
+<pre><code>send_message "${USER[ID]}" "lol"
 </code></pre>
 
-<p>To send html or markdown put the following strings before the text, depending on the parsing mode you want to enable:  </p>
+<p>To send html or markdown put the following strings before the text, depending on the parsing mode you want to enable:</p>
 
-<pre><code>send_message "${USER[ID]}" "markdown_parse_mode lol *bold*" 
+<pre><code>send_message "${USER[ID]}" "markdown_parse_mode lol *bold*"
 </code></pre>
 
-<pre><code>send_message "${USER[ID]}" "html_parse_mode lol &lt;b&gt;bold&lt;/b&gt;" 
+<pre><code>send_message "${USER[ID]}" "html_parse_mode lol &lt;b&gt;bold&lt;/b&gt;"
 </code></pre>
 
-<p>This function also allows a third parameter that disables additional function parsing (for safety use this when reprinting user input):  </p>
+<p>This function also allows a third parameter that disables additional function parsing (for safety use this when reprinting user input):</p>
 
 <pre><code>send_message "${USER[ID]}" "lol" "safe"
 </code></pre>
 
-<p>To send images, videos, voice files, photos ecc use the <code>send_photo</code> function (remember to change the safety Regex @ line 94 to allow sending files only from certain directories):    </p>
+<p>To send images, videos, voice files, photos ecc use the <code>send_photo</code> function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):</p>
 
 <pre><code>send_file "${USER[ID]}" "/home/user/doge.jpg" "Lool"
 </code></pre>
 
-<p>To send custom keyboards use the <code>send_keyboard</code> function:  </p>
+<p>To send custom keyboards use the <code>send_keyboard</code> function:</p>
 
 <pre><code>send_keyboard "${USER[ID]}" "Text that will appear in chat?" "Yep" "No"
 </code></pre>
 
-<p>To send locations use the <code>send_location</code> function:  </p>
+<p>To send locations use the <code>send_location</code> function:</p>
 
 <pre><code>send_location "${USER[ID]}" "Latitude" "Longitude"
 </code></pre>
 
-<p>To send venues use the <code>send_venue</code> function:  </p>
+<p>To send venues use the <code>send_venue</code> function:</p>
 
 <pre><code>send_venue "${USER[ID]}" "Latitude" "Longitude" "Title" "Address" "optional foursquare id"
 </code></pre>
 
-<p>To forward messages use the <code>forward</code> function:  </p>
+<p>To forward messages use the <code>forward</code> function:</p>
 
 <pre><code>forward "${USER[ID]}" "from_chat_id" "message_id"
 </code></pre>
 
 <p>To send a chat action use the <code>send_action</code> function.
-Allowed values: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for locations.  </p>
+Allowed values: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for locations.</p>
 
 <pre><code>send_action "${USER[ID]}" "action"
 </code></pre>
 
-<p>To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.<br>
-The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).<br>
-To open up a keyboard in an interactive script, print out the keyboard layout in the following way:  </p>
+<p>To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.
+The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).
+To open up a keyboard in an interactive script, print out the keyboard layout in the following way:</p>
 
 <pre><code>echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, highly unlikely\""
 </code></pre>
@@ -248,12 +234,12 @@ To open up a keyboard in an interactive script, print out the keyboard layout in
 <pre><code>echo "Text that will appear in chat? myfilelocationstartshere /home/user/doge.jpg"
 </code></pre>
 
-<p>And locations:  </p>
+<p>And locations:</p>
 
 <pre><code>echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45"
 </code></pre>
 
-<p>And venues:  </p>
+<p>And venues:</p>
 
 <pre><code>echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45 mytitlestartshere my home myaddressstartshere Diagon Alley N. 37"
 </code></pre>
@@ -263,11 +249,11 @@ To open up a keyboard in an interactive script, print out the keyboard layout in
 <pre><code>echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, highly unlikely\" myfilelocationstartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
 </code></pre>
 
-<p>Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.  </p>
+<p>Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.</p>
 
 <p>The following commands allows users to interact with your bot via <em>inline queries</em>.
 In order to enable <strong>inline mode</strong>, send <code>/setinline</code> command to <a href="https://telegram.me/botfather">@BotFather</a> and provide the placeholder text that the user will see in the input field after typing your bot’s name.
-Also, edit line 21 from <code>bashbot.sh</code> putting a "1".<br>
+Also, edit line 12 from <code>commands.sh</code> putting a "1".
 Note that you can't modify the first two parameters of the function <code>answer_inline_query</code>, only the ones after them.</p>
 
 <p>To send messsages or links through an <em>inline query</em>:</p>
@@ -315,18 +301,18 @@ Note that you can't modify the first two parameters of the function <code>answer
 <pre><code>answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 </code></pre>
 
-<p>To modify the responses to commands edit the commands.sh file (this should ease upgrades of the bot core).  </p>
+<p>To modify the responses to commands edit the commands.sh file (this should ease upgrades of the bot core).</p>
 
-<p>Once you're done editing start the bot with <code>./bashbot.sh start</code>. If you want to do some more changes make them and then rerun the same command.<br>
-To stop the bot run <code>./bashbot.sh kill</code>.<br>
-If some thing doesn't work as it should, debug with <code>bash -x bashbot.sh</code>.  </p>
+<p>Once you're done editing start the bot with <code>./bashbot.sh start</code>. If you want to do some more changes make them and then rerun the same command.
+To stop the bot run <code>./bashbot.sh kill</code>.
+If some thing doesn't work as it should, debug with <code>bash -x bashbot.sh</code>.</p>
 
-<p>To use the functions provided in this script in other scripts simply source bashbot: <code>source bashbot.sh</code>  </p>
+<p>To use the functions provided in this script in other scripts simply source bashbot: <code>source bashbot.sh</code></p>
 
 <h2>
 <a id="user-count" class="anchor" href="#user-count" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>User count</h2>
 
-<p>To count the total number of users that ever used the bot run the following command:   </p>
+<p>To count the total number of users that ever used the bot run the following command:</p>
 
 <pre><code>bash bashbot.sh count
 </code></pre>
@@ -334,7 +320,7 @@ If some thing doesn't work as it should, debug with <code>bash -x bashbot.sh</co
 <h2>
 <a id="sending-broadcasts-to-all-users" class="anchor" href="#sending-broadcasts-to-all-users" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Sending broadcasts to all users</h2>
 
-<p>To send a broadcast to all of users that ever used the bot run the following command:   </p>
+<p>To send a broadcast to all of users that ever used the bot run the following command:</p>
 
 <pre><code>bash bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
 </code></pre>
