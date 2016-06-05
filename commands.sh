@@ -7,6 +7,8 @@
 if [ "$1" = "source" ];then
 	# Place the token in the token file
 	TOKEN=$(cat token)
+	# Set your ID here
+	OWNER=$'ID OWNER HERE'
 	# Set INLINE to 1 in order to receive inline queries.
 	# To enable this option in your bot, send the /setinline command to @BotFather.
 	INLINE=0
@@ -43,7 +45,7 @@ else
 				answer_inline_query "$iQUERY_ID" "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
 			fi
 			if [[ $iQUERY_MSG == web ]]; then
-				answer_inline_query "$iQUERY_ID" "article" "Telegram" "https://telegram.org/"
+				answer_inline_query "$iQUERY_ID" "article" "GitHub" "http://github.com/topkecleon/telegram-bot-bash"
 			fi
 		fi
 	fi
@@ -52,26 +54,30 @@ else
 			startproc "./question"
 			;;
 		'/info')
-			send_message "${USER[ID]}" "This is bashbot, the Telegram bot written entirely in bash."
+			send_markdown_message "${USER[ID]}" "This is bashbot, the *Telegram* bot written entirely in *bash*."
 			;;
 		'/start')
-			send_message "${USER[ID]}" "This is bashbot, the Telegram bot written entirely in bash.
+			send_action "${USER[ID]}" "typing"
+			send__markdown_message "${USER[ID]}" "This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.
 It currently can send, recieve and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
-Available commands:
-• /start: Start bot and get this message.
-• /info: Get shorter info message about this bot.
-• /question: Start interactive chat.
-• /cancel: Cancel any currently running interactive chats.
+*Available commands*:
+*• /start*: _Start bot and get this message_.
+*• /info*: _Get shorter info message about this bot_.
+*• /question*: _Start interactive chat_.
+*• /cancel*: _Cancel any currently running interactive chats_.
 Written by Drew (@topkecleon) and Daniil Gentili (@danogentili).
-http://github.com/topkecleon/telegram-bot-bash
+Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 "
 			;;
+			
+		'/leavechat')
+			send_markdown_message "${OWNER[ID]}" "*CHAT LEAVED*"
+   			leave_chat "${USER[ID]}"
+     			;;
+     			
 		'/cancel')
 			if tmux ls | grep -q $copname; then killproc && send_message "${USER[ID]}" "Command canceled.";else send_message "${USER[ID]}" "No command is currently running.";fi
-			;;
-		*)
-			if tmux ls | grep -v send | grep -q $copname;then inproc; else send_message "${USER[ID]}" "$MESSAGE" "safe";fi
 			;;
 	esac
 fi
