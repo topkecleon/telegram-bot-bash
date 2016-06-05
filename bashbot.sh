@@ -31,6 +31,8 @@ URL='https://api.telegram.org/bot'$TOKEN
 SCRIPT="$0"
 MSG_URL=$URL'/sendMessage'
 LEAVE_URL=$URL'/leaveChat'
+KICK_URL=$URL'/kickChatMember'
+UNBAN_URL=$URL'/unbanChatMember'
 PHO_URL=$URL'/sendPhoto'
 AUDIO_URL=$URL'/sendAudio'
 DOCUMENT_URL=$URL'/sendDocument'
@@ -113,6 +115,14 @@ send_markdown_message() {
 
 send_html_message() {
 	res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$2" -F "parse_mode=html")
+}
+
+kick_chat_member() {
+	res=$(curl -s "$KICK_URL" -F "chat_id=$1" -F "user_id=$2")
+}
+
+unban_chat_member() {
+	res=$(curl -s "$UNBAN_URL" -F "chat_id=$1" -F "user_id=$2")
 }
 
 leave_chat() {
