@@ -7,8 +7,6 @@
 if [ "$1" = "source" ];then
 	# Place the token in the token file
 	TOKEN=$(cat token)
-	# Set your ID here
-	OWNER=$'ID OWNER HERE'
 	# Set INLINE to 1 in order to receive inline queries.
 	# To enable this option in your bot, send the /setinline command to @BotFather.
 	INLINE=0
