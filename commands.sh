@@ -56,7 +56,7 @@ else
 			;;
 		'/start')
 			send_action "${CHAT[ID]}" "typing"
-			send__markdown_message "${CHAT[ID]}" "This is bashbot, the Telegram bot written entirely in bash.
+			send_markdown_message "${CHAT[ID]}" "This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.
 It currently can send, recieve and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
 *Available commands*:
