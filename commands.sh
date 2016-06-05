@@ -79,7 +79,10 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
      			unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
      			
 		'/cancel')
-			if tmux ls | grep -q $copname; then killproc && send_message "${CHAT[ID]}" "Command canceled.";else send_message "${CHAT[ID]}" "No command is currently running.";fi
+			if tmux ls | grep -q $copname; then killproc && send_message "${USER[ID]}" "Command canceled.";else send_message "${USER[ID]}" "No command is currently running.";fi
+			;;
+		*)
+			if tmux ls | grep -v send | grep -q $copname;then inproc; else send_message "${USER[ID]}" "$MESSAGE" "safe";fi
 			;;
 	esac
 fi
