@@ -276,7 +276,7 @@ startproc() {
 	killproc
 	mkfifo /tmp/$copname
 	TMUX= tmux new-session -d -s $copname "$* &>/tmp/$copname; echo imprettydarnsuredatdisisdaendofdacmd>/tmp/$copname"
-	TMUX= tmux new-session -d -s sendprocess_$copname "bash $SCRIPT outproc ${USER[ID]} $copname"
+	TMUX= tmux new-session -d -s sendprocess_$copname "bash $SCRIPT outproc ${CHAT[ID]} $copname"
 }
 
 killproc() {
@@ -292,8 +292,11 @@ process_client() {
 	# Message
 	MESSAGE=$(echo "$res" | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
 	
+	# Chat
+	CHAT[ID]=$(echo "$res" | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
+
 	# User
-	USER[ID]=$(echo "$res" | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
+	USER[ID]=$(echo "$res" | egrep '\["result",0,"message","from","id"\]' | cut -f 2)
 	USER[FIRST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
 	USER[LAST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","last_name"\]' | cut -f 2 | cut -d '"' -f 2)
 	USER[USERNAME]=$(echo "$res" | egrep '\["result",0,"message","chat","username"\]' | cut -f 2 | cut -d '"' -f 2)
@@ -326,11 +329,11 @@ process_client() {
 	NAME="$(echo ${URLS[*]} | sed 's/.*\///g')"
 
 	# Tmux
-	copname="$ME"_"${USER[ID]}"
+	copname="$ME"_"${CHAT[ID]}"
 
 	source commands.sh
 
-	tmpcount="COUNT${USER[ID]}"
+	tmpcount="COUNT${CHAT[ID]}"
 	cat count | grep -q "$tmpcount" || echo "$tmpcount">>count
 	# To get user count execute bash bashbot.sh count
 }
@@ -374,12 +377,12 @@ case "$1" in
 		tmux kill-session -t $ME&>/dev/null
 		tmux new-session -d -s $ME "bash $SCRIPT startbot" && echo -e '\e[0;32mBot started successfully.\e[0m'
 		echo "Tmux session name $ME" || echo -e '\e[0;31mAn error occurred while starting the bot. \e[0m'
-		send_markdown_message "${USER[ID]}" "*Bot started*"
+		send_markdown_message "${CHAT[ID]}" "*Bot started*"
 		;;
 	"kill")
 		clear
 		tmux kill-session -t $ME &>/dev/null
-		send_markdown_message "${USER[ID]}" "*Bot stopped*"
+		send_markdown_message "${CHAT[ID]}" "*Bot stopped*"
 		echo -e '\e[0;32mOK. Bot stopped successfully.\e[0m'
 		;;
 	"help")
