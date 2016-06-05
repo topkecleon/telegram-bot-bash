@@ -16,10 +16,10 @@ else
 	if ! tmux ls | grep -v send | grep -q $copname; then
 		[ ! -z ${URLS[*]} ] && {
 		curl -s ${URLS[*]} -o $NAME
-			send_file "${USER[ID]}" "$NAME" "$CAPTION"
+			send_file "${CHAT[ID]}" "$NAME" "$CAPTION"
 			rm "$NAME"
 		}
-		[ ! -z ${LOCATION[*]} ] && send_location "${USER[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
+		[ ! -z ${LOCATION[*]} ] && send_location "${CHAT[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
 
 		# Inline
 		if [ $INLINE == 1 ]; then
@@ -52,11 +52,11 @@ else
 			startproc "./question"
 			;;
 		'/info')
-			send_markdown_message "${USER[ID]}" "This is bashbot, the *Telegram* bot written entirely in *bash*."
+			send_markdown_message "${CHAT[ID]}" "This is bashbot, the *Telegram* bot written entirely in *bash*."
 			;;
 		'/start')
-			send_action "${USER[ID]}" "typing"
-			send__markdown_message "${USER[ID]}" "This is bashbot, the Telegram bot written entirely in bash.
+			send_action "${CHAT[ID]}" "typing"
+			send__markdown_message "${CHAT[ID]}" "This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.
 It currently can send, recieve and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
 *Available commands*:
@@ -71,11 +71,11 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 			
 		'/leavechat')
 			send_markdown_message "${OWNER[ID]}" "*CHAT LEAVED*"
-   			leave_chat "${USER[ID]}"
+   			leave_chat "${CHAT[ID]}"
      			;;
      			
 		'/cancel')
-			if tmux ls | grep -q $copname; then killproc && send_message "${USER[ID]}" "Command canceled.";else send_message "${USER[ID]}" "No command is currently running.";fi
+			if tmux ls | grep -q $copname; then killproc && send_message "${CHAT[ID]}" "Command canceled.";else send_message "${CHAT[ID]}" "No command is currently running.";fi
 			;;
 	esac
 fi
