@@ -56,7 +56,7 @@ else
 			;;
 		'/start')
 			send_action "${CHAT[ID]}" "typing"
-			send__markdown_message "${CHAT[ID]}" "This is bashbot, the Telegram bot written entirely in bash.
+			send_markdown_message "${CHAT[ID]}" "This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.
 It currently can send, recieve and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
 *Available commands*:
@@ -64,6 +64,8 @@ It currently can send, recieve and forward messages, custom keyboards, photos, a
 *• /info*: _Get shorter info message about this bot_.
 *• /question*: _Start interactive chat_.
 *• /cancel*: _Cancel any currently running interactive chats_.
+*• /kickme*: _You will be autokicked from the chat_.
+*• /leavechat*: _The bot will leave the group with this command _.
 Written by Drew (@topkecleon) and Daniil Gentili (@danogentili).
 Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 "
@@ -77,6 +79,7 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
      		'/kickme')
      			kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
      			unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
+     			;;
      			
 		'/cancel')
 			if tmux ls | grep -q $copname; then killproc && send_message "${USER[ID]}" "Command canceled.";else send_message "${USER[ID]}" "No command is currently running.";fi
