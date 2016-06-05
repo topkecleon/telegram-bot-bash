@@ -19,7 +19,7 @@ fi
 if [ ! -f "token" ]; then
 	clear
 	echo -e '\e[0;31mTOKEN MISSING.\e[0m'
-	echo -e "PLEASE WRITE YOUR TOKEN HERE\e[0m"
+	echo -e "PLEASE WRITE YOUR TOKEN HERE"
 	read token
 	echo "$token" >> token
 fi
