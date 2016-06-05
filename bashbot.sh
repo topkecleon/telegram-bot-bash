@@ -292,9 +292,6 @@ process_client() {
 	# Message
 	MESSAGE=$(echo "$res" | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
 	
-	# Owner
-	OWNER[ID]=$(OWNER)
-	
 	# User
 	USER[ID]=$(echo "$res" | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
 	USER[FIRST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
@@ -377,12 +374,12 @@ case "$1" in
 		tmux kill-session -t $ME&>/dev/null
 		tmux new-session -d -s $ME "bash $SCRIPT startbot" && echo -e '\e[0;32mBot started successfully.\e[0m'
 		echo "Tmux session name $ME" || echo -e '\e[0;31mAn error occurred while starting the bot. \e[0m'
-		send_markdown_message "$OWNER[ID]" "*Bot started*"
+		send_markdown_message "${USER[ID]}" "*Bot started*"
 		;;
 	"kill")
 		clear
 		tmux kill-session -t $ME &>/dev/null
-		send_markdown_message "$OWNER[ID]" "*Bot stopped*"
+		send_markdown_message "${USER[ID]}" "*Bot stopped*"
 		echo -e '\e[0;32mOK. Bot stopped successfully.\e[0m'
 		;;
 	"help")
