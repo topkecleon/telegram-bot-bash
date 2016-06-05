@@ -64,7 +64,7 @@ It currently can send, recieve and forward messages, custom keyboards, photos, a
 *• /info*: _Get shorter info message about this bot_.
 *• /question*: _Start interactive chat_.
 *• /cancel*: _Cancel any currently running interactive chats_.
-*• /kickme*: _You will be kicked from chat_.
+*• /kickme*: _You will be autokicked from the chat_.
 *• /leavechat*: _The bot will leave the group with this command _.
 Written by Drew (@topkecleon) and Daniil Gentili (@danogentili).
 Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
