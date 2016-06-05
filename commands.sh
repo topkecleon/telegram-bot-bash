@@ -70,9 +70,13 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 			;;
 			
 		'/leavechat')
-			send_markdown_message "${OWNER[ID]}" "*CHAT LEAVED*"
+			send_markdown_message "${CHAT[ID]}" "*CHAT LEAVED*"
    			leave_chat "${CHAT[ID]}"
      			;;
+     			
+     		'/kickme')
+     			kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
+     			unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
      			
 		'/cancel')
 			if tmux ls | grep -q $copname; then killproc && send_message "${CHAT[ID]}" "Command canceled.";else send_message "${CHAT[ID]}" "No command is currently running.";fi
