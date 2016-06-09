@@ -304,10 +304,10 @@ process_client() {
 	
 	# Chat
 	CHAT[ID]=$(echo "$res" | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
-	GROUP[FIRST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
-	GROUP[LAST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","last_name"\]' | cut -f 2 | cut -d '"' -f 2)
-	GROUP[USERNAME]=$(echo "$res" | egrep '\["result",0,"message","chat","username"\]' | cut -f 2 | cut -d '"' -f 2)
-	GROUP[TITLE]=$(echo "$res" | egrep '\["result",0,"message","chat","title"\]' | cut -f 2 | cut -d '"' -f 2)
+	CHAT[FIRST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
+	CHAT[LAST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","last_name"\]' | cut -f 2 | cut -d '"' -f 2)
+	CHAT[USERNAME]=$(echo "$res" | egrep '\["result",0,"message","chat","username"\]' | cut -f 2 | cut -d '"' -f 2)
+	CHAT[TITLE]=$(echo "$res" | egrep '\["result",0,"message","chat","title"\]' | cut -f 2 | cut -d '"' -f 2)
 
 	# User
 	USER[ID]=$(echo "$res" | egrep '\["result",0,"message","from","id"\]' | cut -f 2)
