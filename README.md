@@ -87,6 +87,12 @@ You can read incoming data using the following variables:
  * ```${USER[FIRST_NAME]}```: User's first name
  * ```${USER[LAST_NAME]}```: User's last name
  * ```${USER[USERNAME]}```: Username
+* ```$CHAT```: This array contains the First name, last name, username, title and user id of the chat of the current message.
+ * ```${CHAT[ID]}```: Chat id
+ * ```${CHAT[FIRST_NAME]}```: Chat's first name
+ * ```${CHAT[LAST_NAME]}```: Chat's last name
+ * ```${CHAT[USERNAME]}```: Username
+ * ```${CHAT[TITLE]}```: Title
 * ```$URLS```: This array contains documents, audio files, stickers, voice recordings and stickers stored in the form of URLs.
  * ```${URLS[AUDIO]}```: Audio files
  * ```${URLS[VIDEO]}```: Videos
@@ -106,43 +112,43 @@ You can read incoming data using the following variables:
 ### Usage
 To send messages use the ```send_message``` function:
 ```
-send_message "${USER[ID]}" "lol"
+send_message "${CHAT[ID]}" "lol"
 ```
 To send html or markdown put the following strings before the text, depending on the parsing mode you want to enable:
 ```
-send_message "${USER[ID]}" "markdown_parse_mode lol *bold*"
+send_message "${CHAT[ID]}" "markdown_parse_mode lol *bold*"
 ```
 ```
-send_message "${USER[ID]}" "html_parse_mode lol <b>bold</b>"
+send_message "${CHAT[ID]}" "html_parse_mode lol <b>bold</b>"
 ```
 This function also allows a third parameter that disables additional function parsing (for safety use this when reprinting user input):
 ```
-send_message "${USER[ID]}" "lol" "safe"
+send_message "${CHAT[ID]}" "lol" "safe"
 ```
 To send images, videos, voice files, photos ecc use the ```send_photo``` function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):
 ```
-send_file "${USER[ID]}" "/home/user/doge.jpg" "Lool"
+send_file "${CHAT[ID]}" "/home/user/doge.jpg" "Lool"
 ```
 To send custom keyboards use the ```send_keyboard``` function:
 ```
-send_keyboard "${USER[ID]}" "Text that will appear in chat?" "Yep" "No"
+send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" "Yep" "No"
 ```
 To send locations use the ```send_location``` function:
 ```
-send_location "${USER[ID]}" "Latitude" "Longitude"
+send_location "${CHAT[ID]}" "Latitude" "Longitude"
 ```
 To send venues use the ```send_venue``` function:
 ```
-send_venue "${USER[ID]}" "Latitude" "Longitude" "Title" "Address" "optional foursquare id"
+send_venue "${CHAT[ID]}" "Latitude" "Longitude" "Title" "Address" "optional foursquare id"
 ```
 To forward messages use the ```forward``` function:
 ```
-forward "${USER[ID]}" "from_chat_id" "message_id"
+forward "${CHAT[ID]}" "from_chat_id" "message_id"
 ```
 To send a chat action use the ```send_action``` function.
 Allowed values: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for locations.
 ```
-send_action "${USER[ID]}" "action"
+send_action "${CHAT[ID]}" "action"
 ```
 
 To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.
