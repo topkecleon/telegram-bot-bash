@@ -54,6 +54,11 @@ GET_URL=$URL'/getFile'
 OFFSET=0
 declare -A USER MESSAGE URLS CONTACT LOCATION
 
+urlencode() {
+	echo "$*" | sed 's:%:%25:g;s: :%20:g;s:<:%3C:g;s:>:%3E:g;s:#:%23:g;s:{:%7B:g;s:}:%7D:g;s:|:%7C:g;s:\\:%5C:g;s:\^:%5E:g;s:~:%7E:g;s:\[:%5B:g;s:\]:%5D:g;s:`:%60:g;s:;:%3B:g;s:/:%2F:g;s:?:%3F:g;s^:^%3A^g;s:@:%40:g;s:=:%3D:g;s:&:%26:g;s:\$:%24:g;s:\!:%21:g;s:\*:%2A:g'
+}
+
+
 send_message() {
 	[ "$2" = "" ] && return 1
 	local chat="$1"
@@ -104,17 +109,17 @@ send_text() {
 			send_markdown_message "$1" "${2//markdown_parse_mode}"
 			;;
 		*)
-			res=$(curl -s "$MSG_URL" -d "chat_id=$1" -d "text=$2")
+			res=$(curl -s "$MSG_URL" -d "chat_id=$1" -d "text=$(urlencode "$2")")
 			;;
 	esac
 }
 
 send_markdown_message() {
-	res=$(curl -s "$MSG_URL" -d "chat_id=$1" -d "text=$2" -d "parse_mode=markdown" -d "disable_web_page_preview=true")
+	res=$(curl -s "$MSG_URL" -d "chat_id=$1" -d "text=$(urlencode "$2")" -d "parse_mode=markdown" -d "disable_web_page_preview=true")
 }
 
 send_html_message() {
-	res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$2" -F "parse_mode=html")
+	res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$(urlencode "$2")" -F "parse_mode=html")
 }
 
 kick_chat_member() {
@@ -222,15 +227,17 @@ send_file() {
 	echo "$file" | grep -qE $FILE_REGEX || return
 	local ext="${file##*.}"
 	case $ext in
-        	"mp3")
+        	mp3|flac)
 			CUR_URL=$AUDIO_URL
 			WHAT=audio
 			STATUS=upload_audio
+			local CAPTION="$3"
 			;;
 		png|jpg|jpeg|gif)
 			CUR_URL=$PHO_URL
 			WHAT=photo
 			STATUS=upload_photo
+			local CAPTION="$3"
 			;;
 		webp)
 			CUR_URL=$STICKER_URL
@@ -241,6 +248,7 @@ send_file() {
 			CUR_URL=$VIDEO_URL
 			WHAT=video
 			STATUS=upload_video
+			local CAPTION="$3"
 			;;
 
 		ogg)
@@ -252,10 +260,11 @@ send_file() {
 			CUR_URL=$DOCUMENT_URL
 			WHAT=document
 			STATUS=upload_document
+			local CAPTION="$3"
 			;;
 	esac
 	send_action $chat_id $STATUS
-	res=$(curl -s "$CUR_URL" -F "chat_id=$chat_id" -F "$WHAT=@$file" -F "caption=$3")
+	res=$(curl -s "$CUR_URL" -F "chat_id=$chat_id" -F "$WHAT=@$file" -F "caption=$CAPTION")
 }
 
 # typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
