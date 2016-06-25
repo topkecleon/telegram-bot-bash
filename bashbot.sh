@@ -52,7 +52,7 @@ FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
 UPD_URL=$URL'/getUpdates?offset='
 GET_URL=$URL'/getFile'
 OFFSET=0
-declare -A USER MESSAGE URLS CONTACT LOCATION CHAT
+declare -A BOT USER MESSAGE URLS CONTACT LOCATION CHAT
 
 urlencode() {
 	echo "$*" | sed 's:%:%25:g;s: :%20:g;s:<:%3C:g;s:>:%3E:g;s:#:%23:g;s:{:%7B:g;s:}:%7D:g;s:|:%7C:g;s:\\:%5C:g;s:\^:%5E:g;s:~:%7E:g;s:\[:%5B:g;s:\]:%5D:g;s:`:%60:g;s:;:%3B:g;s:/:%2F:g;s:?:%3F:g;s^:^%3A^g;s:@:%40:g;s:=:%3D:g;s:&:%26:g;s:\$:%24:g;s:\!:%21:g;s:\*:%2A:g'
@@ -310,7 +310,13 @@ inproc() {
 process_client() {
 	# Message
 	MESSAGE=$(echo "$res" | egrep '\["result",0,"message","text"\]' | cut -f 2 | cut -d '"' -f 2)
-	MESSAGE_ID=$(echo "$res" | egrep '\["result",0,"message","message_id"\]' | cut -f 2 | cut -d '"' -f 2)
+	MESSAGE[ID]=$(echo "$res" | egrep '\["result",0,"message","message_id"\]' | cut -f 2 | cut -d '"' -f 2)
+	
+	# Bot
+	BOT[USERNAME]=$(curl -s $ME_URL | ./JSON.sh/JSON.sh -s | egrep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
+	BOT[NAME]=$(curl -s $ME_URL | ./JSON.sh/JSON.sh -s | egrep '\["result","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
+	BOT[ID]=$(curl -s $ME_URL | ./JSON.sh/JSON.sh -s | egrep '\["result","id"\]' | cut -f 2 | cut -d '"' -f 2)
+	
 	# Chat
 	CHAT[ID]=$(echo "$res" | egrep '\["result",0,"message","chat","id"\]' | cut -f 2)
 	CHAT[FIRST_NAME]=$(echo "$res" | egrep '\["result",0,"message","chat","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
