@@ -60,12 +60,13 @@ else
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.
 It currently can send, recieve and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
 *Available commands*:
-*• /start*: _Start bot and get this message_.
-*• /info*: _Get shorter info message about this bot_.
-*• /question*: _Start interactive chat_.
-*• /cancel*: _Cancel any currently running interactive chats_.
-*• /kickme*: _You will be autokicked from the chat_.
-*• /leavechat*: _The bot will leave the group with this command _.
+• /start _Start bot and get this message_.
+• /info _Get shorter info message about this bot_.
+• /question _Start interactive chat_.
+• /cancel _Cancel any currently running interactive chats_.
+• /kickme _You will be autokicked from the chat_.
+• /leavechat _The bot will leave the group with this command_.
+• /botinfo _Get ID, username and name of this bot_.
 Written by Drew (@topkecleon) and Daniil Gentili (@danogentili).
 Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 "
@@ -80,6 +81,12 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
      			kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
      			unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
      			;;
+     			
+     		'/botinfo')
+			send_markdown_message "${CHAT[ID]}" "*Name* ${BOT[NAME]}
+*Username* @${BOT[USERNAME]}
+*ID* ${BOT[ID]}"
+			;;
      			
 		'/cancel')
 			if tmux ls | grep -q $copname; then killproc && send_message "${CHAT[ID]}" "Command canceled.";else send_message "${CHAT[ID]}" "No command is currently running.";fi
