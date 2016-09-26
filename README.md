@@ -26,7 +26,7 @@ call it? Please choose a name for your bot.`
 3. Type whatever name you want for your bot.
 
 4. @botfather replies with `Good. Now let's choose a username for your
-bot. It must end in `bot`. Like this, for example: TetrisBot or
+bot. It must end in bot. Like this, for example: TetrisBot or
 tetris_bot.`
 
 5. Type whatever username you want for your bot, minimum 5 characters,
