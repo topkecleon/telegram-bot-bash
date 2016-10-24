@@ -51,7 +51,7 @@ contact, because some users has similar usernames to <code>botfather</code>.</p>
 call it? Please choose a name for your bot.</code></p></li>
 <li><p>Type whatever name you want for your bot.</p></li>
 <li><p><a href="https://github.com/botfather" class="user-mention">@botfather</a> replies with <code>Good. Now let's choose a username for your
-bot. It must end in</code>bot<code>. Like this, for example: TetrisBot or
+bot. It must end in bot. Like this, for example: TetrisBot or
 tetris_bot.</code></p></li>
 <li><p>Type whatever username you want for your bot, minimum 5 characters,
 and must end with <code>bot</code>. For example: <code>telesample_bot</code></p></li>
@@ -111,6 +111,8 @@ Then start editing the commands.</p>
 <li>
 <code>$MESSAGE</code>: Incoming messages</li>
 <li>
+<code>$MESSAGE[ID]</code>: ID of incoming message</li>
+<li>
 <code>$CAPTION</code>: Captions</li>
 <li>
 <code>$USER</code>: This array contains the First name, last name, username and user id of the sender of the current message.
@@ -124,6 +126,26 @@ Then start editing the commands.</p>
 <code>${USER[LAST_NAME]}</code>: User's last name</li>
 <li>
 <code>${USER[USERNAME]}</code>: Username</li>
+</ul>
+</li>
+<li>
+<code>$CHAT</code>: This array contains the First name, last name, username, title and user id of the chat of the current message.
+
+<ul>
+<li>
+<code>${CHAT[ID]}</code>: Chat id</li>
+<li>
+<code>${CHAT[FIRST_NAME]}</code>: Chat's first name</li>
+<li>
+<code>${CHAT[LAST_NAME]}</code>: Chat's last name</li>
+<li>
+<code>${CHAT[USERNAME]}</code>: Username</li>
+<li>
+<code>${CHAT[TITLE]}</code>: Title</li>
+<li>
+<code>${CHAT[TYPE]}</code>: Type</li>
+<li>
+<code>${CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]}</code>: All members are administrators (true if true)</li>
 </ul>
 </li>
 <li>
@@ -175,51 +197,51 @@ Then start editing the commands.</p>
 
 <p>To send messages use the <code>send_message</code> function:</p>
 
-<pre><code>send_message "${USER[ID]}" "lol"
+<pre><code>send_message "${CHAT[ID]}" "lol"
 </code></pre>
 
 <p>To send html or markdown put the following strings before the text, depending on the parsing mode you want to enable:</p>
 
-<pre><code>send_message "${USER[ID]}" "markdown_parse_mode lol *bold*"
+<pre><code>send_message "${CHAT[ID]}" "markdown_parse_mode lol *bold*"
 </code></pre>
 
-<pre><code>send_message "${USER[ID]}" "html_parse_mode lol &lt;b&gt;bold&lt;/b&gt;"
+<pre><code>send_message "${CHAT[ID]}" "html_parse_mode lol &lt;b&gt;bold&lt;/b&gt;"
 </code></pre>
 
 <p>This function also allows a third parameter that disables additional function parsing (for safety use this when reprinting user input):</p>
 
-<pre><code>send_message "${USER[ID]}" "lol" "safe"
+<pre><code>send_message "${CHAT[ID]}" "lol" "safe"
 </code></pre>
 
 <p>To send images, videos, voice files, photos ecc use the <code>send_photo</code> function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):</p>
 
-<pre><code>send_file "${USER[ID]}" "/home/user/doge.jpg" "Lool"
+<pre><code>send_file "${CHAT[ID]}" "/home/user/doge.jpg" "Lool"
 </code></pre>
 
 <p>To send custom keyboards use the <code>send_keyboard</code> function:</p>
 
-<pre><code>send_keyboard "${USER[ID]}" "Text that will appear in chat?" "Yep" "No"
+<pre><code>send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" "Yep" "No"
 </code></pre>
 
 <p>To send locations use the <code>send_location</code> function:</p>
 
-<pre><code>send_location "${USER[ID]}" "Latitude" "Longitude"
+<pre><code>send_location "${CHAT[ID]}" "Latitude" "Longitude"
 </code></pre>
 
 <p>To send venues use the <code>send_venue</code> function:</p>
 
-<pre><code>send_venue "${USER[ID]}" "Latitude" "Longitude" "Title" "Address" "optional foursquare id"
+<pre><code>send_venue "${CHAT[ID]}" "Latitude" "Longitude" "Title" "Address" "optional foursquare id"
 </code></pre>
 
 <p>To forward messages use the <code>forward</code> function:</p>
 
-<pre><code>forward "${USER[ID]}" "from_chat_id" "message_id"
+<pre><code>forward "${CHAT[ID]}" "from_chat_id" "message_id"
 </code></pre>
 
 <p>To send a chat action use the <code>send_action</code> function.
 Allowed values: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for locations.</p>
 
-<pre><code>send_action "${USER[ID]}" "action"
+<pre><code>send_action "${CHAT[ID]}" "action"
 </code></pre>
 
 <p>To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.
