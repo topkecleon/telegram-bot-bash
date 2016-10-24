@@ -15,7 +15,7 @@ if [ "$1" = "source" ];then
 else
 	if ! tmux ls | grep -v send | grep -q $copname; then
 		[ ! -z ${URLS[*]} ] && {
-		curl -s ${URLS[*]} -o $NAME
+			curl -s ${URLS[*]} -o $NAME
 			send_file "${CHAT[ID]}" "$NAME" "$CAPTION"
 			rm "$NAME"
 		}
@@ -45,7 +45,7 @@ else
 			if [[ $iQUERY_MSG == web ]]; then
 				answer_inline_query "$iQUERY_ID" "article" "GitHub" "http://github.com/topkecleon/telegram-bot-bash"
 			fi
-		fi
+		fi &
 	fi
 	case $MESSAGE in
 		'/question')

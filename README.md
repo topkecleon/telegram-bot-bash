@@ -81,6 +81,7 @@ Then start editing the commands.
 You can read incoming data using the following variables:
 
 * ```$MESSAGE```: Incoming messages
+* ```$MESSAGE[ID]```: ID of incoming message
 * ```$CAPTION```: Captions
 * ```$USER```: This array contains the First name, last name, username and user id of the sender of the current message.
  * ```${USER[ID]}```: User id
@@ -93,6 +94,8 @@ You can read incoming data using the following variables:
  * ```${CHAT[LAST_NAME]}```: Chat's last name
  * ```${CHAT[USERNAME]}```: Username
  * ```${CHAT[TITLE]}```: Title
+ * ```${CHAT[TYPE]}```: Type
+ * ```${CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]}```: All members are administrators (true if true)
 * ```$URLS```: This array contains documents, audio files, stickers, voice recordings and stickers stored in the form of URLs.
  * ```${URLS[AUDIO]}```: Audio files
  * ```${URLS[VIDEO]}```: Videos
