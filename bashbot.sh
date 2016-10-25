@@ -109,17 +109,33 @@ send_text() {
 			send_markdown_message "$1" "${2//markdown_parse_mode}"
 			;;
 		*)
-			res=$(curl -s "$MSG_URL" -d "chat_id=$1" -d "text=$(urlencode "$2")")
+			send_normal_message "$1" "$2"
 			;;
 	esac
 }
 
+send_normal_message() {
+	text="$2"
+	until [ $(echo -n "$text" | wc -m) -eq 0 ]; do
+		res=$(curl -s "$MSG_URL" -d "chat_id=$1" -d "text=$(urlencode "${text:0:4096}")")
+		text="${text:4096}"
+	done
+}
+
 send_markdown_message() {
-	res=$(curl -s "$MSG_URL" -d "chat_id=$1" -d "text=$(urlencode "$2")" -d "parse_mode=markdown" -d "disable_web_page_preview=true")
+	text="$2"
+	until [ $(echo -n "$text" | wc -m) -eq 0 ]; do
+		res=$(curl -s "$MSG_URL" -d "chat_id=$1" -d "text=$(urlencode "${text:0:4096}")" -d "parse_mode=markdown" -d "disable_web_page_preview=true")
+		text="${text:4096}"
+	done
 }
 
 send_html_message() {
-	res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$(urlencode "$2")" -F "parse_mode=html")
+	text="$2"
+	until [ $(echo -n "$text" | wc -m) -eq 0 ]; do
+		res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$(urlencode "${text:0:4096}")" -F "parse_mode=html")
+		text="${text:4096}"
+	done
 }
 
 kick_chat_member() {
