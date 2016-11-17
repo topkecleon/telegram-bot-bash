@@ -10,10 +10,10 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 
-if [ ! -f "JSON.sh/JSON.sh" ]; then
-	echo "You did not clone recursively! Downloading JSON.sh..."
-	git clone http://github.com/dominictarr/JSON.sh
-	echo "JSON.sh has been downloaded. Proceeding."
+if [ ! -f "/usr/bin/jq" ]; then
+	echo "ERROR: telegram-bot-bash require package JQ, please install JQ"
+	echo "Ex. sudo apt install jq"
+	exit
 fi
 
 if [ ! -f "token" ]; then
@@ -45,7 +45,8 @@ ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
 INLINE_QUERY=$URL'/answerInlineQuery'
 ME_URL=$URL'/getMe'
-ME=$(curl -s $ME_URL | ./JSON.sh/JSON.sh -s | egrep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
+ME_RES=$(curl -s $ME_URL)
+ME=$(echo $ME_RES | jq -r '.result .username // empty')
 
 
 FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
@@ -233,7 +234,7 @@ send_keyboard() {
 }
 
 get_file() {
-	[ "$1" != "" ] && echo $FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh/JSON.sh -s | egrep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)
+	[ "$1" != "" ] && echo $FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | jq -r '.result .file_path // empty')
 }
 
 send_file() {
@@ -334,49 +335,49 @@ process_updates() {
 }
 process_client() {
 	# Message
-	MESSAGE[0]=$(echo -e $(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","text"\]' | cut -f 2 | cut -d '"' -f 2) | sed 's#\\/#/#g')
-	MESSAGE[ID]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","message_id"\]' | cut -f 2 | cut -d '"' -f 2)
+	MESSAGE[0]=$(echo -e $(echo "$UPDATE" | jq -r '.result['$PROCESS_NUMBER'] .message .text // empty'))
+	MESSAGE[ID]=$(echo "$UPDATE" | jq -r '.result['$PROCESS_NUMBER'] .message .message_id // empty')
 
 	# Chat
-	CHAT[ID]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","chat","id"\]' | cut -f 2)
-	CHAT[FIRST_NAME]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","chat","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
-	CHAT[LAST_NAME]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","chat","last_name"\]' | cut -f 2 | cut -d '"' -f 2)
-	CHAT[USERNAME]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","chat","username"\]' | cut -f 2 | cut -d '"' -f 2)
-	CHAT[TITLE]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","chat","title"\]' | cut -f 2 | cut -d '"' -f 2)
-	CHAT[TYPE]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","chat","type"\]' | cut -f 2 | cut -d '"' -f 2)
-	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","chat","all_members_are_administrators"\]' | cut -f 2 | cut -d '"' -f 2)
+	CHAT[ID]=$(echo "$UPDATE" | jq -r '.result['$PROCESS_NUMBER'] .message .chat .id // empty')
+	CHAT[FIRST_NAME]=$(echo "$UPDATE" | jq -r '.result['$PROCESS_NUMBER'] .message .chat .first_name // empty')
+	CHAT[LAST_NAME]=$(echo "$UPDATE" | jq -r '.result['$PROCESS_NUMBER'] .message .chat .last_name // empty')
+	CHAT[USERNAME]=$(echo "$UPDATE" | jq -r '.result['$PROCESS_NUMBER'] .message .chat .username // empty')
+	CHAT[TITLE]=$(echo "$UPDATE" | jq -r '.result['$PROCESS_NUMBER'] .message .chat .title // empty')
+	CHAT[TYPE]=$(echo "$UPDATE" | jq -r '.result['$PROCESS_NUMBER'] .message .chat .type // empty')
+	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]=$(echo "$UPDATE" | jq -r '.result['$PROCESS_NUMBER'] .message .chat .all_members_are_administrators // empty')
 
 	# User
-	USER[ID]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","from","id"\]' | cut -f 2)
-	USER[FIRST_NAME]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","from","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
-	USER[LAST_NAME]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","from","last_name"\]' | cut -f 2 | cut -d '"' -f 2)
-	USER[USERNAME]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","from","username"\]' | cut -f 2 | cut -d '"' -f 2)
+	USER[ID]=$(echo "$UPDATE" | jq -r '.result['$PROCESS_NUMBER'] .message .from .id // empty')
+	USER[FIRST_NAME]=$(echo "$UPDATE" | jq -r '.result['$PROCESS_NUMBER'] .message .from .first_name // empty')
+	USER[LAST_NAME]=$(echo "$UPDATE" | jq -r '.result['$PROCESS_NUMBER'] .message .from .last_name // empty')
+	USER[USERNAME]=$(echo "$UPDATE" | jq -r '.result['$PROCESS_NUMBER'] .message .from .username // empty')
 
 	# Audio
-	URLS[AUDIO]=$(get_file $(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","audio","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
+	URLS[AUDIO]=$(get_file $(echo "$UPDATE" | jq -r '.result['$PROCESS_NUMBER'] .message .audio .file_id // empty'))
 	# Document
-	URLS[DOCUMENT]=$(get_file $(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","document","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
+	URLS[DOCUMENT]=$(get_file $(echo "$UPDATE" | jq -r '.result[0] .message .document .file_id // empty'))
 	# Photo
-	URLS[PHOTO]=$(get_file $(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","photo",.*,"file_id"\]' | cut -f 2 | cut -d '"' -f 2 | sed -n '$p'))
+	URLS[PHOTO]=$(get_file $(echo "$UPDATE" | jq -r '.result[0] .message .photo .file_id // empty'))
 	# Sticker
-	URLS[STICKER]=$(get_file $(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","sticker","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
+	URLS[STICKER]=$(get_file $(echo "$UPDATE" | jq -r '.result[0] .message .sticker .file_id // empty'))
 	# Video
-	URLS[VIDEO]=$(get_file $(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","video","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
+	URLS[VIDEO]=$(get_file $(echo "$UPDATE" | jq -r '.result[0] .message .video .file_id // empty'))
 	# Voice
-	URLS[VOICE]=$(get_file $(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","voice","file_id"\]' | cut -f 2 | cut -d '"' -f 2))
+	URLS[VOICE]=$(get_file $(echo "$UPDATE" | jq -r '.result[0] .message .voice .file_id // empty'))
 
 	# Contact
-	CONTACT[NUMBER]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","contact","phone_number"\]' | cut -f 2 | cut -d '"' -f 2)
-	CONTACT[FIRST_NAME]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","contact","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
-	CONTACT[LAST_NAME]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","contact","last_name"\]' | cut -f 2 | cut -d '"' -f 2)
-	CONTACT[USER_ID]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","contact","user_id"\]' | cut -f 2 | cut -d '"' -f 2)
+	CONTACT[NUMBER]=$(echo "$UPDATE" | jq -r '.result[0] .message .contact .phone_number // empty')
+	CONTACT[FIRST_NAME]=$(echo "$UPDATE" | jq -r '.result[0] .message .contact .first_number // empty')
+	CONTACT[LAST_NAME]=$(echo "$UPDATE" | jq -r '.result[0] .message .contact .last_number // empty')
+	CONTACT[USER_ID]=$(echo "$UPDATE" | jq -r '.result[0] .message .contact .user_id // empty')
 
 	# Caption
-	CAPTION=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","caption"\]' | cut -f 2 | cut -d '"' -f 2)
+	CAPTION=$(echo "$UPDATE" | jq -r '.result[0] .message .caption // empty')
 
 	# Location
-	LOCATION[LONGITUDE]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","location","longitude"\]' | cut -f 2 | cut -d '"' -f 2)
-	LOCATION[LATITUDE]=$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","location","latitude"\]' | cut -f 2 | cut -d '"' -f 2)
+	LOCATION[LONGITUDE]=$(echo "$UPDATE" | jq -r '.result[0] .message .location .longitude // empty')
+	LOCATION[LATITUDE]=$(echo "$UPDATE" | jq -r '.result[0] .message .location .latitude // empty')
 	NAME="$(echo ${URLS[*]} | sed 's/.*\///g')"
 
 	# Tmux
@@ -392,12 +393,11 @@ process_client() {
 # source the script with source as param to use functions in other scripts
 while [ "$1" == "startbot" ]; do {
 
-	UPDATE=$(curl -s $UPD_URL$OFFSET | ./JSON.sh/JSON.sh)
+	UPDATE=$(curl -s $UPD_URL$OFFSET)
 
 	# Offset
-	OFFSET=$(echo "$UPDATE" | egrep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)
-	OFFSET=$((OFFSET+1))
-
+	OFFSET=$(echo "$UPDATE" | jq -r '.result[0].update_id +1')
+	
 	if [ $OFFSET != 1 ]; then
 		if [ "$2" == "test" ]; then
 			process_updates "$2"
