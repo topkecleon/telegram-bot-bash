@@ -54,6 +54,17 @@ GET_URL=$URL'/getFile'
 OFFSET=0
 declare -A USER MESSAGE URLS CONTACT LOCATION CHAT
 
+if [ ! -f "bot_data" ]; then
+	get_user=$(curl -s $ME_URL | ./JSON.sh/JSON.sh -s | egrep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
+	get_name=$(curl -s $ME_URL | ./JSON.sh/JSON.sh -s | egrep '\["result","first_name"\]' | cut -f 2 | cut -d '"' -f 2)
+	get_id=$(curl -s $ME_URL | ./JSON.sh/JSON.sh -s | egrep '\["result","id"\]' | cut -f 2 | cut -d '"' -f 2)
+	echo '#!/bin/bash' >> bot_data
+	echo 'declare -A BOT' >> bot_data
+	echo 'BOT[USERNAME]="'$get_user'"' >> bot_data
+	echo 'BOT[NAME]="'$get_name'"' >> bot_data
+	echo 'BOT[ID]='$get_id >> bot_data
+fi
+
 urlencode() {
 	echo "$*" | sed 's:%:%25:g;s: :%20:g;s:<:%3C:g;s:>:%3E:g;s:#:%23:g;s:{:%7B:g;s:}:%7D:g;s:|:%7C:g;s:\\:%5C:g;s:\^:%5E:g;s:~:%7E:g;s:\[:%5B:g;s:\]:%5D:g;s:`:%60:g;s:;:%3B:g;s:/:%2F:g;s:?:%3F:g;s^:^%3A^g;s:@:%40:g;s:=:%3D:g;s:&:%26:g;s:\$:%24:g;s:\!:%21:g;s:\*:%2A:g'
 }
