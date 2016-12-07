@@ -55,7 +55,7 @@ OFFSET=0
 declare -A USER MESSAGE URLS CONTACT LOCATION CHAT
 
 urlencode() {
-  local string="${1}"
+  local string="${*}"
   local strlen=${#string}
   local encoded=""
   local pos c o
