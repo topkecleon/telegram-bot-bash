@@ -1,4 +1,4 @@
-#bashbot
+# bashbot
 A Telegram bot written in bash.
 
 Depends on [tmux](http://github.com/tmux/tmux).
