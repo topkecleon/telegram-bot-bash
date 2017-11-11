@@ -11,8 +11,8 @@ until [ "$SUCCESS" = "y" ] ;do
 	echo 'Do you like Music? mykeyboardstartshere "Yass!" "No"'
 	read answer
 	case $answer in
-		'Yass!') echo "Goody!";SUCCESS=y;;
-		'No') echo "Well that's weird.";SUCCESS=y;;
+		'Yass!') echo "Goody! mykeyboardendshere";SUCCESS=y;;
+		'No') echo "Well that's weird. mykeyboardendshere";SUCCESS=y;;
 		*) SUCCESS=n;;
 	esac
 done
