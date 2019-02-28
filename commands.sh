@@ -47,7 +47,7 @@ else
 			fi
 		fi &
 	fi
-	case $MESSAGE in
+	case "$MESSAGE" in
 		'/question')
 			startproc "./question"
 			;;
