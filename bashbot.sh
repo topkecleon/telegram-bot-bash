@@ -124,7 +124,7 @@ send_text() {
 send_normal_message() {
 	text="$2"
 	until [ $(echo -n "$text" | wc -m) -eq 0 ]; do
-		res=$(curl -s "$MSG_URL" -d "chat_id=$1" -d "text=$(urlencode "${text:0:4096}")")
+		res=$(curl -s "$MSG_URL" -d "chat_id=$1" --data-urlencode "text=${text:0:4096}")
 		text="${text:4096}"
 	done
 }
@@ -132,7 +132,7 @@ send_normal_message() {
 send_markdown_message() {
 	text="$2"
 	until [ $(echo -n "$text" | wc -m) -eq 0 ]; do
-		res=$(curl -s "$MSG_URL" -d "chat_id=$1" -d "text=$(urlencode "${text:0:4096}")" -d "parse_mode=markdown" -d "disable_web_page_preview=true")
+		res=$(curl -s "$MSG_URL" -d "chat_id=$1" --data-urlencode "text=${text:0:4096}" -d "parse_mode=markdown" -d "disable_web_page_preview=true")
 		text="${text:4096}"
 	done
 }
@@ -140,7 +140,7 @@ send_markdown_message() {
 send_html_message() {
 	text="$2"
 	until [ $(echo -n "$text" | wc -m) -eq 0 ]; do
-		res=$(curl -s "$MSG_URL" -F "chat_id=$1" -F "text=$(urlencode "${text:0:4096}")" -F "parse_mode=html")
+		res=$(curl -s "$MSG_URL" -F "chat_id=$1" --data-urlencode "text=${text:0:4096}" -F "parse_mode=html")
 		text="${text:4096}"
 	done
 }
