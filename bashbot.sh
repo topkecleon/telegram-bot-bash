@@ -45,6 +45,7 @@ ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
 INLINE_QUERY=$URL'/answerInlineQuery'
 ME_URL=$URL'/getMe'
+DELETE_URL=$URL'/deleteMessage'
 ME=$(curl -s $ME_URL | ./JSON.sh/JSON.sh -s | egrep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
 
 
@@ -143,6 +144,10 @@ send_html_message() {
 		res=$(curl -s "$MSG_URL" -F "chat_id=$1" --data-urlencode "text=${text:0:4096}" -F "parse_mode=html")
 		text="${text:4096}"
 	done
+}
+
+delete_message() {
+        res=$(curl -s "$DELETE_URL" -F "chat_id=$1" -F "message_id=$2")
 }
 
 kick_chat_member() {
