@@ -10,6 +10,8 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 
+TMPDIR="./tmp-bot-bash"
+
 if [ ! -f "JSON.sh/JSON.sh" ]; then
 	echo "You did not clone recursively! Downloading JSON.sh..."
 	git clone http://github.com/dominictarr/JSON.sh
@@ -22,6 +24,10 @@ if [ ! -f "token" ]; then
 	echo "PLEASE WRITE YOUR TOKEN HERE"
 	read token
 	echo "$token" >> token
+fi
+
+if [ ! -d "$TMPDIR" ]; then
+	mkdir "$TMPDIR"
 fi
 
 source commands.sh source
@@ -45,6 +51,7 @@ ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
 INLINE_QUERY=$URL'/answerInlineQuery'
 ME_URL=$URL'/getMe'
+DELETE_URL=$URL'/deleteMessage'
 ME=$(curl -s $ME_URL | ./JSON.sh/JSON.sh -s | egrep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
 
 
@@ -81,7 +88,7 @@ send_message() {
 
 	}
 	if [ "$no_keyboard" != "" ]; then
-		echo "remove_keyboard $chat $text" > /tmp/prova
+		echo "remove_keyboard $chat $text" > $TMPDIR/prova
 		remove_keyboard "$chat" "$text"
 		local sent=y
 	fi
@@ -321,15 +328,37 @@ forward() {
 	res=$(curl -s "$FORWARD_URL" -F "chat_id=$1" -F "from_chat_id=$2" -F "message_id=$3")
 }
 
+
+background() {
+	echo "${CHAT[ID]}:$2:$1" >"$TMPDIR/${copname}$2-back.cmd"
+	startproc "$1" "back-$2-"
+}
+
 startproc() {
-	killproc
-	mkfifo /tmp/$copname
-	TMUX= tmux new-session -d -s $copname "$* &>/tmp/$copname; echo imprettydarnsuredatdisisdaendofdacmd>/tmp/$copname"
-	TMUX= tmux new-session -d -s sendprocess_$copname "bash $SCRIPT outproc ${CHAT[ID]} $copname"
+	killproc "$2"
+	local fifo="$2${copname}" # add $1 to copname, so we can have more than one running script per chat
+	mkfifo "$TMPDIR/${fifo}"
+	TMUX= tmux new-session -d -s "${fifo}" "$1 &>$TMPDIR/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>$TMPDIR/${fifo}"
+	TMUX= tmux new-session -d -s sendprocess_${fifo} "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
+}
+
+
+checkback() {
+	checkproc "back-$1-"
+}
+
+checkproc() {
+	tmux ls | grep -q "$1${copname}"; res=$?
+}
+
+killback() {
+	killproc "back-$1-"
+	rm "$TMPDIR/${copname}$1-back.cmd"
 }
 
 killproc() {
-	(tmux kill-session -t $copname; echo imprettydarnsuredatdisisdaendofdacmd>/tmp/$copname; tmux kill-session -t sendprocess_$copname; rm -r /tmp/$copname)2>/dev/null
+	local fifo="$1${copname}"
+	(tmux kill-session -t "${fifo}"; echo imprettydarnsuredatdisisdaendofdacmd>$TMPDIR/${fifo}; tmux kill-session -t sendprocess_${fifo}; rm -r $TMPDIR/${fifo})2>/dev/null
 }
 
 inproc() {
@@ -429,8 +458,8 @@ case "$1" in
 			line=
 			read -t 10 line
 			[ "$line" != "" -a "$line" != "imprettydarnsuredatdisisdaendofdacmd" ] && send_message "$2" "$line"
-		done </tmp/$3
-		rm -r /tmp/$3
+		done <$TMPDIR/$3
+		rm -r $TMPDIR/$3
 		;;
 	"count")
 		echo "A total of $(wc -l count | sed 's/count//g')users used me."
