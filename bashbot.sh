@@ -512,7 +512,6 @@ case "$1" in
 			echo -e "\e[0;31mNo background processes.\e[0m"; break
 		    else
 			REMOVE="$(cat "$FILE")"
-			CHAT[ID]="${REMOVE%%:*}"
 			JOB="${REMOVE#*:}"
 			fifo="back-${JOB%:*}-${ME}_${REMOVE%%:*}"
 			echo "killbackground  ${fifo}"
