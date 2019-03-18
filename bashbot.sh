@@ -504,6 +504,23 @@ case "$1" in
 		send_markdown_message "${CHAT[ID]}" "*Bot stopped*"
 		echo -e '\e[0;32mOK. Bot stopped successfully.\e[0m'
 		;;
+	"killback")
+		clear
+		echo -e "\e[0;32mRemove background processes ...\e[0m"
+		for FILE in ${TMPDIR}/*-back.cmd; do
+		    if [ "$FILE" == "${TMPDIR}/*-back.cmd" ]; then
+			echo -e "\e[0;31mNo background processes.\e[0m"; break
+		    else
+			REMOVE="$(cat "$FILE")"
+			CHAT[ID]="${REMOVE%%:*}"
+			JOB="${REMOVE#*:}"
+			fifo="back-${JOB%:*}-${ME}_${REMOVE%%:*}"
+			echo "killbackground  ${fifo}"
+			rm $FILE
+			( tmux kill-session -t "${fifo}"; tmux kill-session -t sendprocess_${fifo}; rm -r $TMPDIR/${fifo}) 2>/dev/null
+		    fi
+		done
+		;;
 	"help")
 		clear
 		less README.md
@@ -516,7 +533,7 @@ case "$1" in
 		;;
 	*)
 		echo -e '\e[0;31mBAD REQUEST\e[0m'
-		echo -e '\e[0;31mAvailable arguments: outproc, count, broadcast, start, background, kill, help, attach\e[0m'
+		echo -e '\e[0;31mAvailable arguments: outproc, count, broadcast, start, background, kill, killback, help, attach\e[0m'
 		;;
 esac
 
