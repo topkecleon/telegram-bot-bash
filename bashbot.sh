@@ -477,6 +477,27 @@ case "$1" in
 		echo "Tmux session name $ME" || echo -e '\e[0;31mAn error occurred while starting the bot. \e[0m'
 		send_markdown_message "${CHAT[ID]}" "*Bot started*"
 		;;
+	"background")
+		clear
+		echo -e '\e[0;32mRestart background processes ...\e[0m'
+		for FILE in ${TMPDIR}/*-back.cmd; do
+		    if [ "$FILE" == "${TMPDIR}/*-back.cmd" ]; then
+			echo -e '\e[0;31mNo background processes to start.\e[0m'; break
+		    else
+			RESTART="$(cat "$FILE")"
+			CHAT[ID]="${RESTART%%:*}"
+			JOB="${RESTART#*:}"
+			PROG="${JOB#*:}"
+			JOB="${JOB%:*}"
+			fifo="back-${JOB}-${ME}_${CHAT[ID]}" # compose fifo from jobname, $ME (botname) and CHAT[ID] 
+			echo "restartbackground  ${PROG}  ${fifo}"
+			( tmux kill-session -t "${fifo}"; tmux kill-session -t sendprocess_${fifo}; rm -r $TMPDIR/${fifo}) 2>/dev/null
+			mkfifo "$TMPDIR/${fifo}"
+			TMUX= tmux new-session -d -s "${fifo}" "${PROG} &>$TMPDIR/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>$TMPDIR/${fifo}"
+			TMUX= tmux new-session -d -s sendprocess_${fifo} "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
+		    fi
+		done
+		;;
 	"kill")
 		clear
 		tmux kill-session -t $ME &>/dev/null
@@ -495,7 +516,7 @@ case "$1" in
 		;;
 	*)
 		echo -e '\e[0;31mBAD REQUEST\e[0m'
-		echo -e '\e[0;31mAvailable arguments: outproc, count, broadcast, start, kill, help, attach\e[0m'
+		echo -e '\e[0;31mAvailable arguments: outproc, count, broadcast, start, background, kill, help, attach\e[0m'
 		;;
 esac
 
