@@ -154,6 +154,7 @@ Allowed values: typing for text messages, upload_photo for photos, record_video 
 send_action "${CHAT[ID]}" "action"
 ```
 
+#### Interactice Chats and background jobs
 To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.
 The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).
 To open up a keyboard in an interactive script, print out the keyboard layout in the following way:
@@ -178,6 +179,20 @@ echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, hi
 ```
 Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.
 
+A background job is similar to an interactive chat, but runs in the background and does only output massages instead of processing input from the user. In contrast to interactive chats it's possible to run multiple background jobs. To create a background job write a script or edit the notify script and use the funtion background to start it:
+```
+background "./notify" "jobname"
+```
+All output of the script will be sent to the user or chat. To stop a background job use:
+```
+stopback "jobname"
+```
+You can restart the last running background jobs, e.g. after a reboot, with the command:
+```
+./bashbot.sh background
+```
+
+#### Inline queries
 The following commands allows users to interact with your bot via *inline queries*.
 In order to enable **inline mode**, send `/setinline` command to [@BotFather](https://telegram.me/botfather) and provide the placeholder text that the user will see in the input field after typing your bot’s name.
 Also, edit line 12 from `commands.sh` putting a "1".
