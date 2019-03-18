@@ -185,7 +185,7 @@ background "./notify" "jobname"
 ```
 All output of the script will be sent to the user or chat. To stop a background job use:
 ```
-stopback "jobname"
+killback "jobname"
 ```
 You can restart the last running background jobs, e.g. after a reboot, with the command:
 ```
