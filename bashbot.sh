@@ -153,6 +153,10 @@ send_html_message() {
 	done
 }
 
+delete_message() {
+        res=$(curl -s "$DELETE_URL" -F "chat_id=$1" -F "message_id=$2")
+}
+
 kick_chat_member() {
 	res=$(curl -s "$KICK_URL" -F "chat_id=$1" -F "user_id=$2")
 }
