@@ -81,8 +81,9 @@ Then start editing the commands.
 You can read incoming data using the following variables:
 
 * ```$MESSAGE```: Incoming messages
-* ```$MESSAGE[ID]```: ID of incoming message
+* ```${MESSAGE[ID]}```: ID of incoming message
 * ```$CAPTION```: Captions
+* ```$REPLYTO```: Original message wich was replied to
 * ```$USER```: This array contains the First name, last name, username and user id of the sender of the current message.
  * ```${USER[ID]}```: User id
  * ```${USER[FIRST_NAME]}```: User's first name
@@ -96,6 +97,18 @@ You can read incoming data using the following variables:
  * ```${CHAT[TITLE]}```: Title
  * ```${CHAT[TYPE]}```: Type
  * ```${CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]}```: All members are administrators (true if true)
+* ```$REPLYTO```: This array contains the First name, last name, username and user id of the ORIGINAL sender of the REPLEYED message.
+ * ```${REPLYTO[ID]}```: ID of message wich was replied to
+ * ```${REPLYTO[UID]}```: Original user's id
+ * ```${REPLYTO[FIRST_NAME]}```: Original user's first name
+ * ```${REPLYTO[LAST_NAME]}```: Original user's' last name
+ * ```${REPLYTO[USERNAME]}```: Original user's username
+* ```$FORWARD```: This array contains the First name, last name, username and user id of the ORIGINAL sender of the FORWARDED message.
+ * ```${FORWARD[ID]}```: Same as MESSAGE[ID] if message is forwarded
+ * ```${FORWARD[UID]}```: Original user's id
+ * ```${FORWARD[FIRST_NAME]}```: Original user's first name
+ * ```${FORWARD[LAST_NAME]}```: Original user's' last name
+ * ```${FORWARD[USERNAME]}```: Original user's username
 * ```$URLS```: This array contains documents, audio files, stickers, voice recordings and stickers stored in the form of URLs.
  * ```${URLS[AUDIO]}```: Audio files
  * ```${URLS[VIDEO]}```: Videos
