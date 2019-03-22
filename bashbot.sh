@@ -425,19 +425,23 @@ process_client() {
 	USER[USERNAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","from","username"\]' | cut -f 2 | cut -d '"' -f 2)"
 
 	# in reply to message from
-	REPLYTO[0]="$(echo -e "$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","text"\]' | cut -f 2 | cut -d '"' -f 2)" | sed 's#\\/#/#g')"
-	REPLYTO[ID]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","message_id"\]' | cut -f 2 | cut -d '"' -f 2)"
 	REPLYTO[UID]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","id"\]' | cut -f 2)"
-	REPLYTO[FIRST_NAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","first_name"\]' | cut -f 2 | cut -d '"' -f 2)"
-	REPLYTO[LAST_NAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","last_name"\]' | cut -f 2 | cut -d '"' -f 2)"
-	REPLYTO[USERNAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","username"\]' | cut -f 2 | cut -d '"' -f 2)"
+	if [ "${REPLYTO[UID]}" != "" ]; then
+	   REPLYTO[0]="$(echo -e "$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","text"\]' | cut -f 2 | cut -d '"' -f 2)" | sed 's#\\/#/#g')"
+	   REPLYTO[ID]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","message_id"\]' | cut -f 2 | cut -d '"' -f 2)"
+	   REPLYTO[FIRST_NAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","first_name"\]' | cut -f 2 | cut -d '"' -f 2)"
+	   REPLYTO[LAST_NAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","last_name"\]' | cut -f 2 | cut -d '"' -f 2)"
+	   REPLYTO[USERNAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","username"\]' | cut -f 2 | cut -d '"' -f 2)"
+	fi
 
 	# forwarded message from
 	FORWARD[UID]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","forward_from","id"\]' | cut -f 2)"
-	FORWARD[FIRST_NAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","forward_from","first_name"\]' | cut -f 2 | cut -d '"' -f 2)"
-	FORWARD[LAST_NAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","forward_from","last_name"\]' | cut -f 2 | cut -d '"' -f 2)"
-	FORWARD[USERNAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","forward_from","username"\]' | cut -f 2 | cut -d '"' -f 2)"
-	[ "${FORWARD[UID]}" == "" ] || FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
+	if [ "${FORWARD[UID]}" != "" ]; then
+	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
+	   FORWARD[FIRST_NAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","forward_from","first_name"\]' | cut -f 2 | cut -d '"' -f 2)"
+	   FORWARD[LAST_NAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","forward_from","last_name"\]' | cut -f 2 | cut -d '"' -f 2)"
+	   FORWARD[USERNAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","forward_from","username"\]' | cut -f 2 | cut -d '"' -f 2)"
+	fi
 
 	# Audio
 	URLS[AUDIO]="$(get_file $(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","audio","file_id"\]' | cut -f 2 | cut -d '"' -f 2))"
