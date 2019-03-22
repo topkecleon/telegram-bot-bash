@@ -55,12 +55,6 @@ elif [ ! -w "$COUNT" ]; then
 fi
 
 
-pwd
-ls -l
-
-exit
-
-
 source commands.sh source
 URL='https://api.telegram.org/bot'$TOKEN
 
