@@ -49,8 +49,32 @@ else
 	fi
 	case "$MESSAGE" in
 		'/question')
-			startproc "./question"
+			checkproc 
+			if [ $res -gt 0 ] ; then
+				startproc "./question"
+			else
+				send_normal_message "${CHAT[ID]}" "$MESSAGE already running ..."
+			fi
 			;;
+
+		'/run-notify') 
+			myback="notify"; checkback "$myback"
+			if [ $res -gt 0 ] ; then
+				background "./notify 60" "$myback" # notify every 60 seconds
+			else
+				send_normal_message "${CHAT[ID]}" "Background command $myback already running ..."
+			fi
+			;;
+		'/stop-notify')
+			myback="notify"; checkback "$myback"
+			if [ $res -eq 0 ] ; then
+				killback "$myback"
+				send_normal_message "${CHAT[ID]}" "Background command $myback canceled."
+			else
+				send_normal_message "${CHAT[ID]}" "No background command $myback is currently running.."
+			fi
+			;;
+
 		'/info')
 			send_markdown_message "${CHAT[ID]}" "This is bashbot, the *Telegram* bot written entirely in *bash*."
 			;;
@@ -82,7 +106,8 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
      			;;
      			
 		'/cancel')
-			if tmux ls | grep -q $copname; then killproc && send_message "${CHAT[ID]}" "Command canceled.";else send_message "${CHAT[ID]}" "No command is currently running.";fi
+			checkprog
+			if [ $res -eq 0 ] ; then killproc && send_message "${CHAT[ID]}" "Command canceled.";else send_message "${CHAT[ID]}" "No command is currently running.";fi
 			;;
 		*)
 			if tmux ls | grep -v send | grep -q $copname;then inproc; else send_message "${CHAT[ID]}" "$MESSAGE" "safe";fi
