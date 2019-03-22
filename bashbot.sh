@@ -10,7 +10,15 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 
-TMPDIR="./tmp-bot-bash"
+# get location of bashbot.sh an change to bashbot dir
+SCRIPT="./$(basename $0)"
+SCRIPTDIR="$(dirname $0)"
+cd "${SCRIPTDIR}"
+
+if [ ! -w "." ]; then
+	echo -e "\e[0;31mWARNING: $SCRIPTDIR is not writeable!\e[0m"
+	ls -ld .
+fi
 
 if [ ! -f "JSON.sh/JSON.sh" ]; then
 	echo "You did not clone recursively! Downloading JSON.sh..."
@@ -26,15 +34,37 @@ if [ ! -f "token" ]; then
 	echo "$token" >> token
 fi
 
+TMPDIR="./tmp-bot-bash"
 if [ ! -d "$TMPDIR" ]; then
 	mkdir "$TMPDIR"
+elif [ ! -w "$TMPDIR" ]; then
+	clear
+	echo -e "\e[0;31mCan't write to $TMPDIR!.\e[0m"
+	ls -ld $TMPDIR
+	exit 1
 fi
+
+COUNT="./count"
+if [ ! -f "$COUNT" ]; then
+	touch "$COUNT"
+elif [ ! -w "$COUNT" ]; then
+	clear
+	echo -e "\e[0;31mCan't write to $COUNT!.\e[0m"
+	ls -l $COUNT
+	exit 1
+fi
+
+
+pwd
+ls -l
+
+exit
+
 
 source commands.sh source
 URL='https://api.telegram.org/bot'$TOKEN
 
 
-SCRIPT="$0"
 MSG_URL=$URL'/sendMessage'
 LEAVE_URL=$URL'/leaveChat'
 KICK_URL=$URL'/kickChatMember'
@@ -433,7 +463,7 @@ process_client() {
 	source commands.sh
 
 	tmpcount="COUNT${CHAT[ID]}"
-	cat count | grep -q "$tmpcount" || echo "$tmpcount">>count
+	cat ${COUNT} | grep -q "$tmpcount" || echo "$tmpcount">>${COUNT}
 	# To get user count execute bash bashbot.sh count
 }
 
@@ -467,13 +497,13 @@ case "$1" in
 		rm -r $TMPDIR/$3
 		;;
 	"count")
-		echo "A total of $(wc -l count | sed 's/count//g')users used me."
+		echo "A total of $(wc -l ${COUNT} | sed 's/count//g')users used me."
 		;;
 	"broadcast")
-		echo "Sending the broadcast $* to $(wc -l count | sed 's/count//g')users."
-		[ $(wc -l count | sed 's/ count//g') -gt 300 ] && sleep="sleep 0.5"
+		echo "Sending the broadcast $* to $(wc -l ${COUNT} | sed 's/count//g')users."
+		[ $(wc -l ${COUNT} | sed 's/ count//g') -gt 300 ] && sleep="sleep 0.5"
 		shift
-		for f in $(cat count);do send_message ${f//COUNT} "$*"; $sleep;done
+		for f in $(cat ${COUNT});do send_message ${f//COUNT} "$*"; $sleep;done
 		;;
 	"start")
 		clear
