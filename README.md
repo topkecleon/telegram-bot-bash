@@ -97,7 +97,7 @@ You can read incoming data using the following variables:
  * ```${CHAT[TITLE]}```: Title
  * ```${CHAT[TYPE]}```: Type
  * ```${CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]}```: All members are administrators (true if true)
-* ```$REPLYTO```: This array contains the First name, last name, username and user id of the ORIGINAL sender of the REPLEYED message.
+* ```$REPLYTO```: This array contains the First name, last name, username and user id of the ORIGINAL sender of the message REPLIED to.
  * ```${REPLYTO[ID]}```: ID of message wich was replied to
  * ```${REPLYTO[UID]}```: Original user's id
  * ```${REPLYTO[FIRST_NAME]}```: Original user's first name
@@ -167,7 +167,7 @@ Allowed values: typing for text messages, upload_photo for photos, record_video 
 send_action "${CHAT[ID]}" "action"
 ```
 
-#### Interactice Chats and background jobs
+#### Interactice Chats
 To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.
 The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).
 To open up a keyboard in an interactive script, print out the keyboard layout in the following way:
@@ -192,7 +192,15 @@ echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, hi
 ```
 Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.
 
-A background job is similar to an interactive chat, but runs in the background and does only output massages instead of processing input from the user. In contrast to interactive chats it's possible to run multiple background jobs. To create a background job write a script or edit the notify script and use the funtion background to start it:
+To insert a linebreak in your message you can insert ```mynewlinestartshere``` in your echo command:
+```
+echo "Text that will appear in one message  mynewlinestartshere  with this text on a new line"
+```
+
+
+#### Background Jobs
+
+A background job is similar to an interactive chat, but runs in the background and does only output massages instead of processing input from the user. In contrast to interactive chats it's possible to run multiple background jobs. To create a background job write a script or edit the notify script and use the funtion ```background``` to start it:
 ```
 background "./notify" "jobname"
 ```
@@ -200,9 +208,16 @@ All output of the script will be sent to the user or chat. To stop a background 
 ```
 killback "jobname"
 ```
-You can restart the last running background jobs, e.g. after a reboot, with the command:
+You can also suspend and resume the last running background jobs from outside bashbot, e.g. in your startup schripts:
 ```
-./bashbot.sh background
+./bashbot.sh suspendback
+./bashbot.sh resumeback
+```
+
+If you want to kill all background jobs permantly run:
+```
+./bashbot.sh killback
+
 ```
 
 #### Inline queries
@@ -271,9 +286,52 @@ To send a broadcast to all of users that ever used the bot run the following com
 bash bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
 ```
 
+## Handling UTF-8 character sets
 
+### Setting up your Environment
+In general ```bash``` and ```GNU``` utitities are UTF-8 aware, but you have to setup your environment
+and your scripts accordingly:
 
+1. Your Terminal and Editor must support UTF-8:
+   Set Terminal and Editor locale to UTF-8, eg. in ```Settings/Configuration``` select UTF-8 (Unicode) as Charset.
 
-That's it!
+2. Set ```Shell``` environment to UTF-8 in your  ```.profile``` and your scripts. The usual settings are:
+
+```
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
+export LANGUAGE=C.UTF-8
+```
+   If you use other languages, eg. german or US english, change the shell settings to:
+```
+export LC_ALL=de_DE.UTF-8
+export LANG=de_DE.UTF-8
+export LANGUAGE=de_DE.UTF-8
+```
+```
+export LC_ALL=en_US.UTF-8
+export LANG=de_en_US.UTF-8
+export LANGUAGE=den_US.UTF-8
+```
+3. make shure your bot scripts use the correct  settings, eg. include the lines above at the beginning of your scripts
+
+To display all availible locales on your system run ```locale -a | more```.
+
+### UTF-8 in Telegram and Bash
+```UTF-8``` is a variable length encoding of Unicode. UTF-8 is recommended as the default encoding in JSON, XML and HTML, also Telegram make use of it.
+
+The first 128 characters are regular ASCII, so it's a superset of and compatible with ASCII environments. The next 1,920 characters need
+two bytes for encoding and covers almost all ```Latin``` alphabets, also ```Greek```, ```Cyrillic```,
+```Hebrew```, ```Arabic``` and more. See [Wikipedia](https://en.wikipedia.org/wiki/UTF-8) for more deatils.
+
+Telegram send Messages with all characters not fitting in one byte (256 bit) escaped as sequences of ```\uxxxx``` to be regular one byte ASCII (incl. iso-xxx-x), e.g. Emoticons and Arabic characters.
+E.g. the Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as:
+```
+\uD83D\uDE01 \uD83D\uDE18 \u2764\uFE0F \uD83D\uDE0A \uD83D\uDC4D
+```
+
+'\uXXXX' and '\UXXXXXXXX' escaped endocings are supported by zsh, bash, ksh93, mksh and FreeBSD sh, GNU 'printf' and GNU 'echo -e', see this [excelent Answer](https://unix.stackexchange.com/questions/252286/how-to-convert-an-emoticon-specified-by-a-uxxxxx-code-to-utf-8/252295#252295) for more information.
+
+## That's it!
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
