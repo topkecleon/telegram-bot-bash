@@ -525,7 +525,7 @@ case "$1" in
 		echo "Tmux session name $ME" || echo -e '\e[0;31mAn error occurred while starting the bot. \e[0m'
 		send_markdown_message "${CHAT[ID]}" "*Bot started*"
 		;;
-	"background")
+	"background" | "resumeback")
 		clear
 		echo -e '\e[0;32mRestart background processes ...\e[0m'
 		for FILE in ${TMPDIR}/*-back.cmd; do
@@ -552,9 +552,9 @@ case "$1" in
 		send_markdown_message "${CHAT[ID]}" "*Bot stopped*"
 		echo -e '\e[0;32mOK. Bot stopped successfully.\e[0m'
 		;;
-	"killback")
+	"killback" | "suspendback")
 		clear
-		echo -e "\e[0;32mRemove background processes ...\e[0m"
+		echo -e "\e[0;32mStopping background processes ...\e[0m"
 		for FILE in ${TMPDIR}/*-back.cmd; do
 		    if [ "$FILE" == "${TMPDIR}/*-back.cmd" ]; then
 			echo -e "\e[0;31mNo background processes.\e[0m"; break
@@ -563,7 +563,7 @@ case "$1" in
 			JOB="${REMOVE#*:}"
 			fifo="back-${JOB%:*}-${ME}_${REMOVE%%:*}"
 			echo "killbackground  ${fifo}"
-			rm $FILE
+			[ "$1" == "killback" ] && rm $FILE # remove job
 			( tmux kill-session -t "${fifo}"; tmux kill-session -t sendprocess_${fifo}; rm -r $TMPDIR/${fifo}) 2>/dev/null
 		    fi
 		done
@@ -580,7 +580,13 @@ case "$1" in
 		;;
 	*)
 		echo -e '\e[0;31mBAD REQUEST\e[0m'
-		echo -e '\e[0;31mAvailable arguments: outproc, count, broadcast, start, background, kill, killback, help, attach\e[0m'
+		echo -e '\e[0;31mAvailable arguments: outproc, count, broadcast, start, suspendback, resumeback, kill, killback, help, attach\e[0m'
 		;;
 esac
+
+# warn if root
+if [[ $(id -u) -eq 0 ]] ; then
+	echo -e "\n\e[0;31mWARNING: ${SCRIPT} was started as ROOT (UID 0)!\e[0m"
+	echo -e '\e[0;31mYou are at HIGH RISK when processing user input with root privilegs!\e[0m'
+fi
 
