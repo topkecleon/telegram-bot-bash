@@ -1,0 +1,67 @@
+#!/bin/sh
+# description: Start or stop telegram-bash-bot
+#
+### BEGIN INIT INFO
+# Provides: bashbot
+# Required-Start: $network $syslog
+# Required-Stop: $network
+# Default-Start: 2 3 5
+# Default-Stop: 0 1 6
+# Description: Start or stop telegram-bot-bash server
+### END INIT INFO
+
+runas="root"  # not recommended!
+runcmd="echo" # not activated until you edit lines below
+
+# uncomment the next line to run as other user, e.g. www
+# runas="www" 
+
+# uncomment one of the following lines 
+# runcmd="su $runas -s /bin/bash -c "      # runasuser with su
+# runcmd="runuser $runas -s /bin/bash -c " # runasuser with runuser
+
+# uncomment and adjust the the values of the following lines
+# start="/usr/local/telegram-bot-bash/bashbot.sh"
+# lockfile=/usr/local/telegram-bot-bash/lockfile
+# name='new-session' # telegram name of your bot
+
+
+case "$1" in
+'start')
+	$runcmd "$start start" # >/dev/null 2>&1 </dev/null
+	RETVAL=$?
+	if [ "$RETVAL" = "0" ]; then
+		touch $lockfile >/dev/null 2>&1
+	fi
+	;;
+'stop')
+	$runcmd "$start kill"
+	RETVAL=$?
+	if [ "$RETVAL" = "0" ]; then
+		rm -f $lockfile
+	fi
+	;;
+'status')
+	ps -f -u $runas | grep "$name" | grep -qF "bashbot.sh startbot"
+	if [ "$?" = "0" ]; then
+		echo "$name is running"
+		RETVAL=0
+	else
+		echo "$name is stopped"
+		RETVAL=1
+	fi
+	;;
+'restart'|'reload')
+	$stop ; $start
+	RETVAL=$?
+	;;
+'suspendback'|'resumeback'|'killback')
+	$runcmd "$start $1"
+	;;
+*)
+	echo "Usage: $0 { start | stop | restart | reload | suspendback | resumeback | killback }"
+	RETVAL=1
+	;;
+esac
+exit $RETVAL
+

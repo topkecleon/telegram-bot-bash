@@ -1,0 +1,32 @@
+#
+# this is an exmaple crontab file for telegram-bot-bash
+# copy it to /etc/cron.d/bashbot
+#
+# (c) https://github.com/gnadelwartz
+#
+# This file is public domain in the USA and all free countries.
+# Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
+
+SHELL=/bin/sh
+PATH=/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:
+MAILTO=root # place your mailadress here
+
+
+# ┌───────────── minute (0 - 59)
+# │ ┌───────────── hour (0 - 23)
+# │ │ ┌───────────── day of the month (1 - 31)
+# │ │ │ ┌───────────── month (1 - 12)
+# │ │ │ │ ┌───────────── day of the week (0 - 6) (Sunday to Saturday;
+# │ │ │ │ │                                   7 is also Sunday on some systems)
+# │ │ │ │ │
+# │ │ │ │ │
+# * * * * *  USER command to execute
+# * * * * *  root  echo "run every minute!"
+
+# run as www every day at 0:00
+  0 0 * * * www /usr/local/telegram-bot-bash/bashbot.sh start		# (re)start bot
+  0 0 * * * www /usr/local/telegram-bot-bash/bashbot.sh resumeback	# (re)start background jobs
+
+# run as www on 24 of Dec, 12:00
+  0 12 24 12 * www /usr/local/telegram-bot-bash/bashbot.sh broadcast "X-Mas shopping is over!"	# broadcast qa message
+
