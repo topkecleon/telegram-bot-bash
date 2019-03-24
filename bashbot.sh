@@ -83,7 +83,7 @@ FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
 UPD_URL=$URL'/getUpdates?offset='
 GET_URL=$URL'/getFile'
 OFFSET=0
-declare -A USER MESSAGE URLS CONTACT LOCATION CHAT
+declare -A USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO
 
 urlencode() {
 	echo "$*" | sed 's:%:%25:g;s: :%20:g;s:<:%3C:g;s:>:%3E:g;s:#:%23:g;s:{:%7B:g;s:}:%7D:g;s:|:%7C:g;s:\\:%5C:g;s:\^:%5E:g;s:~:%7E:g;s:\[:%5B:g;s:\]:%5D:g;s:`:%60:g;s:;:%3B:g;s:/:%2F:g;s:?:%3F:g;s^:^%3A^g;s:@:%40:g;s:=:%3D:g;s:&:%26:g;s:\$:%24:g;s:\!:%21:g;s:\*:%2A:g'
@@ -423,6 +423,25 @@ process_client() {
 	USER[FIRST_NAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","from","first_name"\]' | cut -f 2 | cut -d '"' -f 2)"
 	USER[LAST_NAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","from","last_name"\]' | cut -f 2 | cut -d '"' -f 2)"
 	USER[USERNAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","from","username"\]' | cut -f 2 | cut -d '"' -f 2)"
+
+	# in reply to message from
+	REPLYTO[UID]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","id"\]' | cut -f 2)"
+	if [ "${REPLYTO[UID]}" != "" ]; then
+	   REPLYTO[0]="$(echo -e "$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","text"\]' | cut -f 2 | cut -d '"' -f 2)" | sed 's#\\/#/#g')"
+	   REPLYTO[ID]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","message_id"\]' | cut -f 2 | cut -d '"' -f 2)"
+	   REPLYTO[FIRST_NAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","first_name"\]' | cut -f 2 | cut -d '"' -f 2)"
+	   REPLYTO[LAST_NAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","last_name"\]' | cut -f 2 | cut -d '"' -f 2)"
+	   REPLYTO[USERNAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","username"\]' | cut -f 2 | cut -d '"' -f 2)"
+	fi
+
+	# forwarded message from
+	FORWARD[UID]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","forward_from","id"\]' | cut -f 2)"
+	if [ "${FORWARD[UID]}" != "" ]; then
+	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
+	   FORWARD[FIRST_NAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","forward_from","first_name"\]' | cut -f 2 | cut -d '"' -f 2)"
+	   FORWARD[LAST_NAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","forward_from","last_name"\]' | cut -f 2 | cut -d '"' -f 2)"
+	   FORWARD[USERNAME]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","forward_from","username"\]' | cut -f 2 | cut -d '"' -f 2)"
+	fi
 
 	# Audio
 	URLS[AUDIO]="$(get_file $(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","audio","file_id"\]' | cut -f 2 | cut -d '"' -f 2))"
