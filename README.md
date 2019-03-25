@@ -164,7 +164,7 @@ To forward messages use the ```forward``` function:
 forward "${CHAT[ID]}" "from_chat_id" "message_id"
 ```
 
-#### For safety and performance reasoms I recommend to use send_xxxx_message direct and not the universal send_message function.*
+#### For safety and performance reasoms I recommend to use send_xxxx_message direct and not the universal send_message function.
 To send regular text without any markdown use:
 ```
 send_text_message "${CHAT[ID]}" "lol"
@@ -178,15 +178,14 @@ To send text with html:
 send_html_message "${CHAT[ID]}" "lol <b>bold</b>"
 ```
 
-If your Bot is Admin in a Chat you can delete every message, if not you can delete only messages.
-
+If your Bot is Admin in a Chat you can delete every message, if not you can delete only your messages.
 To delete a message with a known ${MESSAGE[ID]} you can simple use:
 ```
 delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
 ```
 
 #### Send files, location  etc.
-To send images, videos, voice files, photos ecc use the ```send_photo``` function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):
+To send images, videos, voice files, photos etc. use the ```send_photo``` function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):
 ```
 send_file "${CHAT[ID]}" "/home/user/doge.jpg" "Lool"
 ```
@@ -260,6 +259,7 @@ If you want to kill all background jobs permantly run:
 ./bashbot.sh killback
 
 ```
+Note: If your run bashbot as an other user or system service, see Expert use.
 
 #### Inline queries
 The following commands allows users to interact with your bot via *inline queries*.
@@ -315,7 +315,7 @@ To use the functions provided in this script in other scripts simply source bash
 
 
 ## Managing your Bot
-####Note: running bashbot as root is highly danger and not recommended. See Expert useage below.
+#### Note: running bashbot as root is highly danger and not recommended. See Expert usage below.
 
 ### Start / Stop
 Start or Stop your Bot use the following commands:
@@ -386,7 +386,7 @@ E.g. the Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as:
 
 
 ## Expert Usage
-Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it e.g. by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for an experiend linux user.
+Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it e.g. by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for experiend linux users.
 
 ### Run as other user or system service
 Running bashbot as an other user is only possible (and strongly recommended) for root.
@@ -397,9 +397,9 @@ To start your bot use:
 ```
 ./bashbot.rc start
 ```
-Now type ```ps -ef | grep bashbot``` to verify your Bot is running as the desired user.
+Type ```ps -ef | grep bashbot``` to verify your Bot is running as the desired user.
 
-If you use bashbot.rc to start your Bot as an other user your must use  bashbot.rc to manage your Bot! The following commands are availible:
+If you started bashbot by bashbot.rc you must use bashbot.rc also to manage your Bot! The following commands are availible:
 ```
 ./bashbot.rc start
 ./bashbot.rc stop
@@ -407,14 +407,14 @@ If you use bashbot.rc to start your Bot as an other user your must use  bashbot.
 ./bashbot.rc suspendback
 ./bashbot.rc resumeback
 ./bashbot.rc killback
-`` 
+```
 To use bashbot as a system servive include your working ```bashbot.rc``` in your init system (systemd, /etc/init.d).
 
 ### Scedule bashbot from Cron
 An example crontab is provided in ```bashbot.cron```.
 
 - If you are running bashbot with your local user-ID, copy the examples to your crontab and remove username ```www```.
-- if you run crontab as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username````www``` with the username you want to run bashbot. copy the modified file to /etc/cron.d
+- if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username````www``` with the username you want to run bashbot. copy the modified file to /etc/cron.d
 
 ## That's it!
 
