@@ -539,8 +539,8 @@ case "$1" in
 			chown -R "$TOUSER" . *
 			chmod 711 .
 			chmod -R a-w *
-			chmod u+w "$COUNT" "$TMPDIR" *.log
-			chmod o-r,o-w "$COUNT" "$TMPDIR" token
+			chmod -R u+w "$COUNT" "$TMPDIR" *.log
+			chmod -R o-r,o-w "$COUNT" "$TMPDIR" token
 			ls -la
 			exit			
 		fi
