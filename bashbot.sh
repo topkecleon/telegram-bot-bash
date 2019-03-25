@@ -2,7 +2,7 @@
 
 # bashbot, the Telegram bot written in bash.
 # Written by Drew (@topkecleon) and Daniil Gentili (@danogentili).
-# Also contributed: JuanPotato, BigNerd95, TiagoDanin, iicc1.
+# Also contributed: JuanPotato, BigNerd95, TiagoDanin, iicc1, Gnadelwartz.
 # https://github.com/topkecleon/telegram-bot-bash
 
 # Depends on JSON.sh (http://github.com/dominictarr/JSON.sh) (MIT/Apache),
