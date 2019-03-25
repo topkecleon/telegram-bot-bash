@@ -525,6 +525,26 @@ case "$1" in
 		echo "Tmux session name $ME" || echo -e '\e[0;31mAn error occurred while starting the bot. \e[0m'
 		send_markdown_message "${CHAT[ID]}" "*Bot started*"
 		;;
+	"init") # adjust users and permissions
+		MYUSER="$USER"
+		[[ $(id -u) -eq 0 ]] && MYUSER="www"
+		echo -n "Enter User to run basbot [$MYUSER]: "
+		read TOUSER
+		[ "$TOUSER" = "" ] && TOUSER="$MYUSER"
+		if ! compgen -u "$TOUSER" 2>&1 >/dev/null; then
+			echo -e "\e[0;31mUser \"$TOUSER\" not found!\e[0m"
+			exit 2
+		else
+			echo "Adjusting Owner and Permissions ..."
+			chown -R "$TOUSER" . *
+			chmod 711 .
+			chmod -R a-w *
+			chmod u+w "$COUNT" "$TMPDIR" *.log
+			chmod o-r,o-w "$COUNT" "$TMPDIR" token
+			ls -la
+			exit			
+		fi
+		;;
 	"background" | "resumeback")
 		clear
 		echo -e '\e[0;32mRestart background processes ...\e[0m'

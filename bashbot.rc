@@ -11,7 +11,7 @@
 ### END INIT INFO
 
 runas="root"  # not recommended!
-runcmd="echo" # not activated until you edit lines below
+runcmd="echo" # not actived until you edit lines below
 
 # uncomment the next line to run as other user, e.g. www
 # runas="www" 
@@ -20,10 +20,10 @@ runcmd="echo" # not activated until you edit lines below
 # runcmd="su $runas -s /bin/bash -c "      # runasuser with su
 # runcmd="runuser $runas -s /bin/bash -c " # runasuser with runuser
 
-# uncomment and adjust the the values of the following lines
-# start="/usr/local/telegram-bot-bash/bashbot.sh"
-# lockfile=/usr/local/telegram-bot-bash/lockfile
-# name='new-session' # telegram name of your bot
+# adjust the the values of the following lines
+start="/usr/local/telegram-bot-bash/bashbot.sh"
+lockfile=/usr/local/telegram-bot-bash/lockfile
+name='new-session' # telegram name of your bot
 
 
 case "$1" in
@@ -52,11 +52,12 @@ case "$1" in
 	fi
 	;;
 'restart'|'reload')
-	$stop ; $start
+	$0 stop; $0 start 
 	RETVAL=$?
 	;;
 'suspendback'|'resumeback'|'killback')
 	$runcmd "$start $1"
+	RETVAL=$?
 	;;
 *)
 	echo "Usage: $0 { start | stop | restart | reload | suspendback | resumeback | killback }"
