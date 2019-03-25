@@ -83,18 +83,18 @@ group. This step is up to you actually.
 ```
 git clone --recursive https://github.com/topkecleon/telegram-bot-bash
 ```
-3. Change to directory ```telegram-bot.bash``` and run ```./bashbot.sh init``` and follow the instructions.
+3. Change to directory ```telegram-bot.bash```, run ```./bashbot.sh init``` and follow the instructions. At this stage you are asked for your Bots token given by botfather.
 
 
 Then start editing the ```commands.sh``` file.
 
 ## Programming your own Bot
 
-All Commands for the Bot are at the end the ```commands.sh``` file. Here you ifind some exmples how to process messages and send out text.
+All Commands for the Bot are at the end the ```commands.sh``` file. Here you find some examples how to process messages and send out text.
 The default commands like /info, /start, /help /cancel should't changed.
 
 ### Receive data
-Evertime a Message is recived, you can read incoming data using the following variables:
+Evertime a Message is recieved, you can read incoming data using the following variables:
 
 * ```$MESSAGE```: Incoming messages
 * ```${MESSAGE[ID]}```: ID of incoming message
@@ -143,7 +143,7 @@ Evertime a Message is recived, you can read incoming data using the following va
 
 ### Usage of bashbot functions
 
-#### Send_messages
+#### send_message
 To send messages use the ```send_message``` function:
 ```
 send_message "${CHAT[ID]}" "lol"
@@ -163,7 +163,8 @@ To forward messages use the ```forward``` function:
 ```
 forward "${CHAT[ID]}" "from_chat_id" "message_id"
 ```
-*For safety and performance reasoms I recommend to use send_xxxx_message direct and not the universal send_message function.*
+
+#### For safety and performance reasoms I recommend to use send_xxxx_message direct and not the universal send_message function.*
 To send regular text without any markdown use:
 ```
 send_text_message "${CHAT[ID]}" "lol"
@@ -174,10 +175,17 @@ send_markdown_message "${CHAT[ID]}" "lol *bold*"
 ```
 To send text with html:
 ```
-send_html_message "${CHAT[ID]}" "lol <b>bold</b>
+send_html_message "${CHAT[ID]}" "lol <b>bold</b>"
 ```
 
-#### Send files etc.
+If your Bot is Admin in a Chat you can delete every message, if not you can delete only messages.
+
+To delete a message with a known ${MESSAGE[ID]} you can simple use:
+```
+delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
+```
+
+#### Send files, location  etc.
 To send images, videos, voice files, photos ecc use the ```send_photo``` function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):
 ```
 send_file "${CHAT[ID]}" "/home/user/doge.jpg" "Lool"
@@ -307,9 +315,16 @@ To use the functions provided in this script in other scripts simply source bash
 
 
 ## Managing your Bot
+####Note: running bashbot as root is highly danger and not recommended. See Expert useage below.
 
 ### Start / Stop
-
+Start or Stop your Bot use the following commands:
+```
+bash bashbot.sh start
+```
+```
+bash bashbot.sh kill
+```
 
 ### User count
 To count the total number of users that ever used the bot run the following command:
@@ -369,6 +384,37 @@ E.g. the Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as:
 
 '\uXXXX' and '\UXXXXXXXX' escaped endocings are supported by zsh, bash, ksh93, mksh and FreeBSD sh, GNU 'printf' and GNU 'echo -e', see [this Stackexchange Answer](https://unix.stackexchange.com/questions/252286/how-to-convert-an-emoticon-specified-by-a-uxxxxx-code-to-utf-8/252295#252295) for more information.
 
+
+## Expert Usage
+Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it e.g. by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for an experiend linux user.
+
+### Run as other user or system service
+Running bashbot as an other user is only possible (and strongly recommended) for root.
+
+Edit the example rc file ```bashbot.rc``` and set the value ```runas``` to the user you want to run bashbot. Uncomment the ```runcmd``` availible on your system and fill the name of your Bot in ```name```. Now you can start ans stop your bot by bashbot.rc
+
+To start your bot use: 
+```
+./bashbot.rc start
+```
+Now type ```ps -ef | grep bashbot``` to verify your Bot is running as the desired user.
+
+If you use bashbot.rc to start your Bot as an other user your must use  bashbot.rc to manage your Bot! The following commands are availible:
+```
+./bashbot.rc start
+./bashbot.rc stop
+./bashbot.rc status
+./bashbot.rc suspendback
+./bashbot.rc resumeback
+./bashbot.rc killback
+`` 
+To use bashbot as a system servive include your working ```bashbot.rc``` in your init system (systemd, /etc/init.d).
+
+### Scedule bashbot from Cron
+An example crontab is provided in ```bashbot.cron```.
+
+- If you are running bashbot with your local user-ID, copy the examples to your crontab and remove username ```www```.
+- if you run crontab as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username````www``` with the username you want to run bashbot. copy the modified file to /etc/cron.d
 
 ## That's it!
 
