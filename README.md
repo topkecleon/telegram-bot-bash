@@ -83,60 +83,67 @@ group. This step is up to you actually.
 ```
 git clone --recursive https://github.com/topkecleon/telegram-bot-bash
 ```
-3. Change to directory ```telegram-bot.bash``` and run ```./bashbot.sh init``` and follow the instructions.
+3. Change to directory ```telegram-bot.bash```, run ```./bashbot.sh init``` and follow the instructions. At this stage you are asked for your Bots token given by botfather.
 
 
-Then start editing the commands.sh.
+Then start editing the ```commands.sh``` file.
+
+## Programming your own Bot
+
+All Commands for the Bot are at the end the ```commands.sh``` file. Here you find some examples how to process messages and send out text.
+The default commands like /info, /start, /help /cancel should't changed.
 
 ### Receive data
-You can read incoming data using the following variables:
+Evertime a Message is recieved, you can read incoming data using the following variables:
 
 * ```$MESSAGE```: Incoming messages
 * ```${MESSAGE[ID]}```: ID of incoming message
 * ```$CAPTION```: Captions
 * ```$REPLYTO```: Original message wich was replied to
 * ```$USER```: This array contains the First name, last name, username and user id of the sender of the current message.
- * ```${USER[ID]}```: User id
- * ```${USER[FIRST_NAME]}```: User's first name
- * ```${USER[LAST_NAME]}```: User's last name
- * ```${USER[USERNAME]}```: Username
+  - ```${USER[ID]}```: User id
+  - ```${USER[FIRST_NAME]}```: User's first name
+  - ```${USER[LAST_NAME]}```: User's last name
+  - ```${USER[USERNAME]}```: Username
 * ```$CHAT```: This array contains the First name, last name, username, title and user id of the chat of the current message.
- * ```${CHAT[ID]}```: Chat id
- * ```${CHAT[FIRST_NAME]}```: Chat's first name
- * ```${CHAT[LAST_NAME]}```: Chat's last name
- * ```${CHAT[USERNAME]}```: Username
- * ```${CHAT[TITLE]}```: Title
- * ```${CHAT[TYPE]}```: Type
- * ```${CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]}```: All members are administrators (true if true)
+  - ```${CHAT[ID]}```: Chat id
+  - ```${CHAT[FIRST_NAME]}```: Chat's first name
+  - ```${CHAT[LAST_NAME]}```: Chat's last name
+  - ```${CHAT[USERNAME]}```: Username
+  - ```${CHAT[TITLE]}```: Title
+  - ```${CHAT[TYPE]}```: Type
+  - ```${CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]}```: All members are administrators (true if true)
 * ```$REPLYTO```: This array contains the First name, last name, username and user id of the ORIGINAL sender of the message REPLIED to.
- * ```${REPLYTO[ID]}```: ID of message wich was replied to
- * ```${REPLYTO[UID]}```: Original user's id
- * ```${REPLYTO[FIRST_NAME]}```: Original user's first name
- * ```${REPLYTO[LAST_NAME]}```: Original user's' last name
- * ```${REPLYTO[USERNAME]}```: Original user's username
+  - ```${REPLYTO[ID]}```: ID of message wich was replied to
+  - ```${REPLYTO[UID]}```: Original user's id
+  - ```${REPLYTO[FIRST_NAME]}```: Original user's first name
+  - ```${REPLYTO[LAST_NAME]}```: Original user's' last name
+  - ```${REPLYTO[USERNAME]}```: Original user's username
 * ```$FORWARD```: This array contains the First name, last name, username and user id of the ORIGINAL sender of the FORWARDED message.
- * ```${FORWARD[ID]}```: Same as MESSAGE[ID] if message is forwarded
- * ```${FORWARD[UID]}```: Original user's id
- * ```${FORWARD[FIRST_NAME]}```: Original user's first name
- * ```${FORWARD[LAST_NAME]}```: Original user's' last name
- * ```${FORWARD[USERNAME]}```: Original user's username
+  - ```${FORWARD[ID]}```: Same as MESSAGE[ID] if message is forwarded
+  - ```${FORWARD[UID]}```: Original user's id
+  - ```${FORWARD[FIRST_NAME]}```: Original user's first name
+  - ```${FORWARD[LAST_NAME]}```: Original user's' last name
+  - ```${FORWARD[USERNAME]}```: Original user's username
 * ```$URLS```: This array contains documents, audio files, stickers, voice recordings and stickers stored in the form of URLs.
- * ```${URLS[AUDIO]}```: Audio files
- * ```${URLS[VIDEO]}```: Videos
- * ```${URLS[PHOTO]}```: Photos (maximum quality)
- * ```${URLS[VOICE]}```: Voice recordings
- * ```${URLS[STICKER]}```: Stickers
- * ```${URLS[DOCUMENT]}```: Any other file
+  - ```${URLS[AUDIO]}```: Audio files
+  - ```${URLS[VIDEO]}```: Videos
+  - ```${URLS[PHOTO]}```: Photos (maximum quality)
+  - ```${URLS[VOICE]}```: Voice recordings
+  - ```${URLS[STICKER]}```: Stickers
+  - ```${URLS[DOCUMENT]}```: Any other file
 * ```$CONTACT```: This array contains info about contacts sent in a chat.
- * ```${CONTACT[NUMBER]}```: Phone number
- * ```${CONTACT[FIRST_NAME]}```: First name
- * ```${CONTACT[LAST_NAME]}```: Last name
- * ```${CONTACT[ID]}```: User id
+  - ```${CONTACT[NUMBER]}```: Phone number
+  - ```${CONTACT[FIRST_NAME]}```: First name
+  - ```${CONTACT[LAST_NAME]}```: Last name
+  - ```${CONTACT[ID]}```: User id
 * ```$LOCATION```: This array contains info about locations sent in a chat.
- * ```${LOCATION[LONGITUDE]}```: Longitude
- * ```${LOCATION[LATITUDE]}```: Latitude
+  - ```${LOCATION[LONGITUDE]}```: Longitude
+  - ```${LOCATION[LATITUDE]}```: Latitude
 
-### Usage
+### Usage of bashbot functions
+
+#### send_message
 To send messages use the ```send_message``` function:
 ```
 send_message "${CHAT[ID]}" "lol"
@@ -152,7 +159,33 @@ This function also allows a third parameter that disables additional function pa
 ```
 send_message "${CHAT[ID]}" "lol" "safe"
 ```
-To send images, videos, voice files, photos ecc use the ```send_photo``` function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):
+To forward messages use the ```forward``` function:
+```
+forward "${CHAT[ID]}" "from_chat_id" "message_id"
+```
+
+#### For safety and performance reasoms I recommend to use send_xxxx_message direct and not the universal send_message function.
+To send regular text without any markdown use:
+```
+send_text_message "${CHAT[ID]}" "lol"
+```
+To send text with markdown:
+```
+send_markdown_message "${CHAT[ID]}" "lol *bold*"
+```
+To send text with html:
+```
+send_html_message "${CHAT[ID]}" "lol <b>bold</b>"
+```
+
+If your Bot is Admin in a Chat you can delete every message, if not you can delete only your messages.
+To delete a message with a known ${MESSAGE[ID]} you can simple use:
+```
+delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
+```
+
+#### Send files, location  etc.
+To send images, videos, voice files, photos etc. use the ```send_photo``` function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):
 ```
 send_file "${CHAT[ID]}" "/home/user/doge.jpg" "Lool"
 ```
@@ -167,10 +200,6 @@ send_location "${CHAT[ID]}" "Latitude" "Longitude"
 To send venues use the ```send_venue``` function:
 ```
 send_venue "${CHAT[ID]}" "Latitude" "Longitude" "Title" "Address" "optional foursquare id"
-```
-To forward messages use the ```forward``` function:
-```
-forward "${CHAT[ID]}" "from_chat_id" "message_id"
 ```
 To send a chat action use the ```send_action``` function.
 Allowed values: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for locations.
@@ -230,6 +259,7 @@ If you want to kill all background jobs permantly run:
 ./bashbot.sh killback
 
 ```
+Note: If your run bashbot as an other user or system service, see Expert use.
 
 #### Inline queries
 The following commands allows users to interact with your bot via *inline queries*.
@@ -284,14 +314,25 @@ If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```.
 To use the functions provided in this script in other scripts simply source bashbot: ```source bashbot.sh```
 
 
-## User count
+## Managing your Bot
+#### Note: running bashbot as root is highly danger and not recommended. See Expert usage below.
+
+### Start / Stop
+Start or Stop your Bot use the following commands:
+```
+bash bashbot.sh start
+```
+```
+bash bashbot.sh kill
+```
+
+### User count
 To count the total number of users that ever used the bot run the following command:
 ```
 bash bashbot.sh count
 ```
 
-
-## Sending broadcasts to all users
+### Sending broadcasts to all users
 To send a broadcast to all of users that ever used the bot run the following command:
 ```
 bash bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
@@ -326,7 +367,7 @@ export LANGUAGE=den_US.UTF-8
 ```
 3. make shure your bot scripts use the correct  settings, eg. include the lines above at the beginning of your scripts
 
-To display all availible locales on your system run ```locale -a | more```.
+To display all availible locales on your system run ```locale -a | more```. [Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8)
 
 ### UTF-8 in Telegram and Bash
 ```UTF-8``` is a variable length encoding of Unicode. UTF-8 is recommended as the default encoding in JSON, XML and HTML, also Telegram make use of it.
@@ -341,7 +382,39 @@ E.g. the Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as:
 \uD83D\uDE01 \uD83D\uDE18 \u2764\uFE0F \uD83D\uDE0A \uD83D\uDC4D
 ```
 
-'\uXXXX' and '\UXXXXXXXX' escaped endocings are supported by zsh, bash, ksh93, mksh and FreeBSD sh, GNU 'printf' and GNU 'echo -e', see this [excelent Answer](https://unix.stackexchange.com/questions/252286/how-to-convert-an-emoticon-specified-by-a-uxxxxx-code-to-utf-8/252295#252295) for more information.
+'\uXXXX' and '\UXXXXXXXX' escaped endocings are supported by zsh, bash, ksh93, mksh and FreeBSD sh, GNU 'printf' and GNU 'echo -e', see [this Stackexchange Answer](https://unix.stackexchange.com/questions/252286/how-to-convert-an-emoticon-specified-by-a-uxxxxx-code-to-utf-8/252295#252295) for more information.
+
+
+## Expert Usage
+Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it e.g. by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for experiend linux users.
+
+### Run as other user or system service
+Running bashbot as an other user is only possible (and strongly recommended) for root.
+
+Edit the example rc file ```bashbot.rc``` and set the value ```runas``` to the user you want to run bashbot. Uncomment the ```runcmd``` availible on your system and fill the name of your Bot in ```name```. Now you can start ans stop your bot by bashbot.rc
+
+To start your bot use: 
+```
+./bashbot.rc start
+```
+Type ```ps -ef | grep bashbot``` to verify your Bot is running as the desired user.
+
+If you started bashbot by bashbot.rc you must use bashbot.rc also to manage your Bot! The following commands are availible:
+```
+./bashbot.rc start
+./bashbot.rc stop
+./bashbot.rc status
+./bashbot.rc suspendback
+./bashbot.rc resumeback
+./bashbot.rc killback
+```
+To use bashbot as a system servive include your working ```bashbot.rc``` in your init system (systemd, /etc/init.d).
+
+### Scedule bashbot from Cron
+An example crontab is provided in ```bashbot.cron```.
+
+- If you are running bashbot with your local user-ID, copy the examples to your crontab and remove username ```www```.
+- if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username````www``` with the username you want to run bashbot. copy the modified file to /etc/cron.d
 
 ## That's it!
 
