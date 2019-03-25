@@ -4,6 +4,11 @@ A Telegram bot written in bash.
 Depends on [tmux](http://github.com/tmux/tmux).
 Uses [JSON.sh](http://github.com/dominictarr/JSON.sh).
 
+Written by Drew (@topkecleon) and Daniil Gentili (@danogentili).
+Also contributed: JuanPotato, BigNerd95, TiagoDanin, iicc1, Kay M (@gnadelwartz).
+
+[Download from github](https://github.com/topkecleon/telegram-bot-bash)
+
 Released to the public domain wherever applicable.
 Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/copying/).
 
@@ -69,13 +74,19 @@ group. This step is up to you actually.
 13. @botfather replies with `Success! The new status is: DISABLED. /help`
 
 ### Install bashbot
-Clone the repository:
+1. Go to the directory you want to install bashbot, e.g.
+
+   - your $HOME directory (install and run with your user-ID)
+   - /usr/local if you want to run as service
+
+2. Clone the repository:
 ```
 git clone --recursive https://github.com/topkecleon/telegram-bot-bash
 ```
+3. Change to directory ```telegram-bot.bash``` and run ```./bashbot.sh init``` and follow the instructions.
 
-Create a file called token and paste the token in there.
-Then start editing the commands.
+
+Then start editing the commands.sh.
 
 ### Receive data
 You can read incoming data using the following variables:
