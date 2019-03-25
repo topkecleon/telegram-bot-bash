@@ -86,57 +86,64 @@ git clone --recursive https://github.com/topkecleon/telegram-bot-bash
 3. Change to directory ```telegram-bot.bash``` and run ```./bashbot.sh init``` and follow the instructions.
 
 
-Then start editing the commands.sh.
+Then start editing the ```commands.sh``` file.
+
+## Programming your own Bot
+
+All Commands for the Bot are at the end the ```commands.sh``` file. Here you ifind some exmples how to process messages and send out text.
+The default commands like /info, /start, /help /cancel should't changed.
 
 ### Receive data
-You can read incoming data using the following variables:
+Evertime a Message is recived, you can read incoming data using the following variables:
 
 * ```$MESSAGE```: Incoming messages
 * ```${MESSAGE[ID]}```: ID of incoming message
 * ```$CAPTION```: Captions
 * ```$REPLYTO```: Original message wich was replied to
 * ```$USER```: This array contains the First name, last name, username and user id of the sender of the current message.
- * ```${USER[ID]}```: User id
- * ```${USER[FIRST_NAME]}```: User's first name
- * ```${USER[LAST_NAME]}```: User's last name
- * ```${USER[USERNAME]}```: Username
+  - ```${USER[ID]}```: User id
+  - ```${USER[FIRST_NAME]}```: User's first name
+  - ```${USER[LAST_NAME]}```: User's last name
+  - ```${USER[USERNAME]}```: Username
 * ```$CHAT```: This array contains the First name, last name, username, title and user id of the chat of the current message.
- * ```${CHAT[ID]}```: Chat id
- * ```${CHAT[FIRST_NAME]}```: Chat's first name
- * ```${CHAT[LAST_NAME]}```: Chat's last name
- * ```${CHAT[USERNAME]}```: Username
- * ```${CHAT[TITLE]}```: Title
- * ```${CHAT[TYPE]}```: Type
- * ```${CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]}```: All members are administrators (true if true)
+  - ```${CHAT[ID]}```: Chat id
+  - ```${CHAT[FIRST_NAME]}```: Chat's first name
+  - ```${CHAT[LAST_NAME]}```: Chat's last name
+  - ```${CHAT[USERNAME]}```: Username
+  - ```${CHAT[TITLE]}```: Title
+  - ```${CHAT[TYPE]}```: Type
+  - ```${CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]}```: All members are administrators (true if true)
 * ```$REPLYTO```: This array contains the First name, last name, username and user id of the ORIGINAL sender of the message REPLIED to.
- * ```${REPLYTO[ID]}```: ID of message wich was replied to
- * ```${REPLYTO[UID]}```: Original user's id
- * ```${REPLYTO[FIRST_NAME]}```: Original user's first name
- * ```${REPLYTO[LAST_NAME]}```: Original user's' last name
- * ```${REPLYTO[USERNAME]}```: Original user's username
+  - ```${REPLYTO[ID]}```: ID of message wich was replied to
+  - ```${REPLYTO[UID]}```: Original user's id
+  - ```${REPLYTO[FIRST_NAME]}```: Original user's first name
+  - ```${REPLYTO[LAST_NAME]}```: Original user's' last name
+  - ```${REPLYTO[USERNAME]}```: Original user's username
 * ```$FORWARD```: This array contains the First name, last name, username and user id of the ORIGINAL sender of the FORWARDED message.
- * ```${FORWARD[ID]}```: Same as MESSAGE[ID] if message is forwarded
- * ```${FORWARD[UID]}```: Original user's id
- * ```${FORWARD[FIRST_NAME]}```: Original user's first name
- * ```${FORWARD[LAST_NAME]}```: Original user's' last name
- * ```${FORWARD[USERNAME]}```: Original user's username
+  - ```${FORWARD[ID]}```: Same as MESSAGE[ID] if message is forwarded
+  - ```${FORWARD[UID]}```: Original user's id
+  - ```${FORWARD[FIRST_NAME]}```: Original user's first name
+  - ```${FORWARD[LAST_NAME]}```: Original user's' last name
+  - ```${FORWARD[USERNAME]}```: Original user's username
 * ```$URLS```: This array contains documents, audio files, stickers, voice recordings and stickers stored in the form of URLs.
- * ```${URLS[AUDIO]}```: Audio files
- * ```${URLS[VIDEO]}```: Videos
- * ```${URLS[PHOTO]}```: Photos (maximum quality)
- * ```${URLS[VOICE]}```: Voice recordings
- * ```${URLS[STICKER]}```: Stickers
- * ```${URLS[DOCUMENT]}```: Any other file
+  - ```${URLS[AUDIO]}```: Audio files
+  - ```${URLS[VIDEO]}```: Videos
+  - ```${URLS[PHOTO]}```: Photos (maximum quality)
+  - ```${URLS[VOICE]}```: Voice recordings
+  - ```${URLS[STICKER]}```: Stickers
+  - ```${URLS[DOCUMENT]}```: Any other file
 * ```$CONTACT```: This array contains info about contacts sent in a chat.
- * ```${CONTACT[NUMBER]}```: Phone number
- * ```${CONTACT[FIRST_NAME]}```: First name
- * ```${CONTACT[LAST_NAME]}```: Last name
- * ```${CONTACT[ID]}```: User id
+  - ```${CONTACT[NUMBER]}```: Phone number
+  - ```${CONTACT[FIRST_NAME]}```: First name
+  - ```${CONTACT[LAST_NAME]}```: Last name
+  - ```${CONTACT[ID]}```: User id
 * ```$LOCATION```: This array contains info about locations sent in a chat.
- * ```${LOCATION[LONGITUDE]}```: Longitude
- * ```${LOCATION[LATITUDE]}```: Latitude
+  - ```${LOCATION[LONGITUDE]}```: Longitude
+  - ```${LOCATION[LATITUDE]}```: Latitude
 
-### Usage
+### Usage of bashbot functions
+
+#### Send_messages
 To send messages use the ```send_message``` function:
 ```
 send_message "${CHAT[ID]}" "lol"
@@ -152,6 +159,25 @@ This function also allows a third parameter that disables additional function pa
 ```
 send_message "${CHAT[ID]}" "lol" "safe"
 ```
+To forward messages use the ```forward``` function:
+```
+forward "${CHAT[ID]}" "from_chat_id" "message_id"
+```
+*For safety and performance reasoms I recommend to use send_xxxx_message direct and not the universal send_message function.*
+To send regular text without any markdown use:
+```
+send_text_message "${CHAT[ID]}" "lol"
+```
+To send text with markdown:
+```
+send_markdown_message "${CHAT[ID]}" "lol *bold*"
+```
+To send text with html:
+```
+send_html_message "${CHAT[ID]}" "lol <b>bold</b>
+```
+
+#### Send files etc.
 To send images, videos, voice files, photos ecc use the ```send_photo``` function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):
 ```
 send_file "${CHAT[ID]}" "/home/user/doge.jpg" "Lool"
@@ -167,10 +193,6 @@ send_location "${CHAT[ID]}" "Latitude" "Longitude"
 To send venues use the ```send_venue``` function:
 ```
 send_venue "${CHAT[ID]}" "Latitude" "Longitude" "Title" "Address" "optional foursquare id"
-```
-To forward messages use the ```forward``` function:
-```
-forward "${CHAT[ID]}" "from_chat_id" "message_id"
 ```
 To send a chat action use the ```send_action``` function.
 Allowed values: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for locations.
@@ -284,14 +306,18 @@ If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```.
 To use the functions provided in this script in other scripts simply source bashbot: ```source bashbot.sh```
 
 
-## User count
+## Managing your Bot
+
+### Start / Stop
+
+
+### User count
 To count the total number of users that ever used the bot run the following command:
 ```
 bash bashbot.sh count
 ```
 
-
-## Sending broadcasts to all users
+### Sending broadcasts to all users
 To send a broadcast to all of users that ever used the bot run the following command:
 ```
 bash bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
@@ -326,7 +352,7 @@ export LANGUAGE=den_US.UTF-8
 ```
 3. make shure your bot scripts use the correct  settings, eg. include the lines above at the beginning of your scripts
 
-To display all availible locales on your system run ```locale -a | more```.
+To display all availible locales on your system run ```locale -a | more```. [Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8)
 
 ### UTF-8 in Telegram and Bash
 ```UTF-8``` is a variable length encoding of Unicode. UTF-8 is recommended as the default encoding in JSON, XML and HTML, also Telegram make use of it.
@@ -341,7 +367,8 @@ E.g. the Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as:
 \uD83D\uDE01 \uD83D\uDE18 \u2764\uFE0F \uD83D\uDE0A \uD83D\uDC4D
 ```
 
-'\uXXXX' and '\UXXXXXXXX' escaped endocings are supported by zsh, bash, ksh93, mksh and FreeBSD sh, GNU 'printf' and GNU 'echo -e', see this [excelent Answer](https://unix.stackexchange.com/questions/252286/how-to-convert-an-emoticon-specified-by-a-uxxxxx-code-to-utf-8/252295#252295) for more information.
+'\uXXXX' and '\UXXXXXXXX' escaped endocings are supported by zsh, bash, ksh93, mksh and FreeBSD sh, GNU 'printf' and GNU 'echo -e', see [this Stackexchange Answer](https://unix.stackexchange.com/questions/252286/how-to-convert-an-emoticon-specified-by-a-uxxxxx-code-to-utf-8/252295#252295) for more information.
+
 
 ## That's it!
 
