@@ -405,7 +405,7 @@ process_updates() {
 	done
 }
 process_client() {
-	local TMP="$TMPDIR/$RANDOM-MESSAGE"
+	local TMP="$TMPDIR/$RANDOM$RANDOM-MESSAGE"
 	echo "$UPDATE" >"$TMP"
 	# Message
 	MESSAGE[0]="$(echo -e "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","text"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")" | sed 's#\\/#/#g')"
