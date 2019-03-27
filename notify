@@ -3,6 +3,15 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 
+# adjust your language setting here
+# https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
+export LANGUAGE=C.UTF-8
+
+# discard STDIN for background jobs!
+cat >/dev/null & 
+
 # check if $1 is a number
 re='^[0-9]+$'
 if [[ $1 =~ $re ]] ; then

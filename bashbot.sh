@@ -535,12 +535,14 @@ case "$1" in
 			echo -e "\e[0;31mUser \"$TOUSER\" not found!\e[0m"
 			exit 2
 		else
+			echo "Ajusting user in bashbot.rc ..."
+			sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' bashbot.rc
 			echo "Adjusting Owner and Permissions ..."
 			chown -R "$TOUSER" . *
 			chmod 711 .
 			chmod -R a-w *
-			chmod -R u+w "$COUNT" "$TMPDIR" *.log
-			chmod -R o-r,o-w "$COUNT" "$TMPDIR" token
+			chmod -R u+w "$COUNT" "$TMPDIR" *.log 2>/dev/null
+			chmod -R o-r,o-w "$COUNT" "$TMPDIR" token 2>/dev/null
 			ls -la
 			exit			
 		fi

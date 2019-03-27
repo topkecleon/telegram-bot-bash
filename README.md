@@ -86,12 +86,17 @@ git clone --recursive https://github.com/topkecleon/telegram-bot-bash
 3. Change to directory ```telegram-bot.bash```, run ```./bashbot.sh init``` and follow the instructions. At this stage you are asked for your Bots token given by botfather.
 
 
-Then start editing the ```commands.sh``` file.
+## Creating your own Bot
 
-## Programming your own Bot
+All Commands for the Bot are in the ```commands.sh``` file (this should ease upgrades of the bot core). Here you find some examples how to process messages and send out text.
 
-All Commands for the Bot are at the end the ```commands.sh``` file. Here you find some examples how to process messages and send out text.
-The default commands like /info, /start, /help /cancel should't changed.
+Once you're done editing start the Bot with ```./bashbot.sh start```. 
+If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```. To stop the Bot run ```./bashbot.sh kill```
+
+To use the functions provided in this script in other scripts simply source bashbot: ```source bashbot.sh```
+
+Have FUN!
+
 
 ### Receive data
 Evertime a Message is recieved, you can read incoming data using the following variables:
@@ -305,37 +310,28 @@ answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 ```
 
 
-To modify the responses to commands edit the commands.sh file (this should ease upgrades of the bot core).
-
-Once you're done editing start the bot with ```./bashbot.sh start```. If you want to do some more changes make them and then rerun the same command.
-To stop the bot run ```./bashbot.sh kill```.
-If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```.
-
-To use the functions provided in this script in other scripts simply source bashbot: ```source bashbot.sh```
-
-
 ## Managing your Bot
-#### Note: running bashbot as root is highly danger and not recommended. See Expert usage below.
+#### Note: running bashbot as root is highly danger and not recommended. See Expert use below.
 
 ### Start / Stop
 Start or Stop your Bot use the following commands:
 ```
-bash bashbot.sh start
+./bashbot.sh start
 ```
 ```
-bash bashbot.sh kill
+./bashbot.sh kill
 ```
 
 ### User count
 To count the total number of users that ever used the bot run the following command:
 ```
-bash bashbot.sh count
+./bashbot.sh count
 ```
 
 ### Sending broadcasts to all users
 To send a broadcast to all of users that ever used the bot run the following command:
 ```
-bash bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
+./bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
 ```
 
 ## Handling UTF-8 character sets
@@ -386,14 +382,19 @@ E.g. the Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as:
 
 
 ## Expert Usage
-Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it e.g. by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for experiend linux users.
+Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for experiend linux users.
 
 ### Run as other user or system service
 Running bashbot as an other user is only possible (and strongly recommended) for root.
 
-Edit the example rc file ```bashbot.rc``` and set the value ```runas``` to the user you want to run bashbot. Uncomment the ```runcmd``` availible on your system and fill the name of your Bot in ```name```. Now you can start ans stop your bot by bashbot.rc
+Setup the environment for the user you want to run bashbot and enter new username:
+```
+./bashbot.sh init
+```
 
-To start your bot use: 
+Edit the example rc file ```bashbot.rc```, uncomment the ```runcmd``` availible on your system and fill the name of your Bot in ```name```.
+
+From now on always use bashbot.rc to start/stop your bot: 
 ```
 ./bashbot.rc start
 ```
@@ -408,13 +409,15 @@ If you started bashbot by bashbot.rc you must use bashbot.rc also to manage your
 ./bashbot.rc resumeback
 ./bashbot.rc killback
 ```
-To use bashbot as a system servive include your working ```bashbot.rc``` in your init system (systemd, /etc/init.d).
+To change back the environment to your user-ID run ```./bashbot.rc init``` again and enter your user-ID.
+
+To use bashbot as a system servive include a working ```bashbot.rc``` in your init system (systemd, /etc/init.d).
 
 ### Scedule bashbot from Cron
 An example crontab is provided in ```bashbot.cron```.
 
-- If you are running bashbot with your local user-ID, copy the examples to your crontab and remove username ```www```.
-- if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username````www``` with the username you want to run bashbot. copy the modified file to /etc/cron.d
+- If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username ```www```.
+- if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username````www``` with the username you want to run bashbot. copy the modified file to ```/etc/cron.d/bashbot```
 
 ## That's it!
 
