@@ -423,3 +423,5 @@ An example crontab is provided in ```bashbot.cron```.
 ## That's it!
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
+
+#### $$VERSION$$ v0.49-0-g64255eb

@@ -9,6 +9,8 @@
 # and on tmux (http://github.com/tmux/tmux) (BSD).
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
+#
+#### $$VERSION$$ v0.49-0-g64255eb
 
 # get location of bashbot.sh an change to bashbot dir
 SCRIPT="./$(basename $0)"
