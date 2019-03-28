@@ -8,7 +8,7 @@ Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M (@gnadel
 
 Contributions by JuanPotato, BigNerd95, TiagoDanin, and iicc1.
 
-[Download from github](https://github.com/topkecleon/telegram-bot-bash)
+[Download from github](https://github.com/topkecleon/telegram-bot-bash/releases)
 
 Released to the public domain wherever applicable.
 Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/copying/).
@@ -99,7 +99,7 @@ To use the functions provided in this script in other scripts simply source bash
 Have FUN!
 
 
-### Receive data
+### Recieve data
 Evertime a Message is recieved, you can read incoming data using the following variables:
 
 * ```$MESSAGE```: Incoming messages
@@ -242,7 +242,7 @@ To insert a linebreak in your message you can insert ```mynewlinestartshere``` i
 ```
 echo "Text that will appear in one message  mynewlinestartshere  with this text on a new line"
 ```
-
+Note: Interactive Chats run independent from main bot and continue running until your script exits or you /cancel if from your Bot. 
 
 #### Background Jobs
 
@@ -265,7 +265,7 @@ If you want to kill all background jobs permantly run:
 ./bashbot.sh killback
 
 ```
-Note: If your run bashbot as an other user or system service, see Expert use.
+Note: Background Jobs run independent from main bot and continue running until your script exits or you stop if from your Bot. Backgound Jobs will continue running if your Bot is stoped (kill)!. 
 
 #### Inline queries
 The following commands allows users to interact with your bot via *inline queries*.
@@ -366,7 +366,7 @@ export LANGUAGE=den_US.UTF-8
 
 To display all availible locales on your system run ```locale -a | more```. [Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8)
 
-### UTF-8 in Telegram and Bash
+### UTF-8 in Telegram
 ```UTF-8``` is a variable length encoding of Unicode. UTF-8 is recommended as the default encoding in JSON, XML and HTML, also Telegram make use of it.
 
 The first 128 characters are regular ASCII, so it's a superset of and compatible with ASCII environments. The next 1,920 characters need
@@ -382,7 +382,7 @@ E.g. the Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as:
 '\uXXXX' and '\UXXXXXXXX' escaped endocings are supported by zsh, bash, ksh93, mksh and FreeBSD sh, GNU 'printf' and GNU 'echo -e', see [this Stackexchange Answer](https://unix.stackexchange.com/questions/252286/how-to-convert-an-emoticon-specified-by-a-uxxxxx-code-to-utf-8/252295#252295) for more information.
 
 
-## Expert Usage
+## Expert Use
 Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for experiend linux users.
 
 ### Run as other user or system service
@@ -410,18 +410,39 @@ If you started bashbot by bashbot.rc you must use bashbot.rc also to manage your
 ./bashbot.rc resumeback
 ./bashbot.rc killback
 ```
-To change back the environment to your user-ID run ```./bashbot.rc init``` again and enter your user-ID.
+To change back the environment to your user-ID run ```./bashbot.rc init``` again and enter your user name.
 
 To use bashbot as a system servive include a working ```bashbot.rc``` in your init system (systemd, /etc/init.d).
 
 ### Scedule bashbot from Cron
 An example crontab is provided in ```bashbot.cron```.
 
-- If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username ```www```.
-- if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username````www``` with the username you want to run bashbot. copy the modified file to ```/etc/cron.d/bashbot```
+- If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username ```nobody```.
+- if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username````nobody``` with the username you want to run bashbot. copy the modified file to ```/etc/cron.d/bashbot```
+
+
+## Security Considerations
+Running a Telegram Bot means you are conneted to the public, you never know whats send to your Bot.
+
+Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. More concret examples of security problems is bash's 'quoting hell' and globbing. [Implications of wrong quoting](https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells)
+
+Whenever you are processing input from outside your bot you should disable globbing (set -f) and carefully quote everthing.
+
+### Run your Bot as a restricted user
+Every file your bot can write is in danger to be overwritten/deleted, In case of bad handling of user input every file your Bot can read is in danger of being disclosed.
+
+Never run your Bot as root, this is the most dangerous you can do! Usually the user 'nobody' has almost no rigths on Unix/Linux systems. See Expert use on how to run your Bot as an other user.
+
+### Secure your Bot installation
+Everyone who can read your Bot files can extract your Bots data. Especially your Bot Token in ```token``` must be protected against other users. No one exept you should have write access to the Bot files. The Bot itself need write access to ```count``` and  ```tmp-bot-bash``` only, all other files should be write protected.
+
+Runing ```./bashbot init``` sets the Bot permissions to reasonable default values as a starting point.
+
+### Is this Bot insecure?
+No - its not more or less insecure as any other Bot written in any other language. But you should know about the implications ...
 
 ## That's it!
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.49-0-g64255eb
+#### $$VERSION$$ v0.49-1-g851be83

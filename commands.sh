@@ -4,7 +4,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.49-0-g64255eb
+#### $$VERSION$$ v0.49-1-g851be83
 
 # adjust your language setting here, e.g.when run from other user or cron.
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
@@ -25,7 +25,7 @@ else
 		[ ! -z ${URLS[*]} ] && {
 			curl -s ${URLS[*]} -o $NAME
 			send_file "${CHAT[ID]}" "$NAME" "$CAPTION"
-			rm "$NAME"
+			rm -f "$NAME"
 		}
 		[ ! -z ${LOCATION[*]} ] && send_location "${CHAT[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
 

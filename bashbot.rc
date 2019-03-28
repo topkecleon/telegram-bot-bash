@@ -1,7 +1,7 @@
 #!/bin/sh
 # description: Start or stop telegram-bash-bot
 #
-#### $$VERSION$$ v0.49-0-g64255eb
+#### $$VERSION$$ v0.49-1-g851be83
 #
 ### BEGIN INIT INFO
 # Provides: bashbot
@@ -16,7 +16,7 @@ runas="root"  # not recommended!
 runcmd="echo" # not actived until you edit lines below
 
 # uncomment the next line to run as other user, e.g. www
-# runas="www" 
+# runas="nobody" 
 
 # uncomment one of the following lines 
 # runcmd="su $runas -s /bin/bash -c "      # runasuser with su

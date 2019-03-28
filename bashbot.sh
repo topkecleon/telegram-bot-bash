@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.49-0-g64255eb
+#### $$VERSION$$ v0.49-1-g851be83
 
 # get location of bashbot.sh an change to bashbot dir
 SCRIPT="./$(basename $0)"
@@ -394,12 +394,12 @@ checkproc() {
 
 killback() {
 	killproc "back-$1-"
-	rm "$TMPDIR/${copname}$1-back.cmd"
+	rm -f "$TMPDIR/${copname}$1-back.cmd"
 }
 
 killproc() {
 	local fifo="$1${copname}"
-	(tmux kill-session -t "${fifo}"; echo imprettydarnsuredatdisisdaendofdacmd>$TMPDIR/${fifo}; tmux kill-session -t sendprocess_${fifo}; rm -r $TMPDIR/${fifo})2>/dev/null
+	(tmux kill-session -t "${fifo}"; echo imprettydarnsuredatdisisdaendofdacmd>$TMPDIR/${fifo}; tmux kill-session -t sendprocess_${fifo}; rm -f -r $TMPDIR/${fifo})2>/dev/null
 }
 
 inproc() {
@@ -519,7 +519,7 @@ case "$1" in
 			read -t 10 line
 			[ "$line" != "" -a "$line" != "imprettydarnsuredatdisisdaendofdacmd" ] && send_message "$2" "$line"
 		done <$TMPDIR/$3
-		rm -r $TMPDIR/$3
+		rm -f -r $TMPDIR/$3
 		;;
 	"count")
 		echo "A total of $(wc -l ${COUNT} | sed 's/count//g')users used me."
@@ -539,7 +539,7 @@ case "$1" in
 		;;
 	"init") # adjust users and permissions
 		MYUSER="$USER"
-		[[ $(id -u) -eq 0 ]] && MYUSER="www"
+		[[ $(id -u) -eq 0 ]] && MYUSER="nobody"
 		echo -n "Enter User to run basbot [$MYUSER]: "
 		read TOUSER
 		[ "$TOUSER" = "" ] && TOUSER="$MYUSER"
@@ -573,7 +573,7 @@ case "$1" in
 			JOB="${JOB%:*}"
 			fifo="back-${JOB}-${ME}_${CHAT[ID]}" # compose fifo from jobname, $ME (botname) and CHAT[ID] 
 			echo "restartbackground  ${PROG}  ${fifo}"
-			( tmux kill-session -t "${fifo}"; tmux kill-session -t sendprocess_${fifo}; rm -r $TMPDIR/${fifo}) 2>/dev/null
+			( tmux kill-session -t "${fifo}"; tmux kill-session -t sendprocess_${fifo}; rm -f -r $TMPDIR/${fifo}) 2>/dev/null
 			mkfifo "$TMPDIR/${fifo}"
 			TMUX= tmux new-session -d -s "${fifo}" "${PROG} &>$TMPDIR/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>$TMPDIR/${fifo}"
 			TMUX= tmux new-session -d -s sendprocess_${fifo} "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
@@ -597,8 +597,8 @@ case "$1" in
 			JOB="${REMOVE#*:}"
 			fifo="back-${JOB%:*}-${ME}_${REMOVE%%:*}"
 			echo "killbackground  ${fifo}"
-			[ "$1" == "killback" ] && rm $FILE # remove job
-			( tmux kill-session -t "${fifo}"; tmux kill-session -t sendprocess_${fifo}; rm -r $TMPDIR/${fifo}) 2>/dev/null
+			[ "$1" == "killback" ] && rm -f $FILE # remove job
+			( tmux kill-session -t "${fifo}"; tmux kill-session -t sendprocess_${fifo}; rm -f -r $TMPDIR/${fifo}) 2>/dev/null
 		    fi
 		done
 		;;
