@@ -4,8 +4,9 @@ A Telegram bot written in bash.
 Depends on [tmux](http://github.com/tmux/tmux).
 Uses [JSON.sh](http://github.com/dominictarr/JSON.sh).
 
-Written by Drew (@topkecleon) and Daniil Gentili (@danogentili).
-Also contributed: JuanPotato, BigNerd95, TiagoDanin, iicc1, Kay M (@gnadelwartz).
+Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M (@gnadelwartz).
+
+Contributions by JuanPotato, BigNerd95, TiagoDanin, and iicc1.
 
 [Download from github](https://github.com/topkecleon/telegram-bot-bash)
 
