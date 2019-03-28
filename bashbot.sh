@@ -31,7 +31,7 @@ if [ ! -w "." ]; then
 fi
 
 if [ ! -f "JSON.sh/JSON.sh" ]; then
-	echo -"You did not clone recursively! Downloading JSON.sh..."
+	echo "You did not clone recursively! Downloading JSON.sh..."
 	git clone http://github.com/dominictarr/JSON.sh
 	echo "JSON.sh has been downloaded. Proceeding."
 fi
