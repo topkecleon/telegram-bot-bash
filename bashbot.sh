@@ -15,21 +15,31 @@ SCRIPT="./$(basename $0)"
 SCRIPTDIR="$(dirname $0)"
 cd "${SCRIPTDIR}"
 
+# are we runnig in a terminal?
+if [ -t 1 ] ;  then
+    CLEAR="clear"
+    RED='\e[31m'
+    GREEN='\e[32m'
+    ORANGE='\e[35m'
+    NC='\e[0m'
+fi
+
+
 if [ ! -w "." ]; then
-	echo -e "\e[0;31mWARNING: $SCRIPTDIR is not writeable!\e[0m"
+	echo -e "${ORANGE}WARNING: $SCRIPTDIR is not writeable!${NC}"
 	ls -ld .
 fi
 
 if [ ! -f "JSON.sh/JSON.sh" ]; then
-	echo "You did not clone recursively! Downloading JSON.sh..."
+	echo -"You did not clone recursively! Downloading JSON.sh..."
 	git clone http://github.com/dominictarr/JSON.sh
 	echo "JSON.sh has been downloaded. Proceeding."
 fi
 
 if [ ! -f "token" ]; then
-	clear
-	echo -e '\e[0;31mTOKEN MISSING.\e[0m'
-	echo "PLEASE WRITE YOUR TOKEN HERE"
+	$CLEAR
+	echo -e "${RED}TOKEN MISSING.${NC}"
+	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE${NC}"
 	read token
 	echo "$token" >> token
 fi
@@ -38,8 +48,8 @@ TMPDIR="./tmp-bot-bash"
 if [ ! -d "$TMPDIR" ]; then
 	mkdir "$TMPDIR"
 elif [ ! -w "$TMPDIR" ]; then
-	clear
-	echo -e "\e[0;31mCan't write to $TMPDIR!.\e[0m"
+	$CLEAR
+	echo -e "${RED}ERROR: Can't write to $TMPDIR!.${NC}"
 	ls -ld $TMPDIR
 	exit 1
 fi
@@ -48,8 +58,8 @@ COUNT="./count"
 if [ ! -f "$COUNT" ]; then
 	touch "$COUNT"
 elif [ ! -w "$COUNT" ]; then
-	clear
-	echo -e "\e[0;31mCan't write to $COUNT!.\e[0m"
+	$CLEAR
+	echo -e "${RED}ERROR: can't write to $COUNT!.${NC}"
 	ls -l $COUNT
 	exit 1
 fi
@@ -519,10 +529,10 @@ case "$1" in
 		for f in $(cat ${COUNT});do send_message ${f//COUNT} "$*"; $sleep;done
 		;;
 	"start")
-		clear
+		$CLEAR
 		tmux kill-session -t $ME&>/dev/null
-		tmux new-session -d -s $ME "bash $SCRIPT startbot" && echo -e '\e[0;32mBot started successfully.\e[0m'
-		echo "Tmux session name $ME" || echo -e '\e[0;31mAn error occurred while starting the bot. \e[0m'
+		tmux new-session -d -s $ME "bash $SCRIPT startbot" && echo -e "${GREEN}Bot started successfully.${NC}"
+		echo "Tmux session name $ME" || echo -e "${RED}An error occurred while starting the bot. ${NC}"
 		send_markdown_message "${CHAT[ID]}" "*Bot started*"
 		;;
 	"init") # adjust users and permissions
@@ -532,7 +542,7 @@ case "$1" in
 		read TOUSER
 		[ "$TOUSER" = "" ] && TOUSER="$MYUSER"
 		if ! compgen -u "$TOUSER" 2>&1 >/dev/null; then
-			echo -e "\e[0;31mUser \"$TOUSER\" not found!\e[0m"
+			echo -e "${RED}User \"$TOUSER\" not found!${NC}"
 			exit 2
 		else
 			echo "Ajusting user in bashbot.rc ..."
@@ -548,11 +558,11 @@ case "$1" in
 		fi
 		;;
 	"background" | "resumeback")
-		clear
-		echo -e '\e[0;32mRestart background processes ...\e[0m'
+		$CLEAR
+		echo -e "${GREEN}Restart background processes ...${NC}"
 		for FILE in ${TMPDIR}/*-back.cmd; do
 		    if [ "$FILE" == "${TMPDIR}/*-back.cmd" ]; then
-			echo -e '\e[0;31mNo background processes to start.\e[0m'; break
+			echo -e "${RED}No background processes to start.${NC}"; break
 		    else
 			RESTART="$(cat "$FILE")"
 			CHAT[ID]="${RESTART%%:*}"
@@ -569,17 +579,17 @@ case "$1" in
 		done
 		;;
 	"kill")
-		clear
+		$CLEAR
 		tmux kill-session -t $ME &>/dev/null
 		send_markdown_message "${CHAT[ID]}" "*Bot stopped*"
-		echo -e '\e[0;32mOK. Bot stopped successfully.\e[0m'
+		echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
 		;;
 	"killback" | "suspendback")
-		clear
-		echo -e "\e[0;32mStopping background processes ...\e[0m"
+		$CLEAR
+		echo -e "${GREEN}Stopping background processes ...${NC}"
 		for FILE in ${TMPDIR}/*-back.cmd; do
 		    if [ "$FILE" == "${TMPDIR}/*-back.cmd" ]; then
-			echo -e "\e[0;31mNo background processes.\e[0m"; break
+			echo -e "${RED}No background processes.${NC}"; break
 		    else
 			REMOVE="$(cat "$FILE")"
 			JOB="${REMOVE#*:}"
@@ -591,7 +601,7 @@ case "$1" in
 		done
 		;;
 	"help")
-		clear
+		$CLEAR
 		less README.md
 		;;
 	"attach")
@@ -601,14 +611,14 @@ case "$1" in
 		echo "OK"
 		;;
 	*)
-		echo -e '\e[0;31mBAD REQUEST\e[0m'
-		echo -e '\e[0;31mAvailable arguments: outproc, count, broadcast, start, suspendback, resumeback, kill, killback, help, attach\e[0m'
+		echo -e "${RED}BAD REQUEST${NC}"
+		echo -e "${RED}Available arguments: outproc, count, broadcast, start, suspendback, resumeback, kill, killback, help, attach${NC}"
 		;;
 esac
 
 # warn if root
 if [[ $(id -u) -eq 0 ]] ; then
-	echo -e "\n\e[0;31mWARNING: ${SCRIPT} was started as ROOT (UID 0)!\e[0m"
-	echo -e '\e[0;31mYou are at HIGH RISK when processing user input with root privilegs!\e[0m'
+	echo -e "\n${ORANGE}WARNING: ${SCRIPT} was started as ROOT (UID 0)!${NC}"
+	echo -e "${ORANGE}You are at HIGH RISK when processing user input with root privilegs!${NC}"
 fi
 
