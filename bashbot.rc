@@ -1,7 +1,7 @@
 #!/bin/sh
 # description: Start or stop telegram-bash-bot
 #
-#### $$VERSION$$ v0.49-1-g851be83
+#### $$VERSION$$ v0.49-2-g0a90edb
 #
 ### BEGIN INIT INFO
 # Provides: bashbot
@@ -33,18 +33,18 @@ case "$1" in
 	$runcmd "$start start" # >/dev/null 2>&1 </dev/null
 	RETVAL=$?
 	if [ "$RETVAL" = "0" ]; then
-		touch $lockfile >/dev/null 2>&1
+		touch "$lockfile" >/dev/null 2>&1
 	fi
 	;;
 'stop')
 	$runcmd "$start kill"
 	RETVAL=$?
 	if [ "$RETVAL" = "0" ]; then
-		rm -f $lockfile
+		rm -f "$lockfile"
 	fi
 	;;
 'status')
-	ps -f -u $runas | grep "$name" | grep -qF "bashbot.sh startbot"
+	ps -f -u "$runas" | grep "$name" | grep -qF "bashbot.sh startbot"
 	if [ "$?" = "0" ]; then
 		echo "$name is running"
 		RETVAL=0

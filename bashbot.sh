@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.49-1-g851be83
+#### $$VERSION$$ v0.49-2-g0a90edb
 
 # get location of bashbot.sh an change to bashbot dir
 SCRIPT="./$(basename $0)"
@@ -18,8 +18,8 @@ SCRIPTDIR="$(dirname $0)"
 cd "${SCRIPTDIR}"
 
 # are we runnig in a terminal?
-if [ -t 1 ] ;  then
-    CLEAR="clear"
+if [ -t 1 ] || [ "$TERM" != "" ];  then
+    CLEAR='clear'
     RED='\e[31m'
     GREEN='\e[32m'
     ORANGE='\e[35m'
@@ -43,7 +43,7 @@ if [ ! -f "token" ]; then
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE${NC}"
 	read token
-	echo "$token" >> token
+	echo "$token" >> "token"
 fi
 
 TMPDIR="./tmp-bot-bash"
@@ -52,7 +52,7 @@ if [ ! -d "$TMPDIR" ]; then
 elif [ ! -w "$TMPDIR" ]; then
 	$CLEAR
 	echo -e "${RED}ERROR: Can't write to $TMPDIR!.${NC}"
-	ls -ld $TMPDIR
+	ls -ld "$TMPDIR"
 	exit 1
 fi
 
@@ -62,12 +62,12 @@ if [ ! -f "$COUNT" ]; then
 elif [ ! -w "$COUNT" ]; then
 	$CLEAR
 	echo -e "${RED}ERROR: can't write to $COUNT!.${NC}"
-	ls -l $COUNT
+	ls -l "$COUNT"
 	exit 1
 fi
 
 
-source commands.sh source
+source "commands.sh" "source"
 URL='https://api.telegram.org/bot'$TOKEN
 
 
@@ -167,46 +167,46 @@ send_text() {
 
 send_normal_message() {
 	text="$2"
-	until [ $(echo -n "$text" | wc -m) -eq 0 ]; do
-		res=$(curl -s "$MSG_URL" -d "chat_id=$1" --data-urlencode "text=${text:0:4096}")
+	until [ "$(echo -n "$text" | wc -m)" -eq "0" ]; do
+		res="$(curl -s "$MSG_URL" -d "chat_id=$1" --data-urlencode "text=${text:0:4096}")"
 		text="${text:4096}"
 	done
 }
 
 send_markdown_message() {
 	text="$2"
-	until [ $(echo -n "$text" | wc -m) -eq 0 ]; do
-		res=$(curl -s "$MSG_URL" -d "chat_id=$1" --data-urlencode "text=${text:0:4096}" -d "parse_mode=markdown" -d "disable_web_page_preview=true")
+	until [ "$(echo -n "$text" | wc -m)" -eq "0" ]; do
+		res="$(curl -s "$MSG_URL" -d "chat_id=$1" --data-urlencode "text=${text:0:4096}" -d "parse_mode=markdown" -d "disable_web_page_preview=true")"
 		text="${text:4096}"
 	done
 }
 
 send_html_message() {
 	text="$2"
-	until [ $(echo -n "$text" | wc -m) -eq 0 ]; do
-		res=$(curl -s "$MSG_URL" -F "chat_id=$1" --data-urlencode "text=${text:0:4096}" -F "parse_mode=html")
+	until [ "$(echo -n "$text" | wc -m)" -eq "0" ]; do
+		res="$(curl -s "$MSG_URL" -F "chat_id=$1" --data-urlencode "text=${text:0:4096}" -F "parse_mode=html")"
 		text="${text:4096}"
 	done
 }
 
 delete_message() {
-        res=$(curl -s "$DELETE_URL" -F "chat_id=$1" -F "message_id=$2")
+        res="$(curl -s "$DELETE_URL" -F "chat_id=$1" -F "message_id=$2")"
 }
 
 kick_chat_member() {
-	res=$(curl -s "$KICK_URL" -F "chat_id=$1" -F "user_id=$2")
+	res="$(curl -s "$KICK_URL" -F "chat_id=$1" -F "user_id=$2")"
 }
 
 unban_chat_member() {
-	res=$(curl -s "$UNBAN_URL" -F "chat_id=$1" -F "user_id=$2")
+	res="$(curl -s "$UNBAN_URL" -F "chat_id=$1" -F "user_id=$2")"
 }
 
 leave_chat() {
-	res=$(curl -s "$LEAVE_URL" -F "chat_id=$1")
+	res="$(curl -s "$LEAVE_URL" -F "chat_id=$1")"
 }
 
 answer_inline_query() {
-	case $2 in
+	case "$2" in
 		"article")
 			InlineQueryResult='[{"type":"'$2'","id":"'$RANDOM'","title":"'$3'","message_text":"'$4'"}]'
 		;;
@@ -270,7 +270,7 @@ answer_inline_query() {
 
 	esac
 
-	res=$(curl -s "$INLINE_QUERY" -F "inline_query_id=$1" -F "results=$InlineQueryResult")
+	res="$(curl -s "$INLINE_QUERY" -F "inline_query_id=$1" -F "results=$InlineQueryResult")"
 
 }
 
@@ -284,14 +284,14 @@ send_keyboard() {
 	for f in $*;do [ "$f" != " " ] && local keyboard="$keyboard, [\"$f\"]";done
 	IFS=$OLDIFS
 	local keyboard=${keyboard/init, /}
-	res=$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")
+	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")"
 }
 
 remove_keyboard() {
 	local chat="$1"
 	local text="$2"
 	shift 2
-	res=$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat"  -F "text=$text" -F "reply_markup={\"remove_keyboard\": true}")
+	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat"  -F "text=$text" -F "reply_markup={\"remove_keyboard\": true}")"
 }
 
 get_file() {
@@ -342,31 +342,31 @@ send_file() {
 			;;
 	esac
 	send_action $chat_id $STATUS
-	res=$(curl -s "$CUR_URL" -F "chat_id=$chat_id" -F "$WHAT=@$file" -F "caption=$CAPTION")
+	res="$(curl -s "$CUR_URL" -F "chat_id=$chat_id" -F "$WHAT=@$file" -F "caption=$CAPTION")"
 }
 
 # typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
 
 send_action() {
 	[ "$2" = "" ] && return
-	res=$(curl -s "$ACTION_URL" -F "chat_id=$1" -F "action=$2")
+	res="$(curl -s "$ACTION_URL" -F "chat_id=$1" -F "action=$2")"
 }
 
 send_location() {
 	[ "$3" = "" ] && return
-	res=$(curl -s "$LOCATION_URL" -F "chat_id=$1" -F "latitude=$2" -F "longitude=$3")
+	res="$(curl -s "$LOCATION_URL" -F "chat_id=$1" -F "latitude=$2" -F "longitude=$3")"
 }
 
 send_venue() {
 	[ "$5" = "" ] && return
 	[ "$6" != "" ] add="-F \"foursquare_id=$6\""
-	res=$(curl -s "$VENUE_URL" -F "chat_id=$1" -F "latitude=$2" -F "longitude=$3" -F "title=$4" -F "address=$5" $add)
+	res="$(curl -s "$VENUE_URL" -F "chat_id=$1" -F "latitude=$2" -F "longitude=$3" -F "title=$4" -F "address=$5" $add)"
 }
 
 
 forward() {
 	[ "$3" = "" ] && return
-	res=$(curl -s "$FORWARD_URL" -F "chat_id=$1" -F "from_chat_id=$2" -F "message_id=$3")
+	res="$(curl -s "$FORWARD_URL" -F "chat_id=$1" -F "from_chat_id=$2" -F "message_id=$3")"
 }
 
 
@@ -456,17 +456,17 @@ process_client() {
 	fi
 
 	# Audio
-	URLS[AUDIO]="$(get_file $(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","audio","file_id"\]' | cut -f 2 | cut -d '"' -f 2))"
+	URLS[AUDIO]="$(get_file "$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","audio","file_id"\]' | cut -f 2 | cut -d '"' -f 2)")"
 	# Document
-	URLS[DOCUMENT]="$(get_file $(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","document","file_id"\]' | cut -f 2 | cut -d '"' -f 2))"
+	URLS[DOCUMENT]="$(get_file "$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","document","file_id"\]' | cut -f 2 | cut -d '"' -f 2)")"
 	# Photo
-	URLS[PHOTO]="$(get_file $(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","photo",.*,"file_id"\]' | cut -f 2 | cut -d '"' -f 2 | sed -n '$p'))"
+	URLS[PHOTO]="$(get_file "$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","photo",.*,"file_id"\]' | cut -f 2 | cut -d '"' -f 2 | sed -n '$p')")"
 	# Sticker
-	URLS[STICKER]="$(get_file $(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","sticker","file_id"\]' | cut -f 2 | cut -d '"' -f 2))"
+	URLS[STICKER]="$(get_file "$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","sticker","file_id"\]' | cut -f 2 | cut -d '"' -f 2)")"
 	# Video
-	URLS[VIDEO]="$(get_file $(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","video","file_id"\]' | cut -f 2 | cut -d '"' -f 2))"
+	URLS[VIDEO]="$(get_file "$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","video","file_id"\]' | cut -f 2 | cut -d '"' -f 2)")"
 	# Voice
-	URLS[VOICE]="$(get_file $(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","voice","file_id"\]' | cut -f 2 | cut -d '"' -f 2))"
+	URLS[VOICE]="$(get_file "$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","voice","file_id"\]' | cut -f 2 | cut -d '"' -f 2)")"
 
 	# Contact
 	CONTACT[NUMBER]="$(echo "$UPDATE" | egrep '\["result",'$PROCESS_NUMBER',"message","contact","phone_number"\]' | cut -f 2 | cut -d '"' -f 2)"
@@ -526,9 +526,9 @@ case "$1" in
 		;;
 	"broadcast")
 		echo "Sending the broadcast $* to $(wc -l ${COUNT} | sed 's/count//g')users."
-		[ $(wc -l ${COUNT} | sed 's/ count//g') -gt 300 ] && sleep="sleep 0.5"
+		[ "$(wc -l ${COUNT} | sed 's/ count//g')" -gt "300" ] && sleep="sleep 0.5"
 		shift
-		for f in $(cat ${COUNT});do send_message ${f//COUNT} "$*"; $sleep;done
+		for f in "$(cat ${COUNT})";do send_message ${f//COUNT} "$*"; $sleep;done
 		;;
 	"start")
 		$CLEAR
@@ -539,7 +539,7 @@ case "$1" in
 		;;
 	"init") # adjust users and permissions
 		MYUSER="$USER"
-		[[ $(id -u) -eq 0 ]] && MYUSER="nobody"
+		[[ "$(id -u)" -eq "0" ]] && MYUSER="nobody"
 		echo -n "Enter User to run basbot [$MYUSER]: "
 		read TOUSER
 		[ "$TOUSER" = "" ] && TOUSER="$MYUSER"
@@ -573,7 +573,7 @@ case "$1" in
 			JOB="${JOB%:*}"
 			fifo="back-${JOB}-${ME}_${CHAT[ID]}" # compose fifo from jobname, $ME (botname) and CHAT[ID] 
 			echo "restartbackground  ${PROG}  ${fifo}"
-			( tmux kill-session -t "${fifo}"; tmux kill-session -t sendprocess_${fifo}; rm -f -r $TMPDIR/${fifo}) 2>/dev/null
+			( tmux kill-session -t "${fifo}"; tmux kill-session -t sendprocess_${fifo}; rm -f -r "$TMPDIR/${fifo})" 2>/dev/null
 			mkfifo "$TMPDIR/${fifo}"
 			TMUX= tmux new-session -d -s "${fifo}" "${PROG} &>$TMPDIR/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>$TMPDIR/${fifo}"
 			TMUX= tmux new-session -d -s sendprocess_${fifo} "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
@@ -582,14 +582,14 @@ case "$1" in
 		;;
 	"kill")
 		$CLEAR
-		tmux kill-session -t $ME &>/dev/null
+		tmux kill-session -t "$ME" &>/dev/null
 		send_markdown_message "${CHAT[ID]}" "*Bot stopped*"
 		echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
 		;;
 	"killback" | "suspendback")
 		$CLEAR
 		echo -e "${GREEN}Stopping background processes ...${NC}"
-		for FILE in ${TMPDIR}/*-back.cmd; do
+		for FILE in $"{TMPDIR}/*-back.cmd"; do
 		    if [ "$FILE" == "${TMPDIR}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes.${NC}"; break
 		    else
@@ -597,17 +597,17 @@ case "$1" in
 			JOB="${REMOVE#*:}"
 			fifo="back-${JOB%:*}-${ME}_${REMOVE%%:*}"
 			echo "killbackground  ${fifo}"
-			[ "$1" == "killback" ] && rm -f $FILE # remove job
+			[ "$1" == "killback" ] && rm -f "$FILE" # remove job
 			( tmux kill-session -t "${fifo}"; tmux kill-session -t sendprocess_${fifo}; rm -f -r $TMPDIR/${fifo}) 2>/dev/null
 		    fi
 		done
 		;;
 	"help")
 		$CLEAR
-		less README.md
+		less "README.md"
 		;;
 	"attach")
-		tmux attach -t $ME
+		tmux attach -t "$ME"
 		;;
 	"source")
 		echo "OK"
@@ -619,7 +619,7 @@ case "$1" in
 esac
 
 # warn if root
-if [[ $(id -u) -eq 0 ]] ; then
+if [[ "$(id -u)" -eq "0" ]] ; then
 	echo -e "\n${ORANGE}WARNING: ${SCRIPT} was started as ROOT (UID 0)!${NC}"
 	echo -e "${ORANGE}You are at HIGH RISK when processing user input with root privilegs!${NC}"
 fi
