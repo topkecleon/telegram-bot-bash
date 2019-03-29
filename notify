@@ -2,11 +2,11 @@
 
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
-#### $$VERSION$$ v0.49-2-g0a90edb
+#### $$VERSION$$ v0.49-3-g6f1c328
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
-export'LC_ALL=C.UTF-8'
+export 'LC_ALL=C.UTF-8'
 export 'LANG=C.UTF-8'
 export 'LANGUAGE=C.UTF-8'
 
