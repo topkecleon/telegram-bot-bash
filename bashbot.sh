@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.49-3-g6f1c328
+#### $$VERSION$$ v0.49-4-g8e08c1f
 
 # get location of bashbot.sh an change to bashbot dir
 SCRIPT="./$(basename $0)"
@@ -562,7 +562,7 @@ case "$1" in
 	"background" | "resumeback")
 		$CLEAR
 		echo -e "${GREEN}Restart background processes ...${NC}"
-		for FILE in ${TMPDIR}/*-back.cmd; do
+		for FILE in "${TMPDIR}/*-back.cmd"; do
 		    if [ "$FILE" == "${TMPDIR}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes to start.${NC}"; break
 		    else
@@ -573,7 +573,7 @@ case "$1" in
 			JOB="${JOB%:*}"
 			fifo="back-${JOB}-${ME}_${CHAT[ID]}" # compose fifo from jobname, $ME (botname) and CHAT[ID] 
 			echo "restartbackground  ${PROG}  ${fifo}"
-			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "$TMPDIR/${fifo})" 2>/dev/null
+			( tmux kill-session -t "${fifo}"; tmux kill-session -t sendprocess_${fifo}; rm -f -r $TMPDIR/${fifo}) 2>/dev/null
 			mkfifo "$TMPDIR/${fifo}"
 			TMUX= tmux new-session -d -s "${fifo}" "${PROGi}" &>"$TMPDIR/${fifo}"; echo "imprettydarnsuredatdisisdaendofdacmd" >"$TMPDIR/${fifo}"
 			TMUX= tmux new-session -d -s "sendprocess_${fifo}" "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
