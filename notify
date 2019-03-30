@@ -2,19 +2,6 @@
 
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
-#### $$VERSION$$ v0.49-3-g6f1c328
-
-# adjust your language setting here
-# https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
-export 'LC_ALL=C.UTF-8'
-export 'LANG=C.UTF-8'
-export 'LANGUAGE=C.UTF-8'
-
-unset IFS
-# set -f # if you are paranoid use set -f to disable globbing
-
-# discard STDIN for background jobs!
-cat >/dev/null & 
 
 # check if $1 is a number
 re='^[0-9]+$'
