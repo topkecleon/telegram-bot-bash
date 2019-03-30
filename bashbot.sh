@@ -498,13 +498,13 @@ process_client() {
 # source the script with source as param to use functions in other scripts
 while [ "$1" == "startbot" ]; do {
 
-	UPDATE=$(curl -s $UPD_URL$OFFSET | ./JSON.sh/JSON.sh)
+	UPDATE="$(curl -s $UPD_URL$OFFSET | ./JSON.sh/JSON.sh)"
 
 	# Offset
-	OFFSET=$(echo "$UPDATE" | egrep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)
+	OFFSET="$(echo "$UPDATE" | egrep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
 	OFFSET=$((OFFSET+1))
 
-	if [ $OFFSET != 1 ]; then
+	if [ "$OFFSET" != "1" ]; then
 		if [ "$2" == "test" ]; then
 			process_updates "$2"
 		else
@@ -518,7 +518,7 @@ while [ "$1" == "startbot" ]; do {
 case "$1" in
 	"outproc")
 		until [ "$line" = "imprettydarnsuredatdisisdaendofdacmd" ];do
-			line=
+			line=""
 			read -t 10 line
 			[ "$line" != "" -a "$line" != "imprettydarnsuredatdisisdaendofdacmd" ] && send_message "$2" "$line"
 		done <$TMPDIR/$3
