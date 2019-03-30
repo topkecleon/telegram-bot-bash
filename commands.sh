@@ -3,6 +3,14 @@
 
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
+#
+#### $$VERSION$$ v0.49-1-g851be83
+
+# adjust your language setting here, e.g.when run from other user or cron.
+# https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
+export LANGUAGE=C.UTF-8
 
 if [ "$1" = "source" ];then
 	# Place the token in the token file
@@ -17,7 +25,7 @@ else
 		[ ! -z ${URLS[*]} ] && {
 			curl -s ${URLS[*]} -o $NAME
 			send_file "${CHAT[ID]}" "$NAME" "$CAPTION"
-			rm "$NAME"
+			rm -f "$NAME"
 		}
 		[ ! -z ${LOCATION[*]} ] && send_location "${CHAT[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
 
@@ -75,6 +83,8 @@ else
 			fi
 			;;
 
+		################################################
+		# DEFAULT commands start here, edit messages only
 		'/info')
 			send_markdown_message "${CHAT[ID]}" "This is bashbot, the *Telegram* bot written entirely in *bash*."
 			;;
