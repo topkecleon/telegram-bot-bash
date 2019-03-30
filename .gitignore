@@ -2,3 +2,6 @@
 count
 token
 *.save
+*.log
+JSON.sh/*
+tmp-bot-bash/

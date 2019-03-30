@@ -1,7 +1,7 @@
 #!/bin/sh
 # description: Start or stop telegram-bash-bot
 #
-#### $$VERSION$$ v0.49-2-g0a90edb
+#### $$VERSION$$ v0.49-4-g8e08c1f
 #
 ### BEGIN INIT INFO
 # Provides: bashbot
