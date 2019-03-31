@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.5-rc-0-g0c144bc
+#### $$VERSION$$ v0.5-rc-1-g050d376
 
 # are we runnig in a terminal?
 if [ -t 1 ] && [ "$TERM" != "" ];  then
@@ -24,7 +24,11 @@ fi
 # get location of bashbot.sh an change to bashbot dir
 SCRIPT="./$(basename $0)"
 SCRIPTDIR="$(dirname $0)"
-cd "${SCRIPTDIR}" || echo -e "${RED}ERROR: Can't change to ${SCRIPTDIR} ...${NC}" && exit 1
+
+if ! cd "${SCRIPTDIR}" ; then
+	echo -e "${RED}ERROR: Can't change to ${SCRIPTDIR} ...${NC}"
+	exit 1
+fi
 
 if [ ! -w "." ]; then
 	echo -e "${ORANGE}WARNING: $SCRIPTDIR is not writeable!${NC}"
