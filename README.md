@@ -151,65 +151,65 @@ Evertime a Message is recieved, you can read incoming data using the following v
 
 #### send_message
 To send messages use the ```send_message``` function:
-```
+```bash
 send_message "${CHAT[ID]}" "lol"
 ```
 To send html or markdown put the following strings before the text, depending on the parsing mode you want to enable:
-```
+```bash
 send_message "${CHAT[ID]}" "markdown_parse_mode lol *bold*"
 ```
-```
+```bash
 send_message "${CHAT[ID]}" "html_parse_mode lol <b>bold</b>"
 ```
 This function also allows a third parameter that disables additional function parsing (for safety use this when reprinting user input):
-```
+```bash
 send_message "${CHAT[ID]}" "lol" "safe"
 ```
 To forward messages use the ```forward``` function:
-```
+```bash
 forward "${CHAT[ID]}" "from_chat_id" "message_id"
 ```
 
 #### For safety and performance reasoms I recommend to use send_xxxx_message direct and not the universal send_message function.
 To send regular text without any markdown use:
-```
+```bash
 send_text_message "${CHAT[ID]}" "lol"
 ```
 To send text with markdown:
-```
+```bash
 send_markdown_message "${CHAT[ID]}" "lol *bold*"
 ```
 To send text with html:
-```
+```bash
 send_html_message "${CHAT[ID]}" "lol <b>bold</b>"
 ```
 
 If your Bot is Admin in a Chat you can delete every message, if not you can delete only your messages.
 To delete a message with a known ${MESSAGE[ID]} you can simple use:
-```
+```bash
 delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
 ```
 
 #### Send files, location  etc.
 To send images, videos, voice files, photos etc. use the ```send_photo``` function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):
-```
+```bash
 send_file "${CHAT[ID]}" "/home/user/doge.jpg" "Lool"
 ```
 To send custom keyboards use the ```send_keyboard``` function:
-```
+```bash
 send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" "Yep" "No"
 ```
 To send locations use the ```send_location``` function:
-```
+```bash
 send_location "${CHAT[ID]}" "Latitude" "Longitude"
 ```
 To send venues use the ```send_venue``` function:
-```
+```bash
 send_venue "${CHAT[ID]}" "Latitude" "Longitude" "Title" "Address" "optional foursquare id"
 ```
 To send a chat action use the ```send_action``` function.
 Allowed values: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for locations.
-```
+```bash
 send_action "${CHAT[ID]}" "action"
 ```
 
@@ -217,29 +217,29 @@ send_action "${CHAT[ID]}" "action"
 To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.
 The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).
 To open up a keyboard in an interactive script, print out the keyboard layout in the following way:
-```
+```bash
 echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, highly unlikely\""
 ```
 Same goes for files:
-```
+```bash
 echo "Text that will appear in chat? myfilelocationstartshere /home/user/doge.jpg"
 ```
 And locations:
-```
+```bash
 echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45"
 ```
 And venues:
-```
+```bash
 echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45 mytitlestartshere my home myaddressstartshere Diagon Alley N. 37"
 ```
 You can combine them:
-```
+```bash
 echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, highly unlikely\" myfilelocationstartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
 ```
 Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.
 
 To insert a linebreak in your message you can insert ```mynewlinestartshere``` in your echo command:
-```
+```bash
 echo "Text that will appear in one message  mynewlinestartshere  with this text on a new line"
 ```
 Note: Interactive Chats run independent from main bot and continue running until your script exits or you /cancel if from your Bot. 
@@ -247,21 +247,21 @@ Note: Interactive Chats run independent from main bot and continue running until
 #### Background Jobs
 
 A background job is similar to an interactive chat, but runs in the background and does only output massages instead of processing input from the user. In contrast to interactive chats it's possible to run multiple background jobs. To create a background job write a script or edit the notify script and use the funtion ```background``` to start it:
-```
+```bash
 background "./notify" "jobname"
 ```
 All output of the script will be sent to the user or chat. To stop a background job use:
-```
+```bash
 killback "jobname"
 ```
 You can also suspend and resume the last running background jobs from outside bashbot, e.g. in your startup schripts:
-```
+```bash
 ./bashbot.sh suspendback
 ./bashbot.sh resumeback
 ```
 
 If you want to kill all background jobs permantly run:
-```
+```bash
 ./bashbot.sh killback
 
 ```
@@ -274,39 +274,39 @@ Also, edit line 12 from `commands.sh` putting a "1".
 Note that you can't modify the first two parameters of the function `answer_inline_query`, only the ones after them.
 
 To send messsages or links through an *inline query*:
-```
+```bash
 answer_inline_query "$iQUERY_ID" "article" "Title of the result" "Content of the message to be sent"
 ```
 To send photos in jpeg format and less than 5MB, from a website through an *inline query*:
-```
+```bash
 answer_inline_query "$iQUERY_ID" "photo" "A valid URL of the photo" "URL of the thumbnail"
 ```
 To send standard gifs from a website (less than 1MB) through an *inline query*:
-```
+```bash
 answer_inline_query "$iQUERY_ID" "gif" "gif url"
 ```
 To send mpeg4 gifs from a website (less than 1MB) through an *inline query*:
-```
+```bash
 answer_inline_query "$iQUERY_ID" "mpeg4_gif" "mpeg4 gif url"
 ```
 To send videos from a website through an *inline query*:
-```
+```bash
 answer_inline_query "$iQUERY_ID" "video" "valid video url" "Select one mime type: text/html or video/mp4" "URL of the thumbnail" "Title for the result"
 ```
 To send photos stored in Telegram servers through an *inline query*:
-```
+```bash
 answer_inline_query "$iQUERY_ID" "cached_photo" "identifier for the photo"
 ```
 To send gifs stored in Telegram servers through an *inline query*:
-```
+```bash
 answer_inline_query "$iQUERY_ID" "cached_gif" "identifier for the gif"
 ```
 To send mpeg4 gifs stored in Telegram servers through an *inline query*:
-```
+```bash
 answer_inline_query "$iQUERY_ID" "cached_mpeg4_gif" "identifier for the gif"
 ```
 To send stickers through an *inline query*:
-```
+```bash
 answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 ```
 
@@ -316,22 +316,22 @@ answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 
 ### Start / Stop
 Start or Stop your Bot use the following commands:
-```
+```bash
 ./bashbot.sh start
 ```
-```
+```bash
 ./bashbot.sh kill
 ```
 
 ### User count
 To count the total number of users that ever used the bot run the following command:
-```
+```bash
 ./bashbot.sh count
 ```
 
 ### Sending broadcasts to all users
 To send a broadcast to all of users that ever used the bot run the following command:
-```
+```bash
 ./bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
 ```
 
@@ -346,21 +346,21 @@ and your scripts accordingly:
 
 2. Set ```Shell``` environment to UTF-8 in your  ```.profile``` and your scripts. The usual settings are:
 
-```
-export LC_ALL=C.UTF-8
-export LANG=C.UTF-8
-export LANGUAGE=C.UTF-8
+```bash
+export 'LC_ALL=C.UTF-8'
+export 'LANG=C.UTF-8'
+export 'LANGUAGE=C.UTF-8'
 ```
    If you use other languages, eg. german or US english, change the shell settings to:
+```bash
+export 'LC_ALL=de_DE.UTF-8'
+export 'LANG=de_DE.UTF-8'
+export 'LANGUAGE=de_DE.UTF-8'
 ```
-export LC_ALL=de_DE.UTF-8
-export LANG=de_DE.UTF-8
-export LANGUAGE=de_DE.UTF-8
-```
-```
-export LC_ALL=en_US.UTF-8
-export LANG=de_en_US.UTF-8
-export LANGUAGE=den_US.UTF-8
+```bash
+export 'LC_ALL=en_US.UTF-8'
+export 'LANG=de_en_US.UTF-8'
+export 'LANGUAGE=den_US.UTF-8'
 ```
 3. make shure your bot scripts use the correct  settings, eg. include the lines above at the beginning of your scripts
 
@@ -389,20 +389,20 @@ Bashbot is desingned to run manually by the user who installed it. Nevertheless 
 Running bashbot as an other user is only possible (and strongly recommended) for root.
 
 Setup the environment for the user you want to run bashbot and enter new username:
-```
+```bash
 ./bashbot.sh init
 ```
 
 Edit the example rc file ```bashbot.rc```, uncomment the ```runcmd``` availible on your system and fill the name of your Bot in ```name```.
 
 From now on always use bashbot.rc to start/stop your bot: 
-```
+```bash
 ./bashbot.rc start
 ```
 Type ```ps -ef | grep bashbot``` to verify your Bot is running as the desired user.
 
 If you started bashbot by bashbot.rc you must use bashbot.rc also to manage your Bot! The following commands are availible:
-```
+```bash
 ./bashbot.rc start
 ./bashbot.rc stop
 ./bashbot.rc status
@@ -445,4 +445,4 @@ No - its not more or less insecure as any other Bot written in any other languag
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.5-rc-0-g0c144bc
+#### $$VERSION$$ v0.5-rc-2-g46cf959
