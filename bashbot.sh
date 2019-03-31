@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.5-rc-1-g050d376
+#### $$VERSION$$ v0.5-rc-3-gf67503c
 
 # are we runnig in a terminal?
 if [ -t 1 ] && [ "$TERM" != "" ];  then
@@ -187,7 +187,7 @@ send_markdown_message() {
 send_html_message() {
 	text="$2"
 	until [ "$(echo -n "$text" | wc -m)" -eq "0" ]; do
-		res="$(curl -s "$MSG_URL" -F "chat_id=$1" --data-urlencode "text=${text:0:4096}" -F "parse_mode=html")"
+		res="$(curl -s "$MSG_URL" -d "chat_id=$1" --data-urlencode "text=${text:0:4096}" -d "parse_mode=html")"
 		text="${text:4096}"
 	done
 }
