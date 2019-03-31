@@ -445,4 +445,4 @@ No - its not more or less insecure as any other Bot written in any other languag
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.49-4-g8e08c1f
+#### $$VERSION$$ v0.5-rc-0-g0c144bc

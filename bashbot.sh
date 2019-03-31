@@ -10,15 +10,10 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.49-9-gb27017f
-
-# get location of bashbot.sh an change to bashbot dir
-SCRIPT="./$(basename $0)"
-SCRIPTDIR="$(dirname $0)"
-cd "${SCRIPTDIR}"
+#### $$VERSION$$ v0.5-rc-0-g0c144bc
 
 # are we runnig in a terminal?
-if [ -t 1 ] || [ "$TERM" != "" ];  then
+if [ -t 1 ] && [ "$TERM" != "" ];  then
     CLEAR='clear'
     RED='\e[31m'
     GREEN='\e[32m'
@@ -26,6 +21,10 @@ if [ -t 1 ] || [ "$TERM" != "" ];  then
     NC='\e[0m'
 fi
 
+# get location of bashbot.sh an change to bashbot dir
+SCRIPT="./$(basename $0)"
+SCRIPTDIR="$(dirname $0)"
+cd "${SCRIPTDIR}" || echo -e "${RED}ERROR: Can't change to ${SCRIPTDIR} ...${NC}" && exit 1
 
 if [ ! -w "." ]; then
 	echo -e "${ORANGE}WARNING: $SCRIPTDIR is not writeable!${NC}"
@@ -61,7 +60,7 @@ if [ ! -f "$COUNT" ]; then
 	touch "$COUNT"
 elif [ ! -w "$COUNT" ]; then
 	$CLEAR
-	echo -e "${RED}ERROR: can't write to $COUNT!.${NC}"
+	echo -e "${RED}ERROR: Can't write to $COUNT!.${NC}"
 	ls -l "$COUNT"
 	exit 1
 fi
@@ -550,7 +549,7 @@ case "$1" in
 			echo -e "${RED}User \"$TOUSER\" not found!${NC}"
 			exit 2
 		else
-			echo "Ajusting user in bashbot.rc ..."
+			echo "Adjusting user in bashbot.rc ..."
 			sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' bashbot.rc
 			echo "Adjusting Owner and Permissions ..."
 			chown -R "$TOUSER" . *
@@ -565,7 +564,7 @@ case "$1" in
 	"background" | "resumeback")
 		$CLEAR
 		echo -e "${GREEN}Restart background processes ...${NC}"
-		for FILE in "${TMPDIR}/*-back.cmd"; do
+		for FILE in "${TMPDIR}/"*-back.cmd; do
 		    if [ "$FILE" == "${TMPDIR}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes to start.${NC}"; break
 		    else
@@ -578,8 +577,8 @@ case "$1" in
 			echo "restartbackground  ${PROG}  ${fifo}"
 			( tmux kill-session -t "${fifo}"; tmux kill-session -t sendprocess_${fifo}; rm -f -r $TMPDIR/${fifo}) 2>/dev/null
 			mkfifo "$TMPDIR/${fifo}"
-			TMUX= tmux new-session -d -s "${fifo}" "${PROGi}" &>"$TMPDIR/${fifo}"; echo "imprettydarnsuredatdisisdaendofdacmd" >"$TMPDIR/${fifo}"
-			TMUX= tmux new-session -d -s "sendprocess_${fifo}" "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
+			TMUX= tmux new-session -d -s "${fifo}" "${PROG} &>$TMPDIR/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>$TMPDIR/${fifo}"
+			TMUX= tmux new-session -d -s sendprocess_${fifo} "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
 		    fi
 		done
 		;;
@@ -592,7 +591,7 @@ case "$1" in
 	"killback" | "suspendback")
 		$CLEAR
 		echo -e "${GREEN}Stopping background processes ...${NC}"
-		for FILE in "${TMPDIR}/*-back.cmd"; do
+		for FILE in "${TMPDIR}/"*-back.cmd; do
 		    if [ "$FILE" == "${TMPDIR}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes.${NC}"; break
 		    else

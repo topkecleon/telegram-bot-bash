@@ -7,7 +7,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.49-4-g8e08c1f
+#### $$VERSION$$ v0.5-rc-0-g0c144bc
 
 
 SHELL=/bin/sh
@@ -28,9 +28,9 @@ MAILTO=root
 # * * * * *  root  echo "run every minute!"
 
 # run as www every day at 0:00
-  0 0 * * * nobody /usr/local/telegram-bot-bash/bashbot.sh start		# (re)start bot
+  0 0 * * * nobody /usr/local/telegram-bot-bash/bashbot.sh start	# (re)start bot
   0 0 * * * nobody /usr/local/telegram-bot-bash/bashbot.sh resumeback	# (re)start background jobs
 
 # run as www on 24 of Dec, 12:00
-  0 12 24 12 * nobody /usr/local/telegram-bot-bash/bashbot.sh broadcast "X-Mas shopping is over!"	# broadcast qa message
+  0 12 24 12 * nobody /usr/local/telegram-bot-bash/bashbot.sh broadcast "X-Mas shopping is over!"	# broadcast a message
 
