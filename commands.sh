@@ -4,7 +4,10 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.5-rc-3-gf67503c
+#### $$VERSION$$ v0.6-dev-2-gda5e96d
+#
+# shellcheck disable=SC2154
+# shellcheck disable=SC2034
 
 # adjust your language setting here, e.g.when run from other user or cron.
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
@@ -26,11 +29,11 @@ if [ "$1" = "source" ];then
 else
 	if ! tmux ls | grep -v send | grep -q "$copname"; then
 		[ ! -z "${URLS[*]}" ] && {
-			curl -s ${URLS[*]} -o $NAME
+			curl -s "${URLS[*]}" -o "$NAME"
 			send_file "${CHAT[ID]}" "$NAME" "$CAPTION"
 			rm -f "$NAME"
 		}
-		[ ! -z ${LOCATION[*]} ] && send_location "${CHAT[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
+		[ ! -z "${LOCATION[*]}" ] && send_location "${CHAT[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
 
 		# Inline
 		if [ $INLINE == 1 ]; then
@@ -61,7 +64,7 @@ else
 	case "$MESSAGE" in
 		'/question')
 			checkproc 
-			if [ $res -gt 0 ] ; then
+			if [ "$res" -gt 0 ] ; then
 				startproc "./question"
 			else
 				send_normal_message "${CHAT[ID]}" "$MESSAGE already running ..."
@@ -70,7 +73,7 @@ else
 
 		'/run-notify') 
 			myback="notify"; checkback "$myback"
-			if [ $res -gt 0 ] ; then
+			if [ "$res" -gt 0 ] ; then
 				background "./notify 60" "$myback" # notify every 60 seconds
 			else
 				send_normal_message "${CHAT[ID]}" "Background command $myback already running ..."
@@ -78,7 +81,7 @@ else
 			;;
 		'/stop-notify')
 			myback="notify"; checkback "$myback"
-			if [ $res -eq 0 ] ; then
+			if [ "$res" -eq 0 ] ; then
 				killback "$myback"
 				send_normal_message "${CHAT[ID]}" "Background command $myback canceled."
 			else
@@ -120,10 +123,10 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
      			
 		'/cancel')
 			checkprog
-			if [ $res -eq 0 ] ; then killproc && send_message "${CHAT[ID]}" "Command canceled.";else send_message "${CHAT[ID]}" "No command is currently running.";fi
+			if [ "$res" -eq 0 ] ; then killproc && send_message "${CHAT[ID]}" "Command canceled.";else send_message "${CHAT[ID]}" "No command is currently running.";fi
 			;;
 		*)
-			if tmux ls | grep -v send | grep -q $copname;then inproc; else send_message "${CHAT[ID]}" "$MESSAGE" "safe";fi
+			if tmux ls | grep -v send | grep -q "$copname";then inproc; else send_message "${CHAT[ID]}" "$MESSAGE" "safe";fi
 			;;
 	esac
 fi
