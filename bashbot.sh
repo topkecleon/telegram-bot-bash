@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # bashbot, the Telegram bot written in bash.
-# Written by Drew (@topkecleon) and Daniil Gentili (@danogentili).
-# Also contributed: JuanPotato, BigNerd95, TiagoDanin, iicc1, Gnadelwartz.
+# Written by Drew (@topkecleon) and Daniil Gentili (@danogentili), KayM (@gnadelwartz).
+# Also contributed: JuanPotato, BigNerd95, TiagoDanin, iicc1.
 # https://github.com/topkecleon/telegram-bot-bash
 
 # Depends on JSON.sh (http://github.com/dominictarr/JSON.sh) (MIT/Apache),
@@ -10,7 +10,14 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.5-rc-3-gf67503c
+#### $$VERSION$$ v0.5-rc-4-g92e9e9c
+#
+# Exit Codes:
+# - 0 sucess (hopefully)
+# - 1 can't change to bashbot dir
+# - 2 can't write to tmp and / or count 
+# - 3 user not found
+# - 4 unkown command
 
 # are we runnig in a terminal?
 if [ -t 1 ] && [ "$TERM" != "" ];  then
@@ -56,7 +63,7 @@ elif [ ! -w "$TMPDIR" ]; then
 	$CLEAR
 	echo -e "${RED}ERROR: Can't write to $TMPDIR!.${NC}"
 	ls -ld "$TMPDIR"
-	exit 1
+	exit 2
 fi
 
 COUNT="./count"
@@ -66,7 +73,7 @@ elif [ ! -w "$COUNT" ]; then
 	$CLEAR
 	echo -e "${RED}ERROR: Can't write to $COUNT!.${NC}"
 	ls -l "$COUNT"
-	exit 1
+	exit 2
 fi
 
 
@@ -551,7 +558,7 @@ case "$1" in
 		[ "$TOUSER" = "" ] && TOUSER="$MYUSER"
 		if ! compgen -u "$TOUSER" 2>&1 >/dev/null; then
 			echo -e "${RED}User \"$TOUSER\" not found!${NC}"
-			exit 2
+			exit 3
 		else
 			echo "Adjusting user in bashbot.rc ..."
 			sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' bashbot.rc
@@ -611,16 +618,19 @@ case "$1" in
 	"help")
 		$CLEAR
 		less "README.md"
+		exit
 		;;
 	"attach")
 		tmux attach -t "$ME"
 		;;
 	"source")
 		echo "OK"
+		exit
 		;;
 	*)
 		echo -e "${RED}BAD REQUEST${NC}"
 		echo -e "${RED}Available arguments: outproc, count, broadcast, start, suspendback, resumeback, kill, killback, help, attach${NC}"
+		exit 4
 		;;
 esac
 

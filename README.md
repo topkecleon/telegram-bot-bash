@@ -213,7 +213,7 @@ Allowed values: typing for text messages, upload_photo for photos, record_video 
 send_action "${CHAT[ID]}" "action"
 ```
 
-#### Interactice Chats
+#### Interactive Chats
 To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.
 The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).
 To open up a keyboard in an interactive script, print out the keyboard layout in the following way:
@@ -418,7 +418,7 @@ To use bashbot as a system servive include a working ```bashbot.rc``` in your in
 An example crontab is provided in ```bashbot.cron```.
 
 - If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username ```nobody```.
-- if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username````nobody``` with the username you want to run bashbot. copy the modified file to ```/etc/cron.d/bashbot```
+- if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username```nobody``` with the username you want to run bashbot. copy the modified file to ```/etc/cron.d/bashbot```
 
 
 ## Security Considerations
@@ -439,10 +439,10 @@ Everyone who can read your Bot files can extract your Bots data. Especially your
 Runing ```./bashbot init``` sets the Bot permissions to reasonable default values as a starting point.
 
 ### Is this Bot insecure?
-No - its not more or less insecure as any other Bot written in any other language. But you should know about the implications ...
+No - its not less (in)secure as any other Bot written in any other language. But you should know about the implications ...
 
 ## That's it!
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.5-rc-3-gf67503c
+#### $$VERSION$$ v0.5-rc-4-g92e9e9c
