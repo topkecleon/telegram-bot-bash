@@ -428,6 +428,8 @@ Bash scripts in general are not designed to be bullet proof, so consider this Bo
 
 Whenever you are processing input from outside your bot you should disable globbing (set -f) and carefully quote everthing.
 
+To improve you scripts we recommend to lint them with [shellcheck](https://www.shellcheck.net/). This can be done online or you can install ```shellchek``` from your distributions package manager. bashbot itself is also linted by shellcheck.
+
 ### Run your Bot as a restricted user
 Every file your bot can write is in danger to be overwritten/deleted, In case of bad handling of user input every file your Bot can read is in danger of being disclosed.
 
@@ -445,4 +447,4 @@ No - its not less (in)secure as any other Bot written in any other language. But
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.5-rc-4-g92e9e9c
+#### $$VERSION$$ v0.6-dev-0-g352c64f
