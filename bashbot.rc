@@ -1,7 +1,7 @@
 #!/bin/sh
 # description: Start or stop telegram-bash-bot
 #
-#### $$VERSION$$ v0.5-rc-4-g92e9e9c
+#### $$VERSION$$ v0.5-rc-5-g352c64f
 #
 ### BEGIN INIT INFO
 # Provides: bashbot
@@ -12,6 +12,7 @@
 # Description: Start or stop telegram-bot-bash server
 ### END INIT INFO
 
+TERM="" # disable bashbot clear and color output
 runas="root"  # not recommended!
 runcmd="echo Dry run:" # not actived until you edit lines below
 
