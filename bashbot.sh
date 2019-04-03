@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev-3-g614eae8
+#### $$VERSION$$ v0.6-dev-4-gb4e13bd
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -113,7 +113,7 @@ urlencode() {
 
 
 send_message() {
-	local chat, text, arg, keyboard, file, lat long, title, adress, sent
+	local chat text arg keyboard file lat long title adress sent
 	[ "$2" = "" ] && return 1
 	chat="$1"
 	text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
