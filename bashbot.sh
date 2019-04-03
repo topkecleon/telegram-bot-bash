@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.5-rc-4-g92e9e9c
+#### $$VERSION$$ v0.5-rc-6-g7a4831d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -546,7 +546,7 @@ case "$1" in
 	"start")
 		$CLEAR
 		tmux kill-session -t $ME&>/dev/null
-		tmux new-session -d -s $ME "bash $SCRIPT startbot" && echo -e "${GREEN}Bot started successfully.${NC}"
+		tmux new-session -d -s $ME "bash $SCRIPT startbot $ME" && echo -e "${GREEN}Bot started successfully.${NC}"
 		echo "Tmux session name $ME" || echo -e "${RED}An error occurred while starting the bot. ${NC}"
 		send_markdown_message "${CHAT[ID]}" "*Bot started*"
 		;;
