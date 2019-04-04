@@ -462,4 +462,4 @@ No - its not less (in)secure as any other Bot written in any other language. But
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.5-rc-9-g1870ae0
+#### $$VERSION$$ v0.5-0-gfd81668

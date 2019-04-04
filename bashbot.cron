@@ -7,7 +7,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.5-rc-4-g92e9e9c
+#### $$VERSION$$ v0.5-0-gfd81668
 
 
 SHELL=/bin/sh
