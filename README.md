@@ -386,14 +386,14 @@ E.g. the Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as:
 Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for experiend linux users.
 
 ### Run as other user or system service
-Running bashbot as an other user is only possibleers with sudo rigths.
+Running bashbot as an other user is only possible with sudo rigths.
 
 Setup the environment for the user you want to run bashbot and enter desired username, e.g. nobody :
 ```bash
 ./bashbot.sh init
 ```
 
-Edit the example file ```bashbot.rc```, uncomment the ```runcmd=``` availible on your system and edit the following lines to fit xyour configuration:
+Edit the file ```bashbot.rc``` and edit the following lines to fit your configuration:
 ```
 #######################
 # Configuration Section
@@ -462,4 +462,4 @@ No - its not less (in)secure as any other Bot written in any other language. But
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.5-rc-7-gc075ea6
+#### $$VERSION$$ v0.5-rc-8-g7a1c01d
