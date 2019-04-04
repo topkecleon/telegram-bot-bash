@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.5-0-gfd81668
+#### $$VERSION$$ v0.5-2-g09678a1
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -535,11 +535,13 @@ case "$1" in
 		rm -f -r $TMPDIR/$3
 		;;
 	"count")
-		echo "A total of $(wc -l ${COUNT} | sed 's/count//g')users used me."
+		echo "A total of $(wc -l <"${COUNT}") users used me."
+		exit
 		;;
 	"broadcast")
-		echo "Sending the broadcast $* to $(wc -l ${COUNT} | sed 's/count//g')users."
-		[ "$(wc -l ${COUNT} | sed 's/ count//g')" -gt "300" ] && sleep="sleep 0.5"
+		USERS="$(wc -l <"${COUNT}")"
+		echo "Sending the broadcast $* to $USERS users."
+		[ "$USERS" -gt "300" ] && sleep="sleep 0.5"
 		shift
 		for f in "$(cat ${COUNT})";do send_message ${f//COUNT} "$*"; $sleep;done
 		;;
