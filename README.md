@@ -394,7 +394,7 @@ Setup the environment for the user you want to run bashbot and enter desired use
 ```
 
 Edit the file ```bashbot.rc``` and edit the following lines to fit your configuration:
-```
+```bash
 #######################
 # Configuration Section
 
@@ -462,4 +462,4 @@ No - its not less (in)secure as any other Bot written in any other language. But
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.5-rc-8-g7a1c01d
+#### $$VERSION$$ v0.5-rc-9-g1870ae0
