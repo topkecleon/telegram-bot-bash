@@ -538,13 +538,14 @@ case "$1" in
 		rm -f -r "${TMPDIR:-.}/$3"
 		;;
 	"count")
-		echo "A total of $(wc -l "${COUNT}" | sed 's/count//g')users used me."
+		echo "A total of $(wc -l <"${COUNT}") users used me."
 		;;
 	"broadcast")
-		echo "Sending the broadcast $* to $(wc -l "${COUNT}" | sed 's/count//g')users."
-		[ "$(wc -l "${COUNT}" | sed 's/ count//g')" -gt "300" ] && sleep="sleep 0.5"
+		NUMCOUNT="$(wc -l <"${COUNT}")"
+		echo "Sending the broadcast $* to $NUMCOUNT users."
+		[ "$NUMCOUNT" -gt "300" ] && sleep="sleep 0.5"
 		shift
-		for f in $(cat "${COUNT}"); do send_message "${f//COUNT}" "$*"; $sleep;done
+		while read -r f; do send_message "${f//COUNT}" "$*"; $sleep; done <"${COUNT}"
 		;;
 	"start")
 		$CLEAR
