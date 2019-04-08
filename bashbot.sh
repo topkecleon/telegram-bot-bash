@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev-5-g18b3b51
+#### $$VERSION$$ v0.6-dev-6-g34d2e3d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -136,7 +136,7 @@ send_message() {
 
 	}
 	if [ "$no_keyboard" != "" ]; then
-		echo "remove_keyboard $chat $text" > $TMPDIR/prova
+		echo "remove_keyboard $chat $text" > ${TMPDIR:-.}/prova
 		remove_keyboard "$chat" "$text"
 		sent=y
 	fi
@@ -383,15 +383,15 @@ forward() {
 
 
 background() {
-	echo "${CHAT[ID]}:$2:$1" >"$TMPDIR/${copname}$2-back.cmd"
+	echo "${CHAT[ID]}:$2:$1" >"${TMPDIR:-.}/${copname}$2-back.cmd"
 	startproc "$1" "back-$2-"
 }
 
 startproc() {
 	killproc "$2"
 	local fifo="$2${copname}" # add $1 to copname, so we can have more than one running script per chat
-	mkfifo "$TMPDIR/${fifo}"
-	TMUX= tmux new-session -d -s "${fifo}" "$1 &>$TMPDIR/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>$TMPDIR/${fifo}"
+	mkfifo "${TMPDIR:-.}/${fifo}"
+	TMUX= tmux new-session -d -s "${fifo}" "$1 &>${TMPDIR:-.}/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>${TMPDIR:-.}/${fifo}"
 	TMUX= tmux new-session -d -s sendprocess_${fifo} "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
 }
 
@@ -406,12 +406,12 @@ checkproc() {
 
 killback() {
 	killproc "back-$1-"
-	rm -f "$TMPDIR/${copname}$1-back.cmd"
+	rm -f "${TMPDIR:-.}/${copname}$1-back.cmd"
 }
 
 killproc() {
 	local fifo="$1${copname}"
-	(tmux kill-session -t "${fifo}"; echo imprettydarnsuredatdisisdaendofdacmd>"$TMPDIR/${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "$TMPDIR/${fifo}")2>/dev/null
+	(tmux kill-session -t "${fifo}"; echo imprettydarnsuredatdisisdaendofdacmd>"${TMPDIR:-.}/${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}")2>/dev/null
 }
 
 inproc() {
@@ -429,7 +429,7 @@ process_updates() {
 	done
 }
 process_client() {
-	local TMP="$TMPDIR/$RANDOM$RANDOM-MESSAGE"
+	local TMP="${TMPDIR:-.}/$RANDOM$RANDOM-MESSAGE"
 	echo "$UPDATE" >"$TMP"
 	# Message
 	MESSAGE[0]="$(echo -e "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","text"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")" | sed 's#\\/#/#g')"
@@ -533,8 +533,8 @@ case "$1" in
 			line=""
 			read -r -t 10 line
 			[ "$line" != "" ] && [ "$line" != "imprettydarnsuredatdisisdaendofdacmd" ] && send_message "$2" "$line"
-		done <"$TMPDIR/$3"
-		rm -f -r "$TMPDIR/$3"
+		done <"${TMPDIR:-.}/$3"
+		rm -f -r "${TMPDIR:-.}/$3"
 		;;
 	"count")
 		echo "A total of $(wc -l "${COUNT}" | sed 's/count//g')users used me."
@@ -577,8 +577,8 @@ case "$1" in
 	"background" | "resumeback")
 		$CLEAR
 		echo -e "${GREEN}Restart background processes ...${NC}"
-		for FILE in "${TMPDIR}/"*-back.cmd; do
-		    if [ "$FILE" == "${TMPDIR}/*-back.cmd" ]; then
+		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
+		    if [ "$FILE" == "${TMPDIR:-.}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes to start.${NC}"; break
 		    else
 			RESTART="$(cat "$FILE")"
@@ -588,9 +588,9 @@ case "$1" in
 			JOB="${JOB%:*}"
 			fifo="back-${JOB}-${ME}_${CHAT[ID]}" # compose fifo from jobname, $ME (botname) and CHAT[ID] 
 			echo "restartbackground  ${PROG}  ${fifo}"
-			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "$TMPDIR/${fifo}") 2>/dev/null
-			mkfifo "$TMPDIR/${fifo}"
-			TMUX= tmux new-session -d -s "${fifo}" "${PROG} &>$TMPDIR/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>$TMPDIR/${fifo}"
+			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}") 2>/dev/null
+			mkfifo "${TMPDIR:-.}/${fifo}"
+			TMUX= tmux new-session -d -s "${fifo}" "${PROG} &>${TMPDIR:-.}/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>${TMPDIR:-.}/${fifo}"
 			TMUX= tmux new-session -d -s "sendprocess_${fifo}" "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
 		    fi
 		done
@@ -604,8 +604,8 @@ case "$1" in
 	"killback" | "suspendback")
 		$CLEAR
 		echo -e "${GREEN}Stopping background processes ...${NC}"
-		for FILE in "${TMPDIR}/"*-back.cmd; do
-		    if [ "$FILE" == "${TMPDIR}/*-back.cmd" ]; then
+		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
+		    if [ "$FILE" == "${TMPDIR:-.}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes.${NC}"; break
 		    else
 			REMOVE="$(cat "$FILE")"
@@ -613,7 +613,7 @@ case "$1" in
 			fifo="back-${JOB%:*}-${ME}_${REMOVE%%:*}"
 			echo "killbackground  ${fifo}"
 			[ "$1" == "killback" ] && rm -f "$FILE" # remove job
-			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "$TMPDIR/${fifo}") 2>/dev/null
+			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}") 2>/dev/null
 		    fi
 		done
 		;;
