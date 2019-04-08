@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev-6-g34d2e3d
+#### $$VERSION$$ v0.6-dev-7-ge936e6f
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -31,6 +31,7 @@ fi
 # get location of bashbot.sh an change to bashbot dir
 SCRIPT="./$(basename "$0")"
 SCRIPTDIR="$(dirname "$0")"
+RUNUSER="$USER" # USER is overwritten as array, $USER may not work later on...
 
 if ! cd "${SCRIPTDIR}" ; then
 	echo -e "${RED}ERROR: Can't change to ${SCRIPTDIR} ...${NC}"
@@ -372,7 +373,7 @@ send_location() {
 send_venue() {
 	[ "$5" = "" ] && return
 	[ "$6" != "" ] add="-F \"foursquare_id=$6\""
-	res="$(curl -s "$VENUE_URL" -F "chat_id=$1" -F "latitude=$2" -F "longitude=$3" -F "title=$4" -F "address=$5" $add)" # what is add for?
+	res="$(curl -s "$VENUE_URL" -F "chat_id=$1" -F "latitude=$2" -F "longitude=$3" -F "title=$4" -F "address=$5")"
 }
 
 
@@ -391,8 +392,8 @@ startproc() {
 	killproc "$2"
 	local fifo="$2${copname}" # add $1 to copname, so we can have more than one running script per chat
 	mkfifo "${TMPDIR:-.}/${fifo}"
-	TMUX= tmux new-session -d -s "${fifo}" "$1 &>${TMPDIR:-.}/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>${TMPDIR:-.}/${fifo}"
-	TMUX= tmux new-session -d -s sendprocess_${fifo} "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
+	tmux new-session -d -s "${fifo}" "$1 &>${TMPDIR:-.}/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>${TMPDIR:-.}/${fifo}"
+	tmux new-session -d -s "sendprocess_${fifo}" "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
 }
 
 
@@ -503,7 +504,7 @@ process_client() {
 	source commands.sh
 
 	tmpcount="COUNT${CHAT[ID]}"
-	cat ${COUNT} | grep -q "$tmpcount" || echo "$tmpcount">>${COUNT}
+	grep -q "$tmpcount" <"${COUNT}" >/dev/null 2>&1 || echo "$tmpcount">>${COUNT}
 	# To get user count execute bash bashbot.sh count
 }
 
@@ -553,11 +554,10 @@ case "$1" in
 		send_markdown_message "${CHAT[ID]}" "*Bot started*"
 		;;
 	"init") # adjust users and permissions
-		MYUSER="$USER"
-		[[ "$(id -u)" -eq "0" ]] && MYUSER="nobody"
-		echo -n "Enter User to run basbot [$MYUSER]: "
+		[[ "$(id -u)" -eq "0" ]] && RUNUSER="nobody"
+		echo -n "Enter User to run basbot [$RUNUSER]: "
 		read -r TOUSER
-		[ "$TOUSER" = "" ] && TOUSER="$MYUSER"
+		[ "$TOUSER" = "" ] && TOUSER="$RUNUSER"
 		if ! compgen -u "$TOUSER" >/dev/null 2>&1; then
 			echo -e "${RED}User \"$TOUSER\" not found!${NC}"
 			exit 3
@@ -590,8 +590,8 @@ case "$1" in
 			echo "restartbackground  ${PROG}  ${fifo}"
 			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}") 2>/dev/null
 			mkfifo "${TMPDIR:-.}/${fifo}"
-			TMUX= tmux new-session -d -s "${fifo}" "${PROG} &>${TMPDIR:-.}/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>${TMPDIR:-.}/${fifo}"
-			TMUX= tmux new-session -d -s "sendprocess_${fifo}" "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
+			tmux new-session -d -s "${fifo}" "${PROG} &>${TMPDIR:-.}/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>${TMPDIR:-.}/${fifo}"
+			tmux new-session -d -s "sendprocess_${fifo}" "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
 		    fi
 		done
 		;;
