@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev-4-gb4e13bd
+#### $$VERSION$$ v0.6-dev-5-g18b3b51
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -113,9 +113,9 @@ urlencode() {
 
 
 send_message() {
-	local chat text arg keyboard file lat long title adress sent
+	local text arg keyboard file lat long title address sent
 	[ "$2" = "" ] && return 1
-	chat="$1"
+	local chat="$1"
 	text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
 	arg="$3"
 	[ "$arg" != "safe" ] && {
@@ -292,9 +292,9 @@ send_keyboard() {
 	local keyboard=init
 	OLDIFS=$IFS
 	IFS=$(echo -en "\"")
-	for f in "$@" ;do [ "$f" != " " ] && local keyboard="$keyboard, [\"$f\"]";done
+	for f in "$@" ;do [ "$f" != " " ] && keyboard="$keyboard, [\"$f\"]";done
 	IFS=$OLDIFS
-	local keyboard=${keyboard/init, /}
+	keyboard=${keyboard/init, /}
 	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")"
 }
 
@@ -311,6 +311,7 @@ get_file() {
 
 send_file() {
 	[ "$2" = "" ] && return
+	local CAPTION
 	local chat_id=$1
 	local file=$2
 	echo "$file" | grep -qE "$FILE_REGEX" || return
@@ -320,13 +321,13 @@ send_file() {
 			CUR_URL=$AUDIO_URL
 			WHAT=audio
 			STATUS=upload_audio
-			local CAPTION="$3"
+			CAPTION="$3"
 			;;
 		png|jpg|jpeg|gif)
 			CUR_URL=$PHO_URL
 			WHAT=photo
 			STATUS=upload_photo
-			local CAPTION="$3"
+			CAPTION="$3"
 			;;
 		webp)
 			CUR_URL=$STICKER_URL
@@ -337,7 +338,7 @@ send_file() {
 			CUR_URL=$VIDEO_URL
 			WHAT=video
 			STATUS=upload_video
-			local CAPTION="$3"
+			CAPTION="$3"
 			;;
 
 		ogg)
@@ -349,7 +350,7 @@ send_file() {
 			CUR_URL=$DOCUMENT_URL
 			WHAT=document
 			STATUS=upload_document
-			local CAPTION="$3"
+			CAPTION="$3"
 			;;
 	esac
 	send_action "$chat_id" "$STATUS"
@@ -557,7 +558,7 @@ case "$1" in
 		echo -n "Enter User to run basbot [$MYUSER]: "
 		read -r TOUSER
 		[ "$TOUSER" = "" ] && TOUSER="$MYUSER"
-		if ! compgen -u "$TOUSER" >/dev/null 2&>1; then
+		if ! compgen -u "$TOUSER" >/dev/null 2>&1; then
 			echo -e "${RED}User \"$TOUSER\" not found!${NC}"
 			exit 3
 		else
