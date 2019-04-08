@@ -390,7 +390,7 @@ Running bashbot as an other user is only possible with sudo rigths.
 
 Setup the environment for the user you want to run bashbot and enter desired username, e.g. nobody :
 ```bash
-./bashbot.sh init
+sudo ./bashbot.sh init
 ```
 
 Edit the file ```bashbot.rc``` and edit the following lines to fit your configuration:
@@ -427,7 +427,7 @@ sudo ./bashbot.rc suspendback
 sudo ./bashbot.rc resumeback
 sudo ./bashbot.rc killback
 ```
-To change back the environment to your user-ID run ```./bashbot.rc init``` again and enter your user name.
+To change back the environment to your user-ID run ```sudo ./bashbot.sh init``` again and enter your user name.
 
 To use bashbot as a system servive include a working ```bashbot.rc``` in your init system (systemd, /etc/init.d).
 
@@ -453,7 +453,7 @@ Never run your Bot as root, this is the most dangerous you can do! Usually the u
 ### Secure your Bot installation
 Everyone who can read your Bot files can extract your Bots data. Especially your Bot Token in ```token``` must be protected against other users. No one exept you should have write access to the Bot files. The Bot itself need write access to ```count``` and  ```tmp-bot-bash``` only, all other files should be write protected.
 
-Runing ```./bashbot init``` sets the Bot permissions to reasonable default values as a starting point.
+Runing ```./bashbot.sh init``` sets the Bot permissions to reasonable default values as a starting point.
 
 ### Is this Bot insecure?
 No - its not less (in)secure as any other Bot written in any other language. But you should know about the implications ...
@@ -462,4 +462,4 @@ No - its not less (in)secure as any other Bot written in any other language. But
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.5-0-gfd81668
+#### $$VERSION$$ v0.5-3-g8eef840
