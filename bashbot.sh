@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.50-15-g275a83b
+#### $$VERSION$$ v0.50-13-g143c122
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -621,7 +621,7 @@ case "$1" in
 		;;
 	"help")
 		$CLEAR
-		less "README.md"
+		less "README.txt"
 		exit
 		;;
 	"attach")
