@@ -30,20 +30,20 @@ git clone --recursive https://github.com/topkecleon/telegram-bot-bash
 
 
 ## Getting started
- [Create your first telegram bot](doc/1_firstbot.md)
- [Make your own Bot](doc/2_usage.md)
-   Managing your own Bot
-   Recieve data
-   Send Messages
-   Send files, location  etc.
- [Advatage Features](doc/3_advanced.md)
-   Interactive Chats
-   Background Jobs
-   Inline queries
- [Expert Use](doc/4_expert.md)
-   Handling UTF-8
-   Run as other user or system service
-   Scedule bashbot from Cron
+ - [Create your first telegram bot](doc/1_firstbot.md)
+ - [Make your own Bot](doc/2_usage.md)
+   - Managing your own Bot
+   - Recieve data
+   - Send Messages
+   - Send files, location  etc.
+ - [Advatage Features](doc/3_advanced.md)
+   - Interactive Chats
+   - Background Jobs
+   - Inline queries
+ - [Expert Use](doc/4_expert.md)
+   - Handling UTF-8
+   - Run as other user or system service
+   - Scedule bashbot from Cron
 
 
 ## Security Considerations
