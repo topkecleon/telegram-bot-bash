@@ -70,5 +70,5 @@ git clone --recursive https://github.com/topkecleon/telegram-bot-bash
 ```
 3. Change to directory ```telegram-bot.bash```, run ```./bashbot.sh init``` and follow the instructions. At this stage you are asked for your Bots token given by botfather.
 
-#### $$VERSION$$ v0.50-12-g9fd2f5c
+#### $$VERSION$$ v0.50-13-g4d5d386
 
