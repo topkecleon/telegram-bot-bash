@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev-7-ge936e6f
+#### $$VERSION$$ v0.50-15-g275a83b
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
