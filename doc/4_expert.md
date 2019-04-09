@@ -1,5 +1,7 @@
-## Handling UTF-8 character sets
-### Setting up your Environment
+## Expert Use
+
+### Handling UTF-8 character sets
+#### Setting up your Environment
 In general ```bash``` and ```GNU``` utitities are UTF-8 aware, but you have to setup your environment
 and your scripts accordingly:
 
@@ -28,7 +30,7 @@ export 'LANGUAGE=den_US.UTF-8'
 
 To display all availible locales on your system run ```locale -a | more```. [Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8)
 
-### UTF-8 in Telegram
+#### UTF-8 in Telegram
 ```UTF-8``` is a variable length encoding of Unicode. UTF-8 is recommended as the default encoding in JSON, XML and HTML, also Telegram make use of it.
 
 The first 128 characters are regular ASCII, so it's a superset of and compatible with ASCII environments. The next 1,920 characters need
@@ -44,11 +46,11 @@ E.g. the Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as:
 '\uXXXX' and '\UXXXXXXXX' escaped endocings are supported by zsh, bash, ksh93, mksh and FreeBSD sh, GNU 'printf' and GNU 'echo -e', see [this Stackexchange Answer](https://unix.stackexchange.com/questions/252286/how-to-convert-an-emoticon-specified-by-a-uxxxxx-code-to-utf-8/252295#252295) for more information.
 
 
-## Expert Use
-Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for experiend linux users.
 
 ### Run as other user or system service
-Running bashbot as an other user is only possible with sudo rigths.
+Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for experiend linux users.
+
+####Running bashbot as an other user is only possible with sudo rigths.
 
 Setup the environment for the user you want to run bashbot and enter desired username, e.g. nobody :
 ```bash
@@ -99,5 +101,5 @@ An example crontab is provided in ```bashbot.cron```.
 - If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username ```nobody```.
 - if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username```nobody``` with the username you want to run bashbot. copy the modified file to ```/etc/cron.d/bashbot```
 
-#### $$VERSION$$ v0.50-11-g4ce19b1
+#### $$VERSION$$ v0.50-12-g9fd2f5c
 

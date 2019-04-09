@@ -1,4 +1,6 @@
-#### Interactive Chats
+
+## Advanced Features
+### Interactive Chats
 To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.
 The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).
 To open up a keyboard in an interactive script, print out the keyboard layout in the following way:
@@ -29,7 +31,7 @@ echo "Text that will appear in one message  mynewlinestartshere  with this text 
 ```
 Note: Interactive Chats run independent from main bot and continue running until your script exits or you /cancel if from your Bot. 
 
-#### Background Jobs
+### Background Jobs
 
 A background job is similar to an interactive chat, but runs in the background and does only output massages instead of processing input from the user. In contrast to interactive chats it's possible to run multiple background jobs. To create a background job write a script or edit the notify script and use the funtion ```background``` to start it:
 ```bash
@@ -52,7 +54,7 @@ If you want to kill all background jobs permantly run:
 ```
 Note: Background Jobs run independent from main bot and continue running until your script exits or you stop if from your Bot. Backgound Jobs will continue running if your Bot is stoped (kill)!. 
 
-#### Inline queries
+### Inline queries
 The following commands allows users to interact with your bot via *inline queries*.
 In order to enable **inline mode**, send `/setinline` command to [@BotFather](https://telegram.me/botfather) and provide the placeholder text that the user will see in the input field after typing your bot’s name.
 Also, edit line 12 from `commands.sh` putting a "1".
@@ -95,5 +97,5 @@ To send stickers through an *inline query*:
 answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 ```
 
-#### $$VERSION$$ v0.50-11-g4ce19b1
+#### $$VERSION$$ v0.50-12-g9fd2f5c
 

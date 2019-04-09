@@ -1,4 +1,4 @@
-## Creating your own Bot
+## Make your own Bot
 
 All Commands for the Bot are in the ```commands.sh``` file (this should ease upgrades of the bot core). Here you find some examples how to process messages and send out text.
 
@@ -9,7 +9,7 @@ To use the functions provided in this script in other scripts simply source bash
 
 Have FUN!
 
-## Managing your Bot
+## Managing your own Bot
 #### Note: running bashbot as root is highly danger and not recommended. See Expert use.
 
 ### Start / Stop
@@ -33,7 +33,7 @@ To send a broadcast to all of users that ever used the bot run the following com
 ./bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
 ```
 
-### Recieve data
+## Recieve data
 Evertime a Message is recieved, you can read incoming data using the following variables:
 
 * ```$MESSAGE```: Incoming messages
@@ -81,7 +81,7 @@ Evertime a Message is recieved, you can read incoming data using the following v
   - ```${LOCATION[LONGITUDE]}```: Longitude
   - ```${LOCATION[LATITUDE]}```: Latitude
 
-### Usage of bashbot functions
+## Usage of bashbot functions
 
 #### send_message
 To send messages use the ```send_message``` function:
@@ -147,6 +147,6 @@ Allowed values: typing for text messages, upload_photo for photos, record_video 
 send_action "${CHAT[ID]}" "action"
 ```
 
-#### $$VERSION$$ v0.50-11-g4ce19b1
+#### $$VERSION$$ v0.50-12-g9fd2f5c
 
 
