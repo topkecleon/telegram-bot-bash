@@ -539,6 +539,7 @@ case "$1" in
 		;;
 	"count")
 		echo "A total of $(wc -l <"${COUNT}") users used me."
+		exit
 		;;
 	"broadcast")
 		NUMCOUNT="$(wc -l <"${COUNT}")"

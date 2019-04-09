@@ -386,31 +386,48 @@ E.g. the Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as:
 Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for experiend linux users.
 
 ### Run as other user or system service
-Running bashbot as an other user is only possible (and strongly recommended) for root.
+Running bashbot as an other user is only possible with sudo rigths.
 
-Setup the environment for the user you want to run bashbot and enter new username:
+Setup the environment for the user you want to run bashbot and enter desired username, e.g. nobody :
 ```bash
-./bashbot.sh init
+sudo ./bashbot.sh init
 ```
 
-Edit the example rc file ```bashbot.rc```, uncomment the ```runcmd``` availible on your system and fill the name of your Bot in ```name```.
+Edit the file ```bashbot.rc``` and edit the following lines to fit your configuration:
+```bash
+#######################
+# Configuration Section
 
+# edit the next line to fit the user you want to run bashbot, e.g. nobody:
+runas="nobody" 
+
+# uncomment one of the following lines 
+# runcmd="su $runas -s /bin/bash -c "      # runasuser with su
+# runcmd="runuser $runas -s /bin/bash -c " # runasuser with runuser
+
+# edit the values of the following lines to fit your config:
+start="/usr/local/telegram-bot-bash/bashbot.sh"	# location of your bashbot.sh script
+name=''   # your bot name as given to botfather, e.g. mysomething_bot
+
+# END Configuration
+#######################
+```
 From now on always use bashbot.rc to start/stop your bot: 
 ```bash
-./bashbot.rc start
+sudo ./bashbot.rc start
 ```
 Type ```ps -ef | grep bashbot``` to verify your Bot is running as the desired user.
 
 If you started bashbot by bashbot.rc you must use bashbot.rc also to manage your Bot! The following commands are availible:
 ```bash
-./bashbot.rc start
-./bashbot.rc stop
-./bashbot.rc status
-./bashbot.rc suspendback
-./bashbot.rc resumeback
-./bashbot.rc killback
+sudo ./bashbot.rc start
+sudo ./bashbot.rc stop
+sudo ./bashbot.rc status
+sudo ./bashbot.rc suspendback
+sudo ./bashbot.rc resumeback
+sudo ./bashbot.rc killback
 ```
-To change back the environment to your user-ID run ```./bashbot.rc init``` again and enter your user name.
+To change back the environment to your user-ID run ```sudo ./bashbot.sh init``` again and enter your user name.
 
 To use bashbot as a system servive include a working ```bashbot.rc``` in your init system (systemd, /etc/init.d).
 
@@ -438,7 +455,7 @@ Never run your Bot as root, this is the most dangerous you can do! Usually the u
 ### Secure your Bot installation
 Everyone who can read your Bot files can extract your Bots data. Especially your Bot Token in ```token``` must be protected against other users. No one exept you should have write access to the Bot files. The Bot itself need write access to ```count``` and  ```tmp-bot-bash``` only, all other files should be write protected.
 
-Runing ```./bashbot init``` sets the Bot permissions to reasonable default values as a starting point.
+Runing ```./bashbot.sh init``` sets the Bot permissions to reasonable default values as a starting point.
 
 ### Is this Bot insecure?
 No - its not less (in)secure as any other Bot written in any other language. But you should know about the implications ...
