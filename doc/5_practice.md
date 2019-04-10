@@ -47,7 +47,7 @@ If a Bot command needs more than 2-3 lines of code I recommend to factor it out 
 		[...]
 	esac
 ```
-Doing it this way keeps command.sh small and clean, while allowing complex tasks to be done in the included function. example mybotcommands.inc.sh:
+Doing it this way keeps command.sh small and clean, while allowing complex tasks to be done in the included function. example ```mybotcommands.inc.sh```:
 ```bash
 #!/bin/bash
 #
