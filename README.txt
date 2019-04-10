@@ -107,4 +107,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
+latexmath:[\[VERSION\]] v0.6-dev2-0-g143c122
 ++++++++++++++++++++++++++++++++++++++++++++
