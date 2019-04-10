@@ -44,7 +44,7 @@ git clone --recursive https://github.com/topkecleon/telegram-bot-bash
    - Handling UTF-8
    - Run as other user or system service
    - Scedule bashbot from Cron
- - [Best Practices](doc/5_pratice.md)
+ - [Best Practices](doc/5_practice.md)
    - Customizing commands.sh
    - Seperate Bot logic from command
    - Test your Bot with shellcheck
