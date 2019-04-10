@@ -36,7 +36,7 @@ git clone --recursive https://github.com/topkecleon/telegram-bot-bash
    - Recieve data
    - Send Messages
    - Send files, location  etc.
- - [Advatage Features](doc/3_advanced.md)
+ - [Advanced Features](doc/3_advanced.md)
    - Interactive Chats
    - Background Jobs
    - Inline queries
@@ -44,7 +44,10 @@ git clone --recursive https://github.com/topkecleon/telegram-bot-bash
    - Handling UTF-8
    - Run as other user or system service
    - Scedule bashbot from Cron
-
+ - [Best Practices](doc/5_pratice.md)
+   - Customizing commands.sh
+   - Seperate Bot logic from command
+   - Test your Bot with shellcheck
 
 ## Security Considerations
 Running a Telegram Bot means you are conneted to the public, you never know whats send to your Bot.
