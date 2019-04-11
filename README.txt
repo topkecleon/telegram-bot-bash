@@ -43,7 +43,7 @@ Getting started
 * Recieve data
 * Send Messages
 * Send files, location etc.
-* link:doc/3_advanced.md[Advatage Features]
+* link:doc/3_advanced.md[Advanced Features]
 * Interactive Chats
 * Background Jobs
 * Inline queries
@@ -51,6 +51,10 @@ Getting started
 * Handling UTF-8
 * Run as other user or system service
 * Scedule bashbot from Cron
+* link:doc/5_practice.md[Best Practices]
+* Customizing commands.sh
+* Seperate Bot logic from command
+* Test your Bot with shellcheck
 
 Security Considerations
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -107,5 +111,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.6-dev2-0-g143c122
-++++++++++++++++++++++++++++++++++++++++++++
+latexmath:[\[VERSION\]] v0.51-0-g0356270
+++++++++++++++++++++++++++++++++++++++++
