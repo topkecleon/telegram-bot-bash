@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev2-10-gdb64978
+#### $$VERSION$$ v0.6-dev2-12-g307363a
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -224,7 +224,7 @@ leave_chat() {
 }
 
 user_is_creator() {
-	if [ "$1" == "$2" ] || [ "$(get_chat_member_status "$1" "$2")" == "creator" ]; then return 0; fi
+	if [ "${1:--}" == "${2:-+}" ] || [ "$(get_chat_member_status "$1" "$2")" == "creator" ]; then return 0; fi
 	return 1 
 }
 
