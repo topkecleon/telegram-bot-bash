@@ -4,7 +4,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev2-8-g649fe44
+#### $$VERSION$$ v0.6-dev2-9-gf4e277b
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -17,6 +17,28 @@ export 'LANGUAGE=C.UTF-8'
 
 unset IFS
 # set -f # if you are paranoid use set -f to disable globbing
+
+
+# chnage Info anf Help to fit your needs
+bashbot_info() {
+	send_markdown_message "${1}" 'This is bashbot, the Telegram bot written entirely in bash.
+It features background tasks and interactive chats, and can serve as an interface for CLI programs.
+It currently can send, recieve and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
+'
+}
+
+bashbot_help() {
+	send_markdown_message "${1}" '*Available commands*:
+*• /start*: _Start bot and get this message_.
+*• /info*: _Get shorter info message about this bot_.
+*• /question*: _Start interactive chat_.
+*• /cancel*: _Cancel any currently running interactive chats_.
+*• /kickme*: _You will be autokicked from the chat_.
+*• /leavechat*: _The bot will leave the group with this command _.
+Written by Drew (@topkecleon), Daniil Gentili (@danogentili) and KayM(@gnadelwartz).
+Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
+'
+}
 
 if [ "$1" = "source" ];then
 	# Place the token in the token file
@@ -92,23 +114,11 @@ else
 		################################################
 		# DEFAULT commands start here, edit messages only
 		'/info')
-			send_markdown_message "${CHAT[ID]}" "This is bashbot, the *Telegram* bot written entirely in *bash*."
+			bashbot_info "${CHAT[ID]}"
 			;;
 		'/start')
 			send_action "${CHAT[ID]}" "typing"
-			send_markdown_message "${CHAT[ID]}" "This is bashbot, the Telegram bot written entirely in bash.
-It features background tasks and interactive chats, and can serve as an interface for CLI programs.
-It currently can send, recieve and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
-*Available commands*:
-*• /start*: _Start bot and get this message_.
-*• /info*: _Get shorter info message about this bot_.
-*• /question*: _Start interactive chat_.
-*• /cancel*: _Cancel any currently running interactive chats_.
-*• /kickme*: _You will be autokicked from the chat_.
-*• /leavechat*: _The bot will leave the group with this command _.
-Written by Drew (@topkecleon) and Daniil Gentili (@danogentili).
-Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
-"
+			bashbot_help "${CHAT[ID]}"
 			;;
 			
 		'/leavechat')
