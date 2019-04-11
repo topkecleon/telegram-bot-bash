@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.5-2-g09678a1
+#### $$VERSION$$ v0.51-0-g4ddd122
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -29,8 +29,9 @@ if [ -t 1 ] && [ "$TERM" != "" ];  then
 fi
 
 # get location of bashbot.sh an change to bashbot dir
-SCRIPT="./$(basename $0)"
-SCRIPTDIR="$(dirname $0)"
+SCRIPT="./$(basename "$0")"
+SCRIPTDIR="$(dirname "$0")"
+RUNUSER="$USER" # USER is overwritten as array, $USER may not work later on...
 
 if ! cd "${SCRIPTDIR}" ; then
 	echo -e "${RED}ERROR: Can't change to ${SCRIPTDIR} ...${NC}"
@@ -52,7 +53,7 @@ if [ ! -f "token" ]; then
 	$CLEAR
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE${NC}"
-	read token
+	read -r token
 	echo "$token" >> "token"
 fi
 
@@ -98,7 +99,7 @@ FORWARD_URL=$URL'/forwardMessage'
 INLINE_QUERY=$URL'/answerInlineQuery'
 ME_URL=$URL'/getMe'
 DELETE_URL=$URL'/deleteMessage'
-ME=$(curl -s $ME_URL | ./JSON.sh/JSON.sh -s | egrep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
+ME=$(curl -s "$ME_URL" | ./JSON.sh/JSON.sh -s | grep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
 
 
 FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
@@ -113,47 +114,48 @@ urlencode() {
 
 
 send_message() {
+	local text arg keyboard file lat long title address sent
 	[ "$2" = "" ] && return 1
 	local chat="$1"
-	local text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
-	local arg="$3"
-	[ "$3" != "safe" ] && {
+	text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
+	arg="$3"
+	[ "$arg" != "safe" ] && {
 		text="$(echo "$text" | sed 's/ mynewlinestartshere /\r\n/g')" # hack for linebreaks in startproc scripts
-		local no_keyboard="$(echo $2 | sed '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
+		no_keyboard="$(echo "$2" | sed '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
 
-		local keyboard="$(echo "$2" | sed '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
+		keyboard="$(echo "$2" | sed '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
 
-		local file="$(echo "$2" | sed '/myfilelocationstartshere /!d;s/.*myfilelocationstartshere //g;s/ mykeyboardstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
+		file="$(echo "$2" | sed '/myfilelocationstartshere /!d;s/.*myfilelocationstartshere //g;s/ mykeyboardstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
 
-		local lat="$(echo "$2" | sed '/mylatstartshere /!d;s/.*mylatstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
+		lat="$(echo "$2" | sed '/mylatstartshere /!d;s/.*mylatstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
 
-		local long="$(echo "$2" | sed '/mylongstartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
+		long="$(echo "$2" | sed '/mylongstartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
 
-		local title="$(echo "$2" | sed '/mytitlestartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
+		title="$(echo "$2" | sed '/mytitlestartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
 
-		local address="$(echo "$2" | sed '/myaddressstartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mytitlestartshere.*//g;s/ mykeyboardendshere.*//g')"
+		address="$(echo "$2" | sed '/myaddressstartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mytitlestartshere.*//g;s/ mykeyboardendshere.*//g')"
 
 	}
 	if [ "$no_keyboard" != "" ]; then
-		echo "remove_keyboard $chat $text" > $TMPDIR/prova
+		echo "remove_keyboard $chat $text" > ${TMPDIR:-.}/prova
 		remove_keyboard "$chat" "$text"
-		local sent=y
+		sent=y
 	fi
 	if [ "$keyboard" != "" ]; then
 		send_keyboard "$chat" "$text" "$keyboard"
-		local sent=y
+		sent=y
 	fi
 	if [ "$file" != "" ]; then
 		send_file "$chat" "$file" "$text"
-		local sent=y
+		sent=y
 	fi
-	if [ "$lat" != "" -a "$long" != "" -a "$address" = "" -a "$title" = "" ]; then
+	if [ "$lat" != "" ] && [ "$long" != "" ] && [ "$address" = "" ] && [ "$title" = "" ]; then
 		send_location "$chat" "$lat" "$long"
-		local sent=y
+		sent=y
 	fi
-	if [ "$lat" != "" -a "$long" != "" -a "$address" != "" -a "$title" != "" ]; then
+	if [ "$lat" != "" ] && [ "$long" != "" ] && [ "$address" != "" ] && [ "$title" != "" ]; then
 		send_venue "$chat" "$lat" "$long" "$title" "$address"
-		local sent=y
+		sent=y
 	fi
 	if [ "$sent" != "y" ];then
 		send_text "$chat" "$text"
@@ -291,9 +293,9 @@ send_keyboard() {
 	local keyboard=init
 	OLDIFS=$IFS
 	IFS=$(echo -en "\"")
-	for f in $*;do [ "$f" != " " ] && local keyboard="$keyboard, [\"$f\"]";done
+	for f in "$@" ;do [ "$f" != " " ] && keyboard="$keyboard, [\"$f\"]";done
 	IFS=$OLDIFS
-	local keyboard=${keyboard/init, /}
+	keyboard=${keyboard/init, /}
 	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")"
 }
 
@@ -305,27 +307,28 @@ remove_keyboard() {
 }
 
 get_file() {
-	[ "$1" != "" ] && echo $FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh/JSON.sh -s | egrep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)
+	[ "$1" != "" ] && echo "$FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh/JSON.sh -s | grep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)"
 }
 
 send_file() {
 	[ "$2" = "" ] && return
+	local CAPTION
 	local chat_id=$1
 	local file=$2
-	echo "$file" | grep -qE $FILE_REGEX || return
+	echo "$file" | grep -qE "$FILE_REGEX" || return
 	local ext="${file##*.}"
 	case $ext in
         	mp3|flac)
 			CUR_URL=$AUDIO_URL
 			WHAT=audio
 			STATUS=upload_audio
-			local CAPTION="$3"
+			CAPTION="$3"
 			;;
 		png|jpg|jpeg|gif)
 			CUR_URL=$PHO_URL
 			WHAT=photo
 			STATUS=upload_photo
-			local CAPTION="$3"
+			CAPTION="$3"
 			;;
 		webp)
 			CUR_URL=$STICKER_URL
@@ -336,7 +339,7 @@ send_file() {
 			CUR_URL=$VIDEO_URL
 			WHAT=video
 			STATUS=upload_video
-			local CAPTION="$3"
+			CAPTION="$3"
 			;;
 
 		ogg)
@@ -348,10 +351,10 @@ send_file() {
 			CUR_URL=$DOCUMENT_URL
 			WHAT=document
 			STATUS=upload_document
-			local CAPTION="$3"
+			CAPTION="$3"
 			;;
 	esac
-	send_action $chat_id $STATUS
+	send_action "$chat_id" "$STATUS"
 	res="$(curl -s "$CUR_URL" -F "chat_id=$chat_id" -F "$WHAT=@$file" -F "caption=$CAPTION")"
 }
 
@@ -370,7 +373,7 @@ send_location() {
 send_venue() {
 	[ "$5" = "" ] && return
 	[ "$6" != "" ] add="-F \"foursquare_id=$6\""
-	res="$(curl -s "$VENUE_URL" -F "chat_id=$1" -F "latitude=$2" -F "longitude=$3" -F "title=$4" -F "address=$5" $add)"
+	res="$(curl -s "$VENUE_URL" -F "chat_id=$1" -F "latitude=$2" -F "longitude=$3" -F "title=$4" -F "address=$5")"
 }
 
 
@@ -381,16 +384,16 @@ forward() {
 
 
 background() {
-	echo "${CHAT[ID]}:$2:$1" >"$TMPDIR/${copname}$2-back.cmd"
+	echo "${CHAT[ID]}:$2:$1" >"${TMPDIR:-.}/${copname}$2-back.cmd"
 	startproc "$1" "back-$2-"
 }
 
 startproc() {
 	killproc "$2"
 	local fifo="$2${copname}" # add $1 to copname, so we can have more than one running script per chat
-	mkfifo "$TMPDIR/${fifo}"
-	TMUX= tmux new-session -d -s "${fifo}" "$1 &>$TMPDIR/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>$TMPDIR/${fifo}"
-	TMUX= tmux new-session -d -s sendprocess_${fifo} "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
+	mkfifo "${TMPDIR:-.}/${fifo}"
+	tmux new-session -d -s "${fifo}" "$1 &>${TMPDIR:-.}/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>${TMPDIR:-.}/${fifo}"
+	tmux new-session -d -s "sendprocess_${fifo}" "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
 }
 
 
@@ -404,16 +407,16 @@ checkproc() {
 
 killback() {
 	killproc "back-$1-"
-	rm -f "$TMPDIR/${copname}$1-back.cmd"
+	rm -f "${TMPDIR:-.}/${copname}$1-back.cmd"
 }
 
 killproc() {
 	local fifo="$1${copname}"
-	(tmux kill-session -t "${fifo}"; echo imprettydarnsuredatdisisdaendofdacmd>$TMPDIR/${fifo}; tmux kill-session -t sendprocess_${fifo}; rm -f -r $TMPDIR/${fifo})2>/dev/null
+	(tmux kill-session -t "${fifo}"; echo imprettydarnsuredatdisisdaendofdacmd>"${TMPDIR:-.}/${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}")2>/dev/null
 }
 
 inproc() {
-	tmux send-keys -t $copname "$MESSAGE ${URLS[*]}
+	tmux send-keys -t "$copname" "${MESSAGE[0]} ${URLS[*]}
 "
 }
 process_updates() {
@@ -427,7 +430,7 @@ process_updates() {
 	done
 }
 process_client() {
-	local TMP="$TMPDIR/$RANDOM$RANDOM-MESSAGE"
+	local TMP="${TMPDIR:-.}/$RANDOM$RANDOM-MESSAGE"
 	echo "$UPDATE" >"$TMP"
 	# Message
 	MESSAGE[0]="$(echo -e "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","text"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")" | sed 's#\\/#/#g')"
@@ -492,7 +495,7 @@ process_client() {
 	# Location
 	LOCATION[LONGITUDE]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","location","longitude"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
 	LOCATION[LATITUDE]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","location","latitude"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	NAME="$(echo ${URLS[*]} | sed 's/.*\///g')"
+	NAME="$(echo "${URLS[*]}" | sed 's/.*\///g')"
 	rm "$TMP"
 
 	# Tmux
@@ -501,17 +504,17 @@ process_client() {
 	source commands.sh
 
 	tmpcount="COUNT${CHAT[ID]}"
-	cat ${COUNT} | grep -q "$tmpcount" || echo "$tmpcount">>${COUNT}
+	grep -q "$tmpcount" <"${COUNT}" >/dev/null 2>&1 || echo "$tmpcount">>${COUNT}
 	# To get user count execute bash bashbot.sh count
 }
 
 # source the script with source as param to use functions in other scripts
 while [ "$1" == "startbot" ]; do {
 
-	UPDATE="$(curl -s $UPD_URL$OFFSET | ./JSON.sh/JSON.sh)"
+	UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./JSON.sh/JSON.sh)"
 
 	# Offset
-	OFFSET="$(echo "$UPDATE" | egrep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
+	OFFSET="$(echo "$UPDATE" | grep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
 	OFFSET=$((OFFSET+1))
 
 	if [ "$OFFSET" != "1" ]; then
@@ -529,46 +532,45 @@ case "$1" in
 	"outproc")
 		until [ "$line" = "imprettydarnsuredatdisisdaendofdacmd" ];do
 			line=""
-			read -t 10 line
-			[ "$line" != "" -a "$line" != "imprettydarnsuredatdisisdaendofdacmd" ] && send_message "$2" "$line"
-		done <$TMPDIR/$3
-		rm -f -r $TMPDIR/$3
+			read -r -t 10 line
+			[ "$line" != "" ] && [ "$line" != "imprettydarnsuredatdisisdaendofdacmd" ] && send_message "$2" "$line"
+		done <"${TMPDIR:-.}/$3"
+		rm -f -r "${TMPDIR:-.}/$3"
 		;;
 	"count")
 		echo "A total of $(wc -l <"${COUNT}") users used me."
 		exit
 		;;
 	"broadcast")
-		USERS="$(wc -l <"${COUNT}")"
-		echo "Sending the broadcast $* to $USERS users."
-		[ "$USERS" -gt "300" ] && sleep="sleep 0.5"
+		NUMCOUNT="$(wc -l <"${COUNT}")"
+		echo "Sending the broadcast $* to $NUMCOUNT users."
+		[ "$NUMCOUNT" -gt "300" ] && sleep="sleep 0.5"
 		shift
-		for f in "$(cat ${COUNT})";do send_message ${f//COUNT} "$*"; $sleep;done
+		while read -r f; do send_message "${f//COUNT}" "$*"; $sleep; done <"${COUNT}"
 		;;
 	"start")
 		$CLEAR
-		tmux kill-session -t $ME&>/dev/null
-		tmux new-session -d -s $ME "bash $SCRIPT startbot $ME" && echo -e "${GREEN}Bot started successfully.${NC}"
+		tmux kill-session -t "$ME" &>/dev/null
+		tmux new-session -d -s "$ME" "bash $SCRIPT startbot" && echo -e "${GREEN}Bot started successfully.${NC}"
 		echo "Tmux session name $ME" || echo -e "${RED}An error occurred while starting the bot. ${NC}"
 		send_markdown_message "${CHAT[ID]}" "*Bot started*"
 		;;
 	"init") # adjust users and permissions
-		MYUSER="$USER"
-		[[ "$(id -u)" -eq "0" ]] && MYUSER="nobody"
-		echo -n "Enter User to run basbot [$MYUSER]: "
-		read TOUSER
-		[ "$TOUSER" = "" ] && TOUSER="$MYUSER"
-		if ! compgen -u "$TOUSER" 2>&1 >/dev/null; then
+		[[ "$(id -u)" -eq "0" ]] && RUNUSER="nobody"
+		echo -n "Enter User to run basbot [$RUNUSER]: "
+		read -r TOUSER
+		[ "$TOUSER" = "" ] && TOUSER="$RUNUSER"
+		if ! compgen -u "$TOUSER" >/dev/null 2>&1; then
 			echo -e "${RED}User \"$TOUSER\" not found!${NC}"
 			exit 3
 		else
 			echo "Adjusting user in bashbot.rc ..."
 			sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' bashbot.rc
 			echo "Adjusting Owner and Permissions ..."
-			chown -R "$TOUSER" . *
+			chown -R "$TOUSER" . ./*
 			chmod 711 .
-			chmod -R a-w *
-			chmod -R u+w "$COUNT" "$TMPDIR" *.log 2>/dev/null
+			chmod -R a-w ./*
+			chmod -R u+w "$COUNT" "$TMPDIR" ./*.log 2>/dev/null
 			chmod -R o-r,o-w "$COUNT" "$TMPDIR" token 2>/dev/null
 			ls -la
 			exit			
@@ -577,8 +579,8 @@ case "$1" in
 	"background" | "resumeback")
 		$CLEAR
 		echo -e "${GREEN}Restart background processes ...${NC}"
-		for FILE in "${TMPDIR}/"*-back.cmd; do
-		    if [ "$FILE" == "${TMPDIR}/*-back.cmd" ]; then
+		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
+		    if [ "$FILE" == "${TMPDIR:-.}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes to start.${NC}"; break
 		    else
 			RESTART="$(cat "$FILE")"
@@ -588,10 +590,10 @@ case "$1" in
 			JOB="${JOB%:*}"
 			fifo="back-${JOB}-${ME}_${CHAT[ID]}" # compose fifo from jobname, $ME (botname) and CHAT[ID] 
 			echo "restartbackground  ${PROG}  ${fifo}"
-			( tmux kill-session -t "${fifo}"; tmux kill-session -t sendprocess_${fifo}; rm -f -r $TMPDIR/${fifo}) 2>/dev/null
-			mkfifo "$TMPDIR/${fifo}"
-			TMUX= tmux new-session -d -s "${fifo}" "${PROG} &>$TMPDIR/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>$TMPDIR/${fifo}"
-			TMUX= tmux new-session -d -s sendprocess_${fifo} "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
+			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}") 2>/dev/null
+			mkfifo "${TMPDIR:-.}/${fifo}"
+			tmux new-session -d -s "${fifo}" "${PROG} &>${TMPDIR:-.}/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>${TMPDIR:-.}/${fifo}"
+			tmux new-session -d -s "sendprocess_${fifo}" "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
 		    fi
 		done
 		;;
@@ -604,8 +606,8 @@ case "$1" in
 	"killback" | "suspendback")
 		$CLEAR
 		echo -e "${GREEN}Stopping background processes ...${NC}"
-		for FILE in "${TMPDIR}/"*-back.cmd; do
-		    if [ "$FILE" == "${TMPDIR}/*-back.cmd" ]; then
+		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
+		    if [ "$FILE" == "${TMPDIR:-.}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes.${NC}"; break
 		    else
 			REMOVE="$(cat "$FILE")"
@@ -613,13 +615,13 @@ case "$1" in
 			fifo="back-${JOB%:*}-${ME}_${REMOVE%%:*}"
 			echo "killbackground  ${fifo}"
 			[ "$1" == "killback" ] && rm -f "$FILE" # remove job
-			( tmux kill-session -t "${fifo}"; tmux kill-session -t sendprocess_${fifo}; rm -f -r $TMPDIR/${fifo}) 2>/dev/null
+			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}") 2>/dev/null
 		    fi
 		done
 		;;
 	"help")
 		$CLEAR
-		less "README.md"
+		less "README.txt"
 		exit
 		;;
 	"attach")
@@ -638,7 +640,7 @@ esac
 
 # warn if root
 if [[ "$(id -u)" -eq "0" ]] ; then
-	echo -e "\n${ORANGE}WARNING: ${SCRIPT} was started as ROOT (UID 0)!${NC}"
+	echo -e "\\n${ORANGE}WARNING: ${SCRIPT} was started as ROOT (UID 0)!${NC}"
 	echo -e "${ORANGE}You are at HIGH RISK when processing user input with root privilegs!${NC}"
 fi
 

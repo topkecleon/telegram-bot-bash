@@ -3,7 +3,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 
-#### $$VERSION$$ v0.5-0-gfd81668
+#### $$VERSION$$ v0.51-0-g4ddd122
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
@@ -16,11 +16,11 @@ unset IFS
 
 echo "Why hello there.
 Would you like some tea (y/n)?"
-read answer
+read -r answer
 [[ $answer =~ ^([yY][eE][sS]|[yY])$ ]] && echo "OK then, here you go: http://www.rivertea.com/blog/wp-content/uploads/2013/12/Green-Tea.jpg" || echo "OK then."
 until [ "$SUCCESS" = "y" ] ;do
 	echo 'Do you like Music? mykeyboardstartshere "Yass!" "No"'
-	read answer
+	read -r answer
 	case $answer in
 		'Yass!') echo "Goody! mykeyboardendshere";SUCCESS=y;;
 		'No') echo "Well that's weird. mykeyboardendshere";SUCCESS=y;;

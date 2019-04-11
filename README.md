@@ -17,10 +17,8 @@ Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/cop
 
 ## Install bashbot
 1. Go to the directory you want to install bashbot, e.g.
-
-   - your $HOME directory (install and run with your user-ID)
-   - /usr/local if you want to run as service
-
+  - your $HOME directory (install and run with your user-ID)
+  - /usr/local if you want to run as service
 2. Clone the repository:
 ```
 git clone --recursive https://github.com/topkecleon/telegram-bot-bash
@@ -75,4 +73,4 @@ No - its not less (in)secure as any other Bot written in any other language. But
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.50-13-g4d5d386
+#### $$VERSION$$ v0.51-0-g4ddd122

@@ -101,5 +101,6 @@ An example crontab is provided in ```bashbot.cron```.
 - If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username ```nobody```.
 - if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username```nobody``` with the username you want to run bashbot. copy the modified file to ```/etc/cron.d/bashbot```
 
-#### $$VERSION$$ v0.50-13-g4d5d386
+
+#### $$VERSION$$ v0.51-0-g4ddd122
 
