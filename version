@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#### $$VERSION$$ v0.51-0-g0356270
+#### $$VERSION$$ v0.6-dev2-8-g649fe44
 # shellcheck disable=SC2016
 #
 # Easy Versioning in git:
@@ -47,5 +47,7 @@ do
 	echo -n " $file"
 	sed -i 's/^#### $$VERSION$$.*/#### \$\$VERSION\$\$ '"$VERSION"'/' "$file"
 done
+# try to compile README.txt
+pandoc -f markdown -t asciidoc  README.md | sed '/^\[\[/d' >README.txt
 echo " done."
 

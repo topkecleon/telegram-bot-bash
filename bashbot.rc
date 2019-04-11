@@ -1,7 +1,7 @@
 #!/bin/sh
 # description: Start or stop telegram-bash-bot
 #
-#### $$VERSION$$ v0.51-0-g0356270
+#### $$VERSION$$ v0.6-dev2-8-g649fe44
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 
