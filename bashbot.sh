@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev2-8-g649fe44
+#### $$VERSION$$ v0.6-dev2-10-gdb64978
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -99,7 +99,8 @@ FORWARD_URL=$URL'/forwardMessage'
 INLINE_QUERY=$URL'/answerInlineQuery'
 ME_URL=$URL'/getMe'
 DELETE_URL=$URL'/deleteMessage'
-ME=$(curl -s "$ME_URL" | ./JSON.sh/JSON.sh -s | grep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
+GETMEMBER_URL=$URL'/getChatMember'
+ME="$(curl -s "$ME_URL" | ./JSON.sh/JSON.sh -s | grep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)"
 
 
 FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
@@ -205,6 +206,11 @@ delete_message() {
         res="$(curl -s "$DELETE_URL" -F "chat_id=$1" -F "message_id=$2")"
 }
 
+# usage: status="$(get_chat_member_status "chat" "user")"
+get_chat_member_status() {
+	curl -s "$GETMEMBER_URL" -F "chat_id=$1" -F "user_id=$2" | ./JSON.sh/JSON.sh -s | sed -n -e '/\["result","status"\]/  s/.*\][ \t]"\(.*\)"$/\1/p'
+}
+
 kick_chat_member() {
 	res="$(curl -s "$KICK_URL" -F "chat_id=$1" -F "user_id=$2")"
 }
@@ -215,6 +221,17 @@ unban_chat_member() {
 
 leave_chat() {
 	res="$(curl -s "$LEAVE_URL" -F "chat_id=$1")"
+}
+
+user_is_creator() {
+	if [ "$1" == "$2" ] || [ "$(get_chat_member_status "$1" "$2")" == "creator" ]; then return 0; fi
+	return 1 
+}
+
+user_is_admin() {
+	local me; me="$(get_chat_member_status "$1" "$2")"
+	if [ "${me}" == "creator" ] || [ "${me}" == "administrator" ]; then return 0; fi
+	return 1 
 }
 
 answer_inline_query() {

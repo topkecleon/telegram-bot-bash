@@ -4,7 +4,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev2-9-gf4e277b
+#### $$VERSION$$ v0.6-dev2-11-gaeb9a6a
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -121,9 +121,11 @@ else
 			bashbot_help "${CHAT[ID]}"
 			;;
 			
-		'/leavechat')
-			send_markdown_message "${CHAT[ID]}" "*LEAVING CHAT...*"
-   			leave_chat "${CHAT[ID]}"
+		'/leavechat') # bot leave chat if user is admin in chat
+			if user_is_admin "${CHAT[ID]}" "${USER[ID]}"; then 
+				send_markdown_message "${CHAT[ID]}" "*LEAVING CHAT...*"
+   				leave_chat "${CHAT[ID]}"
+			fi
      			;;
      			
      		'/kickme')
