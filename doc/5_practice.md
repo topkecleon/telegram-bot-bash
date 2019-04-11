@@ -25,7 +25,7 @@ Insert your own Bot commands in the ```case ... esac``` block in commands.sh:
 after editing commands.sh restart Bot.
 
 ### Seperate Bot logic from command
-If a Bot command needs more than 2-3 lines of code I recommend to factor it out to bash functions in a seperate file, e.g.
+If a Bot command needs more than 2-3 lines of code I recommend to factor it out to a bash function in a seperate file, e.g.
 ```mybotcommands.inc.sh``` and source the file from bashbot.sh.
 ```bash
 	source mybotcommands.inc.sh
@@ -44,19 +44,16 @@ If a Bot command needs more than 2-3 lines of code I recommend to factor it out 
 			send_action "${CHAT[ID]}" "typing"
 			send_markdown_message "${CHAT[ID]}" "This is bashbot, the Telegram bot written entirely in bash."
 			;;
-		[...]
+		#[...]
 	esac
 ```
-Doing it this way keeps command.sh small and clean, while allowing complex tasks to be done in the included function. example ```mybotcommands.inc.sh```:
+Doing it this way keeps commands.sh small and clean, while allowing complex tasks to be done in the included function. example ```mybotcommands.inc.sh```:
 ```bash
 #!/bin/bash
 #
 process_message() {
-
-   local MESSAGE="$1"		# store arg
-   local ARGS="${MESSAGE#/r* }" # remove command
-   local TEXT=""
-   local OUTPUT=""
+   local ARGS="${1#/* }"	# remove command /*
+   local TEXT OUTPUT=""
 
    # process every word in MESSAGE, avoid globbing from MESSAGE
    set -f
@@ -65,16 +62,13 @@ process_message() {
 	set +f
 	# process links 
 	if [[ "$WORD" == "https://"* ]]; then
-		# remove utf chars from URL 
-		WORD="$(echo "$WORD" |  uni2ascii -q -a F -B)"
 		REPORT="$(dosomething_with_link "$WORD")"
 	# no link, add as text
 	else
-		# TEXT incl UTF to ascii transformation
-		TEXT="$(echo "${TEXT} $WORD"'| iconv -c -f utf-8 -t ascii//TRANSLIT)"
+		TEXT="$(echo "${TEXT} $WORD")"
 		continue
 	fi
-	# compose result components
+	# compose result
 	OUTPUT="* ${REPORT} ${WORD} ${TEXT}"
 	TEXT=""
    done
@@ -87,6 +81,38 @@ process_message() {
 ```
 
 ### Test your Bot with shellcheck
+Shellcheck is a static linter for shell scripts providing excellent tips and hints for shell coding pittfalls. You can [use it online](https://www.shellcheck.net/) or [install it on your system](https://github.com/koalaman/shellcheck#installing).
 
-#### $$VERSION$$ v0.51-0-g4d5d386
+All bashbot scripts are linted by shellcheck.
+
+Shellcheck examples:
+```bash
+$ shellcheck -x mybotcommands.inc.sh
+ 
+Line 17:
+                TEXT="$(echo "${TEXT} $WORD")"
+                      ^-- SC2116: Useless echo? Instead of 'cmd $(echo foo)', just use 'cmd foo'.
+ 
+```
+```bash
+$ shellcheck -x notify
+OK
+$ shellcheck -x question
+OK
+$ shellcheck -x commands.sh
+OK
+$ shellcheck -x bashbot.sh
+
+In bashbot.sh line 123:
+                text="$(echo "$text" | sed 's/ mynewlinestartshere /\r\n/g')" # hack for linebreaks in startproc scripts
+                        ^-- SC2001: See if you can use ${variable//search/replace} instead.
+
+
+In bashbot.sh line 490:
+        CONTACT[USER_ID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","contact","user_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
+        ^-- SC2034: CONTACT appears unused. Verify it or export it.
+```
+As you can see there are only two warnings in bashbots scripts. The first is a hint you may use shell substitions instead of sed, but this is only possible for simple cases. The second warning is about an unused variable, this is true because in our examples CONTACT is not used but assigned in case you want to use it :-)
+
+#### $$VERSION$$ v0.51-0-g0356270
 
