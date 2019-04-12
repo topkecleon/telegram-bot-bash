@@ -10,12 +10,12 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev2-13-g88cf2d9
+#### $$VERSION$$ v0.6-dev2-14-g56cb1bb
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
 # - 1 can't change to dir
-# - 2 can't write to tmp and / or count 
+# - 2 can't write to tmp, count or token 
 # - 3 user not found
 # - 4 unkown command
 
@@ -51,21 +51,31 @@ fi
 
 TOKEN="./token"
 if [ ! -f "${TOKEN}" ]; then
+   if [ "${CLEAR}" == "" ]; then
+	echo "Running headless, run ${SCRIPT} init first!"
+	exit 2 
+   else
 	${CLEAR}
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE${NC}"
 	read -r token
-	echo "${token}" >> "${TOKEN}"
+	echo "${token}" > "${TOKEN}"
+   fi
 fi
 
 BOTADMIN="./botadmin"
 if [ ! -f "${BOTADMIN}" ]; then
+   if [ "${CLEAR}" == "" ]; then
+	echo "Running headless, set botadmin to AUTO MODE!"
+	echo "?" > "${BOTADMIN}"
+   else
 	${CLEAR}
 	echo -e "${RED}BOTADMIN MISSING.${NC}"
-	echo -e "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE${NC}"
-	echo -e "${ORANGE}ENTER '?' TO MAKE FIRST USER TO BOTADMIN${NC}"
+	echo -e "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR ENTER '?'${NC}"
+	echo -e "${ORANGE}TO MAKE FIRST USER TYPING '/start' TO BOTADMIN${NC}"
 	read -r token
-	echo "${token}" >> "${BOTADMIN}"
+	echo "${token}" > "${BOTADMIN}"
+   fi
 fi
 
 TMPDIR="./tmp-bot-bash"
@@ -244,6 +254,14 @@ user_is_admin() {
 	local me; me="$(get_chat_member_status "$1" "$2")"
 	if [ "${me}" == "creator" ] || [ "${me}" == "administrator" ]; then return 0; fi
 	return 1 
+}
+
+user_is_botadmin() {
+	local admin; admin="$(head -n 1 "${BOTADMIN}")"
+	[ "${admin}" == "${1}" ] && return 0
+	[[ "${admin}" == "@*" ]] && [[ "${admin}" == "${2}" ]] && return 0
+	if [ "${admin}" == "?" ]; then echo "${1:-?}" >"${BOTADMIN}"; return 0; fi
+	return 1
 }
 
 answer_inline_query() {
@@ -609,10 +627,10 @@ case "$1" in
 		${CLEAR}
 		echo -e "${GREEN}Restart background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
-		    if [ "$FILE" == "${TMPDIR:-.}/*-back.cmd" ]; then
+		    if [ "${FILE}" == "${TMPDIR:-.}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes to start.${NC}"; break
 		    else
-			RESTART="$(cat "$FILE")"
+			RESTART="$(< "${FILE}")"
 			CHAT[ID]="${RESTART%%:*}"
 			JOB="${RESTART#*:}"
 			PROG="${JOB#*:}"
@@ -636,14 +654,14 @@ case "$1" in
 		${CLEAR}
 		echo -e "${GREEN}Stopping background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
-		    if [ "$FILE" == "${TMPDIR:-.}/*-back.cmd" ]; then
+		    if [ "${FILE}" == "${TMPDIR:-.}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes.${NC}"; break
 		    else
-			REMOVE="$(cat "$FILE")"
+			REMOVE="$(< "${FILE}")"
 			JOB="${REMOVE#*:}"
 			fifo="back-${JOB%:*}-${ME}_${REMOVE%%:*}"
 			echo "killbackground  ${fifo}"
-			[ "$1" == "killback" ] && rm -f "$FILE" # remove job
+			[ "$1" == "killback" ] && rm -f "${FILE}" # remove job
 			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}") 2>/dev/null
 		    fi
 		done
