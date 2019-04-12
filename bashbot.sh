@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev2-14-g56cb1bb
+#### $$VERSION$$ v0.52-0-gdb7b19f
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -76,6 +76,12 @@ if [ ! -f "${BOTADMIN}" ]; then
 	read -r token
 	echo "${token}" > "${BOTADMIN}"
    fi
+fi
+
+BOTACL="./botacl"
+if [ ! -f "${BOTACL}" ]; then
+	echo -e "${ORANGE}Create empty ${BOTACL} file.${NC}"
+	touch "${BOTACL}"
 fi
 
 TMPDIR="./tmp-bot-bash"
@@ -262,6 +268,16 @@ user_is_botadmin() {
 	[[ "${admin}" == "@*" ]] && [[ "${admin}" == "${2}" ]] && return 0
 	if [ "${admin}" == "?" ]; then echo "${1:-?}" >"${BOTADMIN}"; return 0; fi
 	return 1
+}
+
+user_is_allowed() {
+	local acl; acl="$1"
+	[ "$1" == "" ] && return 1
+	grep -F -xq "${acl}:*:*" <"${BOTACL}" && return 0
+	[ "$2" != "" ] && acl="${acl}:$2"
+	grep -F -xq "${acl}:*" <"${BOTACL}" && return 0
+	[ "$3" != "" ] && acl="${acl}:$3"
+	grep -F -xq "${acl}" <"${BOTACL}"
 }
 
 answer_inline_query() {
@@ -618,7 +634,7 @@ case "$1" in
 			chmod 711 .
 			chmod -R a-w ./*
 			chmod -R u+w "${COUNT}" "${TMPDIR}" "${BOTADMIN}" ./*.log 2>/dev/null
-			chmod -R o-r,o-w "${COUNT}" "${TMPDIR}" "${TOKEN}" "${BOTADMIN}" 2>/dev/null
+			chmod -R o-r,o-w "${COUNT}" "${TMPDIR}" "${TOKEN}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
 			ls -la
 			exit			
 		fi

@@ -11,8 +11,8 @@ Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M
 
 Contributions by JuanPotato, BigNerd95, TiagoDanin, and iicc1.
 
-https://github.com/topkecleon/telegram-bot-bash/releases[Download from
-github]
+https://github.com/topkecleon/telegram-bot-bash/releases[Download latest
+release from github]
 
 Released to the public domain wherever applicable. Elsewhere, consider
 it released under the http://www.wtfpl.net/txt/copying/[WTFPLv2].
@@ -34,6 +34,13 @@ git clone --recursive https://github.com/topkecleon/telegram-bot-bash
 follow the instructions. At this stage you are asked for your Bots token
 given by botfather.
 
+Update bashbot
+~~~~~~~~~~~~~~
+
+https://github.com/topkecleon/telegram-bot-bash/releases[Download latest
+update zip from github] and copy all files to bashbot dir. run
+`sudo ./bashbot.sh init`.
+
 Getting started
 ~~~~~~~~~~~~~~~
 
@@ -44,6 +51,7 @@ Getting started
 * Send Messages
 * Send files, location etc.
 * link:doc/3_advanced.md[Advanced Features]
+* Access Control
 * Interactive Chats
 * Background Jobs
 * Inline queries
@@ -111,5 +119,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.6-dev2-8-g649fe44
-++++++++++++++++++++++++++++++++++++++++++++
+latexmath:[\[VERSION\]] v0.52-0-gdb7b19f
+++++++++++++++++++++++++++++++++++++++++
