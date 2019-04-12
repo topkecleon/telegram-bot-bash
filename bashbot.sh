@@ -10,11 +10,11 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev2-12-g307363a
+#### $$VERSION$$ v0.6-dev2-13-g88cf2d9
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
-# - 1 can't change to bashbot dir
+# - 1 can't change to dir
 # - 2 can't write to tmp and / or count 
 # - 3 user not found
 # - 4 unkown command
@@ -31,7 +31,7 @@ fi
 # get location of bashbot.sh an change to bashbot dir
 SCRIPT="./$(basename "$0")"
 SCRIPTDIR="$(dirname "$0")"
-RUNUSER="$USER" # USER is overwritten as array, $USER may not work later on...
+RUNUSER="${USER}" # USER is overwritten by bashbot array, $USER may not work later on...
 
 if ! cd "${SCRIPTDIR}" ; then
 	echo -e "${RED}ERROR: Can't change to ${SCRIPTDIR} ...${NC}"
@@ -39,7 +39,7 @@ if ! cd "${SCRIPTDIR}" ; then
 fi
 
 if [ ! -w "." ]; then
-	echo -e "${ORANGE}WARNING: $SCRIPTDIR is not writeable!${NC}"
+	echo -e "${ORANGE}WARNING: ${SCRIPTDIR} is not writeable!${NC}"
 	ls -ld .
 fi
 
@@ -49,31 +49,42 @@ if [ ! -f "JSON.sh/JSON.sh" ]; then
 	echo "JSON.sh has been downloaded. Proceeding."
 fi
 
-if [ ! -f "token" ]; then
-	$CLEAR
+TOKEN="./token"
+if [ ! -f "${TOKEN}" ]; then
+	${CLEAR}
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE${NC}"
 	read -r token
-	echo "$token" >> "token"
+	echo "${token}" >> "${TOKEN}"
+fi
+
+BOTADMIN="./botadmin"
+if [ ! -f "${BOTADMIN}" ]; then
+	${CLEAR}
+	echo -e "${RED}BOTADMIN MISSING.${NC}"
+	echo -e "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE${NC}"
+	echo -e "${ORANGE}ENTER '?' TO MAKE FIRST USER TO BOTADMIN${NC}"
+	read -r token
+	echo "${token}" >> "${BOTADMIN}"
 fi
 
 TMPDIR="./tmp-bot-bash"
-if [ ! -d "$TMPDIR" ]; then
-	mkdir "$TMPDIR"
-elif [ ! -w "$TMPDIR" ]; then
-	$CLEAR
-	echo -e "${RED}ERROR: Can't write to $TMPDIR!.${NC}"
-	ls -ld "$TMPDIR"
+if [ ! -d "${TMPDIR}" ]; then
+	mkdir "${TMPDIR}"
+elif [ ! -w "${TMPDIR}" ]; then
+	${CLEAR}
+	echo -e "${RED}ERROR: Can't write to ${TMPDIR}!.${NC}"
+	ls -ld "${TMPDIR}"
 	exit 2
 fi
 
 COUNT="./count"
-if [ ! -f "$COUNT" ]; then
-	touch "$COUNT"
-elif [ ! -w "$COUNT" ]; then
-	$CLEAR
-	echo -e "${RED}ERROR: Can't write to $COUNT!.${NC}"
-	ls -l "$COUNT"
+if [ ! -f "${COUNT}" ]; then
+	touch "${COUNT}"
+elif [ ! -w "${COUNT}" ]; then
+	${CLEAR}
+	echo -e "${RED}ERROR: Can't write to ${COUNT}!.${NC}"
+	ls -l "${COUNT}"
 	exit 2
 fi
 
@@ -121,7 +132,8 @@ send_message() {
 	text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
 	arg="$3"
 	[ "$arg" != "safe" ] && {
-		text="$(echo "$text" | sed 's/ mynewlinestartshere /\r\n/g')" # hack for linebreaks in startproc scripts
+		#text="$(echo "$text" | sed 's/ mynewlinestartshere /\r\n/g')" # hack for linebreaks in startproc scripts
+		text="${text// mynewlinestartshere /$'\r\n'}"
 		no_keyboard="$(echo "$2" | sed '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
 
 		keyboard="$(echo "$2" | sed '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
@@ -566,7 +578,7 @@ case "$1" in
 		while read -r f; do send_message "${f//COUNT}" "$*"; $sleep; done <"${COUNT}"
 		;;
 	"start")
-		$CLEAR
+		${CLEAR}
 		tmux kill-session -t "$ME" &>/dev/null
 		tmux new-session -d -s "$ME" "bash $SCRIPT startbot" && echo -e "${GREEN}Bot started successfully.${NC}"
 		echo "Tmux session name $ME" || echo -e "${RED}An error occurred while starting the bot. ${NC}"
@@ -587,14 +599,14 @@ case "$1" in
 			chown -R "$TOUSER" . ./*
 			chmod 711 .
 			chmod -R a-w ./*
-			chmod -R u+w "$COUNT" "$TMPDIR" ./*.log 2>/dev/null
-			chmod -R o-r,o-w "$COUNT" "$TMPDIR" token 2>/dev/null
+			chmod -R u+w "${COUNT}" "${TMPDIR}" "${BOTADMIN}" ./*.log 2>/dev/null
+			chmod -R o-r,o-w "${COUNT}" "${TMPDIR}" "${TOKEN}" "${BOTADMIN}" 2>/dev/null
 			ls -la
 			exit			
 		fi
 		;;
 	"background" | "resumeback")
-		$CLEAR
+		${CLEAR}
 		echo -e "${GREEN}Restart background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
 		    if [ "$FILE" == "${TMPDIR:-.}/*-back.cmd" ]; then
@@ -615,13 +627,13 @@ case "$1" in
 		done
 		;;
 	"kill")
-		$CLEAR
+		${CLEAR}
 		tmux kill-session -t "$ME" &>/dev/null
 		send_markdown_message "${CHAT[ID]}" "*Bot stopped*"
 		echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
 		;;
 	"killback" | "suspendback")
-		$CLEAR
+		${CLEAR}
 		echo -e "${GREEN}Stopping background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
 		    if [ "$FILE" == "${TMPDIR:-.}/*-back.cmd" ]; then
@@ -637,7 +649,7 @@ case "$1" in
 		done
 		;;
 	"help")
-		$CLEAR
+		${CLEAR}
 		less "README.txt"
 		exit
 		;;
