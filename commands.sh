@@ -4,7 +4,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev2-11-gaeb9a6a
+#### $$VERSION$$ v0.6-dev2-14-g56cb1bb
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -118,6 +118,7 @@ else
 			;;
 		'/start')
 			send_action "${CHAT[ID]}" "typing"
+			user_is_botadmin "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
 			bashbot_help "${CHAT[ID]}"
 			;;
 			
