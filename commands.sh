@@ -4,10 +4,11 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.52-0-gdb7b19f
+#### $$VERSION$$ v0.52-1-gdb7b19f
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
+SC2034="$CONTACT" # mute CONTACT not used ;-)
 
 # adjust your language setting here, e.g.when run from other user or cron.
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
@@ -19,7 +20,7 @@ unset IFS
 # set -f # if you are paranoid use set -f to disable globbing
 
 
-# chnage Info anf Help to fit your needs
+# change Info anf Help to fit your needs
 bashbot_info() {
 	send_markdown_message "${1}" 'This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.
@@ -39,6 +40,18 @@ Written by Drew (@topkecleon), Daniil Gentili (@danogentili) and KayM(@gnadelwar
 Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
 }
+
+# some handy shortcuts, e.g.:
+_is_botadmin() {
+	user_is_botadmin "${USER[ID]}"
+}
+_is_admin() {
+	user_is_admin "${CHAT[ID]}" "${USER[ID]}"
+}
+_is_allowed() { # $1 = resource
+	user_is_allowed "${USER[ID]}" "$1" "${CHAT[ID]}"
+}
+
 
 if [ "$1" = "source" ];then
 	# Place the token in the token file
@@ -123,6 +136,7 @@ else
 				bot_help "${CHAT[ID]}"
 			else
 				send_normal_message "${CHAT[ID]}" "You are not allowed to start Bot."
+			fi
 			;;
 			
 		'/leavechat') # bot leave chat if user is admin in chat
