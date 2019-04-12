@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev3-1-gfe9443f
+#### $$VERSION$$ v0.6-dev3-3-g03b6929
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -115,35 +115,39 @@ fi
 # shellcheck source=./commands.sh
 source "${COMMANDS}" "source"
 
-URL='https://api.telegram.org/bot'"$TOKEN"
+URL='https://api.telegram.org/bot'$TOKEN
 
 
-MSG_URL="$URL"'/sendMessage'
-LEAVE_URL="$URL"'/leaveChat'
-KICK_URL="$URL"'/kickChatMember'
-UNBAN_URL="$URL"'/unbanChatMember'
-PHO_URL="$URL"'/sendPhoto'
-AUDIO_URL="$URL"'/sendAudio'
-DOCUMENT_URL="$URL"'/sendDocument'
-STICKER_URL="$URL"'/sendSticker'
-VIDEO_URL="$URL"'/sendVideo'
-VOICE_URL="$URL"'/sendVoice'
-LOCATION_URL="$URL"'/sendLocation'
-VENUE_URL="$URL"'/sendVenue'
-ACTION_URL="$URL"'/sendChatAction'
-FORWARD_URL="$URL"'/forwardMessage'
-INLINE_QUERY="$URL"'/answerInlineQuery'
-DELETE_URL="$URL"'/deleteMessage'
-GETMEMBER_URL="$URL"'/getChatMember'
-ME_URL="$URL"'/getMe'
-ME="$(curl -s "$ME_URL" | ./JSON.sh/JSON.sh -s | sed -n -e '\["result","username"\]  s/.*\][ \t]"\(.*\)"$/\1/p')"
+MSG_URL=$URL'/sendMessage'
+LEAVE_URL=$URL'/leaveChat'
+KICK_URL=$URL'/kickChatMember'
+UNBAN_URL=$URL'/unbanChatMember'
+PHO_URL=$URL'/sendPhoto'
+AUDIO_URL=$URL'/sendAudio'
+DOCUMENT_URL=$URL'/sendDocument'
+STICKER_URL=$URL'/sendSticker'
+VIDEO_URL=$URL'/sendVideo'
+VOICE_URL=$URL'/sendVoice'
+LOCATION_URL=$URL'/sendLocation'
+VENUE_URL=$URL'/sendVenue'
+ACTION_URL=$URL'/sendChatAction'
+FORWARD_URL=$URL'/forwardMessage'
+INLINE_QUERY=$URL'/answerInlineQuery'
+ME_URL=$URL'/getMe'
+DELETE_URL=$URL'/deleteMessage'
+GETMEMBER_URL=$URL'/getChatMember'
+ME="$(curl -s "$ME_URL" | ./JSON.sh/JSON.sh -s | grep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)"
 
 
-FILE_URL='https://api.telegram.org/file/bot'"$TOKEN"'/'
-UPD_URL="$URL"'/getUpdates?offset='
-GET_URL="$URL"'/getFile'
+FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
+UPD_URL=$URL'/getUpdates?offset='
+GET_URL=$URL'/getFile'
 OFFSET=0
 declare -A USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO
+
+urlencode() {
+	echo "$*" | sed 's:%:%25:g;s: :%20:g;s:<:%3C:g;s:>:%3E:g;s:#:%23:g;s:{:%7B:g;s:}:%7D:g;s:|:%7C:g;s:\\:%5C:g;s:\^:%5E:g;s:~:%7E:g;s:\[:%5B:g;s:\]:%5D:g;s:`:%60:g;s:;:%3B:g;s:/:%2F:g;s:?:%3F:g;s^:^%3A^g;s:@:%40:g;s:=:%3D:g;s:&:%26:g;s:\$:%24:g;s:\!:%21:g;s:\*:%2A:g'
+}
 
 
 send_message() {
@@ -153,6 +157,7 @@ send_message() {
 	text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
 	arg="$3"
 	[ "$arg" != "safe" ] && {
+		#text="$(echo "$text" | sed 's/ mynewlinestartshere /\r\n/g')" # hack for linebreaks in startproc scripts
 		text="${text// mynewlinestartshere /$'\r\n'}"
 		no_keyboard="$(echo "$2" | sed '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
 
@@ -198,10 +203,10 @@ send_message() {
 
 send_text() {
 	case "$2" in
-		'html_parse_mode'*)
+		html_parse_mode*)
 			send_html_message "$1" "${2//html_parse_mode}"
 			;;
-		'markdown_parse_mode'*)
+		markdown_parse_mode*)
 			send_markdown_message "$1" "${2//markdown_parse_mode}"
 			;;
 		*)
@@ -356,6 +361,7 @@ answer_inline_query() {
 send_keyboard() {
 	local chat="$1"
 	local text="$2"
+	shift 2
 	local keyboard=init
 	OLDIFS=$IFS
 	IFS=$(echo -en "\"")
@@ -368,11 +374,12 @@ send_keyboard() {
 remove_keyboard() {
 	local chat="$1"
 	local text="$2"
+	shift 2
 	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat"  -F "text=$text" -F "reply_markup={\"remove_keyboard\": true}")"
 }
 
 get_file() {
-	[ "$1" != "" ] && echo "$FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh/JSON.sh -s |  sed -n -e '\["result","file_path"\]  s/.*\][ \t]"\(.*\)"$/\1/p')"
+	[ "$1" != "" ] && echo "$FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh/JSON.sh -s | grep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)"
 }
 
 send_file() {
@@ -467,7 +474,7 @@ checkback() {
 }
 
 checkproc() {
-	tmux ls | grep -qF "$1${copname}"; res=$?
+	tmux ls | grep -q "$1${copname}"; res=$?
 }
 
 killback() {
@@ -564,13 +571,12 @@ process_client() {
 	rm "$TMP"
 
 	# Tmux
-	copname="$ME"'_'"${CHAT[ID]}"
+	copname="$ME"_"${CHAT[ID]}"
 
-	# shellcheck source=./commands.sh
-	source "${COMMANDS}"
+	source commands.sh
 
 	tmpcount="COUNT${CHAT[ID]}"
-	grep -qF "$tmpcount" <"${COUNT}" >/dev/null 2>&1 || echo "$tmpcount">>${COUNT}
+	grep -q "$tmpcount" <"${COUNT}" >/dev/null 2>&1 || echo "$tmpcount">>${COUNT}
 	# To get user count execute bash bashbot.sh count
 }
 
@@ -580,7 +586,7 @@ while [ "$1" = "startbot" ]; do {
 	UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./JSON.sh/JSON.sh)"
 
 	# Offset
-	OFFSET="$(echo "$UPDATE" |  sed -n -e '\["result",[0-9]*,"update_id"\] s/.*\][ \t]//p')"
+	OFFSET="$(echo "$UPDATE" | grep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
 	OFFSET=$((OFFSET+1))
 
 	if [ "$OFFSET" != "1" ]; then
