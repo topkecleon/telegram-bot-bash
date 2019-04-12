@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev3-1-gae157c4
+#### $$VERSION$$ v0.6-dev3-1-gfe9443f
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -45,7 +45,7 @@ fi
 
 TOKEN="./token"
 if [ ! -f "${TOKEN}" ]; then
-   if [ "${CLEAR}" == "" ]; then
+   if [ "${CLEAR}" = "" ]; then
 	echo "Running headless, run ${SCRIPT} init first!"
 	exit 2 
    else
@@ -65,9 +65,9 @@ fi
 
 BOTADMIN="./botadmin"
 if [ ! -f "${BOTADMIN}" ]; then
-   if [ "${CLEAR}" == "" ]; then
+   if [ "${CLEAR}" = "" ]; then
 	echo "Running headless, set botadmin to AUTO MODE!"
-	echo "?" > "${BOTADMIN}"
+	echo '?' > "${BOTADMIN}"
    else
 	${CLEAR}
 	echo -e "${RED}BOTADMIN MISSING.${NC}"
@@ -256,27 +256,27 @@ leave_chat() {
 }
 
 user_is_creator() {
-	if [ "${1:--}" == "${2:-+}" ] || [ "$(get_chat_member_status "$1" "$2")" == "creator" ]; then return 0; fi
+	if [ "${1:--}" = "${2:-+}" ] || [ "$(get_chat_member_status "$1" "$2")" = "creator" ]; then return 0; fi
 	return 1 
 }
 
 user_is_admin() {
 	local me; me="$(get_chat_member_status "$1" "$2")"
-	if [ "${me}" == "creator" ] || [ "${me}" == "administrator" ]; then return 0; fi
+	if [ "${me}" = "creator" ] || [ "${me}" = "administrator" ]; then return 0; fi
 	return 1 
 }
 
 user_is_botadmin() {
 	local admin; admin="$(head -n 1 "${BOTADMIN}")"
-	[ "${admin}" == "${1}" ] && return 0
-	[[ "${admin}" == "@*" ]] && [[ "${admin}" == "${2}" ]] && return 0
-	if [ "${admin}" == "?" ]; then echo "${1:-?}" >"${BOTADMIN}"; return 0; fi
+	[ "${admin}" = "${1}" ] && return 0
+	[[ "${admin}" = "@*" ]] && [[ "${admin}" = "${2}" ]] && return 0
+	if [ "${admin}" = "?" ]; then echo "${1:-?}" >"${BOTADMIN}"; return 0; fi
 	return 1
 }
 
 user_is_allowed() {
 	local acl="$1"
-	[ "$1" == "" ] && return 1
+	[ "$1" = "" ] && return 1
 	grep -F -xq "${acl}:*:*" <"${BOTACL}" && return 0
 	[ "$2" != "" ] && acl="${acl}:$2"
 	grep -F -xq "${acl}:*" <"${BOTACL}" && return 0
@@ -426,24 +426,24 @@ send_file() {
 # typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
 
 send_action() {
-	[ "$2" == "" ] && return
+	[ "$2" = "" ] && return
 	res="$(curl -s "$ACTION_URL" -F "chat_id=$1" -F "action=$2")"
 }
 
 send_location() {
-	[ "$3" == "" ] && return
+	[ "$3" = "" ] && return
 	res="$(curl -s "$LOCATION_URL" -F "chat_id=$1" -F "latitude=$2" -F "longitude=$3")"
 }
 
 send_venue() {
-	[ "$5" == "" ] && return
+	[ "$5" = "" ] && return
 	[ "$6" != "" ] add="-F \"foursquare_id=$6\""
 	res="$(curl -s "$VENUE_URL" -F "chat_id=$1" -F "latitude=$2" -F "longitude=$3" -F "title=$4" -F "address=$5")"
 }
 
 
 forward() {
-	[ "$3" == "" ] && return
+	[ "$3" = "" ] && return
 	res="$(curl -s "$FORWARD_URL" -F "chat_id=$1" -F "from_chat_id=$2" -F "message_id=$3")"
 }
 
@@ -487,7 +487,7 @@ inproc() {
 process_updates() {
 	MAX_PROCESS_NUMBER=$(echo "$UPDATE" | sed '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')
 	for ((PROCESS_NUMBER=0; PROCESS_NUMBER<=MAX_PROCESS_NUMBER; PROCESS_NUMBER++)); do
-		if [ "$1" == "test" ]; then
+		if [ "$1" = "test" ]; then
 			process_client "$1"
 		else
 			process_client "$1" &
@@ -575,7 +575,7 @@ process_client() {
 }
 
 # source the script with source as param to use functions in other scripts
-while [ "$1" == "startbot" ]; do {
+while [ "$1" = "startbot" ]; do {
 
 	UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./JSON.sh/JSON.sh)"
 
@@ -584,7 +584,7 @@ while [ "$1" == "startbot" ]; do {
 	OFFSET=$((OFFSET+1))
 
 	if [ "$OFFSET" != "1" ]; then
-		if [ "$2" == "test" ]; then
+		if [ "$2" = "test" ]; then
 			process_updates "$2"
 		else
 			process_updates "$2" &
@@ -646,7 +646,7 @@ case "$1" in
 		${CLEAR}
 		echo -e "${GREEN}Restart background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
-		    if [ "${FILE}" == "${TMPDIR:-.}/*-back.cmd" ]; then
+		    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes to start.${NC}"; break
 		    else
 			RESTART="$(< "${FILE}")"
@@ -673,14 +673,14 @@ case "$1" in
 		${CLEAR}
 		echo -e "${GREEN}Stopping background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
-		    if [ "${FILE}" == "${TMPDIR:-.}/*-back.cmd" ]; then
+		    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes.${NC}"; break
 		    else
 			REMOVE="$(< "${FILE}")"
 			JOB="${REMOVE#*:}"
 			fifo="back-${JOB%:*}-${ME}_${REMOVE%%:*}"
 			echo "killbackground  ${fifo}"
-			[ "$1" == "killback" ] && rm -f "${FILE}" # remove job
+			[ "$1" = "killback" ] && rm -f "${FILE}" # remove job
 			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}") 2>/dev/null
 		    fi
 		done
