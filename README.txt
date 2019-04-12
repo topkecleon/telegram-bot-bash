@@ -119,5 +119,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.52-0-gdb7b19f
-++++++++++++++++++++++++++++++++++++++++
+latexmath:[\[VERSION\]] v0.6-dev3-0-gae157c4
+++++++++++++++++++++++++++++++++++++++++++++
