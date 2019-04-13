@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.60-dev3-3-gff684b9
+#### $$VERSION$$ v0.60-dev3-4-g8ec4c14
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -136,7 +136,6 @@ INLINE_QUERY=$URL'/answerInlineQuery'
 ME_URL=$URL'/getMe'
 DELETE_URL=$URL'/deleteMessage'
 GETMEMBER_URL=$URL'/getChatMember'
-ME="$(curl -s "$ME_URL" | ./JSON.sh/JSON.sh -s | grep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)"
 
 
 FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
@@ -386,7 +385,7 @@ remove_keyboard() {
 }
 
 get_file() {
-	[ "$1" != "" ] && echo "$FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh/JSON.sh -s | grep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)"
+	[ "$1" != "" ] && echo "$FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh/JSON.sh -s | JsonGetString '"result","file_path"')"
 }
 
 send_file() {
@@ -593,13 +592,16 @@ process_client() {
 	# To get user count execute bash bashbot.sh count
 }
 
+# get bot name
+ME="$(curl -s "$ME_URL" | ./JSON.sh/JSON.sh -s | JsonGetString '"result","username"')"
+
 # source the script with source as param to use functions in other scripts
 while [ "$1" = "startbot" ]; do {
 
 	UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./JSON.sh/JSON.sh)"
 
 	# Offset
-	OFFSET="$(echo "$UPDATE" | grep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
+	OFFSET="$(echo "$UPDATE" | JsonGetValue '"result",[0-9]*,"update_id"')"
 	OFFSET=$((OFFSET+1))
 
 	if [ "$OFFSET" != "1" ]; then
