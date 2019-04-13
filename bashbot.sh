@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-dev3-3-g03b6929
+#### $$VERSION$$ v0.60-dev3-0-g2550aec
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -149,6 +149,17 @@ urlencode() {
 	echo "$*" | sed 's:%:%25:g;s: :%20:g;s:<:%3C:g;s:>:%3E:g;s:#:%23:g;s:{:%7B:g;s:}:%7D:g;s:|:%7C:g;s:\\:%5C:g;s:\^:%5E:g;s:~:%7E:g;s:\[:%5B:g;s:\]:%5D:g;s:`:%60:g;s:;:%3B:g;s:/:%2F:g;s:?:%3F:g;s^:^%3A^g;s:@:%40:g;s:=:%3D:g;s:&:%26:g;s:\$:%24:g;s:\!:%21:g;s:\*:%2A:g'
 }
 
+# use phyton to decode UFT-8 JSON, provide error prone echo -e as fallback
+if which python >/dev/null 2>&1 || which phyton2 >/dev/null 2>&1; then
+    jsondecode() {
+	printf '"%s\\n"' "${1//\"/\\\"}" | python -c 'import json, sys; sys.stdout.write(json.load(sys.stdin).encode("utf-8"))'
+    }
+else
+    echo -e "${ORANGE}WARNING: Fallback to non UTF mode, install python to have full UTF-8 support!${NC}"
+    jsondecode() {
+	echo -e "$1"
+    }
+fi
 
 send_message() {
 	local text arg keyboard file lat long title address sent
@@ -157,7 +168,6 @@ send_message() {
 	text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
 	arg="$3"
 	[ "$arg" != "safe" ] && {
-		#text="$(echo "$text" | sed 's/ mynewlinestartshere /\r\n/g')" # hack for linebreaks in startproc scripts
 		text="${text// mynewlinestartshere /$'\r\n'}"
 		no_keyboard="$(echo "$2" | sed '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
 
@@ -505,7 +515,7 @@ process_client() {
 	local TMP="${TMPDIR:-.}/$RANDOM$RANDOM-MESSAGE"
 	echo "$UPDATE" >"$TMP"
 	# Message
-	MESSAGE[0]="$(echo -e "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","text"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")" | sed 's#\\/#/#g')"
+	MESSAGE[0]="$(jsondecode "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","text"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")" | sed 's#\\/#/#g')"
 	MESSAGE[ID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","message_id"\]/ s/.*\][ \t]//p' <"$TMP" )"
 
 	# Chat

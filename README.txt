@@ -6,6 +6,8 @@ A Telegram bot written in bash.
 Depends on http://github.com/tmux/tmux[tmux]. Uses
 http://github.com/dominictarr/JSON.sh[JSON.sh].
 
+For full UTF-8 support you need python on your system (optional).
+
 Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M
 (@gnadelwartz).
 
@@ -119,5 +121,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.6-dev3-0-gae157c4
-++++++++++++++++++++++++++++++++++++++++++++
+latexmath:[\[VERSION\]] v0.60-dev3-0-g2550aec
++++++++++++++++++++++++++++++++++++++++++++++

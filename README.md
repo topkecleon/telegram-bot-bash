@@ -4,6 +4,8 @@ A Telegram bot written in bash.
 Depends on [tmux](http://github.com/tmux/tmux).
 Uses [JSON.sh](http://github.com/dominictarr/JSON.sh).
 
+For full UTF-8 support you need python on your system (optional).
+
 Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M (@gnadelwartz).
 
 Contributions by JuanPotato, BigNerd95, TiagoDanin, and iicc1.
@@ -75,4 +77,4 @@ No - its not less (in)secure as any other Bot written in any other language. But
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.6-dev3-0-gae157c4
+#### $$VERSION$$ v0.60-dev3-0-g2550aec
