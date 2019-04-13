@@ -1,5 +1,61 @@
 
 ## Advanced Features
+### Access control
+Bashbot offers functions to check if a has Telegram capabilities like chat admin or chat creator:
+```bash
+# return true if user is admin/owner of the bot
+# -> botadmin is stored in file './botadmin'
+user_is_botadmin "user"  
+
+# return true if user is creator or admin of a chat
+user_is_admin "chat" "user"
+
+# return true if user is creator of a chat or it's a one to one chat
+user_is_creator "chat" "user"
+
+# examples:
+user_is_botadmin "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
+
+user_is_admin "${CHAT[ID]}" "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *CHATADMIN*."
+
+```
+In addtion you can configure individual capabilities for users in the file ```./botacl```:
+```bash
+# botacl
+# if a user is not listed here, function 'user_is_allowed' will always return false
+#
+# Format:
+# user:ressource:chat
+
+# allow user 123456789 access to all resources in all chats
+123456789:*:*
+
+# allow user 12131415 to start bot in all chats
+12131415:start:*
+
+# allow user 987654321 only to start bot in chat 98979695
+987654321:start:98979695
+
+# * are only allowed on the right hand side and not for user!
+# the following exaples are NOT valid!
+*:*:*
+*:start:*
+*:*:98979695
+```
+you have to check yourself if a user is allowed to to something by calling function ```user_is_allowed```.
+example to check if a user is allowed to start bot:
+```bash
+	case "$MESSAGE" in
+		'/start')
+			user_is_botadmin "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
+			if user_is_allowed "${USER[ID]}" "start" "${CHAT[ID]}" ; then
+				bot_help "${CHAT[ID]}"
+			else
+				send_normal_message "${CHAT[ID]}" "You are not allowed to start Bot."
+			;;
+	esac
+```
+
 ### Interactive Chats
 To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.
 The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).
@@ -97,5 +153,5 @@ To send stickers through an *inline query*:
 answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 ```
 
-#### $$VERSION$$ v0.51-0-g0356270
+#### $$VERSION$$ v0.52-0-gdb7b19f
 

@@ -1,8 +1,8 @@
 ## Best Practices
 
 ### Customizing commands.sh
-To ease Updates never change ```bashbot.sh```, all changes should be done in ```commands.sh``` .
 
+To ease Updates never change ```bashbot.sh```, all changes should be done in ```commands.sh``` .
 Insert your own Bot commands in the ```case ... esac``` block in commands.sh:
 ```bash
 	case "$MESSAGE" in
@@ -13,20 +13,18 @@ Insert your own Bot commands in the ```case ... esac``` block in commands.sh:
 		################################################
 		# DEFAULT commands start here, edit messages only
 		'/info')
-			send_markdown_message "${CHAT[ID]}" "This is bashbot, the *Telegram* bot written entirely in *bash*."
+			bashbot_info "${CHAT[ID]}"
 			;;
-		'/start')
-			send_action "${CHAT[ID]}" "typing"
-			send_markdown_message "${CHAT[ID]}" "This is bashbot, the Telegram bot written entirely in bash."
-			;;
-		[...]
 	esac
 ```
 after editing commands.sh restart Bot.
 
 ### Seperate Bot logic from command
+
 If a Bot command needs more than 2-3 lines of code I recommend to factor it out to a bash function in a seperate file, e.g.
-```mybotcommands.inc.sh``` and source the file from bashbot.sh.
+```mybotcommands.inc.sh``` and source the file from bashbot.sh. ```bashbot_info and bashbot_help``` are examples how to use
+bash functions to make customisation easy and keep case block small. ```process_message``` is an example for a complex
+processing logic as a bash funtcion in a seperate file.
 ```bash
 	source mybotcommands.inc.sh
 
@@ -38,16 +36,15 @@ If a Bot command needs more than 2-3 lines of code I recommend to factor it out 
 		################################################
 		# DEFAULT commands start here, edit messages only
 		'/info')
-			send_markdown_message "${CHAT[ID]}" "This is bashbot, the *Telegram* bot written entirely in *bash*."
+			bashbot_info "${CHAT[ID]}"
 			;;
 		'/start')
 			send_action "${CHAT[ID]}" "typing"
-			send_markdown_message "${CHAT[ID]}" "This is bashbot, the Telegram bot written entirely in bash."
+			bashbot_help "${CHAT[ID]}"
 			;;
-		#[...]
 	esac
 ```
-Doing it this way keeps commands.sh small and clean, while allowing complex tasks to be done in the included function. example ```mybotcommands.inc.sh```:
+Example ```mybotcommands.inc.sh```:
 ```bash
 #!/bin/bash
 #
@@ -79,10 +76,10 @@ process_message() {
 }
 
 ```
+Doing it this way keeps commands.sh small and clean, while allowing complex tasks to be done in the included function.
 
 ### Test your Bot with shellcheck
 Shellcheck is a static linter for shell scripts providing excellent tips and hints for shell coding pittfalls. You can [use it online](https://www.shellcheck.net/) or [install it on your system](https://github.com/koalaman/shellcheck#installing).
-
 All bashbot scripts are linted by shellcheck.
 
 Shellcheck examples:
@@ -114,5 +111,5 @@ In bashbot.sh line 490:
 ```
 As you can see there are only two warnings in bashbots scripts. The first is a hint you may use shell substitions instead of sed, but this is only possible for simple cases. The second warning is about an unused variable, this is true because in our examples CONTACT is not used but assigned in case you want to use it :-)
 
-#### $$VERSION$$ v0.51-0-g0356270
+#### $$VERSION$$ v0.52-0-gdb7b19f
 

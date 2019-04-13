@@ -8,7 +8,7 @@ Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M (@gnadel
 
 Contributions by JuanPotato, BigNerd95, TiagoDanin, and iicc1.
 
-[Download from github](https://github.com/topkecleon/telegram-bot-bash/releases)
+[Download latest release from github](https://github.com/topkecleon/telegram-bot-bash/releases)
 
 Released to the public domain wherever applicable.
 Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/copying/).
@@ -25,7 +25,8 @@ git clone --recursive https://github.com/topkecleon/telegram-bot-bash
 ```
 3. Change to directory ```telegram-bot.bash```, run ```./bashbot.sh init``` and follow the instructions. At this stage you are asked for your Bots token given by botfather.
 
-
+## Update bashbot
+[Download latest update zip from github](https://github.com/topkecleon/telegram-bot-bash/releases) and copy all files to bashbot dir. run ```sudo ./bashbot.sh init```.
 
 ## Getting started
  - [Create your first telegram bot](doc/1_firstbot.md)
@@ -35,6 +36,7 @@ git clone --recursive https://github.com/topkecleon/telegram-bot-bash
    - Send Messages
    - Send files, location  etc.
  - [Advanced Features](doc/3_advanced.md)
+   - Access Control
    - Interactive Chats
    - Background Jobs
    - Inline queries
@@ -73,4 +75,4 @@ No - its not less (in)secure as any other Bot written in any other language. But
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.51-0-g0356270
+#### $$VERSION$$ v0.52-0-gdb7b19f

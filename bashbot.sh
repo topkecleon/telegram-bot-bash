@@ -10,12 +10,12 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.51-0-g0356270
+#### $$VERSION$$ v0.52-0-gdb7b19f
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
-# - 1 can't change to bashbot dir
-# - 2 can't write to tmp and / or count 
+# - 1 can't change to dir
+# - 2 can't write to tmp, count or token 
 # - 3 user not found
 # - 4 unkown command
 
@@ -31,7 +31,7 @@ fi
 # get location of bashbot.sh an change to bashbot dir
 SCRIPT="./$(basename "$0")"
 SCRIPTDIR="$(dirname "$0")"
-RUNUSER="$USER" # USER is overwritten as array, $USER may not work later on...
+RUNUSER="${USER}" # USER is overwritten by bashbot array, $USER may not work later on...
 
 if ! cd "${SCRIPTDIR}" ; then
 	echo -e "${RED}ERROR: Can't change to ${SCRIPTDIR} ...${NC}"
@@ -39,7 +39,7 @@ if ! cd "${SCRIPTDIR}" ; then
 fi
 
 if [ ! -w "." ]; then
-	echo -e "${ORANGE}WARNING: $SCRIPTDIR is not writeable!${NC}"
+	echo -e "${ORANGE}WARNING: ${SCRIPTDIR} is not writeable!${NC}"
 	ls -ld .
 fi
 
@@ -49,31 +49,58 @@ if [ ! -f "JSON.sh/JSON.sh" ]; then
 	echo "JSON.sh has been downloaded. Proceeding."
 fi
 
-if [ ! -f "token" ]; then
-	$CLEAR
+TOKEN="./token"
+if [ ! -f "${TOKEN}" ]; then
+   if [ "${CLEAR}" == "" ]; then
+	echo "Running headless, run ${SCRIPT} init first!"
+	exit 2 
+   else
+	${CLEAR}
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE${NC}"
 	read -r token
-	echo "$token" >> "token"
+	echo "${token}" > "${TOKEN}"
+   fi
+fi
+
+BOTADMIN="./botadmin"
+if [ ! -f "${BOTADMIN}" ]; then
+   if [ "${CLEAR}" == "" ]; then
+	echo "Running headless, set botadmin to AUTO MODE!"
+	echo "?" > "${BOTADMIN}"
+   else
+	${CLEAR}
+	echo -e "${RED}BOTADMIN MISSING.${NC}"
+	echo -e "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR ENTER '?'${NC}"
+	echo -e "${ORANGE}TO MAKE FIRST USER TYPING '/start' TO BOTADMIN${NC}"
+	read -r token
+	echo "${token}" > "${BOTADMIN}"
+   fi
+fi
+
+BOTACL="./botacl"
+if [ ! -f "${BOTACL}" ]; then
+	echo -e "${ORANGE}Create empty ${BOTACL} file.${NC}"
+	touch "${BOTACL}"
 fi
 
 TMPDIR="./tmp-bot-bash"
-if [ ! -d "$TMPDIR" ]; then
-	mkdir "$TMPDIR"
-elif [ ! -w "$TMPDIR" ]; then
-	$CLEAR
-	echo -e "${RED}ERROR: Can't write to $TMPDIR!.${NC}"
-	ls -ld "$TMPDIR"
+if [ ! -d "${TMPDIR}" ]; then
+	mkdir "${TMPDIR}"
+elif [ ! -w "${TMPDIR}" ]; then
+	${CLEAR}
+	echo -e "${RED}ERROR: Can't write to ${TMPDIR}!.${NC}"
+	ls -ld "${TMPDIR}"
 	exit 2
 fi
 
 COUNT="./count"
-if [ ! -f "$COUNT" ]; then
-	touch "$COUNT"
-elif [ ! -w "$COUNT" ]; then
-	$CLEAR
-	echo -e "${RED}ERROR: Can't write to $COUNT!.${NC}"
-	ls -l "$COUNT"
+if [ ! -f "${COUNT}" ]; then
+	touch "${COUNT}"
+elif [ ! -w "${COUNT}" ]; then
+	${CLEAR}
+	echo -e "${RED}ERROR: Can't write to ${COUNT}!.${NC}"
+	ls -l "${COUNT}"
 	exit 2
 fi
 
@@ -99,7 +126,8 @@ FORWARD_URL=$URL'/forwardMessage'
 INLINE_QUERY=$URL'/answerInlineQuery'
 ME_URL=$URL'/getMe'
 DELETE_URL=$URL'/deleteMessage'
-ME=$(curl -s "$ME_URL" | ./JSON.sh/JSON.sh -s | grep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)
+GETMEMBER_URL=$URL'/getChatMember'
+ME="$(curl -s "$ME_URL" | ./JSON.sh/JSON.sh -s | grep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)"
 
 
 FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
@@ -120,7 +148,8 @@ send_message() {
 	text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
 	arg="$3"
 	[ "$arg" != "safe" ] && {
-		text="$(echo "$text" | sed 's/ mynewlinestartshere /\r\n/g')" # hack for linebreaks in startproc scripts
+		#text="$(echo "$text" | sed 's/ mynewlinestartshere /\r\n/g')" # hack for linebreaks in startproc scripts
+		text="${text// mynewlinestartshere /$'\r\n'}"
 		no_keyboard="$(echo "$2" | sed '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
 
 		keyboard="$(echo "$2" | sed '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
@@ -205,6 +234,11 @@ delete_message() {
         res="$(curl -s "$DELETE_URL" -F "chat_id=$1" -F "message_id=$2")"
 }
 
+# usage: status="$(get_chat_member_status "chat" "user")"
+get_chat_member_status() {
+	curl -s "$GETMEMBER_URL" -F "chat_id=$1" -F "user_id=$2" | ./JSON.sh/JSON.sh -s | sed -n -e '/\["result","status"\]/  s/.*\][ \t]"\(.*\)"$/\1/p'
+}
+
 kick_chat_member() {
 	res="$(curl -s "$KICK_URL" -F "chat_id=$1" -F "user_id=$2")"
 }
@@ -215,6 +249,35 @@ unban_chat_member() {
 
 leave_chat() {
 	res="$(curl -s "$LEAVE_URL" -F "chat_id=$1")"
+}
+
+user_is_creator() {
+	if [ "${1:--}" == "${2:-+}" ] || [ "$(get_chat_member_status "$1" "$2")" == "creator" ]; then return 0; fi
+	return 1 
+}
+
+user_is_admin() {
+	local me; me="$(get_chat_member_status "$1" "$2")"
+	if [ "${me}" == "creator" ] || [ "${me}" == "administrator" ]; then return 0; fi
+	return 1 
+}
+
+user_is_botadmin() {
+	local admin; admin="$(head -n 1 "${BOTADMIN}")"
+	[ "${admin}" == "${1}" ] && return 0
+	[[ "${admin}" == "@*" ]] && [[ "${admin}" == "${2}" ]] && return 0
+	if [ "${admin}" == "?" ]; then echo "${1:-?}" >"${BOTADMIN}"; return 0; fi
+	return 1
+}
+
+user_is_allowed() {
+	local acl; acl="$1"
+	[ "$1" == "" ] && return 1
+	grep -F -xq "${acl}:*:*" <"${BOTACL}" && return 0
+	[ "$2" != "" ] && acl="${acl}:$2"
+	grep -F -xq "${acl}:*" <"${BOTACL}" && return 0
+	[ "$3" != "" ] && acl="${acl}:$3"
+	grep -F -xq "${acl}" <"${BOTACL}"
 }
 
 answer_inline_query() {
@@ -549,7 +612,7 @@ case "$1" in
 		while read -r f; do send_message "${f//COUNT}" "$*"; $sleep; done <"${COUNT}"
 		;;
 	"start")
-		$CLEAR
+		${CLEAR}
 		tmux kill-session -t "$ME" &>/dev/null
 		tmux new-session -d -s "$ME" "bash $SCRIPT startbot" && echo -e "${GREEN}Bot started successfully.${NC}"
 		echo "Tmux session name $ME" || echo -e "${RED}An error occurred while starting the bot. ${NC}"
@@ -570,20 +633,20 @@ case "$1" in
 			chown -R "$TOUSER" . ./*
 			chmod 711 .
 			chmod -R a-w ./*
-			chmod -R u+w "$COUNT" "$TMPDIR" ./*.log 2>/dev/null
-			chmod -R o-r,o-w "$COUNT" "$TMPDIR" token 2>/dev/null
+			chmod -R u+w "${COUNT}" "${TMPDIR}" "${BOTADMIN}" ./*.log 2>/dev/null
+			chmod -R o-r,o-w "${COUNT}" "${TMPDIR}" "${TOKEN}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
 			ls -la
 			exit			
 		fi
 		;;
 	"background" | "resumeback")
-		$CLEAR
+		${CLEAR}
 		echo -e "${GREEN}Restart background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
-		    if [ "$FILE" == "${TMPDIR:-.}/*-back.cmd" ]; then
+		    if [ "${FILE}" == "${TMPDIR:-.}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes to start.${NC}"; break
 		    else
-			RESTART="$(cat "$FILE")"
+			RESTART="$(< "${FILE}")"
 			CHAT[ID]="${RESTART%%:*}"
 			JOB="${RESTART#*:}"
 			PROG="${JOB#*:}"
@@ -598,29 +661,29 @@ case "$1" in
 		done
 		;;
 	"kill")
-		$CLEAR
+		${CLEAR}
 		tmux kill-session -t "$ME" &>/dev/null
 		send_markdown_message "${CHAT[ID]}" "*Bot stopped*"
 		echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
 		;;
 	"killback" | "suspendback")
-		$CLEAR
+		${CLEAR}
 		echo -e "${GREEN}Stopping background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
-		    if [ "$FILE" == "${TMPDIR:-.}/*-back.cmd" ]; then
+		    if [ "${FILE}" == "${TMPDIR:-.}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes.${NC}"; break
 		    else
-			REMOVE="$(cat "$FILE")"
+			REMOVE="$(< "${FILE}")"
 			JOB="${REMOVE#*:}"
 			fifo="back-${JOB%:*}-${ME}_${REMOVE%%:*}"
 			echo "killbackground  ${fifo}"
-			[ "$1" == "killback" ] && rm -f "$FILE" # remove job
+			[ "$1" == "killback" ] && rm -f "${FILE}" # remove job
 			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}") 2>/dev/null
 		    fi
 		done
 		;;
 	"help")
-		$CLEAR
+		${CLEAR}
 		less "README.txt"
 		exit
 		;;
