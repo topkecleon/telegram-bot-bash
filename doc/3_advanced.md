@@ -153,5 +153,5 @@ To send stickers through an *inline query*:
 answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 ```
 
-#### $$VERSION$$ v0.60-dev3-0-g2550aec
+#### $$VERSION$$ v0.60-dev3-1-gc944292
 
