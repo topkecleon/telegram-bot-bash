@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.60-dev3-0-g2550aec
+#### $$VERSION$$ v0.60-dev3-3-gff684b9
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -145,18 +145,15 @@ GET_URL=$URL'/getFile'
 OFFSET=0
 declare -A USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO
 
-urlencode() {
-	echo "$*" | sed 's:%:%25:g;s: :%20:g;s:<:%3C:g;s:>:%3E:g;s:#:%23:g;s:{:%7B:g;s:}:%7D:g;s:|:%7C:g;s:\\:%5C:g;s:\^:%5E:g;s:~:%7E:g;s:\[:%5B:g;s:\]:%5D:g;s:`:%60:g;s:;:%3B:g;s:/:%2F:g;s:?:%3F:g;s^:^%3A^g;s:@:%40:g;s:=:%3D:g;s:&:%26:g;s:\$:%24:g;s:\!:%21:g;s:\*:%2A:g'
-}
 
 # use phyton to decode UFT-8 JSON, provide error prone echo -e as fallback
 if which python >/dev/null 2>&1 || which phyton2 >/dev/null 2>&1; then
-    jsondecode() {
+    JsonDecode() {
 	printf '"%s\\n"' "${1//\"/\\\"}" | python -c 'import json, sys; sys.stdout.write(json.load(sys.stdin).encode("utf-8"))'
     }
 else
     echo -e "${ORANGE}WARNING: Fallback to non UTF mode, install python to have full UTF-8 support!${NC}"
-    jsondecode() {
+    JsonDecode() {
 	echo -e "$1"
     }
 fi
@@ -511,72 +508,78 @@ process_updates() {
 		fi
 	done
 }
+JsonGetString() {
+	sed -n -e '/\['"$1"'\]/ s/.*\][ \t]"\(.*\)"$/\1/p'
+}
+JsonGetValue() {
+	sed -n -e '/\['"$1"'\]/ s/.*\][ \t]//p'
+}
 process_client() {
 	local TMP="${TMPDIR:-.}/$RANDOM$RANDOM-MESSAGE"
 	echo "$UPDATE" >"$TMP"
 	# Message
-	MESSAGE[0]="$(jsondecode "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","text"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")" | sed 's#\\/#/#g')"
-	MESSAGE[ID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","message_id"\]/ s/.*\][ \t]//p' <"$TMP" )"
+	MESSAGE[0]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","text"' <"$TMP")" | sed 's#\\/#/#g')"
+	MESSAGE[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","message_id"' <"$TMP" )"
 
 	# Chat
-	CHAT[ID]="$(sed -n -e  '/\["result",'$PROCESS_NUMBER',"message","chat","id"\]/ s/.*\][ \t]//p' <"$TMP" )"
-	CHAT[FIRST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","chat","first_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CHAT[LAST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","chat","last_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CHAT[USERNAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","chat","username"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CHAT[TITLE]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","chat","title"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CHAT[TYPE]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","chat","type"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","chat","all_members_are_administrators"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
+	CHAT[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","chat","id"' <"$TMP" )"
+	CHAT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","first_name"' <"$TMP")")"
+	CHAT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","last_name"' <"$TMP")")"
+	CHAT[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","username"' <"$TMP")")"
+	CHAT[TITLE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","title"' <"$TMP")")"
+	CHAT[TYPE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","type"' <"$TMP")")"
+	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]="$(JsonDecode "$(JsonGetString '/\["result",'$PROCESS_NUMBER',"message","chat","all_members_are_administrators"' <"$TMP")")"
 
 	# User
-	USER[ID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","from","id"\]/ s/.*\][ \t]//p' <"$TMP" )"
-	USER[FIRST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","from","first_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	USER[LAST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","from","last_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	USER[USERNAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","from","username"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
+	USER[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","from","id"' <"$TMP" )"
+	USER[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","from","first_name"' <"$TMP")")"
+	USER[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","from","last_name"' <"$TMP")")"
+	USER[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","from","username"' <"$TMP")")"
 
 	# in reply to message from
-	REPLYTO[UID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","id"\]/ s/.*\][ \t]//p' <"$TMP" )"
+	REPLYTO[UID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","id"' <"$TMP" )"
 	if [ "${REPLYTO[UID]}" != "" ]; then
-	   REPLYTO[0]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","reply_to_message","text"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	   REPLYTO[ID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","reply_to_message","message_id"\/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	   REPLYTO[FIRST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","first_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	   REPLYTO[LAST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","last_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	   REPLYTO[USERNAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","username"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
+	   REPLYTO[0]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","text"' <"$TMP")")"
+	   REPLYTO[ID]="$(JsonDecode "$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","reply_to_message","message_id"' <"$TMP")")"
+	   REPLYTO[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","first_name"' <"$TMP")")"
+	   REPLYTO[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","last_name"' <"$TMP")")"
+	   REPLYTO[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","username"' <"$TMP")")"
 	fi
 
 	# forwarded message from
-	FORWARD[UID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","forward_from","id"\]/ s/.*\][ \t]//p' <"$TMP" )"
+	FORWARD[UID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","forward_from","id"' <"$TMP" )"
 	if [ "${FORWARD[UID]}" != "" ]; then
 	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
-	   FORWARD[FIRST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","forward_from","first_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	   FORWARD[LAST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","forward_from","last_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	   FORWARD[USERNAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","forward_from","username"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
+	   FORWARD[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","forward_from","first_name"' <"$TMP")")"
+	   FORWARD[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","forward_from","last_name"' <"$TMP")")"
+	   FORWARD[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","forward_from","username"' <"$TMP")")"
 	fi
 
 	# Audio
-	URLS[AUDIO]="$(get_file "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","audio","file_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")")"
+	URLS[AUDIO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","audio","file_id"' <"$TMP")")")"
 	# Document
-	URLS[DOCUMENT]="$(get_file "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","document","file_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")")"
+	URLS[DOCUMENT]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","document","file_id"' <"$TMP")")")"
 	# Photo
-	URLS[PHOTO]="$(get_file "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","photo",.*,"file_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")")"
+	URLS[PHOTO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","photo",.*,"file_id"' <"$TMP")")")"
 	# Sticker
-	URLS[STICKER]="$(get_file "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","sticker","file_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")")"
+	URLS[STICKER]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","sticker","file_id"' <"$TMP")")")"
 	# Video
-	URLS[VIDEO]="$(get_file "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","video","file_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")")"
+	URLS[VIDEO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","video","file_id"' <"$TMP")")")"
 	# Voice
-	URLS[VOICE]="$(get_file "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","voice","file_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")")"
+	URLS[VOICE]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","voice","file_id"' <"$TMP")")")"
 
 	# Contact
-	CONTACT[NUMBER]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","contact","phone_number"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CONTACT[FIRST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","contact","first_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CONTACT[LAST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","contact","last_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CONTACT[USER_ID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","contact","user_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
+	CONTACT[NUMBER]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","phone_number"' <"$TMP")")"
+	CONTACT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","first_name"' <"$TMP")")"
+	CONTACT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","last_name"' <"$TMP")")"
+	CONTACT[USER_ID]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","user_id"' <"$TMP")")"
 
 	# Caption
-	CAPTION="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","caption"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
+	CAPTION="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","caption"' <"$TMP")")"
 
 	# Location
-	LOCATION[LONGITUDE]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","location","longitude"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	LOCATION[LATITUDE]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","location","latitude"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
+	LOCATION[LONGITUDE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","location","longitude"' <"$TMP")")"
+	LOCATION[LATITUDE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","location","latitude"' <"$TMP")")"
 	NAME="$(echo "${URLS[*]}" | sed 's/.*\///g')"
 	rm "$TMP"
 
