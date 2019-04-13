@@ -41,13 +41,14 @@ Telegram send JSON messages with all characters not fitting in one byte (256 bit
 ```
 \uD83D\uDE01 \uD83D\uDE18 \u2764\uFE0F \uD83D\uDE0A \uD83D\uDC4D
 ```
-In theorie you can decode these characters with ```echo -e``` or ```printf '%s\\n'``` in bash, but this works only for single byte characters! To support also multibyte characters in JSON strings you need a working python on your system. If no python is detected on your system, bashbot falls back to echo -e. See [longstanding issue #50](https://github.com/topkecleon/telegram-bot-bash/issues/50)
+In theorie you can decode these characters with ```echo -e``` or ```printf '%s\\n'``` in bash, but this works only for single byte characters! To support also multibyte characters in JSON strings you need a working python on your system.
+#### If no python is detected on your system, bashbot falls back to echo -e. See [longstanding issue #50](https://github.com/topkecleon/telegram-bot-bash/issues/50)
 
 
 ### Run as other user or system service
 Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for experiend linux users.
 
-####Running bashbot as an other user is only possible with sudo rigths.
+#### Running bashbot as an other user is only possible with sudo rigths.
 
 Setup the environment for the user you want to run bashbot and enter desired username, e.g. nobody :
 ```bash
@@ -99,5 +100,5 @@ An example crontab is provided in ```bashbot.cron```.
 - if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username```nobody``` with the username you want to run bashbot. copy the modified file to ```/etc/cron.d/bashbot```
 
 
-#### $$VERSION$$ v0.60-dev3-1-gc944292
+#### $$VERSION$$ v0.60-dev3-2-g9eddea5
 
