@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.60-dev3-5-gaa1404d
+#### $$VERSION$$ v0.60-dev3-6-g5787908
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -145,28 +145,6 @@ OFFSET=0
 declare -A USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO
 
 
-# use phyton JSON to decode JSON UFT-8, provide bash implementaion as fallback
-if which python >/dev/null 2>&1 || which phyton2 >/dev/null 2>&1; then
-    JsonDecode() {
-	printf '"%s\\n"' "${1//\"/\\\"}" | python -c 'import json, sys; sys.stdout.write(json.load(sys.stdin).encode("utf-8"))'
-    }
-else
-    # pure bash implementaion, done by KayM (@gnadelwartz)
-    # see https://stackoverflow.com/a/55666449/9381171
-    JsonDecode() {
-        local out="$1"
-        local remain=""
-        local regexp='(.*)\\ud([0-9a-fA-F]{3})\\ud([0-9a-fA-F]{3})(.*)'
-        while [[ "${out}" =~ $regexp ]] ; do
-                local W1="$(( ( 0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ))"
-                local W2="$(( 0xd${BASH_REMATCH[3]} & 0x3ff ))"
-                U="$(( (${W1} | ${W2}) + 0x10000 ))"
-                remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
-                out="${BASH_REMATCH[1]}"
-        done
-        echo -e "${out}${remain}"
-    }
-fi
 
 send_message() {
 	local text arg keyboard file lat long title address sent
@@ -538,7 +516,7 @@ process_client() {
 	CHAT[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","username"' <"$TMP")")"
 	CHAT[TITLE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","title"' <"$TMP")")"
 	CHAT[TYPE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","type"' <"$TMP")")"
-	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]="$(JsonDecode "$(JsonGetString '/\["result",'$PROCESS_NUMBER',"message","chat","all_members_are_administrators"' <"$TMP")")"
+	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","all_members_are_administrators"' <"$TMP")")"
 
 	# User
 	USER[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","from","id"' <"$TMP" )"
@@ -602,6 +580,29 @@ process_client() {
 	grep -q "$tmpcount" <"${COUNT}" >/dev/null 2>&1 || echo "$tmpcount">>${COUNT}
 	# To get user count execute bash bashbot.sh count
 }
+
+# use phyton JSON to decode JSON UFT-8, provide bash implementaion as fallback
+if which python >/dev/null 2>&1 || which phyton2 >/dev/null 2>&1; then
+    JsonDecode() {
+	printf '"%s\\n"' "${1//\"/\\\"}" | python -c 'import json, sys; sys.stdout.write(json.load(sys.stdin).encode("utf-8"))'
+    }
+else
+    # pure bash implementaion, done by KayM (@gnadelwartz)
+    # see https://stackoverflow.com/a/55666449/9381171
+    JsonDecode() {
+        local out="$1"
+        local remain=""
+        local regexp='(.*)\\ud([0-9a-fA-F]{3})\\ud([0-9a-fA-F]{3})(.*)'
+        while [[ "${out}" =~ $regexp ]] ; do
+                local W1="$(( ( 0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ))"
+                local W2="$(( 0xd${BASH_REMATCH[3]} & 0x3ff ))"
+                U="$(( ( W1 | W2 ) + 0x10000 ))"
+                remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
+                out="${BASH_REMATCH[1]}"
+        done
+        echo -e "${out}${remain}"
+    }
+fi
 
 # get bot name
 ME="$(curl -s "$ME_URL" | ./JSON.sh/JSON.sh -s | JsonGetString '"result","username"')"

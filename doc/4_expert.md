@@ -1,6 +1,12 @@
 ## Expert Use
 
 ### Handling UTF-8 character sets
+UTF-8 is a variable length encoding of Unicode. UTF-8 is recommended as the default encoding in JSON, XML and HTML, also Telegram make use of it.
+
+The first 128 characters are regular ASCII, so it's a superset of and compatible with ASCII environments. The next 1,920 characters need
+two bytes for encoding and covers almost all ```Latin``` alphabets, also ```Greek```, ```Cyrillic```,
+```Hebrew```, ```Arabic``` and more. See [Wikipedia](https://en.wikipedia.org/wiki/UTF-8) for more deatils.
+
 #### Setting up your Environment
 In general ```bash``` and ```GNU``` utitities are UTF-8 aware, but you have to setup your environment
 and your scripts accordingly:
@@ -31,18 +37,11 @@ export 'LANGUAGE=den_US.UTF-8'
 To display all availible locales on your system run ```locale -a | more```. [Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8)
 
 #### UTF-8 Support
-```UTF-8``` is a variable length encoding of Unicode. UTF-8 is recommended as the default encoding in JSON, XML and HTML, also Telegram make use of it.
+Telegram send JSON messages with all characters not fitting in one byte (<256 bit) escaped as sequences of ```\uxxxx``` to be regular one byte ASCII Multibyte UTF-8 characters, e.g. Emoticons and Arabic characters, are send in UTF-16 notation.  e.g. the Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as: ``` \uD83D\uDE01 \uD83D\uDE18 \u2764\uFE0F \uD83D\uDE0A \uD83D\uDC4D ```
 
-The first 128 characters are regular ASCII, so it's a superset of and compatible with ASCII environments. The next 1,920 characters need
-two bytes for encoding and covers almost all ```Latin``` alphabets, also ```Greek```, ```Cyrillic```,
-```Hebrew```, ```Arabic``` and more. See [Wikipedia](https://en.wikipedia.org/wiki/UTF-8) for more deatils.
+**This mixed JSON encoding can't not decoded from ```echo -e``` or ```printf '%s\\n'```, this works only for single byte characters!**
 
-Telegram send JSON messages with all characters not fitting in one byte (256 bit) escaped as sequences of ```\uxxxx``` to be regular one byte ASCII (incl. iso-xxx-x), e.g. Emoticons and Arabic characters, e.g. the Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as: 
-```
-\uD83D\uDE01 \uD83D\uDE18 \u2764\uFE0F \uD83D\uDE0A \uD83D\uDC4D
-```
-In theorie you can decode these characters with ```echo -e``` or ```printf '%s\\n'``` in bash, but this works only for single byte characters! To support also multibyte characters in JSON strings you need a working python on your system.
-#### If no python is detected on your system, bashbot falls back to echo -e. See [longstanding issue #50](https://github.com/topkecleon/telegram-bot-bash/issues/50)
+To to fully support decoding of multibyte characters you need a working python2 instllation on your system. If no python is detected bashbot falls back to a **slow, pure bash solution which may not always work 100% correct**.
 
 
 ### Run as other user or system service
@@ -100,5 +99,5 @@ An example crontab is provided in ```bashbot.cron```.
 - if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username```nobody``` with the username you want to run bashbot. copy the modified file to ```/etc/cron.d/bashbot```
 
 
-#### $$VERSION$$ v0.60-dev3-2-g9eddea5
+#### $$VERSION$$ v0.60-dev3-6-g5787908
 
