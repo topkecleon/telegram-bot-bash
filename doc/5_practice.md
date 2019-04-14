@@ -11,7 +11,7 @@ Insert your own Bot commands in the ```case ... esac``` block in commands.sh:
 			;;
 
 		################################################
-		# DEFAULT commands start here, edit messages only
+		# DEFAULT commands start here, do not edit below this!
 		'/info')
 			bashbot_info "${CHAT[ID]}"
 			;;
@@ -19,22 +19,21 @@ Insert your own Bot commands in the ```case ... esac``` block in commands.sh:
 ```
 after editing commands.sh restart Bot.
 
-### Seperate Bot logic from command
+### Seperate logic from command block
 
-If a Bot command needs more than 2-3 lines of code I recommend to factor it out to a bash function in a seperate file, e.g.
-```mybotcommands.inc.sh``` and source the file from bashbot.sh. ```bashbot_info and bashbot_help``` are examples how to use
-bash functions to make customisation easy and keep case block small. ```process_message``` is an example for a complex
-processing logic as a bash funtcion in a seperate file.
+If your Bot command needs more than 2-3 lines of code I recommend to factor it out to a function to keep the command block small.i
+Place the functions in a file, e.g. ```mybotcommands.inc.sh``` and source it in  bashbot.sh.
+```process_message``` is an example for a function hiding complex logic in a bash funtcion.
 ```bash
 	source mybotcommands.inc.sh
 
 	case "$MESSAGE" in
-		'/report') # report dealz from database and output result
+		'/report') # logic for /report is done in process_message 
 			send_normal_message "${CHAT[ID]}" "$(process_message "$MESSAGE")" 
 			;;
 
 		################################################
-		# DEFAULT commands start here, edit messages only
+		# DEFAULT commands start here, do not edit below this!
 		'/info')
 			bashbot_info "${CHAT[ID]}"
 			;;
@@ -44,7 +43,7 @@ processing logic as a bash funtcion in a seperate file.
 			;;
 	esac
 ```
-Example ```mybotcommands.inc.sh```:
+Example function ```process_message``` in file ```mybotcommands.inc.sh```:
 ```bash
 #!/bin/bash
 #
@@ -91,6 +90,7 @@ Line 17:
                       ^-- SC2116: Useless echo? Instead of 'cmd $(echo foo)', just use 'cmd foo'.
  
 ```
+As you can see my ```mybotcommands.inc.sh``` contains an useless echo command in 'TEXT=' assigment and can be replaced by ```TEXT="${TEXT}${WORD}"```
 ```bash
 $ shellcheck -x notify
 OK
@@ -109,7 +109,8 @@ In bashbot.sh line 490:
         CONTACT[USER_ID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","contact","user_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
         ^-- SC2034: CONTACT appears unused. Verify it or export it.
 ```
-As you can see there are only two warnings in bashbots scripts. The first is a hint you may use shell substitions instead of sed, but this is only possible for simple cases. The second warning is about an unused variable, this is true because in our examples CONTACT is not used but assigned in case you want to use it :-)
+Here are two warnings in bashbots scripts. The first is a hint you may use shell substitions instead of sed, this is really possible and much faster!
+The second warning is about an unused variable, this is true because in our examples CONTACT is not used but assigned in case you want to use it :-)
 
-#### $$VERSION$$ v0.6-rc1-0-gc001d14
+#### $$VERSION$$ v0.6-rc1-1-g87ec24b
 
