@@ -41,9 +41,10 @@ Telegram send JSON messages with all characters not fitting in one byte (<256 bi
 one byte ASCII. Multibyte UTF-8 characters, e.g. Emoticons and Arabic characters, are send in UTF-16 notation.
 The Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as: ``` \uD83D\uDE01 \uD83D\uDE18 \u2764\uFE0F \uD83D\uDE0A \uD83D\uDC4D ```
 
-**This mixed JSON encoding can not decoded from ```echo -e``` or ```printf '%s\\n'```**, this works only for single byte characters!
+**This mixed JSON encoding can not decoded from** ```echo -e``` or ```printf '%s\\n'```, this works only for single byte characters!
 
-To to fully support decoding of multibyte characters you need a working python2 instllation on your system. If no python is detected bashbot falls back to a **slow, pure bash solution which may not always work 100% correct**.
+To to fully support decoding of multibyte characters you need a working python2 installation on your system.
+If no python is detected bashbot falls back to a **slow, pure bash solution which may not work for some corner cases**.
 
 
 ### Run as other user or system service
@@ -101,5 +102,5 @@ An example crontab is provided in ```bashbot.cron```.
 - if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username```nobody``` with the username you want to run bashbot. copy the modified file to ```/etc/cron.d/bashbot```
 
 
-#### $$VERSION$$ v0.60-dev3-7-gf5538ef
+#### $$VERSION$$ v0.6-rc1-0-gc001d14
 
