@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.60-dev3-8-gdec3150
+#### $$VERSION$$ v0.60-dev3-9-g7e75b92
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -528,7 +528,7 @@ process_client() {
 	REPLYTO[UID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","id"' <"$TMP" )"
 	if [ "${REPLYTO[UID]}" != "" ]; then
 	   REPLYTO[0]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","text"' <"$TMP")")"
-	   REPLYTO[ID]="$(JsonDecode "$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","reply_to_message","message_id"' <"$TMP")")"
+	   REPLYTO[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","reply_to_message","message_id"' <"$TMP")"
 	   REPLYTO[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","first_name"' <"$TMP")")"
 	   REPLYTO[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","last_name"' <"$TMP")")"
 	   REPLYTO[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","username"' <"$TMP")")"
