@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.60-dev3-4-g8ec4c14
+#### $$VERSION$$ v0.60-dev3-5-gaa1404d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -145,15 +145,26 @@ OFFSET=0
 declare -A USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO
 
 
-# use phyton to decode UFT-8 JSON, provide error prone echo -e as fallback
+# use phyton JSON to decode JSON UFT-8, provide bash implementaion as fallback
 if which python >/dev/null 2>&1 || which phyton2 >/dev/null 2>&1; then
     JsonDecode() {
 	printf '"%s\\n"' "${1//\"/\\\"}" | python -c 'import json, sys; sys.stdout.write(json.load(sys.stdin).encode("utf-8"))'
     }
 else
-    echo -e "${ORANGE}WARNING: Fallback to non UTF mode, install python to have full UTF-8 support!${NC}"
+    # pure bash implementaion, done by KayM (@gnadelwartz)
+    # see https://stackoverflow.com/a/55666449/9381171
     JsonDecode() {
-	echo -e "$1"
+        local out="$1"
+        local remain=""
+        local regexp='(.*)\\ud([0-9a-fA-F]{3})\\ud([0-9a-fA-F]{3})(.*)'
+        while [[ "${out}" =~ $regexp ]] ; do
+                local W1="$(( ( 0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ))"
+                local W2="$(( 0xd${BASH_REMATCH[3]} & 0x3ff ))"
+                U="$(( (${W1} | ${W2}) + 0x10000 ))"
+                remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
+                out="${BASH_REMATCH[1]}"
+        done
+        echo -e "${out}${remain}"
     }
 fi
 
