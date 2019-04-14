@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.60-dev3-6-g5787908
+#### $$VERSION$$ v0.60-dev3-8-gdec3150
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -457,7 +457,7 @@ background() {
 
 startproc() {
 	killproc "$2"
-	local fifo="$2${copname}" # add $1 to copname, so we can have more than one running script per chat
+	local fifo="$2${copname}"
 	mkfifo "${TMPDIR:-.}/${fifo}"
 	tmux new-session -d -s "${fifo}" "$1 &>${TMPDIR:-.}/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>${TMPDIR:-.}/${fifo}"
 	tmux new-session -d -s "sendprocess_${fifo}" "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
