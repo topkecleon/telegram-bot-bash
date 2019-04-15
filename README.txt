@@ -122,5 +122,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.6-rc1-0-gc001d14
+latexmath:[\[VERSION\]] v0.6-rc1-7-g14eb352
 +++++++++++++++++++++++++++++++++++++++++++

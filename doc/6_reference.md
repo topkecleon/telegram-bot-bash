@@ -30,12 +30,12 @@
 ----
 
 ##### send_message
-Send Message is only used to process the output of interactive chats an background jobs.
-I reccommend to use the more dedicated send_xxx_message() functions above.
+Send Message must (only) used to process the output of interactive chats and background jobs.
+**For your commands I reccommend the more dedicated send_xxx_message() functions above.**
 
 *usage:* 
 
-*example:* see [Usage](2_usage.md#send_message) and [Advanced Usage](3_advanced.md#Interactive-Chats)
+*example:* - see [Usage](2_usage.md#send_message) and [Advanced Usage](3_advanced.md#Interactive-Chats)
 
 ----
 
@@ -161,59 +161,43 @@ I reccommend to use the more dedicated send_xxx_message() functions above.
 *example:* 
 
 ### Bashbot internal 
-These function are for internal use only and must not used for your bot commands.
+These functions are for internal use only and must not used in your bot commands.
 
 ##### send_text
 *usage:* 
-
-*example:* 
 
 ----
 
 ##### JsonDecode
 *usage:* 
 
-*example:* 
-
 ##### JsonGetString
 *usage:* 
 
-*example:* 
-
 ##### JsonGetValue
 *usage:* 
-
-*example:* 
 
 ----
 
 ##### get_chat_member_status
 *usage:* 
 
-*example:* 
-
 ----
 
 ##### process_client
-*usage:* 
-
-*example:* 
+Every Message sent to your Bot is processd by this function. It parse the send JSON and assign the found Values to bash variables.
 
 ##### process_updates
-*usage:* 
-
-*example:* 
+If new updates are availible, this functions gets the JSON from Telegram and dispatch it.
 
 ----
 ##### getBotName
-*usage:* 
+The name of your bot is availible as bash variable "$ME", there is no need to call this function if Bot is running.
 
-*example:* 
+*usage:* ME="$(getBotNiname)"
 
 ##### inproc
-*usage:* 
+Send Input from Telegram to waiting Interactive Chat.
 
-*example:* 
-
-#### $$VERSION$$ v0.6-rc1-6-ge18b200
+#### $$VERSION$$ v0.6-rc1-7-g14eb352
 

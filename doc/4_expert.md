@@ -102,5 +102,5 @@ An example crontab is provided in ```bashbot.cron```.
 - if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username```nobody``` with the username you want to run bashbot. copy the modified file to ```/etc/cron.d/bashbot```
 
 
-#### $$VERSION$$ v0.6-rc1-6-ge18b200
+#### $$VERSION$$ v0.6-rc1-7-g14eb352
 

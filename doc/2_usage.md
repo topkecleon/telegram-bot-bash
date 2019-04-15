@@ -154,6 +154,6 @@ Allowed values: typing for text messages, upload_photo for photos, record_video 
 send_action "${CHAT[ID]}" "action"
 ```
 
-#### $$VERSION$$ v0.6-rc1-6-ge18b200
+#### $$VERSION$$ v0.6-rc1-7-g14eb352
 
 
