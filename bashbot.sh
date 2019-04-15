@@ -180,7 +180,7 @@ send_message() {
 		sent=y
 	fi
 	if [ "$file" != "" ]; then
-		send_file "$chat" "$file" "$text"
+		send_file "$chat" "$file" ""
 		sent=y
 	fi
 	if [ "$lat" != "" ] && [ "$long" != "" ] && [ "$address" = "" ] && [ "$title" = "" ]; then
