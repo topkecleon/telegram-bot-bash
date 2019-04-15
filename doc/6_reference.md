@@ -26,7 +26,7 @@ send_normal_message "${CHAT[ID]}" "this is a text message"
 
 
 ##### send_markdown_message
-Telegram supports onyl a [reduced set of Markdown](https://core.telegram.org/bots/api#markdown-style)
+Telegram supports only a [reduced set of Markdown](https://core.telegram.org/bots/api#markdown-style)
 
 *usage:* send_markdown_message "${CHAT[ID]}" "message"
 
@@ -37,7 +37,7 @@ send_normal_message "${CHAT[ID]}" "*bold* _italic_ [text](link)"
 ```
 
 ##### send_html_message
-Telegram supports onyl a [reduced set of HTML](https://core.telegram.org/bots/api#html-style)
+Telegram supports only a [reduced set of HTML](https://core.telegram.org/bots/api#html-style)
 
 *usage:* send_html_message "${CHAT[ID]}" "message" 
 
@@ -71,7 +71,7 @@ If your Bot is Admin in a Chat you can delete every message, if not you can dele
 ----
 
 ##### answer_inline_query
-Inline Queries allows users to interact with your bot via directly without sending extra commands.
+Inline Queries allows users to interact with your bot directly without sending extra commands.
 answer_inline_query provide the result to a users Inline Query
 
 *usage:* answer_inline_query "$iQUERY_ID" "type" "type arg 1" ... "type arg n" 
@@ -90,7 +90,7 @@ answer_inline_query provide the result to a users Inline Query
 ```
 
 ##### send_file
-There are some ways to send files (photos, stickers, audio, media, etc.), [see more](https://core.telegram.org/bots/api#sending-files)
+send_file allows you to send different type's of files, e.g. photos, stickers, audio, media, etc. [see more](https://core.telegram.org/bots/api#sending-files)
 
 *usage:* send_file "${CHAT[ID]}" "file" "caption"
 
@@ -129,13 +129,13 @@ send_keyboard "${CHAT[ID]}" "[ \"1\" , \"2\" , \"3\" ] , [ \"4\" , \"5\" , \"6\"
 ### Manage users 
 
 ##### kick_chat_member
-If Bot is Admin you can kick and ban a user.
+If your Bot is Admin of a chat he can kick and ban a user.
 
 *usage:*  kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
 
 ##### unban_chat_member
-If Bot is Admin you can unban a kicked user.
+If your Bot is Admin af a chat he can unban a kicked user.
 
 *usage:*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
