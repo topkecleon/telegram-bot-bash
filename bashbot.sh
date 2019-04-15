@@ -357,14 +357,8 @@ answer_inline_query() {
 send_keyboard() {
 	local chat="$1"
 	local text="$2"
-	shift 2
-	local keyboard=init
-	OLDIFS=$IFS
-	IFS=$(echo -en "\"")
-	for f in "$@" ;do [ "$f" != " " ] && keyboard="$keyboard, [\"$f\"]";done
-	IFS=$OLDIFS
-	keyboard=${keyboard/init, /}
-	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")"
+	local keyboard="$3"
+	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [${keyboard}],\"one_time_keyboard\": true}")"
 }
 
 remove_keyboard() {
@@ -470,7 +464,7 @@ checkback() {
 }
 
 checkproc() {
-	tmux ls | grep -q "$1${copname}"; res=$?
+	tmux ls | grep -q "$1${copname}"; res=$?; return $?
 }
 
 killback() {

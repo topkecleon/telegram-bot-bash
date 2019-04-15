@@ -51,6 +51,20 @@ git clone --recursive https://github.com/topkecleon/telegram-bot-bash
    - Seperate Bot logic from command
    - Test your Bot with shellcheck
 
+## Note to Keyboards
+To make using Keayboards easier I changed the format of send_keyboard as of send_message "mykeyboardstartshere ...".
+Now you must provide  the keyboards in Telegram JSON style "[ \"yes\" , \"no\" ]".
+The advantage is that you can create every type of keyboard iwithout relying on bashbot ```send_keyboard``` functionality.
+**This is incompatible with keyboards in bashbot versions older than 0.6!**
+
+*Example Keboards*:
+
+- Yes No in one row: "[ \"yes\" , \"no\" ]"
+- Yes No ind two rows: "[ \"yes\" ] , [ \"no\" ]"
+- numpad keyboard: "[ \"1\" , \"2\" , \"3\" ] , [ \"4\" , \"5\" , \"6\" ] , [ \"7\" , \"8\" , \"9\" ] , [ \"0\" ]"
+
+
+
 ## Security Considerations
 Running a Telegram Bot means you are conneted to the public, you never know whats send to your Bot.
 
