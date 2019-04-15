@@ -21,8 +21,8 @@ after editing commands.sh restart Bot.
 
 ### Seperate logic from command block
 
-If your Bot command needs more than 2-3 lines of code I recommend to factor it out to a function to keep the command block small.i
-Place the functions in a file, e.g. ```mybotcommands.inc.sh``` and source it in  bashbot.sh.
+If your Bot command needs more than 2-3 lines of code I recommend to factor it out to a function to keep the command block small.
+Place the functions in a file, e.g. ```mybotcommands.inc.sh``` and source it from  bashbot.sh.
 ```process_message``` is an example for a function hiding complex logic in a bash funtcion.
 ```bash
 	source mybotcommands.inc.sh
@@ -112,5 +112,5 @@ In bashbot.sh line 490:
 Here are two warnings in bashbots scripts. The first is a hint you may use shell substitions instead of sed, this is really possible and much faster!
 The second warning is about an unused variable, this is true because in our examples CONTACT is not used but assigned in case you want to use it :-)
 
-#### $$VERSION$$ v0.6-rc1-1-g87ec24b
+#### $$VERSION$$ v0.6-rc1-3-g6be706b
 
