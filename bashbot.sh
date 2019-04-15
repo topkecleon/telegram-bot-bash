@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-rc1-2-g1041584
+#### $$VERSION$$ v0.6-rc1-5-g2ac5e6f
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -18,6 +18,7 @@
 # - 2 can't write to tmp, count or token 
 # - 3 user / command not found
 # - 4 unkown command
+# - 5 cannot connect to telegram bot
 
 # are we runnig in a terminal?
 if [ -t 1 ] && [ "$TERM" != "" ];  then
@@ -580,6 +581,17 @@ process_client() {
 	grep -q "$tmpcount" <"${COUNT}" >/dev/null 2>&1 || echo "$tmpcount">>${COUNT}
 	# To get user count execute bash bashbot.sh count
 }
+# get bot name
+getBotName() {
+	res="$(curl -s "$ME_URL")"
+	echo "$res" | ./JSON.sh/JSON.sh -s | JsonGetString '"result","username"'
+}
+
+ME="$(getBotName)"
+if [ "$ME" = "" ]; then
+	echo -e "${RED}ERROR: Can't connect to Telegram Bot! May be your TOKEN is invalid ...${NC}"
+	exit 1
+fi
 
 # use phyton JSON to decode JSON UFT-8, provide bash implementaion as fallback
 if which python >/dev/null 2>&1 || which phyton2 >/dev/null 2>&1; then
@@ -594,6 +606,7 @@ else
         local remain=""
         local regexp='(.*)\\u[dD]([0-9a-fA-F]{3})\\u[dD]([0-9a-fA-F]{3})(.*)'
         while [[ "${out}" =~ $regexp ]] ; do
+		# match 2 \udxxx hex values, calculate new U, then split and replace
                 local W1="$(( ( 0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ))"
                 local W2="$(( 0xd${BASH_REMATCH[3]} & 0x3ff ))"
                 U="$(( ( W1 | W2 ) + 0x10000 ))"
@@ -603,9 +616,6 @@ else
         echo -e "${out}${remain}"
     }
 fi
-
-# get bot name
-ME="$(curl -s "$ME_URL" | ./JSON.sh/JSON.sh -s | JsonGetString '"result","username"')"
 
 # source the script with source as param to use functions in other scripts
 while [ "$1" = "startbot" ]; do {
@@ -731,7 +741,7 @@ case "$1" in
 		exit
 		;;
 	*)
-		echo -e "${RED}BAD REQUEST${NC}"
+		echo -e "${RED}${ME}: BAD REQUEST${NC}"
 		echo -e "${RED}Available arguments: outproc, count, broadcast, start, suspendback, resumeback, kill, killback, help, attach${NC}"
 		exit 4
 		;;
