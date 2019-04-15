@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.6-rc1-0-gc001d14
+#### $$VERSION$$ v0.6-rc1-2-g1041584
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -592,7 +592,7 @@ else
     JsonDecode() {
         local out="$1"
         local remain=""
-        local regexp='(.*)\\ud([0-9a-fA-F]{3})\\ud([0-9a-fA-F]{3})(.*)'
+        local regexp='(.*)\\u[dD]([0-9a-fA-F]{3})\\u[dD]([0-9a-fA-F]{3})(.*)'
         while [[ "${out}" =~ $regexp ]] ; do
                 local W1="$(( ( 0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ))"
                 local W2="$(( 0xd${BASH_REMATCH[3]} & 0x3ff ))"
