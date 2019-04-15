@@ -2,105 +2,218 @@
 
 ### Send, forward, delete Messages
 
-send_action()
+##### send_action
+*usage:* 
 
-send_message()
+*example:* 
 
-send_normal_message()
+##### send_normal_message
+*usage:* 
 
-send_markdown_message()
+*example:* 
 
-send_html_message()
+##### send_markdown_message
+*usage:* 
+
+*example:* 
+
+##### send_html_message
+*usage:* 
+
+*example:* 
+
+##### forward
+*usage:* 
+
+*example:* 
 
 ----
 
-forward()
+##### send_message
+Send Message is only used to process the output of interactive chats an background jobs.
+I reccommend to use the more dedicated send_xxx_message() functions above.
+
+*usage:* 
+
+*example:* see [Usage](2_usage.md#send_message) and [Advanced Usage](3_advanced.md#Interactive-Chats)
 
 ----
 
-delete_message()
+##### delete_message
+*usage:* 
+
+*example:* 
 
 ----
 
-answer_inline_query()
+##### answer_inline_query
+*usage:* 
+
+*example:* 
 
 ----
 
 ### File, Location, Venu, keyboards 
 
-get_file()
+##### get_file
+*usage:* 
 
-send_file()
+*example:* 
 
-send_location()
+##### send_file
+*usage:* 
 
-send_venue()
+*example:* 
+
+##### send_location
+*usage:* 
+
+*example:* 
+
+##### send_venue
+*usage:* 
+
+*example:* 
 
 ----
 
-send_keyboard()
+##### send_keyboard
+*usage:* 
 
-remove_keyboard()
+*example:* 
+
+##### remove_keyboard
+*usage:* 
+
+*example:* 
 
 ### Manage users 
 
-kick_chat_member()
+##### kick_chat_member
+*usage:* 
 
-unban_chat_member()
+*example:* 
 
-leave_chat()
+##### unban_chat_member
+*usage:* 
+
+*example:* 
+
+##### leave_chat
+*usage:* 
+
+*example:* 
 
 ----
 
-user_is_creator()
+##### user_is_creator
+*usage:* 
 
-user_is_admin()
+*example:* 
 
-user_is_botadmin()
+##### user_is_admin
+*usage:* 
 
-user_is_allowed()
+*example:* 
+
+##### user_is_botadmin
+*usage:* 
+
+*example:* 
+
+##### user_is_allowed
+*usage:* 
+
+*example:* 
 
 ### Interactive and backgound jobs
 
-startproc()
+##### startproc
+*usage:* 
 
-checkproc()
+*example:* 
 
-killproc()
+##### checkproc
+*usage:* 
+
+*example:* 
+
+##### killproc
+*usage:* 
+
+*example:* 
 
 ----
 
-background()
+##### background
+*usage:* 
 
-checkback()
+*example:* 
 
-killback()
+##### checkback
+*usage:* 
+
+*example:* 
+
+##### killback
+*usage:* 
+
+*example:* 
 
 ### Bashbot internal 
+These function are for internal use only and must not used for your bot commands.
 
-send_text()
+##### send_text
+*usage:* 
 
-----
-
-JsonDecode()
-
-JsonGetString()
-
-JsonGetValue()
+*example:* 
 
 ----
 
-get_chat_member_status()
+##### JsonDecode
+*usage:* 
+
+*example:* 
+
+##### JsonGetString
+*usage:* 
+
+*example:* 
+
+##### JsonGetValue
+*usage:* 
+
+*example:* 
 
 ----
 
-process_client()
+##### get_chat_member_status
+*usage:* 
 
-process_updates()
+*example:* 
 
 ----
 
-inproc()
+##### process_client
+*usage:* 
 
-#### $$VERSION$$ v0.6-rc1-3-g6be706b
+*example:* 
+
+##### process_updates
+*usage:* 
+
+*example:* 
+
+----
+##### getBotName
+*usage:* 
+
+*example:* 
+
+##### inproc
+*usage:* 
+
+*example:* 
+
+#### $$VERSION$$ v0.6-rc1-6-ge18b200
 

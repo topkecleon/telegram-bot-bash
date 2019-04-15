@@ -83,8 +83,37 @@ Evertime a Message is recieved, you can read incoming data using the following v
 
 ## Usage of bashbot functions
 
+#### sending messages
+To send messages use the ```send_xxx_message``` functions.
+
+To send regular text without any markdown use:
+```bash
+send_text_message "${CHAT[ID]}" "lol"
+```
+To send text with markdown:
+```bash
+send_markdown_message "${CHAT[ID]}" "lol *bold*"
+```
+To send text with html:
+```bash
+send_html_message "${CHAT[ID]}" "lol <b>bold</b>"
+```
+
+To forward messages use the ```forward``` function:
+```bash
+forward "${CHAT[ID]}" "from_chat_id" "message_id"
+```
+
+If your Bot is Admin in a Chat you can delete every message, if not you can delete only your messages.
+To delete a message with a known ${MESSAGE[ID]} you can simple use:
+```bash
+delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
+```
+
 #### send_message
-To send messages use the ```send_message``` function:
+In addition there is a universal send_massage function which can output any type of message.
+This function is used to process output from external scrips like interactive chats or background jobs.  
+**For safety and performance reasons I recommend to use send_xxxx_message functions above for sending messages**
 ```bash
 send_message "${CHAT[ID]}" "lol"
 ```
@@ -99,30 +128,8 @@ This function also allows a third parameter that disables additional function pa
 ```bash
 send_message "${CHAT[ID]}" "lol" "safe"
 ```
-To forward messages use the ```forward``` function:
-```bash
-forward "${CHAT[ID]}" "from_chat_id" "message_id"
-```
+More examples  boutsend_message strings can be found in [Advanced Usage](3_advanced.md#Interactive-Chats)
 
-#### For safety and performance reasoms I recommend to use send_xxxx_message direct and not the universal send_message function.
-To send regular text without any markdown use:
-```bash
-send_text_message "${CHAT[ID]}" "lol"
-```
-To send text with markdown:
-```bash
-send_markdown_message "${CHAT[ID]}" "lol *bold*"
-```
-To send text with html:
-```bash
-send_html_message "${CHAT[ID]}" "lol <b>bold</b>"
-```
-
-If your Bot is Admin in a Chat you can delete every message, if not you can delete only your messages.
-To delete a message with a known ${MESSAGE[ID]} you can simple use:
-```bash
-delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
-```
 
 #### Send files, location  etc.
 To send images, videos, voice files, photos etc. use the ```send_photo``` function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):
@@ -147,6 +154,6 @@ Allowed values: typing for text messages, upload_photo for photos, record_video 
 send_action "${CHAT[ID]}" "action"
 ```
 
-#### $$VERSION$$ v0.6-rc1-0-gc001d14
+#### $$VERSION$$ v0.6-rc1-6-ge18b200
 
 
