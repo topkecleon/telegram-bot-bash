@@ -3,9 +3,16 @@
 ### Send, forward, delete Messages
 
 ##### send_action
-*usage:* 
+To send a chat action use the send_action function. Allowed values: ```typing``` for text messages, ```upload_photo``` for photos, ```record_video``` or ```upload_video``` for videos, ```record_audio``` or ```upload_audio``` for audio files, ```upload_document``` for general files, ```find_location``` for locations.
+
+*usage:* send_action "${CHAT[ID]}" "action"
 
 *example:* 
+```bash
+send_action "${CHAT[ID]}" "typing"
+send_action "${CHAT[ID]}" "record_audio"
+```
+
 
 ##### send_normal_message
 *usage:* 
@@ -78,9 +85,16 @@ Send Message must (only) used to process the output of interactive chats and bac
 ----
 
 ##### send_keyboard
-*usage:* 
+Note: since version 0.6 send_keyboard was changed to use native "JSON Array" as used from Telegram.
+ 
+*usage:*  send_keyboard "chat-id" "keyboard"
 
 *example:* 
+```bash
+send_keyboard "${CHAT[ID]}" "[ \"yes\" , \"no\" ]"
+send_keyboard "${CHAT[ID]}" "[ \"yes\" ] , [ \"no\" ]"
+send_keyboard "${CHAT[ID]}" "[ \"1\" , \"2\" , \"3\" ] , [ \"4\" , \"5\" , \"6\" ] , [ \"7\" , \"8\" , \"9\" ] , [ \"0\" ]"
+```
 
 ##### remove_keyboard
 *usage:* 
