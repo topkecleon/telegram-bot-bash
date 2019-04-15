@@ -112,5 +112,5 @@ In bashbot.sh line 490:
 Here are two warnings in bashbots scripts. The first is a hint you may use shell substitions instead of sed, this is really possible and much faster!
 The second warning is about an unused variable, this is true because in our examples CONTACT is not used but assigned in case you want to use it :-)
 
-#### $$VERSION$$ v0.6-rc1-11-gba80ec6
+#### $$VERSION$$ v0.60-rc2-0-gc581932
 

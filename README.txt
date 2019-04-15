@@ -66,6 +66,24 @@ Getting started
 * Customizing commands.sh
 * Seperate Bot logic from command
 * Test your Bot with shellcheck
+* link:doc/6_reference.md[Bashbot functions reference]
+
+Note on Keyboards
+~~~~~~~~~~~~~~~~~
+
+To make use of Keyboards easyer we changed the format of `send_keyboard`
+and `send_message "mykeyboardstartshere ..."`. Now you must provide the
+keyboards in Telegram JSON Array style "[ "yes" , "no" ]". The advantage
+is that you can create every type of keyboard without relying on bashbot
+`send_keyboard` functionality. *This is incompatible with keyboards in
+bashbot versions older than 0.6!*
+
+_Example Keyboards_:
+
+* Yes No in one row: "[ "yes" , "no" ]"
+* Yes No ind two rows: "[ "yes" ] , [ "no" ]"
+* numpad keyboard: "[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [ "7" ,
+"8" , "9" ] , [ "0" ]"
 
 Security Considerations
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -122,5 +140,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.6-rc1-7-g14eb352
-+++++++++++++++++++++++++++++++++++++++++++
+latexmath:[\[VERSION\]] v0.60-rc2-0-gc581932
+++++++++++++++++++++++++++++++++++++++++++++
