@@ -138,7 +138,7 @@ send_file "${CHAT[ID]}" "/home/user/doge.jpg" "Lool"
 ```
 To send custom keyboards use the ```send_keyboard``` function:
 ```bash
-send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" "Yep" "No"
+send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" "[ \"Yep\" , \"No\" ]"
 ```
 To send locations use the ```send_location``` function:
 ```bash
@@ -154,6 +154,6 @@ Allowed values: typing for text messages, upload_photo for photos, record_video 
 send_action "${CHAT[ID]}" "action"
 ```
 
-#### $$VERSION$$ v0.6-rc1-7-g14eb352
+#### $$VERSION$$ v0.6-rc1-11-gba80ec6
 
 

@@ -199,5 +199,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 ##### inproc
 Send Input from Telegram to waiting Interactive Chat.
 
-#### $$VERSION$$ v0.6-rc1-7-g14eb352
+#### $$VERSION$$ v0.6-rc1-11-gba80ec6
 
