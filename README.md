@@ -68,9 +68,9 @@ This has the advantage that you can create any type of keyboard supported by Tel
     - numpad style keyboard: "[ \\"1\\" , \\"2\\" , \\"3\\" ] , [ \\"4\\" , \\"5\\" , \\"6\\" ] , [ \\"7\\" , \\"8\\" , \\"9\\" ] , [ \\"0\\" ]"
 
 ## Security Considerations
-Running a Telegram Bot means it is conneted to the public and you never know whats send to your Bot.
+Running a Telegram Bot means it is connected to the public and you never know whats send to your Bot.
 
-Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. More concret examples of security problems is bash's 'quoting hell' and globbing. [Implications of wrong quoting](https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells)
+Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. More concret examples of security problems are bash's 'quoting hell' and globbing. [Implications of wrong quoting](https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells)
 
 Whenever you are processing input from from untrusted sources (messages, files, network) you must be as carefull as possible, e.g. disable globbing (set -f) and quote everthing.
 
@@ -79,23 +79,23 @@ A powerful tool to improve your scripts robustness is ```shellcheck```. You can 
 ### Run your Bot as a restricted user
 **It's important to run your bot as a user, with almost no access rights.**
 
-All files your Bot write access to are in danger to be overwritten/deleted if your bot is hacked.
+All files your Bot have write access to are in danger to be overwritten/deleted if your bot is hacked.
 For the same reason ervery file your Bot can read is in danger of being disclosed. So please restict your Bots access rigths to the absolute minimum.
 
-**Never run your Bot as root, this is the most dangerous you can do!** Usually the user 'nobody' has almost no rigths on Unix/Linux systems. See Expert use on how to run your Bot as an other user.
+**Never run your Bot as root, this is the most dangerous you can do!** Usually the user 'nobody' has almost no rights on Unix/Linux systems. See Expert use on how to run your Bot as an other user.
 
 ### Secure your Bot installation
-**Your Bot configuration should not be readable from other users.** If someone can read your Bots token he can act as your Bot and has access to all chats you bot is in!
+**Your Bot configuration should not be readable from other users.** If someone can read your Bots token he can act as your Bot and has access to all chats you Bot is in!
 
 Everyone with read access to your Bot files can extract your Bots data. Especially your Bot Token in ```token``` must be protected against other users. No one exept you should have write access to the Bot files. The Bot must be restricted to have write access to ```count``` and  ```tmp-bot-bash``` only, all other files should be write protected.
 
 To set access rights for your telegram-bot-bash directory to reasonable default values you must run ```sudo ./bashbot.sh init``` after every update or change to your installation directory.
 
 ### Is this Bot insecure?
-Bashbot is no more (in)secure as any other Bot written in any other language. But since YOU change your bots commands and run the Bot, you should know about the implications ...
+Bashbot is no more (in)secure as any other Bot written in any other language. But since YOU are responsible for your bots commands and run the Bot, you should know about the implications ...
 
 ## That's it!
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.60-rc2-3-g4a944d9
+#### $$VERSION$$ v0.60-rc2-4-g1bf26b9

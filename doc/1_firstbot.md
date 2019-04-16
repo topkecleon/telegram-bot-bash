@@ -58,17 +58,8 @@ group. This step is up to you actually.
 
 13. @botfather replies with `Success! The new status is: DISABLED. /help`
 
-### Install bashbot
-1. Go to the directory you want to install bashbot, e.g.
 
-   - your $HOME directory (install and run with your user-ID)
-   - /usr/local if you want to run as service
+#### [Next Getting started](2_usage.md)
 
-2. Clone the repository:
-```
-git clone --recursive https://github.com/topkecleon/telegram-bot-bash
-```
-3. Change to directory ```telegram-bot.bash```, run ```./bashbot.sh init``` and follow the instructions. At this stage you are asked for your Bots token given by botfather.
-
-#### $$VERSION$$ v0.60-rc2-3-g4a944d9
+#### $$VERSION$$ v0.60-rc2-4-g1bf26b9
 

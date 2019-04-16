@@ -152,12 +152,12 @@ If your Bot is Admin of a chat he can kick and ban a user.
 
 
 ##### unban_chat_member
-If your Bot is Admin af a chat he can unban a kicked user.
+If your Bot is Admin of a chat he can unban a kicked user.
 
 *usage:*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
 ##### leave_chat
-Bot will leave chat.
+Bot will leave given chat.
 
 *usage:* leave_chat "${CHAT[ID]}"
 
@@ -171,14 +171,14 @@ fi
 ----
 
 ##### user_is_creator
-Returns true (0) if user is creator of chat or chat is a private chat.
+Return true (0) if user is creator of given chat or chat is a private chat.
 
 *usage:* user_is_creator "${CHAT[ID]}" "${USER[ID]}"
 
 *alias:* _is_creator
 
 ##### user_is_admin
-Returns true (0) if user is admin or creator of chat.
+Return true (0) if user is admin or creator of given chat.
  
 *usage:* user_is_admin "${CHAT[ID]}" "${USER[ID]}"
 
@@ -193,8 +193,8 @@ fi
 ```
 
 ##### user_is_botadmin
-Returns true (0) if user is owner / admin of bot. 
-botadmin is stored in file './botadmin'
+Return true (0) if user is owner / admin of bot. 
+Name or ID botadmin must be placed in './botadmin' file.
 
 *usage:*  user_is_botadmin "${CHAT[ID]}" "${USER[ID]}"
 
@@ -220,7 +220,7 @@ fi
 ### Interactive and backgound jobs
 
 ##### startproc
-```startproc``` tarts a script (or C or python program etc.) running in parallel to your Bot. The text that the script outputs is sent time to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
+```startproc``` starts a script (or C or python program etc.) running in parallel to your Bot. The text that the script outputs is sent to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
 
 *usage:* startproc "./script"
 
@@ -230,7 +230,7 @@ startproc './calc'
 ```
 
 ##### checkproc
-Returns true (0) if an interactive script active in the given chat. 
+Return true (0) if an interactive script active in the given chat. 
 
 *usage:* checkprog
 
@@ -272,7 +272,7 @@ background "./notify" "notify"
 ```
 
 ##### checkback
-Returns true (0) if an background job is active in the given chat. 
+Return true (0) if an background job is active in the given chat. 
 
 *usage:*  checkback "jobname"
 
@@ -346,5 +346,7 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 ##### inproc
 Send Input from Telegram to waiting Interactive Chat.
 
-#### $$VERSION$$ v0.60-rc2-3-g4a944d9
+#### [Prev Best Practice](5_practice.md)
+
+#### $$VERSION$$ v0.60-rc2-4-g1bf26b9
 

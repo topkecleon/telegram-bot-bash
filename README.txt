@@ -90,12 +90,12 @@ _Example Keyboards_:
 Security Considerations
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Running a Telegram Bot means it is conneted to the public and you never
+Running a Telegram Bot means it is connected to the public and you never
 know whats send to your Bot.
 
 Bash scripts in general are not designed to be bullet proof, so consider
 this Bot as a proof of concept. More concret examples of security
-problems is bash's 'quoting hell' and globbing.
+problems are bash's 'quoting hell' and globbing.
 https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells[Implications
 of wrong quoting]
 
@@ -114,13 +114,13 @@ Run your Bot as a restricted user
 *It's important to run your bot as a user, with almost no access
 rights.*
 
-All files your Bot write access to are in danger to be
+All files your Bot have write access to are in danger to be
 overwritten/deleted if your bot is hacked. For the same reason ervery
 file your Bot can read is in danger of being disclosed. So please
 restict your Bots access rigths to the absolute minimum.
 
 *Never run your Bot as root, this is the most dangerous you can do!*
-Usually the user 'nobody' has almost no rigths on Unix/Linux systems.
+Usually the user 'nobody' has almost no rights on Unix/Linux systems.
 See Expert use on how to run your Bot as an other user.
 
 Secure your Bot installation
@@ -128,7 +128,7 @@ Secure your Bot installation
 
 *Your Bot configuration should not be readable from other users.* If
 someone can read your Bots token he can act as your Bot and has access
-to all chats you bot is in!
+to all chats you Bot is in!
 
 Everyone with read access to your Bot files can extract your Bots data.
 Especially your Bot Token in `token` must be protected against other
@@ -144,8 +144,8 @@ Is this Bot insecure?
 ^^^^^^^^^^^^^^^^^^^^^
 
 Bashbot is no more (in)secure as any other Bot written in any other
-language. But since YOU change your bots commands and run the Bot, you
-should know about the implications ...
+language. But since YOU are responsible for your bots commands and run
+the Bot, you should know about the implications ...
 
 That's it!
 ~~~~~~~~~~
@@ -153,5 +153,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.60-rc2-3-g4a944d9
+latexmath:[\[VERSION\]] v0.60-rc2-4-g1bf26b9
 ++++++++++++++++++++++++++++++++++++++++++++

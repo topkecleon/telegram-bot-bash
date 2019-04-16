@@ -21,7 +21,7 @@ user_is_botadmin "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *
 user_is_admin "${CHAT[ID]}" "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *CHATADMIN*."
 
 ```
-In addtion the bot can check individual capabilities of users as defined in the ```./botacl``` file:
+In addition you can check individual capabilities of users as defined in the ```./botacl``` file:
 ```bash
 # file: botacl
 # a user not listed here, will return false from 'user_is_allowed'
@@ -153,6 +153,8 @@ To send stickers through an *inline query*:
 ```bash
 answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 ```
+#### [prev Advanced Usage](3_advanced.md)
+#### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.60-rc2-3-g4a944d9
+#### $$VERSION$$ v0.60-rc2-4-g1bf26b9
 
