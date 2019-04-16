@@ -8,7 +8,7 @@ two bytes for encoding and covers almost all ```Latin``` alphabets, also ```Gree
 ```Hebrew```, ```Arabic``` and more. See [Wikipedia](https://en.wikipedia.org/wiki/UTF-8) for more deatils.
 
 #### Setting up your Environment
-In general ```bash``` and ```GNU``` utitities are UTF-8 aware, but you have to setup your environment
+In general ```bash``` and ```GNU``` utitities are UTF-8 aware if you to setup your environment
 and your scripts accordingly:
 
 1. Your Terminal and Editor must support UTF-8:
@@ -36,15 +36,16 @@ export 'LANGUAGE=den_US.UTF-8'
 
 To display all availible locales on your system run ```locale -a | more```. [Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8)
 
-#### UTF-8 Support
-Telegram send JSON messages with all characters not fitting in one byte (<256 bit) escaped as sequences of ```\uxxxx``` to be regular
-one byte ASCII. Multibyte UTF-8 characters, e.g. Emoticons and Arabic characters, are send in UTF-16 notation.
+#### Bashbot UTF-8 Support
+Bashbot handles all messages transparently, regardless what charset is used. One exception is the conversation from JSON data to strings.
+
+Telegram use JSON to send / recieve data. Characters not ASCII *(>127)* are escaped as sequences of ```\uxxxx``` to be regular ASCII. In addition multibyte characters, *e.g. Emoticons or Arabic characters*, are send in double byte UTF-16 notation.
 The Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as: ``` \uD83D\uDE01 \uD83D\uDE18 \u2764\uFE0F \uD83D\uDE0A \uD83D\uDC4D ```
 
-**This mixed JSON encoding can not decoded from** ```echo -e``` or ```printf '%s\\n'```, this works only for single byte characters!
+**This mixed JSON encoding needs special handling and can not decoded from** ```echo -e``` or ```printf '%s\\n'```
 
 To to fully support decoding of multibyte characters you need a working python2 installation on your system.
-If no python is detected bashbot falls back to a **slow, pure bash solution which may not work for some corner cases**.
+If no python is detected bashbot falls back to a **internal pure bash implementaion which may not work for some corner cases**.
 
 
 ### Run as other user or system service
@@ -102,5 +103,5 @@ An example crontab is provided in ```bashbot.cron```.
 - if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username```nobody``` with the username you want to run bashbot. copy the modified file to ```/etc/cron.d/bashbot```
 
 
-#### $$VERSION$$ v0.60-rc2-2-g7727608
+#### $$VERSION$$ v0.60-rc2-3-g4a944d9
 

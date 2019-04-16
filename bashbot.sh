@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.60-rc2-0-gc581932
+#### $$VERSION$$ v0.60-rc2-3-g4a944d9
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -439,11 +439,13 @@ send_venue() {
 }
 
 
-forward() {
+forward_message() {
 	[ "$3" = "" ] && return
 	res="$(curl -s "$FORWARD_URL" -F "chat_id=$1" -F "from_chat_id=$2" -F "message_id=$3")"
 }
-
+forward() { # backward compatibility
+	forward_message "$@" || return
+}
 
 background() {
 	echo "${CHAT[ID]}:$2:$1" >"${TMPDIR:-.}/${copname}$2-back.cmd"

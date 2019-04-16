@@ -1,7 +1,9 @@
 
 ## Advanced Features
+
 ### Access control
-Bashbot offers functions to check if a has Telegram capabilities like chat admin or chat creator:
+Bashbot offers functions to check what Telegram capabilities like chat admin or chat creator the given user has:
+
 ```bash
 # return true if user is admin/owner of the bot
 # -> botadmin is stored in file './botadmin'
@@ -19,10 +21,10 @@ user_is_botadmin "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *
 user_is_admin "${CHAT[ID]}" "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *CHATADMIN*."
 
 ```
-In addtion you can configure individual capabilities for users in the file ```./botacl```:
+In addtion the bot can check individual capabilities of users as defined in the ```./botacl``` file:
 ```bash
-# botacl
-# if a user is not listed here, function 'user_is_allowed' will always return false
+# file: botacl
+# a user not listed here, will return false from 'user_is_allowed'
 #
 # Format:
 # user:ressource:chat
@@ -42,8 +44,7 @@ In addtion you can configure individual capabilities for users in the file ```./
 *:start:*
 *:*:98979695
 ```
-you have to check yourself if a user is allowed to to something by calling function ```user_is_allowed```.
-example to check if a user is allowed to start bot:
+you have to use the function ```user_is_allowed``` to check if a user has the capability to do something. Example check if user has capability to start bot:
 ```bash
 	case "$MESSAGE" in
 		'/start')
@@ -153,5 +154,5 @@ To send stickers through an *inline query*:
 answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 ```
 
-#### $$VERSION$$ v0.60-rc2-2-g7727608
+#### $$VERSION$$ v0.60-rc2-3-g4a944d9
 

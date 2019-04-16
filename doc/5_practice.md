@@ -1,9 +1,8 @@
 ## Best Practices
 
-### Customizing commands.sh
+### Customize commands.sh only
 
-To ease Updates never change ```bashbot.sh```, all changes should be done in ```commands.sh``` .
-Insert your own Bot commands in the ```case ... esac``` block in commands.sh:
+To ease Updates never change ```bashbot.sh```, instead individual commands should go to  ```commands.sh``` .  Insert your Bot commands in the ```case ... esac``` block:
 ```bash
 	case "$MESSAGE" in
 		'/echo') # my first own command, echo MESSAGE
@@ -17,19 +16,17 @@ Insert your own Bot commands in the ```case ... esac``` block in commands.sh:
 			;;
 	esac
 ```
-after editing commands.sh restart Bot.
 
-### Seperate logic from command block
+### Seperate logic from commands
 
-If your Bot command needs more than 2-3 lines of code I recommend to factor it out to a function to keep the command block small.
-Place the functions in a file, e.g. ```mybotcommands.inc.sh``` and source it from  bashbot.sh.
-```process_message``` is an example for a function hiding complex logic in a bash funtcion.
+If a command need more than 2-3 lines of code, you should use a function to seperate logic from command. Place your functions in a seperate file, e.g. ```mycommands.inc.sh``` and source it from bashbot.sh. Example:
 ```bash
-	source mybotcommands.inc.sh
+	source "mycommands.inc.sh"
 
 	case "$MESSAGE" in
-		'/report') # logic for /report is done in process_message 
-			send_normal_message "${CHAT[ID]}" "$(process_message "$MESSAGE")" 
+		'/process') # logic for /report is done in process_message 
+			result="$(process_message "$MESSAGE")
+			send_normal_message "${CHAT[ID]}" "$result" 
 			;;
 
 		################################################
@@ -43,15 +40,15 @@ Place the functions in a file, e.g. ```mybotcommands.inc.sh``` and source it fro
 			;;
 	esac
 ```
-Example function ```process_message``` in file ```mybotcommands.inc.sh```:
 ```bash
 #!/bin/bash
-#
+# file: mycommands.inc.sh
+
 process_message() {
-   local ARGS="${1#/* }"	# remove command /*
+   local ARGS="${1#/* }"	# remove command 
    local TEXT OUTPUT=""
 
-   # process every word in MESSAGE, avoid globbing from MESSAGE
+   # process every word in MESSAGE, avoid globbing
    set -f
    for WORD in $ARGS
    do
@@ -75,7 +72,6 @@ process_message() {
 }
 
 ```
-Doing it this way keeps commands.sh small and clean, while allowing complex tasks to be done in the included function.
 
 ### Test your Bot with shellcheck
 Shellcheck is a static linter for shell scripts providing excellent tips and hints for shell coding pittfalls. You can [use it online](https://www.shellcheck.net/) or [install it on your system](https://github.com/koalaman/shellcheck#installing).
@@ -112,5 +108,5 @@ In bashbot.sh line 490:
 Here are two warnings in bashbots scripts. The first is a hint you may use shell substitions instead of sed, this is really possible and much faster!
 The second warning is about an unused variable, this is true because in our examples CONTACT is not used but assigned in case you want to use it :-)
 
-#### $$VERSION$$ v0.60-rc2-2-g7727608
+#### $$VERSION$$ v0.60-rc2-3-g4a944d9
 

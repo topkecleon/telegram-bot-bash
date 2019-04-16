@@ -3,7 +3,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 
-#### $$VERSION$$ v0.60-rc2-0-gc581932
+#### $$VERSION$$ v0.60-rc2-3-g4a944d9
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
@@ -23,11 +23,12 @@ echo 'Select Operation: mykeyboardstartshere [ "Addition" , "Subtraction" , "Mul
 read -r opt
 echo -n 'Result: '
 case $opt in
-	'add'* | 'Add'* ) expr $A + $B ;;
-	'sub'* | 'Sub'* ) expr $A - $B ;;
-	'mul'* | 'Mul'* ) expr $A \* $B ;;
-	'div'* | 'Div'* ) expr $A / $B ;;
-	'can'* | 'Can'* ) echo "abort!" ;;
+	'add'* | 'Add'* ) res="$(( A + B ))" ;;
+	'sub'* | 'Sub'* ) res="$(( A - B ))" ;;
+	'mul'* | 'Mul'* ) res="$(( A * B ))" ;;
+	'div'* | 'Div'* ) res="$(( A / B ))" ;;
+	'can'* | 'Can'* ) res="abort!" ;;
 		* ) echo "unknown operator!";;
 esac
+echo "$res"
 echo "Bye .."

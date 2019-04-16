@@ -36,50 +36,50 @@ To send a broadcast to all of users that ever used the bot run the following com
 ## Recieve data
 Evertime a Message is recieved, you can read incoming data using the following variables:
 
-* ```$MESSAGE```: Incoming messages
-* ```${MESSAGE[ID]}```: ID of incoming message
+* ```${MESSAGE}```: Current incoming messages
+* ```${MESSAGE[ID]}```: ID of current message
 * ```$CAPTION```: Captions
 * ```$REPLYTO```: Original message wich was replied to
 * ```$USER```: This array contains the First name, last name, username and user id of the sender of the current message.
-  - ```${USER[ID]}```: User id
-  - ```${USER[FIRST_NAME]}```: User's first name
-  - ```${USER[LAST_NAME]}```: User's last name
-  - ```${USER[USERNAME]}```: Username
+    * ```${USER[ID]}```: User id
+    * ```${USER[FIRST_NAME]}```: User's first name
+    * ```${USER[LAST_NAME]}```: User's last name
+    * ```${USER[USERNAME]}```: Username
 * ```$CHAT```: This array contains the First name, last name, username, title and user id of the chat of the current message.
-  - ```${CHAT[ID]}```: Chat id
-  - ```${CHAT[FIRST_NAME]}```: Chat's first name
-  - ```${CHAT[LAST_NAME]}```: Chat's last name
-  - ```${CHAT[USERNAME]}```: Username
-  - ```${CHAT[TITLE]}```: Title
-  - ```${CHAT[TYPE]}```: Type
-  - ```${CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]}```: All members are administrators (true if true)
+    * ```${CHAT[ID]}```: Chat id
+    * ```${CHAT[FIRST_NAME]}```: Chat's first name
+    * ```${CHAT[LAST_NAME]}```: Chat's last name
+    * ```${CHAT[USERNAME]}```: Username
+    * ```${CHAT[TITLE]}```: Title
+    * ```${CHAT[TYPE]}```: Type
+    * ```${CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]}```: All members are administrators (true if true)
 * ```$REPLYTO```: This array contains the First name, last name, username and user id of the ORIGINAL sender of the message REPLIED to.
-  - ```${REPLYTO[ID]}```: ID of message wich was replied to
-  - ```${REPLYTO[UID]}```: Original user's id
-  - ```${REPLYTO[FIRST_NAME]}```: Original user's first name
-  - ```${REPLYTO[LAST_NAME]}```: Original user's' last name
-  - ```${REPLYTO[USERNAME]}```: Original user's username
+    * ```${REPLYTO[ID]}```: ID of message wich was replied to
+    * ```${REPLYTO[UID]}```: Original user's id
+    * ```${REPLYTO[FIRST_NAME]}```: Original user's first name
+    * ```${REPLYTO[LAST_NAME]}```: Original user's' last name
+    * ```${REPLYTO[USERNAME]}```: Original user's username
 * ```$FORWARD```: This array contains the First name, last name, username and user id of the ORIGINAL sender of the FORWARDED message.
-  - ```${FORWARD[ID]}```: Same as MESSAGE[ID] if message is forwarded
-  - ```${FORWARD[UID]}```: Original user's id
-  - ```${FORWARD[FIRST_NAME]}```: Original user's first name
-  - ```${FORWARD[LAST_NAME]}```: Original user's' last name
-  - ```${FORWARD[USERNAME]}```: Original user's username
+    * ```${FORWARD[ID]}```: Same as MESSAGE[ID] if message is forwarded
+    * ```${FORWARD[UID]}```: Original user's id
+    * ```${FORWARD[FIRST_NAME]}```: Original user's first name
+    * ```${FORWARD[LAST_NAME]}```: Original user's' last name
+    * ```${FORWARD[USERNAME]}```: Original user's username
 * ```$URLS```: This array contains documents, audio files, stickers, voice recordings and stickers stored in the form of URLs.
-  - ```${URLS[AUDIO]}```: Audio files
-  - ```${URLS[VIDEO]}```: Videos
-  - ```${URLS[PHOTO]}```: Photos (maximum quality)
-  - ```${URLS[VOICE]}```: Voice recordings
-  - ```${URLS[STICKER]}```: Stickers
-  - ```${URLS[DOCUMENT]}```: Any other file
+    * ```${URLS[AUDIO]}```: Audio files
+    * ```${URLS[VIDEO]}```: Videos
+    * ```${URLS[PHOTO]}```: Photos (maximum quality)
+    * ```${URLS[VOICE]}```: Voice recordings
+    * ```${URLS[STICKER]}```: Stickers
+    * ```${URLS[DOCUMENT]}```: Any other file
 * ```$CONTACT```: This array contains info about contacts sent in a chat.
-  - ```${CONTACT[NUMBER]}```: Phone number
-  - ```${CONTACT[FIRST_NAME]}```: First name
-  - ```${CONTACT[LAST_NAME]}```: Last name
-  - ```${CONTACT[ID]}```: User id
+    * ```${CONTACT[NUMBER]}```: Phone number
+    * ```${CONTACT[FIRST_NAME]}```: First name
+    * ```${CONTACT[LAST_NAME]}```: Last name
+    * ```${CONTACT[ID]}```: User id
 * ```$LOCATION```: This array contains info about locations sent in a chat.
-  - ```${LOCATION[LONGITUDE]}```: Longitude
-  - ```${LOCATION[LATITUDE]}```: Latitude
+    * ```${LOCATION[LONGITUDE]}```: Longitude
+    * ```${LOCATION[LATITUDE]}```: Latitude
 
 ## Usage of bashbot functions
 
@@ -154,6 +154,6 @@ Allowed values: typing for text messages, upload_photo for photos, record_video 
 send_action "${CHAT[ID]}" "action"
 ```
 
-#### $$VERSION$$ v0.60-rc2-2-g7727608
+#### $$VERSION$$ v0.60-rc2-3-g4a944d9
 
 

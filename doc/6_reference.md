@@ -1,11 +1,14 @@
 ## Bashbot function reference
 
-### Send, forward, delete Messages
+### Send, forward, delete messages
 
 ##### send_action
-To send a chat action use the send_action function. Allowed values: ```typing``` for text messages, ```upload_photo``` for photos, ```record_video``` or ```upload_video``` for videos, ```record_audio``` or ```upload_audio``` for audio files, ```upload_document``` for general files, ```find_location``` for locations.
+```send_action``` shows users what your bot is currently doing.
 
 *usage:* send_action "${CHAT[ID]}" "action"
+
+*"action":* ```typing```, ```upload_photo```, ```record_video```, ```upload_video```, ```record_audio```, ```upload_audio```, ```upload_document```, ```find_location```.
+
 
 *example:* 
 ```bash
@@ -15,7 +18,7 @@ send_action "${CHAT[ID]}" "record_audio"
 
 
 ##### send_normal_message
-sen_normal_message send text only messages to chat.
+```send_normal_message``` sends text only messages to the given chat.
 
 *usage:*  send_normal_message "${CHAT[ID]}" "message"
 
@@ -26,9 +29,10 @@ send_normal_message "${CHAT[ID]}" "this is a text message"
 
 
 ##### send_markdown_message
-Telegram supports only a [reduced set of Markdown](https://core.telegram.org/bots/api#markdown-style)
+```send_markdown_message``` sends markdown style messages to the given chat.
+Telegram supports a [reduced set of Markdown](https://core.telegram.org/bots/api#markdown-style) only
 
-*usage:* send_markdown_message "${CHAT[ID]}" "message"
+*usage:* send_markdown_message "${CHAT[ID]}" "markdown message"
 
 *example:* 
 ```bash
@@ -37,9 +41,10 @@ send_normal_message "${CHAT[ID]}" "*bold* _italic_ [text](link)"
 ```
 
 ##### send_html_message
-Telegram supports only a [reduced set of HTML](https://core.telegram.org/bots/api#html-style)
+```send_html_message``` sends HTML style messages to the given chat.
+Telegram supports a [reduced set of HTML](https://core.telegram.org/bots/api#html-style) only
 
-*usage:* send_html_message "${CHAT[ID]}" "message" 
+*usage:* send_html_message "${CHAT[ID]}" "html message" 
 
 *example:* 
 ```bash
@@ -47,15 +52,19 @@ send_normal_message "${CHAT[ID]}" "this is a markdown  message, next word is <b>
 send_normal_message "${CHAT[ID]}" "<b>bold</b> <i>italic><i> <em>italic>/em> <a href="link">Text</a>"
 ```
 
-##### forward
-*usage:* forward "${CHAT[ID]}" "${MESSAGE[ID]}"
+##### forward_message
+```forward_mesage``` forwards a messsage to the given chat.
 
+*usage:* forward_message "chat_to" "chat_from" "${MESSAGE[ID]}"
+
+*alias:* forward "${CHAT[ID]}" "$FROMCHAT" "${MESSAGE[ID]}"
 
 ----
 
 ##### send_message
-Send Message must (only) used to process the output of interactive chats and background jobs.
-**For your commands I reccommend the more dedicated send_xxx_message() functions above.**
+```send_message``` sends any type of message to the given chat. Type of output is steered by keywords within the message. 
+
+The main use case for send_message is to process the output of interactive chats and background jobs. **For regular Bot commands I recommend using of the dedicated send_xxx_message() functions from above.**
 
 *usage:* send_message "${CHAT[ID]}" "message"
 
@@ -64,7 +73,7 @@ Send Message must (only) used to process the output of interactive chats and bac
 ----
 
 ##### delete_message
-If your Bot is Admin in a Chat you can delete every message, if not you can delete only your Bot messages.
+If your Bot is admin of a Chat he can delete every message, if not he can delete only his messages.
 
 *usage:* delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
 
@@ -111,7 +120,15 @@ send_file "${CHAT[ID]}" "https://www.domain,com/something.gif" "Something"
 ----
 
 ##### send_keyboard
-Note: since version 0.6 send_keyboard was changed to use native "JSON Array" notation as used from Telegram. Eexample Keybord Array definitions:
+Note: since version 0.6 send_keyboard was changed to use native "JSON Array" notation as used from Telegram. Example Keybord Array definitions:
+
+- yes no in one row
+    - OLD format: "yes" "no" (two strings)
+    - NEW format: "[ \\"yes\\" , \\"no\\" ]" (string containing an array)
+- new keybord layouts, no possible with old format:
+    - Yes No in two rows: "[ \\"yes\\" ] , [ \\"no\\" ]"
+    - numpad style keyboard: "[ \\"1\\" , \\"2\\" , \\"3\\" ] , [ \\"4\\" , \\"5\\" , \\"6\\" ] , [ \\"7\\" , \\"8\\" , \\"9\\" ] , [ \\"0\\" ]"
+
 
 *usage:*  send_keyboard "chat-id" "keyboard"
 
@@ -154,7 +171,7 @@ fi
 ----
 
 ##### user_is_creator
-Returns true (0) if user is creator of chat or chat is a one2one / private chat.
+Returns true (0) if user is creator of chat or chat is a private chat.
 
 *usage:* user_is_creator "${CHAT[ID]}" "${USER[ID]}"
 
@@ -203,7 +220,7 @@ fi
 ### Interactive and backgound jobs
 
 ##### startproc
-With ```startproc``` you can start scrips (or C or python program etc.). The text that the script will output will be sent in real time to the user, and all user input will be sent to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
+```startproc``` tarts a script (or C or python program etc.) running in parallel to your Bot. The text that the script outputs is sent time to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
 
 *usage:* startproc "./script"
 
@@ -213,7 +230,7 @@ startproc './calc'
 ```
 
 ##### checkproc
-Returns true (0) if an interactive script is running in chat. 
+Returns true (0) if an interactive script active in the given chat. 
 
 *usage:* checkprog
 
@@ -243,6 +260,10 @@ fi
 ----
 
 ##### background
+```background``` starts a script / programm as a background job and attaches a jobname to it. All output from a background job is sent to the associated chat.
+
+In contrast to interactive chats, background jobs do not recieve user input and can run forever. In addition you can suspend and restart running jobs, e.g. after reboot.
+
 *usage:* background "./script" "jobname"
 
 *example:* 
@@ -251,7 +272,7 @@ background "./notify" "notify"
 ```
 
 ##### checkback
-Returns true (0) if an background job is running in chat. 
+Returns true (0) if an background job is active in the given chat. 
 
 *usage:*  checkback "jobname"
 
@@ -280,7 +301,7 @@ else
 fi
 ```
 
-### Bashbot internal 
+### Bashbot internal functions
 These functions are for internal use only and must not used in your bot commands.
 
 ##### send_text
@@ -325,5 +346,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 ##### inproc
 Send Input from Telegram to waiting Interactive Chat.
 
-#### $$VERSION$$ v0.60-rc2-2-g7727608
+#### $$VERSION$$ v0.60-rc2-3-g4a944d9
 
