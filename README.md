@@ -1,21 +1,20 @@
 # bashbot
 A Telegram bot written in bash.
 
+Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M (@gnadelwartz).
+
+Contributions by JuanPotato, BigNerd95, TiagoDanin, and iicc1.
+
+Released to the public domain wherever applicable.
+Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/copying/).
+
+## Prerequsites
 Depends on [tmux](http://github.com/tmux/tmux).
 Uses [JSON.sh](http://github.com/dominictarr/JSON.sh).
 
 For full UTF-8 support you need [python on your system](doc/4_expert.md#UTF-8-Support) (optional).
 
-Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M (@gnadelwartz).
-
-Contributions by JuanPotato, BigNerd95, TiagoDanin, and iicc1.
-
-Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Downloads](https://github.com/topkecleon/telegram-bot-bash/releases) are availible on Githup.
-
-Released to the public domain wherever applicable.
-Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/copying/).
-
-
+Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Downloads](https://github.com/topkecleon/telegram-bot-bash/releases) are availible on www.github.com
 
 ## Install bashbot
 1. Go to the directory you want to install bashbot, e.g.
@@ -28,7 +27,9 @@ Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/cop
 3. Change to directory ```telegram-bot.bash```, run ```./bashbot.sh init``` and follow the instructions. At this stage you are asked for your Bots token given by botfather.
 
 ## Update bashbot
-[Download latest update zip from github](https://github.com/topkecleon/telegram-bot-bash/releases), extract all files and copy them to your bashbot dir. Now run ```sudo ./bashbot.sh init``` to setup your environment for the new release.
+1. [Download latest update zip from github](https://github.com/topkecleon/telegram-bot-bash/releases)
+2. Extract all files and copy them to your bashbot dir
+3. Run ```sudo ./bashbot.sh init``` to setup your environment after the update-
 
 ## Bashbot Documentation
 * [Create a new Telegram Bot with botfather](doc/1_firstbot.md)
@@ -87,7 +88,7 @@ For the same reason ervery file your Bot can read is in danger to be disclosed. 
 
 Everyone with read access to your Bot files can extract your Bots data. Especially your Bot Token in ```token``` must be protected against other users. No one exept you must have write access to the Bot files. The Bot must be restricted to have write access to ```count``` and  ```tmp-bot-bash``` only, all other files must be write protected.
 
-To set access rights for your bashbot directory to a reasonable default you must run ```sudo ./bashbot.sh init``` after every update or change to your installation directory.
+To set access rights for your bashbot installation to a reasonable default run ```sudo ./bashbot.sh init``` after every update or change to your installation directory.
 
 ### Is this Bot insecure?
 Bashbot is not more (in)secure as any other Bot written in any other language, we have done our best to make it as secure as possible. But YOU are responsible for the bot commands you wrote and you should know about the risks ...
@@ -96,4 +97,4 @@ Bashbot is not more (in)secure as any other Bot written in any other language, w
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.60-rc2-5-g591c583
+#### $$VERSION$$ v0.60-rc2-6-g2e3c975

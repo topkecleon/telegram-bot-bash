@@ -3,23 +3,26 @@ bashbot
 
 A Telegram bot written in bash.
 
+Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M
+(@gnadelwartz).
+
+Contributions by JuanPotato, BigNerd95, TiagoDanin, and iicc1.
+
+Released to the public domain wherever applicable. Elsewhere, consider
+it released under the http://www.wtfpl.net/txt/copying/[WTFPLv2].
+
+Prerequsites
+~~~~~~~~~~~~
+
 Depends on http://github.com/tmux/tmux[tmux]. Uses
 http://github.com/dominictarr/JSON.sh[JSON.sh].
 
 For full UTF-8 support you need
 link:doc/4_expert.md#UTF-8-Support[python on your system] (optional).
 
-Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M
-(@gnadelwartz).
-
-Contributions by JuanPotato, BigNerd95, TiagoDanin, and iicc1.
-
 Bashbot https://github.com/topkecleon/telegram-bot-bash[Documentation]
 and https://github.com/topkecleon/telegram-bot-bash/releases[Downloads]
-are availible on Githup.
-
-Released to the public domain wherever applicable. Elsewhere, consider
-it released under the http://www.wtfpl.net/txt/copying/[WTFPLv2].
+are availible on www.github.com
 
 Install bashbot
 ~~~~~~~~~~~~~~~
@@ -39,10 +42,11 @@ given by botfather.
 Update bashbot
 ~~~~~~~~~~~~~~
 
-https://github.com/topkecleon/telegram-bot-bash/releases[Download latest
-update zip from github], extract all files and copy them to your bashbot
-dir. Now run `sudo ./bashbot.sh init` to setup your environment for the
-new release.
+1.  https://github.com/topkecleon/telegram-bot-bash/releases[Download
+latest update zip from github]
+2.  Extract all files and copy them to your bashbot dir
+3.  Run `sudo ./bashbot.sh init` to setup your environment after the
+update-
 
 Bashbot Documentation
 ~~~~~~~~~~~~~~~~~~~~~
@@ -137,8 +141,8 @@ users. No one exept you must have write access to the Bot files. The Bot
 must be restricted to have write access to `count` and `tmp-bot-bash`
 only, all other files must be write protected.
 
-To set access rights for your bashbot directory to a reasonable default
-you must run `sudo ./bashbot.sh init` after every update or change to
+To set access rights for your bashbot installation to a reasonable
+default run `sudo ./bashbot.sh init` after every update or change to
 your installation directory.
 
 Is this Bot insecure?
@@ -155,5 +159,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.60-rc2-5-g591c583
+latexmath:[\[VERSION\]] v0.60-rc2-6-g2e3c975
 ++++++++++++++++++++++++++++++++++++++++++++

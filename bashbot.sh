@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.60-rc2-5-g591c583
+#### $$VERSION$$ v0.60-rc2-6-g2e3c975
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -176,11 +176,14 @@ send_message() {
 		sent=y
 	fi
 	if [ "$keyboard" != "" ]; then
+		if [[ "$keyboard" != *"["* ]]; then # pre 0.60 style
+			keyboard="[ ${keyboard//\" \"/\" , \"} ]"
+		fi
 		send_keyboard "$chat" "$text" "$keyboard"
 		sent=y
 	fi
 	if [ "$file" != "" ]; then
-		send_file "$chat" "$file" ""
+		send_file "$chat" "$file" "$text"
 		sent=y
 	fi
 	if [ "$lat" != "" ] && [ "$long" != "" ] && [ "$address" = "" ] && [ "$title" = "" ]; then
