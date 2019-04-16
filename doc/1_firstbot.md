@@ -1,4 +1,4 @@
-
+#### [Home](../README.md)
 ## Create a Telegram Bot with botfather
 
 1. Message @botfather https://telegram.me/botfather with the following
@@ -61,5 +61,5 @@ group. This step is up to you actually.
 
 #### [Next Getting started](2_usage.md)
 
-#### $$VERSION$$ v0.60-rc2-4-g1bf26b9
+#### $$VERSION$$ v0.60-rc2-5-g591c583
 

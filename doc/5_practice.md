@@ -1,3 +1,4 @@
+#### [Home](../README.md)
 ## Best Practices
 
 ### Customize commands.sh only
@@ -111,5 +112,5 @@ The second warning is about an unused variable, this is true because in our exam
 #### [Prev Best Practice](5_practice.md)
 #### [Next Functions Reference](6_reference.md)
 
-#### $$VERSION$$ v0.60-rc2-4-g1bf26b9
+#### $$VERSION$$ v0.60-rc2-5-g591c583
 

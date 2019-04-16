@@ -1,4 +1,4 @@
-
+#### [Home](../README.md)
 ## Advanced Features
 
 ### Access control
@@ -153,8 +153,8 @@ To send stickers through an *inline query*:
 ```bash
 answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 ```
-#### [prev Advanced Usage](3_advanced.md)
+#### [Prev Advanced Usage](3_advanced.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.60-rc2-4-g1bf26b9
+#### $$VERSION$$ v0.60-rc2-5-g591c583
 

@@ -1,3 +1,4 @@
+#### [Home](../README.md)
 ## Bashbot function reference
 
 ### Send, forward, delete messages
@@ -122,12 +123,11 @@ send_file "${CHAT[ID]}" "https://www.domain,com/something.gif" "Something"
 ##### send_keyboard
 Note: since version 0.6 send_keyboard was changed to use native "JSON Array" notation as used from Telegram. Example Keybord Array definitions:
 
-- yes no in one row
-    - OLD format: "yes" "no" (two strings)
-    - NEW format: "[ \\"yes\\" , \\"no\\" ]" (string containing an array)
+- OLD format: 'yes' 'no' (two strings)
+- NEW format: '[ "yes" , "no" ]' (string containing an array)
 - new keybord layouts, no possible with old format:
-    - Yes No in two rows: "[ \\"yes\\" ] , [ \\"no\\" ]"
-    - numpad style keyboard: "[ \\"1\\" , \\"2\\" , \\"3\\" ] , [ \\"4\\" , \\"5\\" , \\"6\\" ] , [ \\"7\\" , \\"8\\" , \\"9\\" ] , [ \\"0\\" ]"
+    - Yes No in two rows: '[ "yes" ] , [ "no" ]'
+    - numpad style keyboard: '[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [ "7" , "8" , "9" ] , [ "0" ]'
 
 
 *usage:*  send_keyboard "chat-id" "keyboard"
@@ -348,5 +348,5 @@ Send Input from Telegram to waiting Interactive Chat.
 
 #### [Prev Best Practice](5_practice.md)
 
-#### $$VERSION$$ v0.60-rc2-4-g1bf26b9
+#### $$VERSION$$ v0.60-rc2-5-g591c583
 

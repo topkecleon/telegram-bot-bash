@@ -1,3 +1,4 @@
+#### [Home](../README.md)
 ## Gettting Started
 
 All Commands for the Bot are in the ```commands.sh``` file (this should ease upgrades of the bot core). Here you find some examples how to process messages and send out text.
@@ -131,14 +132,15 @@ send_message "${CHAT[ID]}" "lol" "safe"
 More examples  boutsend_message strings can be found in [Advanced Usage](3_advanced.md#Interactive-Chats)
 
 
-#### Send files, location  etc.
+#### Send files, locations, keyboards.
 To send images, videos, voice files, photos etc. use the ```send_photo``` function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):
 ```bash
 send_file "${CHAT[ID]}" "/home/user/doge.jpg" "Lool"
 ```
 To send custom keyboards use the ```send_keyboard``` function:
 ```bash
-send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" "[ \"Yep\" , \"No\" ]"
+send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" '[ "Yep" , "No" ]' # note the simgle quotes!
+send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" "[ \\"Yep\\" , \\"No\\" ]" # within double quotes you must excape the inside double quots
 ```
 To send locations use the ```send_location``` function:
 ```bash
@@ -154,8 +156,8 @@ Allowed values: typing for text messages, upload_photo for photos, record_video 
 send_action "${CHAT[ID]}" "action"
 ```
 
-#### [Prev Getting started](2_usage.md)
+#### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.60-rc2-4-g1bf26b9
+#### $$VERSION$$ v0.60-rc2-5-g591c583
 
