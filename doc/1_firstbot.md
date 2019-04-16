@@ -1,5 +1,5 @@
 
-## Create your first telegram bot
+## Create a Telegram Bot with botfather
 
 1. Message @botfather https://telegram.me/botfather with the following
 text: `/newbot`
@@ -70,5 +70,5 @@ git clone --recursive https://github.com/topkecleon/telegram-bot-bash
 ```
 3. Change to directory ```telegram-bot.bash```, run ```./bashbot.sh init``` and follow the instructions. At this stage you are asked for your Bots token given by botfather.
 
-#### $$VERSION$$ v0.60-rc2-0-gc581932
+#### $$VERSION$$ v0.60-rc2-2-g7727608
 

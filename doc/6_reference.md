@@ -111,15 +111,15 @@ send_file "${CHAT[ID]}" "https://www.domain,com/something.gif" "Something"
 ----
 
 ##### send_keyboard
-Note: since version 0.6 send_keyboard was changed to use native "JSON Array" as used from Telegram.
- 
+Note: since version 0.6 send_keyboard was changed to use native "JSON Array" notation as used from Telegram. Eexample Keybord Array definitions:
+
 *usage:*  send_keyboard "chat-id" "keyboard"
 
 *example:* 
 ```bash
-send_keyboard "${CHAT[ID]}" "[ \"yes\" , \"no\" ]"
-send_keyboard "${CHAT[ID]}" "[ \"yes\" ] , [ \"no\" ]"
-send_keyboard "${CHAT[ID]}" "[ \"1\" , \"2\" , \"3\" ] , [ \"4\" , \"5\" , \"6\" ] , [ \"7\" , \"8\" , \"9\" ] , [ \"0\" ]"
+send_keyboard "${CHAT[ID]}" "[ \\"yes\" , \\"no\" ]""
+send_keyboard "${CHAT[ID]}" "[ \\"yes\\" ] , [ \\"no\\" ]"
+send_keyboard "${CHAT[ID]}" "[ \\"1\\" , \\"2\\" , \\"3\\" ] , [ \\"4\\" , \\"5\\" , \\"6\\" ] , [ \\"7\\" , \\"8\\" , \\"9\\" ] , [ \\"0\\" ]"
 ```
 
 ##### remove_keyboard
@@ -325,5 +325,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 ##### inproc
 Send Input from Telegram to waiting Interactive Chat.
 
-#### $$VERSION$$ v0.60-rc2-0-gc581932
+#### $$VERSION$$ v0.60-rc2-2-g7727608
 

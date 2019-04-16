@@ -1,4 +1,4 @@
-## Make your own Bot
+## Gettting Started
 
 All Commands for the Bot are in the ```commands.sh``` file (this should ease upgrades of the bot core). Here you find some examples how to process messages and send out text.
 
@@ -154,6 +154,6 @@ Allowed values: typing for text messages, upload_photo for photos, record_video 
 send_action "${CHAT[ID]}" "action"
 ```
 
-#### $$VERSION$$ v0.60-rc2-0-gc581932
+#### $$VERSION$$ v0.60-rc2-2-g7727608
 
 
