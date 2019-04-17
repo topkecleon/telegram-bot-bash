@@ -8,7 +8,7 @@ Contributions by JuanPotato, BigNerd95, TiagoDanin, and iicc1.
 Released to the public domain wherever applicable.
 Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/copying/).
 
-## Prerequsites
+## Prerequisites
 Depends on [tmux](http://github.com/tmux/tmux).
 Uses [JSON.sh](http://github.com/dominictarr/JSON.sh).
 
@@ -24,14 +24,14 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     ```
     git clone --recursive https://github.com/topkecleon/telegram-bot-bash
     ```
-3. Change to directory ```telegram-bot.bash```, run ```./bashbot.sh init``` and follow the instructions. At this stage you are asked for your Bots token given by botfather.
+3. Change to directory ```telegram-bot-bash```, run ```./bashbot.sh init``` and follow the instructions. At this stage you are asked for your Bots token given by botfather.
 
 ## Update bashbot
 1. [Download latest update zip from github](https://github.com/topkecleon/telegram-bot-bash/releases)
 2. Extract all files and copy them to your bashbot dir
-3. Run ```sudo ./bashbot.sh init``` to setup your environment after the update-
+3. Run ```sudo ./bashbot.sh init``` to setup your environment after the update
 
-## Bashbot Documentation
+## Documentation
 * [Create a new Telegram Bot with botfather](doc/1_firstbot.md)
 * [Getting Started](doc/2_usage.md)
     * Managing your Bot
@@ -57,13 +57,13 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
 From Version 0.60 on keybord format for ```send_keyboard``` and ```send_message "mykeyboardstartshere ..."``` was changed.
 Keybords are now defined in JSON Array notation e.g. "[ \\"yes\\" , \\"no\\" ]".
 This has the advantage that you can create any type of keyboard supported by Telegram.
-**This is an incompatible change for keyboards used in older bashbot versions.**
+The old format is supported for backward compatibility, but may fail for strange corner cases.
 
 *Example Keyboards*:
 
 - OLD format: 'yes' 'no' (two strings)
 - NEW format: '[ "yes" , "no" ]' (string containing an array)
-- new keybord layouts, no possible with old format:
+- new keybord layouts, not possible with old format:
     - Yes No in two rows: '[ "yes" ] , [ "no" ]'
     - numpad style keyboard: '[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [ "7" , "8" , "9" ] , [ "0" ]'
 
@@ -97,4 +97,4 @@ Bashbot is not more (in)secure as any other Bot written in any other language, w
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.60-rc2-6-g2e3c975
+#### $$VERSION$$ v0.60-rc3-0-g19a0f7e

@@ -11,8 +11,8 @@ Contributions by JuanPotato, BigNerd95, TiagoDanin, and iicc1.
 Released to the public domain wherever applicable. Elsewhere, consider
 it released under the http://www.wtfpl.net/txt/copying/[WTFPLv2].
 
-Prerequsites
-~~~~~~~~~~~~
+Prerequisites
+~~~~~~~~~~~~~
 
 Depends on http://github.com/tmux/tmux[tmux]. Uses
 http://github.com/dominictarr/JSON.sh[JSON.sh].
@@ -35,7 +35,7 @@ Install bashbot
 ....
 git clone --recursive https://github.com/topkecleon/telegram-bot-bash
 ....
-3.  Change to directory `telegram-bot.bash`, run `./bashbot.sh init` and
+3.  Change to directory `telegram-bot-bash`, run `./bashbot.sh init` and
 follow the instructions. At this stage you are asked for your Bots token
 given by botfather.
 
@@ -46,10 +46,10 @@ Update bashbot
 latest update zip from github]
 2.  Extract all files and copy them to your bashbot dir
 3.  Run `sudo ./bashbot.sh init` to setup your environment after the
-update-
+update
 
-Bashbot Documentation
-~~~~~~~~~~~~~~~~~~~~~
+Documentation
+~~~~~~~~~~~~~
 
 * link:doc/1_firstbot.md[Create a new Telegram Bot with botfather]
 * link:doc/2_usage.md[Getting Started]
@@ -79,14 +79,14 @@ From Version 0.60 on keybord format for `send_keyboard` and
 `send_message "mykeyboardstartshere ..."` was changed. Keybords are now
 defined in JSON Array notation e.g. "[ \"yes\" , \"no\" ]". This has the
 advantage that you can create any type of keyboard supported by
-Telegram. *This is an incompatible change for keyboards used in older
-bashbot versions.*
+Telegram. The old format is supported for backward compatibility, but
+may fail for strange corner cases.
 
 _Example Keyboards_:
 
 * OLD format: 'yes' 'no' (two strings)
 * NEW format: '[ "yes" , "no" ]' (string containing an array)
-* new keybord layouts, no possible with old format:
+* new keybord layouts, not possible with old format:
 ** Yes No in two rows: '[ "yes" ] , [ "no" ]'
 ** numpad style keyboard: '[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [
 "7" , "8" , "9" ] , [ "0" ]'
@@ -159,5 +159,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.60-rc2-6-g2e3c975
+latexmath:[\[VERSION\]] v0.60-rc3-0-g19a0f7e
 ++++++++++++++++++++++++++++++++++++++++++++

@@ -90,14 +90,8 @@ answer_inline_query provide the result to a users Inline Query
 
 ----
 
-### File, Location, Venu, keyboards 
+### File, Location, Venue, Keyboard 
 
-##### get_file
-*usage:* 
-
-*example:* 
-```bash
-```
 
 ##### send_file
 send_file allows you to send different type's of files, e.g. photos, stickers, audio, media, etc. [see more](https://core.telegram.org/bots/api#sending-files)
@@ -125,23 +119,22 @@ Note: since version 0.6 send_keyboard was changed to use native "JSON Array" not
 
 - OLD format: 'yes' 'no' (two strings)
 - NEW format: '[ "yes" , "no" ]' (string containing an array)
-- new keybord layouts, no possible with old format:
+- new keybord layouts, not possible with old format:
     - Yes No in two rows: '[ "yes" ] , [ "no" ]'
     - numpad style keyboard: '[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [ "7" , "8" , "9" ] , [ "0" ]'
 
 
-*usage:*  send_keyboard "chat-id" "keyboard"
+*usage:*  send_keyboard "chat-id" "message" "keyboard"
 
 *example:* 
 ```bash
-send_keyboard "${CHAT[ID]}" "[ \\"yes\" , \\"no\" ]""
-send_keyboard "${CHAT[ID]}" "[ \\"yes\\" ] , [ \\"no\\" ]"
-send_keyboard "${CHAT[ID]}" "[ \\"1\\" , \\"2\\" , \\"3\\" ] , [ \\"4\\" , \\"5\\" , \\"6\\" ] , [ \\"7\\" , \\"8\\" , \\"9\\" ] , [ \\"0\\" ]"
+send_keyboard "${CHAT[ID]}" "Say yes or no" "[ \\"yes\" , \\"no\" ]""
+send_keyboard "${CHAT[ID]}" "Say yes or no" "[ \\"yes\\" ] , [ \\"no\\" ]"
+send_keyboard "${CHAT[ID]}" "Enter digit" "[ \\"1\\" , \\"2\\" , \\"3\\" ] , [ \\"4\\" , \\"5\\" , \\"6\\" ] , [ \\"7\\" , \\"8\\" , \\"9\\" ] , [ \\"0\\" ]"
 ```
 
 ##### remove_keyboard
-*usage:* 
-
+*usage:* remove_keybord "$CHAT[ID]" "message"
 
 ### Manage users 
 
@@ -304,6 +297,11 @@ fi
 ### Bashbot internal functions
 These functions are for internal use only and must not used in your bot commands.
 
+##### get_file
+*usage:* url="$(get_file "${CHAT[ID]}" "message")"
+
+----
+
 ##### send_text
 *usage:* send_text "${CHAT[ID]}" "message"
 
@@ -348,5 +346,5 @@ Send Input from Telegram to waiting Interactive Chat.
 
 #### [Prev Best Practice](5_practice.md)
 
-#### $$VERSION$$ v0.60-rc2-5-g591c583
+#### $$VERSION$$ v0.60-rc3-0-g19a0f7e
 

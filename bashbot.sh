@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.60-rc2-6-g2e3c975
+#### $$VERSION$$ v0.60-rc3-0-g19a0f7e
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -177,7 +177,7 @@ send_message() {
 	fi
 	if [ "$keyboard" != "" ]; then
 		if [[ "$keyboard" != *"["* ]]; then # pre 0.60 style
-			keyboard="[ ${keyboard//\" \"/\" , \"} ]"
+			keyboard="[ ${keyboard//\" \"/\" \] , \[ \"} ]"
 		fi
 		send_keyboard "$chat" "$text" "$keyboard"
 		sent=y
@@ -357,7 +357,22 @@ answer_inline_query() {
 
 }
 
+
+old_send_keyboard() {
+	local chat="$1"
+	local text="$2"
+	shift 2
+	local keyboard=init
+	OLDIFS=$IFS
+	IFS=$(echo -en "\"")
+	for f in "$@" ;do [ "$f" != " " ] && keyboard="$keyboard, [\"$f\"]";done
+	IFS=$OLDIFS
+	keyboard=${keyboard/init, /}
+	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")"
+}
+
 send_keyboard() {
+	if [[ "$3" != *'['* ]]; then old_send_keyboard "$@"; return; fi
 	local chat="$1"
 	local text="$2"
 	local keyboard="$3"

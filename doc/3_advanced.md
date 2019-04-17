@@ -156,5 +156,5 @@ answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 #### [Prev Advanced Usage](3_advanced.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.60-rc2-5-g591c583
+#### $$VERSION$$ v0.60-rc3-0-g19a0f7e
 
