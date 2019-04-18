@@ -17,11 +17,20 @@ echo "............................"
 
 unset IFS; set -f
 
+# check for shellcheck
+if which shellcheck >/dev/null 2>&1; then
+	echo "Test all scripts with shellcheck ..."
+else
+	echo "Error: shellcheck is not installed. Install shellcheck or delete $0"
+	exit 1
+fi
+
 # run shellcheck before commit
 FILES=$(sed '/^#/d' <"hooks/shellcheck.files")
 if [ "$FILES" != "" ]; then
 	# shellcheck disable=SC2086
-	shellcheck -x ${FILES}
+	shellcheck -x ${FILES} || exit 1
+	echo "OK"
 else
 	# something went wrong
 	exit 1
