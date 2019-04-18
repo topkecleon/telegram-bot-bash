@@ -117,12 +117,13 @@ send_file "${CHAT[ID]}" "https://www.domain,com/something.gif" "Something"
 ##### send_keyboard
 Note: since version 0.6 send_keyboard was changed to use native "JSON Array" notation as used from Telegram. Example Keybord Array definitions:
 
-- OLD format: 'yes' 'no' (two strings)
-- NEW format: '[ "yes" , "no" ]' (string containing an array)
-- new keybord layouts, not possible with old format:
-    - Yes No in two rows: '[ "yes" ] , [ "no" ]'
+- yes no in two rows:
+    - OLD format: 'yes' 'no' (two strings)
+    - NEW format: '[ "yes" ] , [ "no" ]' (two arrays with a string)
+- new layouts made easy with NEW format:
+    - Yes No in one row: '[ "yes" , "no" ]'
+    - Yes No plus Maybe in 2.row: '[ "yes" , "no" ] , [ "maybe" ]' 
     - numpad style keyboard: '[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [ "7" , "8" , "9" ] , [ "0" ]'
-
 
 *usage:*  send_keyboard "chat-id" "message" "keyboard"
 
@@ -346,5 +347,5 @@ Send Input from Telegram to waiting Interactive Chat.
 
 #### [Prev Best Practice](5_practice.md)
 
-#### $$VERSION$$ v0.60-rc3-0-g19a0f7e
+#### $$VERSION$$ v0.60-0-gf5162e2
 

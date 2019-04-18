@@ -12,7 +12,7 @@ Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/cop
 Depends on [tmux](http://github.com/tmux/tmux).
 Uses [JSON.sh](http://github.com/dominictarr/JSON.sh).
 
-For full UTF-8 support you need [python on your system](doc/4_expert.md#UTF-8-Support) (optional).
+Most complete [UTF-8 support for bashbot](doc/4_expert.md#Bashbot-UTF-8-Support) is availible if phyton is installed (optional).
 
 Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Downloads](https://github.com/topkecleon/telegram-bot-bash/releases) are availible on www.github.com
 
@@ -57,14 +57,16 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
 From Version 0.60 on keybord format for ```send_keyboard``` and ```send_message "mykeyboardstartshere ..."``` was changed.
 Keybords are now defined in JSON Array notation e.g. "[ \\"yes\\" , \\"no\\" ]".
 This has the advantage that you can create any type of keyboard supported by Telegram.
-The old format is supported for backward compatibility, but may fail for strange corner cases.
+The old format is supported for backward compatibility, but may fail for corner cases.
 
 *Example Keyboards*:
 
-- OLD format: 'yes' 'no' (two strings)
-- NEW format: '[ "yes" , "no" ]' (string containing an array)
-- new keybord layouts, not possible with old format:
-    - Yes No in two rows: '[ "yes" ] , [ "no" ]'
+- yes no in two rows:
+    - OLD format: 'yes' 'no' (two strings)
+    - NEW format: '[ "yes" ] , [ "no" ]' (two arrays with a string)
+- new layouts made easy with NEW format:
+    - Yes No in one row: '[ "yes" , "no" ]'
+    - Yes No plus Maybe in 2.row: '[ "yes" , "no" ] , [ "maybe" ]' 
     - numpad style keyboard: '[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [ "7" , "8" , "9" ] , [ "0" ]'
 
 ## Security Considerations
@@ -97,4 +99,4 @@ Bashbot is not more (in)secure as any other Bot written in any other language, w
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.60-rc3-0-g19a0f7e
+#### $$VERSION$$ v0.60-0-gf5162e2

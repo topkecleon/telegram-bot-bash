@@ -37,7 +37,7 @@ export 'LANGUAGE=den_US.UTF-8'
 
 To display all availible locales on your system run ```locale -a | more```. [Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8)
 
-#### Bashbot's UTF-8 Support
+#### Bashbot UTF-8 Support
 Bashbot handles all messages transparently, regardless of the charset in use. The only exception is when converting from JSON data to strings.
 
 Telegram use JSON to send / recieve data. JSON encodes strings as follow: Characters not ASCII *(>127)* are escaped as sequences of ```\uxxxx``` to be regular ASCII. In addition multibyte characters, *e.g. Emoticons or Arabic characters*, are send in double byte UTF-16 notation.
@@ -45,8 +45,8 @@ The Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as: ``` \uD83D\uDE0
 
 **This "mixed" JSON encoding needs special handling and can not decoded from** ```echo -e``` or ```printf '%s\\n'```
 
-To to fully support decoding of multibyte characters you need a working python2 installation on your system.
-If no python is detected bashbot falls back to a **internal pure bash implementaion which may not work for some corner cases**.
+Most complete support for decoding of multibyte characters can only be provided if python is installed on your system.
+**Without phyton bashbot falls back to an internal, pure bash implementation which may not work for some corner cases**.
 
 
 ### Run as other user or system service
@@ -104,5 +104,5 @@ An example crontab is provided in ```bashbot.cron```.
 #### [Prev Expert Use](4_expert.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v0.60-rc3-0-g19a0f7e
+#### $$VERSION$$ v0.60-0-gf5162e2
 

@@ -80,14 +80,16 @@ From Version 0.60 on keybord format for `send_keyboard` and
 defined in JSON Array notation e.g. "[ \"yes\" , \"no\" ]". This has the
 advantage that you can create any type of keyboard supported by
 Telegram. The old format is supported for backward compatibility, but
-may fail for strange corner cases.
+may fail for corner cases.
 
 _Example Keyboards_:
 
-* OLD format: 'yes' 'no' (two strings)
-* NEW format: '[ "yes" , "no" ]' (string containing an array)
-* new keybord layouts, not possible with old format:
-** Yes No in two rows: '[ "yes" ] , [ "no" ]'
+* yes no in two rows:
+** OLD format: 'yes' 'no' (two strings)
+** NEW format: '[ "yes" ] , [ "no" ]' (two arrays with a string)
+* new layouts made easy with NEW format:
+** Yes No in one row: '[ "yes" , "no" ]'
+** Yes No plus Maybe in 2.row: '[ "yes" , "no" ] , [ "maybe" ]'
 ** numpad style keyboard: '[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [
 "7" , "8" , "9" ] , [ "0" ]'
 
@@ -159,5 +161,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.60-rc3-0-g19a0f7e
-++++++++++++++++++++++++++++++++++++++++++++
+latexmath:[\[VERSION\]] v0.60-0-gf5162e2
+++++++++++++++++++++++++++++++++++++++++
