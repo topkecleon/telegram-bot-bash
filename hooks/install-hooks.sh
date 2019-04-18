@@ -12,9 +12,9 @@ echo -n "Installing hooks..."
 for hook in pre-commit pre-push
 do
    rm -f "$GIT_DIR/hooks/${hook}"
-   if [ -f "test/${hook}.sh" ]; then
+   if [ -f "hooks/${hook}.sh" ]; then
 	echo -n " $hook"
-	ln -s "../../test/${hook}.sh" "$GIT_DIR/hooks/${hook}"
+	ln -s "../../hooks/${hook}.sh" "$GIT_DIR/hooks/${hook}"
    fi
 done
 echo " Done!"

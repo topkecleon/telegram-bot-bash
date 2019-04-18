@@ -18,7 +18,7 @@ echo "............................"
 unset IFS; set -f
 
 # run shellcheck before commit
-FILES=$(sed '/^#/d' <"test/shellcheck.files")
+FILES=$(sed '/^#/d' <"hooks/shellcheck.files")
 if [ "$FILES" != "" ]; then
 	# shellcheck disable=SC2086
 	shellcheck -x ${FILES}

@@ -10,5 +10,5 @@ commands.sh
 notify
 question
 # test files
-test/install-hooks.sh
-test/pre-commit.sh
+hooks/install-hooks.sh
+hooks/pre-commit.sh
