@@ -1,0 +1,13 @@
+# list of files to run shellscheck against
+# main files
+bashbot.rc
+bashbot.sh
+version
+# job files
+calc
+commands.sh
+notify
+question
+# test files
+test/install-hooks.sh
+test/pre-commit.sh
