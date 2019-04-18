@@ -1,9 +1,9 @@
+#### [Home](../README.md)
 ## Best Practices
 
-### Customizing commands.sh
+### Customize commands.sh only
 
-To ease Updates never change ```bashbot.sh```, all changes should be done in ```commands.sh``` .
-Insert your own Bot commands in the ```case ... esac``` block in commands.sh:
+To ease Updates never change ```bashbot.sh```, instead individual commands should go to  ```commands.sh``` .  Insert your Bot commands in the ```case ... esac``` block:
 ```bash
 	case "$MESSAGE" in
 		'/echo') # my first own command, echo MESSAGE
@@ -11,30 +11,27 @@ Insert your own Bot commands in the ```case ... esac``` block in commands.sh:
 			;;
 
 		################################################
-		# DEFAULT commands start here, edit messages only
+		# DEFAULT commands start here, do not edit below this!
 		'/info')
 			bashbot_info "${CHAT[ID]}"
 			;;
 	esac
 ```
-after editing commands.sh restart Bot.
 
-### Seperate Bot logic from command
+### Seperate logic from commands
 
-If a Bot command needs more than 2-3 lines of code I recommend to factor it out to a bash function in a seperate file, e.g.
-```mybotcommands.inc.sh``` and source the file from bashbot.sh. ```bashbot_info and bashbot_help``` are examples how to use
-bash functions to make customisation easy and keep case block small. ```process_message``` is an example for a complex
-processing logic as a bash funtcion in a seperate file.
+If a command need more than 2-3 lines of code, you should use a function to seperate logic from command. Place your functions in a seperate file, e.g. ```mycommands.inc.sh``` and source it from bashbot.sh. Example:
 ```bash
-	source mybotcommands.inc.sh
+	source "mycommands.inc.sh"
 
 	case "$MESSAGE" in
-		'/report') # report dealz from database and output result
-			send_normal_message "${CHAT[ID]}" "$(process_message "$MESSAGE")" 
+		'/process') # logic for /process is done in process_message 
+			result="$(process_message "$MESSAGE")"
+			send_normal_message "${CHAT[ID]}" "$result" 
 			;;
 
 		################################################
-		# DEFAULT commands start here, edit messages only
+		# DEFAULT commands start here, do not edit below this!
 		'/info')
 			bashbot_info "${CHAT[ID]}"
 			;;
@@ -44,15 +41,15 @@ processing logic as a bash funtcion in a seperate file.
 			;;
 	esac
 ```
-Example ```mybotcommands.inc.sh```:
 ```bash
 #!/bin/bash
-#
+# file: mycommands.inc.sh
+
 process_message() {
-   local ARGS="${1#/* }"	# remove command /*
+   local ARGS="${1#/* }"	# remove command 
    local TEXT OUTPUT=""
 
-   # process every word in MESSAGE, avoid globbing from MESSAGE
+   # process every word in MESSAGE, avoid globbing
    set -f
    for WORD in $ARGS
    do
@@ -76,7 +73,6 @@ process_message() {
 }
 
 ```
-Doing it this way keeps commands.sh small and clean, while allowing complex tasks to be done in the included function.
 
 ### Test your Bot with shellcheck
 Shellcheck is a static linter for shell scripts providing excellent tips and hints for shell coding pittfalls. You can [use it online](https://www.shellcheck.net/) or [install it on your system](https://github.com/koalaman/shellcheck#installing).
@@ -91,6 +87,7 @@ Line 17:
                       ^-- SC2116: Useless echo? Instead of 'cmd $(echo foo)', just use 'cmd foo'.
  
 ```
+As you can see my ```mybotcommands.inc.sh``` contains an useless echo command in 'TEXT=' assigment and can be replaced by ```TEXT="${TEXT}${WORD}"```
 ```bash
 $ shellcheck -x notify
 OK
@@ -109,7 +106,11 @@ In bashbot.sh line 490:
         CONTACT[USER_ID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","contact","user_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
         ^-- SC2034: CONTACT appears unused. Verify it or export it.
 ```
-As you can see there are only two warnings in bashbots scripts. The first is a hint you may use shell substitions instead of sed, but this is only possible for simple cases. The second warning is about an unused variable, this is true because in our examples CONTACT is not used but assigned in case you want to use it :-)
+The example show two warnings in bashbots scripts. The first is a hint you may use shell substitions instead of sed, this is fixed and much faster as the "echo | sed" solution.
+The second warning is about an unused variable, this is true because in our examples CONTACT is not used but assigned in case you want to use it :-)
 
-#### $$VERSION$$ v0.52-0-gdb7b19f
+#### [Prev Best Practice](5_practice.md)
+#### [Next Functions Reference](6_reference.md)
+
+#### $$VERSION$$ v0.60-0-gf5162e2
 

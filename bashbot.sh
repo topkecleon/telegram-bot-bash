@@ -10,14 +10,15 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.52-0-gdb7b19f
+#### $$VERSION$$ v0.60-0-gf5162e2
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
 # - 1 can't change to dir
 # - 2 can't write to tmp, count or token 
-# - 3 user not found
+# - 3 user / command not found
 # - 4 unkown command
+# - 5 cannot connect to telegram bot
 
 # are we runnig in a terminal?
 if [ -t 1 ] && [ "$TERM" != "" ];  then
@@ -43,31 +44,31 @@ if [ ! -w "." ]; then
 	ls -ld .
 fi
 
+TOKEN="./token"
+if [ ! -f "${TOKEN}" ]; then
+   if [ "${CLEAR}" = "" ]; then
+	echo "Running headless, run ${SCRIPT} init first!"
+	exit 2 
+   else
+	${CLEAR}
+	echo -e "${RED}TOKEN MISSING.${NC}"
+	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NC}"
+	read -r token
+	echo "${token}" > "${TOKEN}"
+   fi
+fi
+
 if [ ! -f "JSON.sh/JSON.sh" ]; then
 	echo "You did not clone recursively! Downloading JSON.sh..."
 	git clone http://github.com/dominictarr/JSON.sh
 	echo "JSON.sh has been downloaded. Proceeding."
 fi
 
-TOKEN="./token"
-if [ ! -f "${TOKEN}" ]; then
-   if [ "${CLEAR}" == "" ]; then
-	echo "Running headless, run ${SCRIPT} init first!"
-	exit 2 
-   else
-	${CLEAR}
-	echo -e "${RED}TOKEN MISSING.${NC}"
-	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE${NC}"
-	read -r token
-	echo "${token}" > "${TOKEN}"
-   fi
-fi
-
 BOTADMIN="./botadmin"
 if [ ! -f "${BOTADMIN}" ]; then
-   if [ "${CLEAR}" == "" ]; then
+   if [ "${CLEAR}" = "" ]; then
 	echo "Running headless, set botadmin to AUTO MODE!"
-	echo "?" > "${BOTADMIN}"
+	echo '?' > "${BOTADMIN}"
    else
 	${CLEAR}
 	echo -e "${RED}BOTADMIN MISSING.${NC}"
@@ -104,8 +105,17 @@ elif [ ! -w "${COUNT}" ]; then
 	exit 2
 fi
 
+COMMANDS="./commands.sh"
+if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
+	${CLEAR}
+	echo -e "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NC}"
+	exit 3
+	ls -l "${COMMANDS}"
+fi
 
-source "commands.sh" "source"
+# shellcheck source=./commands.sh
+source "${COMMANDS}" "source"
+
 URL='https://api.telegram.org/bot'$TOKEN
 
 
@@ -127,7 +137,6 @@ INLINE_QUERY=$URL'/answerInlineQuery'
 ME_URL=$URL'/getMe'
 DELETE_URL=$URL'/deleteMessage'
 GETMEMBER_URL=$URL'/getChatMember'
-ME="$(curl -s "$ME_URL" | ./JSON.sh/JSON.sh -s | grep '\["result","username"\]' | cut -f 2 | cut -d '"' -f 2)"
 
 
 FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
@@ -136,9 +145,6 @@ GET_URL=$URL'/getFile'
 OFFSET=0
 declare -A USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO
 
-urlencode() {
-	echo "$*" | sed 's:%:%25:g;s: :%20:g;s:<:%3C:g;s:>:%3E:g;s:#:%23:g;s:{:%7B:g;s:}:%7D:g;s:|:%7C:g;s:\\:%5C:g;s:\^:%5E:g;s:~:%7E:g;s:\[:%5B:g;s:\]:%5D:g;s:`:%60:g;s:;:%3B:g;s:/:%2F:g;s:?:%3F:g;s^:^%3A^g;s:@:%40:g;s:=:%3D:g;s:&:%26:g;s:\$:%24:g;s:\!:%21:g;s:\*:%2A:g'
-}
 
 
 send_message() {
@@ -148,7 +154,6 @@ send_message() {
 	text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
 	arg="$3"
 	[ "$arg" != "safe" ] && {
-		#text="$(echo "$text" | sed 's/ mynewlinestartshere /\r\n/g')" # hack for linebreaks in startproc scripts
 		text="${text// mynewlinestartshere /$'\r\n'}"
 		no_keyboard="$(echo "$2" | sed '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
 
@@ -171,6 +176,9 @@ send_message() {
 		sent=y
 	fi
 	if [ "$keyboard" != "" ]; then
+		if [[ "$keyboard" != *"["* ]]; then # pre 0.60 style
+			keyboard="[ ${keyboard//\" \"/\" \] , \[ \"} ]"
+		fi
 		send_keyboard "$chat" "$text" "$keyboard"
 		sent=y
 	fi
@@ -252,27 +260,27 @@ leave_chat() {
 }
 
 user_is_creator() {
-	if [ "${1:--}" == "${2:-+}" ] || [ "$(get_chat_member_status "$1" "$2")" == "creator" ]; then return 0; fi
+	if [ "${1:--}" = "${2:-+}" ] || [ "$(get_chat_member_status "$1" "$2")" = "creator" ]; then return 0; fi
 	return 1 
 }
 
 user_is_admin() {
 	local me; me="$(get_chat_member_status "$1" "$2")"
-	if [ "${me}" == "creator" ] || [ "${me}" == "administrator" ]; then return 0; fi
+	if [ "${me}" = "creator" ] || [ "${me}" = "administrator" ]; then return 0; fi
 	return 1 
 }
 
 user_is_botadmin() {
 	local admin; admin="$(head -n 1 "${BOTADMIN}")"
-	[ "${admin}" == "${1}" ] && return 0
-	[[ "${admin}" == "@*" ]] && [[ "${admin}" == "${2}" ]] && return 0
-	if [ "${admin}" == "?" ]; then echo "${1:-?}" >"${BOTADMIN}"; return 0; fi
+	[ "${admin}" = "${1}" ] && return 0
+	[[ "${admin}" = "@*" ]] && [[ "${admin}" = "${2}" ]] && return 0
+	if [ "${admin}" = "?" ]; then echo "${1:-?}" >"${BOTADMIN}"; return 0; fi
 	return 1
 }
 
 user_is_allowed() {
-	local acl; acl="$1"
-	[ "$1" == "" ] && return 1
+	local acl="$1"
+	[ "$1" = "" ] && return 1
 	grep -F -xq "${acl}:*:*" <"${BOTACL}" && return 0
 	[ "$2" != "" ] && acl="${acl}:$2"
 	grep -F -xq "${acl}:*" <"${BOTACL}" && return 0
@@ -349,7 +357,8 @@ answer_inline_query() {
 
 }
 
-send_keyboard() {
+
+old_send_keyboard() {
 	local chat="$1"
 	local text="$2"
 	shift 2
@@ -362,6 +371,14 @@ send_keyboard() {
 	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")"
 }
 
+send_keyboard() {
+	if [[ "$3" != *'['* ]]; then old_send_keyboard "$@"; return; fi
+	local chat="$1"
+	local text="$2"
+	local keyboard="$3"
+	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [${keyboard}],\"one_time_keyboard\": true}")"
+}
+
 remove_keyboard() {
 	local chat="$1"
 	local text="$2"
@@ -370,7 +387,7 @@ remove_keyboard() {
 }
 
 get_file() {
-	[ "$1" != "" ] && echo "$FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh/JSON.sh -s | grep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)"
+	[ "$1" != "" ] && echo "$FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh/JSON.sh -s | JsonGetString '"result","file_path"')"
 }
 
 send_file() {
@@ -440,11 +457,13 @@ send_venue() {
 }
 
 
-forward() {
+forward_message() {
 	[ "$3" = "" ] && return
 	res="$(curl -s "$FORWARD_URL" -F "chat_id=$1" -F "from_chat_id=$2" -F "message_id=$3")"
 }
-
+forward() { # backward compatibility
+	forward_message "$@" || return
+}
 
 background() {
 	echo "${CHAT[ID]}:$2:$1" >"${TMPDIR:-.}/${copname}$2-back.cmd"
@@ -453,7 +472,7 @@ background() {
 
 startproc() {
 	killproc "$2"
-	local fifo="$2${copname}" # add $1 to copname, so we can have more than one running script per chat
+	local fifo="$2${copname}"
 	mkfifo "${TMPDIR:-.}/${fifo}"
 	tmux new-session -d -s "${fifo}" "$1 &>${TMPDIR:-.}/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>${TMPDIR:-.}/${fifo}"
 	tmux new-session -d -s "sendprocess_${fifo}" "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
@@ -465,7 +484,7 @@ checkback() {
 }
 
 checkproc() {
-	tmux ls | grep -q "$1${copname}"; res=$?
+	tmux ls | grep -q "$1${copname}"; res=$?; return $?
 }
 
 killback() {
@@ -485,79 +504,85 @@ inproc() {
 process_updates() {
 	MAX_PROCESS_NUMBER=$(echo "$UPDATE" | sed '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')
 	for ((PROCESS_NUMBER=0; PROCESS_NUMBER<=MAX_PROCESS_NUMBER; PROCESS_NUMBER++)); do
-		if [ "$1" == "test" ]; then
+		if [ "$1" = "test" ]; then
 			process_client "$1"
 		else
 			process_client "$1" &
 		fi
 	done
 }
+JsonGetString() {
+	sed -n -e '/\['"$1"'\]/ s/.*\][ \t]"\(.*\)"$/\1/p'
+}
+JsonGetValue() {
+	sed -n -e '/\['"$1"'\]/ s/.*\][ \t]//p'
+}
 process_client() {
 	local TMP="${TMPDIR:-.}/$RANDOM$RANDOM-MESSAGE"
 	echo "$UPDATE" >"$TMP"
 	# Message
-	MESSAGE[0]="$(echo -e "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","text"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")" | sed 's#\\/#/#g')"
-	MESSAGE[ID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","message_id"\]/ s/.*\][ \t]//p' <"$TMP" )"
+	MESSAGE[0]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","text"' <"$TMP")" | sed 's#\\/#/#g')"
+	MESSAGE[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","message_id"' <"$TMP" )"
 
 	# Chat
-	CHAT[ID]="$(sed -n -e  '/\["result",'$PROCESS_NUMBER',"message","chat","id"\]/ s/.*\][ \t]//p' <"$TMP" )"
-	CHAT[FIRST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","chat","first_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CHAT[LAST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","chat","last_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CHAT[USERNAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","chat","username"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CHAT[TITLE]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","chat","title"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CHAT[TYPE]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","chat","type"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","chat","all_members_are_administrators"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
+	CHAT[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","chat","id"' <"$TMP" )"
+	CHAT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","first_name"' <"$TMP")")"
+	CHAT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","last_name"' <"$TMP")")"
+	CHAT[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","username"' <"$TMP")")"
+	CHAT[TITLE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","title"' <"$TMP")")"
+	CHAT[TYPE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","type"' <"$TMP")")"
+	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","all_members_are_administrators"' <"$TMP")")"
 
 	# User
-	USER[ID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","from","id"\]/ s/.*\][ \t]//p' <"$TMP" )"
-	USER[FIRST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","from","first_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	USER[LAST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","from","last_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	USER[USERNAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","from","username"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
+	USER[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","from","id"' <"$TMP" )"
+	USER[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","from","first_name"' <"$TMP")")"
+	USER[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","from","last_name"' <"$TMP")")"
+	USER[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","from","username"' <"$TMP")")"
 
 	# in reply to message from
-	REPLYTO[UID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","id"\]/ s/.*\][ \t]//p' <"$TMP" )"
+	REPLYTO[UID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","id"' <"$TMP" )"
 	if [ "${REPLYTO[UID]}" != "" ]; then
-	   REPLYTO[0]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","reply_to_message","text"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	   REPLYTO[ID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","reply_to_message","message_id"\/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	   REPLYTO[FIRST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","first_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	   REPLYTO[LAST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","last_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	   REPLYTO[USERNAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","reply_to_message","from","username"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
+	   REPLYTO[0]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","text"' <"$TMP")")"
+	   REPLYTO[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","reply_to_message","message_id"' <"$TMP")"
+	   REPLYTO[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","first_name"' <"$TMP")")"
+	   REPLYTO[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","last_name"' <"$TMP")")"
+	   REPLYTO[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","username"' <"$TMP")")"
 	fi
 
 	# forwarded message from
-	FORWARD[UID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","forward_from","id"\]/ s/.*\][ \t]//p' <"$TMP" )"
+	FORWARD[UID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","forward_from","id"' <"$TMP" )"
 	if [ "${FORWARD[UID]}" != "" ]; then
 	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
-	   FORWARD[FIRST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","forward_from","first_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	   FORWARD[LAST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","forward_from","last_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	   FORWARD[USERNAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","forward_from","username"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
+	   FORWARD[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","forward_from","first_name"' <"$TMP")")"
+	   FORWARD[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","forward_from","last_name"' <"$TMP")")"
+	   FORWARD[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","forward_from","username"' <"$TMP")")"
 	fi
 
 	# Audio
-	URLS[AUDIO]="$(get_file "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","audio","file_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")")"
+	URLS[AUDIO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","audio","file_id"' <"$TMP")")")"
 	# Document
-	URLS[DOCUMENT]="$(get_file "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","document","file_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")")"
+	URLS[DOCUMENT]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","document","file_id"' <"$TMP")")")"
 	# Photo
-	URLS[PHOTO]="$(get_file "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","photo",.*,"file_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")")"
+	URLS[PHOTO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","photo",.*,"file_id"' <"$TMP")")")"
 	# Sticker
-	URLS[STICKER]="$(get_file "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","sticker","file_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")")"
+	URLS[STICKER]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","sticker","file_id"' <"$TMP")")")"
 	# Video
-	URLS[VIDEO]="$(get_file "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","video","file_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")")"
+	URLS[VIDEO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","video","file_id"' <"$TMP")")")"
 	# Voice
-	URLS[VOICE]="$(get_file "$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","voice","file_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")")"
+	URLS[VOICE]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","voice","file_id"' <"$TMP")")")"
 
 	# Contact
-	CONTACT[NUMBER]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","contact","phone_number"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CONTACT[FIRST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","contact","first_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CONTACT[LAST_NAME]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","contact","last_name"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	CONTACT[USER_ID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","contact","user_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
+	CONTACT[NUMBER]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","phone_number"' <"$TMP")")"
+	CONTACT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","first_name"' <"$TMP")")"
+	CONTACT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","last_name"' <"$TMP")")"
+	CONTACT[USER_ID]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","user_id"' <"$TMP")")"
 
 	# Caption
-	CAPTION="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","caption"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
+	CAPTION="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","caption"' <"$TMP")")"
 
 	# Location
-	LOCATION[LONGITUDE]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","location","longitude"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
-	LOCATION[LATITUDE]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","location","latitude"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
+	LOCATION[LONGITUDE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","location","longitude"' <"$TMP")")"
+	LOCATION[LATITUDE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","location","latitude"' <"$TMP")")"
 	NAME="$(echo "${URLS[*]}" | sed 's/.*\///g')"
 	rm "$TMP"
 
@@ -570,18 +595,53 @@ process_client() {
 	grep -q "$tmpcount" <"${COUNT}" >/dev/null 2>&1 || echo "$tmpcount">>${COUNT}
 	# To get user count execute bash bashbot.sh count
 }
+# get bot name
+getBotName() {
+	res="$(curl -s "$ME_URL")"
+	echo "$res" | ./JSON.sh/JSON.sh -s | JsonGetString '"result","username"'
+}
+
+ME="$(getBotName)"
+if [ "$ME" = "" ]; then
+	echo -e "${RED}ERROR: Can't connect to Telegram Bot! May be your TOKEN is invalid ...${NC}"
+	exit 1
+fi
+
+# use phyton JSON to decode JSON UFT-8, provide bash implementaion as fallback
+if which python >/dev/null 2>&1 || which phyton2 >/dev/null 2>&1; then
+    JsonDecode() {
+	printf '"%s\\n"' "${1//\"/\\\"}" | python -c 'import json, sys; sys.stdout.write(json.load(sys.stdin).encode("utf-8"))'
+    }
+else
+    # pure bash implementaion, done by KayM (@gnadelwartz)
+    # see https://stackoverflow.com/a/55666449/9381171
+    JsonDecode() {
+        local out="$1"
+        local remain=""
+        local regexp='(.*)\\u[dD]([0-9a-fA-F]{3})\\u[dD]([0-9a-fA-F]{3})(.*)'
+        while [[ "${out}" =~ $regexp ]] ; do
+		# match 2 \udxxx hex values, calculate new U, then split and replace
+                local W1="$(( ( 0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ))"
+                local W2="$(( 0xd${BASH_REMATCH[3]} & 0x3ff ))"
+                U="$(( ( W1 | W2 ) + 0x10000 ))"
+                remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
+                out="${BASH_REMATCH[1]}"
+        done
+        echo -e "${out}${remain}"
+    }
+fi
 
 # source the script with source as param to use functions in other scripts
-while [ "$1" == "startbot" ]; do {
+while [ "$1" = "startbot" ]; do {
 
 	UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./JSON.sh/JSON.sh)"
 
 	# Offset
-	OFFSET="$(echo "$UPDATE" | grep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
+	OFFSET="$(echo "$UPDATE" | JsonGetValue '"result",[0-9]*,"update_id"')"
 	OFFSET=$((OFFSET+1))
 
 	if [ "$OFFSET" != "1" ]; then
-		if [ "$2" == "test" ]; then
+		if [ "$2" = "test" ]; then
 			process_updates "$2"
 		else
 			process_updates "$2" &
@@ -643,7 +703,7 @@ case "$1" in
 		${CLEAR}
 		echo -e "${GREEN}Restart background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
-		    if [ "${FILE}" == "${TMPDIR:-.}/*-back.cmd" ]; then
+		    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes to start.${NC}"; break
 		    else
 			RESTART="$(< "${FILE}")"
@@ -670,14 +730,14 @@ case "$1" in
 		${CLEAR}
 		echo -e "${GREEN}Stopping background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
-		    if [ "${FILE}" == "${TMPDIR:-.}/*-back.cmd" ]; then
+		    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes.${NC}"; break
 		    else
 			REMOVE="$(< "${FILE}")"
 			JOB="${REMOVE#*:}"
 			fifo="back-${JOB%:*}-${ME}_${REMOVE%%:*}"
 			echo "killbackground  ${fifo}"
-			[ "$1" == "killback" ] && rm -f "${FILE}" # remove job
+			[ "$1" = "killback" ] && rm -f "${FILE}" # remove job
 			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}") 2>/dev/null
 		    fi
 		done
@@ -695,7 +755,7 @@ case "$1" in
 		exit
 		;;
 	*)
-		echo -e "${RED}BAD REQUEST${NC}"
+		echo -e "${RED}${ME}: BAD REQUEST${NC}"
 		echo -e "${RED}Available arguments: outproc, count, broadcast, start, suspendback, resumeback, kill, killback, help, attach${NC}"
 		exit 4
 		;;

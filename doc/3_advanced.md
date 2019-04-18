@@ -1,7 +1,9 @@
-
+#### [Home](../README.md)
 ## Advanced Features
+
 ### Access control
-Bashbot offers functions to check if a has Telegram capabilities like chat admin or chat creator:
+Bashbot offers functions to check what Telegram capabilities like chat admin or chat creator the given user has:
+
 ```bash
 # return true if user is admin/owner of the bot
 # -> botadmin is stored in file './botadmin'
@@ -19,10 +21,10 @@ user_is_botadmin "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *
 user_is_admin "${CHAT[ID]}" "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *CHATADMIN*."
 
 ```
-In addtion you can configure individual capabilities for users in the file ```./botacl```:
+In addition you can check individual capabilities of users as defined in the ```./botacl``` file:
 ```bash
-# botacl
-# if a user is not listed here, function 'user_is_allowed' will always return false
+# file: botacl
+# a user not listed here, will return false from 'user_is_allowed'
 #
 # Format:
 # user:ressource:chat
@@ -42,8 +44,7 @@ In addtion you can configure individual capabilities for users in the file ```./
 *:start:*
 *:*:98979695
 ```
-you have to check yourself if a user is allowed to to something by calling function ```user_is_allowed```.
-example to check if a user is allowed to start bot:
+you have to use the function ```user_is_allowed``` to check if a user has the capability to do something. Example check if user has capability to start bot:
 ```bash
 	case "$MESSAGE" in
 		'/start')
@@ -61,7 +62,7 @@ To create interactive chats, write (or edit the question script) a normal bash (
 The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).
 To open up a keyboard in an interactive script, print out the keyboard layout in the following way:
 ```bash
-echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, highly unlikely\""
+echo "Text that will appear in chat? mykeyboardstartshere [ \"Yep, sure\" , \"No, highly unlikely\" ]"
 ```
 Same goes for files:
 ```bash
@@ -77,7 +78,7 @@ echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45 myti
 ```
 You can combine them:
 ```bash
-echo "Text that will appear in chat? mykeyboardstartshere \"Yep, sure\" \"No, highly unlikely\" myfilelocationstartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
+echo "Text that will appear in chat? mykeyboardstartshere [ \"Yep, sure\" , \"No, highly unlikely\" ] myfilelocationstartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
 ```
 Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.
 
@@ -152,6 +153,8 @@ To send stickers through an *inline query*:
 ```bash
 answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 ```
+#### [Prev Advanced Usage](3_advanced.md)
+#### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.52-0-gdb7b19f
+#### $$VERSION$$ v0.60-0-gf5162e2
 
