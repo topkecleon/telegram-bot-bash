@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
+#### $$VERSION$$ 0.70-dev-0-g209c4b3
 
-# magic line to ensure that we're always inside the root of our application,
+# magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
-cd "${0%/*}/.." || exit 1
-
 GIT_DIR=$(git rev-parse --git-dir)
+cd "$GIT_DIR/.." || exit 1
 
 echo -n "Installing hooks..."
 for hook in pre-commit pre-push

@@ -1,4 +1,5 @@
 # list of files to run shellscheck against
+#### $$VERSION$$ 0.70-dev-0-g209c4b3
 # main files
 bashbot.rc
 bashbot.sh
