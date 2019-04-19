@@ -20,11 +20,10 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
 1. Go to the directory you want to install bashbot, e.g.
     * your $HOME directory (install and run with your user-ID)
     * /usr/local if you want to run as service
-2. Clone the repository:
-    ```
-    git clone --recursive https://github.com/topkecleon/telegram-bot-bash
-    ```
-3. Change to directory ```telegram-bot-bash```, run ```./bashbot.sh init``` and follow the instructions. At this stage you are asked for your Bots token given by botfather.
+2. [Download latest release archive from github](https://github.com/topkecleon/telegram-bot-bash/releases) and unpack it. 
+
+   If you want the current version from github, clone the repository: ```git clone https://github.com/topkecleon/telegram-bot-bash```
+3. Change directory to ```telegram-bot-bash``` and run ```./bashbot.sh init```. Now follow the instructions. At one point you are asked for your Bots token given by botfather.
 
 ## Update bashbot
 1. [Download latest update zip from github](https://github.com/topkecleon/telegram-bot-bash/releases)
@@ -99,4 +98,4 @@ Bashbot is not more (in)secure as any other Bot written in any other language, w
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ 0.70-dev-4-g12fd839
+#### $$VERSION$$ 0.70-dev-5-ga97cd69

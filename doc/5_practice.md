@@ -89,9 +89,9 @@ Line 17:
 ```
 As you can see my ```mybotcommands.inc.sh``` contains an useless echo command in 'TEXT=' assigment and can be replaced by ```TEXT="${TEXT}${WORD}"```
 ```bash
-$ shellcheck -x notify
+$ shellcheck -x examples/notify
 OK
-$ shellcheck -x question
+$ shellcheck -x examples/question
 OK
 $ shellcheck -x commands.sh
 OK
@@ -112,5 +112,5 @@ The second warning is about an unused variable, this is true because in our exam
 #### [Prev Best Practice](5_practice.md)
 #### [Next Functions Reference](6_reference.md)
 
-#### $$VERSION$$ 0.70-dev-4-g12fd839
+#### $$VERSION$$ 0.70-dev-5-ga97cd69
 

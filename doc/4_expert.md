@@ -96,13 +96,13 @@ To change back the environment to your user-ID run ```sudo ./bashbot.sh init``` 
 To use bashbot as a system servive include a working ```bashbot.rc``` in your init system (systemd, /etc/init.d).
 
 ### Scedule bashbot from Cron
-An example crontab is provided in ```bashbot.cron```.
+An example crontab is provided in ```examples/bashbot.cron```.
 
 - If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username ```nobody```.
-- if you run bashbot as an other user or a system service edit ```bashbot.cron``` to fit your needs and replace username```nobody``` with the username you want to run bashbot. copy the modified file to ```/etc/cron.d/bashbot```
+- if you run bashbot as an other user or a system service edit ```examples/bashbot.cron``` to fit your needs and replace username```nobody``` with the username you want to run bashbot. copy the modified file to ```/etc/cron.d/bashbot```
 
 #### [Prev Expert Use](4_expert.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ 0.70-dev-4-g12fd839
+#### $$VERSION$$ 0.70-dev-5-ga97cd69
 

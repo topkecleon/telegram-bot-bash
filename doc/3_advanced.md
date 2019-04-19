@@ -58,7 +58,7 @@ you have to use the function ```user_is_allowed``` to check if a user has the ca
 ```
 
 ### Interactive Chats
-To create interactive chats, write (or edit the question script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.
+To create interactive chats, write (or edit the exmaples/question.sh script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.
 The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).
 To open up a keyboard in an interactive script, print out the keyboard layout in the following way:
 ```bash
@@ -90,9 +90,9 @@ Note: Interactive Chats run independent from main bot and continue running until
 
 ### Background Jobs
 
-A background job is similar to an interactive chat, but runs in the background and does only output massages instead of processing input from the user. In contrast to interactive chats it's possible to run multiple background jobs. To create a background job write a script or edit the notify script and use the funtion ```background``` to start it:
+A background job is similar to an interactive chat, but runs in the background and does only output massages instead of processing input from the user. In contrast to interactive chats it's possible to run multiple background jobs. To create a background job write a script or edit the examples/notify.sh script and use the funtion ```background``` to start it:
 ```bash
-background "./notify" "jobname"
+background "examples/notify.sh" "jobname"
 ```
 All output of the script will be sent to the user or chat. To stop a background job use:
 ```bash
@@ -156,5 +156,5 @@ answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 #### [Prev Advanced Usage](3_advanced.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ 0.70-dev-4-g12fd839
+#### $$VERSION$$ 0.70-dev-5-ga97cd69
 

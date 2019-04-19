@@ -216,11 +216,11 @@ fi
 ##### startproc
 ```startproc``` starts a script (or C or python program etc.) running in parallel to your Bot. The text that the script outputs is sent to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
 
-*usage:* startproc "./script"
+*usage:* startproc "script"
 
 *example:* 
 ```bash
-startproc './calc'
+startproc 'examples/calc.sh'
 ```
 
 ##### checkproc
@@ -232,7 +232,7 @@ Return true (0) if an interactive script active in the given chat.
 ```bash
 checkproc 
 if [ "$res" -gt 0 ] ; then
-  startproc "./calc"
+  startproc "examples/calc.sh"
 else
    send_normal_message "${CHAT[ID]}" "Calc already running ..."
 fi
@@ -258,11 +258,11 @@ fi
 
 In contrast to interactive chats, background jobs do not recieve user input and can run forever. In addition you can suspend and restart running jobs, e.g. after reboot.
 
-*usage:* background "./script" "jobname"
+*usage:* background "script" "jobname"
 
 *example:* 
 ```bash
-background "./notify" "notify"
+background "examples/notify.sh" "notify"
 ```
 
 ##### checkback
@@ -275,7 +275,7 @@ Return true (0) if an background job is active in the given chat.
 checkback "notify"
 if [ "$res" -gt 0 ] ; then
   send_normal_message "${CHAT[ID]}" "Start notify"
-  background "./notify" "notify"
+  background "examples/notify.sh" "notify"
 else
  send_normal_message "${CHAT[ID]}" "Process notify already running."
 fi
@@ -347,5 +347,5 @@ Send Input from Telegram to waiting Interactive Chat.
 
 #### [Prev Best Practice](5_practice.md)
 
-#### $$VERSION$$ 0.70-dev-4-g12fd839
+#### $$VERSION$$ 0.70-dev-5-ga97cd69
 
