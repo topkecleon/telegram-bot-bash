@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ 0.70-dev-0-g209c4b3
+#### $$VERSION$$ 0.70-dev-6-g3fb7796
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
 GIT_DIR=$(git rev-parse --git-dir)
 cd "$GIT_DIR/.." || exit 1
 
-HOOKDIR="dev/hooks"
+export HOOKDIR="dev/hooks"
 
 REMOTEVER="$(git ls-remote -t --refs 2>/dev/null | tail -1 | sed 's/.*\/v//')"
 VERSION="$(git describe --tags | sed -e 's/-.*//' -e 's/v//')"

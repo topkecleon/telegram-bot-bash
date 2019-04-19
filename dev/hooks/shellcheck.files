@@ -1,5 +1,5 @@
 # list of files to run shellscheck against
-#### $$VERSION$$ 0.70-dev-0-g209c4b3
+#### $$VERSION$$ 0.70-dev-6-g3fb7796
 # main files
 bashbot.sh
 commands.sh
@@ -10,5 +10,6 @@ examples/notify
 examples/question
 # dev files
 dev/version.sh
-dev/hooks/install-hooks.sh
+dev/install-hooks.sh
 dev/hooks/pre-commit.sh
+dev/hooks/pre-push.sh

@@ -51,6 +51,7 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Seperate logic from commands
     * Test your Bot with shellcheck
 * [Bashbot function reference](doc/6_reference.md)
+* [Notes for bashbot developers](doc/7_develop.md)
 
 ## Note on Keyboards
 From Version 0.60 on keybord format for ```send_keyboard``` and ```send_message "mykeyboardstartshere ..."``` was changed.
@@ -98,4 +99,4 @@ Bashbot is not more (in)secure as any other Bot written in any other language, w
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ 0.70-dev-5-ga97cd69
+#### $$VERSION$$ 0.70-dev-6-g3fb7796
