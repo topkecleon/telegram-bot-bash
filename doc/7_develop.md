@@ -31,7 +31,37 @@ For a shell script running as a service it's important to be paranoid about quot
 In addition you can run ```dev/hooks/pre-commit.sh``` every time you want to shellcheck all files given in 'dev/shellcheck.files'.
 
 
+## bashbot tests
+Starting with version 0.70 bashbot has a test suite. To start testsuite run ```test/ALL-tests.sh```. ALL-tests.sh will only return 'SUCCESS' if all tests pass.
+
+### creating new tests
+To create a new test create a new bash script named ```p-name-test.sh```, where p is pass 'a-z' and name the name of your test.
+All tests with the same pass are performed together.
+
+Tests with no dependency to other tests will run in pass 'a', tests which need an initialized bahsbot environment must run in pass 'c' or later. 
+If '$1' is present the script is started from 'ALL-tests.sh' and the script runs in a temporary test environment in directory '$1'.
+The temporary test environment is created when 'ALL-tests.sh' starts and deleted after all tests are finished.
+
+Example test
+```bash
+
+#!/usr/bin/env bash
+# file: z-bashbot-test.sh
+
+# this test should always pass :-)
+echo "Running test if bashbot.sh exists"
+echo "................................."
+
+if [ -f "bashbot.sh" ]; then
+	echo "bashbot.sh OK!"
+	exit 0
+else
+	echo "bashbot.sh missing!"
+	exit 1
+fi
+```
+
 #### [Prev Function Reference](6_function.md)
 
-#### $$VERSION$$ v0.61-2-gfd4dd8c
+#### $$VERSION$$ 0.70-dev-11-g41b8e69
 

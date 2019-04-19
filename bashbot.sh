@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.61-0-g3b17bc2
+#### $$VERSION$$ 0.70-dev-11-g41b8e69
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -44,9 +44,9 @@ if [ ! -w "." ]; then
 	ls -ld .
 fi
 
-TOKEN="./token"
-if [ ! -f "${TOKEN}" ]; then
-   if [ "${CLEAR}" = "" ]; then
+TOKENFILE="./token"
+if [ ! -f "${TOKENFILE}" ]; then
+   if [ "${CLEAR}" = "" ] && [ "$1" != "init" ]; then
 	echo "Running headless, run ${SCRIPT} init first!"
 	exit 2 
    else
@@ -54,13 +54,13 @@ if [ ! -f "${TOKEN}" ]; then
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NC}"
 	read -r token
-	echo "${token}" > "${TOKEN}"
+	echo "${token}" > "${TOKENFILE}"
    fi
 fi
 
 if [ ! -f "JSON.sh/JSON.sh" ]; then
-	echo "You did not clone recursively! Downloading JSON.sh..."
-	git clone http://github.com/dominictarr/JSON.sh
+	echo "Seems to be first run, Downloading JSON.sh..."
+	git clone https://github.com/dominictarr/JSON.sh/ 2>&1
 	echo "JSON.sh has been downloaded. Proceeding."
 fi
 
@@ -603,8 +603,12 @@ getBotName() {
 
 ME="$(getBotName)"
 if [ "$ME" = "" ]; then
+   if [ "$(cat "${TOKENFILE}")" = "bashbottestscript" ]; then
+	ME="bashbottestscript"
+   else
 	echo -e "${RED}ERROR: Can't connect to Telegram Bot! May be your TOKEN is invalid ...${NC}"
 	exit 1
+   fi
 fi
 
 # use phyton JSON to decode JSON UFT-8, provide bash implementaion as fallback
@@ -687,14 +691,13 @@ case "$1" in
 			echo -e "${RED}User \"$TOUSER\" not found!${NC}"
 			exit 3
 		else
-			echo "Adjusting user in bashbot.rc ..."
+			echo "Adjusting user \"${TOUSER}\" files and permissions ..."
 			sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' bashbot.rc
-			echo "Adjusting Owner and Permissions ..."
 			chown -R "$TOUSER" . ./*
 			chmod 711 .
 			chmod -R a-w ./*
 			chmod -R u+w "${COUNT}" "${TMPDIR}" "${BOTADMIN}" ./*.log 2>/dev/null
-			chmod -R o-r,o-w "${COUNT}" "${TMPDIR}" "${TOKEN}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
+			chmod -R o-r,o-w "${COUNT}" "${TMPDIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
 			ls -la
 			exit			
 		fi
