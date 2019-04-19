@@ -28,10 +28,10 @@ If you actived git hooks in Setup step 6, 'version.sh' updates the version name 
 
 For a shell script running as a service it's important to be paranoid about quoting, globbing and other common problems. So it's a must to run shellchek on all shell scripts before you commit a change. this is automated by a git hook activated in Setup step 6.
 
-In addition you can run ```dev/hooks/pre-commit.sh``` every time you want to shellcheck all files given in 'dev/hooks/shellcheck.files'.
+In addition you can run ```dev/hooks/pre-commit.sh``` every time you want to shellcheck all files given in 'dev/shellcheck.files'.
 
 
 #### [Prev Function Reference](6_function.md)
 
-#### $$VERSION$$ v0.61-0-g3b17bc2
+#### $$VERSION$$ v0.61-2-gfd4dd8c
 

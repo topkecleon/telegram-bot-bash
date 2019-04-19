@@ -1,13 +1,13 @@
 # list of files to run shellscheck against
-#### $$VERSION$$ v0.61-0-g3b17bc2
+#### $$VERSION$$ v0.61-2-gfd4dd8c
 # main files
 bashbot.sh
 commands.sh
 bashbot.rc
 # example files
-examples/calc
-examples/notify
-examples/question
+examples/calc.sh
+examples/notify.sh
+examples/question.sh
 # dev files
 dev/version.sh
 dev/install-hooks.sh
