@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ 0.70-dev-6-g3fb7796
+#### $$VERSION$$ v0.61-0-g3b17bc2
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
