@@ -641,7 +641,7 @@ while [ "$1" = "startbot" ]; do {
 	UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./JSON.sh/JSON.sh)"
 
 	# Offset
-	OFFSET="$(echo "$UPDATE" | JsonGetValue '"result",[0-9]*,"update_id"')"
+	OFFSET="$(echo "$UPDATE" | grep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
 	OFFSET=$((OFFSET+1))
 
 	if [ "$OFFSET" != "1" ]; then
