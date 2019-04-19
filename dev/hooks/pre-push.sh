@@ -5,6 +5,9 @@
 # no matter from which directory we'll run script
 GIT_DIR=$(git rev-parse --git-dir)
 cd "$GIT_DIR/.." || exit 1
+
+HOOKDIR="dev/hooks"
+
 REMOTEVER="$(git ls-remote -t --refs 2>/dev/null | tail -1 | sed 's/.*\/v//')"
 VERSION="$(git describe --tags | sed -e 's/-.*//' -e 's/v//')"
 
@@ -22,7 +25,7 @@ unset IFS; set -f
 # LOCAL version must greater than latest REMOTE release version
 if (( $(echo "${VERSION} > ${REMOTEVER}" | bc -l) )); then
 	# update version in bashbot files on push
-	./version
+	dev/version.sh 2>/dev/null
 else
 	echo "Error: local version ${VERSION} must be greater than latest release version."
         echo "use \"git tag ...\" to create a local version greater than ${REMOTEVER}"

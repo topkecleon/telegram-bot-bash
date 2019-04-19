@@ -1,0 +1,14 @@
+# list of files to run shellscheck against
+#### $$VERSION$$ 0.70-dev-0-g209c4b3
+# main files
+bashbot.sh
+commands.sh
+bashbot.rc
+# example files
+examples/calc
+examples/notify
+examples/question
+# dev files
+dev/version.sh
+dev/hooks/install-hooks.sh
+dev/hooks/pre-commit.sh

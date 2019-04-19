@@ -4,7 +4,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.70-dev-2-gebd9e6f
+#### $$VERSION$$ 0.70-dev-4-g12fd839
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -100,7 +100,7 @@ else
 		'/question')
 			checkproc 
 			if [ "$res" -gt 0 ] ; then
-				startproc "./question"
+				startproc "example/question"
 			else
 				send_normal_message "${CHAT[ID]}" "$MESSAGE already running ..."
 			fi
@@ -109,7 +109,7 @@ else
 		'/run-notify') 
 			myback="notify"; checkback "$myback"
 			if [ "$res" -gt 0 ] ; then
-				background "./notify 60" "$myback" # notify every 60 seconds
+				background "example/notify 60" "$myback" # notify every 60 seconds
 			else
 				send_normal_message "${CHAT[ID]}" "Background command $myback already running ..."
 			fi

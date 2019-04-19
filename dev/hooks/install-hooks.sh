@@ -8,13 +8,15 @@
 GIT_DIR=$(git rev-parse --git-dir)
 cd "$GIT_DIR/.." || exit 1
 
+HOOKDIR="dev/hooks"
+
 echo -n "Installing hooks..."
 for hook in pre-commit pre-push
 do
-   rm -f "$GIT_DIR/hooks/${hook}"
-   if [ -f "hooks/${hook}.sh" ]; then
+   rm -f ".git/hooks/${hook}"
+   if [ -f "${HOOKDIR}/${hook}.sh" ]; then
 	echo -n " $hook"
-	ln -s "../../hooks/${hook}.sh" "$GIT_DIR/hooks/${hook}"
+	ln -s "../../${HOOKDIR}/${hook}.sh" "${GIT_DIR}/hooks/${hook}"
    fi
 done
 echo " Done!"

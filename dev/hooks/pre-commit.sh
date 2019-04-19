@@ -6,6 +6,8 @@
 GIT_DIR=$(git rev-parse --git-dir)
 cd "$GIT_DIR/.." || exit 1
 
+HOOKDIR="dev/hooks"
+
 echo "Running pre-commit hook"
 
 # if any command inside script returns error, exit and return that error 
@@ -26,7 +28,7 @@ else
 fi
 
 # run shellcheck before commit
-FILES=$(sed '/^#/d' <"hooks/shellcheck.files")
+FILES=$(sed '/^#/d' <"${HOOKDIR}/shellcheck.files")
 if [ "$FILES" != "" ]; then
 	# shellcheck disable=SC2086
 	shellcheck -x ${FILES} || exit 1
