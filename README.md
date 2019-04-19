@@ -20,11 +20,13 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
 1. Go to the directory you want to install bashbot, e.g.
     * your $HOME directory (install and run with your user-ID)
     * /usr/local if you want to run as service
-2. Clone the repository:
+2. [Download latest release](https://github.com/topkecleon/telegram-bot-bash/releases)  archive from github and extract all files. 
+
+    As an alternative you can clone the github repository to get the latest, but possible unstable improvements.
     ```
-    git clone --recursive https://github.com/topkecleon/telegram-bot-bash
+    git clone https://github.com/topkecleon/telegram-bot-bash
     ```
-3. Change to directory ```telegram-bot-bash```, run ```./bashbot.sh init``` and follow the instructions. At this stage you are asked for your Bots token given by botfather.
+3. Go to directory ```telegram-bot-bash```, run ```./bashbot.sh init``` and follow the instructions. At this point you are asked for your Bots token given by botfather.
 
 ## Update bashbot
 1. [Download latest update zip from github](https://github.com/topkecleon/telegram-bot-bash/releases)
@@ -52,6 +54,7 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Seperate logic from commands
     * Test your Bot with shellcheck
 * [Bashbot function reference](doc/6_reference.md)
+* [Notes for bashbot developers](doc/7_develop.md)
 
 ## Note on Keyboards
 From Version 0.60 on keybord format for ```send_keyboard``` and ```send_message "mykeyboardstartshere ..."``` was changed.
@@ -99,4 +102,4 @@ Bashbot is not more (in)secure as any other Bot written in any other language, w
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.60-0-gf5162e2
+#### $$VERSION$$ v0.61-0-g3b17bc2

@@ -17,8 +17,8 @@ Prerequisites
 Depends on http://github.com/tmux/tmux[tmux]. Uses
 http://github.com/dominictarr/JSON.sh[JSON.sh].
 
-For full UTF-8 support you need
-link:doc/4_expert.md#UTF-8-Support[python on your system] (optional).
+Most complete link:doc/4_expert.md#Bashbot-UTF-8-Support[UTF-8 support
+for bashbot] is availible if phyton is installed (optional).
 
 Bashbot https://github.com/topkecleon/telegram-bot-bash[Documentation]
 and https://github.com/topkecleon/telegram-bot-bash/releases[Downloads]
@@ -30,13 +30,17 @@ Install bashbot
 1.  Go to the directory you want to install bashbot, e.g.
 * your $HOME directory (install and run with your user-ID)
 * /usr/local if you want to run as service
-2.  Clone the repository:
+2.  https://github.com/topkecleon/telegram-bot-bash/releases[Download
+latest release] archive from github and extract all files.
++
+As an alternative you can clone the github repository to get the latest,
+but possible unstable improvements.
 +
 ....
-git clone --recursive https://github.com/topkecleon/telegram-bot-bash
+git clone https://github.com/topkecleon/telegram-bot-bash
 ....
-3.  Change to directory `telegram-bot-bash`, run `./bashbot.sh init` and
-follow the instructions. At this stage you are asked for your Bots token
+3.  Go to directory `telegram-bot-bash`, run `./bashbot.sh init` and
+follow the instructions. At this point you are asked for your Bots token
 given by botfather.
 
 Update bashbot
@@ -71,6 +75,7 @@ Documentation
 ** Seperate logic from commands
 ** Test your Bot with shellcheck
 * link:doc/6_reference.md[Bashbot function reference]
+* link:doc/7_develop.md[Notes for bashbot developers]
 
 Note on Keyboards
 ~~~~~~~~~~~~~~~~~
@@ -161,5 +166,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.60-0-gf5162e2
+latexmath:[\[VERSION\]] v0.61-0-g3b17bc2
 ++++++++++++++++++++++++++++++++++++++++
