@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ 0.70-dev-15-g074a103
-
-# magic to ensure that we're always inside the root of our application,
-# no matter from which directory we'll run script
-GIT_DIR=$(git rev-parse --git-dir)
-cd "$GIT_DIR/.." || exit 1
+#### $$VERSION$$ 0.70-dev-16-g2eac362
 
 TOKENFILE="./token"
 TESTTOKEN="bashbottestscript"
@@ -47,3 +42,10 @@ else
 	echo "Token not correct or not written!"
 	exit 1
 fi
+
+echo "Test Sourcing of bashbot.sh ..."
+trap exit 1 EXIT
+
+# shellcheck source=./bashbot.sh
+source "$1/bashbot.sh" source
+trap '' EXIT

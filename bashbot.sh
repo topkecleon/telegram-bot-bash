@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.70-dev-11-g41b8e69
+#### $$VERSION$$ 0.70-dev-16-g2eac362
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -34,7 +34,7 @@ SCRIPT="./$(basename "$0")"
 SCRIPTDIR="$(dirname "$0")"
 RUNUSER="${USER}" # USER is overwritten by bashbot array, $USER may not work later on...
 
-if ! cd "${SCRIPTDIR}" ; then
+if [ "$1" != "source" ] && ! cd "${SCRIPTDIR}" ; then
 	echo -e "${RED}ERROR: Can't change to ${SCRIPTDIR} ...${NC}"
 	exit 1
 fi
@@ -95,28 +95,31 @@ elif [ ! -w "${TMPDIR}" ]; then
 	exit 2
 fi
 
-COUNT="./count"
-if [ ! -f "${COUNT}" ]; then
-	touch "${COUNT}"
-elif [ ! -w "${COUNT}" ]; then
+COUNTFILE="./count"
+if [ ! -f "${COUNTFILE}" ]; then
+	touch "${COUNTFILE}"
+elif [ ! -w "${COUNTFILE}" ]; then
 	${CLEAR}
-	echo -e "${RED}ERROR: Can't write to ${COUNT}!.${NC}"
-	ls -l "${COUNT}"
+	echo -e "${RED}ERROR: Can't write to ${COUNTFILE}!.${NC}"
+	ls -l "${COUNTFILE}"
 	exit 2
 fi
 
 COMMANDS="./commands.sh"
-if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
-	${CLEAR}
-	echo -e "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NC}"
-	exit 3
-	ls -l "${COMMANDS}"
+if [ "$1" != "source" ]; then
+	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
+		${CLEAR}
+		echo -e "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NC}"
+		ls -l "${COMMANDS}"
+		exit 3
+	fi
+	# shellcheck source=./commands.sh
+	source "${COMMANDS}" "source"
 fi
 
-# shellcheck source=./commands.sh
-source "${COMMANDS}" "source"
 
-URL='https://api.telegram.org/bot'$TOKEN
+BOTTOKEN="$(cat "${TOKENFILE}")"
+URL='https://api.telegram.org/bot'$BOTTOKEN
 
 
 MSG_URL=$URL'/sendMessage'
@@ -139,7 +142,7 @@ DELETE_URL=$URL'/deleteMessage'
 GETMEMBER_URL=$URL'/getChatMember'
 
 
-FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
+FILE_URL='https://api.telegram.org/file/bot'$BOTTOKEN'/'
 UPD_URL=$URL'/getUpdates?offset='
 GET_URL=$URL'/getFile'
 OFFSET=0
@@ -592,7 +595,7 @@ process_client() {
 	source commands.sh
 
 	tmpcount="COUNT${CHAT[ID]}"
-	grep -q "$tmpcount" <"${COUNT}" >/dev/null 2>&1 || echo "$tmpcount">>${COUNT}
+	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || echo "$tmpcount">>${COUNTFILE}
 	# To get user count execute bash bashbot.sh count
 }
 # get bot name
@@ -636,7 +639,10 @@ else
 fi
 
 # source the script with source as param to use functions in other scripts
-while [ "$1" = "startbot" ]; do {
+# do not execute if read from other scripts
+
+if [ "$1" != "source" ]; then
+  while [ "$1" = "startbot" ]; do {
 
 	UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./JSON.sh/JSON.sh)"
 
@@ -652,10 +658,10 @@ while [ "$1" = "startbot" ]; do {
 		fi
 	fi
 
-}; done
+  }; done
 
 
-case "$1" in
+  case "$1" in
 	"outproc")
 		until [ "$line" = "imprettydarnsuredatdisisdaendofdacmd" ];do
 			line=""
@@ -665,15 +671,15 @@ case "$1" in
 		rm -f -r "${TMPDIR:-.}/$3"
 		;;
 	"count")
-		echo "A total of $(wc -l <"${COUNT}") users used me."
+		echo "A total of $(wc -l <"${COUNTFILE}") users used me."
 		exit
 		;;
 	"broadcast")
-		NUMCOUNT="$(wc -l <"${COUNT}")"
+		NUMCOUNT="$(wc -l <"${COUNTFILE}")"
 		echo "Sending the broadcast $* to $NUMCOUNT users."
 		[ "$NUMCOUNT" -gt "300" ] && sleep="sleep 0.5"
 		shift
-		while read -r f; do send_message "${f//COUNT}" "$*"; $sleep; done <"${COUNT}"
+		while read -r f; do send_message "${f//COUNT}" "$*"; $sleep; done <"${COUNTFILE}"
 		;;
 	"start")
 		${CLEAR}
@@ -696,8 +702,8 @@ case "$1" in
 			chown -R "$TOUSER" . ./*
 			chmod 711 .
 			chmod -R a-w ./*
-			chmod -R u+w "${COUNT}" "${TMPDIR}" "${BOTADMIN}" ./*.log 2>/dev/null
-			chmod -R o-r,o-w "${COUNT}" "${TMPDIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
+			chmod -R u+w "${COUNTFILE}" "${TMPDIR}" "${BOTADMIN}" ./*.log 2>/dev/null
+			chmod -R o-r,o-w "${COUNTFILE}" "${TMPDIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
 			ls -la
 			exit			
 		fi
@@ -754,19 +760,19 @@ case "$1" in
 		tmux attach -t "$ME"
 		;;
 	"source")
-		echo "OK"
-		exit
+		# this should never happen
+		echo "OK" 
 		;;
 	*)
 		echo -e "${RED}${ME}: BAD REQUEST${NC}"
 		echo -e "${RED}Available arguments: outproc, count, broadcast, start, suspendback, resumeback, kill, killback, help, attach${NC}"
 		exit 4
 		;;
-esac
+  esac
 
-# warn if root
-if [[ "$(id -u)" -eq "0" ]] ; then
+  # warn if root
+  if [[ "$(id -u)" -eq "0" ]] ; then
 	echo -e "\\n${ORANGE}WARNING: ${SCRIPT} was started as ROOT (UID 0)!${NC}"
 	echo -e "${ORANGE}You are at HIGH RISK when processing user input with root privilegs!${NC}"
-fi
-
+  fi
+fi # end source
