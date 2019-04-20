@@ -102,4 +102,4 @@ Bashbot is not more (in)secure as any other Bot written in any other language, w
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ 0.70-dev-16-g2eac362
+#### $$VERSION$$ 0.70-dev-18-g7512681

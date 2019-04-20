@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ 0.70-dev-17-gb1aef7d
+#### $$VERSION$$ 0.70-dev-18-g7512681
 
-TOKENFILE="./token"
-TESTTOKEN="bashbottestscript"
 TESTME="$(basename "$0")"
-NEWFILES="${TOKENFILE} botacl count botadmin JSON.sh/JSON.sh  tmp-bot-bash"
+DIRME="$(pwd)"
+TESTDIR="$1"
+
+LOGFILE="${TESTDIR}/${TESTME}.log"
+REFDIR="${TESTME%.sh}"
+
+TOKENFILE="token"
+TESTTOKEN="bashbottestscript"
+TESTFILES="${TOKENFILE} botacl count botadmin"
 
 set -e
 
@@ -12,40 +18,39 @@ set -e
 echo "Running bashbot init"
 echo "............................" 
 # change to test env
-[ "$1" = "" ] && echo "not called from testsuite, exit" && exit
-cd "$1" || exit 1
+[ "${TESTDIR}" = "" ] && echo "not called from testsuite, exit" && exit
 
 
 unset IFS; set -f
 
 # run bashbot first time with init
 export TERM=""
-"${1}/bashbot.sh" init >"${TESTME}.log"  <<EOF
+"${TESTDIR}/bashbot.sh" init >"${LOGFILE}"  <<EOF
 $TESTTOKEN
 nobody
 botadmin
 EOF
 echo "OK"
 
-# files must exsit after init
+# compare files with refrence files
 echo "Check check new files ..."
-for file in ${NEWFILES}
+for file in ${TESTFILES}
 do
-	ls -d "${file}" >/dev/null
+	ls -d "${TESTDIR}/${file}" >>"${LOGFILE}"
+	diff -q "${TESTDIR}/${file}" "${REFDIR}/${file}" >>"${LOGFILE}"
+	
 done
 echo "OK"
 
-echo "Check value of token ..."
-if [ "${TESTTOKEN}" = "$(cat "${TOKENFILE}")" ]; then
-	echo "OK"
-else
-	echo "Token not correct or not written!"
-	exit 1
-fi
-
 echo "Test Sourcing of bashbot.sh ..."
 trap exit 1 EXIT
+cd "${TESTDIR}" || exit
 
 # shellcheck source=./bashbot.sh
-source "$1/bashbot.sh" source
+source "${TESTDIR}/bashbot.sh" source
 trap '' EXIT
+cd "${DIRME}" || exit 1
+
+echo "Test bashbot.sh count"
+cp "${REFDIR}/count.test" "${TESTDIR}/count"
+"${TESTDIR}/bashbot.sh" count

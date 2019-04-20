@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ 0.70-dev-17-gb1aef7d
+#### $$VERSION$$ 0.70-dev-18-g7512681
 
-dev/hooks/pre-commit.sh
+../dev/hooks/pre-commit.sh
 
