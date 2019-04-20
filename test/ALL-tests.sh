@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
-#### $$VERSION$$ 0.70-dev-16-g2eac362
+#### $$VERSION$$ 0.70-dev-17-gb1aef7d
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -12,7 +12,7 @@ cd "${GIT_DIR}/.." || exit 1
 TESTENV="/tmp/bashbot.test$$"
 cp -r . "${TESTENV}"
 
-cd "${TESTENV}" || exit 1
+#cd "${TESTENV}" || exit 1
 
 #set -e
 fail=0
@@ -46,6 +46,6 @@ else
   exitcode=1
 fi
 
-rm -rf "${TESTENV}"
+#rm -rf "${TESTENV}"
 echo "${passed} / ${tests}"
 exit ${exitcode}

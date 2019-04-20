@@ -38,8 +38,8 @@ Starting with version 0.70 bashbot has a test suite. To start testsuite run ```t
 To create a new test create a new bash script named ```p-name-test.sh```, where p is pass 'a-z' and name the name of your test.
 All tests with the same pass are performed together.
 
-Tests with no dependency to other tests will run in pass 'a', tests which need an initialized bahsbot environment must run in pass 'c' or later. 
-If '$1' is present the script is started from 'ALL-tests.sh' and the script runs in a temporary test environment in directory '$1'.
+Tests with no dependency to other tests will run in pass 'a', tests which need an initialized bahsbot environment must run in pass 'd' or later. 
+If '$1' is present the script is started from 'ALL-tests.sh' and a temporary test environment is setup in directory '$1'.
 The temporary test environment is created when 'ALL-tests.sh' starts and deleted after all tests are finished.
 
 Example test
@@ -63,5 +63,5 @@ fi
 
 #### [Prev Function Reference](6_function.md)
 
-#### $$VERSION$$ 0.70-dev-16-g2eac362
+#### $$VERSION$$ 0.70-dev-17-gb1aef7d
 
