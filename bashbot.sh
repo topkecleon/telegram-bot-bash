@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.70-dev-18-g7512681
+#### $$VERSION$$ 0.70-dev-19-g3183419
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -82,7 +82,7 @@ fi
 BOTACL="./botacl"
 if [ ! -f "${BOTACL}" ]; then
 	echo -e "${ORANGE}Create empty ${BOTACL} file.${NC}"
-	touch "${BOTACL}"
+	echo "" >"${BOTACL}"
 fi
 
 TMPDIR="./tmp-bot-bash"
@@ -97,7 +97,7 @@ fi
 
 COUNTFILE="./count"
 if [ ! -f "${COUNTFILE}" ]; then
-	touch "${COUNTFILE}"
+	echo "" >"${COUNTFILE}"
 elif [ ! -w "${COUNTFILE}" ]; then
 	${CLEAR}
 	echo -e "${RED}ERROR: Can't write to ${COUNTFILE}!.${NC}"

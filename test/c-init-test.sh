@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ 0.70-dev-18-g7512681
+#### $$VERSION$$ 0.70-dev-19-g3183419
 
 TESTME="$(basename "$0")"
 DIRME="$(pwd)"
@@ -33,13 +33,15 @@ EOF
 echo "OK"
 
 # compare files with refrence files
-echo "Check check new files ..."
+echo "Check new files after init ..."
+export FAIL="0"
 for file in ${TESTFILES}
 do
 	ls -d "${TESTDIR}/${file}" >>"${LOGFILE}"
-	diff -q "${TESTDIR}/${file}" "${REFDIR}/${file}" >>"${LOGFILE}"
+	if ! diff -q "${TESTDIR}/${file}" "${REFDIR}/${file}" >>"${LOGFILE}"; then echo "  ERROR: Fail diff ${file}!"; FAIL="1"; fi
 	
 done
+[ "${FAIL}" != "0" ] && exit "${FAIL}"
 echo "OK"
 
 echo "Test Sourcing of bashbot.sh ..."
@@ -54,3 +56,5 @@ cd "${DIRME}" || exit 1
 echo "Test bashbot.sh count"
 cp "${REFDIR}/count.test" "${TESTDIR}/count"
 "${TESTDIR}/bashbot.sh" count
+
+exit 1
