@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.70-dev-23-g48e6f64
+#### $$VERSION$$ 0.70-dev-24-gfbd86c3
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -58,10 +58,12 @@ if [ ! -f "${TOKENFILE}" ]; then
    fi
 fi
 
-if [ ! -f "JSON.sh/JSON.sh" ]; then
-	echo "Seems to be first run, Downloading JSON.sh..."
-	git clone https://github.com/dominictarr/JSON.sh/ 2>&1
-	echo "JSON.sh has been downloaded. Proceeding."
+JSONSHFILE="JSON.sh"
+if [ ! -f "${JSONSHFILE}/${JSONSHFILE}" ]; then
+	echo "Seems to be first run, Downloading ${JSONSHFILE}..."
+	mkdir "${JSONSHFILE}" 2>/dev/null;
+	curl -sL -o "${JSONSHFILE}/${JSONSHFILE}" "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh"
+	chmod +x "${JSONSHFILE}/${JSONSHFILE}" 
 fi
 
 BOTADMIN="./botadmin"
