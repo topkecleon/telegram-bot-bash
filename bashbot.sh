@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.70-dev-22-g26c8523
+#### $$VERSION$$ 0.70-dev-23-g48e6f64
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -391,7 +391,7 @@ remove_keyboard() {
 
 get_file() {
 	[ "$1" = "" ] && return
-	echo "$FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh/JSON.sh -s | grep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)"
+	echo "${FILE_URL}$(curl -s "${GET_URL}" -F "file_id=$1" | ./JSON.sh/JSON.sh -s | grep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)"
 }
 
 send_file() {
@@ -519,18 +519,19 @@ process_client() {
 	process_message "$PROCESS_NUMBER"
 	# Tmux
 	copname="$ME"_"${CHAT[ID]}"
-
 	source commands.sh
-
 	tmpcount="COUNT${CHAT[ID]}"
 	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || echo "$tmpcount">>${COUNTFILE}
 	# To get user count execute bash bashbot.sh count
 }
 JsonGetString() {
-	sed -n -e '/\['"$1"'\]/ s/.*\][ \t]"\(.*\)"$/\1/p'
+	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]"\(.*\)"$/\1/p'
+}
+JsonGetLine() {
+	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\]\][ \t]//p'
 }
 JsonGetValue() {
-	sed -n -e '/\['"$1"'\]/ s/.*\][ \t]//p'
+	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]\([0-9.,]*\).*/\1/p'
 }
 process_message() {
 	local num="$1"
@@ -575,17 +576,17 @@ process_message() {
 	fi
 
 	# Audio
-	URLS[AUDIO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","audio","file_id"' <"$TMP")")")"
+	URLS[AUDIO]="$(get_file "$(JsonGetString '"result",'"${num}"',"message","audio","file_id"' <"$TMP")")"
 	# Document
-	URLS[DOCUMENT]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","document","file_id"' <"$TMP")")")"
+	URLS[DOCUMENT]="$(get_file "$(JsonGetString '"result",'"${num}"',"message","document","file_id"' <"$TMP")")"
 	# Photo
-	URLS[PHOTO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","photo",0,"file_id"' <"$TMP")")")"
+	URLS[PHOTO]="$(get_file "$(JsonGetString '"result",'"${num}"',"message","photo",0,"file_id"' <"$TMP")")"
 	# Sticker
-	URLS[STICKER]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","sticker","file_id"' <"$TMP")")")"
+	URLS[STICKER]="$(get_file "$(JsonGetString '"result",'"${num}"',"message","sticker","file_id"' <"$TMP")")"
 	# Video
-	URLS[VIDEO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","video","file_id"' <"$TMP")")")"
+	URLS[VIDEO]="$(get_file "$(JsonGetString '"result",'"${num}"',"message","video","file_id"' <"$TMP")")"
 	# Voice
-	URLS[VOICE]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","voice","file_id"' <"$TMP")")")"
+	URLS[VOICE]="$(get_file "$(JsonGetString '"result",'"${num}"',"message","voice","file_id"' <"$TMP")")"
 
 	# Contact
 	CONTACT[NUMBER]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","phone_number"' <"$TMP")")"
@@ -600,7 +601,7 @@ process_message() {
 	LOCATION[LONGITUDE]="$(JsonGetValue '"result",'"${num}"',"message","location","longitude"' <"$TMP")"
 	LOCATION[LATITUDE]="$(JsonGetValue '"result",'"${num}"',"message","location","latitude"' <"$TMP")"
 	NAME="$(echo "${URLS[*]}" | sed 's/.*\///g')"
-	#rm "$TMP"
+	rm "$TMP"
 }
 # get bot name
 getBotName() {
@@ -619,7 +620,7 @@ if [ "$ME" = "" ]; then
 fi
 
 # use phyton JSON to decode JSON UFT-8, provide bash implementaion as fallback
-if which python >/dev/null 2>&1 || which phyton2 >/dev/null 2>&1; then
+if [ "${BASHDECODE}" != "yes" ] && which python >/dev/null 2>&1 ; then
     JsonDecode() {
 	printf '"%s\\n"' "${1//\"/\\\"}" | python -c 'import json, sys; sys.stdout.write(json.load(sys.stdin).encode("utf-8"))'
     }

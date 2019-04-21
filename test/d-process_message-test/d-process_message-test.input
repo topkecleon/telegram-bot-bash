@@ -1,6 +1,8 @@
 ["ok"]	true
 ["result",0,"update_id"]	146860800
-["result",0,"message","message_id"]	6541
+["result",0,"message","message_id"]	6541 6541 # this is a cross check for JsonGetValue
+["result",0,"message","text"]	"\ud83d\ude02\ud83d\ude1d\ud83d\udc4c\u263a\u2764\ud83d\ude15\ud83d\ude08#\u20e3\ud83c\udf0f\ud83c\udf89\ud83d\ude4a\ud83d\ude49\u2615\ud83d\ude80\u2708\ud83d\ude82\ud83d\udcaf\u2714\u303d\ud83d\udd1a"
+["result",0,"message","text"]	"Cross check, this second text must be ignored"
 ["result",0,"message","from","id"]	123456789
 ["result",0,"message","from","is_bot"]	false
 ["result",0,"message","from","first_name"]	"Kay"
@@ -11,6 +13,7 @@
 ["result",0,"message","chat","first_name"]	"Test"
 ["result",0,"message","chat","last_name"]	"Bot"
 ["result",0,"message","chat","username"]	"BotTest"
+["result",0,"message","chat","title"]	"BotTestTitle"
 ["result",0,"message","chat","type"]	"private"
 ["result",0,"message","date"]	1555822879
 ["result",0,"message","reply_to_message","message_id"]	6542
@@ -32,7 +35,6 @@
 ["result",0,"message","reply_to_message","entities",1,"offset"]	61
 ["result",0,"message","reply_to_message","entities",1,"length"]	5
 ["result",0,"message","reply_to_message","entities",1,"type"]	"bot_command"
-["result",0,"message","text"]	"\ud83d\ude02\ud83d\ude1d\ud83d\udc4c\u263a\u2764\ud83d\ude15\ud83d\ude08#\u20e3\ud83c\udf0f\ud83c\udf89\ud83d\ude4a\ud83d\ude49\u2615\ud83d\ude80\u2708\ud83d\ude82\ud83d\udcaf\u2714\u303d\ud83d\udd1a"
 ["result",0,"message","forward_from","id"]	123456789
 ["result",0,"message","forward_from","is_bot"]	false
 ["result",0,"message","forward_from","first_name"]	"Kay"
@@ -40,13 +42,20 @@
 ["result",0,"message","forward_from","username"]	"Gnadelwartz"
 ["result",0,"message","forward_from","language_code"]	"de"
 ["result",0,"message","forward_date"]	1555822879
-["result",0,"message","photo",0,"file_id"]	"AgADAgADL6oxG-Gw4EndCWGl2WUfUo1pXw8ABOusSilDGzAYa_gDAAEC"
+["result",0,"message","audio","file_id"]	"audio-AgADAgADL6oxG-Gw4EndCWGl2WUfUo1pXw8ABOusSilDGzAYa"
+["result",0,"message","video","file_id"]	"video-AgADAgADL6oxG-Gw4EndCWGl2WUfUo1pXw8ABOusSilDGzAYa"
+["result",0,"message","document","file_id"]	"document-AgADAgADL6oxG-Gw4EndCWGl2WUfUo1pXw8ABOusSilDGzAYa"
+["result",0,"message","sticker","file_id"]	"sticker-AgADAgADL6oxG-Gw4EndCWGl2WUfUo1pXw8ABOusSilDGzAYa"
+["result",0,"message","sticker","file_id"]	"sticker-AgADAgADL6oxG-Gw4EndCWGl2WUfUo1pXw8ABOusSilDGzAYa"
+["result",0,"message","voice","file_id"]	"voice-AgADAgADL6oxG-Gw4EndCWGl2WUfUo1pXw8ABOusSilDGzAYa"
+
+["result",0,"message","photo",0,"file_id"]	"photo-AgADAgADL6oxG-Gw4EndCWGl2WUfUo1pXw8ABOusSilDGzAYa"
 ["result",0,"message","photo",0,"file_size"]	1468
 ["result",0,"message","photo",0,"width"]	67
 ["result",0,"message","photo",0,"height"]	90
 ["result",0,"message","photo",0]	{"file_id":"AgADAgADL6oxG-Gw4EndCWGl2WUfUo1pXw8ABOusSilDGzAYa_gDAAEC","file_size":1468,"width":67,"height":90}
 ["result",0,"message","photo",1,"file_id"]	"AgADAgADL6oxG-Gw4EndCWGl2WUfUo1pXw8ABOFli9a5TF3rbPgDAAEC"
-["result",0,"message","photo",1,"file_size"]	25125
+["result",0,"message","photo",1,"file_size"]	2512
 ["result",0,"message","photo",1,"width"]	240
 ["result",0,"message","photo",1,"height"]	320
 ["result",0,"message","photo",1]	{"file_id":"AgADAgADL6oxG-Gw4EndCWGl2WUfUo1pXw8ABOFli9a5TF3rbPgDAAEC","file_size":25125,"width":240,"height":320}

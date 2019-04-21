@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
-#### $$VERSION$$ 0.70-dev-22-g26c8523
+#### $$VERSION$$ 0.70-dev-23-g48e6f64
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -19,7 +19,7 @@ tests=0
 passed=0
 #all_tests=${__dirname:}
 #echo PLAN ${#all_tests}
-for test in $(find ./*-test.sh | sort -u) ;
+for test in $(find ./${pass}*-test.sh | sort -u) ;
 do
   [ "${test}" = "test/all-tests.sh" ] && continue
   [ ! -x "${test}" ] && continue

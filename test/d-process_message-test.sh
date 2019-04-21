@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ 0.70-dev-22-g26c8523
+#### $$VERSION$$ 0.70-dev-23-g48e6f64
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -21,13 +21,20 @@ get_file() {
 export UPDATE
 UPDATE="$(cat "${INPUTFILE}")"
 
-set -x
-process_message "0" >>"${LOGFILE}" 2>&1; set +x
+# run process_message with and without phyton
+echo "Check process_message ..."
+for i in 1 2
+do
+	[ "${i}" = "1" ] && ! which python >/dev/null 2>&1 && continue
+	[ "${i}" = "1" ] && echo "  ... JsonDecode Phyton"
+	[ "${i}" = "2" ] && echo "  ... JsonDecode Bash" && export BASHDECODE="yes"
+	set -x
+	{ process_message "0";  set +x; } >>"${LOGFILE}" 2>&1;
+
+	# output processed input
+	print_array "USER" "CHAT" "REPLYTO" "FORWARD" "URLS" "CONTACT" "CAPTION" "LOCATION" "MESSAGE" >"${OUTPUTFILE}"
+	diff -c "${REFFILE}" "${OUTPUTFILE}" || exit 1
+	echo "${SUCCESS}"
+done
+
 cd "${DIRME}" || exit 1
-
-# output processed input
-echo "Diff process_message input and output ..."
-print_array "USER" "CHAT" "REPLYTO" "FORWARD" "URLS" "CONTACT" "CAPTION" "LOCATION" "MESSAGE" >"${OUTPUTFILE}"
-diff -c "${REFFILE}" "${OUTPUTFILE}" || exit 1
-
-echo "${SUCCESS}"
