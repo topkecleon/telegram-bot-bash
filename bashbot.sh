@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.70-dev-24-gfbd86c3
+#### $$VERSION$$ 0.70-dev-25-g0422cb0
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -58,12 +58,12 @@ if [ ! -f "${TOKENFILE}" ]; then
    fi
 fi
 
-JSONSHFILE="JSON.sh"
-if [ ! -f "${JSONSHFILE}/${JSONSHFILE}" ]; then
+JSONSHFILE="JSON.sh/JSON.sh"
+if [ ! -f "${JSONSHFILE}" ]; then
 	echo "Seems to be first run, Downloading ${JSONSHFILE}..."
-	mkdir "${JSONSHFILE}" 2>/dev/null;
-	curl -sL -o "${JSONSHFILE}/${JSONSHFILE}" "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh"
-	chmod +x "${JSONSHFILE}/${JSONSHFILE}" 
+	mkdir "JSON.sh" 2>/dev/null;
+	curl -sL -o "${JSONSHFILE}" "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh"
+	chmod +x "${JSONSHFILE}" 
 fi
 
 BOTADMIN="./botadmin"
@@ -249,7 +249,7 @@ delete_message() {
 
 # usage: status="$(get_chat_member_status "chat" "user")"
 get_chat_member_status() {
-	curl -s "$GETMEMBER_URL" -F "chat_id=$1" -F "user_id=$2" | ./JSON.sh/JSON.sh -s | sed -n -e '/\["result","status"\]/  s/.*\][ \t]"\(.*\)"$/\1/p'
+	curl -s "$GETMEMBER_URL" -F "chat_id=$1" -F "user_id=$2" | "./${JSONSHFILE}" -s -b -n | sed -n -e '/\["result","status"\]/  s/.*\][ \t]"\(.*\)"$/\1/p'
 }
 
 kick_chat_member() {
@@ -393,7 +393,7 @@ remove_keyboard() {
 
 get_file() {
 	[ "$1" = "" ] && return
-	echo "${FILE_URL}$(curl -s "${GET_URL}" -F "file_id=$1" | ./JSON.sh/JSON.sh -s | grep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)"
+	echo "${FILE_URL}$(curl -s "${GET_URL}" -F "file_id=$1" | "./${JSONSHFILE}" -s -b -n | grep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)"
 }
 
 send_file() {
@@ -608,7 +608,7 @@ process_message() {
 # get bot name
 getBotName() {
 	res="$(curl -s "$ME_URL")"
-	echo "$res" | ./JSON.sh/JSON.sh -s | JsonGetString '"result","username"'
+	echo "$res" | "./${JSONSHFILE}" -s -b -n | JsonGetString '"result","username"'
 }
 
 ME="$(getBotName)"
@@ -651,7 +651,7 @@ fi
 if [ "$1" != "source" ]; then
   while [ "$1" = "startbot" ]; do {
 
-	UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./JSON.sh/JSON.sh)"
+	UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./${JSONSHFILE})"
 
 	# Offset
 	OFFSET="$(echo "$UPDATE" | grep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
