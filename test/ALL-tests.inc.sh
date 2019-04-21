@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ 0.70-dev-21-gd4cd756
+#### $$VERSION$$ 0.70-dev-22-g26c8523
 
 # common variables
 export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
@@ -22,6 +22,26 @@ export SUCCESS NOSUCCESS
 SUCCESS="   OK"
 NOSUCCESS="   FAILED!"
 
+# default input, reference and output files
+INPUTFILE="${DIRME}/${REFDIR}/${REFDIR}.input"
+REFFILE="${DIRME}/${REFDIR}/${REFDIR}.result"
+OUTPUTFILE="${TESTDIR}/${REFDIR}.out"
+
+# print arrays in reproducible order
+print_array() {
+  local idx t
+  local arrays=( "${@}" )
+  for idx in "${arrays[@]}"; do
+    declare -n temp="$idx"
+	for t in "${!temp[@]}"; do 
+  		printf "%s:\t%s\t%s\n" "$idx" "$t" "${temp[$t]}"
+	done | sort
+  done | grep -v '^USER:	0'
+}
+
+
+######
+# lets go ...
 echo "Running ${TESTNAME#? } ..."
 echo "............................" 
 [ "${TESTDIR}" = "" ] && echo "${NOSUCCESS} not called from testsuite, exit" && exit 1

@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.70-dev-21-gd4cd756
+#### $$VERSION$$ 0.70-dev-22-g26c8523
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -579,7 +579,7 @@ process_message() {
 	# Document
 	URLS[DOCUMENT]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","document","file_id"' <"$TMP")")")"
 	# Photo
-	URLS[PHOTO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","photo",.*,"file_id"' <"$TMP")")")"
+	URLS[PHOTO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","photo",0,"file_id"' <"$TMP")")")"
 	# Sticker
 	URLS[STICKER]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","sticker","file_id"' <"$TMP")")")"
 	# Video
@@ -597,8 +597,8 @@ process_message() {
 	CAPTION="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","caption"' <"$TMP")")"
 
 	# Location
-	LOCATION[LONGITUDE]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","location","longitude"' <"$TMP")")"
-	LOCATION[LATITUDE]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","location","latitude"' <"$TMP")")"
+	LOCATION[LONGITUDE]="$(JsonGetValue '"result",'"${num}"',"message","location","longitude"' <"$TMP")"
+	LOCATION[LATITUDE]="$(JsonGetValue '"result",'"${num}"',"message","location","latitude"' <"$TMP")"
 	NAME="$(echo "${URLS[*]}" | sed 's/.*\///g')"
 	#rm "$TMP"
 }
