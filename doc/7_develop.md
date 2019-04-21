@@ -34,9 +34,17 @@ In addition you can run ```dev/hooks/pre-commit.sh``` every time you want to she
 ## bashbot tests
 Starting with version 0.70 bashbot has a test suite. To start testsuite run ```test/ALL-tests.sh```. ALL-tests.sh will only return 'SUCCESS' if all tests pass.
 
+### enabling / disabling tests
+
+All tests are placed in the directory  ```test```. To disable a test remove the x flag from the '*-test.sh' test script, to (re)enable
+a test make the script executable again.
+
+
 ### creating new tests
-To create a new test create a new bash script named ```p-name-test.sh```, where p is pass 'a-z' and name the name of your test.
-All tests with the same pass are performed together.
+Each test consists of a script script named like ```p-name-test.sh``` *(where p is test pass 'a-z' and name the name of your test)* and
+an optional dir ```p-name-test/``` *(script name minus '.sh')* for additional files.
+
+The file ```ALL-tests.inc.sh``` must be included from all tests, do not forget the shellcheck source directive to statisfy shellcheck.
 
 Tests with no dependency to other tests will run in pass 'a', tests which need an initialized bahsbot environment must run in pass 'd' or later. 
 If '$1' is present the script is started from 'ALL-tests.sh' and a temporary test environment is setup in directory '$1'.
@@ -44,24 +52,23 @@ The temporary test environment is created when 'ALL-tests.sh' starts and deleted
 
 Example test
 ```bash
-
 #!/usr/bin/env bash
-# file: z-bashbot-test.sh
+# file: b-example-test.sh
 
-# this test should always pass :-)
-echo "Running test if bashbot.sh exists"
-echo "................................."
+# include common functions and definitions
+# shellcheck source=test/ALL-tests.inc.sh
+source "./ALL-tests.inc.sh"
 
 if [ -f "bashbot.sh" ]; then
-	echo "bashbot.sh OK!"
+	echo "${SUCCESS} bashbot.sh exist!"
 	exit 0
 else
-	echo "bashbot.sh missing!"
+	echo "${NOSUCCESS} bashbot.sh missing!"
 	exit 1
 fi
 ```
 
 #### [Prev Function Reference](6_function.md)
 
-#### $$VERSION$$ 0.70-dev-18-g7512681
+#### $$VERSION$$ 0.70-dev-20-g753f1b3
 
