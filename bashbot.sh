@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.70-dev-19-g3183419
+#### $$VERSION$$ 0.70-dev-21-gd4cd756
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -390,7 +390,8 @@ remove_keyboard() {
 }
 
 get_file() {
-	[ "$1" != "" ] && echo "$FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh/JSON.sh -s | JsonGetString '"result","file_path"')"
+	[ "$1" = "" ] && return
+	echo "$FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh/JSON.sh -s | grep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)"
 }
 
 send_file() {
@@ -514,81 +515,8 @@ process_updates() {
 		fi
 	done
 }
-JsonGetString() {
-	sed -n -e '/\['"$1"'\]/ s/.*\][ \t]"\(.*\)"$/\1/p'
-}
-JsonGetValue() {
-	sed -n -e '/\['"$1"'\]/ s/.*\][ \t]//p'
-}
 process_client() {
-	local TMP="${TMPDIR:-.}/$RANDOM$RANDOM-MESSAGE"
-	echo "$UPDATE" >"$TMP"
-	# Message
-	MESSAGE[0]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","text"' <"$TMP")" | sed 's#\\/#/#g')"
-	MESSAGE[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","message_id"' <"$TMP" )"
-
-	# Chat
-	CHAT[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","chat","id"' <"$TMP" )"
-	CHAT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","first_name"' <"$TMP")")"
-	CHAT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","last_name"' <"$TMP")")"
-	CHAT[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","username"' <"$TMP")")"
-	CHAT[TITLE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","title"' <"$TMP")")"
-	CHAT[TYPE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","type"' <"$TMP")")"
-	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","all_members_are_administrators"' <"$TMP")")"
-
-	# User
-	USER[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","from","id"' <"$TMP" )"
-	USER[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","from","first_name"' <"$TMP")")"
-	USER[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","from","last_name"' <"$TMP")")"
-	USER[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","from","username"' <"$TMP")")"
-
-	# in reply to message from
-	REPLYTO[UID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","id"' <"$TMP" )"
-	if [ "${REPLYTO[UID]}" != "" ]; then
-	   REPLYTO[0]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","text"' <"$TMP")")"
-	   REPLYTO[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","reply_to_message","message_id"' <"$TMP")"
-	   REPLYTO[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","first_name"' <"$TMP")")"
-	   REPLYTO[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","last_name"' <"$TMP")")"
-	   REPLYTO[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","username"' <"$TMP")")"
-	fi
-
-	# forwarded message from
-	FORWARD[UID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","forward_from","id"' <"$TMP" )"
-	if [ "${FORWARD[UID]}" != "" ]; then
-	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
-	   FORWARD[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","forward_from","first_name"' <"$TMP")")"
-	   FORWARD[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","forward_from","last_name"' <"$TMP")")"
-	   FORWARD[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","forward_from","username"' <"$TMP")")"
-	fi
-
-	# Audio
-	URLS[AUDIO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","audio","file_id"' <"$TMP")")")"
-	# Document
-	URLS[DOCUMENT]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","document","file_id"' <"$TMP")")")"
-	# Photo
-	URLS[PHOTO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","photo",.*,"file_id"' <"$TMP")")")"
-	# Sticker
-	URLS[STICKER]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","sticker","file_id"' <"$TMP")")")"
-	# Video
-	URLS[VIDEO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","video","file_id"' <"$TMP")")")"
-	# Voice
-	URLS[VOICE]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","voice","file_id"' <"$TMP")")")"
-
-	# Contact
-	CONTACT[NUMBER]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","phone_number"' <"$TMP")")"
-	CONTACT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","first_name"' <"$TMP")")"
-	CONTACT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","last_name"' <"$TMP")")"
-	CONTACT[USER_ID]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","user_id"' <"$TMP")")"
-
-	# Caption
-	CAPTION="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","caption"' <"$TMP")")"
-
-	# Location
-	LOCATION[LONGITUDE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","location","longitude"' <"$TMP")")"
-	LOCATION[LATITUDE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","location","latitude"' <"$TMP")")"
-	NAME="$(echo "${URLS[*]}" | sed 's/.*\///g')"
-	rm "$TMP"
-
+	process_message "$PROCESS_NUMBER"
 	# Tmux
 	copname="$ME"_"${CHAT[ID]}"
 
@@ -597,6 +525,82 @@ process_client() {
 	tmpcount="COUNT${CHAT[ID]}"
 	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || echo "$tmpcount">>${COUNTFILE}
 	# To get user count execute bash bashbot.sh count
+}
+JsonGetString() {
+	sed -n -e '/\['"$1"'\]/ s/.*\][ \t]"\(.*\)"$/\1/p'
+}
+JsonGetValue() {
+	sed -n -e '/\['"$1"'\]/ s/.*\][ \t]//p'
+}
+process_message() {
+	local num="$1"
+	local TMP="${TMPDIR:-.}/$RANDOM$RANDOM-MESSAGE"
+	echo "$UPDATE" >"$TMP"
+	# Message
+	MESSAGE[0]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","text"' <"$TMP")" | sed 's#\\/#/#g')"
+	MESSAGE[ID]="$(JsonGetValue '"result",'"${num}"',"message","message_id"' <"$TMP" )"
+
+	# Chat
+	CHAT[ID]="$(JsonGetValue '"result",'"${num}"',"message","chat","id"' <"$TMP" )"
+	CHAT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","chat","first_name"' <"$TMP")")"
+	CHAT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","chat","last_name"' <"$TMP")")"
+	CHAT[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","chat","username"' <"$TMP")")"
+	CHAT[TITLE]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","chat","title"' <"$TMP")")"
+	CHAT[TYPE]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","chat","type"' <"$TMP")")"
+	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","chat","all_members_are_administrators"' <"$TMP")")"
+
+	# User
+	USER[ID]="$(JsonGetValue '"result",'"${num}"',"message","from","id"' <"$TMP" )"
+	USER[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","from","first_name"' <"$TMP")")"
+	USER[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","from","last_name"' <"$TMP")")"
+	USER[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","from","username"' <"$TMP")")"
+
+	# in reply to message from
+	REPLYTO[UID]="$(JsonGetValue '"result",'"${num}"',"message","reply_to_message","from","id"' <"$TMP" )"
+	if [ "${REPLYTO[UID]}" != "" ]; then
+	   REPLYTO[0]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","reply_to_message","text"' <"$TMP")")"
+	   REPLYTO[ID]="$(JsonGetValue '"result",'"${num}"',"message","reply_to_message","message_id"' <"$TMP")"
+	   REPLYTO[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","reply_to_message","from","first_name"' <"$TMP")")"
+	   REPLYTO[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","reply_to_message","from","last_name"' <"$TMP")")"
+	   REPLYTO[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","reply_to_message","from","username"' <"$TMP")")"
+	fi
+
+	# forwarded message from
+	FORWARD[UID]="$(JsonGetValue '"result",'"${num}"',"message","forward_from","id"' <"$TMP" )"
+	if [ "${FORWARD[UID]}" != "" ]; then
+	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
+	   FORWARD[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","forward_from","first_name"' <"$TMP")")"
+	   FORWARD[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","forward_from","last_name"' <"$TMP")")"
+	   FORWARD[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","forward_from","username"' <"$TMP")")"
+	fi
+
+	# Audio
+	URLS[AUDIO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","audio","file_id"' <"$TMP")")")"
+	# Document
+	URLS[DOCUMENT]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","document","file_id"' <"$TMP")")")"
+	# Photo
+	URLS[PHOTO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","photo",.*,"file_id"' <"$TMP")")")"
+	# Sticker
+	URLS[STICKER]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","sticker","file_id"' <"$TMP")")")"
+	# Video
+	URLS[VIDEO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","video","file_id"' <"$TMP")")")"
+	# Voice
+	URLS[VOICE]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","voice","file_id"' <"$TMP")")")"
+
+	# Contact
+	CONTACT[NUMBER]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","phone_number"' <"$TMP")")"
+	CONTACT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","first_name"' <"$TMP")")"
+	CONTACT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","last_name"' <"$TMP")")"
+	CONTACT[USER_ID]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","user_id"' <"$TMP")")"
+
+	# Caption
+	CAPTION="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","caption"' <"$TMP")")"
+
+	# Location
+	LOCATION[LONGITUDE]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","location","longitude"' <"$TMP")")"
+	LOCATION[LATITUDE]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","location","latitude"' <"$TMP")")"
+	NAME="$(echo "${URLS[*]}" | sed 's/.*\///g')"
+	#rm "$TMP"
 }
 # get bot name
 getBotName() {
