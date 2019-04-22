@@ -4,7 +4,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.61-0-g3b17bc2
+#### $$VERSION$$ v0.62-0-g5d5dbae
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -20,15 +20,16 @@ unset IFS
 # set -f # if you are paranoid use set -f to disable globbing
 
 
-# change Info anf Help to fit your needs
-bashbot_info() {
+if [ "$1" != "source" ]; then
+  # change Info anf Help to fit your needs
+  bashbot_info() {
 	send_markdown_message "${1}" 'This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.
 It currently can send, recieve and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
 '
-}
+  }
 
-bashbot_help() {
+  bashbot_help() {
 	send_markdown_message "${1}" '*Available commands*:
 *• /start*: _Start bot and get this message_.
 *• /info*: _Get shorter info message about this bot_.
@@ -39,23 +40,21 @@ bashbot_help() {
 Written by Drew (@topkecleon), Daniil Gentili (@danogentili) and KayM(@gnadelwartz).
 Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
-}
+  }
 
 # some handy shortcuts, e.g.:
-_is_botadmin() {
+  _is_botadmin() {
 	user_is_botadmin "${USER[ID]}"
-}
-_is_admin() {
+  }
+  _is_admin() {
 	user_is_admin "${CHAT[ID]}" "${USER[ID]}"
-}
-_is_allowed() { # $1 = resource
+  }
+  _is_allowed() { # $1 = resource
 	user_is_allowed "${USER[ID]}" "$1" "${CHAT[ID]}"
-}
-
+  }
+fi
 
 if [ "$1" = "source" ];then
-	# Place the token in the token file
-	TOKEN="$(cat token)"
 	# Set INLINE to 1 in order to receive inline queries.
 	# To enable this option in your bot, send the /setinline command to @BotFather.
 	INLINE="0"

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.61-2-gfd4dd8c
+#### $$VERSION$$ v0.62-0-g5d5dbae
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -28,8 +28,10 @@ else
 fi
 
 # run shellcheck before commit
-echo "read files from dev/shellcheck.files ..."
-FILES=$(sed '/^#/d' <"dev/shellcheck.files")
+set +f
+FILES="$(find ./* -name '*.sh')"
+set -f
+FILES="${FILES} $(sed '/^#/d' <"dev/shellcheck.files")"
 if [ "$FILES" != "" ]; then
 	# shellcheck disable=SC2086
 	shellcheck -x ${FILES} || exit 1

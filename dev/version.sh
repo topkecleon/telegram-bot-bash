@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#### $$VERSION$$ v0.61-2-gfd4dd8c
+#### $$VERSION$$ v0.62-0-g5d5dbae
 # shellcheck disable=SC2016
 #
 # Easy Versioning in git:
@@ -45,7 +45,7 @@ unset IFS
 VERSION="$(git describe --tags --long)"
 echo "Update to version $VERSION ..."
 
-FILES="* doc/* dev/* dev/*/*"
+FILES="$(find ./*)"
 [ "$1" != "" ] && FILES="$*"
 
 for file in $FILES

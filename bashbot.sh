@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.61-0-g3b17bc2
+#### $$VERSION$$ v0.62-0-g5d5dbae
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -34,7 +34,7 @@ SCRIPT="./$(basename "$0")"
 SCRIPTDIR="$(dirname "$0")"
 RUNUSER="${USER}" # USER is overwritten by bashbot array, $USER may not work later on...
 
-if ! cd "${SCRIPTDIR}" ; then
+if [ "$1" != "source" ] && ! cd "${SCRIPTDIR}" ; then
 	echo -e "${RED}ERROR: Can't change to ${SCRIPTDIR} ...${NC}"
 	exit 1
 fi
@@ -44,9 +44,9 @@ if [ ! -w "." ]; then
 	ls -ld .
 fi
 
-TOKEN="./token"
-if [ ! -f "${TOKEN}" ]; then
-   if [ "${CLEAR}" = "" ]; then
+TOKENFILE="./token"
+if [ ! -f "${TOKENFILE}" ]; then
+   if [ "${CLEAR}" = "" ] && [ "$1" != "init" ]; then
 	echo "Running headless, run ${SCRIPT} init first!"
 	exit 2 
    else
@@ -54,14 +54,16 @@ if [ ! -f "${TOKEN}" ]; then
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NC}"
 	read -r token
-	echo "${token}" > "${TOKEN}"
+	echo "${token}" > "${TOKENFILE}"
    fi
 fi
 
-if [ ! -f "JSON.sh/JSON.sh" ]; then
-	echo "You did not clone recursively! Downloading JSON.sh..."
-	git clone http://github.com/dominictarr/JSON.sh
-	echo "JSON.sh has been downloaded. Proceeding."
+JSONSHFILE="JSON.sh/JSON.sh"
+if [ ! -f "${JSONSHFILE}" ]; then
+	echo "Seems to be first run, Downloading ${JSONSHFILE}..."
+	mkdir "JSON.sh" 2>/dev/null;
+	curl -sL -o "${JSONSHFILE}" "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh"
+	chmod +x "${JSONSHFILE}" 
 fi
 
 BOTADMIN="./botadmin"
@@ -82,7 +84,7 @@ fi
 BOTACL="./botacl"
 if [ ! -f "${BOTACL}" ]; then
 	echo -e "${ORANGE}Create empty ${BOTACL} file.${NC}"
-	touch "${BOTACL}"
+	echo "" >"${BOTACL}"
 fi
 
 TMPDIR="./tmp-bot-bash"
@@ -95,28 +97,31 @@ elif [ ! -w "${TMPDIR}" ]; then
 	exit 2
 fi
 
-COUNT="./count"
-if [ ! -f "${COUNT}" ]; then
-	touch "${COUNT}"
-elif [ ! -w "${COUNT}" ]; then
+COUNTFILE="./count"
+if [ ! -f "${COUNTFILE}" ]; then
+	echo "" >"${COUNTFILE}"
+elif [ ! -w "${COUNTFILE}" ]; then
 	${CLEAR}
-	echo -e "${RED}ERROR: Can't write to ${COUNT}!.${NC}"
-	ls -l "${COUNT}"
+	echo -e "${RED}ERROR: Can't write to ${COUNTFILE}!.${NC}"
+	ls -l "${COUNTFILE}"
 	exit 2
 fi
 
 COMMANDS="./commands.sh"
-if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
-	${CLEAR}
-	echo -e "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NC}"
-	exit 3
-	ls -l "${COMMANDS}"
+if [ "$1" != "source" ]; then
+	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
+		${CLEAR}
+		echo -e "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NC}"
+		ls -l "${COMMANDS}"
+		exit 3
+	fi
+	# shellcheck source=./commands.sh
+	source "${COMMANDS}" "source"
 fi
 
-# shellcheck source=./commands.sh
-source "${COMMANDS}" "source"
 
-URL='https://api.telegram.org/bot'$TOKEN
+BOTTOKEN="$(cat "${TOKENFILE}")"
+URL='https://api.telegram.org/bot'$BOTTOKEN
 
 
 MSG_URL=$URL'/sendMessage'
@@ -139,7 +144,7 @@ DELETE_URL=$URL'/deleteMessage'
 GETMEMBER_URL=$URL'/getChatMember'
 
 
-FILE_URL='https://api.telegram.org/file/bot'$TOKEN'/'
+FILE_URL='https://api.telegram.org/file/bot'$BOTTOKEN'/'
 UPD_URL=$URL'/getUpdates?offset='
 GET_URL=$URL'/getFile'
 OFFSET=0
@@ -244,7 +249,7 @@ delete_message() {
 
 # usage: status="$(get_chat_member_status "chat" "user")"
 get_chat_member_status() {
-	curl -s "$GETMEMBER_URL" -F "chat_id=$1" -F "user_id=$2" | ./JSON.sh/JSON.sh -s | sed -n -e '/\["result","status"\]/  s/.*\][ \t]"\(.*\)"$/\1/p'
+	curl -s "$GETMEMBER_URL" -F "chat_id=$1" -F "user_id=$2" | "./${JSONSHFILE}" -s -b -n | sed -n -e '/\["result","status"\]/  s/.*\][ \t]"\(.*\)"$/\1/p'
 }
 
 kick_chat_member() {
@@ -387,7 +392,8 @@ remove_keyboard() {
 }
 
 get_file() {
-	[ "$1" != "" ] && echo "$FILE_URL$(curl -s "$GET_URL" -F "file_id=$1" | ./JSON.sh/JSON.sh -s | JsonGetString '"result","file_path"')"
+	[ "$1" = "" ] && return
+	echo "${FILE_URL}$(curl -s "${GET_URL}" -F "file_id=$1" | "./${JSONSHFILE}" -s -b -n | grep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)"
 }
 
 send_file() {
@@ -511,104 +517,112 @@ process_updates() {
 		fi
 	done
 }
+process_client() {
+	process_message "$PROCESS_NUMBER"
+	# Tmux
+	copname="$ME"_"${CHAT[ID]}"
+	source commands.sh
+	tmpcount="COUNT${CHAT[ID]}"
+	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || echo "$tmpcount">>${COUNTFILE}
+	# To get user count execute bash bashbot.sh count
+}
 JsonGetString() {
-	sed -n -e '/\['"$1"'\]/ s/.*\][ \t]"\(.*\)"$/\1/p'
+	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]"\(.*\)"$/\1/p'
+}
+JsonGetLine() {
+	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\]\][ \t]//p'
 }
 JsonGetValue() {
-	sed -n -e '/\['"$1"'\]/ s/.*\][ \t]//p'
+	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]\([0-9.,]*\).*/\1/p'
 }
-process_client() {
+process_message() {
+	local num="$1"
 	local TMP="${TMPDIR:-.}/$RANDOM$RANDOM-MESSAGE"
 	echo "$UPDATE" >"$TMP"
 	# Message
-	MESSAGE[0]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","text"' <"$TMP")" | sed 's#\\/#/#g')"
-	MESSAGE[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","message_id"' <"$TMP" )"
+	MESSAGE[0]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","text"' <"$TMP")" | sed 's#\\/#/#g')"
+	MESSAGE[ID]="$(JsonGetValue '"result",'"${num}"',"message","message_id"' <"$TMP" )"
 
 	# Chat
-	CHAT[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","chat","id"' <"$TMP" )"
-	CHAT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","first_name"' <"$TMP")")"
-	CHAT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","last_name"' <"$TMP")")"
-	CHAT[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","username"' <"$TMP")")"
-	CHAT[TITLE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","title"' <"$TMP")")"
-	CHAT[TYPE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","type"' <"$TMP")")"
-	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","chat","all_members_are_administrators"' <"$TMP")")"
+	CHAT[ID]="$(JsonGetValue '"result",'"${num}"',"message","chat","id"' <"$TMP" )"
+	CHAT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","chat","first_name"' <"$TMP")")"
+	CHAT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","chat","last_name"' <"$TMP")")"
+	CHAT[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","chat","username"' <"$TMP")")"
+	CHAT[TITLE]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","chat","title"' <"$TMP")")"
+	CHAT[TYPE]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","chat","type"' <"$TMP")")"
+	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","chat","all_members_are_administrators"' <"$TMP")")"
 
 	# User
-	USER[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","from","id"' <"$TMP" )"
-	USER[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","from","first_name"' <"$TMP")")"
-	USER[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","from","last_name"' <"$TMP")")"
-	USER[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","from","username"' <"$TMP")")"
+	USER[ID]="$(JsonGetValue '"result",'"${num}"',"message","from","id"' <"$TMP" )"
+	USER[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","from","first_name"' <"$TMP")")"
+	USER[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","from","last_name"' <"$TMP")")"
+	USER[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","from","username"' <"$TMP")")"
 
 	# in reply to message from
-	REPLYTO[UID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","id"' <"$TMP" )"
+	REPLYTO[UID]="$(JsonGetValue '"result",'"${num}"',"message","reply_to_message","from","id"' <"$TMP" )"
 	if [ "${REPLYTO[UID]}" != "" ]; then
-	   REPLYTO[0]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","text"' <"$TMP")")"
-	   REPLYTO[ID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","reply_to_message","message_id"' <"$TMP")"
-	   REPLYTO[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","first_name"' <"$TMP")")"
-	   REPLYTO[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","last_name"' <"$TMP")")"
-	   REPLYTO[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","reply_to_message","from","username"' <"$TMP")")"
+	   REPLYTO[0]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","reply_to_message","text"' <"$TMP")")"
+	   REPLYTO[ID]="$(JsonGetValue '"result",'"${num}"',"message","reply_to_message","message_id"' <"$TMP")"
+	   REPLYTO[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","reply_to_message","from","first_name"' <"$TMP")")"
+	   REPLYTO[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","reply_to_message","from","last_name"' <"$TMP")")"
+	   REPLYTO[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","reply_to_message","from","username"' <"$TMP")")"
 	fi
 
 	# forwarded message from
-	FORWARD[UID]="$(JsonGetValue '"result",'$PROCESS_NUMBER',"message","forward_from","id"' <"$TMP" )"
+	FORWARD[UID]="$(JsonGetValue '"result",'"${num}"',"message","forward_from","id"' <"$TMP" )"
 	if [ "${FORWARD[UID]}" != "" ]; then
 	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
-	   FORWARD[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","forward_from","first_name"' <"$TMP")")"
-	   FORWARD[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","forward_from","last_name"' <"$TMP")")"
-	   FORWARD[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","forward_from","username"' <"$TMP")")"
+	   FORWARD[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","forward_from","first_name"' <"$TMP")")"
+	   FORWARD[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","forward_from","last_name"' <"$TMP")")"
+	   FORWARD[USERNAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","forward_from","username"' <"$TMP")")"
 	fi
 
 	# Audio
-	URLS[AUDIO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","audio","file_id"' <"$TMP")")")"
+	URLS[AUDIO]="$(get_file "$(JsonGetString '"result",'"${num}"',"message","audio","file_id"' <"$TMP")")"
 	# Document
-	URLS[DOCUMENT]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","document","file_id"' <"$TMP")")")"
+	URLS[DOCUMENT]="$(get_file "$(JsonGetString '"result",'"${num}"',"message","document","file_id"' <"$TMP")")"
 	# Photo
-	URLS[PHOTO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","photo",.*,"file_id"' <"$TMP")")")"
+	URLS[PHOTO]="$(get_file "$(JsonGetString '"result",'"${num}"',"message","photo",0,"file_id"' <"$TMP")")"
 	# Sticker
-	URLS[STICKER]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","sticker","file_id"' <"$TMP")")")"
+	URLS[STICKER]="$(get_file "$(JsonGetString '"result",'"${num}"',"message","sticker","file_id"' <"$TMP")")"
 	# Video
-	URLS[VIDEO]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","video","file_id"' <"$TMP")")")"
+	URLS[VIDEO]="$(get_file "$(JsonGetString '"result",'"${num}"',"message","video","file_id"' <"$TMP")")"
 	# Voice
-	URLS[VOICE]="$(get_file "$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","voice","file_id"' <"$TMP")")")"
+	URLS[VOICE]="$(get_file "$(JsonGetString '"result",'"${num}"',"message","voice","file_id"' <"$TMP")")"
 
 	# Contact
-	CONTACT[NUMBER]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","phone_number"' <"$TMP")")"
-	CONTACT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","first_name"' <"$TMP")")"
-	CONTACT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","last_name"' <"$TMP")")"
-	CONTACT[USER_ID]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","contact","user_id"' <"$TMP")")"
+	CONTACT[NUMBER]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","phone_number"' <"$TMP")")"
+	CONTACT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","first_name"' <"$TMP")")"
+	CONTACT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","last_name"' <"$TMP")")"
+	CONTACT[USER_ID]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","user_id"' <"$TMP")")"
 
 	# Caption
-	CAPTION="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","caption"' <"$TMP")")"
+	CAPTION="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","caption"' <"$TMP")")"
 
 	# Location
-	LOCATION[LONGITUDE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","location","longitude"' <"$TMP")")"
-	LOCATION[LATITUDE]="$(JsonDecode "$(JsonGetString '"result",'$PROCESS_NUMBER',"message","location","latitude"' <"$TMP")")"
+	LOCATION[LONGITUDE]="$(JsonGetValue '"result",'"${num}"',"message","location","longitude"' <"$TMP")"
+	LOCATION[LATITUDE]="$(JsonGetValue '"result",'"${num}"',"message","location","latitude"' <"$TMP")"
 	NAME="$(echo "${URLS[*]}" | sed 's/.*\///g')"
 	rm "$TMP"
-
-	# Tmux
-	copname="$ME"_"${CHAT[ID]}"
-
-	source commands.sh
-
-	tmpcount="COUNT${CHAT[ID]}"
-	grep -q "$tmpcount" <"${COUNT}" >/dev/null 2>&1 || echo "$tmpcount">>${COUNT}
-	# To get user count execute bash bashbot.sh count
 }
 # get bot name
 getBotName() {
 	res="$(curl -s "$ME_URL")"
-	echo "$res" | ./JSON.sh/JSON.sh -s | JsonGetString '"result","username"'
+	echo "$res" | "./${JSONSHFILE}" -s -b -n | JsonGetString '"result","username"'
 }
 
 ME="$(getBotName)"
 if [ "$ME" = "" ]; then
+   if [ "$(cat "${TOKENFILE}")" = "bashbottestscript" ]; then
+	ME="bashbottestscript"
+   else
 	echo -e "${RED}ERROR: Can't connect to Telegram Bot! May be your TOKEN is invalid ...${NC}"
 	exit 1
+   fi
 fi
 
 # use phyton JSON to decode JSON UFT-8, provide bash implementaion as fallback
-if which python >/dev/null 2>&1 || which phyton2 >/dev/null 2>&1; then
+if [ "${BASHDECODE}" != "yes" ] && which python >/dev/null 2>&1 ; then
     JsonDecode() {
 	printf '"%s\\n"' "${1//\"/\\\"}" | python -c 'import json, sys; sys.stdout.write(json.load(sys.stdin).encode("utf-8"))'
     }
@@ -632,9 +646,12 @@ else
 fi
 
 # source the script with source as param to use functions in other scripts
-while [ "$1" = "startbot" ]; do {
+# do not execute if read from other scripts
 
-	UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./JSON.sh/JSON.sh)"
+if [ "$1" != "source" ]; then
+  while [ "$1" = "startbot" ]; do {
+
+	UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./${JSONSHFILE})"
 
 	# Offset
 	OFFSET="$(echo "$UPDATE" | grep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
@@ -648,10 +665,10 @@ while [ "$1" = "startbot" ]; do {
 		fi
 	fi
 
-}; done
+  }; done
 
 
-case "$1" in
+  case "$1" in
 	"outproc")
 		until [ "$line" = "imprettydarnsuredatdisisdaendofdacmd" ];do
 			line=""
@@ -661,15 +678,15 @@ case "$1" in
 		rm -f -r "${TMPDIR:-.}/$3"
 		;;
 	"count")
-		echo "A total of $(wc -l <"${COUNT}") users used me."
+		echo "A total of $(wc -l <"${COUNTFILE}") users used me."
 		exit
 		;;
 	"broadcast")
-		NUMCOUNT="$(wc -l <"${COUNT}")"
+		NUMCOUNT="$(wc -l <"${COUNTFILE}")"
 		echo "Sending the broadcast $* to $NUMCOUNT users."
 		[ "$NUMCOUNT" -gt "300" ] && sleep="sleep 0.5"
 		shift
-		while read -r f; do send_message "${f//COUNT}" "$*"; $sleep; done <"${COUNT}"
+		while read -r f; do send_message "${f//COUNT}" "$*"; $sleep; done <"${COUNTFILE}"
 		;;
 	"start")
 		${CLEAR}
@@ -687,14 +704,13 @@ case "$1" in
 			echo -e "${RED}User \"$TOUSER\" not found!${NC}"
 			exit 3
 		else
-			echo "Adjusting user in bashbot.rc ..."
+			echo "Adjusting user \"${TOUSER}\" files and permissions ..."
 			sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' bashbot.rc
-			echo "Adjusting Owner and Permissions ..."
 			chown -R "$TOUSER" . ./*
 			chmod 711 .
 			chmod -R a-w ./*
-			chmod -R u+w "${COUNT}" "${TMPDIR}" "${BOTADMIN}" ./*.log 2>/dev/null
-			chmod -R o-r,o-w "${COUNT}" "${TMPDIR}" "${TOKEN}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
+			chmod -R u+w "${COUNTFILE}" "${TMPDIR}" "${BOTADMIN}" ./*.log 2>/dev/null
+			chmod -R o-r,o-w "${COUNTFILE}" "${TMPDIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
 			ls -la
 			exit			
 		fi
@@ -751,19 +767,19 @@ case "$1" in
 		tmux attach -t "$ME"
 		;;
 	"source")
-		echo "OK"
-		exit
+		# this should never happen
+		echo "OK" 
 		;;
 	*)
 		echo -e "${RED}${ME}: BAD REQUEST${NC}"
 		echo -e "${RED}Available arguments: outproc, count, broadcast, start, suspendback, resumeback, kill, killback, help, attach${NC}"
 		exit 4
 		;;
-esac
+  esac
 
-# warn if root
-if [[ "$(id -u)" -eq "0" ]] ; then
+  # warn if root
+  if [[ "$(id -u)" -eq "0" ]] ; then
 	echo -e "\\n${ORANGE}WARNING: ${SCRIPT} was started as ROOT (UID 0)!${NC}"
 	echo -e "${ORANGE}You are at HIGH RISK when processing user input with root privilegs!${NC}"
-fi
-
+  fi
+fi # end source
