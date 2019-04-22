@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ 0.70-dev-26-gbca3e59
+#### $$VERSION$$ v0.62-0-g5d5dbae
 
 # common variables
 export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
