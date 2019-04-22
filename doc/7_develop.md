@@ -70,5 +70,5 @@ fi
 
 #### [Prev Function Reference](6_function.md)
 
-#### $$VERSION$$ v0.62-0-g5d5dbae
+#### $$VERSION$$ v0.70-dev2-0-g4fff4c3
 

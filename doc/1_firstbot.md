@@ -61,5 +61,5 @@ group. This step is up to you actually.
 
 #### [Next Getting started](2_usage.md)
 
-#### $$VERSION$$ v0.62-0-g5d5dbae
+#### $$VERSION$$ v0.70-dev2-0-g4fff4c3
 

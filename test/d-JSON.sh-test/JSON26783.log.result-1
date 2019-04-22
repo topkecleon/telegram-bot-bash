@@ -1,0 +1,22 @@
+["ok"]	true
+["result",0,"update_id"]	146860898
+["result",0,"message","message_id"]	6620
+["result",0,"message","from","id"]	123456789
+["result",0,"message","from","is_bot"]	false
+["result",0,"message","from","first_name"]	"Kay"
+["result",0,"message","from","last_name"]	"M"
+["result",0,"message","from","username"]	"Gnadelwartz"
+["result",0,"message","from","language_code"]	"de"
+["result",0,"message","chat","id"]	123456789
+["result",0,"message","chat","first_name"]	"Kay"
+["result",0,"message","chat","last_name"]	"M"
+["result",0,"message","chat","username"]	"Gnadelwartz"
+["result",0,"message","chat","type"]	"private"
+["result",0,"message","date"]	1555934213
+["result",0,"message","location","latitude"]	49.630443
+["result",0,"message","location","longitude"]	8.361698
+["result",0,"message","venue","location","latitude"]	49.630443
+["result",0,"message","venue","location","longitude"]	8.361698
+["result",0,"message","venue","title"]	"Vannini"
+["result",0,"message","venue","address"]	"K\u00e4mmererstr. 3"
+["result",0,"message","venue","foursquare_id"]	"4bf94ec05ec320a115f889d3"

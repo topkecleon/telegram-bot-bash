@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.62-0-g5d5dbae
+#### $$VERSION$$ v0.70-dev2-0-g4fff4c3
 
 # common variables
 export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
@@ -23,6 +23,7 @@ export SUCCESS NOSUCCESS
  NOSUCCESS="   FAILED!"
 
 # default input, reference and output files
+export  INPUTFILE REFFILE OUTPUTFILE
  INPUTFILE="${DIRME}/${REFDIR}/${REFDIR}.input"
  REFFILE="${DIRME}/${REFDIR}/${REFDIR}.result"
  OUTPUTFILE="${TESTDIR}/${REFDIR}.out"
@@ -34,7 +35,7 @@ print_array() {
   for idx in "${arrays[@]}"; do
     declare -n temp="$idx"
 	for t in "${!temp[@]}"; do 
-  		printf "%s:\t%s\t%s\n" "$idx" "$t" "${temp[$t]}"
+  		printf '%s:\t%s\t%s\n' "$idx" "$t" "${temp[$t]}"
 	done | sort
   done | grep -v '^USER:	0'
 }

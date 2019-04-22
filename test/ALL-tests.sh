@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
-#### $$VERSION$$ v0.62-0-g5d5dbae
+#### $$VERSION$$ v0.70-dev2-0-g4fff4c3
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -11,7 +11,7 @@ cd "${GIT_DIR}/.." || exit 1
 # create test environment
 TESTENV="/tmp/bashbot.test$$"
 mkdir "${TESTENV}"
-cp -r * "${TESTENV}"
+cp -r ./* "${TESTENV}"
 cd "test" || exit 1
 
 #set -e
@@ -20,7 +20,7 @@ tests=0
 passed=0
 #all_tests=${__dirname:}
 #echo PLAN ${#all_tests}
-for test in $(find ./${pass}*-test.sh | sort -u) ;
+for test in $(find ./*-test.sh | sort -u) ;
 do
   [ "${test}" = "test/all-tests.sh" ] && continue
   [ ! -x "${test}" ] && continue
