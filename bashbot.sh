@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-0-g4fff4c3
+#### $$VERSION$$ v0.70-dev2-1-gf59ddae
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -605,6 +605,50 @@ process_message() {
 	NAME="$(echo "${URLS[*]}" | sed 's/.*\///g')"
 	rm "$TMP"
 }
+
+# main get updates loop, should never terminate
+start_bot() {
+	while true; do {
+
+		UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./${JSONSHFILE})"
+
+		# Offset
+		OFFSET="$(echo "$UPDATE" | grep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
+		OFFSET=$((OFFSET+1))
+
+		if [ "$OFFSET" != "1" ]; then
+			if [ "$2" = "test" ]; then
+				process_updates "$2"
+			else
+				process_updates "$2" &
+			fi
+		fi
+
+  	}
+	done
+}
+
+# initialize bot environment, user and permissions
+bot_init() {
+	[[ "$(id -u)" -eq "0" ]] && RUNUSER="nobody"
+	echo -n "Enter User to run basbot [$RUNUSER]: "
+	read -r TOUSER
+	[ "$TOUSER" = "" ] && TOUSER="$RUNUSER"
+	if ! compgen -u "$TOUSER" >/dev/null 2>&1; then
+		echo -e "${RED}User \"$TOUSER\" not found!${NC}"
+		exit 3
+	else
+		echo "Adjusting user \"${TOUSER}\" files and permissions ..."
+		sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' bashbot.rc
+		chown -R "$TOUSER" . ./*
+		chmod 711 .
+		chmod -R a-w ./*
+		chmod -R u+w "${COUNTFILE}" "${TMPDIR}" "${BOTADMIN}" ./*.log 2>/dev/null
+		chmod -R o-r,o-w "${COUNTFILE}" "${TMPDIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
+		ls -la
+	fi
+}
+
 # get bot name
 getBotName() {
 	res="$(curl -s "$ME_URL")"
@@ -649,34 +693,40 @@ fi
 # do not execute if read from other scripts
 
 if [ "$1" != "source" ]; then
-  while [ "$1" = "startbot" ]; do {
 
-	UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./${JSONSHFILE})"
-
-	# Offset
-	OFFSET="$(echo "$UPDATE" | grep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
-	OFFSET=$((OFFSET+1))
-
-	if [ "$OFFSET" != "1" ]; then
-		if [ "$2" = "test" ]; then
-			process_updates "$2"
-		else
-			process_updates "$2" &
-		fi
-	fi
-
-  }; done
-
-
+  ##############
+  # internal options only for use from bashbot and developers
   case "$1" in
-	"outproc")
+	"outproc") # forward output from interactive and jobs to chat
 		until [ "$line" = "imprettydarnsuredatdisisdaendofdacmd" ];do
 			line=""
 			read -r -t 10 line
 			[ "$line" != "" ] && [ "$line" != "imprettydarnsuredatdisisdaendofdacmd" ] && send_message "$2" "$line"
 		done <"${TMPDIR:-.}/$3"
 		rm -f -r "${TMPDIR:-.}/$3"
+		exit
 		;;
+	"startbot" )
+		start_bot
+		exit
+		;;
+	"source") # this should never arrive here
+		exit
+		;;
+	"init") # adjust users and permissions
+		bot_init
+		exit
+		;;
+	"attach")
+		tmux attach -t "$ME"
+		exit
+		;;
+  esac
+
+
+  ###############
+  # "official" arguments as shown to users
+  case "$1" in
 	"count")
 		echo "A total of $(wc -l <"${COUNTFILE}") users used me."
 		exit
@@ -695,25 +745,11 @@ if [ "$1" != "source" ]; then
 		echo "Tmux session name $ME" || echo -e "${RED}An error occurred while starting the bot. ${NC}"
 		send_markdown_message "${CHAT[ID]}" "*Bot started*"
 		;;
-	"init") # adjust users and permissions
-		[[ "$(id -u)" -eq "0" ]] && RUNUSER="nobody"
-		echo -n "Enter User to run basbot [$RUNUSER]: "
-		read -r TOUSER
-		[ "$TOUSER" = "" ] && TOUSER="$RUNUSER"
-		if ! compgen -u "$TOUSER" >/dev/null 2>&1; then
-			echo -e "${RED}User \"$TOUSER\" not found!${NC}"
-			exit 3
-		else
-			echo "Adjusting user \"${TOUSER}\" files and permissions ..."
-			sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' bashbot.rc
-			chown -R "$TOUSER" . ./*
-			chmod 711 .
-			chmod -R a-w ./*
-			chmod -R u+w "${COUNTFILE}" "${TMPDIR}" "${BOTADMIN}" ./*.log 2>/dev/null
-			chmod -R o-r,o-w "${COUNTFILE}" "${TMPDIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
-			ls -la
-			exit			
-		fi
+	"kill")
+		${CLEAR}
+		tmux kill-session -t "$ME" &>/dev/null
+		send_markdown_message "${CHAT[ID]}" "*Bot stopped*"
+		echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
 		;;
 	"background" | "resumeback")
 		${CLEAR}
@@ -736,12 +772,6 @@ if [ "$1" != "source" ]; then
 		    fi
 		done
 		;;
-	"kill")
-		${CLEAR}
-		tmux kill-session -t "$ME" &>/dev/null
-		send_markdown_message "${CHAT[ID]}" "*Bot stopped*"
-		echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
-		;;
 	"killback" | "suspendback")
 		${CLEAR}
 		echo -e "${GREEN}Stopping background processes ...${NC}"
@@ -763,16 +793,9 @@ if [ "$1" != "source" ]; then
 		less "README.txt"
 		exit
 		;;
-	"attach")
-		tmux attach -t "$ME"
-		;;
-	"source")
-		# this should never happen
-		echo "OK" 
-		;;
 	*)
 		echo -e "${RED}${ME}: BAD REQUEST${NC}"
-		echo -e "${RED}Available arguments: outproc, count, broadcast, start, suspendback, resumeback, kill, killback, help, attach${NC}"
+		echo -e "${RED}Available arguments: start, kill, count, broadcast, help, suspendback, resumeback, killback${NC}"
 		exit 4
 		;;
   esac
