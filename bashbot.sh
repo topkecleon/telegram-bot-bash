@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-1-gf59ddae
+#### $$VERSION$$ v0.70-dev2-3-g65cd94a
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -608,6 +608,9 @@ process_message() {
 
 # main get updates loop, should never terminate
 start_bot() {
+	local mysleep="100" # ms
+	local addsleep"50"
+	local maxsleep="${BASHBOTSLEEP:-5000}"
 	while true; do {
 
 		UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./${JSONSHFILE})"
@@ -617,13 +620,15 @@ start_bot() {
 		OFFSET=$((OFFSET+1))
 
 		if [ "$OFFSET" != "1" ]; then
-			if [ "$2" = "test" ]; then
-				process_updates "$2"
+			mysleep="100"
+			if [ "$1" = "test" ]; then
+				process_updates "$1"
 			else
-				process_updates "$2" &
+				process_updates "$1" &
 			fi
 		fi
-
+		# adaptive sleep in ms rounded to next lower second
+		sleep "${mysleep%???}"; mysleep=$((mysleep+addsleep)); [ "${mysleep}" -gt "${maxsleep}" ] && mysleep="${maxsleep}"
   	}
 	done
 }
@@ -679,9 +684,9 @@ else
         local regexp='(.*)\\u[dD]([0-9a-fA-F]{3})\\u[dD]([0-9a-fA-F]{3})(.*)'
         while [[ "${out}" =~ $regexp ]] ; do
 		# match 2 \udxxx hex values, calculate new U, then split and replace
-                local W1="$(( ( 0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ))"
-                local W2="$(( 0xd${BASH_REMATCH[3]} & 0x3ff ))"
-                U="$(( ( W1 | W2 ) + 0x10000 ))"
+                local W1=$(( ( 0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ))
+                local W2=$(( 0xd${BASH_REMATCH[3]} & 0x3ff ))
+                local U=$(( ( W1 | W2 ) + 0x10000 ))
                 remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
                 out="${BASH_REMATCH[1]}"
         done
@@ -707,7 +712,7 @@ if [ "$1" != "source" ]; then
 		exit
 		;;
 	"startbot" )
-		start_bot
+		start_bot "$2"
 		exit
 		;;
 	"source") # this should never arrive here
