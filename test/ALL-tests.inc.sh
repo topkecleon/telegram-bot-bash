@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ 0.70-dev-23-g48e6f64
+#### $$VERSION$$ 0.70-dev-26-gbca3e59
 
 # common variables
 export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
@@ -19,13 +19,13 @@ export TOKENFILE ACLFILE COUNTFILE ADMINFILE
 
 # SUCCESS NOSUCCES
 export SUCCESS NOSUCCESS
-SUCCESS="   OK"
-NOSUCCESS="   FAILED!"
+ SUCCESS="   OK"
+ NOSUCCESS="   FAILED!"
 
 # default input, reference and output files
-INPUTFILE="${DIRME}/${REFDIR}/${REFDIR}.input"
-REFFILE="${DIRME}/${REFDIR}/${REFDIR}.result"
-OUTPUTFILE="${TESTDIR}/${REFDIR}.out"
+ INPUTFILE="${DIRME}/${REFDIR}/${REFDIR}.input"
+ REFFILE="${DIRME}/${REFDIR}/${REFDIR}.result"
+ OUTPUTFILE="${TESTDIR}/${REFDIR}.out"
 
 # print arrays in reproducible order
 print_array() {
