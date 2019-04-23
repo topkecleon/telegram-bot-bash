@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-6-gc527d17
+#### $$VERSION$$ v0.70-dev2-7-g1957133
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -29,22 +29,26 @@ if [ -t 1 ] && [ "$TERM" != "" ];  then
     NC='\e[0m'
 fi
 
-# get location of bashbot.sh an change to bashbot dir
-SCRIPT="./$(basename "$0")"
+# get location and name of bashbot.sh
+SCRIPT="$0"
 SCRIPTDIR="$(dirname "$0")"
+RUNDIR="${BASHBOT_VAR:-${SCRIPTDIR}}"
+[ "${RUNDIR}" = "${SCRIPTDIR}" ] && SCRIPT="./$(basename "${SCRIPT}")"
+
+
 RUNUSER="${USER}" # USER is overwritten by bashbot array, $USER may not work later on...
 
-if [ "$1" != "source" ] && ! cd "${SCRIPTDIR}" ; then
-	echo -e "${RED}ERROR: Can't change to ${SCRIPTDIR} ...${NC}"
+if [ "$1" != "source" ] && ! cd "${RUNDIR}" ; then
+	echo -e "${RED}ERROR: Can't change to ${RUNDIR} ...${NC}"
 	exit 1
 fi
 
 if [ ! -w "." ]; then
-	echo -e "${ORANGE}WARNING: ${SCRIPTDIR} is not writeable!${NC}"
+	echo -e "${ORANGE}WARNING: ${RUNDIR} is not writeable!${NC}"
 	ls -ld .
 fi
 
-TOKENFILE="./token"
+TOKENFILE="${BASHBOT_ETC:-.}/token"
 if [ ! -f "${TOKENFILE}" ]; then
    if [ "${CLEAR}" = "" ] && [ "$1" != "init" ]; then
 	echo "Running headless, run ${SCRIPT} init first!"
@@ -58,7 +62,7 @@ if [ ! -f "${TOKENFILE}" ]; then
    fi
 fi
 
-JSONSHFILE="JSON.sh/JSON.sh"
+JSONSHFILE="${BASHBOT_JSONSH:-${RUNDIR}}/JSON.sh/JSON.sh"
 if [ ! -f "${JSONSHFILE}" ]; then
 	echo "Seems to be first run, Downloading ${JSONSHFILE}..."
 	mkdir "JSON.sh" 2>/dev/null;
@@ -66,7 +70,7 @@ if [ ! -f "${JSONSHFILE}" ]; then
 	chmod +x "${JSONSHFILE}" 
 fi
 
-BOTADMIN="./botadmin"
+BOTADMIN="${BASHBOT_ETC:-.}/botadmin"
 if [ ! -f "${BOTADMIN}" ]; then
    if [ "${CLEAR}" = "" ]; then
 	echo "Running headless, set botadmin to AUTO MODE!"
@@ -81,13 +85,13 @@ if [ ! -f "${BOTADMIN}" ]; then
    fi
 fi
 
-BOTACL="./botacl"
+BOTACL="${BASHBOT_ETC:-.}/botacl"
 if [ ! -f "${BOTACL}" ]; then
 	echo -e "${ORANGE}Create empty ${BOTACL} file.${NC}"
 	echo "" >"${BOTACL}"
 fi
 
-TMPDIR="./tmp-bot-bash"
+TMPDIR="${BASHBOT_VAR:-.}/tmp-bot-bash"
 if [ ! -d "${TMPDIR}" ]; then
 	mkdir "${TMPDIR}"
 elif [ ! -w "${TMPDIR}" ]; then
@@ -97,7 +101,7 @@ elif [ ! -w "${TMPDIR}" ]; then
 	exit 2
 fi
 
-COUNTFILE="./count"
+COUNTFILE="${BASHBOT_VAR:-.}/count"
 if [ ! -f "${COUNTFILE}" ]; then
 	echo "" >"${COUNTFILE}"
 elif [ ! -w "${COUNTFILE}" ]; then
@@ -107,7 +111,7 @@ elif [ ! -w "${COUNTFILE}" ]; then
 	exit 2
 fi
 
-COMMANDS="./commands.sh"
+COMMANDS="${BASHBOT_COMMANDS:-${RUNDIR}}/commands.sh"
 if [ "$1" != "source" ]; then
 	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
 		${CLEAR}
@@ -176,7 +180,7 @@ send_message() {
 
 	}
 	if [ "$no_keyboard" != "" ]; then
-		echo "remove_keyboard $chat $text" > ${TMPDIR:-.}/prova
+		echo "remove_keyboard $chat $text" > "${TMPDIR:-.}/prova"
 		remove_keyboard "$chat" "$text"
 		sent=y
 	fi
@@ -249,7 +253,7 @@ delete_message() {
 
 # usage: status="$(get_chat_member_status "chat" "user")"
 get_chat_member_status() {
-	curl -s "$GETMEMBER_URL" -F "chat_id=$1" -F "user_id=$2" | "./${JSONSHFILE}" -s -b -n | sed -n -e '/\["result","status"\]/  s/.*\][ \t]"\(.*\)"$/\1/p'
+	curl -s "$GETMEMBER_URL" -F "chat_id=$1" -F "user_id=$2" | "${JSONSHFILE}" -s -b -n | sed -n -e '/\["result","status"\]/  s/.*\][ \t]"\(.*\)"$/\1/p'
 }
 
 kick_chat_member() {
@@ -393,7 +397,7 @@ remove_keyboard() {
 
 get_file() {
 	[ "$1" = "" ] && return
-	echo "${FILE_URL}$(curl -s "${GET_URL}" -F "file_id=$1" | "./${JSONSHFILE}" -s -b -n | grep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)"
+	echo "${FILE_URL}$(curl -s "${GET_URL}" -F "file_id=$1" | "${JSONSHFILE}" -s -b -n | grep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)"
 }
 
 send_file() {
@@ -523,7 +527,7 @@ process_client() {
 	copname="$ME"_"${CHAT[ID]}"
 	source commands.sh
 	tmpcount="COUNT${CHAT[ID]}"
-	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || echo "$tmpcount">>${COUNTFILE}
+	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || echo "$tmpcount">>"${COUNTFILE}"
 	# To get user count execute bash bashbot.sh count
 }
 JsonGetString() {
@@ -613,7 +617,7 @@ start_bot() {
 	local maxsleep="$(( ${BASHBOT_SLEEP:-5000} + 100 ))"
 	while true; do {
 
-		UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./${JSONSHFILE})"
+		UPDATE="$(curl -s "$UPD_URL$OFFSET" | "${JSONSHFILE}")"
 
 		# Offset
 		OFFSET="$(echo "$UPDATE" | grep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
@@ -657,7 +661,7 @@ bot_init() {
 # get bot name
 getBotName() {
 	res="$(curl -s "$ME_URL")"
-	echo "$res" | "./${JSONSHFILE}" -s -b -n | JsonGetString '"result","username"'
+	echo "$res" | "${JSONSHFILE}" -s -b -n | JsonGetString '"result","username"'
 }
 
 ME="$(getBotName)"
