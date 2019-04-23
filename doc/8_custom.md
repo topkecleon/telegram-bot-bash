@@ -4,10 +4,11 @@ This section describe how you can customize bashbot to your needs by setting env
 
 
 ### Change file locations
-In standard setup bashbot is self containing, this means you can place 'telegram-bot-bash' on any location
+In standard setup bashbot is self containing, this means you can place 'telegram-bot-bash'  any location
 and run it from there. All files - programm, config, data etc - will reside in 'telegram-bot-bash'.
 
-If you want other locations for config, data etc,  define and export the following environment variables: 
+If you want to have other locations for config, data etc,  define and export the following environment variables.
+**Note: all specified directories and files must exist or running 'bashbot.sh' will fail.**
 
 #### BASHBOT_ETC
 Location of the config files 'token', 'botadmin', 'botacl' ...
@@ -75,7 +76,51 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
   
 ```
 
+### Testet location configs
+**Note: Environment variables are not stored, you must setup them before every call to bashbot.sh, e.g. from a script.**
+
+#### simple Unix like config, mainly for one bot. bashbot is in '/usr/local/telegram-bot-bash'
+```bash
+  # Note: all dirs and files must exist!
+  export BASHBOT_ETC "/etc/bashbot"
+  export BASHBOT_VAR "/var/spool/bashbot"
+
+  /usr/local/telegram-bot-bash/bashbot.sh start
+```
+
+#### Unix like config, mainly for one bot. bashbot.sh is in '/usr/bin'
+```bash
+  # Note: all dirs and files must exist!
+  export BASHBOT_ETC "/etc/bashbot"
+  export BASHBOT_VAR "/var/spool/bashbot"
+  export BASHBOT_JSONSH "/var/spool/bashbot"
+  export BASHBOT_COMMANDS "/etc/bashbot/commands.sh
+
+  /usr/local/bin/bashbot.sh start
+```
+
+#### simple multibot config bashbot is in '/usr/local/telegram-bot-bash'
+```bash
+  # config for running Bot 1
+  # Note: all dirs and files must exist!
+  export BASHBOT_ETC "./mybot1"
+  export BASHBOT_VAR "./mybot1"
+  export BASHBOT_COMMANDS "./mybot1/commands.sh
+
+  /usr/local/telegram-bot-bash/bashbot.sh start
+```
+
+```bash
+  # config for running Bot 2
+  # Note: all dirs and files must exist!
+  export BASHBOT_ETC "./mybot2"
+  export BASHBOT_VAR "./mybot2"
+  export BASHBOT_COMMANDS "./mybot2/commands.sh
+
+  /usr/local/telegram-bot-bash/bashbot.sh start
+```
+
 #### [Prev Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-dev2-4-g893ee61
+#### $$VERSION$$ v0.70-dev2-5-gfe5840d
 
