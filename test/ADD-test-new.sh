@@ -2,7 +2,7 @@
 #
 # ADD a new test skeleton to test dir, but does not activate test
 #
-#### $$VERSION$$ v0.70-dev2-9-g63ef678
+#### $$VERSION$$ v0.70-dev2-10-gfa9e879
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -59,6 +59,12 @@ cat >"test/${TEST}.sh" <<EOF
 source "./ALL-tests.inc.sh"
 
 set -e
+
+cd "\${TESTDIR}" || exit 1
+
+# source bashbot.sh function, uncomment if you want to test functions
+# shellcheck source=./bashbot.sh
+# source "\\${TESTDIR}/bashbot.sh" source
 
 # start writing your tests here ...
 

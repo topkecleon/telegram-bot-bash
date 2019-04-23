@@ -34,7 +34,8 @@ Install bashbot
 latest release zip from github] and extract all files.
 +
 As an alternative you can clone the github repository to get the latest
-improvements, run All-tests.sh to be shure.
+improvements/fixes, run bashbot test suite `All-tests.sh` afterwards to
+see if code looks OK.
 +
 ....
 git clone https://github.com/topkecleon/telegram-bot-bash; test/ALL-tests.sh
@@ -76,6 +77,7 @@ Documentation
 ** Test your Bot with shellcheck
 * link:doc/6_reference.md[Bashbot function reference]
 * link:doc/7_develop.md[Notes for bashbot developers]
+* link:doc/8_customize.md[Customize bashbot environment]
 
 Note on Keyboards
 ~~~~~~~~~~~~~~~~~
@@ -166,5 +168,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.70-dev2-0-g4fff4c3
-+++++++++++++++++++++++++++++++++++++++++++++
+latexmath:[\[VERSION\]] v0.70-dev2-10-gfa9e879
+++++++++++++++++++++++++++++++++++++++++++++++

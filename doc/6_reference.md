@@ -163,6 +163,20 @@ fi
 ```
 
 ----
+### User Access Control
+
+##### user_is_botadmin
+Return true (0) if user is owner / admin of bot. 
+Name or ID botadmin must be placed in './botadmin' file.
+
+*usage:*  user_is_botadmin "${USER[ID]}"
+
+*alias:* _is_botadmin 
+
+*example:* 
+```bash
+ _is_botadmin && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
+```
 
 ##### user_is_creator
 Return true (0) if user is creator of given chat or chat is a private chat.
@@ -184,19 +198,6 @@ if _is_admin ; then
   send_markdown_message "${CHAT[ID]}" "*LEAVING CHAT...*"
   leave_chat "${CHAT[ID]}"
 fi
-```
-
-##### user_is_botadmin
-Return true (0) if user is owner / admin of bot. 
-Name or ID botadmin must be placed in './botadmin' file.
-
-*usage:*  user_is_botadmin "${CHAT[ID]}" "${USER[ID]}"
-
-*alias:* _is_botadmin
-
-*example:* 
-```bash
- _is_botadmin && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
 ```
 
 ##### user_is_allowed
@@ -348,5 +349,5 @@ Send Input from Telegram to waiting Interactive Chat.
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-dev2-5-gfe5840d
+#### $$VERSION$$ v0.70-dev2-10-gfa9e879
 
