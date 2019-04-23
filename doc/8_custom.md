@@ -47,6 +47,15 @@ Full path to bash script containing your commands, default: './commands.sh'
   export BASHBOT_COMMANDS "/etc/bashbot/bot1/commands.sh"  # multibot configuration bot 1
   export BASHBOT_COMMANDS "/etc/bashbot/bot2/commands.sh"  # multibot configuration bot 2
 ```
+#### BASHBOT_JSONSH
+Full path to JSON.sh script, default: './JSON.sh/JSON.sh'
+```bash
+  unset  BASHBOT_JSONSH     # telegram-bot-bash/JSON.sh/JSON.sh (default)
+  export BASHBOT_JSONSH ""  # telegram-bot-bash/JSON.sh/JSON.sh
+
+  export BASHBOT_JSONSH "/usr/local/bin/JSON.sh"  # installed in /usr/local/bin
+
+```
 
 ### Change config values
 
@@ -122,5 +131,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 
 #### [Prev Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-dev2-5-gfe5840d
+#### $$VERSION$$ v0.70-dev2-8-gf412a29
 

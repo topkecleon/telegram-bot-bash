@@ -10,13 +10,13 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-7-g1957133
+#### $$VERSION$$ v0.70-dev2-8-gf412a29
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
 # - 1 can't change to dir
 # - 2 can't write to tmp, count or token 
-# - 3 user / command not found
+# - 3 user / command / file not found
 # - 4 unkown command
 # - 5 cannot connect to telegram bot
 
@@ -62,7 +62,9 @@ if [ ! -f "${TOKENFILE}" ]; then
    fi
 fi
 
-JSONSHFILE="${BASHBOT_JSONSH:-${RUNDIR}}/JSON.sh/JSON.sh"
+JSONSHFILE="${BASHBOT_JSONSH:-${RUNDIR}/JSON.sh/JSON.sh}"
+[[ "${JSONSHFILE}" != *"/JSON.sh" ]] && echo -e "${RED}ERROR: \"${JSONSHFILE}\" ends not with \"JSONS.sh\".${NC}" && exit 3
+
 if [ ! -f "${JSONSHFILE}" ]; then
 	echo "Seems to be first run, Downloading ${JSONSHFILE}..."
 	mkdir "JSON.sh" 2>/dev/null;
@@ -111,7 +113,9 @@ elif [ ! -w "${COUNTFILE}" ]; then
 	exit 2
 fi
 
-COMMANDS="${BASHBOT_COMMANDS:-${RUNDIR}}/commands.sh"
+COMMANDS="${BASHBOT_COMMANDS:-${RUNDIR}/commands.sh}"
+[[ "${COMMANDS}" != *".sh" ]] && echo -e "${RED}ERROR: \"${COMMANDS}\" ends not with \".sh\".${NC}" && exit 3
+
 if [ "$1" != "source" ]; then
 	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
 		${CLEAR}
