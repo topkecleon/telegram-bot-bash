@@ -346,7 +346,7 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 Send Input from Telegram to waiting Interactive Chat.
 
 #### [Prev Best Practice](5_practice.md)
-#### [Next Developer Rules](7_develop.md)
+#### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-dev2-0-g4fff4c3
+#### $$VERSION$$ v0.70-dev2-4-g893ee61
 

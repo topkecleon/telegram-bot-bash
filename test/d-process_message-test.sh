@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.70-dev2-0-g4fff4c3
+#### $$VERSION$$ v0.70-dev2-4-g893ee61
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -26,8 +26,8 @@ echo "Check process_message ..."
 for i in 1 2
 do
 	[ "${i}" = "1" ] && ! which python >/dev/null 2>&1 && continue
-	[ "${i}" = "1" ] && echo "  ... JsonDecode Phyton"
-	[ "${i}" = "2" ] && echo "  ... JsonDecode Bash" && export BASHDECODE="yes"
+	[ "${i}" = "1" ] && echo "  ... JsonDecode Phyton" && unset BASHBOT_DECODE
+	[ "${i}" = "2" ] && echo "  ... JsonDecode Bash" && export BASHBOT_DECODE="yes"
 	set -x
 	{ process_message "0";  set +x; } >>"${LOGFILE}" 2>&1;
 

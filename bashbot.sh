@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-3-g65cd94a
+#### $$VERSION$$ v0.70-dev2-4-g893ee61
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -609,8 +609,8 @@ process_message() {
 # main get updates loop, should never terminate
 start_bot() {
 	local mysleep="100" # ms
-	local addsleep"50"
-	local maxsleep="${BASHBOTSLEEP:-5000}"
+	local addsleep="50"
+	local maxsleep="${BASHBOT_SLEEP:-5000}"
 	while true; do {
 
 		UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./${JSONSHFILE})"
@@ -671,7 +671,7 @@ if [ "$ME" = "" ]; then
 fi
 
 # use phyton JSON to decode JSON UFT-8, provide bash implementaion as fallback
-if [ "${BASHDECODE}" != "yes" ] && which python >/dev/null 2>&1 ; then
+if [ "${BASHBOT_DECODE}" != "" ] && which python >/dev/null 2>&1 ; then
     JsonDecode() {
 	printf '"%s\\n"' "${1//\"/\\\"}" | python -c 'import json, sys; sys.stdout.write(json.load(sys.stdin).encode("utf-8"))'
     }
