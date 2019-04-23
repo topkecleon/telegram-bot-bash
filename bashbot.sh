@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-4-g893ee61
+#### $$VERSION$$ v0.70-dev2-6-gc527d17
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -609,8 +609,8 @@ process_message() {
 # main get updates loop, should never terminate
 start_bot() {
 	local mysleep="100" # ms
-	local addsleep="50"
-	local maxsleep="${BASHBOT_SLEEP:-5000}"
+	local addsleep="100"
+	local maxsleep="$(( ${BASHBOT_SLEEP:-5000} + 100 ))"
 	while true; do {
 
 		UPDATE="$(curl -s "$UPD_URL$OFFSET" | ./${JSONSHFILE})"

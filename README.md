@@ -22,7 +22,8 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * /usr/local if you want to run as service
 2. [Download latest release zip from github](https://github.com/topkecleon/telegram-bot-bash/releases) and extract all files. 
 
-    As an alternative you can clone the github repository to get the latest improvements, run All-tests.sh to be shure.
+    As an alternative you can clone the github repository to get the latest improvements/fixes,
+    run bashbot test suite ``All-tests.sh`` afterwards to see if code looks OK.
     ```
     git clone https://github.com/topkecleon/telegram-bot-bash; test/ALL-tests.sh
     ```
@@ -55,6 +56,7 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Test your Bot with shellcheck
 * [Bashbot function reference](doc/6_reference.md)
 * [Notes for bashbot developers](doc/7_develop.md)
+* [Customize bashbot environment](doc/8_customize.md)
 
 ## Note on Keyboards
 From Version 0.60 on keybord format for ```send_keyboard``` and ```send_message "mykeyboardstartshere ..."``` was changed.
@@ -102,4 +104,4 @@ Bashbot is not more (in)secure as any other Bot written in any other language, w
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.70-dev2-0-g4fff4c3
+#### $$VERSION$$ v0.70-dev2-5-gfe5840d
