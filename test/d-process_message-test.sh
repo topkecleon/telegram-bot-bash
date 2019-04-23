@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.70-dev2-12-gaa93839
+#### $$VERSION$$ v0.70-dev2-13-gca73be8
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -32,7 +32,7 @@ do
 	{ process_message "0";  set +x; } >>"${LOGFILE}" 2>&1;
 
 	# output processed input
-	print_array "USER" "CHAT" "REPLYTO" "FORWARD" "URLS" "CONTACT" "CAPTION" "LOCATION" "MESSAGE" >"${OUTPUTFILE}"
+	print_array "USER" "CHAT" "REPLYTO" "FORWARD" "URLS" "CONTACT" "CAPTION" "LOCATION" "MESSAGE" "VENUE" >"${OUTPUTFILE}"
 	diff -c "${REFFILE}" "${OUTPUTFILE}" || exit 1
 	echo "${SUCCESS}"
 done

@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-12-gaa93839
+#### $$VERSION$$ v0.70-dev2-13-gca73be8
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -157,8 +157,8 @@ UPD_URL=$URL'/getUpdates?offset='
 GET_URL=$URL'/getFile'
 
 unset USER
-declare -A USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO
-
+declare -A USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
+export USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
 
 
 send_message() {
@@ -600,10 +600,18 @@ process_message() {
 	URLS[VOICE]="$(get_file "$(JsonGetString '"result",'"${num}"',"message","voice","file_id"' <"$TMP")")"
 
 	# Contact
-	CONTACT[NUMBER]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","phone_number"' <"$TMP")")"
+	CONTACT[USER_ID]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","user_id"' <"$TMP")")"
 	CONTACT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","first_name"' <"$TMP")")"
 	CONTACT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","last_name"' <"$TMP")")"
-	CONTACT[USER_ID]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","user_id"' <"$TMP")")"
+	CONTACT[NUMBER]="$(JsonGetString '"result",'"${num}"',"message","contact","phone_number"' <"$TMP")"
+	CONTACT[VCARD]="$(JsonGetString '"result",'"${num}"',"message","contact","vcard"' <"$TMP")"
+
+	# vunue
+	VENUE[TITLE]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","venue","title"' <"$TMP")")"
+	VENUE[ADDRESS]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","venue","address"' <"$TMP")")"
+	VENUE[LONGITUDE]="$(JsonGetValue '"result",'"${num}"',"message","venue","location","longitude"' <"$TMP")"
+	VENUE[LATITUDE]="$(JsonGetValue '"result",'"${num}"',"message","venue","location","latitude"' <"$TMP")"
+	VENUE[FOURSQUARE]="$(JsonGetString '"result",'"${num}"',"message","venue","foursquare_id"' <"$TMP")"
 
 	# Caption
 	CAPTION="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","caption"' <"$TMP")")"

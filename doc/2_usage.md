@@ -74,13 +74,20 @@ Evertime a Message is recieved, you can read incoming data using the following v
     * ```${URLS[STICKER]}```: Stickers
     * ```${URLS[DOCUMENT]}```: Any other file
 * ```$CONTACT```: This array contains info about contacts sent in a chat.
+    * ```${CONTACT[ID]}```: User id
     * ```${CONTACT[NUMBER]}```: Phone number
     * ```${CONTACT[FIRST_NAME]}```: First name
     * ```${CONTACT[LAST_NAME]}```: Last name
-    * ```${CONTACT[ID]}```: User id
+    * ```${CONTACT[VCARD]}```: User's complete Vcard
 * ```$LOCATION```: This array contains info about locations sent in a chat.
     * ```${LOCATION[LONGITUDE]}```: Longitude
     * ```${LOCATION[LATITUDE]}```: Latitude
+* ```$VENUE```: This array contains info about venue (a place) sent in a chat.
+    * ```${VENUE[TITLE]}```: Name of the place
+    * ```${VENUE[ADDRESS]}```: Address of the place
+    * ```${VENUE[LONGITUDE]}```: Longitude
+    * ```${VENUE[LATITUDE]}```: Latitude
+    * ```${VENUE[FOURSQUARE]}```: Fouresquare ID
 
 ## Usage of bashbot functions
 
@@ -159,5 +166,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.70-dev2-10-gfa9e879
+#### $$VERSION$$ v0.70-dev2-13-gca73be8
 
