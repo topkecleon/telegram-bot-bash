@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-13-gca73be8
+#### $$VERSION$$ v0.70-dev2-14-g56a45aa
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -515,6 +515,10 @@ killproc() {
 inproc() {
 	tmux send-keys -t "$copname" "${MESSAGE[0]} ${URLS[*]}
 "
+}
+_is_function()
+{
+	[ "$(LC_ALL=C type -t "$1")" = "function" ]
 }
 process_updates() {
 	MAX_PROCESS_NUMBER=$(echo "$UPDATE" | sed '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')
