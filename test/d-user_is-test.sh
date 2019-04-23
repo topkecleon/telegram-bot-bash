@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.70-dev2-10-gfa9e879
+#### $$VERSION$$ v0.70-dev2-11-g8549727
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -17,9 +17,10 @@ source "${TESTDIR}/bashbot.sh" source
 
 # first user asking for botadmin will botadmin
 echo "  test \"user_is_botadmin\" ..."
-echo '?' >"${ADMINFILE}" # auto mode
-user_is_botadmin "BOTADMIN" || exit 1 # should never fail
 
+echo '?' >"${ADMINFILE}" # auto mode
+
+user_is_botadmin "BOTADMIN" || exit 1 # should never fail
 user_is_botadmin "NOBOTADMIN" && exit 1 # should fail
 user_is_botadmin "BOTADMIN" || exit 1 # same name as first one, should work
 
@@ -32,24 +33,25 @@ echo "${SUCCESS}"
 
 # lets see If UAC works ...
 echo "  test \"user_is_allowed\" ..."
+
 echo "  ... with not rules"
-user_is_allowed "NOBOTADMIN" "ANYTHING" && exit 1 # should always fail because not rules exist
+user_is_allowed "NOBOTADMIN" "ANYTHING" && exit 1 # should always fail because no rules exist
 user_is_allowed "BOTADMIN" "ANYTHING" && exit 1 # should fail even is BOTADMIN
 echo "${SUCCESS}"
 
 echo "  ... with BOTADMIN:*:*"
 echo 'BOTADMIN:*:*' >"${ACLFILE}" # RULE allow BOTADMIN everything
 
-user_is_allowed "BOTADMIN" "ANYTHING" || exit 1 # should always work
+user_is_allowed "BOTADMIN" "ANYTHING" || exit 1 # should work now
 user_is_allowed "NOBOTADMIN" "ANYTHING" && exit 1 # should fail because user is not listed
 echo "${SUCCESS}"
 
 echo "  ... with NOBOTAMIN:SOMETHING:*"
 echo 'NOBOTADMIN:SOMETHING:*' >>"${ACLFILE}" # RULE allow NOBOTADMIN something
 
-user_is_allowed "BOTADMIN" "ANYTHING" || exit 1 # should always work
-user_is_allowed "BOTADMIN" "SOMETHING" || exit 1 # should always work
-user_is_allowed "NOBOTADMIN" "SOMETHING" || exit 1 # should work
+user_is_allowed "BOTADMIN" "ANYTHING" || exit 1 # should work
+user_is_allowed "BOTADMIN" "SOMETHING" || exit 1 # should work
+user_is_allowed "NOBOTADMIN" "SOMETHING" || exit 1 # should work now
 user_is_allowed "NOBOTADMIN" "ANYTHING" && exit 1 # should fail because only SOMETHING is listed 
 
 echo "${SUCCESS}"
