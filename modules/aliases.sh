@@ -1,0 +1,33 @@
+#!/bin/bash
+# file: modules/alaises.sh
+# do not edit, this file will be overwritten on update
+
+# This file is public domain in the USA and all free countries.
+# Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
+#
+#### $$VERSION$$ v0.70-dev2-15-g03f22c9
+
+# source from commands.sh to use the aliases
+# some handy aliases for use when processing messages:
+_is_botadmin() {
+	user_is_botadmin "${USER[ID]}"
+}
+_is_admin() {
+	user_is_admin "${CHAT[ID]}" "${USER[ID]}"
+}
+_is_allowed() {
+	user_is_allowed "${USER[ID]}" "$1" "${CHAT[ID]}"
+}
+# same for easy sending messages of messages
+_message() {
+	send_normal_message "${CHAT[ID]}" "$1"
+}
+_normal_message() {
+	send_normal_message "${CHAT[ID]}" "$1"
+}
+_html_message() {
+	send_html_message "${CHAT[ID]}" "$1"
+}
+_markdown_message() {
+	send_markdown_message "${CHAT[ID]}" "$1"
+}

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
-#### $$VERSION$$ v0.70-dev2-10-gfa9e879
+#### $$VERSION$$ v0.70-dev2-15-g03f22c9
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -12,7 +12,7 @@ VERSION="$(git describe --tags | sed -e 's/-.*//' -e 's/v//')"
 
 DISTNAME="telegram-bot-bash"
 DISTDIR="./dist/${DISTNAME}" 
-DISTFILES="bashbot.rc  bashbot.sh  commands.sh  doc  examples  LICENSE  README.md  README.txt"
+DISTFILES="bashbot.rc  bashbot.sh  commands.sh  mycommands.sh doc  examples modules LICENSE  README.md  README.txt"
 
 # run tests first!
 
@@ -32,6 +32,7 @@ cd "${DISTDIR}" || exit 1
 
 # additional stuff
 mv "commands.sh" "commands.sh.dist"
+mv "mycommands.sh" "mycommands.sh.dist"
 
 JSONSHFILE="JSON.sh/JSON.sh"
 if [ ! -f "${JSONSHFILE}" ]; then
@@ -48,9 +49,5 @@ tar -czf "${DISTNAME}-${VERSION}.tar.gz" "${DISTNAME}"
 
 # shellcheck disable=SC2086
 ls -ld ${DISTNAME}-${VERSION}.*
-
-# remove temporary dist dir
-cd "$GIT_DIR/.." || exit 1
-rm -rf ${DISTDIR}
 
 
