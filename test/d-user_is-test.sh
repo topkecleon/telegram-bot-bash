@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.70-dev2-11-g8549727
+#### $$VERSION$$ v0.70-dev2-12-gaa93839
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -16,7 +16,7 @@ source "${TESTDIR}/bashbot.sh" source
 # start writing your tests here ...
 
 # first user asking for botadmin will botadmin
-echo "  test \"user_is_botadmin\" ..."
+echo "Check \"user_is_botadmin\" ..."
 
 echo '?' >"${ADMINFILE}" # auto mode
 
@@ -32,7 +32,7 @@ fi
 echo "${SUCCESS}"
 
 # lets see If UAC works ...
-echo "  test \"user_is_allowed\" ..."
+echo "Check \"user_is_allowed\" ..."
 
 echo "  ... with not rules"
 user_is_allowed "NOBOTADMIN" "ANYTHING" && exit 1 # should always fail because no rules exist

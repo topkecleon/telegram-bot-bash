@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-10-gfa9e879
+#### $$VERSION$$ v0.70-dev2-12-gaa93839
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -36,7 +36,7 @@ RUNDIR="${BASHBOT_VAR:-${SCRIPTDIR}}"
 [ "${RUNDIR}" = "${SCRIPTDIR}" ] && SCRIPT="./$(basename "${SCRIPT}")"
 
 
-RUNUSER="${USER}" # USER is overwritten by bashbot array, $USER may not work later on...
+RUNUSER="${USER}" # USER is overwritten by bashbot array
 
 if [ "$1" != "source" ] && ! cd "${RUNDIR}" ; then
 	echo -e "${RED}ERROR: Can't change to ${RUNDIR} ...${NC}"
@@ -93,7 +93,7 @@ if [ ! -f "${BOTACL}" ]; then
 	echo "" >"${BOTACL}"
 fi
 
-TMPDIR="${BASHBOT_VAR:-.}/tmp-bot-bash"
+TMPDIR="${BASHBOT_VAR:-.}/data-bot-bash"
 if [ ! -d "${TMPDIR}" ]; then
 	mkdir "${TMPDIR}"
 elif [ ! -w "${TMPDIR}" ]; then
@@ -155,7 +155,8 @@ GETMEMBER_URL=$URL'/getChatMember'
 FILE_URL='https://api.telegram.org/file/bot'$BOTTOKEN'/'
 UPD_URL=$URL'/getUpdates?offset='
 GET_URL=$URL'/getFile'
-OFFSET=0
+
+unset USER
 declare -A USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO
 
 
@@ -616,6 +617,7 @@ process_message() {
 
 # main get updates loop, should never terminate
 start_bot() {
+	local OFFSET=0
 	local mysleep="100" # ms
 	local addsleep="100"
 	local maxsleep="$(( ${BASHBOT_SLEEP:-5000} + 100 ))"
@@ -643,6 +645,9 @@ start_bot() {
 
 # initialize bot environment, user and permissions
 bot_init() {
+	# move tmpdir to datadir
+	local OLDTMP="${BASHBOT_VAR:-.}/tmp-bot-bash"
+	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${TMPDIR}"; rmdir "${OLDTMP}"; }
 	[[ "$(id -u)" -eq "0" ]] && RUNUSER="nobody"
 	echo -n "Enter User to run basbot [$RUNUSER]: "
 	read -r TOUSER
