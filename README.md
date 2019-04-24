@@ -16,25 +16,12 @@ Most complete [UTF-8 support for bashbot](doc/4_expert.md#Bashbot-UTF-8-Support)
 
 Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Downloads](https://github.com/topkecleon/telegram-bot-bash/releases) are availible on www.github.com
 
-## Install bashbot
-1. Go to the directory you want to install bashbot, e.g.
-    * your $HOME directory (install and run with your user-ID)
-    * /usr/local if you want to run as service
-2. [Download latest release zip from github](https://github.com/topkecleon/telegram-bot-bash/releases) and extract all files. 
-
-    As an alternative you can clone the github repository to get the latest improvements/fixes,
-    run bashbot test suite ``All-tests.sh`` afterwards to see if code looks OK.
-    ```
-    git clone https://github.com/topkecleon/telegram-bot-bash; test/ALL-tests.sh
-    ```
-3. Go to directory ```telegram-bot-bash```, run ```./bashbot.sh init``` and follow the instructions. At this point you are asked for your Bots token given by botfather.
-
-## Update bashbot
-1. [Download latest update zip from github](https://github.com/topkecleon/telegram-bot-bash/releases)
-2. Extract all files and copy them to your bashbot dir
-3. Run ```sudo ./bashbot.sh init``` to setup your environment after the update
-
 ## Documentation
+* [Install Bashbot](doc/0_install.md)
+    * Install release
+    * Install from githup
+    * Update Bashbot
+    * Notes on Updates
 * [Create a new Telegram Bot with botfather](doc/1_firstbot.md)
 * [Getting Started](doc/2_usage.md)
     * Managing your Bot
@@ -58,21 +45,6 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
 * [Notes for bashbot developers](doc/7_develop.md)
 * [Customize bashbot environment](doc/8_customize.md)
 
-## Note on Keyboards
-From Version 0.60 on keybord format for ```send_keyboard``` and ```send_message "mykeyboardstartshere ..."``` was changed.
-Keybords are now defined in JSON Array notation e.g. "[ \\"yes\\" , \\"no\\" ]".
-This has the advantage that you can create any type of keyboard supported by Telegram.
-The old format is supported for backward compatibility, but may fail for corner cases.
-
-*Example Keyboards*:
-
-- yes no in two rows:
-    - OLD format: 'yes' 'no' (two strings)
-    - NEW format: '[ "yes" ] , [ "no" ]' (two arrays with a string)
-- new layouts made easy with NEW format:
-    - Yes No in one row: '[ "yes" , "no" ]'
-    - Yes No plus Maybe in 2.row: '[ "yes" , "no" ] , [ "maybe" ]' 
-    - numpad style keyboard: '[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [ "7" , "8" , "9" ] , [ "0" ]'
 
 ## Security Considerations
 Running a Telegram Bot means it is connected to the public and you never know whats send to your Bot.
@@ -104,4 +76,4 @@ Bashbot is not more (in)secure as any other Bot written in any other language, w
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.70-dev2-18-g097a841
+#### $$VERSION$$ v0.70-dev2-20-ga3b82f7

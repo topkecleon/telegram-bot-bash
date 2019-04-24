@@ -1,49 +1,81 @@
 #### [Home](../README.md)
 ## Best Practices
 
-### Customize commands.sh only
-
-To ease Updates never change ```bashbot.sh```, instead individual commands should go to  ```commands.sh``` .  Insert your Bot commands in the ```case ... esac``` block:
+### Add commands to mycommands.sh only
+To ease Updates never change ```bashbot.sh```, instead your commands and functions must go to  ```mycommands.sh``` .  Insert your Bot commands in the ```case ... esac``` block of the 'mycommands()' function:
 ```bash
-	case "$MESSAGE" in
-		'/echo') # my first own command, echo MESSAGE
-			send_normal_message "${CHAT[ID]}" "${MESSAGE}"
-			;;
+# file: mycommands.sh
+# your additional bahsbot commands
 
+# uncomment the following lines to overwrite info and help messages
+ bashbot_info='This is *MY* variant of _bashbot_, the Telegram bot written entirely in bash.
+'
+
+ bashbot_help='*Available commands*:
+/echo message - _echo the given messsage_
+'
+
+mycommands() {
+
+	case "$MESSAGE" in
+		'/echo'*) # example echo command
+			send_normal_message "${CHAT[ID]}" "$MESSAGE"
+			;;
+		# .....
+	esac
+}
+```
+
+### Reuse or disable standard commands
+If you want to disable or reuse a standard bashbot command comment it out in 'commands.sh' by placing a '#' in front of
+every line from ```'/command')``` to ```;;```. 
+
+**Note: Never disable the catchall command ``*)```` in 'commands.sh'!!**
+```bash
+#!/bin/bash
+# file: commands.sh
+
+	case "$MESSAGE" in
 		################################################
-		# DEFAULT commands start here, do not edit below this!
-		'/info')
-			bashbot_info "${CHAT[ID]}"
+		# DEFAULT commands start here, edit messages only
+
+		#'/start')
+		#	send_action "${CHAT[ID]}" "typing"
+		#	_is_botadmin && _markdown_message "You are *BOTADMIN*."
+		#	if _is_allowed "start" ; then
+		#		_markdown_message "${bot_help}"
+		#	else
+		#		_message "You are not allowed to start Bot."
+		#	fi
+		#	;;
+
+		*)	# forward other messages to optional dispatcher
+			_is_function startproc && if tmux ls | grep -v send | grep -q "$copname"; then inproc; fi # interactive running
+			_is_function mycommands && mycommands
 			;;
 	esac
 ```
 
+
 ### Seperate logic from commands
 
-If a command need more than 2-3 lines of code, you should use a function to seperate logic from command. Place your functions in a seperate file, e.g. ```mycommands.inc.sh``` and source it from bashbot.sh. Example:
+If a command need more than 2-3 lines of code, you should use a function to seperate logic from command. Place your functions in ```mycommands.sh``` and call the from you commands. Example:
 ```bash
-	source "mycommands.inc.sh"
+#!/bin/bash
+# file: mycommands.sh
+
+mycommands() {
 
 	case "$MESSAGE" in
 		'/process') # logic for /process is done in process_message 
 			result="$(process_message "$MESSAGE")"
 			send_normal_message "${CHAT[ID]}" "$result" 
 			;;
-
-		################################################
-		# DEFAULT commands start here, do not edit below this!
-		'/info')
-			bashbot_info "${CHAT[ID]}"
-			;;
-		'/start')
-			send_action "${CHAT[ID]}" "typing"
-			bashbot_help "${CHAT[ID]}"
-			;;
 	esac
-```
-```bash
-#!/bin/bash
-# file: mycommands.inc.sh
+
+}
+
+# place your functions here
 
 process_message() {
    local ARGS="${1#/* }"	# remove command 
@@ -53,7 +85,6 @@ process_message() {
    set -f
    for WORD in $ARGS
    do
-	set +f
 	# process links 
 	if [[ "$WORD" == "https://"* ]]; then
 		REPORT="$(dosomething_with_link "$WORD")"
@@ -68,7 +99,6 @@ process_message() {
    done
 
    # return result, reset globbing in case we had no ARGS
-   set +f
    echo "${OUTPUT}${TEXT}"
 }
 
@@ -112,5 +142,5 @@ The second warning is about an unused variable, this is true because in our exam
 #### [Prev Best Practice](5_practice.md)
 #### [Next Functions Reference](6_reference.md)
 
-#### $$VERSION$$ v0.70-dev2-18-g097a841
+#### $$VERSION$$ v0.70-dev2-20-ga3b82f7
 

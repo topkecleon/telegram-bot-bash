@@ -1,0 +1,65 @@
+#### [Home](../README.md)
+
+## Install bashbot
+
+1. Go to the directory you want to install bashbot, e.g.
+    * your $HOME directory (install and run with your user-ID)
+    * /usr/local if you want to run as service
+2. [Download latest release zip from github](https://github.com/topkecleon/telegram-bot-bash/releases) and extract all files. 
+3. Change into the directory ```telegram-bot-bash```
+4. Create default commands with ```cp commands.sh.dist commands.sh; cp mycommands.sh.dist mycommands.sh```
+5. Run ```./bashbot.sh init``` to setup the environment and enter your Bots token given by botfather.
+
+Now your Bot is ready to start ...
+
+### Install from Github
+
+As an alternative to donwload the zip files, you can clone the github repository to get the latest improvements/fixes.
+
+1. Go to the directory you want to install bashbot, e.g.
+    * your $HOME directory (install and run with your user-ID)
+    * /usr/local if you want to run as service
+
+2. Run ```git clone https://github.com/topkecleon/telegram-bot-bash;```
+3. Change into the directory ```telegram-bot-bash```
+4. Run ``` test/ALL-tests.sh``` and if everthing finish OK ...
+5. Run ```./bashbot.sh init``` to setup the environment and enter your Bots token given by botfather.
+
+###  Update bashbot
+
+1. Go to the directory where you had installed bashbot, e.g.
+    * your $HOME directory
+    * /usr/local
+2. [Download latest release zip from github](https://github.com/topkecleon/telegram-bot-bash/releases)
+3. Extract all files to you existing bashbot dir **Note** all files execpt 'mycommands.sh' and 'commands.sh' may overwritten!**
+4. Run ```sudo ./bashbot.sh init``` to setup your environment after the update
+
+### Notes on Updates
+
+#### Location of tmp / data dir
+From version 0.70 on the tmp dir is renamed to 'data-bot-bash' to refelect the fact that not only temporyry files are stored. an existing 'tmp-bot-bash' will be automatically after update renamed.
+
+From version 0.50 on the temporary files are no more placed in '/tmp'. instead a dedicatet tmp dir is used.
+
+#### Changes to send_keyboard in v0.6
+From Version 0.60 on keybord format for ```send_keyboard``` and ```send_message "mykeyboardstartshere ..."``` was changed.
+Keybords are now defined in JSON Array notation e.g. "[ \\"yes\\" , \\"no\\" ]".
+This has the advantage that you can create any type of keyboard supported by Telegram.
+The old format is supported for backward compatibility, but may fail for corner cases.
+
+*Example Keyboards*:
+
+- yes no in two rows:
+    - OLD format: 'yes' 'no' (two strings)
+    - NEW format: '[ "yes" ] , [ "no" ]' (two arrays with a string)
+- new layouts made easy with NEW format:
+    - Yes No in one row: '[ "yes" , "no" ]'
+    - Yes No plus Maybe in 2.row: '[ "yes" , "no" ] , [ "maybe" ]' 
+    - numpad style keyboard: '[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [ "7" , "8" , "9" ] , [ "0" ]'
+
+
+
+#### [Next Create Bot](1_firstbot.md)
+
+#### $$VERSION$$ v0.70-dev2-20-ga3b82f7
+

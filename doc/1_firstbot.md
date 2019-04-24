@@ -59,7 +59,8 @@ group. This step is up to you actually.
 13. @botfather replies with `Success! The new status is: DISABLED. /help`
 
 
+#### [Prev Installation](0_install.md)
 #### [Next Getting started](2_usage.md)
 
-#### $$VERSION$$ v0.70-dev2-18-g097a841
+#### $$VERSION$$ v0.70-dev2-20-ga3b82f7
 

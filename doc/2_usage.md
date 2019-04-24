@@ -1,9 +1,9 @@
 #### [Home](../README.md)
 ## Gettting Started
 
-All Commands for the Bot are in the ```commands.sh``` file (this should ease upgrades of the bot core). Here you find some examples how to process messages and send out text.
+THe Bots standard commands are in the ```commands.sh``` file. Vou must not add your commands to 'commands.sh' instead place them in ```mycommands.sh```,  there you also find examples how to process messages and send out text.
 
-Once you're done editing start the Bot with ```./bashbot.sh start```. 
+Once you're done with editing 'mycommands.sh' start the Bot with ```./bashbot.sh start```. 
 If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```. To stop the Bot run ```./bashbot.sh kill```
 
 To use the functions provided in this script in other scripts simply source bashbot: ```source bashbot.sh```
@@ -166,5 +166,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.70-dev2-18-g097a841
+#### $$VERSION$$ v0.70-dev2-20-ga3b82f7
 
