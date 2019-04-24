@@ -62,5 +62,5 @@ group. This step is up to you actually.
 #### [Prev Installation](0_install.md)
 #### [Next Getting started](2_usage.md)
 
-#### $$VERSION$$ v0.70-dev2-20-ga3b82f7
+#### $$VERSION$$ v0.70-dev2-21-g0cfb9f0
 

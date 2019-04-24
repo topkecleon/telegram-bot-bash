@@ -2,7 +2,7 @@
 ## Best Practices
 
 ### Add commands to mycommands.sh only
-To ease Updates never change ```bashbot.sh```, instead your commands and functions must go to  ```mycommands.sh``` .  Insert your Bot commands in the ```case ... esac``` block of the 'mycommands()' function:
+To ease updates never change ```bashbot.sh```, instead your commands and functions must go to  ```mycommands.sh``` .  Insert your Bot commands in the ```case ... esac``` block of the 'mycommands()' function:
 ```bash
 # file: mycommands.sh
 # your additional bahsbot commands
@@ -32,7 +32,6 @@ every line from ```'/command')``` to ```;;```.
 
 **Note: Never disable the catchall command ``*)```` in 'commands.sh'!!**
 ```bash
-#!/bin/bash
 # file: commands.sh
 
 	case "$MESSAGE" in
@@ -59,10 +58,10 @@ every line from ```'/command')``` to ```;;```.
 
 ### Seperate logic from commands
 
-If a command need more than 2-3 lines of code, you should use a function to seperate logic from command. Place your functions in ```mycommands.sh``` and call the from you commands. Example:
+If a command need more than 2-3 lines of code, you should use a function to seperate logic from command. Place your functions in ```mycommands.sh``` and call the from your command. Example:
 ```bash
-#!/bin/bash
 # file: mycommands.sh
+# your additional bahsbot commands
 
 mycommands() {
 
@@ -142,5 +141,5 @@ The second warning is about an unused variable, this is true because in our exam
 #### [Prev Best Practice](5_practice.md)
 #### [Next Functions Reference](6_reference.md)
 
-#### $$VERSION$$ v0.70-dev2-20-ga3b82f7
+#### $$VERSION$$ v0.70-dev2-21-g0cfb9f0
 

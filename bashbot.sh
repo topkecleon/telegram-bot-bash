@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-20-ga3b82f7
+#### $$VERSION$$ v0.70-dev2-21-g0cfb9f0
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -333,6 +333,15 @@ remove_keyboard() {
 	local text="$2"
 	shift 2
 	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat"  -F "text=$text" -F "reply_markup={\"remove_keyboard\": true}")"
+}
+send_inline_button() {
+	local chat='"chat_id": '"$1"
+	local text='"text": "'"$2"'"'
+	local button='{ "text" : "'"$3"' , "url": "'"$4"'" }'
+	local JSON='{ '"${chat}"' , '"${text}"' , "reply_markup": { "inline_keyboard": [[ '"${button}"' ]]} }'
+        # JSON='{"chat_id":$1, "text":"$2", "reply_markup": {"inline_keyboard": [[ {"text":"$3", "url":"$4"} ]]} }'
+
+	res="$(curl -d "$JSON" -H "Content-Type: application/json" -X POST "$MSG_URL")"
 }
 
 get_file() {
