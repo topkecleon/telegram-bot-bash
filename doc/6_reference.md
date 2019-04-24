@@ -58,18 +58,7 @@ send_normal_message "${CHAT[ID]}" "<b>bold</b> <i>italic><i> <em>italic>/em> <a 
 
 *usage:* forward_message "chat_to" "chat_from" "${MESSAGE[ID]}"
 
-*alias:* forward "${CHAT[ID]}" "$FROMCHAT" "${MESSAGE[ID]}"
-
-----
-
-##### send_message
-```send_message``` sends any type of message to the given chat. Type of output is steered by keywords within the message. 
-
-The main use case for send_message is to process the output of interactive chats and background jobs. **For regular Bot commands I recommend using of the dedicated send_xxx_message() functions from above.**
-
-*usage:* send_message "${CHAT[ID]}" "message"
-
-*example:* - see [Usage](2_usage.md#send_message) and [Advanced Usage](3_advanced.md#Interactive-Chats)
+*old call:* forward "${CHAT[ID]}" "$FROMCHAT" "${MESSAGE[ID]}"
 
 ----
 
@@ -137,6 +126,8 @@ send_keyboard "${CHAT[ID]}" "Enter digit" "[ \\"1\\" , \\"2\\" , \\"3\\" ] , [ \
 ##### remove_keyboard
 *usage:* remove_keybord "$CHAT[ID]" "message"
 
+----
+
 ### Manage users 
 
 ##### kick_chat_member
@@ -163,6 +154,7 @@ fi
 ```
 
 ----
+
 ### User Access Control
 
 ##### user_is_botadmin
@@ -171,7 +163,7 @@ Name or ID botadmin must be placed in './botadmin' file.
 
 *usage:*  user_is_botadmin "${USER[ID]}"
 
-*alias:* _is_botadmin 
+*modules/alias:* _is_botadmin 
 
 *example:* 
 ```bash
@@ -183,14 +175,14 @@ Return true (0) if user is creator of given chat or chat is a private chat.
 
 *usage:* user_is_creator "${CHAT[ID]}" "${USER[ID]}"
 
-*alias:* _is_creator
+*modules/alias:* _is_creator
 
 ##### user_is_admin
 Return true (0) if user is admin or creator of given chat.
  
 *usage:* user_is_admin "${CHAT[ID]}" "${USER[ID]}"
 
-*alias:* _is_creator
+*modules/alias:* _is_admin
 
 *example:* 
 ```bash
@@ -212,7 +204,59 @@ if ! user_is_allowed "${USER[ID]}" "start" "${CHAT[ID]}" ; then
 fi
 ```
 
+----
+
+### Aliases - shortcuts for often used funtions 
+You must use  ```source modules/aliases.sh``` in commands.sh or mycommands.sh to have the following functions availible.
+
+#### _is_botadmin
+
+*usage:* _is_botadmin
+
+*alias for* user_is_botadmin "${USER[ID]}"
+
+#### _is_admin
+
+*usage:* _is_admin
+
+*alias for* user_is_admin "${CHAT[ID]}" "${USER[ID]}"
+
+#### _is_allowed
+
+*usage:* _is_allowed "what"
+
+*alias for* user_is_allowed "${USER[ID]}" "what" "${CHAT[ID]}"
+
+----
+
+#### _message
+
+*usage:* _message "message"
+
+*alias for* send_normal_message "${CHAT[ID]}" "message"
+
+#### _normal_message
+
+*usage:* _normal_message "message"
+
+*alias for* send_normal_message "${CHAT[ID]}" "message"
+
+#### _html_message
+
+*usage:* _html_message "message"
+
+*alias for* send_html_message "${CHAT[ID]}" "message"
+
+#### _markdown_message
+
+*usage:* _markdown_message "message"
+
+*alias for* send_markdown_message "${CHAT[ID]}" "message"
+
+----
+
 ### Interactive and backgound jobs
+You must use  ```source modules/background.sh``` in commands.sh or mycommands.sh to have the following functions availible.
 
 ##### startproc
 ```startproc``` starts a script (or C or python program etc.) running in parallel to your Bot. The text that the script outputs is sent to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
@@ -296,6 +340,33 @@ else
 fi
 ```
 
+----
+
+##### send_message
+```send_message``` sends any type of message to the given chat. Type of output is steered by keywords within the message. 
+
+The main use case for send_message is to process the output of interactive chats and background jobs. **For regular Bot commands I recommend using of the dedicated send_xxx_message() functions from above.**
+
+*usage:* send_message "${CHAT[ID]}" "message"
+
+*example:* - see [Usage](2_usage.md#send_message) and [Advanced Usage](3_advanced.md#Interactive-Chats)
+
+----
+
+### Helper functions
+
+#### _is_function
+Returns true if the given function exist, can be used to check if a module is loaded.
+
+*usage* _is_function function
+
+*example:* 
+```bash
+_is_function "background" && _message "you can run background jobs!"
+```
+
+----
+
 ### Bashbot internal functions
 These functions are for internal use only and must not used in your bot commands.
 
@@ -349,5 +420,5 @@ Send Input from Telegram to waiting Interactive Chat.
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-dev2-10-gfa9e879
+#### $$VERSION$$ v0.70-dev2-16-gc6d4086
 

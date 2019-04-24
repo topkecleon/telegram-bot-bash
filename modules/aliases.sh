@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-15-g03f22c9
+#### $$VERSION$$ v0.70-dev2-16-gc6d4086
 
 # source from commands.sh to use the aliases
 # some handy aliases for use when processing messages:
@@ -14,6 +14,9 @@ _is_botadmin() {
 }
 _is_admin() {
 	user_is_admin "${CHAT[ID]}" "${USER[ID]}"
+}
+_is_creator() {
+	user_is_creator "${CHAT[ID]}" "${USER[ID]}"
 }
 _is_allowed() {
 	user_is_allowed "${USER[ID]}" "$1" "${CHAT[ID]}"

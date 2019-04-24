@@ -37,7 +37,7 @@ Location of runtime data files 'data-bot-bash', 'count', downloaded files ...
 ```
 
 #### BASHBOT_COMMANDS
-Full path to bash script containing your commandsm, default: './commands.sh', must end with '.sh'
+Full path to bash script containing your commands, default: './commands.sh', must end with '.sh'
 ```bash
   unset  BASHBOT_COMMANDS     # telegram-bot-bash/commands.sh (default)
   export BASHBOT_COMMANDS ""  # telegram-bot-bash/commands.sh
@@ -131,5 +131,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 
 #### [Prev Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-dev2-10-gfa9e879
+#### $$VERSION$$ v0.70-dev2-16-gc6d4086
 

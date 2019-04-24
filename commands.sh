@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-15-g03f22c9
+#### $$VERSION$$ v0.70-dev2-16-gc6d4086
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -125,8 +125,8 @@ else
 			checkprog
 			if [ "$res" -eq 0 ] ; then killproc && send_message "${CHAT[ID]}" "Command canceled.";else send_message "${CHAT[ID]}" "No command is currently running.";fi
 			;;
-		*)	# forward input to interactive chat if running
-			if tmux ls | grep -v send | grep -q "$copname"; then inproc; fi
+		*)	# forward other messages to optional dispatcher
+			_is_function startproc && if tmux ls | grep -v send | grep -q "$copname"; then inproc; fi
 			_is_function mycommands && mycommands
 			;;
 	esac
