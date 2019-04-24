@@ -166,5 +166,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.70-dev2-16-gc6d4086
+#### $$VERSION$$ v0.70-dev2-17-g92ad9e4
 

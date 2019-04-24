@@ -5,16 +5,19 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-15-g03f22c9
+#### $$VERSION$$ v0.70-dev2-17-g92ad9e4
 
 # source from commands.sh if you want ro use interactive or background jobs
+
+## to statisfy shellcheck
+export res
 
 ####
 # I placed send_message here because main use case is interactive chats and background jobs
 send_message() {
 	local text arg keyboard file lat long title address sent
 	[ "$2" = "" ] && return 1
-	local chat="$1"
+	local mychat="$1"
 	text="$(echo "$2" | sed 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
 	arg="$3"
 	[ "$arg" != "safe" ] && {
@@ -35,31 +38,31 @@ send_message() {
 
 	}
 	if [ "$no_keyboard" != "" ]; then
-		echo "remove_keyboard $chat $text" > "${TMPDIR:-.}/prova"
-		remove_keyboard "$chat" "$text"
+		echo "remove_keyboard $mychat $text" > "${TMPDIR:-.}/prova"
+		remove_keyboard "$mychat" "$text"
 		sent=y
 	fi
 	if [ "$keyboard" != "" ]; then
 		if [[ "$keyboard" != *"["* ]]; then # pre 0.60 style
 			keyboard="[ ${keyboard//\" \"/\" \] , \[ \"} ]"
 		fi
-		send_keyboard "$chat" "$text" "$keyboard"
+		send_keyboard "$mychat" "$text" "$keyboard"
 		sent=y
 	fi
 	if [ "$file" != "" ]; then
-		send_file "$chat" "$file" "$text"
+		send_file "$mychat" "$file" "$text"
 		sent=y
 	fi
 	if [ "$lat" != "" ] && [ "$long" != "" ] && [ "$address" = "" ] && [ "$title" = "" ]; then
-		send_location "$chat" "$lat" "$long"
+		send_location "$mychat" "$lat" "$long"
 		sent=y
 	fi
 	if [ "$lat" != "" ] && [ "$long" != "" ] && [ "$address" != "" ] && [ "$title" != "" ]; then
-		send_venue "$chat" "$lat" "$long" "$title" "$address"
+		send_venue "$mychat" "$lat" "$long" "$title" "$address"
 		sent=y
 	fi
 	if [ "$sent" != "y" ];then
-		send_text "$chat" "$text"
+		send_text "$mychat" "$text"
 	fi
 
 }
@@ -82,7 +85,7 @@ send_text() {
 # interactive and background functions
 
 background() {
-	echo "${CHAT[ID]}:$2:$1" >"${TMPDIR:-.}/${copname}$2-back.cmd"
+	echo "${CHAT[ID]}:$2:$1" >"${TMPDIR:-.}/${copname:--}$2-back.cmd"
 	startproc "$1" "back-$2-"
 }
 
