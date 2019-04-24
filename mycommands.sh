@@ -2,14 +2,14 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.70-dev2-18-g097a841
+#### $$VERSION$$ v0.70-dev2-19-g262bb9e
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
 
 
-# uncomment the following lines to overwrite info and hel messages
-# bashbot_info='This is bashbot, the Telegram bot written entirely in bash.`
+# uncomment the following lines to overwrite info and help messages
+# bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
 #'
 # bashbot_help='*Available commands*:
 #'
