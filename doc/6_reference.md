@@ -133,18 +133,23 @@ send_keyboard "${CHAT[ID]}" "Enter digit" "[ \\"1\\" , \\"2\\" , \\"3\\" ] , [ \
 ##### kick_chat_member
 If your Bot is Admin of a chat he can kick and ban a user.
 
-*usage:*  kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
+*usage:* kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
+*alias* _kick_user "${USER[ID]}"
 
 ##### unban_chat_member
 If your Bot is Admin of a chat he can unban a kicked user.
 
 *usage:*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
+*alias* _unban "${USER[ID]}"
+
 ##### leave_chat
 Bot will leave given chat.
 
 *usage:* leave_chat "${CHAT[ID]}"
+
+*alias* _leave 
 
 ```bash
 if _is_admin ; then 
@@ -226,6 +231,26 @@ You must use  ```source modules/aliases.sh``` in commands.sh or mycommands.sh to
 *usage:* _is_allowed "what"
 
 *alias for* user_is_allowed "${USER[ID]}" "what" "${CHAT[ID]}"
+
+----
+
+##### kick_chat_member
+
+*usage:* _kick_user "${USER[ID]}"
+
+*alias for* kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
+
+##### unban_chat_member
+
+*usage:* _unban "${USER[ID]}"
+
+*alias for*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
+
+##### leave_chat
+
+*usage:* _leave 
+
+*alias for* leave_chat "${CHAT[ID]}"
 
 ----
 
@@ -420,5 +445,5 @@ Send Input from Telegram to waiting Interactive Chat.
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-dev2-17-g92ad9e4
+#### $$VERSION$$ v0.70-dev2-18-g097a841
 

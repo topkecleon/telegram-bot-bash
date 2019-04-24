@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-17-g92ad9e4
+#### $$VERSION$$ v0.70-dev2-18-g097a841
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -20,19 +20,16 @@ unset IFS
 # set -f # if you are paranoid use set -f to disable globbing
 
 
-# to change the default info and help messages copy bashbot_info() and bahsbot_help()
-# to mycommands.sh and edit the messages there.
 
 if [ "$1" != "source" ]; then
-  bashbot_info() {
-	send_markdown_message "${1}" 'This is bashbot, the Telegram bot written entirely in bash.
+  # to change the default info message overwrite bashbot_info in mycommands.sh
+  bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.
 It currently can send, recieve and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
 '
-  }
 
-  bashbot_help() {
-	send_markdown_message "${1}" '*Available commands*:
+  # to change the default help messages overwrite in mycommands.sh
+  bashbot_help='*Available commands*:
 *• /start*: _Start bot and get this message_.
 *• /info*: _Get shorter info message about this bot_.
 *• /question*: _Start interactive chat_.
@@ -42,11 +39,13 @@ It currently can send, recieve and forward messages, custom keyboards, photos, a
 Written by Drew (@topkecleon), Daniil Gentili (@danogentili) and KayM(@gnadelwartz).
 Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
-  }
 
   # load additional modules
-  [ -r "modules/aliases.sh" ] && source "modules/aliases.sh" # some handy aliases, e.g. _is_admin and _message
-  # ...
+  [ -r "modules/aliases.sh" ] && source "modules/aliases.sh"
+  [ -r "modules/background.sh" ] && source "modules/background.sh"
+  # ... more modules here ...
+
+  # mycommands is the last "module" to source in
   # shellcheck source=./commands.sh
   [ -r "mycommands.sh" ] && source "mycommands.sh"
 
@@ -60,6 +59,7 @@ if [ "$1" = "source" ];then
 	FILE_REGEX='/home/user/allowed/.*'
 else
 	if ! tmux ls | grep -v send | grep -q "$copname"; then
+		# interactive running?
 		[ ! -z "${URLS[*]}" ] && {
 			curl -s "${URLS[*]}" -o "$NAME"
 			send_file "${CHAT[ID]}" "$NAME" "$CAPTION"
@@ -91,42 +91,42 @@ else
 			if [[ "$iQUERY_MSG" = "web" ]]; then
 				answer_inline_query "$iQUERY_ID" "article" "GitHub" "http://github.com/topkecleon/telegram-bot-bash"
 			fi
-		fi &
+		fi & # note the & !
 	fi
 	case "$MESSAGE" in
 		################################################
 		# DEFAULT commands start here, edit messages only
 		'/info')
-			bashbot_info "${CHAT[ID]}"
+			_markdown_message "${bashbot_info}"
 			;;
 		'/start')
 			send_action "${CHAT[ID]}" "typing"
-			_is_botadmin && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
+			_is_botadmin && _markdown_message "You are *BOTADMIN*."
 			if _is_allowed "start" ; then
-				bot_help "${CHAT[ID]}"
+				_markdown_message "${bot_help}"
 			else
-				send_normal_message "${CHAT[ID]}" "You are not allowed to start Bot."
+				_message "You are not allowed to start Bot."
 			fi
 			;;
 			
 		'/leavechat') # bot leave chat if user is admin in chat
 			if _is_admin ; then 
-				send_markdown_message "${CHAT[ID]}" "*LEAVING CHAT...*"
-   				leave_chat "${CHAT[ID]}"
+				_markdown_message "*LEAVING CHAT...*"
+   				_leave
 			fi
      			;;
      			
      		'/kickme')
-     			kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
-     			unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
+     			_kick_user "${USER[ID]}"
+     			_unban_user "${USER[ID]}"
      			;;
      			
 		'/cancel')
 			checkprog
-			if [ "$res" -eq 0 ] ; then killproc && send_message "${CHAT[ID]}" "Command canceled.";else send_message "${CHAT[ID]}" "No command is currently running.";fi
+			if [ "$res" -eq 0 ] ; then killproc && _message "Command canceled.";else _message "No command is currently running.";fi
 			;;
 		*)	# forward other messages to optional dispatcher
-			_is_function startproc && if tmux ls | grep -v send | grep -q "$copname"; then inproc; fi
+			_is_function startproc && if tmux ls | grep -v send | grep -q "$copname"; then inproc; fi # interactive running
 			_is_function mycommands && mycommands
 			;;
 	esac

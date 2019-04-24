@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-17-g92ad9e4
+#### $$VERSION$$ v0.70-dev2-18-g097a841
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -666,7 +666,7 @@ if [ "$1" != "source" ]; then
 		echo "Sending the broadcast $* to $NUMCOUNT users."
 		[ "$NUMCOUNT" -gt "300" ] && sleep="sleep 0.5"
 		shift
-		while read -r f; do send_message "${f//COUNT}" "$*"; $sleep; done <"${COUNTFILE}"
+		while read -r f; do send__markdown_message "${f//COUNT}" "$*"; $sleep; done <"${COUNTFILE}"
 		;;
 	"start")
 		${CLEAR}

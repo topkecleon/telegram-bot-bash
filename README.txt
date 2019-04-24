@@ -168,5 +168,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.70-dev2-17-g92ad9e4
+latexmath:[\[VERSION\]] v0.70-dev2-18-g097a841
 ++++++++++++++++++++++++++++++++++++++++++++++
