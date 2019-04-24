@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-21-g0cfb9f0
+#### $$VERSION$$ v0.70-dev2-22-g991ecd4
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -322,27 +322,35 @@ old_send_keyboard() {
 
 send_keyboard() {
 	if [[ "$3" != *'['* ]]; then old_send_keyboard "$@"; return; fi
-	local chat="$1"
-	local text="$2"
+	local chat='"chat_id":'"$1"
+	local text='"text":"'"$2"'"'
 	local keyboard="$3"
-	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [${keyboard}],\"one_time_keyboard\": true}")"
+        local JSON='{'"${chat}"', '"${text}"', "reply_markup": {"keyboard": [ '"${keyboard}"' ], "one_time_keyboard":true } }'
+	# '{"chat_id":$1, "text":"$2", "reply_markup": {"keyboard": [ ${3} ], "one_time_keyboard": true} }'
+        sendJson "$JSON" "$MSG_URL"
 }
 
 remove_keyboard() {
-	local chat="$1"
-	local text="$2"
-	shift 2
-	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat"  -F "text=$text" -F "reply_markup={\"remove_keyboard\": true}")"
+	local chat='"chat_id":'"$1"
+	local text='"text":"'"$2"'"'
+        local JSON='{'"${chat}"', '"${text}"', "reply_markup": {"remove_keyboard":true} }'
+	#JSON='{"chat_id":$1, "text":"$2", "reply_markup": {"remove_keyboard":true} }'
+        sendJson "$JSON" "$MSG_URL"
 }
-send_inline_button() {
-	local chat='"chat_id": '"$1"
-	local text='"text": "'"$2"'"'
-	local button='{ "text" : "'"$3"' , "url": "'"$4"'" }'
-	local JSON='{ '"${chat}"' , '"${text}"' , "reply_markup": { "inline_keyboard": [[ '"${button}"' ]]} }'
-        # JSON='{"chat_id":$1, "text":"$2", "reply_markup": {"inline_keyboard": [[ {"text":"$3", "url":"$4"} ]]} }'
+send_inline_keyboard() {
+        local chat='"chat_id":'"$1"
+        local text='"text":"'"$2"'"'
+        local keyboard="$3"
+        local JSON='{'"${chat}"', '"${text}"', "reply_markup": {"inline_keyboard": [ '"${keyboard}"' ]} }'
+        # JSON='{"chat_id":$1, "text":"$2", "reply_markup": {"inline_keyboard": [[ {"text":"$3", "url":"$4"} ... ]]} }'
+        sendJson "$JSON" "$MSG_URL"
+}
 
-	res="$(curl -d "$JSON" -H "Content-Type: application/json" -X POST "$MSG_URL")"
+# this will be the only send interface to telegram!
+sendJson(){
+        res="$(curl -d "$1" -H "Content-Type: application/json" -X POST "$2")"
 }
+
 
 get_file() {
 	[ "$1" = "" ] && return
