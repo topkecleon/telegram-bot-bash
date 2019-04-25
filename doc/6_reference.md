@@ -10,7 +10,6 @@
 
 *"action":* ```typing```, ```upload_photo```, ```record_video```, ```upload_video```, ```record_audio```, ```upload_audio```, ```upload_document```, ```find_location```.
 
-
 *example:* 
 ```bash
 send_action "${CHAT[ID]}" "typing"
@@ -37,8 +36,8 @@ Telegram supports a [reduced set of Markdown](https://core.telegram.org/bots/api
 
 *example:* 
 ```bash
-send_normal_message "${CHAT[ID]}" "this is a markdown  message, next word is *bold*"
-send_normal_message "${CHAT[ID]}" "*bold* _italic_ [text](link)"
+send_markdown_message "${CHAT[ID]}" "this is a markdown  message, next word is *bold*"
+send_markdown_message "${CHAT[ID]}" "*bold* _italic_ [text](link)"
 ```
 
 ##### send_html_message
@@ -126,6 +125,33 @@ send_keyboard "${CHAT[ID]}" "Enter digit" "[ \\"1\\" , \\"2\\" , \\"3\\" ] , [ \
 ##### remove_keyboard
 *usage:* remove_keybord "$CHAT[ID]" "message"
 
+#### send_inline_button
+*usage:*  send_inine_button "chat-id" "message" "Button text" "Buttton URL"
+
+*alias:* _inline_button "Button text" "Buttton URL"
+
+*example:* 
+```bash
+send_inline_button "${CHAT[ID]}" "MAKE MONEY FAST!!!" "Visit my Shop" "https://dealz.rrr.de"
+```
+
+#### send_inline_keyboard
+An inline keyboard is used to place multiple inline buttons in a row. The inline buttons must specified as a JSON array in the following format. Each button consists of a text for the button and an URL to got to if the button is clicked, button definitions
+are sourrounded by a pair of '**{ }**' and seperated by a '**,**'.
+
+```[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ]```
+
+*usage:*  send_inline_keyboard "chat-id" "message" "[{"text":"text", "url":"url"} ...]"
+
+*alias:* _inline_keyboard "[{"text":"text", "url":"url"} ...]"
+
+*example:* 
+```bash
+send_inline_keyboard "${CHAT[ID]}" "MAKE MONEY FAST!!!" '[{"text":"Visit my Shop", url"":"https://dealz.rrr.de"}]'
+send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"button 1", url"":"url 1"}, {"text":"button 2", url"":"url 2"} ]'
+send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"b 1", url"":"u 1"}, {"text":"b 2", url"":"u 2"}, {"text":"b 2", url"":"u 2"} ]'
+```
+
 ----
 
 ### Manage users 
@@ -135,21 +161,21 @@ If your Bot is Admin of a chat he can kick and ban a user.
 
 *usage:* kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
-*alias* _kick_user "${USER[ID]}"
+*alias:* _kick_user "${USER[ID]}"
 
 ##### unban_chat_member
 If your Bot is Admin of a chat he can unban a kicked user.
 
 *usage:*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
-*alias* _unban "${USER[ID]}"
+*alias:* _unban "${USER[ID]}"
 
 ##### leave_chat
 Bot will leave given chat.
 
 *usage:* leave_chat "${CHAT[ID]}"
 
-*alias* _leave 
+*alias:* _leave 
 
 ```bash
 if _is_admin ; then 
@@ -218,19 +244,19 @@ You must use  ```source modules/aliases.sh``` in commands.sh or mycommands.sh to
 
 *usage:* _is_botadmin
 
-*alias for* user_is_botadmin "${USER[ID]}"
+*alias for:* user_is_botadmin "${USER[ID]}"
 
 #### _is_admin
 
 *usage:* _is_admin
 
-*alias for* user_is_admin "${CHAT[ID]}" "${USER[ID]}"
+*alias for:* user_is_admin "${CHAT[ID]}" "${USER[ID]}"
 
 #### _is_allowed
 
 *usage:* _is_allowed "what"
 
-*alias for* user_is_allowed "${USER[ID]}" "what" "${CHAT[ID]}"
+*alias for:* user_is_allowed "${USER[ID]}" "what" "${CHAT[ID]}"
 
 ----
 
@@ -238,19 +264,19 @@ You must use  ```source modules/aliases.sh``` in commands.sh or mycommands.sh to
 
 *usage:* _kick_user "${USER[ID]}"
 
-*alias for* kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
+*alias for:* kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
 ##### unban_chat_member
 
 *usage:* _unban "${USER[ID]}"
 
-*alias for*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
+*alias for:*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
 ##### leave_chat
 
 *usage:* _leave 
 
-*alias for* leave_chat "${CHAT[ID]}"
+*alias for:* leave_chat "${CHAT[ID]}"
 
 ----
 
@@ -258,25 +284,25 @@ You must use  ```source modules/aliases.sh``` in commands.sh or mycommands.sh to
 
 *usage:* _message "message"
 
-*alias for* send_normal_message "${CHAT[ID]}" "message"
+*alias for:* send_normal_message "${CHAT[ID]}" "message"
 
 #### _normal_message
 
 *usage:* _normal_message "message"
 
-*alias for* send_normal_message "${CHAT[ID]}" "message"
+*alias for:* send_normal_message "${CHAT[ID]}" "message"
 
 #### _html_message
 
 *usage:* _html_message "message"
 
-*alias for* send_html_message "${CHAT[ID]}" "message"
+*alias for:* send_html_message "${CHAT[ID]}" "message"
 
 #### _markdown_message
 
 *usage:* _markdown_message "message"
 
-*alias for* send_markdown_message "${CHAT[ID]}" "message"
+*alias for:* send_markdown_message "${CHAT[ID]}" "message"
 
 ----
 
@@ -445,5 +471,5 @@ Send Input from Telegram to waiting Interactive Chat.
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-dev2-27-g2da31c1
+#### $$VERSION$$ v0.70-dev3-4-g8f4b168
 

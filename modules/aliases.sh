@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-27-g2da31c1
+#### $$VERSION$$ v0.70-dev3-4-g8f4b168
 #
 # source from commands.sh to use the aliases
 
@@ -46,17 +46,17 @@ _markdown_message() {
 }
 # easy handling of keyboards
 _inline_button() {
-	send_inline_button "${CHAT[ID]}" "${1}" "${2}" "${3}"
+	send_inline_button "${CHAT[ID]}" "" "${1}" "${2}" 
 }
 _inline_keyboard() {
-	send_inline_keyboard "${CHAT[ID]}" "${1}" "${2}"
+	send_inline_keyboard "${CHAT[ID]}" "" "${1}"
 }
 _keyboard_numpad() {
-	send_keyboard "${CHAT[ID]}" "${1}" '["1","2","3"],["4","5","6"],["7","8","9"],["-","0","."]' "yes"
+	send_keyboard "${CHAT[ID]}" "" '["1","2","3"],["4","5","6"],["7","8","9"],["-","0","."]' "yes"
 }
 _keyboard_yesno() {
-	send_keyboard "${CHAT[ID]}" "${1}" '["yes","no"]'
+	send_keyboard "${CHAT[ID]}" "" '["yes","no"]'
 }
 _del_keyboard() {
-	remove_keyboard "${CHAT[ID]}" "${1}"
+	remove_keyboard "${CHAT[ID]}" ""
 }

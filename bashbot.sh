@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev3-3-g0f220bd
+#### $$VERSION$$ v0.70-dev3-4-g8f4b168
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -166,7 +166,7 @@ export BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
 send_normal_message() {
 	text="$2"
 	until [ "$(echo -n "$text" | wc -m)" -eq "0" ]; do
-		res="$(curl -s "$MSG_URL" -d "chat_id=$1" --data-urlencode "text=${text:0:4096}")"
+		sendJson "${1}" '"text":"'"${text:0:4096}"'"' "$MSG_URL"
 		text="${text:4096}"
 	done
 }
@@ -174,7 +174,7 @@ send_normal_message() {
 send_markdown_message() {
 	text="$2"
 	until [ "$(echo -n "$text" | wc -m)" -eq "0" ]; do
-		res="$(curl -s "$MSG_URL" -d "chat_id=$1" --data-urlencode "text=${text:0:4096}" -d "parse_mode=markdown" -d "disable_web_page_preview=true")"
+		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdown"' "$MSG_URL"
 		text="${text:4096}"
 	done
 }
@@ -182,7 +182,7 @@ send_markdown_message() {
 send_html_message() {
 	text="$2"
 	until [ "$(echo -n "$text" | wc -m)" -eq "0" ]; do
-		res="$(curl -s "$MSG_URL" -d "chat_id=$1" --data-urlencode "text=${text:0:4096}" -d "parse_mode=html")"
+		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"html"' "$MSG_URL"
 		text="${text:4096}"
 	done
 }
@@ -352,7 +352,7 @@ send_inline_button() {
 
 # usage: sendJson "chat" "JSON" "URL"
 sendJson(){
-	res="$(curl -d '{"chat_id":'"${1}"', '"$2"'}' -H "Content-Type: application/json" \
+	res="$(curl -s -d '{"chat_id":'"${1}"', '"$2"'}' -H "Content-Type: application/json" \
 		-X POST "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(echo "$res" | JsonGetLine '"ok"')"
 	BOTSENT[ID]="$(echo "$res" | JsonGetValue '"result","message_id"')"

@@ -3,7 +3,7 @@
 #
 # works together with git pre-push.sh and ADD all changed files since last push
 
-#### $$VERSION$$ v0.70-dev3-3-g0f220bd
+#### $$VERSION$$ v0.70-dev3-4-g8f4b168
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -24,7 +24,4 @@ do
 	git add "${file}" && echo -n "${file} "
 done
 echo "done."
-
-# shellcheck disable=SC2086
-git add ${FILES}
 
