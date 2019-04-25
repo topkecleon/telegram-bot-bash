@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#### $$VERSION$$ v0.70-dev2-21-g0cfb9f0
+#### $$VERSION$$ v0.70-dev2-24-gfe4fb34
 # shellcheck disable=SC2016
 #
 # Easy Versioning in git:
