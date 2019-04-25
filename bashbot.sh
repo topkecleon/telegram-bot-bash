@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev3-1-g55dab95
+#### $$VERSION$$ v0.70-dev3-3-g0f220bd
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -188,24 +188,25 @@ send_html_message() {
 }
 
 delete_message() {
-        res="$(curl -s "$DELETE_URL" -F "chat_id=$1" -F "message_id=$2")"
+	sendJson "$1" 'message_id: '"$2"'' "$DELETE_URL"
 }
 
 # usage: status="$(get_chat_member_status "chat" "user")"
 get_chat_member_status() {
-	curl -s "$GETMEMBER_URL" -F "chat_id=$1" -F "user_id=$2" | "${JSONSHFILE}" -s -b -n | sed -n -e '/\["result","status"\]/  s/.*\][ \t]"\(.*\)"$/\1/p'
+	sendJson "$1" 'user_id: '"$2"'' "$GETMEMBER_URL"
+	echo "$res" | JsonGetString '"result","status"'
 }
 
 kick_chat_member() {
-	res="$(curl -s "$KICK_URL" -F "chat_id=$1" -F "user_id=$2")"
+	sendJson "$1" 'user_id: '"$2"'' "$KICK_URL"
 }
 
 unban_chat_member() {
-	res="$(curl -s "$UNBAN_URL" -F "chat_id=$1" -F "user_id=$2")"
+	sendJson "$1" 'user_id: '"$2"'' "$UNBAN_URL"
 }
 
 leave_chat() {
-	res="$(curl -s "$LEAVE_URL" -F "chat_id=$1")"
+	sendJson "$1" "" "$LEAVE_URL"
 }
 
 user_is_creator() {
@@ -347,10 +348,8 @@ send_inline_keyboard() {
 }
 send_inline_button() {
 	send_inline_keyboard "${1}" "${2}" '[ {"text":"'"${3}"'", "url":"'"${4}"'"}]' 
-        # JSON='"text":"$2", "reply_markup": {"inline_keyboard": [[ {"text":"$3", "url":"$4"} ... ]]}'
 }
 
-# this will be the only send interface to telegram!
 # usage: sendJson "chat" "JSON" "URL"
 sendJson(){
 	res="$(curl -d '{"chat_id":'"${1}"', '"$2"'}' -H "Content-Type: application/json" \
