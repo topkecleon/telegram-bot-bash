@@ -3,7 +3,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 
-#### $$VERSION$$ v0.70-dev2-26-g163635d
+#### $$VERSION$$ v0.70-dev2-27-g2da31c1
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
