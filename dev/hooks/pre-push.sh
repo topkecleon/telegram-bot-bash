@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.70-dev2-21-g0cfb9f0
+#### $$VERSION$$ v0.70-dev2-23-ga7d14f6
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -8,6 +8,7 @@ cd "$GIT_DIR/.." || exit 1
 
 export HOOKDIR="dev/hooks"
 
+LASTPUSH='.git/.lastpush'
 REMOTEVER="$(git ls-remote -t --refs 2>/dev/null | tail -1 | sed 's/.*\/v//')"
 VERSION="$(git describe --tags | sed -e 's/-.*//' -e 's/v//')"
 
@@ -23,8 +24,12 @@ unset IFS; set -f
 # LOCAL version must greater than latest REMOTE release version
 if (( $(echo "${VERSION} > ${REMOTEVER}" | bc -l) )); then
 	# update version in bashbot files on push
+	set +f
+	[ -f "${LASTPUSH}" ] && LASTFILES="$(find ./* -newer "${LASTPUSH}")"
+	[ "${LASTFILES}" = "" ] && exit
 	echo -n " "
-	dev/version.sh 2>/dev/null || exit 1
+	# shellcheck disable=SC2086
+	dev/version.sh ${LASTFILES} 2>/dev/null || exit 1
 	echo "    OK"
 else
 	echo "Error: local version ${VERSION} must be greater than latest release version."
@@ -32,3 +37,5 @@ else
 	exit 1
 fi
 
+# note date of last push for version
+touch "${LASTPUSH}"

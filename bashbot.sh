@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev2-22-g991ecd4
+#### $$VERSION$$ v0.70-dev2-23-ga7d14f6
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -159,8 +159,8 @@ UPD_URL=$URL'/getUpdates?offset='
 GET_URL=$URL'/getFile'
 
 unset USER
-declare -A USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
-export USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
+declare -A BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
+export BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
 
 
 send_normal_message() {
@@ -320,35 +320,44 @@ old_send_keyboard() {
 	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")"
 }
 
+TEXTISEMPTY="MyTextIsEmpty"
 send_keyboard() {
 	if [[ "$3" != *'['* ]]; then old_send_keyboard "$@"; return; fi
-	local chat='"chat_id":'"$1"
-	local text='"text":"'"$2"'"'
-	local keyboard="$3"
-        local JSON='{'"${chat}"', '"${text}"', "reply_markup": {"keyboard": [ '"${keyboard}"' ], "one_time_keyboard":true } }'
+	local chat='"chat_id":'"${1}"
+	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${TEXTISEMPTY}"'"'
+	local one_time=', "one_time_keyboard":true' && [ "$4" != "" ] && one_time=""
+        local JSON='{'"${chat}"', '"${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"' } }'
 	# '{"chat_id":$1, "text":"$2", "reply_markup": {"keyboard": [ ${3} ], "one_time_keyboard": true} }'
         sendJson "$JSON" "$MSG_URL"
+	[ "${text}" = '"text":"'"${TEXTISEMPTY}"'"' ] && delete_message "${1}" "${2}"
 }
 
 remove_keyboard() {
-	local chat='"chat_id":'"$1"
-	local text='"text":"'"$2"'"'
+	local chat='"chat_id":'"${1}"
+	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${TEXTISEMPTY}"'"'
         local JSON='{'"${chat}"', '"${text}"', "reply_markup": {"remove_keyboard":true} }'
 	#JSON='{"chat_id":$1, "text":"$2", "reply_markup": {"remove_keyboard":true} }'
         sendJson "$JSON" "$MSG_URL"
+	[ "${text}" = '"text":"'"${TEXTISEMPTY}"'"' ] && delete_message "${1}" "${2}"
 }
 send_inline_keyboard() {
-        local chat='"chat_id":'"$1"
-        local text='"text":"'"$2"'"'
-        local keyboard="$3"
-        local JSON='{'"${chat}"', '"${text}"', "reply_markup": {"inline_keyboard": [ '"${keyboard}"' ]} }'
-        # JSON='{"chat_id":$1, "text":"$2", "reply_markup": {"inline_keyboard": [[ {"text":"$3", "url":"$4"} ... ]]} }'
+	local chat='"chat_id":'"${1}"
+	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${TEXTISEMPTY}"'"'
+        local JSON='{'"${chat}"', '"${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]} }'
+        # JSON='{"chat_id":$1, "text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]} }'
         sendJson "$JSON" "$MSG_URL"
+	[ "${text}" = '"text":"'"${TEXTISEMPTY}"'"' ] && delete_message "${1}" "${2}"
+}
+send_inline_button() {
+	send_inline_keyboard "${1}" "${2}" '[ {"text":"'"${3}"'", "url":"'"${4}"'"}]' 
+        # JSON='{"chat_id":$1, "text":"$2", "reply_markup": {"inline_keyboard": [[ {"text":"$3", "url":"$4"} ... ]]} }'
 }
 
 # this will be the only send interface to telegram!
 sendJson(){
-        res="$(curl -d "$1" -H "Content-Type: application/json" -X POST "$2")"
+	res="$(curl -d "${1}" -H "Content-Type: application/json" -X POST "${2}" | "${JSONSHFILE}" -s -b -n )"
+	BOTSENT[OK]="$(echo "$res" | JsonGetLine '"ok"')"
+	BOTSENT[ID]="$(echo "$res" | JsonGetValue '"result","message_id"')"
 }
 
 
@@ -460,7 +469,7 @@ JsonGetString() {
 	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]"\(.*\)"$/\1/p'
 }
 JsonGetLine() {
-	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\]\][ \t]//p'
+	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]//p'
 }
 JsonGetValue() {
 	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]\([0-9.,]*\).*/\1/p'
