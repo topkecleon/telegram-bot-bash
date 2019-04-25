@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev3-4-g8f4b168
+#### $$VERSION$$ v0.70-dev3-5-g8b8da67
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -310,7 +310,7 @@ answer_inline_query() {
 
 old_send_keyboard() {
 	local chat="$1"
-	local text="$2"
+	local text='"text":"'"${2}"'"'
 	shift 2
 	local keyboard=init
 	OLDIFS=$IFS
@@ -318,7 +318,8 @@ old_send_keyboard() {
 	for f in "$@" ;do [ "$f" != " " ] && keyboard="$keyboard, [\"$f\"]";done
 	IFS=$OLDIFS
 	keyboard=${keyboard/init, /}
-	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")"
+        local JSON="${text}"', "reply_markup": {"keyboard": [ '"${keyboard}"' ],"one_time_keyboard": true}'
+        sendJson "${chat}" "$JSON" "$MSG_URL"
 }
 
 TEXTISEMPTY="ThisTextIsEmptyAndWillBeDeleted"
@@ -352,17 +353,19 @@ send_inline_button() {
 
 # usage: sendJson "chat" "JSON" "URL"
 sendJson(){
-	res="$(curl -s -d '{"chat_id":'"${1}"', '"$2"'}' -H "Content-Type: application/json" \
+	local chat='"chat_id":'"${1}"','; [ "${1}" = "" ] && chat=""
+	res="$(curl -s -d '{'"${chat} $2"'}' -H "Content-Type: application/json" \
 		-X POST "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(echo "$res" | JsonGetLine '"ok"')"
 	BOTSENT[ID]="$(echo "$res" | JsonGetValue '"result","message_id"')"
 	[[ "${2}" = *"${TEXTISEMPTY}"* ]] && delete_message "${1}" "${BOTSENT[ID]}"
 }
 
-
 get_file() {
 	[ "$1" = "" ] && return
-	echo "${FILE_URL}$(curl -s "${GET_URL}" -F "file_id=$1" | "${JSONSHFILE}" -s -b -n | grep '\["result","file_path"\]' | cut -f 2 | cut -d '"' -f 2)"
+	local JSON='"file_id": '"${1}"
+	sendJson "" "${JSON}" "${GET_URL}"
+	echo "${FILE_URL}$(echo "${res}" | jsonGetString '"result","file_path"')"
 }
 
 send_file() {
@@ -417,24 +420,27 @@ send_file() {
 
 send_action() {
 	[ "$2" = "" ] && return
-	res="$(curl -s "$ACTION_URL" -F "chat_id=$1" -F "action=$2")"
+	sendJson "${1}" '"action": "'"${2}"'"' "$ACTION_URL"
 }
 
 send_location() {
 	[ "$3" = "" ] && return
-	res="$(curl -s "$LOCATION_URL" -F "chat_id=$1" -F "latitude=$2" -F "longitude=$3")"
+	local JSON='"latitude": '"${2}"', "longitude": '"${3}"''
+	sendJson "${1}" "${JSON}" "$LOCATION_URL"
 }
 
 send_venue() {
 	[ "$5" = "" ] && return
-	[ "$6" != "" ] add="-F \"foursquare_id=$6\""
-	res="$(curl -s "$VENUE_URL" -F "chat_id=$1" -F "latitude=$2" -F "longitude=$3" -F "title=$4" -F "address=$5")"
+	local JSON='"latitude": '"${2}"', "longitude": '"${3}"', "title": "'"${4}"'"'
+	[ "$6" != "" ] JSON="$JSON"', "foursquare_id": '"$6"''
+	sendJson "${1}" "${JSON}" "$VENUE_URL"
 }
 
 
 forward_message() {
 	[ "$3" = "" ] && return
-	res="$(curl -s "$FORWARD_URL" -F "chat_id=$1" -F "from_chat_id=$2" -F "message_id=$3")"
+	local JSON='"from_chat_id": '"${2}"', "message_id": '"${3}"''
+	sendJson "${1}" "${JSON}" "$FORWARD_URL"
 }
 forward() { # backward compatibility
 	forward_message "$@" || return
@@ -606,8 +612,8 @@ bot_init() {
 
 # get bot name
 getBotName() {
-	res="$(curl -s "$ME_URL")"
-	echo "$res" | "${JSONSHFILE}" -s -b -n | JsonGetString '"result","username"'
+	res="$(curl -s "$ME_URL" | "${JSONSHFILE}" -s -b -n )"
+	echo "$res" | JsonGetString '"result","username"'
 }
 
 ME="$(getBotName)"
