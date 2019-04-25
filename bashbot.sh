@@ -320,44 +320,44 @@ old_send_keyboard() {
 	res="$(curl -s "$MSG_URL" --header "content-type: multipart/form-data" -F "chat_id=$chat" -F "text=$text" -F "reply_markup={\"keyboard\": [$keyboard],\"one_time_keyboard\": true}")"
 }
 
-TEXTISEMPTY="MyTextIsEmpty"
+TEXTISEMPTY="ThisTextIsEmptyAndWillBeDeleted"
 send_keyboard() {
 	if [[ "$3" != *'['* ]]; then old_send_keyboard "$@"; return; fi
-	local chat='"chat_id":'"${1}"
+	local chat="${1}"
 	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${TEXTISEMPTY}"'"'
 	local one_time=', "one_time_keyboard":true' && [ "$4" != "" ] && one_time=""
-        local JSON='{'"${chat}"', '"${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"' } }'
-	# '{"chat_id":$1, "text":"$2", "reply_markup": {"keyboard": [ ${3} ], "one_time_keyboard": true} }'
-        sendJson "$JSON" "$MSG_URL"
-	[ "${text}" = '"text":"'"${TEXTISEMPTY}"'"' ] && delete_message "${1}" "${2}"
+        local JSON="${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"'}'
+	# '"text":"$2", "reply_markup": {"keyboard": [ ${3} ], "one_time_keyboard": true}'
+        sendJson "${chat}" "$JSON" "$MSG_URL"
 }
 
 remove_keyboard() {
-	local chat='"chat_id":'"${1}"
+	local chat="${1}"
 	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${TEXTISEMPTY}"'"'
-        local JSON='{'"${chat}"', '"${text}"', "reply_markup": {"remove_keyboard":true} }'
-	#JSON='{"chat_id":$1, "text":"$2", "reply_markup": {"remove_keyboard":true} }'
-        sendJson "$JSON" "$MSG_URL"
-	[ "${text}" = '"text":"'"${TEXTISEMPTY}"'"' ] && delete_message "${1}" "${2}"
+        local JSON="${text}"', "reply_markup": {"remove_keyboard":true}'
+	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
+        sendJson "${chat}" "$JSON" "$MSG_URL"
 }
 send_inline_keyboard() {
-	local chat='"chat_id":'"${1}"
+	local chat="${1}"
 	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${TEXTISEMPTY}"'"'
-        local JSON='{'"${chat}"', '"${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]} }'
-        # JSON='{"chat_id":$1, "text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]} }'
-        sendJson "$JSON" "$MSG_URL"
-	[ "${text}" = '"text":"'"${TEXTISEMPTY}"'"' ] && delete_message "${1}" "${2}"
+        local JSON="${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]}'
+        # JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
+        sendJson "${chat}" "$JSON" "$MSG_URL"
 }
 send_inline_button() {
 	send_inline_keyboard "${1}" "${2}" '[ {"text":"'"${3}"'", "url":"'"${4}"'"}]' 
-        # JSON='{"chat_id":$1, "text":"$2", "reply_markup": {"inline_keyboard": [[ {"text":"$3", "url":"$4"} ... ]]} }'
+        # JSON='"text":"$2", "reply_markup": {"inline_keyboard": [[ {"text":"$3", "url":"$4"} ... ]]}'
 }
 
 # this will be the only send interface to telegram!
+# usage: sendJson "chat" "JSON" "URL"
 sendJson(){
-	res="$(curl -d "${1}" -H "Content-Type: application/json" -X POST "${2}" | "${JSONSHFILE}" -s -b -n )"
+	res="$(curl -d '{"chat_id":'"${1}"', '"$2"'}' -H "Content-Type: application/json" \
+		-X POST "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(echo "$res" | JsonGetLine '"ok"')"
 	BOTSENT[ID]="$(echo "$res" | JsonGetValue '"result","message_id"')"
+	[[ "${2}" = *"${TEXTISEMPTY}"* ]] && delete_message "${1}" "${BOTSENT[ID]}"
 }
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # file: git-add.sh
 #
-# works together with git pre-push.sh and add all changed files sind last push
+# works together with git pre-push.sh and ADD all changed files since last push
 
 #### $$VERSION$$ v0.70-dev3-1-g55dab95
 
