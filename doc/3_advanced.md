@@ -2,7 +2,7 @@
 ## Advanced Features
 
 ### Access control
-Bashbot offers functions to check what Telegram capabilities like chat admin or chat creator the given user has:
+Bashbot offers functions to check what Telegram capabilities like 'chat admin' or 'chat creator' the given user has:
 
 ```bash
 # return true if user is admin/owner of the bot
@@ -21,7 +21,7 @@ user_is_botadmin "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *
 user_is_admin "${CHAT[ID]}" "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *CHATADMIN*."
 
 ```
-In addition you can check individual capabilities of users as defined in the ```./botacl``` file:
+In addition you can check individual capabilities of users as you must define in the file ```./botacl```:
 ```bash
 # file: botacl
 # a user not listed here, will return false from 'user_is_allowed'
@@ -44,7 +44,7 @@ In addition you can check individual capabilities of users as defined in the ```
 *:start:*
 *:*:98979695
 ```
-you have to use the function ```user_is_allowed``` to check if a user has the capability to do something. Example check if user has capability to start bot:
+You must use the function ```user_is_allowed``` to check if a user has the capability to do something. Example: Check if user has capability to start bot.
 ```bash
 	case "$MESSAGE" in
 		'/start')
@@ -58,8 +58,14 @@ you have to use the function ```user_is_allowed``` to check if a user has the ca
 ```
 
 ### Interactive Chats
-To create interactive chats, write (or edit the exmaples/question.sh script) a normal bash (or C or python) script, chmod +x it and then change the argument of the startproc function to match the command you usually use to start the script.
-The text that the script will output will be sent in real time to the user, and all user input will be sent to the script (as long as it's running or until the user kills it with /cancel).
+To create interactive chats, write *(or edit the 'exmaples/question.sh' script)* a bash *(or C or python)* script, make it executable 
+and then use the 'startproc' function to  start the script.
+The output of the script will be sent to the user and user input will be sent to the script.
+To stop the script use the function 'killprog'
+
+The output of the script will be processed by 'send_messages' to enable you to not only send text, but also keyboards, files, locations and more.
+Each newline in the output will start an new message to the user, to have line breaks in your message you can use 'mynewlinestartshere'.
+
 To open up a keyboard in an interactive script, print out the keyboard layout in the following way:
 ```bash
 echo "Text that will appear in chat? mykeyboardstartshere [ \"Yep, sure\" , \"No, highly unlikely\" ]"
@@ -90,11 +96,11 @@ Note: Interactive Chats run independent from main bot and continue running until
 
 ### Background Jobs
 
-A background job is similar to an interactive chat, but runs in the background and does only output massages instead of processing input from the user. In contrast to interactive chats it's possible to run multiple background jobs. To create a background job write a script or edit the examples/notify.sh script and use the funtion ```background``` to start it:
+A background job is similar to an interactive chat, but runs in the background and does only output massages and does not get user input. In contrast to interactive chats it's possible to run multiple background jobs. To create a background job write a script or edit 'examples/notify.sh'  script and use the funtion ```background``` to start it:
 ```bash
 background "examples/notify.sh" "jobname"
 ```
-All output of the script will be sent to the user or chat. To stop a background job use:
+All output of the script will be sent to the user, to stop a background job use:
 ```bash
 killback "jobname"
 ```
@@ -109,7 +115,7 @@ If you want to kill all background jobs permantly run:
 ./bashbot.sh killback
 
 ```
-Note: Background Jobs run independent from main bot and continue running until your script exits or you stop if from your Bot. Backgound Jobs will continue running if your Bot is stoped (kill)!. 
+Note: Background Jobs run independent from main bot and continue running until your script exits or you stop if from your Bot. Backgound Jobs will continue running if your Bot is stopeda and must be terminated, e.g. by ```bashbot.sh killback``` 
 
 ### Inline queries
 The following commands allows users to interact with your bot via *inline queries*.
@@ -153,8 +159,8 @@ To send stickers through an *inline query*:
 ```bash
 answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 ```
-#### [Prev Advanced Usage](3_advanced.md)
+#### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.70-dev2-27-g2da31c1
+#### $$VERSION$$ v0.70-dev3-6-g034274c
 

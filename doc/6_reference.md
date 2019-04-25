@@ -125,23 +125,24 @@ send_keyboard "${CHAT[ID]}" "Enter digit" "[ \\"1\\" , \\"2\\" , \\"3\\" ] , [ \
 ##### remove_keyboard
 *usage:* remove_keybord "$CHAT[ID]" "message"
 
-#### send_inline_button
-*usage:*  send_inine_button "chat-id" "message" "Button text" "Buttton URL"
+##### send_inline_button
+*usage:*  send_inine_button "chat-id" "message" "text" "URL"
 
-*alias:* _inline_button "Button text" "Buttton URL"
+*alias:* _inline_button "text" "URL"
 
 *example:* 
 ```bash
 send_inline_button "${CHAT[ID]}" "MAKE MONEY FAST!!!" "Visit my Shop" "https://dealz.rrr.de"
 ```
 
-#### send_inline_keyboard
-An inline keyboard is used to place multiple inline buttons in a row. The inline buttons must specified as a JSON array in the following format. Each button consists of a text for the button and an URL to got to if the button is clicked, button definitions
-are sourrounded by a pair of '**{ }**' and seperated by a '**,**'.
+##### send_inline_keyboard
+This allows to place multiple inline buttons in a row. The inline buttons must specified as a JSON array in the following format:
 
 ```[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ]```
 
-*usage:*  send_inline_keyboard "chat-id" "message" "[{"text":"text", "url":"url"} ...]"
+Each button consists of a pair of text and URL values, sourrounded by '**{ }**', multiple buttons are seperated by '**,**' and everthing is wrapped in '**[ ]**'.
+
+*usage:*  send_inline_keyboard "chat-id" "message" "[ {"text":"text", "url":"url"} ...]"
 
 *alias:* _inline_keyboard "[{"text":"text", "url":"url"} ...]"
 
@@ -157,21 +158,21 @@ send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"b 1", url"":"u 1"}, {"text":"b 
 ### Manage users 
 
 ##### kick_chat_member
-If your Bot is Admin of a chat he can kick and ban a user.
+If your Bot is a chat admin he can kick and ban a user.
 
 *usage:* kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
 *alias:* _kick_user "${USER[ID]}"
 
 ##### unban_chat_member
-If your Bot is Admin of a chat he can unban a kicked user.
+If your Bot is a chat admine can unban a kicked user.
 
 *usage:*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
 *alias:* _unban "${USER[ID]}"
 
 ##### leave_chat
-Bot will leave given chat.
+Your Bot will leave the chat.
 
 *usage:* leave_chat "${CHAT[ID]}"
 
@@ -189,8 +190,7 @@ fi
 ### User Access Control
 
 ##### user_is_botadmin
-Return true (0) if user is owner / admin of bot. 
-Name or ID botadmin must be placed in './botadmin' file.
+Return true (0) if user is admin of bot, user id if botadmin is read from file './botadmin'.
 
 *usage:*  user_is_botadmin "${USER[ID]}"
 
@@ -238,21 +238,21 @@ fi
 ----
 
 ### Aliases - shortcuts for often used funtions 
-You must use  ```source modules/aliases.sh``` in commands.sh or mycommands.sh to have the following functions availible.
+You must not disable  ```source modules/aliases.sh``` in 'commands.sh' to have the following functions availible.
 
-#### _is_botadmin
+##### _is_botadmin
 
 *usage:* _is_botadmin
 
 *alias for:* user_is_botadmin "${USER[ID]}"
 
-#### _is_admin
+##### _is_admin
 
 *usage:* _is_admin
 
 *alias for:* user_is_admin "${CHAT[ID]}" "${USER[ID]}"
 
-#### _is_allowed
+##### _is_allowed
 
 *usage:* _is_allowed "what"
 
@@ -260,19 +260,19 @@ You must use  ```source modules/aliases.sh``` in commands.sh or mycommands.sh to
 
 ----
 
-##### kick_chat_member
+##### _kick_user
 
 *usage:* _kick_user "${USER[ID]}"
 
 *alias for:* kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
-##### unban_chat_member
+##### _unban
 
 *usage:* _unban "${USER[ID]}"
 
 *alias for:*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
-##### leave_chat
+##### _leave
 
 *usage:* _leave 
 
@@ -280,25 +280,25 @@ You must use  ```source modules/aliases.sh``` in commands.sh or mycommands.sh to
 
 ----
 
-#### _message
+##### _message
 
 *usage:* _message "message"
 
 *alias for:* send_normal_message "${CHAT[ID]}" "message"
 
-#### _normal_message
+##### _normal_message
 
 *usage:* _normal_message "message"
 
 *alias for:* send_normal_message "${CHAT[ID]}" "message"
 
-#### _html_message
+##### _html_message
 
 *usage:* _html_message "message"
 
 *alias for:* send_html_message "${CHAT[ID]}" "message"
 
-#### _markdown_message
+##### _markdown_message
 
 *usage:* _markdown_message "message"
 
@@ -307,10 +307,10 @@ You must use  ```source modules/aliases.sh``` in commands.sh or mycommands.sh to
 ----
 
 ### Interactive and backgound jobs
-You must use  ```source modules/background.sh``` in commands.sh or mycommands.sh to have the following functions availible.
+You must not disable  ```source modules/background.sh``` in 'commands.sh' to have the following functions availible.
 
 ##### startproc
-```startproc``` starts a script (or C or python program etc.) running in parallel to your Bot. The text that the script outputs is sent to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
+```startproc``` starts a script, the output of the script is sent to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
 
 *usage:* startproc "script"
 
@@ -320,7 +320,7 @@ startproc 'examples/calc.sh'
 ```
 
 ##### checkproc
-Return true (0) if an interactive script active in the given chat. 
+Return true (0) if an interactive script is running in the chat. 
 
 *usage:* checkprog
 
@@ -335,6 +335,8 @@ fi
 ```
 
 ##### killproc
+Kill the interactive script running in the chat
+
 *usage:* killproc
 
 *example:* 
@@ -350,7 +352,7 @@ fi
 ----
 
 ##### background
-```background``` starts a script / programm as a background job and attaches a jobname to it. All output from a background job is sent to the associated chat.
+Starts a script as a background job and attaches a jobname to it. All output from a background job is sent to the associated chat.
 
 In contrast to interactive chats, background jobs do not recieve user input and can run forever. In addition you can suspend and restart running jobs, e.g. after reboot.
 
@@ -406,7 +408,7 @@ The main use case for send_message is to process the output of interactive chats
 
 ### Helper functions
 
-#### _is_function
+##### _is_function
 Returns true if the given function exist, can be used to check if a module is loaded.
 
 *usage* _is_function function
@@ -471,5 +473,5 @@ Send Input from Telegram to waiting Interactive Chat.
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-dev3-4-g8f4b168
+#### $$VERSION$$ v0.70-dev3-6-g034274c
 
