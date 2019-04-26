@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
-#### $$VERSION$$ v0.70-dev3-15-gfba8951
+#### $$VERSION$$ v0.70-dev3-17-g45f042d
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -16,7 +16,7 @@ DISTFILES="bashbot.rc  bashbot.sh  commands.sh  mycommands.sh doc  examples modu
 
 # run tests first!
 
-for test in dev/hooks/* "test/ALL-tests.sh"
+for test in "dev/all-tests.sh"
 do
    if ! "${test}" ; then
 	echo "Test ${test} failed, can't create dist!"
