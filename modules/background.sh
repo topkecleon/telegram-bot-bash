@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev3-14-gd26a992
+#### $$VERSION$$ v0.70-dev3-15-gfba8951
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -18,24 +18,16 @@ send_message() {
 	local text arg keyboard file lat long title address sent
 	[ "$2" = "" ] && return
 	local mychat="$1"
-	text="$(sed <<< "${2}" 's/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
+	text="$(sed <<< "${2}" 's/ mynewlinestartshere /\r\n/g; s/ my[kflta][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
 	arg="$3"
 	[ "$arg" != "safe" ] && {
-		text="${text// mynewlinestartshere /$'\r\n'}"
 		no_keyboard="$(sed <<< "${2}" '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
-
-		keyboard="$(sed <<< "${2}" '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
-
-		file="$(sed <<< "${2}" '/myfilelocationstartshere /!d;s/.*myfilelocationstartshere //g;s/ mykeyboardstartshere.*//g;s/ mylatstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
-
-		lat="$(sed <<< "${2}" '/mylatstartshere /!d;s/.*mylatstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylongstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
-
-		long="$(sed <<< "${2}" '/mylongstartshere /!d;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mytitlestartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
-
-		title="$(sed <<< "${2}" '/mytitlestartshere /!d;s/.*mytitlestartshere //g;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ myaddressstartshere.*//g;s/ mykeyboardendshere.*//g')"
-
-		address="$(sed <<< "${2}" '/myaddressstartshere /!d;s/.*myaddressstartshere //g;s/.*mylongstartshere //g;s/ mykeyboardstartshere.*//g;s/ myfilelocationstartshere.*//g;s/ mylatstartshere.*//g;s/ mytitlestartshere.*//g;s/ mykeyboardendshere.*//g')"
-
+		keyboard="$(sed <<< "${2}" '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ my[kflta][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+		file="$(sed <<< "${2}" '/myfilelocationstartshere /!d;s/.*myfilelocationstartshere //g;s/ my[kflta][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+		lat="$(sed <<< "${2}" '/mylatstartshere /!d;s/.*mylatstartshere //g;s/ my[kflta][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+		long="$(sed <<< "${2}" '/mylongstartshere /!d;s/.*mylongstartshere //g;s/ my[kflta][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+		title="$(sed <<< "${2}" '/mytitlestartshere /!d;s/.*mytitlestartshere //g;s/ my[kflta][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+		address="$(sed <<< "${2}" '/myaddressstartshere /!d;s/.*myaddressstartshere //g;s/ my[kflta][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
 	}
 	if [ "$no_keyboard" != "" ]; then
 		remove_keyboard "$mychat" "$text"
