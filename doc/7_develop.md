@@ -14,7 +14,7 @@ bashbot development is done on github. If you want to provide fixes or new featu
 6. setup github hooks by running ```dev/install-hooks.sh``` (optional)
 
 ### Test, Add, Push changes
-A typical bashbot develop cycle looks as follow:
+A typical bashbot develop loop looks as follow:
 
 1. start developing - *change, copy, edit bashbot files ...*
 2. after change to bash file: ```shellcheck -x file.sh```
@@ -24,6 +24,15 @@ A typical bashbot develop cycle looks as follow:
 
 
 **If you setup with hooks and use the scripts above, versioning, addding and testing is done automatically.**
+
+### Prepare a new version
+After some development it may time to create a new version for the users. a new version can be in sub version upgrade, e.g. for fixes and smaller additions or
+a new release version for new features. To mark a new version use ```git tag NEWVERSION``` and run ```dev/version.sh``` to update all version strings.
+
+Usually I start with some pre-x versions and when everything looks good I push out a release candidate (rc) and finally the new version.
+```
+ v0.x-dev -> v0.x-pre-x -> v0.x-rc -> v0.x  ... 0.x+1-dev ...
+```
 
 ### Versioning
 
@@ -83,5 +92,5 @@ fi
 #### [Prev Function Reference](6_function.md)
 #### [Next Bashbot Environment](8_custom.md)
 
-#### $$VERSION$$ v0.70-dev3-15-gfba8951
+#### $$VERSION$$ v0.70-pre1-0-g490c472
 
