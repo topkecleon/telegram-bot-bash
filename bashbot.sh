@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev3-12-ga288a8d
+#### $$VERSION$$ v0.70-dev3-13-g81b540a
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -420,8 +420,8 @@ send_location() {
 send_venue() {
 	local add=""
 	[ "$5" = "" ] && return
-	[ "$6" != "" ] add=', "foursquare_id": '"$6"''
-	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"', "title": "'"${4}"'"'"${add}" "$VENUE_URL"
+	[ "$6" != "" ] && add=', "foursquare_id": '"$6"''
+	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"', "address": "'"${5}"'", "title": "'"${4}"'"'"${add}" "$VENUE_URL"
 }
 
 

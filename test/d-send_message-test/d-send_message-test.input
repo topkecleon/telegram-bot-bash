@@ -1,0 +1,17 @@
+# test for text only output
+This is a normal text
+This is a normal text mynewlinestartshere with a line break
+html_parse_mode This is a <b>HTML</b> text
+html_parse_mode This is a <b>HTML</b> text mynewlinestartshere with a line break
+markdown_parse_mode This is a *MARKDOWN* text
+markdown_parse_mode This is a *MARKDOWN* text mynewlinestartshere with a line break
+
+# test for keyboard, file, venue output
+Text plus keyboard will appear in chat mykeyboardstartshere [ "Yep, sure" , "No, highly unlikely" ]
+Text plus file will appear in chat myfilelocationstartshere /home/user/doge.jpg
+Text plus location will appear in chat mylatstartshere la10 mylongstartshere lo20
+Text plus vuene will appear in chat mylatstartshere la10 mylongstartshere lo20 mytitlestartshere my home myaddressstartshere Diagon Alley N. 37
+All in one will appear in chat mykeyboardstartshere [ "Yep, sure" , "No, highly unlikely" ] myfilelocationstartshere /home/user/doge.jpg mylatstartshere la10 mylongstartshere lo20
+
+# test for new inline button
+Text plus keyboard will appear in chat mybuttonstartshere "Button Text" "https://www..."
