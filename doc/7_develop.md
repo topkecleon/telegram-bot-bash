@@ -13,6 +13,19 @@ bashbot development is done on github. If you want to provide fixes or new featu
 5. give your (dev) fork a new version tag: ```git tag vx.xx```, version must be higher than current version
 6. setup github hooks by running ```dev/install-hooks.sh``` (optional)
 
+### Test, Add, Push changes
+A typical bashbot develop cycle looks as follow:
+
+1. 'git checkout develop'
+2. start developing - *change, copy, edit bashbot files ...*
+3. run 'dev/all-tests.sh' - *in case if errors back to 2.*
+4. run 'dev/git-add.sh' - *check for changed files, update version string, run git add*
+5. 'git commit' -m "COMMIT MESSAGE"
+6. 'git push'
+
+
+**If you setup with hooks and use the scripts above, versioning, addding and testing is done automatically.**
+
 ### Versioning
 
 Bashbot is tagged with version numbers. If you start a new development cycle you must tag your fork with a version higher than the current version.
@@ -22,7 +35,6 @@ To get the current version name of your develepment fork run ```git describe --t
 
 To update the Version Number in your scripts run ```dev/version.sh```, it will update the line '#### $$VERSION$$ ###' in all files to the current version name.
 
-If you actived git hooks in Setup step 6, 'version.sh' updates the version name on every push
 
 ### Shellchecking
 
@@ -32,17 +44,18 @@ In addition you can run ```dev/hooks/pre-commit.sh``` every time you want to she
 
 
 ## bashbot tests
-Starting with version 0.70 bashbot has a test suite. To start testsuite run ```test/ALL-tests.sh```. ALL-tests.sh will only return 'SUCCESS' if all tests pass.
+Starting with version 0.70 bashbot has a test suite. To start testsuite run ```dev/all-tests.sh```. all-tests.sh will return 'SUCCESS' only if all tests pass.
 
 ### enabling / disabling tests
 
-All tests are placed in the directory  ```test```. To disable a test remove the x flag from the '*-test.sh' test script, to (re)enable
-a test make the script executable again.
+All tests are placed in the directory  ```test```. To disable a test remove the x flag from the '*-test.sh' test script, to (re)enable a test make the script executable again.
 
 
 ### creating new tests
-Each test consists of a script script named like ```p-name-test.sh``` *(where p is test pass 'a-z' and name the name of your test)* and
-an optional dir ```p-name-test/``` *(script name minus '.sh')* for additional files.
+To create a new test run ```test/ADD-test-new.sh``` and answer the questions, afterwards you have the following described files and dirs:
+
+Each test consists of a script script named like ```p-name-test.sh``` *(where p is test pass 'a-z' and name the name
+of your test)* and an optional dir ```p-name-test/``` *(script name minus '.sh')* for additional files.
 
 The file ```ALL-tests.inc.sh``` must be included from all tests, do not forget the shellcheck source directive to statisfy shellcheck.
 
@@ -71,5 +84,5 @@ fi
 #### [Prev Function Reference](6_function.md)
 #### [Next Bashbot Environment](8_custom.md)
 
-#### $$VERSION$$ v0.70-dev2-27-g2da31c1
+#### $$VERSION$$ v0.70-dev3-8-gb8a23c4
 

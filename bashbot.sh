@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev3-5-g8b8da67
+#### $$VERSION$$ v0.70-dev3-8-gb8a23c4
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -34,9 +34,10 @@ fi
 # get location and name of bashbot.sh
 SCRIPT="$0"
 SCRIPTDIR="$(dirname "$0")"
-RUNDIR="${BASHBOT_VAR:-${SCRIPTDIR}}"
-[ "${RUNDIR}" = "${SCRIPTDIR}" ] && SCRIPT="./$(basename "${SCRIPT}")"
+MODULEDIR="${SCRIPTDIR}/modules"
 
+RUNDIR="${SCRIPTDIR}"
+[ "${RUNDIR}" = "${SCRIPTDIR}" ] && SCRIPT="./$(basename "${SCRIPT}")"
 
 RUNUSER="${USER}" # USER is overwritten by bashbot array
 
@@ -115,9 +116,7 @@ elif [ ! -w "${COUNTFILE}" ]; then
 	exit 2
 fi
 
-COMMANDS="${BASHBOT_COMMANDS:-${RUNDIR}/commands.sh}"
-[[ "${COMMANDS}" != *".sh" ]] && echo -e "${RED}ERROR: \"${COMMANDS}\" ends not with \".sh\".${NC}" && exit 3
-
+COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
 if [ "$1" != "source" ]; then
 	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
 		${CLEAR}
