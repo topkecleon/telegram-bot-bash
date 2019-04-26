@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev3-10-g81c8b04
+#### $$VERSION$$ v0.70-dev3-11-gc835e05
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -308,7 +308,6 @@ answer_inline_query() {
 
 
 old_send_keyboard() {
-	local chat="$1"
 	local text='"text":"'"${2}"'"'
 	shift 2
 	local keyboard=init
@@ -317,34 +316,27 @@ old_send_keyboard() {
 	for f in "$@" ;do [ "$f" != " " ] && keyboard="$keyboard, [\"$f\"]";done
 	IFS=$OLDIFS
 	keyboard=${keyboard/init, /}
-        local JSON="${text}"', "reply_markup": {"keyboard": [ '"${keyboard}"' ],"one_time_keyboard": true}'
-        sendJson "${chat}" "$JSON" "$MSG_URL"
+	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${keyboard}"' ],"one_time_keyboard": true}' "$MSG_URL"
 }
 
-TEXTISEMPTY="ThisTextIsEmptyAndWillBeDeleted"
+ISEMPTY="ThisTextIsEmptyAndWillBeDeleted"
 send_keyboard() {
 	if [[ "$3" != *'['* ]]; then old_send_keyboard "$@"; return; fi
-	local chat="${1}"
-	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${TEXTISEMPTY}"'"'
+	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${ISEMPTY}"'"'
 	local one_time=', "one_time_keyboard":true' && [ "$4" != "" ] && one_time=""
-        local JSON="${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"'}'
+	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"'}' "$MSG_URL"
 	# '"text":"$2", "reply_markup": {"keyboard": [ ${3} ], "one_time_keyboard": true}'
-        sendJson "${chat}" "$JSON" "$MSG_URL"
 }
 
 remove_keyboard() {
-	local chat="${1}"
-	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${TEXTISEMPTY}"'"'
-        local JSON="${text}"', "reply_markup": {"remove_keyboard":true}'
+	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${ISEMPTY}"'"'
+	sendJson "${1}" "${text}"', "reply_markup": {"remove_keyboard":true}' "$MSG_URL"
 	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
-        sendJson "${chat}" "$JSON" "$MSG_URL"
 }
 send_inline_keyboard() {
-	local chat="${1}"
-	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${TEXTISEMPTY}"'"'
-        local JSON="${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]}'
-        # JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
-        sendJson "${chat}" "$JSON" "$MSG_URL"
+	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${ISEMPTY}"'"'
+	sendJson "${1}" "${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]}' "$MSG_URL"
+	# JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
 }
 send_inline_button() {
 	send_inline_keyboard "${1}" "${2}" '[ {"text":"'"${3}"'", "url":"'"${4}"'"}]' 
@@ -352,12 +344,13 @@ send_inline_button() {
 
 # usage: sendJson "chat" "JSON" "URL"
 sendJson(){
-	local chat='"chat_id":'"${1}"','; [ "${1}" = "" ] && chat=""
-	res="$(curl -s -d '{'"${chat} $2"'}' -H "Content-Type: application/json" \
-		-X POST "${3}" | "${JSONSHFILE}" -s -b -n )"
-	BOTSENT[OK]="$(echo "$res" | JsonGetLine '"ok"')"
-	BOTSENT[ID]="$(echo "$res" | JsonGetValue '"result","message_id"')"
-	[[ "${2}" = *"${TEXTISEMPTY}"* ]] && delete_message "${1}" "${BOTSENT[ID]}"
+	local chat="";
+	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
+	res="$(curl -s -d '{'"${chat} $2"'}' -X POST "${3}" \
+		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
+	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
+	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
+	[[ "${2}" = *"${ISEMPTY}"* ]] && delete_message "${1}" "${BOTSENT[ID]}"
 }
 
 get_file() {
@@ -424,22 +417,20 @@ send_action() {
 
 send_location() {
 	[ "$3" = "" ] && return
-	local JSON='"latitude": '"${2}"', "longitude": '"${3}"''
-	sendJson "${1}" "${JSON}" "$LOCATION_URL"
+	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"'' "$LOCATION_URL"
 }
 
 send_venue() {
+	local add=""
 	[ "$5" = "" ] && return
-	local JSON='"latitude": '"${2}"', "longitude": '"${3}"', "title": "'"${4}"'"'
-	[ "$6" != "" ] JSON="$JSON"', "foursquare_id": '"$6"''
-	sendJson "${1}" "${JSON}" "$VENUE_URL"
+	[ "$6" != "" ] add=', "foursquare_id": '"$6"''
+	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"', "title": "'"${4}"'"'"${add}" "$VENUE_URL"
 }
 
 
 forward_message() {
 	[ "$3" = "" ] && return
-	local JSON='"from_chat_id": '"${2}"', "message_id": '"${3}"''
-	sendJson "${1}" "${JSON}" "$FORWARD_URL"
+	sendJson "${1}" '"from_chat_id": '"${2}"', "message_id": '"${3}"'' "$FORWARD_URL"
 }
 forward() { # backward compatibility
 	forward_message "$@" || return
