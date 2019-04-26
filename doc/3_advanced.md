@@ -74,6 +74,10 @@ Same goes for files:
 ```bash
 echo "Text that will appear in chat? myfilelocationstartshere /home/user/doge.jpg"
 ```
+And buttons:
+```bash
+echo "Text that will appear in chat. mybtextstartshere Klick me myburlstartshere https://dealz.rrr.de"
+```
 And locations:
 ```bash
 echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45"
@@ -162,5 +166,5 @@ answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.70-dev3-15-gfba8951
+#### $$VERSION$$ v0.70-dev3-16-gd6d640a
 

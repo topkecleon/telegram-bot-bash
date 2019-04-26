@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev3-15-gfba8951
+#### $$VERSION$$ v0.70-dev3-16-gd6d640a
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -15,19 +15,21 @@ export res
 ####
 # I placed send_message here because main use case is interactive chats and background jobs
 send_message() {
-	local text arg keyboard file lat long title address sent
+	local text arg keyboard btext burl no_keyboard file lat long title address sent
 	[ "$2" = "" ] && return
 	local mychat="$1"
-	text="$(sed <<< "${2}" 's/ mynewlinestartshere /\r\n/g; s/ my[kflta][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+	text="$(sed <<< "${2}" 's/ mynewlinestartshere /\r\n/g; s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
 	arg="$3"
 	[ "$arg" != "safe" ] && {
 		no_keyboard="$(sed <<< "${2}" '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
-		keyboard="$(sed <<< "${2}" '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ my[kflta][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
-		file="$(sed <<< "${2}" '/myfilelocationstartshere /!d;s/.*myfilelocationstartshere //g;s/ my[kflta][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
-		lat="$(sed <<< "${2}" '/mylatstartshere /!d;s/.*mylatstartshere //g;s/ my[kflta][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
-		long="$(sed <<< "${2}" '/mylongstartshere /!d;s/.*mylongstartshere //g;s/ my[kflta][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
-		title="$(sed <<< "${2}" '/mytitlestartshere /!d;s/.*mytitlestartshere //g;s/ my[kflta][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
-		address="$(sed <<< "${2}" '/myaddressstartshere /!d;s/.*myaddressstartshere //g;s/ my[kflta][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+		keyboard="$(sed <<< "${2}" '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+		btext="$(sed <<< "${2}" '/mybtextstartshere /!d;s/.*mybtextstartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+		burl="$(sed <<< "${2}" '/myburlstartshere /!d;s/.*myburlstartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+		file="$(sed <<< "${2}" '/myfilelocationstartshere /!d;s/.*myfilelocationstartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+		lat="$(sed <<< "${2}" '/mylatstartshere /!d;s/.*mylatstartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+		long="$(sed <<< "${2}" '/mylongstartshere /!d;s/.*mylongstartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+		title="$(sed <<< "${2}" '/mytitlestartshere /!d;s/.*mytitlestartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+		address="$(sed <<< "${2}" '/myaddressstartshere /!d;s/.*myaddressstartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
 	}
 	if [ "$no_keyboard" != "" ]; then
 		remove_keyboard "$mychat" "$text"
@@ -38,6 +40,10 @@ send_message() {
 			keyboard="[ ${keyboard//\" \"/\" \] , \[ \"} ]"
 		fi
 		send_keyboard "$mychat" "$text" "$keyboard"
+		sent=y
+	fi
+	if [ "$btext" != "" ] && [ "$burl" != "" ]; then
+		send_button "$mychat" "$text" "$btext" "$burl"
 		sent=y
 	fi
 	if [ "$file" != "" ]; then

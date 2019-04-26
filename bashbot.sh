@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev3-15-gfba8951
+#### $$VERSION$$ v0.70-dev3-16-gd6d640a
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -335,7 +335,7 @@ send_inline_keyboard() {
 	sendJson "${1}" "${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]}' "$MSG_URL"
 	# JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
 }
-send_inline_button() {
+send_button() {
 	send_inline_keyboard "${1}" "${2}" '[ {"text":"'"${3}"'", "url":"'"${4}"'"}]' 
 }
 

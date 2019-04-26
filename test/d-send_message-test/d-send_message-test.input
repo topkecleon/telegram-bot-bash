@@ -14,4 +14,4 @@ Text plus vuene will appear in chat mylatstartshere la10 mylongstartshere lo20 m
 All in one will appear in chat mykeyboardstartshere [ "Yep, sure" , "No, highly unlikely" ] myfilelocationstartshere /home/user/doge.jpg mylatstartshere la10 mylongstartshere lo20
 
 # test for new inline button
-Text plus keyboard will appear in chat mybuttonstartshere "Button Text" "https://www..."
+Text plus keyboard will appear in chat mybtextstartshere Button Text myburlstartshere https://www...

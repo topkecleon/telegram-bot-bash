@@ -125,14 +125,14 @@ send_keyboard "${CHAT[ID]}" "Enter digit" "[ \\"1\\" , \\"2\\" , \\"3\\" ] , [ \
 ##### remove_keyboard
 *usage:* remove_keybord "$CHAT[ID]" "message"
 
-##### send_inline_button
-*usage:*  send_inine_button "chat-id" "message" "text" "URL"
+##### send_button
+*usage:*  send_button "chat-id" "message" "text" "URL"
 
-*alias:* _inline_button "text" "URL"
+*alias:* _button "text" "URL"
 
 *example:* 
 ```bash
-send_inline_button "${CHAT[ID]}" "MAKE MONEY FAST!!!" "Visit my Shop" "https://dealz.rrr.de"
+send_button "${CHAT[ID]}" "MAKE MONEY FAST!!!" "Visit my Shop" "https://dealz.rrr.de"
 ```
 
 ##### send_inline_keyboard
@@ -473,5 +473,5 @@ Send Input from Telegram to waiting Interactive Chat.
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-dev3-15-gfba8951
+#### $$VERSION$$ v0.70-dev3-16-gd6d640a
 

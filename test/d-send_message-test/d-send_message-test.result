@@ -49,6 +49,6 @@ URL:https://api.telegram.org/botbashbottestscript/sendLocation
 chat:123456	JSON:"text":"# test for new inline button"
 URL:https://api.telegram.org/botbashbottestscript/sendMessage
 
-chat:123456	JSON:"text":"Text plus keyboard will appear in chat mybuttonstartshere "Button Text" "https://www...""
+chat:123456	JSON:"text":"Text plus keyboard will appear in chat", "reply_markup": {"inline_keyboard": [ [ {"text":"Button Text", "url":"https://www..."}] ]}
 URL:https://api.telegram.org/botbashbottestscript/sendMessage
 
