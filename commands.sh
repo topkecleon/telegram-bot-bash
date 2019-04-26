@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev3-8-gb8a23c4
+#### $$VERSION$$ v0.70-dev3-10-g81c8b04
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -42,9 +42,9 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 
   # load modules
   # shellcheck source=./modules/aliases.sh
-  [ -r "${MODULEDIR}/aliases.sh" ] && source "${MODULEDIR}/aliases.sh"
+  [ -r "${MODULEDIR:-.}/aliases.sh" ] && source "${MODULEDIR:-.}/aliases.sh"
   # shellcheck source=./modules/background.sh
-  [ -r "${MODULEDIR}/background.sh" ] && source "${MODULEDIR}/background.sh"
+  [ -r "${MODULEDIR:-.}/background.sh" ] && source "${MODULEDIR:-.}/background.sh"
   # ... more modules here ...
 
   # mycommands is the last "module" to source in
