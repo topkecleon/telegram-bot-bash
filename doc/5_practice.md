@@ -30,7 +30,7 @@ mycommands() {
 If you want to disable or reuse a standard bashbot command comment it out in 'commands.sh' by placing a '#' in front of
 every line from ```'/command')``` to ```;;```. 
 
-**Note: Never disable the catchall command ``*)```` in 'commands.sh'!!**
+**Note: Never disable the catchall command ```*)``` in 'commands.sh'!!**
 ```bash
 # file: commands.sh
 
@@ -141,5 +141,5 @@ The second warning is about an unused variable, this is true because in our exam
 #### [Prev Best Practice](5_practice.md)
 #### [Next Functions Reference](6_reference.md)
 
-#### $$VERSION$$ v0.70-dev2-27-g2da31c1
+#### $$VERSION$$ v0.70-dev3-7-gd88d422
 

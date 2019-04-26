@@ -11,7 +11,7 @@ If you want to have other locations for config, data etc,  define and export the
 **Note: all specified directories and files must exist or running 'bashbot.sh' will fail.**
 
 #### BASHBOT_ETC
-Location of the config files 'token', 'botadmin', 'botacl' ...
+Location of the files ```commands.sh```, ```mycommands.sh```, ```token```, ```botadmin```, ```botacl``` ...
 ```bash
   unset  BASHBOT_ETC     # keep in telegram-bot-bash (default)
   export BASHBOT_ETC ""  # keep in telegram-bot-bash
@@ -36,17 +36,6 @@ Location of runtime data files 'data-bot-bash', 'count', downloaded files ...
   export BASHBOT_VAR "/var/spool/bashbot/bot2"  # multibot configuration bot 2
 ```
 
-#### BASHBOT_COMMANDS
-Full path to bash script containing your commands, default: './commands.sh', must end with '.sh'
-```bash
-  unset  BASHBOT_COMMANDS     # telegram-bot-bash/commands.sh (default)
-  export BASHBOT_COMMANDS ""  # telegram-bot-bash/commands.sh
-
-  export BASHBOT_COMMANDS "/etc/bashbot/commands.sh"  # unix like config location
-
-  export BASHBOT_COMMANDS "/etc/bashbot/bot1/commands.sh"  # multibot configuration bot 1
-  export BASHBOT_COMMANDS "/etc/bashbot/bot2/commands.sh"  # multibot configuration bot 2
-```
 #### BASHBOT_JSONSH
 Full path to JSON.sh script, default: './JSON.sh/JSON.sh', must end with '/JSON.sh'.
 ```bash
@@ -85,10 +74,10 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
   
 ```
 
-### Testet location configs
+### Testet configs as of v.07 release
 **Note: Environment variables are not stored, you must setup them before every call to bashbot.sh, e.g. from a script.**
 
-#### simple Unix like config, mainly for one bot. bashbot is in '/usr/local/telegram-bot-bash'
+#### simple Unix like config, for one bot. bashbot is installed in '/usr/local/telegram-bot-bash'
 ```bash
   # Note: all dirs and files must exist!
   export BASHBOT_ETC "/etc/bashbot"
@@ -97,24 +86,22 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
   /usr/local/telegram-bot-bash/bashbot.sh start
 ```
 
-#### Unix like config, mainly for one bot. bashbot.sh is in '/usr/bin'
+#### Unix like config for one bot. bashbot.sh is installed in '/usr/bin'
 ```bash
   # Note: all dirs and files must exist!
   export BASHBOT_ETC "/etc/bashbot"
   export BASHBOT_VAR "/var/spool/bashbot"
   export BASHBOT_JSONSH "/var/spool/bashbot"
-  export BASHBOT_COMMANDS "/etc/bashbot/commands.sh
 
   /usr/local/bin/bashbot.sh start
 ```
 
-#### simple multibot config bashbot is in '/usr/local/telegram-bot-bash'
+#### simple multibot config, everything is keept inside 'telegram-bot-bash' dir
 ```bash
   # config for running Bot 1
   # Note: all dirs and files must exist!
   export BASHBOT_ETC "./mybot1"
   export BASHBOT_VAR "./mybot1"
-  export BASHBOT_COMMANDS "./mybot1/commands.sh
 
   /usr/local/telegram-bot-bash/bashbot.sh start
 ```
@@ -124,12 +111,11 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
   # Note: all dirs and files must exist!
   export BASHBOT_ETC "./mybot2"
   export BASHBOT_VAR "./mybot2"
-  export BASHBOT_COMMANDS "./mybot2/commands.sh
 
   /usr/local/telegram-bot-bash/bashbot.sh start
 ```
 
 #### [Prev Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-dev2-27-g2da31c1
+#### $$VERSION$$ v0.70-dev3-7-gd88d422
 
