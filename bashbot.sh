@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-dev3-11-gc835e05
+#### $$VERSION$$ v0.70-dev3-12-ga288a8d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -132,7 +132,6 @@ fi
 BOTTOKEN="$(cat "${TOKENFILE}")"
 URL='https://api.telegram.org/bot'$BOTTOKEN
 
-
 MSG_URL=$URL'/sendMessage'
 LEAVE_URL=$URL'/leaveChat'
 KICK_URL=$URL'/kickChatMember'
@@ -152,10 +151,8 @@ ME_URL=$URL'/getMe'
 DELETE_URL=$URL'/deleteMessage'
 GETMEMBER_URL=$URL'/getChatMember'
 
-
-FILE_URL='https://api.telegram.org/file/bot'$BOTTOKEN'/'
 UPD_URL=$URL'/getUpdates?offset='
-GET_URL=$URL'/getFile'
+GETFILE_URL=$URL'/getFile'
 
 unset USER
 declare -A BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
@@ -163,37 +160,37 @@ export BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
 
 
 send_normal_message() {
-	text="$2"
-	until [ "$(echo -n "$text" | wc -m)" -eq "0" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'"' "$MSG_URL"
+	local text="${2}"
+	until [ -z "${text}" ]; do
+		sendJson "${1}" '"text":"'"${text:0:4096}"'"' "${MSG_URL}"
 		text="${text:4096}"
 	done
 }
 
 send_markdown_message() {
-	text="$2"
-	until [ "$(echo -n "$text" | wc -m)" -eq "0" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdown"' "$MSG_URL"
+	local text="${2}"
+	until [ -z "${text}" ]; do
+		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdown"' "${MSG_URL}"
 		text="${text:4096}"
 	done
 }
 
 send_html_message() {
-	text="$2"
-	until [ "$(echo -n "$text" | wc -m)" -eq "0" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"html"' "$MSG_URL"
+	local text="${2}"
+	until [ -z "${text}" ]; do
+		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"html"' "${MSG_URL}"
 		text="${text:4096}"
 	done
 }
 
 delete_message() {
-	sendJson "$1" 'message_id: '"$2"'' "$DELETE_URL"
+	sendJson "${1}" 'message_id: '"${2}"'' "${DELETE_URL}"
 }
 
 # usage: status="$(get_chat_member_status "chat" "user")"
 get_chat_member_status() {
 	sendJson "$1" 'user_id: '"$2"'' "$GETMEMBER_URL"
-	echo "$res" | JsonGetString '"result","status"'
+	JsonGetString '"result","status"' <<< "$res"
 }
 
 kick_chat_member() {
@@ -238,72 +235,72 @@ user_is_allowed() {
 }
 
 answer_inline_query() {
-	case "$2" in
+	local JSON
+	case "${2}" in
 		"article")
-			InlineQueryResult='[{"type":"'$2'","id":"'$RANDOM'","title":"'$3'","message_text":"'$4'"}]'
+			JSON='[{"type":"'$2'","id":"'$RANDOM'","title":"'$3'","message_text":"'$4'"}]'
 		;;
 		"photo")
-			InlineQueryResult='[{"type":"'$2'","id":"'$RANDOM'","photo_url":"'$3'","thumb_url":"'$4'"}]'
+			JSON='[{"type":"'$2'","id":"'$RANDOM'","photo_url":"'$3'","thumb_url":"'$4'"}]'
 		;;
 		"gif")
-			InlineQueryResult='[{"type":"'$2'","id":"'$RANDOM'","gif_url":"'$3'", "thumb_url":"'$4'"}]'
+			JSON='[{"type":"'$2'","id":"'$RANDOM'","gif_url":"'$3'", "thumb_url":"'$4'"}]'
 		;;
 		"mpeg4_gif")
-			InlineQueryResult='[{"type":"'$2'","id":"'$RANDOM'","mpeg4_url":"'$3'"}]'
+			JSON='[{"type":"'$2'","id":"'$RANDOM'","mpeg4_url":"'$3'"}]'
 		;;
 		"video")
-			InlineQueryResult='[{"type":"'$2'","id":"'$RANDOM'","video_url":"'$3'","mime_type":"'$4'","thumb_url":"'$5'","title":"'$6'"}]'
+			JSON='[{"type":"'$2'","id":"'$RANDOM'","video_url":"'$3'","mime_type":"'$4'","thumb_url":"'$5'","title":"'$6'"}]'
 		;;
 		"audio")
-			InlineQueryResult='[{"type":"'$2'","id":"'$RANDOM'","audio_url":"'$3'","title":"'$4'"}]'
+			JSON='[{"type":"'$2'","id":"'$RANDOM'","audio_url":"'$3'","title":"'$4'"}]'
 		;;
 		"voice")
-			InlineQueryResult='[{"type":"'$2'","id":"'$RANDOM'","voice_url":"'$3'","title":"'$4'"}]'
+			JSON='[{"type":"'$2'","id":"'$RANDOM'","voice_url":"'$3'","title":"'$4'"}]'
 		;;
 		"document")
-			InlineQueryResult='[{"type":"'$2'","id":"'$RANDOM'","title":"'$3'","caption":"'$4'","document_url":"'$5'","mime_type":"'$6'"}]'
+			JSON='[{"type":"'$2'","id":"'$RANDOM'","title":"'$3'","caption":"'$4'","document_url":"'$5'","mime_type":"'$6'"}]'
 		;;
 		"location")
-			InlineQueryResult='[{"type":"'$2'","id":"'$RANDOM'","latitude":"'$3'","longitude":"'$4'","title":"'$5'"}]'
+			JSON='[{"type":"'$2'","id":"'$RANDOM'","latitude":"'$3'","longitude":"'$4'","title":"'$5'"}]'
 		;;
 		"venue")
-			InlineQueryResult='[{"type":"'$2'","id":"'$RANDOM'","latitude":"'$3'","longitude":"'$4'","title":"'$5'","address":"'$6'"}]'
+			JSON='[{"type":"'$2'","id":"'$RANDOM'","latitude":"'$3'","longitude":"'$4'","title":"'$5'","address":"'$6'"}]'
 		;;
 		"contact")
-			InlineQueryResult='[{"type":"'$2'","id":"'$RANDOM'","phone_number":"'$3'","first_name":"'$4'"}]'
+			JSON='[{"type":"'$2'","id":"'$RANDOM'","phone_number":"'$3'","first_name":"'$4'"}]'
 		;;
 
 		# Cached media stored in Telegram server
 
 		"cached_photo")
-			InlineQueryResult='[{"type":"photo","id":"'$RANDOM'","photo_file_id":"'$3'"}]'
+			JSON='[{"type":"photo","id":"'$RANDOM'","photo_file_id":"'$3'"}]'
 		;;
 		"cached_gif")
-			InlineQueryResult='[{"type":"gif","id":"'$RANDOM'","gif_file_id":"'$3'"}]'
+			JSON='[{"type":"gif","id":"'$RANDOM'","gif_file_id":"'$3'"}]'
 		;;
 		"cached_mpeg4_gif")
-			InlineQueryResult='[{"type":"mpeg4_gif","id":"'$RANDOM'","mpeg4_file_id":"'$3'"}]'
+			JSON='[{"type":"mpeg4_gif","id":"'$RANDOM'","mpeg4_file_id":"'$3'"}]'
 		;;
 		"cached_sticker")
-			InlineQueryResult='[{"type":"sticker","id":"'$RANDOM'","sticker_file_id":"'$3'"}]'
+			JSON='[{"type":"sticker","id":"'$RANDOM'","sticker_file_id":"'$3'"}]'
 		;;
 		"cached_document")
-			InlineQueryResult='[{"type":"document","id":"'$RANDOM'","title":"'$3'","document_file_id":"'$4'"}]'
+			JSON='[{"type":"document","id":"'$RANDOM'","title":"'$3'","document_file_id":"'$4'"}]'
 		;;
 		"cached_video")
-			InlineQueryResult='[{"type":"video","id":"'$RANDOM'","video_file_id":"'$3'","title":"'$4'"}]'
+			JSON='[{"type":"video","id":"'$RANDOM'","video_file_id":"'$3'","title":"'$4'"}]'
 		;;
 		"cached_voice")
-			InlineQueryResult='[{"type":"voice","id":"'$RANDOM'","voice_file_id":"'$3'","title":"'$4'"}]'
+			JSON='[{"type":"voice","id":"'$RANDOM'","voice_file_id":"'$3'","title":"'$4'"}]'
 		;;
 		"cached_audio")
-			InlineQueryResult='[{"type":"audio","id":"'$RANDOM'","audio_file_id":"'$3'"}]'
+			JSON='[{"type":"audio","id":"'$RANDOM'","audio_file_id":"'$3'"}]'
 		;;
 
 	esac
 
-	res="$(curl -s "$INLINE_QUERY" -F "inline_query_id=$1" -F "results=$InlineQueryResult")"
-
+	sendJson "" '"inline_query_id": '"${1}"', "results": '"${JSON}" "${INLINE_QUERY}"
 }
 
 
@@ -356,8 +353,8 @@ sendJson(){
 get_file() {
 	[ "$1" = "" ] && return
 	local JSON='"file_id": '"${1}"
-	sendJson "" "${JSON}" "${GET_URL}"
-	echo "${FILE_URL}$(echo "${res}" | jsonGetString '"result","file_path"')"
+	sendJson "" "${JSON}" "${GETFILE_URL}"
+	echo "${URL}/$(echo "${res}" | jsonGetString '"result","file_path"')"
 }
 
 send_file() {
@@ -602,8 +599,8 @@ bot_init() {
 
 # get bot name
 getBotName() {
-	res="$(curl -s "$ME_URL" | "${JSONSHFILE}" -s -b -n )"
-	echo "$res" | JsonGetString '"result","username"'
+	sendJson "" "" "$ME_URL"
+	JsonGetString '"result","username"' <<< "$res"
 }
 
 ME="$(getBotName)"

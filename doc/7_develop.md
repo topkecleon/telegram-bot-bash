@@ -16,12 +16,11 @@ bashbot development is done on github. If you want to provide fixes or new featu
 ### Test, Add, Push changes
 A typical bashbot develop cycle looks as follow:
 
-1. 'git checkout develop'
-2. start developing - *change, copy, edit bashbot files ...*
-3. run 'dev/all-tests.sh' - *in case if errors back to 2.*
-4. run 'dev/git-add.sh' - *check for changed files, update version string, run git add*
-5. 'git commit' -m "COMMIT MESSAGE"
-6. 'git push'
+1. start developing - *change, copy, edit bashbot files ...*
+2. after change to bash file: ```shellcheck -x file.sh```
+3. ```dev/all-tests.sh``` - *in case if errors back to 2.*
+4. ```dev/git-add.sh``` - *check for changed files, update version string, run git add*
+5. ```git commit' -m "COMMIT MESSAGE"; git push```
 
 
 **If you setup with hooks and use the scripts above, versioning, addding and testing is done automatically.**
@@ -84,5 +83,5 @@ fi
 #### [Prev Function Reference](6_function.md)
 #### [Next Bashbot Environment](8_custom.md)
 
-#### $$VERSION$$ v0.70-dev3-8-gb8a23c4
+#### $$VERSION$$ v0.70-dev3-12-ga288a8d
 
