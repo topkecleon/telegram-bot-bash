@@ -3,7 +3,7 @@
 #
 # works together with git pre-push.sh and ADD all changed files since last push
 
-#### $$VERSION$$ v0.70-dev3-4-g8f4b168
+#### $$VERSION$$ v0.70-dev3-9-gd08d581
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -21,7 +21,8 @@ echo -n "Add files to repo: "
 for file in ${FILES}
 do
 	[ -d "${file}" ] && continue
-	git add "${file}" && echo -n "${file} "
+	echo -n "${file} "
 done
+git add .
 echo "done."
 

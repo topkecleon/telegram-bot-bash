@@ -25,7 +25,7 @@ Location of the files ```commands.sh```, ```mycommands.sh```, ```token```, ```bo
  e.g. /etc/bashbot
 
 #### BASHBOT_VAR
-Location of runtime data files 'data-bot-bash', 'count', downloaded files ...
+Location of runtime data ```data-bot-bash```, ```count``` 
 ```bash
   unset  BASHBOT_VAR     # keep in telegram-bot-bash (default)
   export BASHBOT_VAR ""  # keep in telegram-bot-bash
@@ -117,5 +117,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 
 #### [Prev Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-dev3-7-gd88d422
+#### $$VERSION$$ v0.70-dev3-9-gd08d581
 
