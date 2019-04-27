@@ -1,5 +1,10 @@
 #### [Home](../README.md)
 ## Create a Telegram Bot with botfather
+[BotFather is the one bot to rule them all](https://core.telegram.org/bots#3-how-do-i-create-a-bot). It will help you create new bots and change settings for existing ones.
+
+[Commands known by Botfather](https://core.telegram.org/bots#generating-an-authorization-token)
+
+### Creating a new Bot
 
 1. Message @botfather https://telegram.me/botfather with the following
 text: `/newbot`
@@ -62,5 +67,5 @@ group. This step is up to you actually.
 #### [Prev Installation](0_install.md)
 #### [Next Getting started](2_usage.md)
 
-#### $$VERSION$$ v0.70-pre1-0-g490c472
+#### $$VERSION$$ v0.70-pre1-1-gbd4a116
 

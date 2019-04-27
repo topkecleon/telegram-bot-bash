@@ -56,6 +56,7 @@ You must use the function ```user_is_allowed``` to check if a user has the capab
 			;;
 	esac
 ```
+See also [Bashbot User Access Control functions](6_functions.md#User_Access_Control)
 
 ### Interactive Chats
 To create interactive chats, write *(or edit the 'exmaples/question.sh' script)* a bash *(or C or python)* script, make it executable 
@@ -166,5 +167,5 @@ answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.70-pre1-0-g490c472
+#### $$VERSION$$ v0.70-pre1-1-gbd4a116
 

@@ -29,9 +29,9 @@ A typical bashbot develop loop looks as follow:
 After some development it may time to create a new version for the users. a new version can be in sub version upgrade, e.g. for fixes and smaller additions or
 a new release version for new features. To mark a new version use ```git tag NEWVERSION``` and run ```dev/version.sh``` to update all version strings.
 
-Usually I start with some pre-x versions and when everything looks good I push out a release candidate (rc) and finally the new version.
+Usually I start with pre versions and when everything looks good I push out a release candidate (rc) and finally the new version.
 ```
- v0.x-dev -> v0.x-pre-x -> v0.x-rc -> v0.x  ... 0.x+1-dev ...
+ v0.x-devx -> v0.x-prex -> v0.x-rc -> v0.x  ... 0.x+1-dev ...
 ```
 
 ### Versioning
@@ -92,5 +92,5 @@ fi
 #### [Prev Function Reference](6_function.md)
 #### [Next Bashbot Environment](8_custom.md)
 
-#### $$VERSION$$ v0.70-pre1-0-g490c472
+#### $$VERSION$$ v0.70-pre1-1-gbd4a116
 

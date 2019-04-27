@@ -27,6 +27,10 @@ are availible on www.github.com
 Documentation
 ~~~~~~~~~~~~~
 
+* [Bots: Introduction for developers] (https://core.telegram.org/bots)
+** https://core.telegram.org/bots#3-how-do-i-create-a-bot[The one to
+rule them all]
+** https://core.telegram.org/bots#commands[Bot commands]
 * link:doc/0_install.md[Install Bashbot]
 ** Install release
 ** Install from githup
@@ -123,5 +127,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.70-pre1-0-g490c472
+latexmath:[\[VERSION\]] v0.70-pre1-1-gbd4a116
 +++++++++++++++++++++++++++++++++++++++++++++

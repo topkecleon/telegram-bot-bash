@@ -59,6 +59,8 @@ send_normal_message "${CHAT[ID]}" "<b>bold</b> <i>italic><i> <em>italic>/em> <a 
 
 *old call:* forward "${CHAT[ID]}" "$FROMCHAT" "${MESSAGE[ID]}"
 
+See also [Text formating options](https://core.telegram.org/bots/api#formatting-options)
+
 ----
 
 ##### delete_message
@@ -66,6 +68,7 @@ If your Bot is admin of a Chat he can delete every message, if not he can delete
 
 *usage:* delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
 
+See also [deleteMessage limitations](https://core.telegram.org/bots/api#deletemessage)
 ----
 
 ##### answer_inline_query
@@ -125,6 +128,10 @@ send_keyboard "${CHAT[ID]}" "Enter digit" "[ \\"1\\" , \\"2\\" , \\"3\\" ] , [ \
 ##### remove_keyboard
 *usage:* remove_keybord "$CHAT[ID]" "message"
 
+See also: [Keyboard Markup](https://core.telegram.org/bots/api/#replykeyboardmarkup)
+
+----
+
 ##### send_button
 *usage:*  send_button "chat-id" "message" "text" "URL"
 
@@ -152,6 +159,8 @@ send_inline_keyboard "${CHAT[ID]}" "MAKE MONEY FAST!!!" '[{"text":"Visit my Shop
 send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"button 1", url"":"url 1"}, {"text":"button 2", url"":"url 2"} ]'
 send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"b 1", url"":"u 1"}, {"text":"b 2", url"":"u 2"}, {"text":"b 2", url"":"u 2"} ]'
 ```
+
+See also [Inline keyboard markup](https://core.telegram.org/bots/api/#inlinekeyboardmarkup)
 
 ----
 
@@ -184,6 +193,8 @@ if _is_admin ; then
  leave_chat "${CHAT[ID]}"
 fi
 ```
+
+See also [kicki Chat Member](https://core.telegram.org/bots/api/#kickchatmember)
 
 ----
 
@@ -223,8 +234,10 @@ if _is_admin ; then
 fi
 ```
 
+See also [ChatMember](https://core.telegram.org/bots/api/#chatmember)
+
 ##### user_is_allowed
-Bahsbot supports User Access Control, see [Advanced Usage](4_advanced.ma)
+Bahsbot supports User Access Control, see [Advanced Usage](4_advanced.md)
 
 *usage:* user_is_allowed "${USER[ID]}" "what" "${CHAT[ID]}"
 
@@ -453,6 +466,8 @@ Reads JSON fro STDIN and Outputs found Value to STDOUT
 ##### get_chat_member_status
 *usage:* get_chat_member_status "${CHAT[ID]}" "${USER[ID]}"
 
+this may get an official function ...
+
 ----
 
 ##### process_client
@@ -473,5 +488,5 @@ Send Input from Telegram to waiting Interactive Chat.
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-pre1-0-g490c472
+#### $$VERSION$$ v0.70-pre1-1-gbd4a116
 

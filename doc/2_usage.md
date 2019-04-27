@@ -162,9 +162,10 @@ Allowed values: typing for text messages, upload_photo for photos, record_video 
 ```bash
 send_action "${CHAT[ID]}" "action"
 ```
+See also [Bashbot function reference](6_reference.md)
 
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.70-pre1-0-g490c472
+#### $$VERSION$$ v0.70-pre1-1-gbd4a116
 
