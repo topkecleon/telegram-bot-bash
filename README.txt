@@ -142,5 +142,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.70-pre1-3-g3719c81
+latexmath:[\[VERSION\]] v0.70-pre1-4-g0d38a67
 +++++++++++++++++++++++++++++++++++++++++++++
