@@ -27,8 +27,8 @@ are availible on www.github.com
 Documentation
 ~~~~~~~~~~~~~
 
-* https://core.telegram.org/bots[Bots: Introduction for developers]
-** https://core.telegram.org/bots#3-how-do-i-create-a-bot[The one to
+* https://core.telegram.org/bots[Introdution to Telegram Bots]
+** https://core.telegram.org/bots#3-how-do-i-create-a-bot[One Bot to
 rule them all]
 ** https://core.telegram.org/bots#commands[Bot commands]
 * link:doc/0_install.md[Install Bashbot]
@@ -56,7 +56,11 @@ rule them all]
 ** Seperate logic from commands
 ** Test your Bot with shellcheck
 * link:doc/6_reference.md[Bashbot function reference]
-* link:doc/7_develop.md[Notes for bashbot developers]
+* link:doc/7_develop.md[Deveoper Notess]
+** Setup your environment
+** Test, Add, Push changes
+** Prepare a new version
+** Bashbot testsuite
 * link:doc/8_customize.md[Customize bashbot environment]
 
 Security Considerations
@@ -121,7 +125,7 @@ language, we have done our best to make it as secure as possible. But
 YOU are responsible for the bot commands you wrote and you should know
 about the risks ...
 
-Why Bash and not the much better ...?
+Why Bash and not the much better xyz?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Well, thats a damn good question ... may be because I'm an Unix/Linux
@@ -129,12 +133,13 @@ admin from stone age. Nevertheless there are more reasons from my side:
 
 * bashbot will run everywhere where bash is availible, from ebedded
 linux to mainframe
-* easy to integrate with other shell/bashscripts for system admins to
-send status updates
+* easy to integrate with other shell script, e.g. for sending system
+message / health status
 * no need to install or learn a new programming language, library or
-framwework
+framework
 * no database, not event driven, not OO ...
-* 
+
+@Gnadelwartz
 
 That's it!
 ~~~~~~~~~~
@@ -142,5 +147,5 @@ That's it!
 If you feel that there's something missing or if you found a bug, feel
 free to submit a pull request!
 
-latexmath:[\[VERSION\]] v0.70-pre1-4-g0d38a67
+latexmath:[\[VERSION\]] v0.70-pre1-5-g07dc7b4
 +++++++++++++++++++++++++++++++++++++++++++++

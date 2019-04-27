@@ -52,3 +52,8 @@ URL:https://api.telegram.org/botbashbottestscript/sendMessage
 chat:123456	JSON:"text":"Text plus keyboard will appear in chat", "reply_markup": {"inline_keyboard": [ [ {"text":"Button Text", "url":"https://www..."}] ]}
 URL:https://api.telegram.org/botbashbottestscript/sendMessage
 
+chat:123456	JSON:"text":"STABILO 88/240 Fineliner point 88
+
+[https://images-na.ssl-images-amazon.com/images/I/41oypA3kmHL.l_SX300.jpg] second part of text", "reply_markup": {"inline_keyboard": [ [ {"text":"Bei Amazon ansehen ...", "url":"https://www.amazon.de/dp/B014TN3JYW"}] ]}
+URL:https://api.telegram.org/botbashbottestscript/sendMessage
+

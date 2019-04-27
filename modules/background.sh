@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-pre1-4-g0d38a67
+#### $$VERSION$$ v0.70-pre1-5-g07dc7b4
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -15,51 +15,49 @@ export res
 ####
 # I placed send_message here because main use case is interactive chats and background jobs
 send_message() {
-	local text arg keyboard btext burl no_keyboard file lat long title address sent
 	[ "$2" = "" ] && return
-	local mychat="$1"
-	text="$(sed <<< "${2}" 's/ mynewlinestartshere/\r\n/g; s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
-	arg="$3"
-	[ "$arg" != "safe" ] && {
+	local text keyboard btext burl no_keyboard file lat long title address sent
+	text="$(sed <<< "${2}" 's/ *mynewlinestartshere */\r\n/g;s/ mykeyboardend.*//;s/ *my[a-z]\{3,15\}startshere.*//')$(sed <<< "${2}" -n '/mytextstartshere/ s/.*mytextstartshere//p')"
+	[ "$3" != "safe" ] && {
 		no_keyboard="$(sed <<< "${2}" '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
-		keyboard="$(sed <<< "${2}" '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
-		btext="$(sed <<< "${2}" '/mybtextstartshere /!d;s/.*mybtextstartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
-		burl="$(sed <<< "${2}" '/myburlstartshere /!d;s/.*myburlstartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
-		file="$(sed <<< "${2}" '/myfilelocationstartshere /!d;s/.*myfilelocationstartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
-		lat="$(sed <<< "${2}" '/mylatstartshere /!d;s/.*mylatstartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
-		long="$(sed <<< "${2}" '/mylongstartshere /!d;s/.*mylongstartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
-		title="$(sed <<< "${2}" '/mytitlestartshere /!d;s/.*mytitlestartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
-		address="$(sed <<< "${2}" '/myaddressstartshere /!d;s/.*myaddressstartshere //g;s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+		keyboard="$(sed <<< "${2}" '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere *//;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
+		btext="$(sed <<< "${2}" '/mybtextstartshere /!d;s/.*mybtextstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
+		burl="$(sed <<< "${2}" '/myburlstartshere /!d;s/.*myburlstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//g;s/ *mykeyboardendshere.*//g')"
+		file="$(sed <<< "${2}" '/myfilelocationstartshere /!d;s/.*myfilelocationstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
+		lat="$(sed <<< "${2}" '/mylatstartshere /!d;s/.*mylatstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
+		long="$(sed <<< "${2}" '/mylongstartshere /!d;s/.*mylongstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
+		title="$(sed <<< "${2}" '/mytitlestartshere /!d;s/.*mytitlestartshere //;s/ *my[kfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
+		address="$(sed <<< "${2}" '/myaddressstartshere /!d;s/.*myaddressstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
 	}
 	if [ "$no_keyboard" != "" ]; then
-		remove_keyboard "$mychat" "$text"
+		remove_keyboard "$1" "$text"
 		sent=y
 	fi
 	if [ "$keyboard" != "" ]; then
 		if [[ "$keyboard" != *"["* ]]; then # pre 0.60 style
 			keyboard="[ ${keyboard//\" \"/\" \] , \[ \"} ]"
 		fi
-		send_keyboard "$mychat" "$text" "$keyboard"
+		send_keyboard "$1" "$text" "$keyboard"
 		sent=y
 	fi
 	if [ "$btext" != "" ] && [ "$burl" != "" ]; then
-		send_button "$mychat" "$text" "$btext" "$burl"
+		send_button "$1" "$text" "$btext" "$burl"
 		sent=y
 	fi
 	if [ "$file" != "" ]; then
-		send_file "$mychat" "$file" "$text"
+		send_file "$1" "$file" "$text"
 		sent=y
 	fi
 	if [ "$lat" != "" ] && [ "$long" != "" ]; then
 		if [ "$address" != "" ] && [ "$title" != "" ]; then
-			send_venue "$mychat" "$lat" "$long" "$title" "$address"
+			send_venue "$1" "$lat" "$long" "$title" "$address"
 		else
-			send_location "$mychat" "$lat" "$long"
+			send_location "$1" "$lat" "$long"
 		fi
 		sent=y
 	fi
 	if [ "$sent" != "y" ];then
-		send_text "$mychat" "$text"
+		send_text "$1" "$text"
 	fi
 
 }

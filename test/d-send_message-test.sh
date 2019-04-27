@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.70-pre1-0-g490c472
+#### $$VERSION$$ v0.70-pre1-5-g07dc7b4
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -31,7 +31,7 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
 done < "${INPUTFILE}" 2>>"${LOGFILE}"
 echo " done."
 
-diff -c "${REFFILE}" "${OUTPUTFILE}" || exit 1
+{ diff -c "${REFFILE}" "${OUTPUTFILE}" || exit 1; } | cat -v
 echo "  ... all \"send_message\" functions seems to work as expected."
 echo "${SUCCESS}"
 

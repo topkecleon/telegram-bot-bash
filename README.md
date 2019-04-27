@@ -17,8 +17,8 @@ Most complete [UTF-8 support for bashbot](doc/4_expert.md#Bashbot-UTF-8-Support)
 Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Downloads](https://github.com/topkecleon/telegram-bot-bash/releases) are availible on www.github.com
 
 ## Documentation
-* [Bots: Introduction for developers](https://core.telegram.org/bots)
-    * [The one to rule them all](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
+* [Introdution to Telegram Bots](https://core.telegram.org/bots)
+    * [One Bot to rule them all](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
     * [Bot commands](https://core.telegram.org/bots#commands)
 * [Install Bashbot](doc/0_install.md)
     * Install release
@@ -45,7 +45,11 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Seperate logic from commands
     * Test your Bot with shellcheck
 * [Bashbot function reference](doc/6_reference.md)
-* [Notes for bashbot developers](doc/7_develop.md)
+* [Deveoper Notess](doc/7_develop.md)
+    * Setup your environment
+    * Test, Add, Push changes
+    * Prepare a new version
+    * Bashbot testsuite
 * [Customize bashbot environment](doc/8_customize.md)
 
 
@@ -82,10 +86,11 @@ Well, thats a damn good question ... may be because I'm an Unix/Linux admin from
 - easy to integrate with other shell script, e.g. for sending system message / health status
 - no need to install or learn a new programming language, library or framework
 - no database, not event driven, not OO ...
+
 @Gnadelwartz
 
 ## That's it!
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.70-pre1-4-g0d38a67
+#### $$VERSION$$ v0.70-pre1-5-g07dc7b4
