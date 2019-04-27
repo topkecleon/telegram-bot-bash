@@ -69,6 +69,7 @@ If your Bot is admin of a Chat he can delete every message, if not he can delete
 *usage:* delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
 
 See also [deleteMessage limitations](https://core.telegram.org/bots/api#deletemessage)
+
 ----
 
 ##### answer_inline_query
@@ -128,7 +129,7 @@ send_keyboard "${CHAT[ID]}" "Enter digit" "[ \\"1\\" , \\"2\\" , \\"3\\" ] , [ \
 ##### remove_keyboard
 *usage:* remove_keybord "$CHAT[ID]" "message"
 
-See also: [Keyboard Markup](https://core.telegram.org/bots/api/#replykeyboardmarkup)
+*See also: [Keyboard Markup](https://core.telegram.org/bots/api/#replykeyboardmarkup)*
 
 ----
 
@@ -147,7 +148,7 @@ This allows to place multiple inline buttons in a row. The inline buttons must s
 
 ```[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ]```
 
-Each button consists of a pair of text and URL values, sourrounded by '**{ }**', multiple buttons are seperated by '**,**' and everthing is wrapped in '**[ ]**'.
+Each button consists of a pair of text and URL values, sourrounded by '{ }', multiple buttons are seperated by '**,**' and everthing is wrapped in '[ ]'.
 
 *usage:*  send_inline_keyboard "chat-id" "message" "[ {"text":"text", "url":"url"} ...]"
 
@@ -160,7 +161,7 @@ send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"button 1", url"":"url 1"}, {"te
 send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"b 1", url"":"u 1"}, {"text":"b 2", url"":"u 2"}, {"text":"b 2", url"":"u 2"} ]'
 ```
 
-See also [Inline keyboard markup](https://core.telegram.org/bots/api/#inlinekeyboardmarkup)
+*See also [Inline keyboard markup](https://core.telegram.org/bots/api/#inlinekeyboardmarkup)*
 
 ----
 
@@ -194,7 +195,7 @@ if _is_admin ; then
 fi
 ```
 
-See also [kick Chat Member](https://core.telegram.org/bots/api/#kickchatmember)
+'See also [kick Chat Member](https://core.telegram.org/bots/api/#kickchatmember)*
 
 ----
 
@@ -234,7 +235,7 @@ if _is_admin ; then
 fi
 ```
 
-See also [Chat Member](https://core.telegram.org/bots/api/#chatmember)
+*See also [Chat Member](https://core.telegram.org/bots/api/#chatmember)*
 
 ##### user_is_allowed
 Bahsbot supports User Access Control, see [Advanced Usage](4_advanced.md)
@@ -488,5 +489,5 @@ Send Input from Telegram to waiting Interactive Chat.
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-pre1-2-g293ad08
+#### $$VERSION$$ v0.70-pre1-7-g02d9afb
 

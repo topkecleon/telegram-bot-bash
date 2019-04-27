@@ -1,6 +1,6 @@
 #### [Home](../README.md)
 ## Notes for bashbot developers
-This section is about help and best pratices for new bashbot developers. The main focus on is creating new versions of bashbot, not on develop your individual bot. Nevertheless the rules and tools described here can also help you with your bot development.
+This section is about help and best practices for new bashbot developers. The main focus on is creating new versions of bashbot, not on develop your individual bot. Nevertheless the rules and tools described here can also help you with your bot development.
 
 bashbot development is done on github. If you want to provide fixes or new features [fork bashbot on githup](https://help.github.com/en/articles/fork-a-repo) and provide changes as [pull request on github](https://help.github.com/en/articles/creating-a-pull-request).
 
@@ -17,13 +17,13 @@ bashbot development is done on github. If you want to provide fixes or new featu
 A typical bashbot develop loop looks as follow:
 
 1. start developing - *change, copy, edit bashbot files ...*
-2. after change to bash file: ```shellcheck -x file.sh```
+2. after changing a bash sript: ```shellcheck -x scipt.sh```
 3. ```dev/all-tests.sh``` - *in case if errors back to 2.*
 4. ```dev/git-add.sh``` - *check for changed files, update version string, run git add*
 5. ```git commit' -m "COMMIT MESSAGE"; git push```
 
 
-**If you setup with hooks and use the scripts above, versioning, addding and testing is done automatically.**
+**If you setup iyou dev environment with hooks and use the scripts above, versioning, addding and testing is done automatically.**
 
 ### Prepare a new version
 After some development it may time to create a new version for the users. a new version can be in sub version upgrade, e.g. for fixes and smaller additions or
@@ -92,5 +92,5 @@ fi
 #### [Prev Function Reference](6_function.md)
 #### [Next Bashbot Environment](8_custom.md)
 
-#### $$VERSION$$ v0.70-pre1-1-gbd4a116
+#### $$VERSION$$ v0.70-pre1-7-g02d9afb
 
