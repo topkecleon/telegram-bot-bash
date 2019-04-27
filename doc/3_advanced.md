@@ -95,9 +95,17 @@ echo "Text that will appear in chat? mykeyboardstartshere [ \"Yep, sure\" , \"No
 ```
 Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.
 
-To insert a linebreak in your message you can insert ```mynewlinestartshere``` in your echo command:
+New in v0.6: To insert a linebreak in your message you can insert ```mynewlinestartshere``` in your echo command:
 ```bash
 echo "Text that will appear in one message  mynewlinestartshere  with this text on a new line"
+```
+
+New in v0.7: In case you must extend a message already containing a location, a file, a keyboard etc.,
+with additionial text simply add ``` mytextstartshere additional text``` at the end of the string:
+```bash
+out="Text that will appear mylatstartshere 45 mylongstartshere 45"
+[[ "$out" != *'in chat'* ]] &&  out="$out mytextstartshere in chat."
+echo "$out"
 ```
 Note: Interactive Chats run independent from main bot and continue running until your script exits or you /cancel if from your Bot. 
 
@@ -169,5 +177,5 @@ answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.70-pre1-2-g293ad08
+#### $$VERSION$$ v0.70-pre1-6-g3cd6eeb
 
