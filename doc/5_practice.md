@@ -1,6 +1,14 @@
 #### [Home](../README.md)
 ## Best Practices
 
+### New to bot development?
+
+If you are new to Bot development read [Bots: An introduction for developers](https://core.telegram.org/bots) and consult [Telegram Bot API Documentaion](https://core.telegram.org/bots/api/).
+
+In addition you should know about [BotFatheri, the one bot to rule them all](https://core.telegram.org/bots#3-how-do-i-create-a-bot). It will help you create new bots and change settings for existing ones. [Commands known by Botfather](https://core.telegram.org/bots#generating-an-authorization-token)
+
+If you dont't have a gibtup account, it may time to [sepup a free account now](https://github.com/pricing)
+
 ### Add commands to mycommands.sh only
 To ease updates never change ```bashbot.sh```, instead your commands and functions must go to  ```mycommands.sh``` .  Insert your Bot commands in the ```case ... esac``` block of the 'mycommands()' function:
 ```bash
@@ -15,6 +23,7 @@ To ease updates never change ```bashbot.sh```, instead your commands and functio
 /echo message - _echo the given messsage_
 '
 
+# NOTE: command can have @botname attached, you must add * in case tests... 
 mycommands() {
 
 	case "$MESSAGE" in
@@ -26,9 +35,12 @@ mycommands() {
 }
 ```
 
-### Reuse or disable standard commands
-If you want to disable or reuse a standard bashbot command comment it out in 'commands.sh' by placing a '#' in front of
+### Reuse or disable global commands
+
+If you want to disable or reuse a global bashbot command comment it out in 'commands.sh' by placing a '#' in front of
 every line from ```'/command')``` to ```;;```. 
+
+**Learn more about [Bot (global) commands](https://core.telegram.org/bots#commands).**
 
 **Note: Never disable the catchall command ```*)``` in 'commands.sh'!!**
 ```bash
@@ -36,9 +48,9 @@ every line from ```'/command')``` to ```;;```.
 
 	case "$MESSAGE" in
 		################################################
-		# DEFAULT commands start here, edit messages only
+		# GLOBAL commands start here, edit messages only
 
-		#'/start')
+		#'/start'*)
 		#	send_action "${CHAT[ID]}" "typing"
 		#	_is_botadmin && _markdown_message "You are *BOTADMIN*."
 		#	if _is_allowed "start" ; then
@@ -66,7 +78,7 @@ If a command need more than 2-3 lines of code, you should use a function to sepe
 mycommands() {
 
 	case "$MESSAGE" in
-		'/process') # logic for /process is done in process_message 
+		'/process'*) # logic for /process is done in process_message 
 			result="$(process_message "$MESSAGE")"
 			send_normal_message "${CHAT[ID]}" "$result" 
 			;;
@@ -141,5 +153,5 @@ The second warning is about an unused variable, this is true because in our exam
 #### [Prev Best Practice](5_practice.md)
 #### [Next Functions Reference](6_reference.md)
 
-#### $$VERSION$$ v0.70-pre1-0-g490c472
+#### $$VERSION$$ v0.70-pre1-2-g293ad08
 

@@ -47,7 +47,9 @@ In addition you can check individual capabilities of users as you must define in
 You must use the function ```user_is_allowed``` to check if a user has the capability to do something. Example: Check if user has capability to start bot.
 ```bash
 	case "$MESSAGE" in
-		'/start')
+		################################################
+		# GLOBAL commands start here, only edit messages
+		'/start'*)
 			user_is_botadmin "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
 			if user_is_allowed "${USER[ID]}" "start" "${CHAT[ID]}" ; then
 				bot_help "${CHAT[ID]}"
@@ -56,7 +58,7 @@ You must use the function ```user_is_allowed``` to check if a user has the capab
 			;;
 	esac
 ```
-See also [Bashbot User Access Control functions](6_functions.md#User_Access_Control)
+**See also [Bashbot User Access Control functions](6_functions.md#User_Access_Control)**
 
 ### Interactive Chats
 To create interactive chats, write *(or edit the 'exmaples/question.sh' script)* a bash *(or C or python)* script, make it executable 
@@ -167,5 +169,5 @@ answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.70-pre1-1-gbd4a116
+#### $$VERSION$$ v0.70-pre1-2-g293ad08
 

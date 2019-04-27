@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-pre1-0-g490c472
+#### $$VERSION$$ v0.70-pre1-2-g293ad08
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -31,6 +31,7 @@ It currently can send, recieve and forward messages, custom keyboards, photos, a
   # to change the default help messages overwrite in mycommands.sh
   bashbot_help='*Available commands*:
 *• /start*: _Start bot and get this message_.
+*• /help*: _Get this message_.
 *• /info*: _Get shorter info message about this bot_.
 *• /question*: _Start interactive chat_.
 *• /cancel*: _Cancel any currently running interactive chats_.
@@ -97,11 +98,11 @@ else
 	fi
 	case "$MESSAGE" in
 		################################################
-		# DEFAULT commands start here, edit messages only
-		'/info')
+		# GLOBAL commands start here, edit messages only
+		'/info'*)
 			_markdown_message "${bashbot_info}"
 			;;
-		'/start')
+		'/start'*)
 			send_action "${CHAT[ID]}" "typing"
 			_is_botadmin && _markdown_message "You are *BOTADMIN*."
 			if _is_allowed "start" ; then
@@ -111,19 +112,22 @@ else
 			fi
 			;;
 			
-		'/leavechat') # bot leave chat if user is admin in chat
+		'/help'*)
+			_markdown_message "${bot_help}"
+			;;
+		'/leavechat'*) # bot leave chat if user is admin in chat
 			if _is_admin ; then 
 				_markdown_message "*LEAVING CHAT...*"
    				_leave
 			fi
      			;;
      			
-     		'/kickme')
+     		'/kickme'*)
      			_kick_user "${USER[ID]}"
      			_unban_user "${USER[ID]}"
      			;;
      			
-		'/cancel')
+		'/cancel'*)
 			checkprog
 			if [ "$res" -eq 0 ] ; then killproc && _message "Command canceled.";else _message "No command is currently running.";fi
 			;;

@@ -37,7 +37,7 @@ To send a broadcast to all of users that ever used the bot run the following com
 ## Recieve data
 Evertime a Message is recieved, you can read incoming data using the following variables:
 
-* ```${MESSAGE}```: Current incoming messages
+* ```${MESSAGE}```: Current message
 * ```${MESSAGE[ID]}```: ID of current message
 * ```$CAPTION```: Captions
 * ```$REPLYTO```: Original message wich was replied to
@@ -66,7 +66,7 @@ Evertime a Message is recieved, you can read incoming data using the following v
     * ```${FORWARD[FIRST_NAME]}```: Original user's first name
     * ```${FORWARD[LAST_NAME]}```: Original user's' last name
     * ```${FORWARD[USERNAME]}```: Original user's username
-* ```$URLS```: This array contains documents, audio files, stickers, voice recordings and stickers stored in the form of URLs.
+* ```$URLS```: This array contains documents, audio files, voice recordings and stickers as URL.
     * ```${URLS[AUDIO]}```: Audio files
     * ```${URLS[VIDEO]}```: Videos
     * ```${URLS[PHOTO]}```: Photos (maximum quality)
@@ -136,7 +136,7 @@ This function also allows a third parameter that disables additional function pa
 ```bash
 send_message "${CHAT[ID]}" "lol" "safe"
 ```
-More examples  boutsend_message strings can be found in [Advanced Usage](3_advanced.md#Interactive-Chats)
+**See also [Interactive chats](3_advanced.md#Interactive-Chats)**
 
 
 #### Send files, locations, keyboards.
@@ -162,10 +162,10 @@ Allowed values: typing for text messages, upload_photo for photos, record_video 
 ```bash
 send_action "${CHAT[ID]}" "action"
 ```
-See also [Bashbot function reference](6_reference.md)
+**See also [Bashbot function reference](6_reference.md#Interactive_Chats)**
 
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.70-pre1-1-gbd4a116
+#### $$VERSION$$ v0.70-pre1-2-g293ad08
 

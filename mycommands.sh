@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.70-pre1-0-g490c472
+#### $$VERSION$$ v0.70-pre1-2-g293ad08
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -16,13 +16,14 @@
 
 
 # your additional bahsbot commands
+# NOTE: command can have @botname attached, you must add * in case tests... 
 mycommands() {
 
 	case "$MESSAGE" in
 		'/echo'*) # example echo command
 			send_normal_message "${CHAT[ID]}" "$MESSAGE"
 			;;
-		'/question') # start interactive questions
+		'/question'*) # start interactive questions
 			checkproc 
 			if [ "$res" -gt 0 ] ; then
 				startproc "example/question"
@@ -31,7 +32,7 @@ mycommands() {
 			fi
 			;;
 
-		'/run-notify') # start notify background job
+		'/run-notify'*) # start notify background job
 			myback="notify"; checkback "$myback"
 			if [ "$res" -gt 0 ] ; then
 				background "example/notify 60" "$myback" # notify every 60 seconds
@@ -39,7 +40,7 @@ mycommands() {
 				send_normal_message "${CHAT[ID]}" "Background command $myback already running ..."
 			fi
 			;;
-		'/stop-notify') # kill notify background job
+		'/stop-notify'*) # kill notify background job
 			myback="notify"; checkback "$myback"
 			if [ "$res" -eq 0 ] ; then
 				killback "$myback"

@@ -194,7 +194,7 @@ if _is_admin ; then
 fi
 ```
 
-See also [kicki Chat Member](https://core.telegram.org/bots/api/#kickchatmember)
+See also [kick Chat Member](https://core.telegram.org/bots/api/#kickchatmember)
 
 ----
 
@@ -234,7 +234,7 @@ if _is_admin ; then
 fi
 ```
 
-See also [ChatMember](https://core.telegram.org/bots/api/#chatmember)
+See also [Chat Member](https://core.telegram.org/bots/api/#chatmember)
 
 ##### user_is_allowed
 Bahsbot supports User Access Control, see [Advanced Usage](4_advanced.md)
@@ -488,5 +488,5 @@ Send Input from Telegram to waiting Interactive Chat.
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-pre1-1-gbd4a116
+#### $$VERSION$$ v0.70-pre1-2-g293ad08
 

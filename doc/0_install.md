@@ -12,7 +12,7 @@
 
 Now your Bot is ready to start ...
 
-If you are new to Bot development read [Bots: An introduction for developers](https://core.telegram.org/bots)
+**If you are new to Bot development read [Bots: An introduction for developers](https://core.telegram.org/bots)**
 
 ### Install from Github
 
@@ -63,5 +63,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v0.70-pre1-1-gbd4a116
+#### $$VERSION$$ v0.70-pre1-2-g293ad08
 
