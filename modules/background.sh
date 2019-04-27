@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-pre1-0-g490c472
+#### $$VERSION$$ v0.70-pre1-3-g3719c81
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -18,7 +18,7 @@ send_message() {
 	local text arg keyboard btext burl no_keyboard file lat long title address sent
 	[ "$2" = "" ] && return
 	local mychat="$1"
-	text="$(sed <<< "${2}" 's/ mynewlinestartshere /\r\n/g; s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
+	text="$(sed <<< "${2}" 's/ mynewlinestartshere/\r\n/g; s/ my[kfltab][a-z]\{2,13\}startshere.*//g;s/ mykeyboardendshere.*//g')"
 	arg="$3"
 	[ "$arg" != "safe" ] && {
 		no_keyboard="$(sed <<< "${2}" '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"

@@ -75,8 +75,17 @@ To set access rights for your bashbot installation to a reasonable default run `
 ### Is this Bot insecure?
 Bashbot is not more (in)secure as any other Bot written in any other language, we have done our best to make it as secure as possible. But YOU are responsible for the bot commands you wrote and you should know about the risks ...
 
+### Why Bash and not the much better ...?
+Well, thats a damn good question ... may be because I'm an Unix/Linux admin from stone age. Nevertheless there are more reasons from my side:
+
+- bashbot will run everywhere where bash is availible, from ebedded linux to mainframe
+- easy to integrate with other shell/bashscripts for system admins to send status updates
+- no need to install or learn a new programming language, library or framwework
+- no database, not event driven, not OO ...
+- 
+
 ## That's it!
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.70-pre1-2-g293ad08
+#### $$VERSION$$ v0.70-pre1-3-g3719c81
