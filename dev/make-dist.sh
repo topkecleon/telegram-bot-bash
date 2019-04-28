@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
-#### $$VERSION$$ v0.70-pre1-9-gb831e60
+#### $$VERSION$$ v0.70-pre1-10-g5269b54
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
