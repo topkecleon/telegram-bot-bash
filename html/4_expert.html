@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Bashobot Documentation - 4_expert.html</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Bashobot Documentation - 4_expert.html</h1>
+</div>
+<h4 id="home"><a href="../README.html">Home</a></h4>
+<h2 id="expert-use">Expert Use</h2>
+<h3 id="handling-utf-8-character-sets">Handling UTF-8 character sets</h3>
+<p>UTF-8 is a variable length encoding of Unicode. UTF-8 is recommended as the default encoding in JSON, XML and HTML, also Telegram make use of it.</p>
+<p>The first 128 characters are regular ASCII, so it’s a superset of and compatible with ASCII environments. The next 1,920 characters need two bytes for encoding and covers almost all <code>Latin</code> alphabets, also <code>Greek</code>, <code>Cyrillic</code>, <code>Hebrew</code>, <code>Arabic</code> and more. See <a href="https://en.wikipedia.org/wiki/UTF-8">Wikipedia</a> for more details.</p>
+<h4 id="setting-up-your-environment">Setting up your Environment</h4>
+<p>In general <code>bash</code> and <code>GNU</code> utitities are UTF-8 aware if you to setup your environment and your scripts accordingly:</p>
+<ol style="list-style-type: decimal">
+<li><p>Your Terminal and Editor must support UTF-8: Set Terminal and Editor locale to UTF-8, eg. in <code>Settings/Configuration</code> select UTF-8 (Unicode) as Charset.</p></li>
+<li><p>Set <code>Shell</code> environment to UTF-8 in your <code>.profile</code> and your scripts. The usual settings are:</p></li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">export</span> <span class="st">&#39;LC_ALL=C.UTF-8&#39;</span>
+<span class="bu">export</span> <span class="st">&#39;LANG=C.UTF-8&#39;</span>
+<span class="bu">export</span> <span class="st">&#39;LANGUAGE=C.UTF-8&#39;</span></code></pre></div>
+<p>If you use other languages, eg. german or US english, change the shell settings to:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">export</span> <span class="st">&#39;LC_ALL=de_DE.UTF-8&#39;</span>
+<span class="bu">export</span> <span class="st">&#39;LANG=de_DE.UTF-8&#39;</span>
+<span class="bu">export</span> <span class="st">&#39;LANGUAGE=de_DE.UTF-8&#39;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">export</span> <span class="st">&#39;LC_ALL=en_US.UTF-8&#39;</span>
+<span class="bu">export</span> <span class="st">&#39;LANG=de_en_US.UTF-8&#39;</span>
+<span class="bu">export</span> <span class="st">&#39;LANGUAGE=den_US.UTF-8&#39;</span></code></pre></div>
+<ol start="3" style="list-style-type: decimal">
+<li>make shure your bot scripts use the correct settings, eg. include the lines above at the beginning of your scripts</li>
+</ol>
+<p>To display all availible locales on your system run <code>locale -a | more</code>. <a href="https://wiki.gentoo.org/wiki/UTF-8">Gentoo Wiki</a></p>
+<h4 id="bashbot-utf-8-support">Bashbot UTF-8 Support</h4>
+<p>Bashbot handles all messages transparently, regardless of the charset in use. The only exception is when converting from JSON data to strings.</p>
+<p>Telegram use JSON to send / recieve data. JSON encodes strings as follow: Characters not ASCII <em>(&gt;127)</em> are escaped as sequences of <code>\uxxxx</code> to be regular ASCII. In addition multibyte characters, <em>e.g. Emoticons or Arabic characters</em>, are send in double byte UTF-16 notation. The Emoticons <code>😁 😘 ❤️ 😊 👍</code> are encoded as: <code>\uD83D\uDE01 \uD83D\uDE18 \u2764\uFE0F \uD83D\uDE0A \uD83D\uDC4D</code></p>
+<p><strong>This “mixed” JSON encoding needs special handling and can not decoded from</strong> <code>echo -e</code> or <code>printf '%s\\n'</code></p>
+<p>Most complete support for decoding of multibyte characters can only be provided if python is installed on your system. <strong>Without phyton bashbot falls back to an internal, pure bash implementation which may not work for some corner cases</strong>.</p>
+<h3 id="run-as-other-user-or-system-service">Run as other user or system service</h3>
+<p>Bashbot is desingned to run manually by the user who installed it. Nevertheless it’s possible to run it by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for experiend linux users.</p>
+<p>Setup the environment for the user you want to run bashbot and enter desired username, e.g. nobody :</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> ./bashbot.sh init</code></pre></div>
+<p>Edit the file <code>bashbot.rc</code> and edit the following lines to fit your configuration:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#######################</span>
+<span class="co"># Configuration Section</span>
+
+<span class="co"># edit the next line to fit the user you want to run bashbot, e.g. nobody:</span>
+<span class="va">runas=</span><span class="st">&quot;nobody&quot;</span> 
+
+<span class="co"># uncomment one of the following lines </span>
+<span class="co"># runcmd=&quot;su $runas -s /bin/bash -c &quot;      # runasuser with su</span>
+<span class="co"># runcmd=&quot;runuser $runas -s /bin/bash -c &quot; # runasuser with runuser</span>
+
+<span class="co"># edit the values of the following lines to fit your config:</span>
+<span class="va">start=</span><span class="st">&quot;/usr/local/telegram-bot-bash/bashbot.sh&quot;</span> <span class="co"># location of your bashbot.sh script</span>
+<span class="va">name=</span><span class="st">&#39;&#39;</span>   # <span class="ex">your</span> bot name as given to botfather, e.g. mysomething_bot
+
+<span class="co"># </span><span class="re">END</span><span class="co"> Configuration</span>
+<span class="co">#######################</span></code></pre></div>
+<p>From now on use ‘bashbot.rc’ to manage your bot:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> ./bashbot.rc start</code></pre></div>
+<p>Type <code>ps -ef | grep bashbot</code> to verify your Bot is running as the desired user.</p>
+<p>If your Bot is started by ‘bashbot.rc’, you must use ‘bashbot.rc’ also to manage your Bot! The following commands are availible:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> ./bashbot.rc start
+<span class="fu">sudo</span> ./bashbot.rc stop
+<span class="fu">sudo</span> ./bashbot.rc status
+<span class="fu">sudo</span> ./bashbot.rc suspendback
+<span class="fu">sudo</span> ./bashbot.rc resumeback
+<span class="fu">sudo</span> ./bashbot.rc killback</code></pre></div>
+<p>To change back the environment to your user-ID run <code>sudo ./bashbot.sh init</code> again and enter your user name.</p>
+<p>To use bashbot as a system servive include a working <code>bashbot.rc</code> in your init system (systemd, /etc/init.d).</p>
+<h3 id="scedule-bashbot-from-cron">Scedule bashbot from Cron</h3>
+<p>An example crontab is provided in <code>examples/bashbot.cron</code>.</p>
+<ul>
+<li>If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username <code>nobody</code>.</li>
+<li>if you run bashbot as an other user or a system service edit <code>examples/bashbot.cron</code> to fit your needs and replace username<code>nobody</code> with the username you want to run bashbot. copy the modified file to <code>/etc/cron.d/bashbot</code></li>
+</ul>
+<h4 id="prev-expert-use"><a href="4_expert.html">Prev Expert Use</a></h4>
+<h4 id="next-best-practice"><a href="5_practice.html">Next Best Practice</a></h4>
+<h4 id="version-v0.70-pre1-0-g490c472"><br /><span class="math display"><em>V</em><em>E</em><em>R</em><em>S</em><em>I</em><em>O</em><em>N</em></span><br /> v0.70-pre1-0-g490c472</h4>
+</body>
+</html>

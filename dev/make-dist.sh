@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
-#### $$VERSION$$ v0.70-pre1-0-g490c472
+#### $$VERSION$$ v0.70-pre1-9-gb831e60
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -24,7 +24,7 @@ do
   fi
 done
 
-# create dir for sitribution and copy files
+# create dir for distribution and copy files
 mkdir -p "${DISTDIR}" 2>/dev/null
 # shellcheck disable=SC2086
 cp -r ${DISTFILES} "${DISTDIR}"
@@ -40,6 +40,12 @@ if [ ! -f "${JSONSHFILE}" ]; then
 	curl -sL -o "${JSONSHFILE}" "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh"
 	chmod +x "${JSONSHFILE}" 
 fi
+
+# make html doc
+mkdir html
+cp README.html html/index.html
+find ./doc -iname "*.md" -type f -exec sh -c 'pandoc -s -S -M "title=Bashobot Documentation - ${0%.md}.html"  "${0}" -o "./html/$(basename ${0%.md}.html)"' {} \;
+find README.html html -iname "*.html" -type f -exec sh -c 'sed -i -E "s/href=\"(.*).md\"/href=\"\1.html\"/g" ${0}' {} \;
 
 # create archive
 cd .. || exit 1

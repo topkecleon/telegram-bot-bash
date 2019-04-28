@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Bashobot Documentation - 2_usage.html</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Bashobot Documentation - 2_usage.html</h1>
+</div>
+<h4 id="home"><a href="../README.html">Home</a></h4>
+<h2 id="gettting-started">Gettting Started</h2>
+<p>The Bots standard commands are in <code>commands.sh</code> file. You must not add your commands to ‘commands.sh’, instead place them in <code>mycommands.sh</code>, there you also find examples how to process messages and send out text. See <a href="5_practice.html">Best practices</a> for more information.</p>
+<p>Once you’re done with editing ‘mycommands.sh’ start the Bot with <code>./bashbot.sh start</code>. If some thing doesn’t work as it should, debug with <code>bash -x bashbot.sh</code>. To stop the Bot run <code>./bashbot.sh kill</code></p>
+<p>To use the functions provided in this script in other scripts simply source bashbot: <code>source bashbot.sh</code></p>
+<p>Have FUN!</p>
+<h2 id="managing-your-own-bot">Managing your own Bot</h2>
+<h4 id="note-running-bashbot-as-root-is-highly-danger-and-not-recommended.-see-expert-use.">Note: running bashbot as root is highly danger and not recommended. See Expert use.</h4>
+<h3 id="start-stop">Start / Stop</h3>
+<p>Start or Stop your Bot use the following commands:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">./bashbot.sh</span> start</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">./bashbot.sh</span> kill</code></pre></div>
+<h3 id="user-count">User count</h3>
+<p>To count the total number of users that ever used the bot run the following command:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">./bashbot.sh</span> count</code></pre></div>
+<h3 id="sending-broadcasts-to-all-users">Sending broadcasts to all users</h3>
+<p>To send a broadcast to all of users that ever used the bot run the following command:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">./bashbot.sh</span> broadcast <span class="st">&quot;Hey! I just wanted to let you know that the bot&#39;s been updated!&quot;</span></code></pre></div>
+<h2 id="recieve-data">Recieve data</h2>
+<p>Evertime a Message is recieved, you can read incoming data using the following variables:</p>
+<ul>
+<li><code>${MESSAGE}</code>: Current message</li>
+<li><code>${MESSAGE[ID]}</code>: ID of current message</li>
+<li><code>$CAPTION</code>: Captions</li>
+<li><code>$REPLYTO</code>: Original message wich was replied to</li>
+<li><code>$USER</code>: This array contains the First name, last name, username and user id of the sender of the current message.
+<ul>
+<li><code>${USER[ID]}</code>: User id</li>
+<li><code>${USER[FIRST_NAME]}</code>: User’s first name</li>
+<li><code>${USER[LAST_NAME]}</code>: User’s last name</li>
+<li><code>${USER[USERNAME]}</code>: Username</li>
+</ul></li>
+<li><code>$CHAT</code>: This array contains the First name, last name, username, title and user id of the chat of the current message.
+<ul>
+<li><code>${CHAT[ID]}</code>: Chat id</li>
+<li><code>${CHAT[FIRST_NAME]}</code>: Chat’s first name</li>
+<li><code>${CHAT[LAST_NAME]}</code>: Chat’s last name</li>
+<li><code>${CHAT[USERNAME]}</code>: Username</li>
+<li><code>${CHAT[TITLE]}</code>: Title</li>
+<li><code>${CHAT[TYPE]}</code>: Type</li>
+<li><code>${CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]}</code>: All members are administrators (true if true)</li>
+</ul></li>
+<li><code>$REPLYTO</code>: This array contains the First name, last name, username and user id of the ORIGINAL sender of the message REPLIED to.
+<ul>
+<li><code>${REPLYTO[ID]}</code>: ID of message wich was replied to</li>
+<li><code>${REPLYTO[UID]}</code>: Original user’s id</li>
+<li><code>${REPLYTO[FIRST_NAME]}</code>: Original user’s first name</li>
+<li><code>${REPLYTO[LAST_NAME]}</code>: Original user’s’ last name</li>
+<li><code>${REPLYTO[USERNAME]}</code>: Original user’s username</li>
+</ul></li>
+<li><code>$FORWARD</code>: This array contains the First name, last name, username and user id of the ORIGINAL sender of the FORWARDED message.
+<ul>
+<li><code>${FORWARD[ID]}</code>: Same as MESSAGE[ID] if message is forwarded</li>
+<li><code>${FORWARD[UID]}</code>: Original user’s id</li>
+<li><code>${FORWARD[FIRST_NAME]}</code>: Original user’s first name</li>
+<li><code>${FORWARD[LAST_NAME]}</code>: Original user’s’ last name</li>
+<li><code>${FORWARD[USERNAME]}</code>: Original user’s username</li>
+</ul></li>
+<li><code>$URLS</code>: This array contains documents, audio files, voice recordings and stickers as URL.
+<ul>
+<li><code>${URLS[AUDIO]}</code>: Audio files</li>
+<li><code>${URLS[VIDEO]}</code>: Videos</li>
+<li><code>${URLS[PHOTO]}</code>: Photos (maximum quality)</li>
+<li><code>${URLS[VOICE]}</code>: Voice recordings</li>
+<li><code>${URLS[STICKER]}</code>: Stickers</li>
+<li><code>${URLS[DOCUMENT]}</code>: Any other file</li>
+</ul></li>
+<li><code>$CONTACT</code>: This array contains info about contacts sent in a chat.
+<ul>
+<li><code>${CONTACT[ID]}</code>: User id</li>
+<li><code>${CONTACT[NUMBER]}</code>: Phone number</li>
+<li><code>${CONTACT[FIRST_NAME]}</code>: First name</li>
+<li><code>${CONTACT[LAST_NAME]}</code>: Last name</li>
+<li><code>${CONTACT[VCARD]}</code>: User’s complete Vcard</li>
+</ul></li>
+<li><code>$LOCATION</code>: This array contains info about locations sent in a chat.
+<ul>
+<li><code>${LOCATION[LONGITUDE]}</code>: Longitude</li>
+<li><code>${LOCATION[LATITUDE]}</code>: Latitude</li>
+</ul></li>
+<li><code>$VENUE</code>: This array contains info about venue (a place) sent in a chat.
+<ul>
+<li><code>${VENUE[TITLE]}</code>: Name of the place</li>
+<li><code>${VENUE[ADDRESS]}</code>: Address of the place</li>
+<li><code>${VENUE[LONGITUDE]}</code>: Longitude</li>
+<li><code>${VENUE[LATITUDE]}</code>: Latitude</li>
+<li><code>${VENUE[FOURSQUARE]}</code>: Fouresquare ID</li>
+</ul></li>
+</ul>
+<h2 id="usage-of-bashbot-functions">Usage of bashbot functions</h2>
+<h4 id="sending-messages">sending messages</h4>
+<p>To send messages use the <code>send_xxx_message</code> functions.</p>
+<p>To send regular text without any markdown use:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">send_text_message</span> <span class="st">&quot;</span><span class="va">${CHAT[ID]}</span><span class="st">&quot;</span> <span class="st">&quot;lol&quot;</span></code></pre></div>
+<p>To send text with markdown:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">send_markdown_message</span> <span class="st">&quot;</span><span class="va">${CHAT[ID]}</span><span class="st">&quot;</span> <span class="st">&quot;lol *bold*&quot;</span></code></pre></div>
+<p>To send text with html:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">send_html_message</span> <span class="st">&quot;</span><span class="va">${CHAT[ID]}</span><span class="st">&quot;</span> <span class="st">&quot;lol &lt;b&gt;bold&lt;/b&gt;&quot;</span></code></pre></div>
+<p>To forward messages use the <code>forward</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">forward</span> <span class="st">&quot;</span><span class="va">${CHAT[ID]}</span><span class="st">&quot;</span> <span class="st">&quot;from_chat_id&quot;</span> <span class="st">&quot;message_id&quot;</span></code></pre></div>
+<p>If your Bot is Admin in a Chat you can delete every message, if not you can delete only your messages. To delete a message with a known <span class="math inline">${MESSAGE[ID]} you can simple use: ```bash delete_message &quot;$</span>{CHAT[ID]}&quot; “${MESSAGE[ID]}” ```</p>
+<h4 id="send_message">send_message</h4>
+<p>In addition there is a universal send_massage function which can output any type of message. This function is used to process output from external scrips like interactive chats or background jobs.<br />
+<strong>For safety and performance reasons I recommend to use send_xxxx_message functions above for sending messages</strong></p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">send_message</span> <span class="st">&quot;</span><span class="va">${CHAT[ID]}</span><span class="st">&quot;</span> <span class="st">&quot;lol&quot;</span></code></pre></div>
+<p>To send html or markdown put the following strings before the text, depending on the parsing mode you want to enable:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">send_message</span> <span class="st">&quot;</span><span class="va">${CHAT[ID]}</span><span class="st">&quot;</span> <span class="st">&quot;markdown_parse_mode lol *bold*&quot;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">send_message</span> <span class="st">&quot;</span><span class="va">${CHAT[ID]}</span><span class="st">&quot;</span> <span class="st">&quot;html_parse_mode lol &lt;b&gt;bold&lt;/b&gt;&quot;</span></code></pre></div>
+<p>This function also allows a third parameter that disables additional function parsing (for safety use this when reprinting user input):</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">send_message</span> <span class="st">&quot;</span><span class="va">${CHAT[ID]}</span><span class="st">&quot;</span> <span class="st">&quot;lol&quot;</span> <span class="st">&quot;safe&quot;</span></code></pre></div>
+<p><strong>See also <a href="3_advanced.md#Interactive-Chats">Interactive chats</a></strong></p>
+<h4 id="send-files-locations-keyboards.">Send files, locations, keyboards.</h4>
+<p>To send images, videos, voice files, photos etc. use the <code>send_photo</code> function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">send_file</span> <span class="st">&quot;</span><span class="va">${CHAT[ID]}</span><span class="st">&quot;</span> <span class="st">&quot;/home/user/doge.jpg&quot;</span> <span class="st">&quot;Lool&quot;</span></code></pre></div>
+<p>To send custom keyboards use the <code>send_keyboard</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">send_keyboard</span> <span class="st">&quot;</span><span class="va">${CHAT[ID]}</span><span class="st">&quot;</span> <span class="st">&quot;Text that will appear in chat?&quot;</span> <span class="st">&#39;[ &quot;Yep&quot; , &quot;No&quot; ]&#39;</span> <span class="co"># note the simgle quotes!</span>
+<span class="ex">send_keyboard</span> <span class="st">&quot;</span><span class="va">${CHAT[ID]}</span><span class="st">&quot;</span> <span class="st">&quot;Text that will appear in chat?&quot;</span> <span class="st">&quot;[ </span><span class="dt">\\</span><span class="st">&quot;</span>Yep<span class="dt">\\</span><span class="st">&quot; , </span><span class="dt">\\</span><span class="st">&quot;</span>No<span class="dt">\\</span><span class="st">&quot; ]&quot;</span> <span class="co"># within double quotes you must excape the inside double quots</span></code></pre></div>
+<p>To send locations use the <code>send_location</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">send_location</span> <span class="st">&quot;</span><span class="va">${CHAT[ID]}</span><span class="st">&quot;</span> <span class="st">&quot;Latitude&quot;</span> <span class="st">&quot;Longitude&quot;</span></code></pre></div>
+<p>To send venues use the <code>send_venue</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">send_venue</span> <span class="st">&quot;</span><span class="va">${CHAT[ID]}</span><span class="st">&quot;</span> <span class="st">&quot;Latitude&quot;</span> <span class="st">&quot;Longitude&quot;</span> <span class="st">&quot;Title&quot;</span> <span class="st">&quot;Address&quot;</span> <span class="st">&quot;optional foursquare id&quot;</span></code></pre></div>
+<p>To send a chat action use the <code>send_action</code> function. Allowed values: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for locations.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">send_action</span> <span class="st">&quot;</span><span class="va">${CHAT[ID]}</span><span class="st">&quot;</span> <span class="st">&quot;action&quot;</span></code></pre></div>
+<p><strong>See also <a href="6_reference.md#Interactive_Chats">Bashbot function reference</a></strong></p>
+<h4 id="prev-create-bot"><a href="1_firstbot.html">Prev Create Bot</a></h4>
+<h4 id="next-advanced-usage"><a href="3_advanced.html">Next Advanced Usage</a></h4>
+<h4 id="version-v0.70-pre1-2-g293ad08"><br /><span class="math display"><em>V</em><em>E</em><em>R</em><em>S</em><em>I</em><em>O</em><em>N</em></span><br /> v0.70-pre1-2-g293ad08</h4>
+</body>
+</html>
