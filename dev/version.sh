@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#### $$VERSION$$ v0.70-pre1-0-g490c472
+#### $$VERSION$$ v0.70-pre1-8-gfcca139
 # shellcheck disable=SC2016
 #
 # Easy Versioning in git:
@@ -57,6 +57,7 @@ do
 done
 # try to compile README.txt
 echo -n " README.txt" >&2
-pandoc -f markdown -t asciidoc  README.md | sed '/^\[\[/d' >README.txt
+type -f pandoc >/dev/null && pandoc -s -S -M "title=Bashbot README" README.md >README.html
+fold -s README.md >README.txt
 echo " done."
 
