@@ -1,9 +1,11 @@
 #!/bin/bash
+# file: calc.sh
+# example for an interactive chat, run with startprog calc.sh
 
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 
-#### $$VERSION$$ v0.70-pre1-0-g490c472
+#### $$VERSION$$ v0.70-pre1-11-g3dfa5e4
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment

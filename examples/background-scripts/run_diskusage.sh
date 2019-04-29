@@ -1,6 +1,6 @@
 #!/bin/bash
-# file: notify.sh
-# example for an background job, run with startback notify.sh
+# file: run_diskcusage.sh
+# example for an background job display a system value
 
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
@@ -18,17 +18,25 @@ unset IFS
 # discard STDIN for background jobs!
 cat >/dev/null & 
 
+source "./mycommands.sh"
+
 # check if $1 is a number
 re='^[0-9]+$'
 if [[ $1 =~ $re ]] ; then
 	SLEEP="$1"
 else
-	SLEEP=10 # time between time notifications
+	SLEEP=100 # time between time notifications
 fi
 
-# output current time every $1 seconds
-while sleep $SLEEP
+NEWLINE=$'\n'
+
+# output disk usgae every $1 seconds
+WAIT=0
+while sleep $WAIT
 do
-	date "+* It's %k:%M:%S o' clock ..."
+	output_telegram "Current Disk usage ${NEWLINE} $(df -h / /tmp /usr /var /home)"
+	# only for testing, delete echo line for production ...
+	echo "Current Disk usage ${NEWLINE} $(df -h / /tmp /usr /var /home)"
+	WAIT="$SLEEP"
 done
 
