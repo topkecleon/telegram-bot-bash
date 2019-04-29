@@ -9,25 +9,25 @@ mycommands() {
 	case "$MESSAGE" in
 		'/run_'*) 
 			myback="run_${MESSAGE#*_}"
-			if [ -x "./$myback.sh" ]; then
-			    checkback "$myback"
+			if [ -x "./${myback}.sh" ]; then
+			    checkback "${myback}"
 			    if [ "$res" -gt 0 ] ; then
-				send_normal_message "${CHAT[ID]}" "Starte $myback"
-				background "./$myback.sh" "$myback"
+				send_normal_message "${CHAT[ID]}" "Start ${myback}, use /kill${myback} to stop it."
+				background "./${myback}.sh" "${myback}"
 			    else
-				send_normal_message "${CHAT[ID]}" "Prozess $myback laeuft bereits."
+				send_normal_message "${CHAT[ID]}" "Background job ${myback} already running."
 			    fi
 			fi
 			;;
 		'/kill_'*)
 			myback="run_${MESSAGE#*_}"
-			if [ -x "./$myback.sh" ]; then
-			    checkback "$myback"
+			if [ -x "./${myback}.sh" ]; then
+			    checkback "${myback}"
 			    if [ "$res" -eq 0 ] ; then
-				killback "$myback"
-				send_normal_message "${CHAT[ID]}" "Beende $myback."
+				killback "${myback}"
+				send_normal_message "${CHAT[ID]}" "Stopping ${myback}, use /run_${myback} to start again."
 			    else
-				send_normal_message "${CHAT[ID]}" "Prozess $myback laeuft nicht."
+				send_normal_message "${CHAT[ID]}" "No background job ${myback}."
 			    fi
 			fi
 			;;

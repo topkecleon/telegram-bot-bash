@@ -92,5 +92,5 @@ fi
 #### [Prev Function Reference](6_function.md)
 #### [Next Bashbot Environment](8_custom.md)
 
-#### $$VERSION$$ v0.70-pre1-7-g02d9afb
+#### $$VERSION$$ v0.7-pre2-0-g7ce2c5b
 
