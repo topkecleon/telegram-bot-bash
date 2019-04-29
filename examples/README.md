@@ -13,7 +13,7 @@ Two examples for interactive scripts are provided as 'calc.sh' and 'question.sh'
 
 Background jobs are an easy way to provide sceduled messages or alerts if something happens.
 
-'notify.sh' shows you a simple exmaple to send a message ervery x seonds, e.g. actual time.
+'notify.sh' shows you a simple examples to send a message ervery x seonds, e.g. actual time.
 
 'background-scripts' contains a more complex example on how to start and kill many scripts sending messages to a chat.
 
@@ -30,6 +30,6 @@ Background jobs are an easy way to provide sceduled messages or alerts if someth
 
 In 'external-use' you will find some examples on how to send messages from external scripts to send messages to Telegram chats or users.
 
-#### $$VERSION$$ v0.7-pre2-0-g7ce2c5b
+#### $$VERSION$$ v0.7-pre2-1-g4b83377
 
 

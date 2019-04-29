@@ -58,7 +58,7 @@ all](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
     * Prepare a new version
     * Bashbot testsuite
 * [Customize bashbot environment](doc/8_customize.md)
-* [Exmaples](examples/README.MD)
+* [Examples](examples/README.md)
 
 ## Security Considerations
 Running a Telegram Bot means it is connected to the public and you never know 
@@ -130,4 +130,4 @@ health status
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.7-pre2-0-g7ce2c5b
+#### $$VERSION$$ v0.7-pre2-1-g4b83377

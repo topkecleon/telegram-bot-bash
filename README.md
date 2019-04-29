@@ -51,7 +51,7 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Prepare a new version
     * Bashbot testsuite
 * [Customize bashbot environment](doc/8_customize.md)
-* [Exmaples](examples/README.MD)
+* [Examples](examples/README.md)
 
 ## Security Considerations
 Running a Telegram Bot means it is connected to the public and you never know whats send to your Bot.
@@ -93,4 +93,4 @@ Well, thats a damn good question ... may be because I'm an Unix/Linux admin from
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.7-pre2-0-g7ce2c5b
+#### $$VERSION$$ v0.7-pre2-1-g4b83377
