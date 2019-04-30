@@ -38,6 +38,6 @@ mycommands.sh avoids this by converting each newline to ' mynewlinestartshere ' 
 
 **external-use** will contain some examples on how to send messages from external scripts to Telegram chats or users.
 
-#### $$VERSION$$ v0.7-pre2-4-g8dcbc29
+#### $$VERSION$$ v0.7-rc1-0-g8279bdb
 
 

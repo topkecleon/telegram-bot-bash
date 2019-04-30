@@ -65,5 +65,5 @@ group. This step is up to you actually.
 #### [Prev Installation](0_install.md)
 #### [Next Getting started](2_usage.md)
 
-#### $$VERSION$$ v0.7-pre2-0-g7ce2c5b
+#### $$VERSION$$ v0.7-rc1-0-g8279bdb
 

@@ -2,7 +2,7 @@
 # file:  run_filename
 # background job to display content of all new files in WATCHDIR
 #
-#### $$VERSION$$ v0.7-pre2-2-g68afdbf
+#### $$VERSION$$ v0.7-rc1-0-g8279bdb
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
