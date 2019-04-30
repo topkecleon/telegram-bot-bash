@@ -2,6 +2,7 @@
 # file:  run_filename
 # background job to display content of all new files in WATCHDIR
 #
+#### $$VERSION$$ v0.7-pre2-2-g68afdbf
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
@@ -15,18 +16,20 @@ unset IFS
 # discard STDIN for background jobs!
 cat >/dev/null & 
 
-# watch for new logfiles
-WATCHDIR="/my_special/dir_to_watch"
+# watch for new files created by a trusted programm
+WATCHDIR="/my_trusted/dir_to_watch"
 source "./mycommands.sh"
 
 # test your script and the remove ...
-WATCHDIR="/tmp"
+WATCHDIR="/tmp/bottest"
 
-# this is calles by watch loop
+NEWLINE='mynewlinestartshere'
+
+# this is called by watch dir loop
 # $1 is name of the new file
 loop_callback() {
-	# output content of file, you MUST trust creator of the file because it contest are sent as message to you!
-	output_telegram "Contents of ${1}: mynewlinestartshere $(cat "${1}")"
+	# output content of file, you must trust creator because content is sent as message!
+	output_telegram "Contents of ${1}: ${NEWLINE} $(cat "${1}")"
 }
 
 watch_dir_loop "$WATCHDIR"

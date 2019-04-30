@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.7-pre2-0-g7ce2c5b
+#### $$VERSION$$ v0.7-pre2-2-g68afdbf
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -17,7 +17,8 @@ export res
 send_message() {
 	[ "$2" = "" ] && return
 	local text keyboard btext burl no_keyboard file lat long title address sent
-	text="$(sed <<< "${2}" 's/ *mynewlinestartshere */\r\n/g;s/ mykeyboardend.*//;s/ *my[a-z]\{3,15\}startshere.*//')$(sed <<< "${2}" -n '/mytextstartshere/ s/.*mytextstartshere//p')"
+	text="$(sed <<< "${2}" 's/ mykeyboardend.*//;s/ *my[kfltab][a-z]\{2,13\}startshere.*//')$(sed <<< "${2}" -n '/mytextstartshere/ s/.*mytextstartshere//p')"
+	text="$(sed <<< "${text}" 's/ *mynewlinestartshere */\r\n/g')"
 	[ "$3" != "safe" ] && {
 		no_keyboard="$(sed <<< "${2}" '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
 		keyboard="$(sed <<< "${2}" '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere *//;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"

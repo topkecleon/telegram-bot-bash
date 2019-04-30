@@ -2,6 +2,7 @@
 # file:  run_filename
 # background job to display all new files in WATCHDIR
 #
+#### $$VERSION$$ v0.7-pre2-2-g68afdbf
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
@@ -20,9 +21,9 @@ WATCHDIR="/var/log"
 source "./mycommands.sh"
 
 # test your script and the remove ...
-WATCHDIR="/tmp"
+WATCHDIR="/tmp/bottest"
 
-# this is calles by watch loop
+# this is called by watch dir loop
 # $1 is name of the new file
 loop_callback() {
 	# output one simple line ...

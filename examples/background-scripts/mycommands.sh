@@ -46,6 +46,7 @@ _is_function()
 # $1 dir to wtach for new files
 watch_dir_loop() {
 	local newfile old
+	[ ! -d "$1" ] && echo "ERROR: no directory $1 found!" >&2 && exit 1
 	# wait for new files in WATCHDIR
 	inotifywait -q -m "$1" -e create --format "%f" \
 	  | while true
@@ -58,12 +59,13 @@ watch_dir_loop() {
 		sleep 0.2
 
 		# process content and output message
-		echo "$(date) found ${newfile}" >&2
+		echo "$(date): new file: ${newfile}" >>"$0.log"
 		# note: loop callback must a function in the calling script! 
 		if _is_function loop_callback ; then
 			loop_callback "$1/$newfile"
 		else
 			echo "ERROR: loop_callback not found!" >&2
+			exit 1
 		fi
 	  done
 } # 2>>"$0.log"
