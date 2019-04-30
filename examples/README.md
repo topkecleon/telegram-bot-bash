@@ -28,10 +28,16 @@ Background jobs are an easy way to provide sceduled messages or alerts if someth
 **Note:** Output of system commands often contains newlines, each newline results in a telegram message, the function 'send_telegram' in
 mycommands.sh avoids this by converting each newline to ' mynewlinestartshere ' before output the string.
 
+**system-status** contains an example with commands showing system status. This example is adapted from https://github.com/RG72/telegram-bot-bash
+
+```
+    mycommands.sh - sommands to show system status
+    botacl - controls who can show system status
+```
 ### Use bashbot from external scripts
 
 **external-use** will contain some examples on how to send messages from external scripts to Telegram chats or users.
 
-#### $$VERSION$$ v0.7-pre2-3-ge0a6d38
+#### $$VERSION$$ v0.7-pre2-4-g8dcbc29
 
 
