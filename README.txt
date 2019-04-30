@@ -57,7 +57,7 @@ all](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
     * Test, Add, Push changes
     * Prepare a new version
     * Bashbot testsuite
-* [Customize bashbot environment](doc/8_customize.md)
+* [Customize bashbot environment](doc/8_custom.md)
 * [Examples](examples/README.md)
 
 ## Security Considerations
@@ -130,4 +130,4 @@ health status
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.7-pre2-1-g4b83377
+#### $$VERSION$$ v0.7-pre2-3-ge0a6d38

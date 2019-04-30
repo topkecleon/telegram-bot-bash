@@ -238,7 +238,7 @@ fi
 *See also [Chat Member](https://core.telegram.org/bots/api/#chatmember)*
 
 ##### user_is_allowed
-Bahsbot supports User Access Control, see [Advanced Usage](4_advanced.md)
+Bahsbot supports User Access Control, see [Advanced Usage](3_advanced.md)
 
 *usage:* user_is_allowed "${USER[ID]}" "what" "${CHAT[ID]}"
 
@@ -489,5 +489,5 @@ Send Input from Telegram to waiting Interactive Chat.
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.7-pre2-0-g7ce2c5b
+#### $$VERSION$$ v0.7-pre2-3-ge0a6d38
 

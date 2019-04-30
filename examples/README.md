@@ -13,9 +13,9 @@ Two examples for interactive scripts are provided as **calc.sh** and **question.
 
 Background jobs are an easy way to provide sceduled messages or alerts if something happens.
 
-**notify.sh** is a simple example how to send a message ervery x seonds, e.g. actual time.
+**notify.sh** is a simple example on how to send a message every x seonds, e.g. current time.
 
-**background-scripts** contains a more concrete example on how to start and kill diffrent background scripts plus some example backgound scripts.
+**background-scripts** contains a more concrete example on how to start and stop different scripts plus some example backgound scripts.
 
 ```
     mycommands.sh - /run_xxx and /kill-xxx wil start any script named run_xxx.sh
@@ -25,13 +25,13 @@ Background jobs are an easy way to provide sceduled messages or alerts if someth
     run_filecontent.sh	- shown the content of new files in a named dir
     run_notify.sh - same as notify.sh
 ```
-**Note:** Output of system commands often contains newlines, each newline results in a a sepperate telegram message, see function send_telegram in
-mycommands.sh on how to avoid this.
+**Note:** Output of system commands often contains newlines, each newline results in a telegram message, the function 'send_telegram' in
+mycommands.sh avoids this by converting each newline to ' mynewlinestartshere ' before output the string.
 
 ### Use bashbot from external scripts
 
 **external-use** will contain some examples on how to send messages from external scripts to Telegram chats or users.
 
-#### $$VERSION$$ v0.7-pre2-2-g68afdbf
+#### $$VERSION$$ v0.7-pre2-3-ge0a6d38
 
 
