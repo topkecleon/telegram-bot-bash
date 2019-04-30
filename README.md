@@ -16,24 +16,15 @@ Most complete [UTF-8 support for bashbot](doc/4_expert.md#Bashbot-UTF-8-Support)
 
 Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Downloads](https://github.com/topkecleon/telegram-bot-bash/releases) are availible on www.github.com
 
-## Install bashbot
-1. Go to the directory you want to install bashbot, e.g.
-    * your $HOME directory (install and run with your user-ID)
-    * /usr/local if you want to run as service
-2. [Download latest release](https://github.com/topkecleon/telegram-bot-bash/releases)  archive from github and extract all files. 
-
-    As an alternative you can clone the github repository to get the latest, but possible unstable improvements.
-    ```
-    git clone https://github.com/topkecleon/telegram-bot-bash
-    ```
-3. Go to directory ```telegram-bot-bash```, run ```./bashbot.sh init``` and follow the instructions. At this point you are asked for your Bots token given by botfather.
-
-## Update bashbot
-1. [Download latest update zip from github](https://github.com/topkecleon/telegram-bot-bash/releases)
-2. Extract all files and copy them to your bashbot dir
-3. Run ```sudo ./bashbot.sh init``` to setup your environment after the update
-
 ## Documentation
+* [Introdution to Telegram Bots](https://core.telegram.org/bots)
+    * [One Bot to rule them all](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
+    * [Bot commands](https://core.telegram.org/bots#commands)
+* [Install Bashbot](doc/0_install.md)
+    * Install release
+    * Install from githup
+    * Update Bashbot
+    * Notes on Updates
 * [Create a new Telegram Bot with botfather](doc/1_firstbot.md)
 * [Getting Started](doc/2_usage.md)
     * Managing your Bot
@@ -54,23 +45,13 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Seperate logic from commands
     * Test your Bot with shellcheck
 * [Bashbot function reference](doc/6_reference.md)
-* [Notes for bashbot developers](doc/7_develop.md)
-
-## Note on Keyboards
-From Version 0.60 on keybord format for ```send_keyboard``` and ```send_message "mykeyboardstartshere ..."``` was changed.
-Keybords are now defined in JSON Array notation e.g. "[ \\"yes\\" , \\"no\\" ]".
-This has the advantage that you can create any type of keyboard supported by Telegram.
-The old format is supported for backward compatibility, but may fail for corner cases.
-
-*Example Keyboards*:
-
-- yes no in two rows:
-    - OLD format: 'yes' 'no' (two strings)
-    - NEW format: '[ "yes" ] , [ "no" ]' (two arrays with a string)
-- new layouts made easy with NEW format:
-    - Yes No in one row: '[ "yes" , "no" ]'
-    - Yes No plus Maybe in 2.row: '[ "yes" , "no" ] , [ "maybe" ]' 
-    - numpad style keyboard: '[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [ "7" , "8" , "9" ] , [ "0" ]'
+* [Deveoper Notess](doc/7_develop.md)
+    * Setup your environment
+    * Test, Add, Push changes
+    * Prepare a new version
+    * Bashbot testsuite
+* [Customize bashbot environment](doc/8_custom.md)
+* [Examples](examples/README.md)
 
 ## Security Considerations
 Running a Telegram Bot means it is connected to the public and you never know whats send to your Bot.
@@ -98,8 +79,18 @@ To set access rights for your bashbot installation to a reasonable default run `
 ### Is this Bot insecure?
 Bashbot is not more (in)secure as any other Bot written in any other language, we have done our best to make it as secure as possible. But YOU are responsible for the bot commands you wrote and you should know about the risks ...
 
+### Why Bash and not the much better xyz?
+Well, thats a damn good question ... may be because I'm an Unix/Linux admin from stone age. Nevertheless there are more reasons from my side:
+
+- bashbot will run everywhere where bash is availible, from ebedded linux to mainframe
+- easy to integrate with other shell script, e.g. for sending system message / health status
+- no need to install or learn a new programming language, library or framework
+- no database, not event driven, not OO ...
+
+@Gnadelwartz
+
 ## That's it!
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.62-0-g5d5dbae
+#### $$VERSION$$ v0.7-rc1-0-g8279bdb

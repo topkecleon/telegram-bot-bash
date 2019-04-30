@@ -1,7 +1,7 @@
 #!/bin/sh
 # description: Start or stop telegram-bash-bot
 #
-#### $$VERSION$$ v0.62-0-g5d5dbae
+#### $$VERSION$$ v0.7-rc1-0-g8279bdb
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 
@@ -69,12 +69,16 @@ case "$1" in
 	$0 stop; $0 start 
 	RETVAL=$?
 	;;
+'restartback')
+	$0 suspendback; $0 resumeback 
+	RETVAL=$?
+	;;
 'suspendback'|'resumeback'|'killback')
 	$runcmd "$start $1"
 	RETVAL=$?
 	;;
 *)
-	echo "Usage: $0 { start | stop | restart | reload | suspendback | resumeback | killback }"
+	echo "Usage: $0 { start | stop | restart | reload | restartback | suspendback | resumeback | killback }"
 	RETVAL=1
 	;;
 esac

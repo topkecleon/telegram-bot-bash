@@ -1,7 +1,9 @@
 *~
+/.github/
 /count
 /token
 *.save
 *.log
-/JSON.sh/*
+/JSON.sh/
 /tmp-bot-bash/
+/dist/

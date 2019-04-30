@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.62-0-g5d5dbae
+#### $$VERSION$$ v0.7-rc1-0-g8279bdb
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh

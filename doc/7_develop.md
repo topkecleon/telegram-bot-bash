@@ -1,6 +1,6 @@
 #### [Home](../README.md)
 ## Notes for bashbot developers
-This section is about help and best pratices for new bashbot developers. The main focus on is creating new versions of bashbot, not on develop your individual bot. Nevertheless the rules and tools described here can also help you with your bot development.
+This section is about help and best practices for new bashbot developers. The main focus on is creating new versions of bashbot, not on develop your individual bot. Nevertheless the rules and tools described here can also help you with your bot development.
 
 bashbot development is done on github. If you want to provide fixes or new features [fork bashbot on githup](https://help.github.com/en/articles/fork-a-repo) and provide changes as [pull request on github](https://help.github.com/en/articles/creating-a-pull-request).
 
@@ -13,6 +13,27 @@ bashbot development is done on github. If you want to provide fixes or new featu
 5. give your (dev) fork a new version tag: ```git tag vx.xx```, version must be higher than current version
 6. setup github hooks by running ```dev/install-hooks.sh``` (optional)
 
+### Test, Add, Push changes
+A typical bashbot develop loop looks as follow:
+
+1. start developing - *change, copy, edit bashbot files ...*
+2. after changing a bash sript: ```shellcheck -x scipt.sh```
+3. ```dev/all-tests.sh``` - *in case if errors back to 2.*
+4. ```dev/git-add.sh``` - *check for changed files, update version string, run git add*
+5. ```git commit' -m "COMMIT MESSAGE"; git push```
+
+
+**If you setup iyou dev environment with hooks and use the scripts above, versioning, addding and testing is done automatically.**
+
+### Prepare a new version
+After some development it may time to create a new version for the users. a new version can be in sub version upgrade, e.g. for fixes and smaller additions or
+a new release version for new features. To mark a new version use ```git tag NEWVERSION``` and run ```dev/version.sh``` to update all version strings.
+
+Usually I start with pre versions and when everything looks good I push out a release candidate (rc) and finally the new version.
+```
+ v0.x-devx -> v0.x-prex -> v0.x-rc -> v0.x  ... 0.x+1-dev ...
+```
+
 ### Versioning
 
 Bashbot is tagged with version numbers. If you start a new development cycle you must tag your fork with a version higher than the current version.
@@ -22,7 +43,6 @@ To get the current version name of your develepment fork run ```git describe --t
 
 To update the Version Number in your scripts run ```dev/version.sh```, it will update the line '#### $$VERSION$$ ###' in all files to the current version name.
 
-If you actived git hooks in Setup step 6, 'version.sh' updates the version name on every push
 
 ### Shellchecking
 
@@ -32,17 +52,18 @@ In addition you can run ```dev/hooks/pre-commit.sh``` every time you want to she
 
 
 ## bashbot tests
-Starting with version 0.70 bashbot has a test suite. To start testsuite run ```test/ALL-tests.sh```. ALL-tests.sh will only return 'SUCCESS' if all tests pass.
+Starting with version 0.70 bashbot has a test suite. To start testsuite run ```dev/all-tests.sh```. all-tests.sh will return 'SUCCESS' only if all tests pass.
 
 ### enabling / disabling tests
 
-All tests are placed in the directory  ```test```. To disable a test remove the x flag from the '*-test.sh' test script, to (re)enable
-a test make the script executable again.
+All tests are placed in the directory  ```test```. To disable a test remove the x flag from the '*-test.sh' test script, to (re)enable a test make the script executable again.
 
 
 ### creating new tests
-Each test consists of a script script named like ```p-name-test.sh``` *(where p is test pass 'a-z' and name the name of your test)* and
-an optional dir ```p-name-test/``` *(script name minus '.sh')* for additional files.
+To create a new test run ```test/ADD-test-new.sh``` and answer the questions, afterwards you have the following described files and dirs:
+
+Each test consists of a script script named like ```p-name-test.sh``` *(where p is test pass 'a-z' and name the name
+of your test)* and an optional dir ```p-name-test/``` *(script name minus '.sh')* for additional files.
 
 The file ```ALL-tests.inc.sh``` must be included from all tests, do not forget the shellcheck source directive to statisfy shellcheck.
 
@@ -68,7 +89,8 @@ else
 fi
 ```
 
-#### [Prev Function Reference](6_function.md)
+#### [Prev Function Reference](6_reference.md)
+#### [Next Bashbot Environment](8_custom.md)
 
-#### $$VERSION$$ v0.62-0-g5d5dbae
+#### $$VERSION$$ v0.7-rc1-0-g8279bdb
 

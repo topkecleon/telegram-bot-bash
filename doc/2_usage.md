@@ -1,9 +1,9 @@
 #### [Home](../README.md)
 ## Gettting Started
 
-All Commands for the Bot are in the ```commands.sh``` file (this should ease upgrades of the bot core). Here you find some examples how to process messages and send out text.
+The Bots standard commands are in ```commands.sh``` file. You must not add your commands to 'commands.sh', instead place them in ```mycommands.sh```,  there you also find examples how to process messages and send out text. See [Best practices](5_practice.md) for more information.
 
-Once you're done editing start the Bot with ```./bashbot.sh start```. 
+Once you're done with editing 'mycommands.sh' start the Bot with ```./bashbot.sh start```. 
 If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```. To stop the Bot run ```./bashbot.sh kill```
 
 To use the functions provided in this script in other scripts simply source bashbot: ```source bashbot.sh```
@@ -37,7 +37,7 @@ To send a broadcast to all of users that ever used the bot run the following com
 ## Recieve data
 Evertime a Message is recieved, you can read incoming data using the following variables:
 
-* ```${MESSAGE}```: Current incoming messages
+* ```${MESSAGE}```: Current message
 * ```${MESSAGE[ID]}```: ID of current message
 * ```$CAPTION```: Captions
 * ```$REPLYTO```: Original message wich was replied to
@@ -66,7 +66,7 @@ Evertime a Message is recieved, you can read incoming data using the following v
     * ```${FORWARD[FIRST_NAME]}```: Original user's first name
     * ```${FORWARD[LAST_NAME]}```: Original user's' last name
     * ```${FORWARD[USERNAME]}```: Original user's username
-* ```$URLS```: This array contains documents, audio files, stickers, voice recordings and stickers stored in the form of URLs.
+* ```$URLS```: This array contains documents, audio files, voice recordings and stickers as URL.
     * ```${URLS[AUDIO]}```: Audio files
     * ```${URLS[VIDEO]}```: Videos
     * ```${URLS[PHOTO]}```: Photos (maximum quality)
@@ -74,13 +74,20 @@ Evertime a Message is recieved, you can read incoming data using the following v
     * ```${URLS[STICKER]}```: Stickers
     * ```${URLS[DOCUMENT]}```: Any other file
 * ```$CONTACT```: This array contains info about contacts sent in a chat.
+    * ```${CONTACT[ID]}```: User id
     * ```${CONTACT[NUMBER]}```: Phone number
     * ```${CONTACT[FIRST_NAME]}```: First name
     * ```${CONTACT[LAST_NAME]}```: Last name
-    * ```${CONTACT[ID]}```: User id
+    * ```${CONTACT[VCARD]}```: User's complete Vcard
 * ```$LOCATION```: This array contains info about locations sent in a chat.
     * ```${LOCATION[LONGITUDE]}```: Longitude
     * ```${LOCATION[LATITUDE]}```: Latitude
+* ```$VENUE```: This array contains info about venue (a place) sent in a chat.
+    * ```${VENUE[TITLE]}```: Name of the place
+    * ```${VENUE[ADDRESS]}```: Address of the place
+    * ```${VENUE[LONGITUDE]}```: Longitude
+    * ```${VENUE[LATITUDE]}```: Latitude
+    * ```${VENUE[FOURSQUARE]}```: Fouresquare ID
 
 ## Usage of bashbot functions
 
@@ -129,7 +136,7 @@ This function also allows a third parameter that disables additional function pa
 ```bash
 send_message "${CHAT[ID]}" "lol" "safe"
 ```
-More examples  boutsend_message strings can be found in [Advanced Usage](3_advanced.md#Interactive-Chats)
+**See also [Interactive chats](3_advanced.md#Interactive-Chats)**
 
 
 #### Send files, locations, keyboards.
@@ -155,9 +162,10 @@ Allowed values: typing for text messages, upload_photo for photos, record_video 
 ```bash
 send_action "${CHAT[ID]}" "action"
 ```
+**See also [Bashbot function reference](6_reference.md#Interactive_Chats)**
 
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.62-0-g5d5dbae
+#### $$VERSION$$ v0.7-rc1-0-g8279bdb
 

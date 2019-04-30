@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.62-0-g5d5dbae
+#### $$VERSION$$ v0.7-rc1-0-g8279bdb
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -26,13 +26,13 @@ echo "Check process_message ..."
 for i in 1 2
 do
 	[ "${i}" = "1" ] && ! which python >/dev/null 2>&1 && continue
-	[ "${i}" = "1" ] && echo "  ... JsonDecode Phyton"
-	[ "${i}" = "2" ] && echo "  ... JsonDecode Bash" && export BASHDECODE="yes"
+	[ "${i}" = "1" ] && echo "  ... with JsonDecode Phyton" && unset BASHBOT_DECODE
+	[ "${i}" = "2" ] && echo "  ... with JsonDecode Bash" && export BASHBOT_DECODE="yes"
 	set -x
 	{ process_message "0";  set +x; } >>"${LOGFILE}" 2>&1;
 
 	# output processed input
-	print_array "USER" "CHAT" "REPLYTO" "FORWARD" "URLS" "CONTACT" "CAPTION" "LOCATION" "MESSAGE" >"${OUTPUTFILE}"
+	print_array "USER" "CHAT" "REPLYTO" "FORWARD" "URLS" "CONTACT" "CAPTION" "LOCATION" "MESSAGE" "VENUE" >"${OUTPUTFILE}"
 	diff -c "${REFFILE}" "${OUTPUTFILE}" || exit 1
 	echo "${SUCCESS}"
 done

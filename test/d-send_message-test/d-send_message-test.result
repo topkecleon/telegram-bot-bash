@@ -1,0 +1,61 @@
+chat:123456	JSON:"text":"# test for text only output"
+URL:https://api.telegram.org/botbashbottestscript/sendMessage
+
+chat:123456	JSON:"text":"This is a normal text"
+URL:https://api.telegram.org/botbashbottestscript/sendMessage
+
+chat:123456	JSON:"text":"This is a normal text
+with a line break"
+URL:https://api.telegram.org/botbashbottestscript/sendMessage
+
+chat:123456	JSON:"text":" This is a <b>HTML</b> text","parse_mode":"html"
+URL:https://api.telegram.org/botbashbottestscript/sendMessage
+
+chat:123456	JSON:"text":" This is a <b>HTML</b> text
+with a line break","parse_mode":"html"
+URL:https://api.telegram.org/botbashbottestscript/sendMessage
+
+chat:123456	JSON:"text":" This is a *MARKDOWN* text","parse_mode":"markdown"
+URL:https://api.telegram.org/botbashbottestscript/sendMessage
+
+chat:123456	JSON:"text":" This is a *MARKDOWN* text
+with a line break","parse_mode":"markdown"
+URL:https://api.telegram.org/botbashbottestscript/sendMessage
+
+chat:123456	JSON:"text":"# test for keyboard, file, venue output"
+URL:https://api.telegram.org/botbashbottestscript/sendMessage
+
+chat:123456	JSON:"text":"Text plus keyboard will appear in chat", "reply_markup": {"keyboard": [ [ "Yep, sure" , "No, highly unlikely" ] ] , "one_time_keyboard":true}
+URL:https://api.telegram.org/botbashbottestscript/sendMessage
+
+chat:123456	JSON:"action": "upload_photo"
+URL:https://api.telegram.org/botbashbottestscript/sendChatAction
+
+chat:123456	JSON:"latitude": la10, "longitude": lo20
+URL:https://api.telegram.org/botbashbottestscript/sendLocation
+
+chat:123456	JSON:"latitude": la10, "longitude": lo20, "address": "Diagon Alley N. 37", "title": "my home"
+URL:https://api.telegram.org/botbashbottestscript/sendVenue
+
+chat:123456	JSON:"text":"All in one will appear in chat", "reply_markup": {"keyboard": [ [ "Yep, sure" , "No, highly unlikely" ] ] , "one_time_keyboard":true}
+URL:https://api.telegram.org/botbashbottestscript/sendMessage
+
+chat:123456	JSON:"action": "upload_photo"
+URL:https://api.telegram.org/botbashbottestscript/sendChatAction
+
+chat:123456	JSON:"latitude": la10, "longitude": lo20
+URL:https://api.telegram.org/botbashbottestscript/sendLocation
+
+chat:123456	JSON:"text":"# test for new inline button"
+URL:https://api.telegram.org/botbashbottestscript/sendMessage
+
+chat:123456	JSON:"text":"Text plus keyboard will appear in chat", "reply_markup": {"inline_keyboard": [ [ {"text":"Button Text", "url":"https://www..."}] ]}
+URL:https://api.telegram.org/botbashbottestscript/sendMessage
+
+chat:123456	JSON:"text":"STABILO 88/240 Fineliner point 88
+
+[https://images-na.ssl-images-amazon.com/images/I/41oypA3kmHL.l_SX300.jpg]
+second part of text
+plus newline.", "reply_markup": {"inline_keyboard": [ [ {"text":"Bei Amazon ansehen ...", "url":"https://www.amazon.de/dp/B014TN3JYW"}] ]}
+URL:https://api.telegram.org/botbashbottestscript/sendMessage
+
