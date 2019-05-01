@@ -74,9 +74,9 @@
 </ul>
 <h2 id="security-considerations">Security Considerations</h2>
 <p>Running a Telegram Bot means it is connected to the public and you never know whats send to your Bot.</p>
-<p>Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. More concret examples of security problems are: bash’s ‘quoting hell’ and globbing. <a href="https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells">Implications of wrong quoting</a></p>
-<p>Whenever you are processing input from from untrusted sources (messages, files, network) you must be as carefull as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everthing. In addition disable not used Bot commands and delete unused scripts from your Bot, e.g. example scripts ‘notify’, ‘calc’, ‘question’,</p>
-<p>A powerful tool to improve your scripts robustness is <code>shellcheck</code>. You can <a href="https://www.shellcheck.net/">use it online</a> or <a href="https://github.com/koalaman/shellcheck#installing">install shellcheck locally</a>. All bashbot scripts are checked by shellcheck.</p>
+<p>Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. Bash programmers often struggle with ‘quoting hell’ and globbing, see <a href="https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells">Implications of wrong quoting</a></p>
+<p>Whenever you are processing input from from untrusted sources (messages, files, network) you must be as carefull as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everthing. In addition delete unused scripts and examples from your Bot, e.g. scripts ‘notify’, ‘calc’, ‘question’, and disable all not used commands.</p>
+<p>A powerful tool to improve your scripts is <code>shellcheck</code>. You can <a href="https://www.shellcheck.net/">use it online</a> or <a href="https://github.com/koalaman/shellcheck#installing">install shellcheck locally</a>. Shellcheck is used extensive in bashbot development to enshure a high code quality, e.g. it’s not allowed to push changes without passing all shellcheck tests. In addition bashbot has a <a href="doc/7_develop.md">test suite</a> to check if important functionality is working as expected.</p>
 <h3 id="run-your-bot-as-a-restricted-user">Run your Bot as a restricted user</h3>
 <p><strong>I recommend to run your bot as a user, with almost no access rights.</strong> All files your Bot have write access to are in danger to be overwritten/deleted if your bot is hacked. For the same reason ervery file your Bot can read is in danger to be disclosed. Restict your Bots access rigths to the absolute minimum.</p>
 <p><strong>Never run your Bot as root, this is the most dangerous you can do!</strong> Usually the user ‘nobody’ has almost no rights on Unix/Linux systems. See <a href="doc/4_expert.md">Expert use</a> on how to run your Bot as an other user.</p>
@@ -97,6 +97,6 @@
 <p><span class="citation">@Gnadelwartz</span></p>
 <h2 id="thats-it">That’s it!</h2>
 <p>If you feel that there’s something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4 id="version-v0.70-rc1-0-g8883cc9"><br /><span class="math display"><em>V</em><em>E</em><em>R</em><em>S</em><em>I</em><em>O</em><em>N</em></span><br /> v0.70-rc1-0-g8883cc9</h4>
+<h4 id="version-v0.70-0-g6243be9"><br /><span class="math display"><em>V</em><em>E</em><em>R</em><em>S</em><em>I</em><em>O</em><em>N</em></span><br /> v0.70-0-g6243be9</h4>
 </body>
 </html>

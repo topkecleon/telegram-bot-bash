@@ -6,5 +6,4 @@
 *.log
 /JSON.sh/
 /data-bot-bash/
-/tmp-bot-bash/
 /dist/

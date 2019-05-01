@@ -2,7 +2,7 @@
 # file. multibot.sh
 # description:  run multiple telegram bots from one installation
 #
-#### $$VERSION$$ v0.70-rc1-0-g8883cc9
+#### $$VERSION$$ v0.70-0-g6243be9
 
 if [ "${2}" = "" ] || [ "${2}" = "-h" ]; then
 	echo "Usage: $0 botname command"
@@ -41,4 +41,4 @@ export BASHBOT_VAR="${VAR}/${BOT}"
 [ ! -r "${BASHBOT_ETC}/commands.sh" ] && echo "${BASHBOT_ETC}/commands.sh not readable or does not exist" && exit 1
 [ ! -r "${BASHBOT_ETC}/mycommands.sh" ] && echo "${BASHBOT_ETC}/mycommands.sh not readable or does not exist" && exit 1
 
-"${BINDIR}/bashbot.sh" $2
+"${BINDIR}/bashbot.sh" "$2"
