@@ -130,4 +130,4 @@ health status
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.7-rc1-0-g8279bdb
+#### $$VERSION$$ v0.70-rc1-0-g8883cc9

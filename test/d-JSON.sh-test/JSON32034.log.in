@@ -1,0 +1,2 @@
+{"ok":true,"result":[{"update_id":146860897,
+"message":{"message_id":6619,"from":{"id":123456789,"is_bot":false,"first_name":"Kay","last_name":"M","username":"Gnadelwartz","language_code":"de"},"chat":{"id":586928566,"first_name":"Kay","last_name":"M","username":"Gnadelwartz","type":"private"},"date":1555934204,"contact":{"phone_number":"222222","first_name":"ADAC Pannenhilfe","vcard":"BEGIN:VCARD\nVERSION:2.1\nN:Pannenhilfe;ADAC;;;\nFN:ADAC Pannenhilfe\nTEL;CELL;PREF:+49179222222\nTEL;X-Mobil:222222\nEND:VCARD"}}}]}

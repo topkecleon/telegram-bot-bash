@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.7-rc1-0-g8279bdb
+#### $$VERSION$$ v0.70-rc1-0-g8883cc9
 
 # common variables
 export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
@@ -11,11 +11,12 @@ export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
  TESTNAME="${REFDIR//-/ }"
 
 # common filenames
-export TOKENFILE ACLFILE COUNTFILE ADMINFILE
+export TOKENFILE ACLFILE COUNTFILE ADMINFILE DATADIR
  TOKENFILE="token"
  ACLFILE="botacl"
  COUNTFILE="count"
  ADMINFILE="botadmin"
+ DATADIR="data-bot-bash"
 
 # SUCCESS NOSUCCES
 export SUCCESS NOSUCCESS

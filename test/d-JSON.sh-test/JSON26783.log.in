@@ -1,0 +1,2 @@
+{"ok":true,"result":[{"update_id":146860898,
+"message":{"message_id":6620,"from":{"id":123456789,"is_bot":false,"first_name":"Kay","last_name":"M","username":"Gnadelwartz","language_code":"de"},"chat":{"id":123456789,"first_name":"Kay","last_name":"M","username":"Gnadelwartz","type":"private"},"date":1555934213,"location":{"latitude":49.630443,"longitude":8.361698},"venue":{"location":{"latitude":49.630443,"longitude":8.361698},"title":"Vannini","address":"K\u00e4mmererstr. 3","foursquare_id":"4bf94ec05ec320a115f889d3"}}}]}

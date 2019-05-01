@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.7-rc1-0-g8279bdb
+#### $$VERSION$$ v0.70-rc1-0-g8883cc9
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -70,7 +70,7 @@ JSONSHFILE="${BASHBOT_JSONSH:-${RUNDIR}/JSON.sh/JSON.sh}"
 
 if [ ! -f "${JSONSHFILE}" ]; then
 	echo "Seems to be first run, Downloading ${JSONSHFILE}..."
-	mkdir "JSON.sh" 2>/dev/null;
+	[[ "${JSONSHFILE}" = "${RUNDIR}/JSON.sh/JSON.sh" ]] && mkdir "JSON.sh" 2>/dev/null;
 	curl -sL -o "${JSONSHFILE}" "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh"
 	chmod +x "${JSONSHFILE}" 
 fi
@@ -587,7 +587,7 @@ bot_init() {
 		exit 3
 	else
 		echo "Adjusting user \"${TOUSER}\" files and permissions ..."
-		sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' bashbot.rc
+		[ -w "bashbot.rc" ] && sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' "bashbot.rc"
 		chown -R "$TOUSER" . ./*
 		chmod 711 .
 		chmod -R a-w ./*

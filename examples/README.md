@@ -9,13 +9,12 @@ An example crontab is provided in ```examples/bashbot.cron```, see [Expert use](
 ### Interactive chats
 Two examples for interactive scripts are provided as **calc.sh** and **question.sh**, see [Advanced use](../doc/3_advanced.md#Interactive-Chats)
 
-### Background jobs
+### Background scripts
 
 Background jobs are an easy way to provide sceduled messages or alerts if something happens.
-
 **notify.sh** is a simple example on how to send a message every x seonds, e.g. current time.
 
-**background-scripts** contains a more concrete example on how to start and stop different scripts plus some example backgound scripts.
+**background-scripts** contains a more useful example on how to start and stop different scripts plus some example backgound scripts.
 
 ```
     mycommands.sh - /run_xxx and /kill-xxx wil start any script named run_xxx.sh
@@ -28,16 +27,31 @@ Background jobs are an easy way to provide sceduled messages or alerts if someth
 **Note:** Output of system commands often contains newlines, each newline results in a telegram message, the function 'send_telegram' in
 mycommands.sh avoids this by converting each newline to ' mynewlinestartshere ' before output the string.
 
-**system-status** contains an example with commands showing system status. This example is adapted from https://github.com/RG72/telegram-bot-bash
+### Ssystem Status
+
+**send-system-status** contains an example for commands showing status of different subsystems. This example is adapted from
+ https://github.com/RG72/telegram-bot-bash to current bashbot commands, but not fully tested. This will show how easy you can
+convert existing bots.
 
 ```
-    mycommands.sh - sommands to show system status
+    mycommands.sh - commands to show system status
     botacl - controls who can show system status
+
+*Availiable commands*:
+	/se *sensors*
+	/smb *smbstatus*
+	/free *memory status*
+	/md *raid status*
+	/lvm *lvm status*
+	/lvsd *Datailed lvm status*
+	/df *disk space*
+	/ifconfig *ifconfig output*
+	/smart *sda* _smart status for sda drive_
 ```
-### Use bashbot from external scripts
+### External scripts
 
 **external-use** will contain some examples on how to send messages from external scripts to Telegram chats or users.
 
-#### $$VERSION$$ v0.7-rc1-0-g8279bdb
+#### $$VERSION$$ v0.70-rc1-0-g8883cc9
 
 

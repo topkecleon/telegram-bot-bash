@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.7-rc1-0-g8279bdb
+#### $$VERSION$$ v0.70-rc1-0-g8883cc9
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -20,14 +20,14 @@ do
     [ "${i}" = "1" ] && echo "  ... JSON.sh -s -b -n"
     [ "${i}" = "2" ] && echo "  ... JSON.sh"
     set +f
-    for jsonfile in ${REFDIR}/*.log
+    for jsonfile in ${REFDIR}/*.in
     do
 	set -f
 	[ "${i}" = "1" ] && "${JSON}"  -s -b -n <"${jsonfile}"  >"${jsonfile}.out-${i}"
 	[ "${i}" = "2" ] && "${JSON}"  <"${jsonfile}"  >"${jsonfile}.out-${i}"
 
 	# output processed input
-	diff -c "${jsonfile}.result-${i}" "${jsonfile}.out-${i}" || exit 1
+	diff -c "${jsonfile%.in}.result-${i}" "${jsonfile}.out-${i}" || exit 1
     done
     echo "${SUCCESS}"
 done

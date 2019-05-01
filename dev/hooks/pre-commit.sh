@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.7-rc1-0-g8279bdb
+#### $$VERSION$$ v0.70-rc1-0-g8883cc9
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
@@ -42,12 +42,12 @@ else
 	exit 1
 fi
 
-REMOTEVER="$(git ls-remote -t --refs 2>/dev/null | tail -1 | sed 's/.*\/v//')"
+REMOTEVER="$(git ls-remote -t --refs 2>/dev/null | tail -1 | sed -e 's/.*\/v//' -e 's/-.*//')"
 VERSION="$(git describe --tags | sed -e 's/-.*//' -e 's/v//')"
 
 
 # LOCAL version must greater than latest REMOTE release version
-if (( $(echo "${VERSION} > ${REMOTEVER}" | bc -l) )); then
+if (( $(echo "${VERSION} >= ${REMOTEVER}" | bc -l) )); then
 	# update version in bashbot files on push
 	set +f
 	[ -f "${LASTPUSH}" ] && LASTFILES="$(find ./* -newer "${LASTPUSH}")"
@@ -57,8 +57,8 @@ if (( $(echo "${VERSION} > ${REMOTEVER}" | bc -l) )); then
 	dev/version.sh ${LASTFILES} 2>/dev/null || exit 1
 	echo "    OK"
 else
-	echo "Error: local version ${VERSION} must be greater than latest release version."
-        echo "use \"git tag ...\" to create a local version greater than ${REMOTEVER}"
+	echo "Error: local version ${VERSION} must be greater or equal to release version ${REMOTEVER}."
+        echo "use \"git tag ...\" to create a new local version"
 	exit 1
 fi
 
