@@ -1,6 +1,6 @@
 #!/bin/bash
 # file: question.sh
-# example for an interactive chat, run with startprog question.sh
+# example for an interactive chat, run with startproc question.sh
 
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)

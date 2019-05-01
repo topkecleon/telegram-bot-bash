@@ -32,7 +32,7 @@ mycommands() {
 			fi
 			;;
 
-		'/run-notify'*) # start notify background job
+		'/run_notify'*) # start notify background job
 			myback="notify"; checkback "$myback"
 			if [ "$res" -gt 0 ] ; then
 				background "example/notify 60" "$myback" # notify every 60 seconds
@@ -40,7 +40,7 @@ mycommands() {
 				send_normal_message "${CHAT[ID]}" "Background command $myback already running ..."
 			fi
 			;;
-		'/stop-notify'*) # kill notify background job
+		'/stop_notify'*) # kill notify background job
 			myback="notify"; checkback "$myback"
 			if [ "$res" -eq 0 ] ; then
 				killback "$myback"

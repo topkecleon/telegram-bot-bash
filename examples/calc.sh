@@ -1,6 +1,6 @@
 #!/bin/bash
 # file: calc.sh
-# example for an interactive chat, run with startprog calc.sh
+# example for an interactive chat, run with startproc calc.sh
 
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)

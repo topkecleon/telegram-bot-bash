@@ -128,7 +128,7 @@ else
      			;;
      			
 		'/cancel'*)
-			checkprog
+			checkproc
 			if [ "$res" -eq 0 ] ; then killproc && _message "Command canceled.";else _message "No command is currently running.";fi
 			;;
 		*)	# forward other messages to optional dispatcher
