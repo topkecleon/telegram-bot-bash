@@ -10,8 +10,10 @@
 GIT_DIR=$(git rev-parse --git-dir)
 cd "$GIT_DIR/.." || exit 1
 
+[ -f .git/.lastpush ] || echo "No push or hooks not installed, use \"git add\" instead ... Abort" && exit
+
 FILES="$(find ./* -newer .git/.lastpush)"
-[ "${FILES}" = "" ] && echo "Noting changed since last push!" && exit
+[ "${FILES}" = "" ] && echo "Noting changed since last push ... Abort" && exit
 
 # run pre_commit on files
 dev/hooks/pre-commit.sh
