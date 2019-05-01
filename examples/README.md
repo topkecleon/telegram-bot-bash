@@ -27,7 +27,7 @@ Background jobs are an easy way to provide sceduled messages or alerts if someth
 **Note:** Output of system commands often contains newlines, each newline results in a telegram message, the function 'send_telegram' in
 mycommands.sh avoids this by converting each newline to ' mynewlinestartshere ' before output the string.
 
-### Ssystem Status
+### System Status
 
 **send-system-status** contains an example for commands showing status of different subsystems. This example is adapted from
  https://github.com/RG72/telegram-bot-bash to current bashbot commands, but not fully tested. This will show how easy you can
