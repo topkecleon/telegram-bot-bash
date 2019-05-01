@@ -10,7 +10,7 @@ if [ -f "${TESTDIR}/bashbot.sh" ]; then
 	echo "${SUCCESS} bashbot.sh exist!"
 	exit 0
 else
-	echo "${NOSUCCESS} ${TESTDIR}bashbot.sh missing!"
+	echo "${NOSUCCESS} ${TESTDIR}/bashbot.sh missing!"
 	exit 1
 fi
 

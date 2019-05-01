@@ -56,11 +56,12 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
 ## Security Considerations
 Running a Telegram Bot means it is connected to the public and you never know whats send to your Bot.
 
-Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. More concret examples of security problems are: bash's 'quoting hell' and globbing. [Implications of wrong quoting](https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells)
+Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. Bash programmers often struggle with 'quoting hell' and globbing, see [Implications of wrong quoting](https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells)
 
-Whenever you are processing input from from untrusted sources (messages, files, network) you must be as carefull as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everthing. In addition disable not used Bot commands and delete unused scripts from your Bot, e.g. example scripts 'notify', 'calc', 'question',
+Whenever you are processing input from from untrusted sources (messages, files, network) you must be as carefull as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everthing. In addition delete unused scripts and examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable all not used commands.
 
-A powerful tool to improve your scripts robustness is ```shellcheck```. You can [use it online](https://www.shellcheck.net/) or [install shellcheck locally](https://github.com/koalaman/shellcheck#installing). All bashbot scripts are checked by shellcheck.
+A powerful tool to improve your scripts is ```shellcheck```. You can [use it online](https://www.shellcheck.net/) or [install shellcheck locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used extensive in bashbot development to enshure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests.
+In addition bashbot has a [test suite](doc/7_develop.md) to check if important functionality is working as expected.
 
 ### Run your Bot as a restricted user
 **I recommend to run your bot as a user, with almost no access rights.** 

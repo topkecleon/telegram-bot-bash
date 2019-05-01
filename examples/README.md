@@ -2,6 +2,9 @@
 
 ## Bashbot examples
 
+### bashbot multi
+An example wrapper to run multiple instances of bashbot, use ```./bashbot-multi.sh botname command```
+
 ### bashbot.cron
 An example crontab is provided in ```examples/bashbot.cron```, see [Expert use](../doc/4_expert.md#Scedule-bashbot-from-Cron)
 
