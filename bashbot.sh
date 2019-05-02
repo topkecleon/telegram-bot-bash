@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-0-g6243be9
+#### $$VERSION$$ v0.70-0-g8ea9e3b
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -87,6 +87,7 @@ if [ ! -f "${BOTADMIN}" ]; then
 	echo -e "${ORANGE}TO MAKE FIRST USER TYPING '/start' TO BOTADMIN${NC}"
 	read -r token
 	echo "${token}" > "${BOTADMIN}"
+	[ "${token}" = "" ] && echo '?' > "${BOTADMIN}"
    fi
 fi
 

@@ -94,4 +94,4 @@ Well, thats a damn good question ... may be because I'm an Unix/Linux admin from
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.70-0-g6243be9
+#### $$VERSION$$ v0.70-0-g8ea9e3b

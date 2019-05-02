@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-0-g6243be9
+#### $$VERSION$$ v0.70-0-g8ea9e3b
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -105,15 +105,15 @@ else
 		'/start'*)
 			send_action "${CHAT[ID]}" "typing"
 			_is_botadmin && _markdown_message "You are *BOTADMIN*."
-			if _is_allowed "start" ; then
-				_markdown_message "${bot_help}"
+			if _is_botadmin || _is_allowed "start" ; then
+				_markdown_message "${bashbot_help}"
 			else
 				_message "You are not allowed to start Bot."
 			fi
 			;;
 			
 		'/help'*)
-			_markdown_message "${bot_help}"
+			_markdown_message "${bashbot_help}"
 			;;
 		'/leavechat'*) # bot leave chat if user is admin in chat
 			if _is_admin ; then 

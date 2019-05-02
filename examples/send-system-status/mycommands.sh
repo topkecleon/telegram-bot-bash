@@ -5,7 +5,7 @@
 # to show how you can customize bashbot by only editing mycommands.sh
 # NOTE: this is not tested, simply copied from original source and reworked!
 #
-#### $$VERSION$$ v0.70-0-g6243be9
+#### $$VERSION$$ v0.70-0-g8ea9e3b
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -43,7 +43,7 @@ mycommands() {
     local cmd="${arg[0]}"
     local msg=""
 
-    if user_is_botadmin || user_is_allowed "${USER[ID]}" "systemstatus"; then
+    if user_is_botadmin "${USER[ID]}" || user_is_allowed "${USER[ID]}" "systemstatus"; then
 	case "$cmd" in
 		'/md'*) msg="$(cat /proc/mdstat)";;
 		'/smb'*) msg="$(smbstatus)" ;;
