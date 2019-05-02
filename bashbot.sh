@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev-2-g4e4194d
+#### $$VERSION$$ v0.80-dev-3-g9bcab66
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -147,7 +147,6 @@ LOCATION_URL=$URL'/sendLocation'
 VENUE_URL=$URL'/sendVenue'
 ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
-INLINE_QUERY=$URL'/answerInlineQuery'
 ME_URL=$URL'/getMe'
 DELETE_URL=$URL'/deleteMessage'
 GETMEMBER_URL=$URL'/getChatMember'
@@ -156,8 +155,8 @@ UPD_URL=$URL'/getUpdates?offset='
 GETFILE_URL=$URL'/getFile'
 
 unset USER
-declare -A BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
-export BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
+declare -A BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
+export BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
 
 
 send_normal_message() {
@@ -234,76 +233,6 @@ user_is_allowed() {
 	[ "$3" != "" ] && acl="${acl}:$3"
 	grep -F -xq "${acl}" <"${BOTACL}"
 }
-
-answer_inline_query() {
-	local JSON
-	case "${2}" in
-		"article")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","title":"'$3'","message_text":"'$4'"}]'
-		;;
-		"photo")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","photo_url":"'$3'","thumb_url":"'$4'"}]'
-		;;
-		"gif")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","gif_url":"'$3'", "thumb_url":"'$4'"}]'
-		;;
-		"mpeg4_gif")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","mpeg4_url":"'$3'"}]'
-		;;
-		"video")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","video_url":"'$3'","mime_type":"'$4'","thumb_url":"'$5'","title":"'$6'"}]'
-		;;
-		"audio")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","audio_url":"'$3'","title":"'$4'"}]'
-		;;
-		"voice")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","voice_url":"'$3'","title":"'$4'"}]'
-		;;
-		"document")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","title":"'$3'","caption":"'$4'","document_url":"'$5'","mime_type":"'$6'"}]'
-		;;
-		"location")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","latitude":"'$3'","longitude":"'$4'","title":"'$5'"}]'
-		;;
-		"venue")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","latitude":"'$3'","longitude":"'$4'","title":"'$5'","address":"'$6'"}]'
-		;;
-		"contact")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","phone_number":"'$3'","first_name":"'$4'"}]'
-		;;
-
-		# Cached media stored in Telegram server
-
-		"cached_photo")
-			JSON='[{"type":"photo","id":"'$RANDOM'","photo_file_id":"'$3'"}]'
-		;;
-		"cached_gif")
-			JSON='[{"type":"gif","id":"'$RANDOM'","gif_file_id":"'$3'"}]'
-		;;
-		"cached_mpeg4_gif")
-			JSON='[{"type":"mpeg4_gif","id":"'$RANDOM'","mpeg4_file_id":"'$3'"}]'
-		;;
-		"cached_sticker")
-			JSON='[{"type":"sticker","id":"'$RANDOM'","sticker_file_id":"'$3'"}]'
-		;;
-		"cached_document")
-			JSON='[{"type":"document","id":"'$RANDOM'","title":"'$3'","document_file_id":"'$4'"}]'
-		;;
-		"cached_video")
-			JSON='[{"type":"video","id":"'$RANDOM'","video_file_id":"'$3'","title":"'$4'"}]'
-		;;
-		"cached_voice")
-			JSON='[{"type":"voice","id":"'$RANDOM'","voice_file_id":"'$3'","title":"'$4'"}]'
-		;;
-		"cached_audio")
-			JSON='[{"type":"audio","id":"'$RANDOM'","audio_file_id":"'$3'"}]'
-		;;
-
-	esac
-
-	sendJson "" '"inline_query_id": '"${1}"', "results": '"${JSON}" "${INLINE_QUERY}"
-}
-
 
 old_send_keyboard() {
 	local text='"text":"'"${2}"'"'
@@ -454,7 +383,7 @@ process_client() {
 	if [ "${iQUERY[ID]}" = "" ]; then
 		process_message "$PROCESS_NUMBER"
 	else
-		[ "$INLINE" = 1 ] && _is_function process_inline && process_inline "$PROCESS_NUMBER"
+		[ "$INLINE" != "0" ] && _is_function process_inline && process_inline "$PROCESS_NUMBER"
 	fi
 	# Tmux
 	copname="$ME"_"${CHAT[ID]}"
@@ -560,7 +489,7 @@ start_bot() {
 	local maxsleep="$(( ${BASHBOT_SLEEP:-5000} + 100 ))"
 	while true; do {
 
-		UPDATE="$(curl -s "$UPD_URL$OFFSET" | "${JSONSHFILE}")"
+		UPDATE="$(curl -s "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n)"
 
 		# Offset
 		OFFSET="$(echo "$UPDATE" | grep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"

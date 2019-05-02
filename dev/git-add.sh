@@ -3,14 +3,14 @@
 #
 # works together with git pre-push.sh and ADD all changed files since last push
 
-#### $$VERSION$$ v0.80-dev-2-g4e4194d
+#### $$VERSION$$ v0.80-dev-3-g9bcab66
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
 GIT_DIR=$(git rev-parse --git-dir)
 cd "$GIT_DIR/.." || exit 1
 
-[ -f .git/.lastpush ] || echo "No push or hooks not installed, use \"git add\" instead ... Abort" && exit
+[ ! -f .git/.lastpush ] && echo "No push or hooks not installed, use \"git add\" instead ... Abort" && exit
 
 FILES="$(find ./* -newer .git/.lastpush)"
 [ "${FILES}" = "" ] && echo "Noting changed since last push ... Abort" && exit

@@ -37,6 +37,8 @@ To send a broadcast to all of users that ever used the bot run the following com
 ## Recieve data
 Evertime a Message is recieved, you can read incoming data using the following variables:
 
+### Regular Messages
+
 * ```${MESSAGE}```: Current message
 * ```${MESSAGE[ID]}```: ID of current message
 * ```$CAPTION```: Captions
@@ -88,6 +90,16 @@ Evertime a Message is recieved, you can read incoming data using the following v
     * ```${VENUE[LONGITUDE]}```: Longitude
     * ```${VENUE[LATITUDE]}```: Latitude
     * ```${VENUE[FOURSQUARE]}```: Fouresquare ID
+
+### Inline queries
+Evertime a Message is recieved, you can read incoming data using the following variables:
+
+* ```${iQUERY}```: Current inline query
+* ```$iQUERY```: This array contains the ID, First name, last name, username and user id of the sender of the current inline query.
+    * ```${iQUERY[ID]}```: Inline query ID
+    * ```${iQUERY[USER_ID]}```: User's id
+    * ```${iQUERY[FIRST_NAME]}```: User's first name
+    * ```${iQUERY[LAST_NAME]}```: User's last name
 
 ## Usage of bashbot functions
 
@@ -167,5 +179,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.80-dev-2-g4e4194d
+#### $$VERSION$$ v0.80-dev-3-g9bcab66
 
