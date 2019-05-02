@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-7-g66c390e
+#### $$VERSION$$ v0.70-8-g0582a2a
 
 # source from commands.sh to use the inline functions
 
@@ -24,7 +24,10 @@ process_inline() {
 
 
 answer_inline_query() {
-	sendJson "" '"inline_query_id": '"${1}"', "results": ['"$(shift; inline_query_result "$RANDOM" "$@")"']' "${INLINE_QUERY}"
+	answer_inline "${1}" "$(shift; inline_query_result "$RANDOM" "$@")"
+}
+answer_inline() {
+	sendJson "" '"inline_query_id": '"${1}"', "results": ['"${2}"']' "${INLINE_QUERY}"
 }
 
 # $1 unique ID for answer
