@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.70-0-g8ea9e3b
+#### $$VERSION$$ v0.80-dev-2-g4e4194d
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -14,10 +14,17 @@
 # bashbot_help='*Available commands*:
 #'
 
+if [ "$1" = "source" ];then
+    # Set INLINE to 1 in order to receive inline queries.
+    # To enable this option in your bot, send the /setinline command to @BotFather.
+    INLINE="0"
+    # Set to .* to allow sending files from all locations
+    FILE_REGEX='/home/user/allowed/.*'
 
-# your additional bahsbot commands
-# NOTE: command can have @botname attached, you must add * in case tests... 
-mycommands() {
+else
+    # your additional bahsbot commands
+    # NOTE: command can have @botname attached, you must add * in case tests... 
+    mycommands() {
 
 	case "$MESSAGE" in
 		'/echo'*) # example echo command
@@ -51,6 +58,7 @@ mycommands() {
 			;;
 
 	esac
-}
+     }
 
-# place your processing functions here
+    # place your processing functions here
+fi

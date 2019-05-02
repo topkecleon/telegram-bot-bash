@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-0-g8ea9e3b
+#### $$VERSION$$ v0.80-dev-2-g4e4194d
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -21,7 +21,6 @@ unset IFS
 
 
 
-if [ "$1" != "source" ]; then
   # to change the default info message overwrite bashbot_info in mycommands.sh
   bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.
@@ -41,26 +40,28 @@ Written by Drew (@topkecleon), Daniil Gentili (@danogentili) and KayM(@gnadelwar
 Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
 
-  # load modules
-  # shellcheck source=./modules/aliases.sh
-  [ -r "${MODULEDIR:-.}/aliases.sh" ] && source "${MODULEDIR:-.}/aliases.sh"
-  # shellcheck source=./modules/background.sh
-  [ -r "${MODULEDIR:-.}/background.sh" ] && source "${MODULEDIR:-.}/background.sh"
-  # ... more modules here ...
+# load modules
+# shellcheck source=./modules/aliases.sh
+[ -r "${MODULEDIR:-.}/aliases.sh" ] && source "${MODULEDIR:-.}/aliases.sh"
+# shellcheck source=./modules/background.sh
+[ -r "${MODULEDIR:-.}/background.sh" ] && source "${MODULEDIR:-.}/background.sh"
+# shellcheck source=./modules/background.sh
+[ -r "${MODULEDIR:-.}/inline.sh" ] && source "${MODULEDIR:-.}/inline.sh"
+# ... more modules here ...
 
-  # mycommands is the last "module" to source in
-  # shellcheck source=./commands.sh
-  [ -r "${BASHBOT_ETC:-.}/mycommands.sh" ] && source "${BASHBOT_ETC:-.}/mycommands.sh"
 
-fi
 
 if [ "$1" = "source" ];then
-	# Set INLINE to 1 in order to receive inline queries.
-	# To enable this option in your bot, send the /setinline command to @BotFather.
+	# defaults to no inline and nonsense home dir
 	INLINE="0"
-	# Set to .* to allow sending files from all locations
 	FILE_REGEX='/home/user/allowed/.*'
+  	# shellcheck source=./commands.sh
+  	[ -r "${BASHBOT_ETC:-.}/mycommands.sh" ] && source "${BASHBOT_ETC:-.}/mycommands.sh"  "source"
 else
+ 	# mycommands is the last "module" to source in
+ 	# shellcheck source=./commands.sh
+  	[ -r "${BASHBOT_ETC:-.}/mycommands.sh" ] && source "${BASHBOT_ETC:-.}/mycommands.sh"
+
 	if ! tmux ls | grep -v send | grep -q "$copname"; then
 		# interactive running?
 		[ ! -z "${URLS[*]}" ] && {

@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-0-g8ea9e3b
+#### $$VERSION$$ v0.80-dev-2-g4e4194d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -156,8 +156,8 @@ UPD_URL=$URL'/getUpdates?offset='
 GETFILE_URL=$URL'/getFile'
 
 unset USER
-declare -A BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
-export BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
+declare -A BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
+export BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
 
 
 send_normal_message() {
@@ -450,7 +450,12 @@ process_updates() {
 	done
 }
 process_client() {
-	process_message "$PROCESS_NUMBER"
+	iQUERY[ID]="$(JsonGetString <<<"${UPDATE}" '"result",'"$PROCESS_NUMBER"',"inline_query","id"')"
+	if [ "${iQUERY[ID]}" = "" ]; then
+		process_message "$PROCESS_NUMBER"
+	else
+		[ "$INLINE" = 1 ] && _is_function process_inline && process_inline "$PROCESS_NUMBER"
+	fi
 	# Tmux
 	copname="$ME"_"${CHAT[ID]}"
 	source commands.sh
@@ -471,6 +476,7 @@ process_message() {
 	local num="$1"
 	local TMP="${TMPDIR:-.}/$RANDOM$RANDOM-MESSAGE"
 	echo "$UPDATE" >"$TMP"
+echo "$UPDATE" >>"MESSAGE.log"
 	# Message
 	MESSAGE[0]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","text"' <"$TMP")" | sed 's#\\/#/#g')"
 	MESSAGE[ID]="$(JsonGetValue '"result",'"${num}"',"message","message_id"' <"$TMP" )"
