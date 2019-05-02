@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-5-g82eb3c7
+#### $$VERSION$$ v0.70-6-g5b8f2a2
 
 # source from commands.sh to use the inline functions
 
@@ -14,9 +14,8 @@ declare -A iQUERY
 export iQUERY
 
 process_inline() {
-set -x
 	local num="${1}"
-	iQUERY[0]="$(JsonGetString <<<"${UPDATE}" '"result",0,"inline_query","query"')"
+	iQUERY[0]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",0,"inline_query","query"')")"
 	iQUERY[USER_ID]="$(JsonGetValue <<<"${UPDATE}" '"result",'"${num}"',"inline_query","from","id"')"
 	iQUERY[FIRST_NAME]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",'"${num}"',"inline_query","from","first_name"')")"
 	iQUERY[LAST_NAME]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",'"${num}"',"inline_query","from","last_name"')")"
