@@ -1,0 +1,11 @@
+["ok"]  true
+["result",0,"update_id"]i	1234567890
+["result",0,"inline_query","id"]	"987654321"
+["result",0,"inline_query","query"]	"message"
+["result",0,"inline_query","from","id"]	123456789
+["result",0,"inline_query","from","is_bot"]	false
+["result",0,"inline_query","from","first_name"]	"Kay"
+["result",0,"inline_query","from","last_name"]	"M"
+["result",0,"inline_query","from","username"]	"Gnadelwartz"
+["result",0,"inline_query","from","language_code"]	"de"
+
