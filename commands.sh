@@ -5,10 +5,11 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev-3-g9bcab66
+#### $$VERSION$$ v0.70-7-g66c390e
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
+# shellcheck disable=SC2128
 
 # adjust your language setting here, e.g.when run from other user or cron.
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
@@ -75,24 +76,24 @@ if [ "${1}" != "source" ];then
 	if _is_function process_inline; then
 	    #######################
 	    # Inline query examples
-	    case "$iQUERY" in
+	    case "${iQUERY}" in
 		"photo")
-			answer_inline_query "${iQUERY[ID]}" "photo" "http://blog.techhysahil.com/wp-content/uploads/2016/01/Bash_Scripting.jpeg" "http://blog.techhysahil.com/wp-content/uploads/2016/01/Bash_Scripting.jpeg"
+			_answer_inline "photo" "http://blog.techhysahil.com/wp-content/uploads/2016/01/Bash_Scripting.jpeg" "http://blog.techhysahil.com/wp-content/uploads/2016/01/Bash_Scripting.jpeg"
 			;;
 
 		"sticker")
-			answer_inline_query "${iQUERY[ID]}" "cached_sticker" "BQADBAAD_QEAAiSFLwABWSYyiuj-g4AC"
+			_answer_inline "cached_sticker" "BQADBAAD_QEAAiSFLwABWSYyiuj-g4AC"
 			;;
 		"gif")
-			answer_inline_query "${iQUERY[ID]}" "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
+			_answer_inline "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
 			;;
 		"web")
-			answer_inline_query "${iQUERY[ID]}" "article" "GitHub" "http://github.com/topkecleon/telegram-bot-bash"
+			_answer_inline "article" "GitHub" "http://github.com/topkecleon/telegram-bot-bash"
 			;;
 		################################################
 		# GLOBAL commands start here, edit messages only
 		'/info'*)
-			  answer_inline_query "${iQUERY[ID]}" "article" "${bashbot_info}"
+			_answer_inline "article" "Info" "${bashbot_info}" "markdown"
 			;;
 		*)	# forward iinline query to optional dispatcher
 			_is_function myinlines && myinlines
@@ -100,7 +101,7 @@ if [ "${1}" != "source" ];then
 	fi
     else
 	
-	case "$MESSAGE" in
+	case "${MESSAGE}" in
 		################################################
 		# GLOBAL commands start here, edit messages only
 		'/info'*)
