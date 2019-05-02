@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-6-g5b8f2a2
+#### $$VERSION$$ v0.70-9-g2557ea7
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -405,7 +405,6 @@ process_message() {
 	local num="$1"
 	local TMP="${TMPDIR:-.}/$RANDOM$RANDOM-MESSAGE"
 	echo "$UPDATE" >"$TMP"
-echo "$UPDATE" >>"MESSAGE.log"
 	# Message
 	MESSAGE[0]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","text"' <"$TMP")" | sed 's#\\/#/#g')"
 	MESSAGE[ID]="$(JsonGetValue '"result",'"${num}"',"message","message_id"' <"$TMP" )"
