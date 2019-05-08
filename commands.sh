@@ -5,11 +5,10 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-7-g66c390e
+#### $$VERSION$$ v0.70-10-gcbdfc7c
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
-# shellcheck disable=SC2128
 
 # adjust your language setting here, e.g.when run from other user or cron.
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
@@ -49,11 +48,12 @@ else
 	# defaults to no inline and nonsense home dir
 	INLINE="0"
 	FILE_REGEX='/home/user/allowed/.*'
-fi
 
-# load modules needed for bashbot.sh also
-# shellcheck source=./modules/background.sh
-[ -r "${MODULEDIR:-.}/inline.sh" ] && source "${MODULEDIR:-.}/inline.sh"
+	# load modules needed for bashbot.sh also
+	# shellcheck source=./modules/background.sh
+	[ -r "${MODULEDIR:-.}/inline.sh" ] && source "${MODULEDIR:-.}/inline.sh"
+
+fi
 
 # load mycommands
 # shellcheck source=./commands.sh
@@ -72,28 +72,33 @@ if [ "${1}" != "source" ];then
 
     fi
 
+
     if [ "$INLINE" != "0" ] && [ "${iQUERY[ID]}" != "" ]; then
 	if _is_function process_inline; then
 	    #######################
 	    # Inline query examples
+	    # shellcheck disable=SC2128
 	    case "${iQUERY}" in
 		"photo")
-			_answer_inline "photo" "http://blog.techhysahil.com/wp-content/uploads/2016/01/Bash_Scripting.jpeg" "http://blog.techhysahil.com/wp-content/uploads/2016/01/Bash_Scripting.jpeg"
+			answer_inline_multi "${iQUERY[ID]}" "
+			    $(inline_query_compose "$RANDOM" "photo" "https://avatars0.githubusercontent.com/u/13046303"), 
+			    $(inline_query_compose "$RANDOM" "photo" "https://avatars1.githubusercontent.com/u/4593242")
+			    "
 			;;
 
 		"sticker")
-			_answer_inline "cached_sticker" "BQADBAAD_QEAAiSFLwABWSYyiuj-g4AC"
+			answer_inline_query "${iQUERY[ID]}" "cached_sticker" "BQADBAAD_QEAAiSFLwABWSYyiuj-g4AC"
 			;;
 		"gif")
-			_answer_inline "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
+			answer_inline_query "${iQUERY[ID]}" "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
 			;;
 		"web")
-			_answer_inline "article" "GitHub" "http://github.com/topkecleon/telegram-bot-bash"
+			answer_inline_query "${iQUERY[ID]}" "article" "GitHub" "http://github.com/topkecleon/telegram-bot-bash"
 			;;
 		################################################
 		# GLOBAL commands start here, edit messages only
-		'/info'*)
-			_answer_inline "article" "Info" "${bashbot_info}" "markdown"
+		'info')
+			  answer_inline_query "${iQUERY[ID]}" "article" "${bashbot_info}"
 			;;
 		*)	# forward iinline query to optional dispatcher
 			_is_function myinlines && myinlines

@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-8-g0582a2a
+#### $$VERSION$$ v0.70-10-gcbdfc7c
 
 # source from commands.sh to use the inline functions
 
@@ -24,15 +24,15 @@ process_inline() {
 
 
 answer_inline_query() {
-	answer_inline "${1}" "$(shift; inline_query_result "$RANDOM" "$@")"
+	answer_inline_multi "${1}" "$(shift; inline_query_compose "$RANDOM" "$@")"
 }
-answer_inline() {
+answer_inline_multi() {
 	sendJson "" '"inline_query_id": '"${1}"', "results": ['"${2}"']' "${INLINE_QUERY}"
 }
 
 # $1 unique ID for answer
 # remaining arguments are in the order as shown in telegram doc: https://core.telegram.org/bots/api#inlinequeryresult
-inline_query_result(){
+inline_query_compose(){
 	local JSON="{}"
 	local ID="${1}"
 	case "${2}" in
@@ -42,16 +42,19 @@ inline_query_result(){
 			JSON='{"type":"article","id":"'$ID'","title":"'$3'","message_text":"'$4'"'"${parse}"'}'
 		;;
 		"photo")
-			JSON='{"type":"photo","id":"'$ID'","photo_url":"'$3'","thumb_url":"'$4'"}'
+			[ "$4" = "" ] && local tumb="$3"
+			JSON='{"type":"photo","id":"'$ID'","photo_url":"'$3'","thumb_url":"'$4${tumb}'"}'
 		;;
 		"gif")
-			JSON='{"type":"gif","id":"'$ID'","gif_url":"'$3'", "thumb_url":"'$4'"}'
+			[ "$4" = "" ] && local tumb="$3"
+			JSON='{"type":"gif","id":"'$ID'","gif_url":"'$3'", "thumb_url":"'$4${tumb}'"}'
 		;;
 		"mpeg4_gif")
 			JSON='{"type":"mpeg4_gif","id":"'$ID'","mpeg4_url":"'$3'"}'
 		;;
 		"video")
-			JSON='{"type":"video","id":"'$ID'","video_url":"'$3'","mime_type":"'$4'","thumb_url":"'$5'","title":"'$6'"}'
+			[ "$5" = "" ] && local tumb="$3"
+			JSON='{"type":"video","id":"'$ID'","video_url":"'$3'","mime_type":"'$4'","thumb_url":"'$5${tumb}'","title":"'$6'"}'
 		;;
 		"audio")
 			JSON='{"type":"audio","id":"'$ID'","audio_url":"'$3'","title":"'$4'"}'
@@ -66,10 +69,11 @@ inline_query_result(){
 			JSON='{"type":"location","id":"'$ID'","latitude":"'$3'","longitude":"'$4'","title":"'$5'"}'
 		;;
 		"venue")
-			JSON='{"type":"venue","id":"'$ID'","latitude":"'$3'","longitude":"'$4'","title":"'$5'","address":"'$6'"}'
+			[ "$6" = "" ] && local addr="$5"
+			JSON='{"type":"venue","id":"'$ID'","latitude":"'$3'","longitude":"'$4'","title":"'$5'","address":"'$6${addr}'"}'
 		;;
 		"contact")
-			JSON='{"type":"contact","id":"'$ID'","phone_number":"'$3'","first_name":"'$4'"}'
+			JSON='{"type":"contact","id":"'$ID'","phone_number":"'$3'","first_name":"'$4'","last_name":"'$5'"}'
 		;;
 		# Cached media stored in Telegram server
 		"cached_photo")
