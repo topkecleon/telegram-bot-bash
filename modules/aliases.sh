@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.72-dev-0-g6afa177
+#### $$VERSION$$ v0.72-dev-3-g65b32aa
 #
 # source from commands.sh to use the aliases
 
@@ -59,9 +59,4 @@ _keyboard_yesno() {
 }
 _del_keyboard() {
 	remove_keyboard "${CHAT[ID]}" ""
-}
-# inline query
-iQUERY[ID]=""
-_answer_inline() {
-	_is_function answer_inline_query && answer_inline_query "${iQUERY[ID]}" "$@"
 }

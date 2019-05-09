@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.72-dev-0-g6afa177
+#### $$VERSION$$ v0.72-dev-3-g65b32aa
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -52,7 +52,6 @@ else
 	# load modules needed for bashbot.sh also
 	# shellcheck source=./modules/background.sh
 	[ -r "${MODULEDIR:-.}/inline.sh" ] && source "${MODULEDIR:-.}/inline.sh"
-
 fi
 
 # load mycommands
@@ -72,37 +71,10 @@ if [ "${1}" != "source" ];then
 
     fi
 
-
     if [ "$INLINE" != "0" ] && [ "${iQUERY[ID]}" != "" ]; then
 	if _is_function process_inline; then
-	    #######################
-	    # Inline query examples
-	    # shellcheck disable=SC2128
-	    case "${iQUERY}" in
-		"photo")
-			answer_inline_multi "${iQUERY[ID]}" "
-			    $(inline_query_compose "$RANDOM" "photo" "https://avatars0.githubusercontent.com/u/13046303"), 
-			    $(inline_query_compose "$RANDOM" "photo" "https://avatars1.githubusercontent.com/u/4593242")
-			    "
-			;;
-
-		"sticker")
-			answer_inline_query "${iQUERY[ID]}" "cached_sticker" "BQADBAAD_QEAAiSFLwABWSYyiuj-g4AC"
-			;;
-		"gif")
-			answer_inline_query "${iQUERY[ID]}" "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
-			;;
-		"web")
-			answer_inline_query "${iQUERY[ID]}" "article" "GitHub" "http://github.com/topkecleon/telegram-bot-bash"
-			;;
-		################################################
-		# GLOBAL commands start here, edit messages only
-		'info')
-			  answer_inline_query "${iQUERY[ID]}" "article" "${bashbot_info}"
-			;;
-		*)	# forward iinline query to optional dispatcher
-			_is_function myinlines && myinlines
-	    esac
+	    # forward iinline query to optional dispatcher
+	    _is_function myinlines && myinlines
 	fi
     else
 	

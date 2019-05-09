@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.72-dev-0-g6afa177
+#### $$VERSION$$ v0.72-dev-3-g65b32aa
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -60,5 +60,45 @@ else
 	esac
      }
 
+     myinlines() {
+	#######################
+	# Inline query examples
+	# shellcheck disable=SC2128
+	case "${iQUERY}" in
+		"google "*) # search in google images
+			local search="${iQUERY#* }"
+			answer_inline_multi "${iQUERY[ID]}" "$(my_image_search "${search}")"
+			;;
+		"photo")
+			answer_inline_multi "${iQUERY[ID]}" "
+			    $(inline_query_compose "$RANDOM" "photo" "https://avatars0.githubusercontent.com/u/13046303"), 
+			    $(inline_query_compose "$RANDOM" "photo" "https://avatars1.githubusercontent.com/u/4593242")
+			    "
+			;;
+
+		"sticker")
+			answer_inline_query "${iQUERY[ID]}" "cached_sticker" "BQADBAAD_QEAAiSFLwABWSYyiuj-g4AC"
+			;;
+		"gif")
+			answer_inline_query "${iQUERY[ID]}" "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
+			;;
+		"web")
+			answer_inline_query "${iQUERY[ID]}" "article" "GitHub" "http://github.com/topkecleon/telegram-bot-bash"
+			;;
+	esac
+     }
+
     # place your processing functions here
+
+    # $1 search parameter
+    my_image_search(){
+	local image result
+	result="$(wget --user-agent 'Mozilla/5.0' -qO - "https://www.google.com/search?q=$1&tbm=isch" |  sed 's/</\n</g' | grep '<img')"
+
+	while read -r image; do
+		image="${image#* src=\"}"; image="${image%%\" width=\"*}"
+		echo "$(inline_query_compose "$RANDOM" "photo" "${image}"),"
+	done <<<"${result}"
+    }
+
 fi
