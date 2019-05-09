@@ -245,8 +245,8 @@ fi
 You must include  ```source modules/inline.sh``` in 'commands.sh' to have the following functions availible.
 
 Inline Queries allows users to interact with your bot directly without sending extra commands.
-As an aswer to an inline query you can send back one or more results to the client. The Client
-will show the results to the user and let him  selcet one.
+As an answer to an inline query you can send back one or more results to the Telegram client. 
+The Telegram client will then show the results to the user and let him select one.
 
 ##### answer_inline_query
 answer_inline_query is provided for backward compatibility with older versions of bashbot.
@@ -255,8 +255,6 @@ It send back only one response to an inline query.
 *usage:* answer_inline_query "$i{QUERY[ID]}" "type" "type arg 1" ... "type arg n" 
 
 *example:* - see [Advanced Usage](3_advanced.md#Inline-queries)
-
-----
 
 
 ##### answer_inline_multi
@@ -274,24 +272,20 @@ answer_inline_multi "${iQUERY[ID]}" "
     "
 ```
 
-----
-
 #### inline_query_compose
 inline_query_compose composes one response element to to send back. 
 
 *usage:*  inline_query_compose ID type args ....
 
 ```
-	ID = unique ID for answer
-	type = type of answer, e.g. article, photo, video, localtion ...
-	args = arguments in the order as described in telegram doc, mandatory first, them optional
+	ID = unique ID for this response, 1-64 byte long
+	type = type of answer, e.g. article, photo, video, location ...
+	args = mandatory arguments in the order they are described in telegram documentation
 ```
-see [InlineQueryResult for more information](https://core.telegram.org/bots/api#inlinequeryresult)
 
-
-Currently the following types and args are implemented (optional args in parenthesis)
+Currently the following types and arguments are implemented (optional arguments in parenthesis)
 ```
-	"article"|"message"	title message (markup decription)
+	"article"|"message"	title message (markup description)
 
 	"photo"			photo_URL (thumb_URL title description caption)
 	"gif"			photo_URL (thumb_URL title caption)
@@ -314,6 +308,7 @@ Currently the following types and args are implemented (optional args in parenth
 	"cached_voice"		file title (caption)
 	"cached_audio"		file title (caption)
 ```
+see [InlineQueryResult for more information](https://core.telegram.org/bots/api#inlinequeryresult) about response types and their arguments.
 
 ----
 
@@ -556,5 +551,5 @@ Send Input from Telegram to waiting Interactive Chat.
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.72-dev-0-g6afa177
+#### $$VERSION$$ v0.72-dev-1-g9b85000
 
