@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.72-dev-0-g6afa177
+#### $$VERSION$$ v0.72-dev-2-g17d3573
 
 # source from commands.sh to use the inline functions
 
@@ -37,49 +37,36 @@ answer_inline_multi() {
 inline_query_compose(){
 	local JSON="{}"
 	local ID="${1}"
-	local title markup caption fours last desc
+	local fours last
+								# title2Json title caption description markup inlinekeyboard
 	case "${2}" in
 		# user provided media
 		"article"|"message") # article ID title message (markup decription)
-			[ "$5" != "" ] && markup=',"parse_mode":'"$5"
-			[ "$6" != "" ] && desc=',"description":"'$6'"'
-			JSON='{"type":"article","id":"'$ID'","title":"'$3'","message_text":"'$4'"'${markup}${desc}'}'
+			JSON='{"type":"article","id":"'$ID'","message_text":"'$4'"'$(title2Json "$3" "" "$5" "$6")'}'
 		;;
 		"photo") # photo ID photoURL (thumbURL title description caption)
 			[ "$4" = "" ] && tumb="$3"
-			[ "$5" != "" ] && title=',"title":"'$5'"'
-			[ "$6" != "" ] && desc=',"description":"'$6'"'
-			[ "$7" != "" ] && caption=',"caption":"'$7'"'
-			JSON='{"type":"photo","id":"'$ID'","photo_url":"'$3'","thumb_url":"'$4${tumb}'"'${title}${desc}${caption}'}'
+			JSON='{"type":"photo","id":"'$ID'","photo_url":"'$3'","thumb_url":"'$4${tumb}'"'$(title2Json "$5" "$7" "$6")'}'
 		;;
 		"gif") # gif ID photoURL (thumbURL title caption)
 			[ "$4" = "" ] && tumb="$3"
-			[ "$5" != "" ] && title=',"title":"'$5'"'
-			[ "$6" != "" ] && caption=',"caption":"'$6'"'
-			JSON='{"type":"gif","id":"'$ID'","gif_url":"'$3'", "thumb_url":"'$4${tumb}'"'${title}${caption}'}'
+			JSON='{"type":"gif","id":"'$ID'","gif_url":"'$3'", "thumb_url":"'$4${tumb}'"'$(title2Json "$5" "$6")'}'
 		;;
 		"mpeg4_gif") # mpeg4_gif ID mpegURL (thumbURL title caption)
 			[ "$4" != "" ] && tumb='","thumb_url":"'$4'"'
-			[ "$5" != "" ] && title=',"title":"'$5'"'
-			[ "$6" != "" ] && caption=',"caption":"'$6'"'
-			JSON='{"type":"mpeg4_gif","id":"'$ID'","mpeg4_url":"'$3'"'${tumb}${title}${caption}'}'
+			JSON='{"type":"mpeg4_gif","id":"'$ID'","mpeg4_url":"'$3'"'${tumb}$(title2Json "$5" "$6")'}'
 		;;
 		"video") # video ID videoURL mime thumbURL title (caption)
-			[ "$7" != "" ] && caption=',"caption":"'$7'"'
-			JSON='{"type":"video","id":"'$ID'","video_url":"'$3'","mime_type":"'$4'","thumb_url":"'$5'","title":"'$6'"'${caption}'}'
+			JSON='{"type":"video","id":"'$ID'","video_url":"'$3'","mime_type":"'$4'","thumb_url":"'$5'"'$(title2Json "$6" "$7")'}'
 		;;
 		"audio") # audio ID audioURL title (caption)
-			[ "$5" != "" ] && caption=',"caption":"'$5'"'
-			JSON='{"type":"audio","id":"'$ID'","audio_url":"'$3'","title":"'$4'"'${caption}'}'
+			JSON='{"type":"audio","id":"'$ID'","audio_url":"'$3'"'$(title2Json "$4" "$5")'}'
 		;;
 		"voice") # voice ID voiceURL title (caption)
-			[ "$5" != "" ] && caption=',"caption":"'$5'"'
-			JSON='{"type":"voice","id":"'$ID'","voice_url":"'$3'","title":"'$4'"'${caption}'}'
+			JSON='{"type":"voice","id":"'$ID'","voice_url":"'$3'"'$(title2Json "$4" "$5")'}'
 		;;
 		"document") # document ID title documentURL mimetype (caption description)
-			[ "$6" != "" ] && caption=',"caption":"'$6'"'
-			[ "$7" != "" ] && desc=',"description":"'$7'"'
-			JSON='{"type":"document","id":"'$ID'","title":"'$3'","document_url":"'$4'","mime_type":"'$5'"'${caption}${desc}'}'
+			JSON='{"type":"document","id":"'$ID'","document_url":"'$4'","mime_type":"'$5'"'$(title2Json "$3" "$6" "$7")'}'
 		;;
 		"location") # location ID lat long title
 			JSON='{"type":"location","id":"'$ID'","latitude":"'$3'","longitude":"'$4'","title":"'$5'"}'
@@ -94,43 +81,31 @@ inline_query_compose(){
 			[ "$6" != "" ] && tumb='","thumb_url":"'$6'"'
 			JSON='{"type":"contact","id":"'$ID'","phone_number":"'$3'","first_name":"'$4'"'${last}'"}'
 		;;
+								# title2Json title caption description markup inlinekeyboard
 		# Cached media stored in Telegram server
 		"cached_photo") # photo ID file (title description caption)
-			[ "$4" != "" ] && title=',"title":"'$4'"'
-			[ "$5" != "" ] && desc=',"description":"'$5'"'
-			[ "$6" != "" ] && caption=',"caption":"'$6'"'
-			JSON='{"type":"photo","id":"'$ID'","photo_file_id":"'$3'"'${title}${desc}${caption}'}'
+			JSON='{"type":"photo","id":"'$ID'","photo_file_id":"'$3'"'$(title2Json "$4" "$6" "$5")'}'
 		;;
 		"cached_gif") # gif ID file (title caption)
-			[ "$4" != "" ] && title=',"title":"'$4'"'
-			[ "$5" != "" ] && caption=',"caption":"'$5'"'
-			JSON='{"type":"gif","id":"'$ID'","gif_file_id":"'$3'"'${title}${caption}'}'
+			JSON='{"type":"gif","id":"'$ID'","gif_file_id":"'$3'"'$(title2Json "$4" "$5")'}'
 		;;
 		"cached_mpeg4_gif") # mpeg ID file (title caption)
-			[ "$4" != "" ] && title=',"title":"'$4'"'
-			[ "$5" != "" ] && caption=',"caption":"'$5'"'
-			JSON='{"type":"mpeg4_gif","id":"'$ID'","mpeg4_file_id":"'$3'"'${title}${caption}'}'
+			JSON='{"type":"mpeg4_gif","id":"'$ID'","mpeg4_file_id":"'$3'"'$(title2Json "$4" "$5")'}'
 		;;
 		"cached_sticker") # sticker ID file 
 			JSON='{"type":"sticker","id":"'$ID'","sticker_file_id":"'$3'"}'
 		;;
 		"cached_document") # document ID title file (description caption)
-			[ "$5" != "" ] && desc=',"description":"'$5'"'
-			[ "$6" != "" ] && caption=',"caption":"'$6'"'
-			JSON='{"type":"document","id":"'$ID'","title":"'$3'","document_file_id":"'$4'"'${desc}${caption}'}'
+			JSON='{"type":"document","id":"'$ID'","document_file_id":"'$4'"'$(title2Json "$3" "$6" "$5")'}'
 		;;
 		"cached_video") # video ID file title (description caption)
-			[ "$5" != "" ] && desc=',"description":"'$5'"'
-			[ "$6" != "" ] && caption=',"caption":"'$6'"'
-			JSON='{"type":"video","id":"'$ID'","video_file_id":"'$3'","title":"'$4'"'${desc}${caption}'}'
+			JSON='{"type":"video","id":"'$ID'","video_file_id":"'$3'"'$(title2Json "$4" "$6" "$5")'}'
 		;;
 		"cached_voice") # voice ID file title (caption)
-			[ "$5" != "" ] && caption=',"caption":"'$5'"'
-			JSON='{"type":"voice","id":"'$ID'","voice_file_id":"'$3'","title":"'$4'"'${caption}'}'
+			JSON='{"type":"voice","id":"'$ID'","voice_file_id":"'$3'"'$(title2Json "$4" "$5")'}'
 		;;
 		"cached_audio") # audio ID file title (caption)
-			[ "$5" != "" ] && caption=',"caption":"'$5'"'
-			JSON='{"type":"audio","id":"'$ID'","audio_file_id":"'$3'"'${caption}'}'
+			JSON='{"type":"audio","id":"'$ID'","audio_file_id":"'$3'"'$(title2Json "$4" "$5")'}'
 		;;
 	esac
 

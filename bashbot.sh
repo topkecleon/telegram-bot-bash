@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.72-dev-0-g6afa177
+#### $$VERSION$$ v0.72-dev-2-g17d3573
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -278,6 +278,18 @@ sendJson(){
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
 	[[ "${2}" = *"${ISEMPTY}"* ]] && delete_message "${1}" "${BOTSENT[ID]}"
+}
+
+# convert common telegram entities to JSON
+# title caption description markup inlinekeyboard
+title2Json(){
+	local title caption desc markup keyboard
+	[ "$1" != "" ] && title=',"title":"'$1'"'
+	[ "$2" != "" ] && caption=',"caption":"'$2'"'
+	[ "$3" != "" ] && desc=',"description":"'$3'"'
+	[ "$4" != "" ] && markup=',"parse_mode":"'$4'"'
+	[ "$5" != "" ] && keyboard=',"reply_markup":"'$5'"'
+	echo "${title}${caption}${desc}${markup}${keyboard}"
 }
 
 get_file() {
