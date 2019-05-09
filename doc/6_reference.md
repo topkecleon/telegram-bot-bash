@@ -72,16 +72,6 @@ See also [deleteMessage limitations](https://core.telegram.org/bots/api#deleteme
 
 ----
 
-##### answer_inline_query
-Inline Queries allows users to interact with your bot directly without sending extra commands.
-answer_inline_query provide the result to a users Inline Query
-
-*usage:* answer_inline_query "$iQUERY_ID" "type" "type arg 1" ... "type arg n" 
-
-*example:* - see [Advanced Usage](3_advanced.md#Inline-queries)
-
-----
-
 ### File, Location, Venue, Keyboard 
 
 
@@ -251,8 +241,85 @@ fi
 
 ----
 
+### Inline Queries - answer direct queries to bot
+You must include  ```source modules/inline.sh``` in 'commands.sh' to have the following functions availible.
+
+Inline Queries allows users to interact with your bot directly without sending extra commands.
+As an aswer to an inline query you can send back one or more results to the client. The Client
+will show the results to the user and let him  selcet one.
+
+##### answer_inline_query
+answer_inline_query is provided for backward compatibility with older versions of bashbot.
+It send back only one response to an inline query.
+
+*usage:* answer_inline_query "$i{QUERY[ID]}" "type" "type arg 1" ... "type arg n" 
+
+*example:* - see [Advanced Usage](3_advanced.md#Inline-queries)
+
+----
+
+
+##### answer_inline_multi
+anser_inline_multi allows you to send back a list of responses. responses must be seperated by ','.
+
+*usage:* answer_inline_multi "${iQUERY[ID]}" "res, res, ... res" 
+
+*example:*
+```bash
+# note the starting " and ending " !!
+answer_inline_multi "${iQUERY[ID]}" "
+    $(inline_query_compose "1" "photo" "https://avatars0.githubusercontent.com/u/13046303") ,
+    ...
+    $(inline_query_compose "n" "photo" "https://avatars1.githubusercontent.com/u/4593242")
+    "
+```
+
+----
+
+#### inline_query_compose
+inline_query_compose composes one response element to to send back. 
+
+*usage:*  inline_query_compose ID type args ....
+
+```
+	ID = unique ID for answer
+	type = type of answer, e.g. article, photo, video, localtion ...
+	args = arguments in the order as described in telegram doc, mandatory first, them optional
+```
+see [InlineQueryResult for more information](https://core.telegram.org/bots/api#inlinequeryresult)
+
+
+Currently the following types and args are implemented (optional args in parenthesis)
+```
+	"article"|"message"	title message (markup decription)
+
+	"photo"			photo_URL (thumb_URL title description caption)
+	"gif"			photo_URL (thumb_URL title caption)
+	"mpeg4_gif"		mpeg_URL (thumb_URL title caption)
+	"video"			video_URL mime_type thumb_URL title (caption)
+	"audio"			audio_URL title (caption)
+	"voice"			voice_URL title (caption)
+	"document"		title document_URL mime_type (caption description)
+
+	"location"		latitude longitude title
+	"venue"			latitude longitude title (adress foursquare)
+	"contact"		phone first (last thumb)
+
+	"cached_photo"		file (title description caption)
+	"cached_gif"		file (title caption)
+	"cached_mpeg4_gif"	file (title caption)
+	"cached_sticker"	file 
+	"cached_document"	title file (description caption)
+	"cached_video"		file title (description caption)
+	"cached_voice"		file title (caption)
+	"cached_audio"		file title (caption)
+```
+
+----
+
+
 ### Aliases - shortcuts for often used funtions 
-You must not disable  ```source modules/aliases.sh``` in 'commands.sh' to have the following functions availible.
+You must include  ```source modules/aliases.sh``` in 'commands.sh' to have the following functions availible.
 
 ##### _is_botadmin
 
@@ -320,8 +387,8 @@ You must not disable  ```source modules/aliases.sh``` in 'commands.sh' to have t
 
 ----
 
-### Interactive and backgound jobs
-You must not disable  ```source modules/background.sh``` in 'commands.sh' to have the following functions availible.
+### Background and Interactive jobs
+You must include  ```source modules/background.sh``` in 'commands.sh' to have the following functions availible.
 
 ##### startproc
 ```startproc``` starts a script, the output of the script is sent to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
@@ -489,5 +556,5 @@ Send Input from Telegram to waiting Interactive Chat.
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.80-dev-2-g4e4194d
+#### $$VERSION$$ v0.72-dev-0-g6afa177
 

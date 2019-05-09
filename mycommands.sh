@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.80-dev-3-g9bcab66
+#### $$VERSION$$ v0.72-dev-0-g6afa177
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034

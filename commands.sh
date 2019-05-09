@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-10-gcbdfc7c
+#### $$VERSION$$ v0.72-dev-0-g6afa177
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034

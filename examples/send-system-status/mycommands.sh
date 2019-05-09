@@ -5,7 +5,7 @@
 # to show how you can customize bashbot by only editing mycommands.sh
 # NOTE: this is not tested, simply copied from original source and reworked!
 #
-#### $$VERSION$$ v0.80-dev-2-g4e4194d
+#### $$VERSION$$ v0.72-dev-0-g6afa177
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
