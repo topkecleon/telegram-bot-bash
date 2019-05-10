@@ -104,5 +104,5 @@ An example crontab is provided in ```examples/bashbot.cron```.
 #### [Prev Expert Use](4_expert.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v0.72-1-g67c47ac
+#### $$VERSION$$ v0.80-dev2-1-g0b36bc5
 
