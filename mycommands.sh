@@ -17,7 +17,7 @@
 if [ "$1" = "source" ];then
     # Set INLINE to 1 in order to receive inline queries.
     # To enable this option in your bot, send the /setinline command to @BotFather.
-    INLINE="1"
+    INLINE="0"
     # Set to .* to allow sending files from all locations
     FILE_REGEX='/home/user/allowed/.*'
 

@@ -175,6 +175,8 @@ To send stickers through an *inline query*:
 ```bash
 answer_inline_query "${iQUERY[ID]}" "cached_sticker" "identifier for the sticker"
 ```
+See also [answer_inline_multi, answer_inline_compose](6_reference.md#answer_inline_multi) and [mycommands.sh](../mycommands.sh) for more information.
+
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 

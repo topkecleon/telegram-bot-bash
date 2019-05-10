@@ -60,7 +60,7 @@ fi
 
 
 if [ "${1}" != "source" ];then
-    if ! tmux ls | grep -v send | grep -q "$copname"; then
+    if ! tmux ls 2>/dev/null | grep -v send | grep -q "$copname"; then
 		# interactive running?
 		[ ! -z "${URLS[*]}" ] && {
 			curl -s "${URLS[*]}" -o "$NAME"
