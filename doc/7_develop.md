@@ -4,6 +4,20 @@ This section is about help and best practices for new bashbot developers. The ma
 
 bashbot development is done on github. If you want to provide fixes or new features [fork bashbot on githup](https://help.github.com/en/articles/fork-a-repo) and provide changes as [pull request on github](https://help.github.com/en/articles/creating-a-pull-request).
 
+### Debuging Bashbot
+In normal mode of operation all bashbot output is discarded one more correct sent to TMUX console.
+To get these messages (and more) you can start bashbot in the current shell ```./bashbot.sh startbot```. Now you can see all output or erros from bashbot.
+In addition you can change the change the level of verbosity by adding a third argument after startbot.
+```
+	"debug"		redirects all output to "DEBUG.log", in addtion every update is logged in "MESSAGE.LOG" and "INLINE.log"
+	"debugterm"	same as debug but output and errors are sent to terminal
+
+	"xdebug"	same as debug plus set bash option '-x' to log any executed command
+	"xdebugterm"	same as xdebug but output and errors are sent to terminal
+```
+
+
+
 ### Setup your develop environment
 
 1. install git, install [shellcheck](5_practice.md#Test-your-Bot-with-shellcheck)
@@ -117,5 +131,5 @@ fi
 #### [Prev Function Reference](6_reference.md)
 #### [Next Bashbot Environment](8_custom.md)
 
-#### $$VERSION$$ v0.70-0-g6243be9
+#### $$VERSION$$ v0.72-1-g67c47ac
 

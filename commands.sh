@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-0-g6243be9
+#### $$VERSION$$ v0.72-1-g67c47ac
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -19,17 +19,14 @@ export 'LANGUAGE=C.UTF-8'
 unset IFS
 # set -f # if you are paranoid use set -f to disable globbing
 
-
-
-if [ "$1" != "source" ]; then
-  # to change the default info message overwrite bashbot_info in mycommands.sh
-  bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
+# to change the default info message overwrite bashbot_info in mycommands.sh
+bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.
 It currently can send, recieve and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
 '
 
-  # to change the default help messages overwrite in mycommands.sh
-  bashbot_help='*Available commands*:
+# to change the default help messages overwrite in mycommands.sh
+bashbot_help='*Available commands*:
 *• /start*: _Start bot and get this message_.
 *• /help*: _Get this message_.
 *• /info*: _Get shorter info message about this bot_.
@@ -41,27 +38,29 @@ Written by Drew (@topkecleon), Daniil Gentili (@danogentili) and KayM(@gnadelwar
 Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
 
-  # load modules
-  # shellcheck source=./modules/aliases.sh
-  [ -r "${MODULEDIR:-.}/aliases.sh" ] && source "${MODULEDIR:-.}/aliases.sh"
-  # shellcheck source=./modules/background.sh
-  [ -r "${MODULEDIR:-.}/background.sh" ] && source "${MODULEDIR:-.}/background.sh"
-  # ... more modules here ...
+if [ "${1}" != "source" ]; then
+	# load modules needed for commands.sh only
+	# shellcheck source=./modules/aliases.sh
+	[ -r "${MODULEDIR:-.}/aliases.sh" ] && source "${MODULEDIR:-.}/aliases.sh"
+	# shellcheck source=./modules/background.sh
+	[ -r "${MODULEDIR:-.}/background.sh" ] && source "${MODULEDIR:-.}/background.sh"
+else
+	# defaults to no inline and nonsense home dir
+	INLINE="0"
+	FILE_REGEX='/home/user/allowed/.*'
 
-  # mycommands is the last "module" to source in
-  # shellcheck source=./commands.sh
-  [ -r "${BASHBOT_ETC:-.}/mycommands.sh" ] && source "${BASHBOT_ETC:-.}/mycommands.sh"
-
+	# load modules needed for bashbot.sh also
+	# shellcheck source=./modules/background.sh
+	[ -r "${MODULEDIR:-.}/inline.sh" ] && source "${MODULEDIR:-.}/inline.sh"
 fi
 
-if [ "$1" = "source" ];then
-	# Set INLINE to 1 in order to receive inline queries.
-	# To enable this option in your bot, send the /setinline command to @BotFather.
-	INLINE="0"
-	# Set to .* to allow sending files from all locations
-	FILE_REGEX='/home/user/allowed/.*'
-else
-	if ! tmux ls | grep -v send | grep -q "$copname"; then
+# load mycommands
+# shellcheck source=./commands.sh
+[ -r "${BASHBOT_ETC:-.}/mycommands.sh" ] && source "${BASHBOT_ETC:-.}/mycommands.sh"  "${1}"
+
+
+if [ "${1}" != "source" ];then
+    if ! tmux ls 2>/dev/null | grep -v send | grep -q "$copname"; then
 		# interactive running?
 		[ ! -z "${URLS[*]}" ] && {
 			curl -s "${URLS[*]}" -o "$NAME"
@@ -70,33 +69,16 @@ else
 		}
 		[ ! -z "${LOCATION[*]}" ] && send_location "${CHAT[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
 
-		# Inline
-		if [ "$INLINE" = 1 ]; then
-			# inline query data
-			iUSER[FIRST_NAME]="$(echo "$res" | sed 's/^.*\(first_name.*\)/\1/g' | cut -d '"' -f3 | tail -1)"
-			iUSER[LAST_NAME]="$(echo "$res" | sed 's/^.*\(last_name.*\)/\1/g' | cut -d '"' -f3)"
-			iUSER[USERNAME]="$(echo "$res" | sed 's/^.*\(username.*\)/\1/g' | cut -d '"' -f3 | tail -1)"
-			iQUERY_ID="$(echo "$res" | sed 's/^.*\(inline_query.*\)/\1/g' | cut -d '"' -f5 | tail -1)"
-			iQUERY_MSG="$(echo "$res" | sed 's/^.*\(inline_query.*\)/\1/g' | cut -d '"' -f5 | tail -6 | head -1)"
+    fi
 
-			# Inline examples
-			if [[ "$iQUERY_MSG" = "photo" ]]; then
-				answer_inline_query "$iQUERY_ID" "photo" "http://blog.techhysahil.com/wp-content/uploads/2016/01/Bash_Scripting.jpeg" "http://blog.techhysahil.com/wp-content/uploads/2016/01/Bash_Scripting.jpeg"
-			fi
-
-			if [[ "$iQUERY_MSG" = "sticker" ]]; then
-				answer_inline_query "$iQUERY_ID" "cached_sticker" "BQADBAAD_QEAAiSFLwABWSYyiuj-g4AC"
-			fi
-
-			if [[ "$iQUERY_MSG" = "gif" ]]; then
-				answer_inline_query "$iQUERY_ID" "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
-			fi
-			if [[ "$iQUERY_MSG" = "web" ]]; then
-				answer_inline_query "$iQUERY_ID" "article" "GitHub" "http://github.com/topkecleon/telegram-bot-bash"
-			fi
-		fi & # note the & !
+    if [ "$INLINE" != "0" ] && [ "${iQUERY[ID]}" != "" ]; then
+	if _is_function process_inline; then
+	    # forward iinline query to optional dispatcher
+	    _is_function myinlines && myinlines
 	fi
-	case "$MESSAGE" in
+    else
+	
+	case "${MESSAGE}" in
 		################################################
 		# GLOBAL commands start here, edit messages only
 		'/info'*)
@@ -105,15 +87,15 @@ else
 		'/start'*)
 			send_action "${CHAT[ID]}" "typing"
 			_is_botadmin && _markdown_message "You are *BOTADMIN*."
-			if _is_allowed "start" ; then
-				_markdown_message "${bot_help}"
+			if _is_botadmin || _is_allowed "start" ; then
+				_markdown_message "${bashbot_help}"
 			else
 				_message "You are not allowed to start Bot."
 			fi
 			;;
 			
 		'/help'*)
-			_markdown_message "${bot_help}"
+			_markdown_message "${bashbot_help}"
 			;;
 		'/leavechat'*) # bot leave chat if user is admin in chat
 			if _is_admin ; then 
@@ -131,9 +113,10 @@ else
 			checkproc
 			if [ "$res" -eq 0 ] ; then killproc && _message "Command canceled.";else _message "No command is currently running.";fi
 			;;
-		*)	# forward other messages to optional dispatcher
+		*)	# forward messages to optional dispatcher
 			_is_function startproc && if tmux ls | grep -v send | grep -q "$copname"; then inproc; fi # interactive running
 			_is_function mycommands && mycommands
 			;;
 	esac
+    fi
 fi

@@ -4,7 +4,10 @@
 The Bots standard commands are in ```commands.sh``` file. You must not add your commands to 'commands.sh', instead place them in ```mycommands.sh```,  there you also find examples how to process messages and send out text. See [Best practices](5_practice.md) for more information.
 
 Once you're done with editing 'mycommands.sh' start the Bot with ```./bashbot.sh start```. 
-If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```. To stop the Bot run ```./bashbot.sh kill```
+To stop the Bot run ```./bashbot.sh kill```
+
+If some thing doesn't work as it should, you can debug with ```./bashbot.sh startbot DEBUG``` where DEBUG can be 'debug', 'xdebug' or 'xdebugx'.
+See [Bashbot Development](7_develop.md) for more information.
 
 To use the functions provided in this script in other scripts simply source bashbot: ```source bashbot.sh```
 
@@ -36,6 +39,8 @@ To send a broadcast to all of users that ever used the bot run the following com
 
 ## Recieve data
 Evertime a Message is recieved, you can read incoming data using the following variables:
+
+### Regular Messages
 
 * ```${MESSAGE}```: Current message
 * ```${MESSAGE[ID]}```: ID of current message
@@ -88,6 +93,16 @@ Evertime a Message is recieved, you can read incoming data using the following v
     * ```${VENUE[LONGITUDE]}```: Longitude
     * ```${VENUE[LATITUDE]}```: Latitude
     * ```${VENUE[FOURSQUARE]}```: Fouresquare ID
+
+### Inline queries
+Evertime a Message is recieved, you can read incoming data using the following variables:
+
+* ```${iQUERY}```: Current inline query
+* ```$iQUERY```: This array contains the ID, First name, last name, username and user id of the sender of the current inline query.
+    * ```${iQUERY[ID]}```: Inline query ID
+    * ```${iQUERY[USER_ID]}```: User's id
+    * ```${iQUERY[FIRST_NAME]}```: User's first name
+    * ```${iQUERY[LAST_NAME]}```: User's last name
 
 ## Usage of bashbot functions
 
@@ -167,5 +182,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.70-0-g6243be9
+#### $$VERSION$$ v0.72-1-g67c47ac
 

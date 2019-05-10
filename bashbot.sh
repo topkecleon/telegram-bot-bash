@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.70-0-g6243be9
+#### $$VERSION$$ v0.72-1-g67c47ac
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -87,6 +87,7 @@ if [ ! -f "${BOTADMIN}" ]; then
 	echo -e "${ORANGE}TO MAKE FIRST USER TYPING '/start' TO BOTADMIN${NC}"
 	read -r token
 	echo "${token}" > "${BOTADMIN}"
+	[ "${token}" = "" ] && echo '?' > "${BOTADMIN}"
    fi
 fi
 
@@ -116,18 +117,6 @@ elif [ ! -w "${COUNTFILE}" ]; then
 	exit 2
 fi
 
-COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
-if [ "$1" != "source" ]; then
-	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
-		${CLEAR}
-		echo -e "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NC}"
-		ls -l "${COMMANDS}"
-		exit 3
-	fi
-	# shellcheck source=./commands.sh
-	source "${COMMANDS}" "source"
-fi
-
 
 BOTTOKEN="$(cat "${TOKENFILE}")"
 URL='https://api.telegram.org/bot'$BOTTOKEN
@@ -146,7 +135,6 @@ LOCATION_URL=$URL'/sendLocation'
 VENUE_URL=$URL'/sendVenue'
 ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
-INLINE_QUERY=$URL'/answerInlineQuery'
 ME_URL=$URL'/getMe'
 DELETE_URL=$URL'/deleteMessage'
 GETMEMBER_URL=$URL'/getChatMember'
@@ -157,6 +145,18 @@ GETFILE_URL=$URL'/getFile'
 unset USER
 declare -A BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
 export BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
+
+COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
+if [ "$1" != "source" ]; then
+	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
+		${CLEAR}
+		echo -e "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NC}"
+		ls -l "${COMMANDS}"
+		exit 3
+	fi
+	# shellcheck source=./commands.sh
+	source "${COMMANDS}" "source"
+fi
 
 
 send_normal_message() {
@@ -234,76 +234,6 @@ user_is_allowed() {
 	grep -F -xq "${acl}" <"${BOTACL}"
 }
 
-answer_inline_query() {
-	local JSON
-	case "${2}" in
-		"article")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","title":"'$3'","message_text":"'$4'"}]'
-		;;
-		"photo")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","photo_url":"'$3'","thumb_url":"'$4'"}]'
-		;;
-		"gif")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","gif_url":"'$3'", "thumb_url":"'$4'"}]'
-		;;
-		"mpeg4_gif")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","mpeg4_url":"'$3'"}]'
-		;;
-		"video")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","video_url":"'$3'","mime_type":"'$4'","thumb_url":"'$5'","title":"'$6'"}]'
-		;;
-		"audio")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","audio_url":"'$3'","title":"'$4'"}]'
-		;;
-		"voice")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","voice_url":"'$3'","title":"'$4'"}]'
-		;;
-		"document")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","title":"'$3'","caption":"'$4'","document_url":"'$5'","mime_type":"'$6'"}]'
-		;;
-		"location")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","latitude":"'$3'","longitude":"'$4'","title":"'$5'"}]'
-		;;
-		"venue")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","latitude":"'$3'","longitude":"'$4'","title":"'$5'","address":"'$6'"}]'
-		;;
-		"contact")
-			JSON='[{"type":"'$2'","id":"'$RANDOM'","phone_number":"'$3'","first_name":"'$4'"}]'
-		;;
-
-		# Cached media stored in Telegram server
-
-		"cached_photo")
-			JSON='[{"type":"photo","id":"'$RANDOM'","photo_file_id":"'$3'"}]'
-		;;
-		"cached_gif")
-			JSON='[{"type":"gif","id":"'$RANDOM'","gif_file_id":"'$3'"}]'
-		;;
-		"cached_mpeg4_gif")
-			JSON='[{"type":"mpeg4_gif","id":"'$RANDOM'","mpeg4_file_id":"'$3'"}]'
-		;;
-		"cached_sticker")
-			JSON='[{"type":"sticker","id":"'$RANDOM'","sticker_file_id":"'$3'"}]'
-		;;
-		"cached_document")
-			JSON='[{"type":"document","id":"'$RANDOM'","title":"'$3'","document_file_id":"'$4'"}]'
-		;;
-		"cached_video")
-			JSON='[{"type":"video","id":"'$RANDOM'","video_file_id":"'$3'","title":"'$4'"}]'
-		;;
-		"cached_voice")
-			JSON='[{"type":"voice","id":"'$RANDOM'","voice_file_id":"'$3'","title":"'$4'"}]'
-		;;
-		"cached_audio")
-			JSON='[{"type":"audio","id":"'$RANDOM'","audio_file_id":"'$3'"}]'
-		;;
-
-	esac
-
-	sendJson "" '"inline_query_id": '"${1}"', "results": '"${JSON}" "${INLINE_QUERY}"
-}
-
-
 old_send_keyboard() {
 	local text='"text":"'"${2}"'"'
 	shift 2
@@ -348,6 +278,18 @@ sendJson(){
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
 	[[ "${2}" = *"${ISEMPTY}"* ]] && delete_message "${1}" "${BOTSENT[ID]}"
+}
+
+# convert common telegram entities to JSON
+# title caption description markup inlinekeyboard
+title2Json(){
+	local title caption desc markup keyboard
+	[ "$1" != "" ] && title=',"title":"'$1'"'
+	[ "$2" != "" ] && caption=',"caption":"'$2'"'
+	[ "$3" != "" ] && desc=',"description":"'$3'"'
+	[ "$4" != "" ] && markup=',"parse_mode":"'$4'"'
+	[ "$5" != "" ] && keyboard=',"reply_markup":"'$5'"'
+	echo "${title}${caption}${desc}${markup}${keyboard}"
 }
 
 get_file() {
@@ -439,17 +381,20 @@ _is_function()
 	[ "$(LC_ALL=C type -t "$1")" = "function" ]
 }
 process_updates() {
-	MAX_PROCESS_NUMBER=$(echo "$UPDATE" | sed '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')
+	MAX_PROCESS_NUMBER="$(sed <<< "${UPDATE}" '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')"
 	for ((PROCESS_NUMBER=0; PROCESS_NUMBER<=MAX_PROCESS_NUMBER; PROCESS_NUMBER++)); do
-		if [ "$1" = "test" ]; then
-			process_client "$1"
-		else
-			process_client "$1" &
-		fi
+		process_client "$1"
 	done
 }
 process_client() {
-	process_message "$PROCESS_NUMBER"
+	iQUERY[ID]="$(JsonGetString <<<"${UPDATE}" '"result",'"${PROCESS_NUMBER}"',"inline_query","id"')"
+	if [ "${iQUERY[ID]}" = "" ]; then
+		[[ "$1" = *"debug"* ]] && echo "$UPDATE" >>"MESSAGE.log"
+		process_message "$PROCESS_NUMBER" "$1"
+	else
+		[[ "$1" = *"debug"* ]] && echo "$UPDATE" >>"INLINE.log"
+		[ "$INLINE" != "0" ] && _is_function process_inline && process_inline "$PROCESS_NUMBER" "$1"
+	fi
 	# Tmux
 	copname="$ME"_"${CHAT[ID]}"
 	source commands.sh
@@ -547,28 +492,29 @@ process_message() {
 
 # main get updates loop, should never terminate
 start_bot() {
+	local DEBUG="$1"
 	local OFFSET=0
 	local mysleep="100" # ms
 	local addsleep="100"
 	local maxsleep="$(( ${BASHBOT_SLEEP:-5000} + 100 ))"
+	[[ "${DEBUG}" = *"debug" ]] && exec &>>"DEBUG.log"
+	[ "${DEBUG}" != "" ] && date && echo "Start BASHBOT in Mode \"${DEBUG}\""
+	[[ "${DEBUG}" = "xdebug"* ]] && set -x 
 	while true; do {
 
-		UPDATE="$(curl -s "$UPD_URL$OFFSET" | "${JSONSHFILE}")"
+		UPDATE="$(curl -s "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n)"
 
 		# Offset
-		OFFSET="$(echo "$UPDATE" | grep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
+		OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
 		OFFSET=$((OFFSET+1))
 
 		if [ "$OFFSET" != "1" ]; then
 			mysleep="100"
-			if [ "$1" = "test" ]; then
-				process_updates "$1"
-			else
-				process_updates "$1" &
-			fi
+			process_updates "${DEBUG}" &
 		fi
 		# adaptive sleep in ms rounded to next lower second
-		sleep "${mysleep%???}"; mysleep=$((mysleep+addsleep)); [ "${mysleep}" -gt "${maxsleep}" ] && mysleep="${maxsleep}"
+		[ "${mysleep}" -gt "999" ] && sleep "${mysleep%???}"
+		mysleep=$((mysleep+addsleep)); [ "${mysleep}" -gt "${maxsleep}" ] && mysleep="${maxsleep}"
   	}
 	done
 }

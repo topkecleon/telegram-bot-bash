@@ -133,49 +133,52 @@ If you want to kill all background jobs permantly run:
 Note: Background Jobs run independent from main bot and continue running until your script exits or you stop if from your Bot. Backgound Jobs will continue running if your Bot is stopeda and must be terminated, e.g. by ```bashbot.sh killback``` 
 
 ### Inline queries
-The following commands allows users to interact with your bot via *inline queries*.
+**Inline queries** allow users to send commands to your bot from every chat without going to a private chat. An inline query is started if the user type the bots name, e.g. @myBot. Everything after @myBot is immediatly send to the bot.
+
 In order to enable **inline mode**, send `/setinline` command to [@BotFather](https://telegram.me/botfather) and provide the placeholder text that the user will see in the input field after typing your bot’s name.
-Also, edit line 12 from `commands.sh` putting a "1".
-Note that you can't modify the first two parameters of the function `answer_inline_query`, only the ones after them.
+
+The following commands allows you to send ansers to *inline queries*. To enable bashbot to process inline queries set ```INLINE="1"``` in 'mycommands.sh'.
 
 To send messsages or links through an *inline query*:
 ```bash
-answer_inline_query "$iQUERY_ID" "article" "Title of the result" "Content of the message to be sent"
+answer_inline_query "${iQUERY[ID]}" "article" "Title of the result" "Content of the message to be sent"
 ```
 To send photos in jpeg format and less than 5MB, from a website through an *inline query*:
 ```bash
-answer_inline_query "$iQUERY_ID" "photo" "A valid URL of the photo" "URL of the thumbnail"
+answer_inline_query "${iQUERY[ID]}" "photo" "A valid URL of the photo" "URL of the thumbnail"
 ```
 To send standard gifs from a website (less than 1MB) through an *inline query*:
 ```bash
-answer_inline_query "$iQUERY_ID" "gif" "gif url"
+answer_inline_query "${iQUERY[ID]}" "gif" "gif url"
 ```
 To send mpeg4 gifs from a website (less than 1MB) through an *inline query*:
 ```bash
-answer_inline_query "$iQUERY_ID" "mpeg4_gif" "mpeg4 gif url"
+answer_inline_query "${iQUERY[ID]}" "mpeg4_gif" "mpeg4 gif url"
 ```
 To send videos from a website through an *inline query*:
 ```bash
-answer_inline_query "$iQUERY_ID" "video" "valid video url" "Select one mime type: text/html or video/mp4" "URL of the thumbnail" "Title for the result"
+answer_inline_query "${iQUERY[ID]}" "video" "valid video url" "Select one mime type: text/html or video/mp4" "URL of the thumbnail" "Title for the result"
 ```
 To send photos stored in Telegram servers through an *inline query*:
 ```bash
-answer_inline_query "$iQUERY_ID" "cached_photo" "identifier for the photo"
+answer_inline_query "${iQUERY[ID]}" "cached_photo" "identifier for the photo"
 ```
 To send gifs stored in Telegram servers through an *inline query*:
 ```bash
-answer_inline_query "$iQUERY_ID" "cached_gif" "identifier for the gif"
+answer_inline_query "${iQUERY[ID]}" "cached_gif" "identifier for the gif"
 ```
 To send mpeg4 gifs stored in Telegram servers through an *inline query*:
 ```bash
-answer_inline_query "$iQUERY_ID" "cached_mpeg4_gif" "identifier for the gif"
+answer_inline_query "${iQUERY[ID]}" "cached_mpeg4_gif" "identifier for the gif"
 ```
 To send stickers through an *inline query*:
 ```bash
-answer_inline_query "$iQUERY_ID" "cached_sticker" "identifier for the sticker"
+answer_inline_query "${iQUERY[ID]}" "cached_sticker" "identifier for the sticker"
 ```
+See also [answer_inline_multi, answer_inline_compose](6_reference.md#answer_inline_multi) and [mycommands.sh](../mycommands.sh) for more information.
+
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.70-0-g6243be9
+#### $$VERSION$$ v0.72-1-g67c47ac
 

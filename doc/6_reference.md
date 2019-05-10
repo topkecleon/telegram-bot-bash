@@ -10,6 +10,8 @@
 
 *"action":* ```typing```, ```upload_photo```, ```record_video```, ```upload_video```, ```record_audio```, ```upload_audio```, ```upload_document```, ```find_location```.
 
+*alias:* _action "action"
+
 *example:* 
 ```bash
 send_action "${CHAT[ID]}" "typing"
@@ -21,6 +23,8 @@ send_action "${CHAT[ID]}" "record_audio"
 ```send_normal_message``` sends text only messages to the given chat.
 
 *usage:*  send_normal_message "${CHAT[ID]}" "message"
+
+*alias:* _normal_message "message"
 
 *example:* 
 ```bash
@@ -34,6 +38,8 @@ Telegram supports a [reduced set of Markdown](https://core.telegram.org/bots/api
 
 *usage:* send_markdown_message "${CHAT[ID]}" "markdown message"
 
+*alias:* _markdown "message"
+
 *example:* 
 ```bash
 send_markdown_message "${CHAT[ID]}" "this is a markdown  message, next word is *bold*"
@@ -45,6 +51,8 @@ send_markdown_message "${CHAT[ID]}" "*bold* _italic_ [text](link)"
 Telegram supports a [reduced set of HTML](https://core.telegram.org/bots/api#html-style) only
 
 *usage:* send_html_message "${CHAT[ID]}" "html message" 
+
+*alias:* _html_message "message"
 
 *example:* 
 ```bash
@@ -59,6 +67,8 @@ send_normal_message "${CHAT[ID]}" "<b>bold</b> <i>italic><i> <em>italic>/em> <a 
 
 *old call:* forward "${CHAT[ID]}" "$FROMCHAT" "${MESSAGE[ID]}"
 
+*alias:* _forward "$FROMCHAT" "${MESSAGE[ID]}"
+
 See also [Text formating options](https://core.telegram.org/bots/api#formatting-options)
 
 ----
@@ -68,17 +78,9 @@ If your Bot is admin of a Chat he can delete every message, if not he can delete
 
 *usage:* delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
 
+*alias:* _del_message "${MESSAGE[ID]}"
+
 See also [deleteMessage limitations](https://core.telegram.org/bots/api#deletemessage)
-
-----
-
-##### answer_inline_query
-Inline Queries allows users to interact with your bot directly without sending extra commands.
-answer_inline_query provide the result to a users Inline Query
-
-*usage:* answer_inline_query "$iQUERY_ID" "type" "type arg 1" ... "type arg n" 
-
-*example:* - see [Advanced Usage](3_advanced.md#Inline-queries)
 
 ----
 
@@ -119,6 +121,8 @@ Note: since version 0.6 send_keyboard was changed to use native "JSON Array" not
 
 *usage:*  send_keyboard "chat-id" "message" "keyboard"
 
+*alias:* _keyboard "message" "keyboard"
+
 *example:* 
 ```bash
 send_keyboard "${CHAT[ID]}" "Say yes or no" "[ \\"yes\" , \\"no\" ]""
@@ -128,6 +132,8 @@ send_keyboard "${CHAT[ID]}" "Enter digit" "[ \\"1\\" , \\"2\\" , \\"3\\" ] , [ \
 
 ##### remove_keyboard
 *usage:* remove_keybord "$CHAT[ID]" "message"
+
+*alias:* _del_keyboard "message"
 
 *See also: [Keyboard Markup](https://core.telegram.org/bots/api/#replykeyboardmarkup)*
 
@@ -165,7 +171,7 @@ send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"b 1", url"":"u 1"}, {"text":"b 
 
 ----
 
-### Manage users 
+### User Access Control
 
 ##### kick_chat_member
 If your Bot is a chat admin he can kick and ban a user.
@@ -199,14 +205,12 @@ fi
 
 ----
 
-### User Access Control
-
 ##### user_is_botadmin
 Return true (0) if user is admin of bot, user id if botadmin is read from file './botadmin'.
 
 *usage:*  user_is_botadmin "${USER[ID]}"
 
-*modules/alias:* _is_botadmin 
+*alias:* _is_botadmin 
 
 *example:* 
 ```bash
@@ -218,14 +222,14 @@ Return true (0) if user is creator of given chat or chat is a private chat.
 
 *usage:* user_is_creator "${CHAT[ID]}" "${USER[ID]}"
 
-*modules/alias:* _is_creator
+*alias:* _is_creator
 
 ##### user_is_admin
 Return true (0) if user is admin or creator of given chat.
  
 *usage:* user_is_admin "${CHAT[ID]}" "${USER[ID]}"
 
-*modules/alias:* _is_admin
+*alias:* _is_admin
 
 *example:* 
 ```bash
@@ -251,77 +255,80 @@ fi
 
 ----
 
-### Aliases - shortcuts for often used funtions 
-You must not disable  ```source modules/aliases.sh``` in 'commands.sh' to have the following functions availible.
+### Inline Queries - answer direct queries to bot
+You must include  ```source modules/inline.sh``` in 'commands.sh' to have the following functions availible.
 
-##### _is_botadmin
+Inline Queries allows users to interact with your bot directly without sending extra commands.
+As an answer to an inline query you can send back one or more results to the Telegram client. 
+The Telegram client will then show the results to the user and let him select one.
 
-*usage:* _is_botadmin
+##### answer_inline_query
+answer_inline_query is provided for backward compatibility with older versions of bashbot.
+It send back only one response to an inline query.
 
-*alias for:* user_is_botadmin "${USER[ID]}"
+*usage:* answer_inline_query "$i{QUERY[ID]}" "type" "type arg 1" ... "type arg n" 
 
-##### _is_admin
+*example:* - see [Advanced Usage](3_advanced.md#Inline-queries)
 
-*usage:* _is_admin
 
-*alias for:* user_is_admin "${CHAT[ID]}" "${USER[ID]}"
+##### answer_inline_multi
+anser_inline_multi allows you to send back a list of responses. responses must be seperated by ','.
 
-##### _is_allowed
+*usage:* answer_inline_multi "${iQUERY[ID]}" "res, res, ... res" 
 
-*usage:* _is_allowed "what"
+*example:*
+```bash
+# note the starting " and ending " !!
+answer_inline_multi "${iQUERY[ID]}" "
+    $(inline_query_compose "1" "photo" "https://avatars0.githubusercontent.com/u/13046303") ,
+    ...
+    $(inline_query_compose "n" "photo" "https://avatars1.githubusercontent.com/u/4593242")
+    "
+```
 
-*alias for:* user_is_allowed "${USER[ID]}" "what" "${CHAT[ID]}"
+#### inline_query_compose
+inline_query_compose composes one response element to to send back. 
+
+*usage:*  inline_query_compose ID type args ....
+
+```
+	ID = unique ID for this response, 1-64 byte long
+	type = type of answer, e.g. article, photo, video, location ...
+	args = mandatory arguments in the order they are described in telegram documentation
+```
+
+Currently the following types and arguments are implemented (optional arguments in parenthesis)
+```
+	"article"|"message"	title message (markup description)
+
+	"photo"			photo_URL (thumb_URL title description caption)
+	"gif"			photo_URL (thumb_URL title caption)
+	"mpeg4_gif"		mpeg_URL (thumb_URL title caption)
+	"video"			video_URL mime_type thumb_URL title (caption)
+	"audio"			audio_URL title (caption)
+	"voice"			voice_URL title (caption)
+	"document"		title document_URL mime_type (caption description)
+
+	"location"		latitude longitude title
+	"venue"			latitude longitude title (adress foursquare)
+	"contact"		phone first (last thumb)
+
+	"cached_photo"		file (title description caption)
+	"cached_gif"		file (title caption)
+	"cached_mpeg4_gif"	file (title caption)
+	"cached_sticker"	file 
+	"cached_document"	title file (description caption)
+	"cached_video"		file title (description caption)
+	"cached_voice"		file title (caption)
+	"cached_audio"		file title (caption)
+```
+see [InlineQueryResult for more information](https://core.telegram.org/bots/api#inlinequeryresult) about response types and their arguments.
 
 ----
 
-##### _kick_user
 
-*usage:* _kick_user "${USER[ID]}"
-
-*alias for:* kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
-
-##### _unban
-
-*usage:* _unban "${USER[ID]}"
-
-*alias for:*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
-
-##### _leave
-
-*usage:* _leave 
-
-*alias for:* leave_chat "${CHAT[ID]}"
-
-----
-
-##### _message
-
-*usage:* _message "message"
-
-*alias for:* send_normal_message "${CHAT[ID]}" "message"
-
-##### _normal_message
-
-*usage:* _normal_message "message"
-
-*alias for:* send_normal_message "${CHAT[ID]}" "message"
-
-##### _html_message
-
-*usage:* _html_message "message"
-
-*alias for:* send_html_message "${CHAT[ID]}" "message"
-
-##### _markdown_message
-
-*usage:* _markdown_message "message"
-
-*alias for:* send_markdown_message "${CHAT[ID]}" "message"
-
-----
-
-### Interactive and backgound jobs
-You must not disable  ```source modules/background.sh``` in 'commands.sh' to have the following functions availible.
+### Background and Interactive jobs
+You must include  ```source modules/background.sh``` in 'commands.sh' to have the following functions availible.
 
 ##### startproc
 ```startproc``` starts a script, the output of the script is sent to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
@@ -420,6 +427,102 @@ The main use case for send_message is to process the output of interactive chats
 
 ----
 
+### Aliases - shortcuts for often used funtions 
+You must include  ```source modules/aliases.sh``` in 'commands.sh' to have the following functions availible.
+
+##### _is_botadmin
+
+*usage:* _is_botadmin
+
+*alias for:* user_is_botadmin "${USER[ID]}"
+
+##### _is_admin
+
+*usage:* _is_admin
+
+*alias for:* user_is_admin "${CHAT[ID]}" "${USER[ID]}"
+
+##### _is_allowed
+
+*usage:* _is_allowed "what"
+
+*alias for:* user_is_allowed "${USER[ID]}" "what" "${CHAT[ID]}"
+
+----
+
+##### _kick_user
+
+*usage:* _kick_user "${USER[ID]}"
+
+*alias for:* kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
+
+##### _unban
+
+*usage:* _unban "${USER[ID]}"
+
+*alias for:*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
+
+##### _leave
+
+*usage:* _leave 
+
+*alias for:* leave_chat "${CHAT[ID]}"
+
+----
+
+##### _message
+
+*usage:* _message "message"
+
+*alias for:* send_normal_message "${CHAT[ID]}" "message"
+
+##### _normal_message
+
+*usage:* _normal_message "message"
+
+*alias for:* send_normal_message "${CHAT[ID]}" "message"
+
+##### _html_message
+
+*usage:* _html_message "message"
+
+*alias for:* send_html_message "${CHAT[ID]}" "message"
+
+##### _markdown_message
+
+*usage:* _markdown_message "message"
+
+*alias for:* send_markdown_message "${CHAT[ID]}" "message"
+
+----
+
+#### _inline_button
+*usage:* _inline_button "${1}" "${2}" 
+
+*alias for:* send_inline_button "${CHAT[ID]}" "" "${1}" "${2}" 
+
+#### _inline_keyboard
+*usage:* _inline_keyboard "${1}"
+
+*alias for:* _inline_keyboard "${CHAT[ID]}" "" "${1}"
+
+#### _keyboard_numpad
+*usage:* _keyboard_numpad
+
+*alias for:* send_keyboard "${CHAT[ID]}" "" '["1","2","3"],["4","5","6"],["7","8","9"],["-","0","."]' "yes"
+
+#### _keyboard_yesno
+*usage:* _keyboard_yesno
+
+*alias for:* send_keyboard '["yes","no"]'
+
+#### _del_keyboard
+*usage:* _del_keyboard 
+
+*alias for:* remove_keyboard "${CHAT[ID]}" ""
+
+
+
 ### Helper functions
 
 ##### _is_function
@@ -489,5 +592,5 @@ Send Input from Telegram to waiting Interactive Chat.
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.70-0-g6243be9
+#### $$VERSION$$ v0.72-1-g67c47ac
 

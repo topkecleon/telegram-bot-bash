@@ -11,6 +11,8 @@ set -e
 cd "${TESTDIR}" || exit 1
 # shellcheck source=./bashbot.sh
 source "${TESTDIR}/bashbot.sh" source
+# shellcheck source=./bashbot.sh
+source "${TESTDIR}/modules/inline.sh" source
 
 # overwrite get_file for test
 get_file() {
@@ -22,17 +24,17 @@ export UPDATE
 UPDATE="$(cat "${INPUTFILE}")"
 
 # run process_message with and without phyton
-echo "Check process_message ..."
+echo "Check process_inline ..."
 for i in 1 2
 do
 	[ "${i}" = "1" ] && ! which python >/dev/null 2>&1 && continue
 	[ "${i}" = "1" ] && echo "  ... with JsonDecode Phyton" && unset BASHBOT_DECODE
 	[ "${i}" = "2" ] && echo "  ... with JsonDecode Bash" && export BASHBOT_DECODE="yes"
 	set -x
-	{ process_message "0";  set +x; } >>"${LOGFILE}" 2>&1;
+	{ process_inline "0";  set +x; } >>"${LOGFILE}" 2>&1;
 
 	# output processed input
-	print_array "USER" "CHAT" "REPLYTO" "FORWARD" "URLS" "CONTACT" "CAPTION" "LOCATION" "MESSAGE" "VENUE" >"${OUTPUTFILE}"
+	print_array "iQUERY" >"${OUTPUTFILE}"
 	diff -c "${REFFILE}" "${OUTPUTFILE}" || exit 1
 	echo "${SUCCESS}"
 done
