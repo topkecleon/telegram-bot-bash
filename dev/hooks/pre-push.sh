@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.72-1-g67c47ac
+#### $$VERSION$$ v0.80-dev2-0-gdbba89c
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
