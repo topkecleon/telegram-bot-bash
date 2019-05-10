@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.72-0-ge899420
+#### $$VERSION$$ v0.72-1-g67c47ac
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -107,7 +107,6 @@ else
 			answer_inline_query "${iQUERY[ID]}" "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
 			;;
 	esac
-exit
      }
 
     # place your processing functions here

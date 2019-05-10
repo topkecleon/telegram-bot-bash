@@ -592,5 +592,5 @@ Send Input from Telegram to waiting Interactive Chat.
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.72-0-ge899420
+#### $$VERSION$$ v0.72-1-g67c47ac
 
