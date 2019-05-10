@@ -44,7 +44,11 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Customize commands.sh
     * Seperate logic from commands
     * Test your Bot with shellcheck
-* [Bashbot function reference](doc/6_reference.md)
+* [Function Reference](doc/6_reference.md)
+    * Sending Messages, Files, Keyboards
+    * User Access Control
+    * Inline Queries
+    * Background and Interactive Jobs
 * [Deveoper Notess](doc/7_develop.md)
     * Setup your environment
     * Test, Add, Push changes
@@ -94,4 +98,4 @@ Well, thats a damn good question ... may be because I'm an Unix/Linux admin from
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.72-dev-0-g6afa177
+#### $$VERSION$$ v0.72-dev-5-g73b7734

@@ -7,13 +7,13 @@ bashbot development is done on github. If you want to provide fixes or new featu
 ### Debuging Bashbot
 In normal mode of operation all bashbot output is discarded one more correct sent to TMUX console.
 To get these messages (and more) you can start bashbot in the current shell ```./bashbot.sh startbot```. Now you can see all output or erros from bashbot.
-In addition you can change the change the level of verbosity by adding  a third argumant.
+In addition you can change the change the level of verbosity by adding a third argument after startbot.
 ```
 	"debug"		redirects all output to "DEBUG.log", in addtion every update is logged in "MESSAGE.LOG" and "INLINE.log"
-	"debugterm	same as debug but output and errors are sent to terminal
+	"debugterm"	same as debug but output and errors are sent to terminal
 
 	"xdebug"	same as debug plus set bash option '-x' to log any executed command
-	"xdebugterm"	same as xdebug, but output and errors are sent to terminal
+	"xdebugterm"	same as xdebug but output and errors are sent to terminal
 ```
 
 
@@ -131,5 +131,5 @@ fi
 #### [Prev Function Reference](6_reference.md)
 #### [Next Bashbot Environment](8_custom.md)
 
-#### $$VERSION$$ v0.72-dev-4-gbf00d33
+#### $$VERSION$$ v0.72-dev-5-g73b7734
 
