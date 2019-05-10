@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.72-dev-2-g17d3573
+#### $$VERSION$$ v0.72-dev-4-gbf00d33
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -117,18 +117,6 @@ elif [ ! -w "${COUNTFILE}" ]; then
 	exit 2
 fi
 
-COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
-if [ "$1" != "source" ]; then
-	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
-		${CLEAR}
-		echo -e "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NC}"
-		ls -l "${COMMANDS}"
-		exit 3
-	fi
-	# shellcheck source=./commands.sh
-	source "${COMMANDS}" "source"
-fi
-
 
 BOTTOKEN="$(cat "${TOKENFILE}")"
 URL='https://api.telegram.org/bot'$BOTTOKEN
@@ -157,6 +145,18 @@ GETFILE_URL=$URL'/getFile'
 unset USER
 declare -A BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
 export BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
+
+COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
+if [ "$1" != "source" ]; then
+	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
+		${CLEAR}
+		echo -e "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NC}"
+		ls -l "${COMMANDS}"
+		exit 3
+	fi
+	# shellcheck source=./commands.sh
+	source "${COMMANDS}" "source"
+fi
 
 
 send_normal_message() {
@@ -381,21 +381,19 @@ _is_function()
 	[ "$(LC_ALL=C type -t "$1")" = "function" ]
 }
 process_updates() {
-	MAX_PROCESS_NUMBER=$(echo "$UPDATE" | sed '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')
+	MAX_PROCESS_NUMBER="$(sed <<< "${UPDATE}" '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')"
 	for ((PROCESS_NUMBER=0; PROCESS_NUMBER<=MAX_PROCESS_NUMBER; PROCESS_NUMBER++)); do
-		if [ "$1" = "test" ]; then
-			process_client "$1"
-		else
-			process_client "$1" &
-		fi
+		process_client "$1"
 	done
 }
 process_client() {
-	iQUERY[ID]="$(JsonGetString <<<"${UPDATE}" '"result",'"$PROCESS_NUMBER"',"inline_query","id"')"
+	iQUERY[ID]="$(JsonGetString <<<"${UPDATE}" '"result",'"${PROCESS_NUMBER}"',"inline_query","id"')"
 	if [ "${iQUERY[ID]}" = "" ]; then
-		process_message "$PROCESS_NUMBER"
+		[[ "$1" = *"debug"* ]] && echo "$UPDATE" >>"MESSAGE.log"
+		process_message "$PROCESS_NUMBER" "$1"
 	else
-		[ "$INLINE" != "0" ] && _is_function process_inline && process_inline "$PROCESS_NUMBER"
+		[[ "$1" = *"debug"* ]] && echo "$UPDATE" >>"INLINE.log"
+		[ "$INLINE" != "0" ] && _is_function process_inline && process_inline "$PROCESS_NUMBER" "$1"
 	fi
 	# Tmux
 	copname="$ME"_"${CHAT[ID]}"
@@ -494,28 +492,29 @@ process_message() {
 
 # main get updates loop, should never terminate
 start_bot() {
+	local DEBUG="$1"
 	local OFFSET=0
 	local mysleep="100" # ms
 	local addsleep="100"
 	local maxsleep="$(( ${BASHBOT_SLEEP:-5000} + 100 ))"
+	[[ "${DEBUG}" = *"debug" ]] && exec &>>"DEBUG.log"
+	[ "${DEBUG}" != "" ] && date && echo "Start BASHBOT in Mode ${DEBUG}"
+	[[ "${DEBUG}" = "xdebug"* ]] && set -x 
 	while true; do {
 
 		UPDATE="$(curl -s "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n)"
 
 		# Offset
-		OFFSET="$(echo "$UPDATE" | grep '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
+		OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
 		OFFSET=$((OFFSET+1))
 
 		if [ "$OFFSET" != "1" ]; then
 			mysleep="100"
-			if [ "$1" = "test" ]; then
-				process_updates "$1"
-			else
-				process_updates "$1" &
-			fi
+			process_updates "${DEBUG}" &
 		fi
 		# adaptive sleep in ms rounded to next lower second
-		sleep "${mysleep%???}"; mysleep=$((mysleep+addsleep)); [ "${mysleep}" -gt "${maxsleep}" ] && mysleep="${maxsleep}"
+		[ "${mysleep}" -gt "999" ] && sleep "${mysleep%???}"
+		mysleep=$((mysleep+addsleep)); [ "${mysleep}" -gt "${maxsleep}" ] && mysleep="${maxsleep}"
   	}
 	done
 }

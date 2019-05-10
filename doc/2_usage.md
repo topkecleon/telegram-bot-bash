@@ -4,7 +4,10 @@
 The Bots standard commands are in ```commands.sh``` file. You must not add your commands to 'commands.sh', instead place them in ```mycommands.sh```,  there you also find examples how to process messages and send out text. See [Best practices](5_practice.md) for more information.
 
 Once you're done with editing 'mycommands.sh' start the Bot with ```./bashbot.sh start```. 
-If some thing doesn't work as it should, debug with ```bash -x bashbot.sh```. To stop the Bot run ```./bashbot.sh kill```
+To stop the Bot run ```./bashbot.sh kill```
+
+If some thing doesn't work as it should, you can debug with ```./bashbot.sh startbot DEBUG``` where DEBUG can be 'debug', 'xdebug' or 'xdebugx'.
+See [Bashbot Development](7_develop.md) for more information.
 
 To use the functions provided in this script in other scripts simply source bashbot: ```source bashbot.sh```
 
@@ -179,5 +182,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.72-dev-0-g6afa177
+#### $$VERSION$$ v0.72-dev-4-gbf00d33
 
