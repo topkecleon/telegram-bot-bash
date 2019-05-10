@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.72-dev-3-g65b32aa
+#### $$VERSION$$ v0.72-0-ge899420
 
 # source from commands.sh to use the inline functions
 
@@ -42,7 +42,7 @@ inline_query_compose(){
 	case "${2}" in
 		# user provided media
 		"article"|"message") # article ID title message (markup decription)
-			JSON='{"type":"article","id":"'$ID'","message_text":"'$4'"'$(title2Json "$3" "" "$5" "$6")'}'
+			JSON='{"type":"article","id":"'$ID'","input_message_content": {"message_text":"'$4'"} '$(title2Json "$3" "" "$5" "$6")'}'
 		;;
 		"photo") # photo ID photoURL (thumbURL title description caption)
 			[ "$4" = "" ] && tumb="$3"

@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.72-dev-4-gbf00d33
+#### $$VERSION$$ v0.72-0-ge899420
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -498,7 +498,7 @@ start_bot() {
 	local addsleep="100"
 	local maxsleep="$(( ${BASHBOT_SLEEP:-5000} + 100 ))"
 	[[ "${DEBUG}" = *"debug" ]] && exec &>>"DEBUG.log"
-	[ "${DEBUG}" != "" ] && date && echo "Start BASHBOT in Mode ${DEBUG}"
+	[ "${DEBUG}" != "" ] && date && echo "Start BASHBOT in Mode \"${DEBUG}\""
 	[[ "${DEBUG}" = "xdebug"* ]] && set -x 
 	while true; do {
 

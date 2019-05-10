@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.72-dev-7-ga734b5f
+#### $$VERSION$$ v0.72-0-ge899420
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -62,21 +62,35 @@ else
 
      myinlines() {
 	#######################
-	# Inline query examples
+	# Inline query examples, do not use them in production (exept image search ;-)
 	# shellcheck disable=SC2128
 	case "${iQUERY}" in
-		"image "*) # search in yahoo images
+		"image "*) # search images with yahoo
 			local search="${iQUERY#* }"
 			answer_inline_multi "${iQUERY[ID]}" "$(my_image_search "${search}")"
 			;;
-		"photo") # manually provide URLs
+
+		"0"*)	# a single message with title
+			answer_inline_query "${iQUERY[ID]}" "message" "Title of the result" "Content of the message to be sent"
+			;;
+		"1"*)	# a single photo
+			answer_inline_query "${iQUERY[ID]}" "photo" "https://avatars.githubusercontent.com/u/13046303" "https://avatars.githubusercontent.com/u/13046303" 
+			;;
+		"2"*)	# two photos
 			answer_inline_multi "${iQUERY[ID]}" "
 			    $(inline_query_compose "$RANDOM" "photo" "https://avatars.githubusercontent.com/u/13046303"), 
 			    $(inline_query_compose "$RANDOM" "photo" "https://avatars.githubusercontent.com/u/4593242")
 			    "
 			;;
+		"3"*) # three photos
+			answer_inline_multi "${iQUERY[ID]}" "
+			    $(inline_query_compose "$RANDOM" "photo" "https://avatars.githubusercontent.com/u/13046303"), 
+			    $(inline_query_compose "$RANDOM" "photo" "https://avatars.githubusercontent.com/u/4593242")
+			    $(inline_query_compose "$RANDOM" "photo" "https://avatars.githubusercontent.com/u/102707")
+			    "
+			;;
 
-		"avatar") # read URLS from array
+		"4") # four photo from array
 			local sep=""
 			local avatar=("https://avatars.githubusercontent.com/u/13046303" "https://avatars.githubusercontent.com/u/4593242" "https://avatars.githubusercontent.com/u/102707" "https://avatars.githubusercontent.com/u/6460407")
 			answer_inline_multi "${iQUERY[ID]}" "
@@ -86,14 +100,11 @@ else
 				"
 			;;
 
-		"sticker")
+		"sticker") # example chaecd telegram sticker
 			answer_inline_query "${iQUERY[ID]}" "cached_sticker" "BQADBAAD_QEAAiSFLwABWSYyiuj-g4AC"
 			;;
-		"gif")
+		"gif") # exmaple chaehed gif
 			answer_inline_query "${iQUERY[ID]}" "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
-			;;
-		"web")
-			answer_inline_query "${iQUERY[ID]}" "article" "GitHub" "http://github.com/topkecleon/telegram-bot-bash"
 			;;
 	esac
 exit
