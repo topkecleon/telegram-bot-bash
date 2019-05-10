@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.72-1-g67c47ac
+#### $$VERSION$$ v0.72-3-gdb14eb9
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -64,6 +64,7 @@ else
 	#######################
 	# Inline query examples, do not use them in production (exept image search ;-)
 	# shellcheck disable=SC2128
+	iQUERY="${iQUERY,,}" # all lowercase
 	case "${iQUERY}" in
 		"image "*) # search images with yahoo
 			local search="${iQUERY#* }"

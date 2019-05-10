@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
-#### $$VERSION$$ v0.72-1-g67c47ac
+#### $$VERSION$$ v0.72-3-gdb14eb9
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -31,6 +31,7 @@ cp -r ${DISTFILES} "${DISTDIR}"
 cd "${DISTDIR}" || exit 1
 
 # additional stuff
+mv "bashbot.rc" "bashbot.rc.dist"
 mv "commands.sh" "commands.sh.dist"
 mv "mycommands.sh" "mycommands.sh.dist"
 
