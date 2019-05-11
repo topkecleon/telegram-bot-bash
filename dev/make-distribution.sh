@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# this has to run once atfer git clone
-# and every time we create new hooks
-#### $$VERSION$$ v0.80-dev2-2-g0c5e3dd
+# file: make-distribution.sh
+# creates files and arcchives to dirtribute bashbot
+#
+#### $$VERSION$$ v0.80-dev2-3-ge492da0
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script

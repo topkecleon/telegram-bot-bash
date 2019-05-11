@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-# this has to run once atfer git clone
-# and every time we create new hooks
-#### $$VERSION$$ v0.80-dev2-2-g0c5e3dd
+# file: make-standalone.sh
+# even after make-distribution.sh bashbot is not self contained as it was in the past.
+#
+# If you your bot is finished you can use make-standalone.sh to create the
+# the old all-in-one bashbot:  bashbot.sh and commands.sh only!
+#
+#### $$VERSION$$ v0.80-dev2-3-ge492da0
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
