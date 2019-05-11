@@ -24,7 +24,7 @@ Let's create a stripped down version:
 
 - delete all modules you do not need from 'modules', e.g. 'modules/inline.sh' if you don't use inline queries
 - delete not needed standard commands and messages from 'commands.sh'
-- delete not neede commands and functions from 'mycommands.sh'
+- delete not needed commands and functions from 'mycommands.sh'
 - run ```dev/make-standalone.sh``` to create a a stripped down version of your bo
 
 Now have a look at the directory 'standalone', here you find the files 'bashbot.sh' and 'commands.sh' containing everything to run your bot.
@@ -145,5 +145,5 @@ fi
 #### [Prev Function Reference](6_reference.md)
 #### [Next Bashbot Environment](8_custom.md)
 
-#### $$VERSION$$ v0.80-dev2-4-gb7df57a
+#### $$VERSION$$ v0.80-dev2-5-gd08d912
 

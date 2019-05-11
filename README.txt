@@ -65,12 +65,13 @@ all](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
 * [Examples](examples/README.md)
 
 
-### I don't like the many bashbot files
+#### You don't like the many bashbot files?
 At the beginning bashbot was simply the file ```bashbot.sh``` I can copy 
 everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 
 'modules/*.sh' and much more.
+
 Hey no Problem, if you are finished with your cool bot simply run 
-```dev/make-standalone.sh``` to create a a stripped down Version containing only
+```dev/make-standalone.sh``` to create a stripped down Version containing only
 'bashbot.sh' and 'commands.sh'! For more information see [Create a stripped 
 down Version of your Bot](doc/7_develop.md)
 
@@ -147,4 +148,4 @@ health status
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.80-dev2-4-gb7df57a
+#### $$VERSION$$ v0.80-dev2-5-gd08d912
