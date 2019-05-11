@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
-#### $$VERSION$$ v0.80-dev2-1-g0b36bc5
+#### $$VERSION$$ v0.80-dev2-2-g0c5e3dd
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
-GIT_DIR=$(git rev-parse --git-dir)
-cd "$GIT_DIR/.." || exit 1
+GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
+if [ "$GIT_DIR" != "" ] ; then
+	cd "$GIT_DIR/.." || exit 1
+else
+	echo "Sorry, no git repository $(pwd)" && exit 1
+fi
 
 HOOKDIR="dev/hooks"
 

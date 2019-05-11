@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
-#### $$VERSION$$ v0.80-dev2-1-g0b36bc5
+#### $$VERSION$$ v0.80-dev2-2-g0c5e3dd
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
-GIT_DIR=$(git rev-parse --git-dir)
-cd "$GIT_DIR/.." || exit 1
+GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
+if [ "$GIT_DIR" != "" ] ; then
+	cd "$GIT_DIR/.." || exit 1
+else
+	echo "Sorry, no git repository $(pwd)" && exit 1
+fi
 
 VERSION="$(git describe --tags | sed -e 's/-[0-9].*//' -e 's/v//')"
 
@@ -18,6 +22,7 @@ DISTFILES="bashbot.rc  bashbot.sh  commands.sh  mycommands.sh doc  examples modu
 
 for test in "dev/all-tests.sh"
 do
+   [ ! -x ""${test} ] && continue
    if ! "${test}" ; then
 	echo "Test ${test} failed, can't create dist!"
 	exit 1

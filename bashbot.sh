@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-1-g0b36bc5
+#### $$VERSION$$ v0.80-dev2-2-g0c5e3dd
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -32,6 +32,7 @@ if [ -t 1 ] && [ "$TERM" != "" ];  then
 fi
 
 # get location and name of bashbot.sh
+export SCRIPT SCRIPTDIR MODULEDIR RUNDIR RUNUSER
 SCRIPT="$0"
 SCRIPTDIR="$(dirname "$0")"
 MODULEDIR="${SCRIPTDIR}/modules"

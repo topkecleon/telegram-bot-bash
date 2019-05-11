@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.80-dev2-1-g0b36bc5
+#### $$VERSION$$ v0.80-dev2-2-g0c5e3dd
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -117,7 +117,7 @@ else
 	local image result sep="" count="1"
 	result="$(wget --user-agent 'Mozilla/5.0' -qO - "https://images.search.yahoo.com/search/images?p=$1" |  sed 's/</\n</g' | grep "<img src=")"
 	while read -r image; do
-		[ "$count" -gt "9" ] && break
+		[ "$count" -gt "20" ] && break
 		image="${image#* src=\'}"; image="${image%%&pid=*}"
 		[[ "${image}" = *"src="* ]] && continue
 		echo "${sep}"; inline_query_compose "$RANDOM" "photo" "${image}"; sep=","
