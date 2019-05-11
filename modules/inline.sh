@@ -5,23 +5,11 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-1-g0b36bc5
+#### $$VERSION$$ v0.80-dev2-4-gb7df57a
 
 # source from commands.sh to use the inline functions
 
 INLINE_QUERY=$URL'/answerInlineQuery'
-declare -A iQUERY
-export iQUERY
-
-process_inline() {
-	local num="${1}"
-	iQUERY[0]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",0,"inline_query","query"')")"
-	iQUERY[USER_ID]="$(JsonGetValue <<<"${UPDATE}" '"result",'"${num}"',"inline_query","from","id"')"
-	iQUERY[FIRST_NAME]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",'"${num}"',"inline_query","from","first_name"')")"
-	iQUERY[LAST_NAME]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",'"${num}"',"inline_query","from","last_name"')")"
-	iQUERY[USERNAME]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",'"${num}"',"inline_query","from","username"')")"
-}
-
 
 answer_inline_query() {
 	answer_inline_multi "${1}" "$(shift; inline_query_compose "$RANDOM" "$@")"

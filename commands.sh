@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-1-g0b36bc5
+#### $$VERSION$$ v0.80-dev2-4-gb7df57a
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -39,19 +39,16 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
 
 if [ "${1}" != "source" ]; then
-	# load modules needed for commands.sh only
 	# shellcheck source=./modules/aliases.sh
 	[ -r "${MODULEDIR:-.}/aliases.sh" ] && source "${MODULEDIR:-.}/aliases.sh"
 	# shellcheck source=./modules/background.sh
 	[ -r "${MODULEDIR:-.}/background.sh" ] && source "${MODULEDIR:-.}/background.sh"
+	# shellcheck source=./modules/background.sh
+	[ -r "${MODULEDIR:-.}/inline.sh" ] && source "${MODULEDIR:-.}/inline.sh"
 else
 	# defaults to no inline and nonsense home dir
 	INLINE="0"
 	FILE_REGEX='/home/user/allowed/.*'
-
-	# load modules needed for bashbot.sh also
-	# shellcheck source=./modules/background.sh
-	[ -r "${MODULEDIR:-.}/inline.sh" ] && source "${MODULEDIR:-.}/inline.sh"
 fi
 
 # load mycommands

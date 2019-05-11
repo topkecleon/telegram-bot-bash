@@ -4,7 +4,7 @@ This section is about help and best practices for new bashbot developers. The ma
 
 bashbot development is done on github. If you want to provide fixes or new features [fork bashbot on githup](https://help.github.com/en/articles/fork-a-repo) and provide changes as [pull request on github](https://help.github.com/en/articles/creating-a-pull-request).
 
-### Debuging Bashbot
+### Debugging Bashbot
 In normal mode of operation all bashbot output is discarded one more correct sent to TMUX console.
 To get these messages (and more) you can start bashbot in the current shell ```./bashbot.sh startbot```. Now you can see all output or erros from bashbot.
 In addition you can change the change the level of verbosity by adding a third argument after startbot.
@@ -16,7 +16,19 @@ In addition you can change the change the level of verbosity by adding a third a
 	"xdebugterm"	same as xdebug but output and errors are sent to terminal
 ```
 
+### Create a stripped down Version of your Bot
+Currently bashbot is more a bot development environment than a bot, containing examples, developer scripts, modules, documentation and more.
+You don't need all these files after you're finished with your cool new bot.
 
+Let's create a stripped down version:
+
+- delete all modules you do not need from 'modules', e.g. 'modules/inline.sh' if you don't use inline queries
+- delete not needed standard commands and messages from 'commands.sh'
+- delete not neede commands and functions from 'mycommands.sh'
+- run ```dev/make-standalone.sh``` to create a a stripped down version of your bo
+
+Now have a look at the directory 'standalone', here you find the files 'bashbot.sh' and 'commands.sh' containing everything to run your bot.
+[Download make-standalone.sh](https://github.com/topkecleon/telegram-bot-bash/blob/master/dev/make-standalone.sh) from github.
 
 ### Setup your develop environment
 
@@ -47,6 +59,8 @@ Usually I start with pre versions and when everything looks good I push out a re
 ```
  v0.x-devx -> v0.x-prex -> v0.x-rc -> v0.x  ... 0.x+1-dev ...
 ```
+
+If you release a new Version run ```dev/make-distribution.sh``` to create the zip and tar.gz archives in the dist directory and attach them to the github release. Do not forget to delete directory dist afterwards.
 
 ### Versioning
 
@@ -131,5 +145,5 @@ fi
 #### [Prev Function Reference](6_reference.md)
 #### [Next Bashbot Environment](8_custom.md)
 
-#### $$VERSION$$ v0.80-dev2-1-g0b36bc5
+#### $$VERSION$$ v0.80-dev2-4-gb7df57a
 

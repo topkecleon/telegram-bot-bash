@@ -64,6 +64,16 @@ all](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
 * [Customize bashbot environment](doc/8_custom.md)
 * [Examples](examples/README.md)
 
+
+### I don't like the many bashbot files
+At the beginning bashbot was simply the file ```bashbot.sh``` I can copy 
+everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 
+'modules/*.sh' and much more.
+Hey no Problem, if you are finished with your cool bot simply run 
+```dev/make-standalone.sh``` to create a a stripped down Version containing only
+'bashbot.sh' and 'commands.sh'! For more information see [Create a stripped 
+down Version of your Bot](doc/7_develop.md)
+
 ## Security Considerations
 Running a Telegram Bot means it is connected to the public and you never know 
 whats send to your Bot.
@@ -137,4 +147,4 @@ health status
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.80-dev2-1-g0b36bc5
+#### $$VERSION$$ v0.80-dev2-4-gb7df57a

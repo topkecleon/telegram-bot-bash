@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-2-g0c5e3dd
+#### $$VERSION$$ v0.80-dev2-4-gb7df57a
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -144,8 +144,8 @@ UPD_URL=$URL'/getUpdates?offset='
 GETFILE_URL=$URL'/getFile'
 
 unset USER
-declare -A BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
-export BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
+declare -A BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
+export BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
 
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
 if [ "$1" != "source" ]; then
@@ -411,6 +411,15 @@ JsonGetLine() {
 }
 JsonGetValue() {
 	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]\([0-9.,]*\).*/\1/p'
+}
+
+process_inline() {
+	local num="${1}"
+	iQUERY[0]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",0,"inline_query","query"')")"
+	iQUERY[USER_ID]="$(JsonGetValue <<<"${UPDATE}" '"result",'"${num}"',"inline_query","from","id"')"
+	iQUERY[FIRST_NAME]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",'"${num}"',"inline_query","from","first_name"')")"
+	iQUERY[LAST_NAME]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",'"${num}"',"inline_query","from","last_name"')")"
+	iQUERY[USERNAME]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",'"${num}"',"inline_query","from","username"')")"
 }
 process_message() {
 	local num="$1"
