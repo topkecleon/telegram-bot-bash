@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-4-gb7df57a
+#### $$VERSION$$ v0.80-dev2-6-g5b10e75
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -122,30 +122,14 @@ fi
 BOTTOKEN="$(cat "${TOKENFILE}")"
 URL='https://api.telegram.org/bot'$BOTTOKEN
 
-MSG_URL=$URL'/sendMessage'
-LEAVE_URL=$URL'/leaveChat'
-KICK_URL=$URL'/kickChatMember'
-UNBAN_URL=$URL'/unbanChatMember'
-PHO_URL=$URL'/sendPhoto'
-AUDIO_URL=$URL'/sendAudio'
-DOCUMENT_URL=$URL'/sendDocument'
-STICKER_URL=$URL'/sendSticker'
-VIDEO_URL=$URL'/sendVideo'
-VOICE_URL=$URL'/sendVoice'
-LOCATION_URL=$URL'/sendLocation'
-VENUE_URL=$URL'/sendVenue'
-ACTION_URL=$URL'/sendChatAction'
-FORWARD_URL=$URL'/forwardMessage'
 ME_URL=$URL'/getMe'
-DELETE_URL=$URL'/deleteMessage'
-GETMEMBER_URL=$URL'/getChatMember'
 
 UPD_URL=$URL'/getUpdates?offset='
 GETFILE_URL=$URL'/getFile'
 
 unset USER
 declare -A BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
-export BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
+export res BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
 
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
 if [ "$1" != "source" ]; then
@@ -160,114 +144,9 @@ if [ "$1" != "source" ]; then
 fi
 
 
-send_normal_message() {
-	local text="${2}"
-	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'"' "${MSG_URL}"
-		text="${text:4096}"
-	done
-}
-
-send_markdown_message() {
-	local text="${2}"
-	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdown"' "${MSG_URL}"
-		text="${text:4096}"
-	done
-}
-
-send_html_message() {
-	local text="${2}"
-	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"html"' "${MSG_URL}"
-		text="${text:4096}"
-	done
-}
-
+DELETE_URL=$URL'/deleteMessage'
 delete_message() {
 	sendJson "${1}" 'message_id: '"${2}"'' "${DELETE_URL}"
-}
-
-# usage: status="$(get_chat_member_status "chat" "user")"
-get_chat_member_status() {
-	sendJson "$1" 'user_id: '"$2"'' "$GETMEMBER_URL"
-	JsonGetString '"result","status"' <<< "$res"
-}
-
-kick_chat_member() {
-	sendJson "$1" 'user_id: '"$2"'' "$KICK_URL"
-}
-
-unban_chat_member() {
-	sendJson "$1" 'user_id: '"$2"'' "$UNBAN_URL"
-}
-
-leave_chat() {
-	sendJson "$1" "" "$LEAVE_URL"
-}
-
-user_is_creator() {
-	if [ "${1:--}" = "${2:-+}" ] || [ "$(get_chat_member_status "$1" "$2")" = "creator" ]; then return 0; fi
-	return 1 
-}
-
-user_is_admin() {
-	local me; me="$(get_chat_member_status "$1" "$2")"
-	if [ "${me}" = "creator" ] || [ "${me}" = "administrator" ]; then return 0; fi
-	return 1 
-}
-
-user_is_botadmin() {
-	local admin; admin="$(head -n 1 "${BOTADMIN}")"
-	[ "${admin}" = "${1}" ] && return 0
-	[[ "${admin}" = "@*" ]] && [[ "${admin}" = "${2}" ]] && return 0
-	if [ "${admin}" = "?" ]; then echo "${1:-?}" >"${BOTADMIN}"; return 0; fi
-	return 1
-}
-
-user_is_allowed() {
-	local acl="$1"
-	[ "$1" = "" ] && return 1
-	grep -F -xq "${acl}:*:*" <"${BOTACL}" && return 0
-	[ "$2" != "" ] && acl="${acl}:$2"
-	grep -F -xq "${acl}:*" <"${BOTACL}" && return 0
-	[ "$3" != "" ] && acl="${acl}:$3"
-	grep -F -xq "${acl}" <"${BOTACL}"
-}
-
-old_send_keyboard() {
-	local text='"text":"'"${2}"'"'
-	shift 2
-	local keyboard=init
-	OLDIFS=$IFS
-	IFS=$(echo -en "\"")
-	for f in "$@" ;do [ "$f" != " " ] && keyboard="$keyboard, [\"$f\"]";done
-	IFS=$OLDIFS
-	keyboard=${keyboard/init, /}
-	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${keyboard}"' ],"one_time_keyboard": true}' "$MSG_URL"
-}
-
-ISEMPTY="ThisTextIsEmptyAndWillBeDeleted"
-send_keyboard() {
-	if [[ "$3" != *'['* ]]; then old_send_keyboard "$@"; return; fi
-	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${ISEMPTY}"'"'
-	local one_time=', "one_time_keyboard":true' && [ "$4" != "" ] && one_time=""
-	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"'}' "$MSG_URL"
-	# '"text":"$2", "reply_markup": {"keyboard": [ ${3} ], "one_time_keyboard": true}'
-}
-
-remove_keyboard() {
-	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${ISEMPTY}"'"'
-	sendJson "${1}" "${text}"', "reply_markup": {"remove_keyboard":true}' "$MSG_URL"
-	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
-}
-send_inline_keyboard() {
-	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${ISEMPTY}"'"'
-	sendJson "${1}" "${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]}' "$MSG_URL"
-	# JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
-}
-send_button() {
-	send_inline_keyboard "${1}" "${2}" '[ {"text":"'"${3}"'", "url":"'"${4}"'"}]' 
 }
 
 # usage: sendJson "chat" "JSON" "URL"
@@ -278,7 +157,6 @@ sendJson(){
 		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
-	[[ "${2}" = *"${ISEMPTY}"* ]] && delete_message "${1}" "${BOTSENT[ID]}"
 }
 
 # convert common telegram entities to JSON
@@ -298,82 +176,6 @@ get_file() {
 	local JSON='"file_id": '"${1}"
 	sendJson "" "${JSON}" "${GETFILE_URL}"
 	echo "${URL}/$(echo "${res}" | jsonGetString '"result","file_path"')"
-}
-
-send_file() {
-	[ "$2" = "" ] && return
-	local CAPTION
-	local chat_id=$1
-	local file=$2
-	echo "$file" | grep -qE "$FILE_REGEX" || return
-	local ext="${file##*.}"
-	case $ext in
-        	mp3|flac)
-			CUR_URL=$AUDIO_URL
-			WHAT=audio
-			STATUS=upload_audio
-			CAPTION="$3"
-			;;
-		png|jpg|jpeg|gif)
-			CUR_URL=$PHO_URL
-			WHAT=photo
-			STATUS=upload_photo
-			CAPTION="$3"
-			;;
-		webp)
-			CUR_URL=$STICKER_URL
-			WHAT=sticker
-			STATUS=
-			;;
-		mp4)
-			CUR_URL=$VIDEO_URL
-			WHAT=video
-			STATUS=upload_video
-			CAPTION="$3"
-			;;
-
-		ogg)
-			CUR_URL=$VOICE_URL
-			WHAT=voice
-			STATUS=
-			;;
-		*)
-			CUR_URL=$DOCUMENT_URL
-			WHAT=document
-			STATUS=upload_document
-			CAPTION="$3"
-			;;
-	esac
-	send_action "$chat_id" "$STATUS"
-	res="$(curl -s "$CUR_URL" -F "chat_id=$chat_id" -F "$WHAT=@$file" -F "caption=$CAPTION")"
-}
-
-# typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
-
-send_action() {
-	[ "$2" = "" ] && return
-	sendJson "${1}" '"action": "'"${2}"'"' "$ACTION_URL"
-}
-
-send_location() {
-	[ "$3" = "" ] && return
-	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"'' "$LOCATION_URL"
-}
-
-send_venue() {
-	local add=""
-	[ "$5" = "" ] && return
-	[ "$6" != "" ] && add=', "foursquare_id": '"$6"''
-	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"', "address": "'"${5}"'", "title": "'"${4}"'"'"${add}" "$VENUE_URL"
-}
-
-
-forward_message() {
-	[ "$3" = "" ] && return
-	sendJson "${1}" '"from_chat_id": '"${2}"', "message_id": '"${3}"'' "$FORWARD_URL"
-}
-forward() { # backward compatibility
-	forward_message "$@" || return
 }
 
 # returns true if function exist
@@ -398,7 +200,9 @@ process_client() {
 	fi
 	# Tmux
 	copname="$ME"_"${CHAT[ID]}"
-	source commands.sh
+	# shellcheck source=./commands.sh
+	source "${COMMANDS}" "$1"
+
 	tmpcount="COUNT${CHAT[ID]}"
 	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || echo "$tmpcount">>"${COUNTFILE}"
 	# To get user count execute bash bashbot.sh count

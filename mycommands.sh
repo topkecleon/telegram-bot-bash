@@ -2,24 +2,22 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.80-dev2-2-g0c5e3dd
+#### $$VERSION$$ v0.80-dev2-6-g5b10e75
 #
-# shellcheck disable=SC2154
-# shellcheck disable=SC2034
-
 
 # uncomment the following lines to overwrite info and help messages
 # bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
 #'
 # bashbot_help='*Available commands*:
 #'
+res=""
 
 if [ "$1" = "source" ];then
     # Set INLINE to 1 in order to receive inline queries.
     # To enable this option in your bot, send the /setinline command to @BotFather.
-    INLINE="0"
+    export INLINE="0"
     # Set to .* to allow sending files from all locations
-    FILE_REGEX='/home/user/allowed/.*'
+    export FILE_REGEX='/home/user/allowed/.*'
 
 else
     # your additional bahsbot commands
