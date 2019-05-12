@@ -397,7 +397,7 @@ process_client() {
 	fi
 	# Tmux
 	copname="$ME"_"${CHAT[ID]}"
-	source commands.sh
+	source "${COMMANDS}"
 	tmpcount="COUNT${CHAT[ID]}"
 	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || echo "$tmpcount">>"${COUNTFILE}"
 	# To get user count execute bash bashbot.sh count
