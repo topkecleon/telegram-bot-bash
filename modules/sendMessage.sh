@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-6-g5b10e75
+#### $$VERSION$$ v0.80-dev2-7-g92f022d
 
 # source from commands.sh to use the sendMessage functions
 
@@ -90,7 +90,7 @@ send_file() {
 	local CAPTION
 	local chat_id=$1
 	local file=$2
-	echo "$file" | grep -qE "$FILE_REGEX" || return
+	[[ "$file" =~ $FILE_REGEX ]] || return
 	local ext="${file##*.}"
 	case $ext in
         	mp3|flac)

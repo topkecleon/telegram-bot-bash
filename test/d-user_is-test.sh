@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.80-dev2-1-g0b36bc5
+#### $$VERSION$$ v0.80-dev2-7-g92f022d
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
 source "./ALL-tests.inc.sh"
 
 set -e
+set +f
 
 cd "${TESTDIR}" || exit 1
 
 # source bashbot.sh function, uncomment if you want to test functions
 # shellcheck source=./bashbot.sh
 source "${TESTDIR}/bashbot.sh" source
+# shellcheck source=./bashbot.sh
+source "${TESTDIR}/commands.sh" source 
 
 # start writing your tests here ...
 

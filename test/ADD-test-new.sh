@@ -2,7 +2,7 @@
 #
 # ADD a new test skeleton to test dir, but does not activate test
 #
-#### $$VERSION$$ v0.80-dev2-1-g0b36bc5
+#### $$VERSION$$ v0.80-dev2-7-g92f022d
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -65,6 +65,7 @@ cd "\${TESTDIR}" || exit 1
 # source bashbot.sh function, uncomment if you want to test functions
 # shellcheck source=./bashbot.sh
 # source "\\${TESTDIR}/bashbot.sh" source
+# source "\\${TESTDIR}/commands.sh" source 
 
 # start writing your tests here ...
 

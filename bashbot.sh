@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-6-g5b10e75
+#### $$VERSION$$ v0.80-dev2-7-g92f022d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -385,11 +385,12 @@ else
         local out="$1"
         local remain=""
         local regexp='(.*)\\u[dD]([0-9a-fA-F]{3})\\u[dD]([0-9a-fA-F]{3})(.*)'
+	local W1 W2 U
         while [[ "${out}" =~ $regexp ]] ; do
 		# match 2 \udxxx hex values, calculate new U, then split and replace
-                local W1=$(( ( 0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ))
-                local W2=$(( 0xd${BASH_REMATCH[3]} & 0x3ff ))
-                local U=$(( ( W1 | W2 ) + 0x10000 ))
+                W1=$(( ( 0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ))
+                W2=$(( 0xd${BASH_REMATCH[3]} & 0x3ff ))
+                U=$(( ( W1 | W2 ) + 0x10000 ))
                 remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
                 out="${BASH_REMATCH[1]}"
         done

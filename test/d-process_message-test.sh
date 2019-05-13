@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.80-dev2-1-g0b36bc5
+#### $$VERSION$$ v0.80-dev2-7-g92f022d
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -11,6 +11,8 @@ set -e
 cd "${TESTDIR}" || exit 1
 # shellcheck source=./bashbot.sh
 source "${TESTDIR}/bashbot.sh" source
+# shellcheck source=./bashbot.sh
+source "${TESTDIR}/commands.sh" source 
 
 # overwrite get_file for test
 get_file() {

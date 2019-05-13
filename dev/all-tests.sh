@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
-#### $$VERSION$$ v0.80-dev2-2-g0c5e3dd
+#### $$VERSION$$ v0.80-dev2-7-g92f022d
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -49,8 +49,8 @@ if [ "$fail" -eq 0 ]; then
 else
   /bin/echo -n 'FAILURE '
   exitcode=1
-  rm -rf "${TESTENV}/test"
-  find "${TESTENV}/"* ! -name '[a-z]-*' -delete
+  #rm -rf "${TESTENV}/test"
+  #find "${TESTENV}/"* ! -name '[a-z]-*' -delete
 fi
 
 echo -e "${passed} / ${tests}\\n"

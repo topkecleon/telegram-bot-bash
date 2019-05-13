@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.80-dev2-1-g0b36bc5
+#### $$VERSION$$ v0.80-dev2-7-g92f022d
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -36,6 +36,8 @@ cd "${TESTDIR}" || exit
 
 # shellcheck source=./bashbot.sh
 source "${TESTDIR}/bashbot.sh" source
+source "${TESTDIR}/commands.sh" source 
+
 trap '' EXIT
 cd "${DIRME}" || exit 1
 echo "${SUCCESS}"
