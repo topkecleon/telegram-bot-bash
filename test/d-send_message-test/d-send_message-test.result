@@ -34,12 +34,6 @@ URL:https://api.telegram.org/botbashbottestscript/sendLocation
 chat:123456	JSON:"latitude": la10, "longitude": lo20, "address": "Diagon Alley N. 37", "title": "my home"
 URL:https://api.telegram.org/botbashbottestscript/sendVenue
 
-chat:123456	JSON:"text":"All in one will appear in chat", "reply_markup": {"keyboard": [ [ "Yep, sure" , "No, highly unlikely" ] ] , "one_time_keyboard":true}
-URL:https://api.telegram.org/botbashbottestscript/sendMessage
-
-chat:123456	JSON:"latitude": la10, "longitude": lo20
-URL:https://api.telegram.org/botbashbottestscript/sendLocation
-
 chat:123456	JSON:"text":"# test for new inline button"
 URL:https://api.telegram.org/botbashbottestscript/sendMessage
 

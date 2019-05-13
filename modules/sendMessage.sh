@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-7-g92f022d
+#### $$VERSION$$ v0.80-dev2-9-ga79f97f
 
 # source from commands.sh to use the sendMessage functions
 
@@ -85,12 +85,23 @@ send_button() {
 }
 
 
+UPLOADDIR="${BASHBOT_UPLOAD:-${TMPDIR}/upload}"
+
 send_file() {
 	[ "$2" = "" ] && return
 	local CAPTION
 	local chat_id=$1
 	local file=$2
-	[[ "$file" =~ $FILE_REGEX ]] || return
+	# file access checks ...
+	[[ "$file" = *'..'* ]] && return # no directory traversal
+	[[ "$file" = '.'* ]] && return	# no hidden or relative files
+	if [[ "$file" = '/'* ]] ; then
+		[[ "$file" =~ $FILE_REGEX ]] || return # absulute must match REGEX
+	else
+		file="${UPLOADDIR:-NOUPLOADDIR}/${file}" # othiers must be in UPLOADDIR
+	fi
+	[ -r "$file" ] || return # and file must exits of course
+ 
 	local ext="${file##*.}"
 	case $ext in
         	mp3|flac)
