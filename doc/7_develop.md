@@ -51,6 +51,48 @@ A typical bashbot develop loop looks as follow:
 
 **If you setup your dev environment with hooks and use the scripts above, versioning, addding and testing is done automatically.**
 
+### bash only commands
+We state bashbot is a bash only bot, but this is not true. bashbot is a bash script using bash features PLUS external commands.
+Usually bash is used unix/linux environment where many external (GNU) commands are availible, but if one command is missing, bashbot may not work.
+
+To avoid this and make bashbot working on as many platforms as psossible - from embedded linux to mainframes - I recommed to restrict
+yourself to the commandset and features provided by bash and busybox/toybox.
+See [Bash Builtins](https://www.gnu.org/software/bash/manual/html_node/Shell-Builtin-Commands.html) less as you migth expect and
+[Busybox Builtins](https://busybox.net/downloads/BusyBox.html)
+
+example list of mumimum availible commandsi for bash scripts. Do you find curl on the list?
+```bash
+	.\*, [\*, [[\*, basename, break, builtin\*, bzcat, caller\*, cat, cd\*, chattr,
+	chgrp, chmod, chown, clear, command\*, continue \*, cp, cut, date, declare\*,
+	dc, dd, df, diff, dirname, du, echo\*, ed, eval\*, exec\*, exit \*, expr\*, find,
+	fuser, getopt\*, grep, hash\*, head, hexdump, id, kill, killall, last, length,
+	less, let\*, ln, local\*, logname, ls, lsattr, lsmod, man, mapfile\*, md5sum, mkdir,
+	mkfifo, mknod, more, mv, nice, nohup, passwd, patch, printf\*, ps, pwd\*, read\*,
+	readarray\*, readonly\* return\*, rm, rmdir, sed, seq, sha1sum, sha256sum, sha512sum,
+	shift\*, sleep, source\*, sort, split, stat, strings, su, sync, tail, tar, tee, test,
+	time, times\*, timeout, touch, tr, trap\*, true, umask\*, unix2dos, usleep, uudecode,
+	uuencode, vi, wc, wget, which, who, whoami, xargs, yes
+```
+commands marked with \* are bash builtins, all others are external programms. Calling an external programm is more expensive then using bulitins
+or using an internal replacement. Here are some examples of internal replacement for external commands:
+```bash
+HOST="$(hostname)" -> HOST="$HOSTNAME"
+
+seq 1 100 -> {0..100}
+
+data="$(cat file)" -> data="$(<"file")"
+
+DIR="$(dirname $0) -> DIR=""${0%/*}/""
+
+IAM="($basename $0)" -> IAM="${0##*/}*
+
+VAR="$(( 1 + 2 ))" -> (( var=1+2 ))
+
+INDEX="$(( ${INDEX} + 1 ))" -> (( INDEX++ ))
+
+```
+For more examples see [Pure bash bible](https://github.com/dylanaraps/pure-bash-bible)
+
 ### Prepare a new version
 After some development it may time to create a new version for the users. a new version can be in sub version upgrade, e.g. for fixes and smaller additions or
 a new release version for new features. To mark a new version use ```git tag NEWVERSION``` and run ```dev/version.sh``` to update all version strings.
@@ -145,5 +187,5 @@ fi
 #### [Prev Function Reference](6_reference.md)
 #### [Next Bashbot Environment](8_custom.md)
 
-#### $$VERSION$$ v0.80-dev2-5-gd08d912
+#### $$VERSION$$ v0.80-dev2-10-g5f945e5
 
