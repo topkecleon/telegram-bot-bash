@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-7-g92f022d
+#### $$VERSION$$ v0.80-dev2-11-gb55c171
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -56,18 +56,6 @@ export FILE_REGEX='/home/user/allowed/.*'
 
 
 if [ "${1}" != "source" ];then
-    # this was here from beginning, can some tell me what this is for?
-    # I GUESS it was used to auto send files and locations??
-    # this will be removed!!!
-    if ! tmux ls 2>/dev/null | grep -v send | grep -q "$copname"; then
-		[ ! -z "${URLS[*]}" ] && {
-			curl -s "${URLS[*]}" -o "$NAME"
-			send_file "${CHAT[ID]}" "$NAME" "$CAPTION"
-			rm -f "$NAME"
-		}
-		[ ! -z "${LOCATION[*]}" ] && send_location "${CHAT[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
-    fi
-
     # detect inline commands....
     # no default commands, all processing is done in myinlines()
     if [ "$INLINE" != "0" ] && [ "${iQUERY[ID]}" != "" ]; then

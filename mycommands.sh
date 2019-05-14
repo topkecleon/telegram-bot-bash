@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.80-dev2-6-g5b10e75
+#### $$VERSION$$ v0.80-dev2-11-gb55c171
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -24,7 +24,7 @@ else
     # NOTE: command can have @botname attached, you must add * in case tests... 
     mycommands() {
 
-	case "$MESSAGE" in
+	case "${MESSAGE}" in
 		'/echo'*) # example echo command
 			send_normal_message "${CHAT[ID]}" "$MESSAGE"
 			;;

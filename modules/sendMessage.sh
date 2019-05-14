@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-9-ga79f97f
+#### $$VERSION$$ v0.80-dev2-11-gb55c171
 
 # source from commands.sh to use the sendMessage functions
 
@@ -141,13 +141,12 @@ send_file() {
 			;;
 	esac
 	send_action "$chat_id" "$STATUS"
-	# convert over to sendJson!!
+	# convert over to sendJson!! much better: use sendjson in case above ...
 	# shellcheck disable=SC2034
 	res="$(curl -s "$CUR_URL" -F "chat_id=$chat_id" -F "$WHAT=@$file" -F "caption=$CAPTION")"
 }
 
 # typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
-
 send_action() {
 	[ "$2" = "" ] && return
 	sendJson "${1}" '"action": "'"${2}"'"' "$ACTION_URL"

@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-9-ga79f97f
+#### $$VERSION$$ v0.80-dev2-11-gb55c171
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -119,7 +119,7 @@ elif [ ! -w "${COUNTFILE}" ]; then
 fi
 
 
-BOTTOKEN="$(cat "${TOKENFILE}")"
+BOTTOKEN="$(< "${TOKENFILE}")"
 URL='https://api.telegram.org/bot'$BOTTOKEN
 
 ME_URL=$URL'/getMe'
@@ -129,7 +129,7 @@ GETFILE_URL=$URL'/getFile'
 
 unset USER
 declare -A BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
-export res BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
+export res BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY CAPTION NAME
 
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
 if [ "$1" != "source" ]; then
@@ -314,13 +314,12 @@ start_bot() {
 	[[ "${DEBUG}" = *"debug" ]] && exec &>>"DEBUG.log"
 	[ "${DEBUG}" != "" ] && date && echo "Start BASHBOT in Mode \"${DEBUG}\""
 	[[ "${DEBUG}" = "xdebug"* ]] && set -x 
-	while true; do {
-
+	while true; do
 		UPDATE="$(curl -s "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n)"
 
 		# Offset
 		OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
-		OFFSET=$((OFFSET+1))
+		((OFFSET++))
 
 		if [ "$OFFSET" != "1" ]; then
 			mysleep="100"
@@ -328,16 +327,18 @@ start_bot() {
 		fi
 		# adaptive sleep in ms rounded to next lower second
 		[ "${mysleep}" -gt "999" ] && sleep "${mysleep%???}"
-		mysleep=$((mysleep+addsleep)); [ "${mysleep}" -gt "${maxsleep}" ] && mysleep="${maxsleep}"
-  	}
+		# bash aritmetic
+		((mysleep+= addsleep , mysleep= mysleep>maxsleep ?maxsleep:mysleep))
 	done
 }
 
 # initialize bot environment, user and permissions
 bot_init() {
-	# move tmpdir to datadir
+	# upgrade from old version
 	local OLDTMP="${BASHBOT_VAR:-.}/tmp-bot-bash"
 	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${TMPDIR}"; rmdir "${OLDTMP}"; }
+	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
+	#setup bashbot
 	[[ "$(id -u)" -eq "0" ]] && RUNUSER="nobody"
 	echo -n "Enter User to run basbot [$RUNUSER]: "
 	read -r TOUSER
@@ -365,7 +366,7 @@ getBotName() {
 
 ME="$(getBotName)"
 if [ "$ME" = "" ]; then
-   if [ "$(cat "${TOKENFILE}")" = "bashbottestscript" ]; then
+   if [ "$(< "${TOKENFILE}")" = "bashbottestscript" ]; then
 	ME="bashbottestscript"
    else
 	echo -e "${RED}ERROR: Can't connect to Telegram Bot! May be your TOKEN is invalid ...${NC}"
@@ -407,6 +408,8 @@ if [ "$1" != "source" ]; then
   # internal options only for use from bashbot and developers
   case "$1" in
 	"outproc") # forward output from interactive and jobs to chat
+		[ "$3" = "" ] && echo "No file to read from" && exit 3
+		[ "$2" = "" ] && echo "No chat to send to" && exit 3
 		until [ "$line" = "imprettydarnsuredatdisisdaendofdacmd" ];do
 			line=""
 			read -r -t 10 line

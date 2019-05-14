@@ -34,12 +34,19 @@ As an alternative to download the zip files, you can clone the github repository
 2. [Download latest release zip from github](https://github.com/topkecleon/telegram-bot-bash/releases)
 3. Extract all files to your existing bashbot dir 
    **Note: all files execpt 'mycommands.sh' and 'commands.sh' may overwritten!**
-4. Run ```sudo ./bashbot.sh init``` to setup your environment after the update
+4. Save your your current 'commands.sh' and run ```cp commands.sh.dist commands.sh```
+5. Run ```sudo ./bashbot.sh init``` to setup your environment after the update
+
+If you modified 'commands.sh' re apply all changes to the new 'commands.sh'. To avoid this all your modifications
+must be done in 'mycommands.sh' only.
 
 ### Notes on Updates
 
 #### Location of tmp / data dir
 From version 0.70 on the tmp dir is renamed to 'data-bot-bash' to reflect the fact that not only temporary files are stored. an existing 'tmp-bot-bash' will be automatically renamed after update.
+
+From version 0.60 on your commands must be placed in 'mycommands.sh'. If you update from a version with your commands
+in 'commands.sh' move all your commands and functions to 'mycommands.sh'.
 
 From version 0.50 on the temporary files are no more placed in '/tmp'. instead a dedicated tmp dir is used.
 
@@ -63,5 +70,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v0.80-dev2-1-g0b36bc5
+#### $$VERSION$$ v0.80-dev2-11-gb55c171
 
