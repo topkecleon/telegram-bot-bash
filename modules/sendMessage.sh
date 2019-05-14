@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-11-gb55c171
+#### $$VERSION$$ v0.80-dev2-12-gdf03727
 
 # source from commands.sh to use the sendMessage functions
 
@@ -89,9 +89,8 @@ UPLOADDIR="${BASHBOT_UPLOAD:-${TMPDIR}/upload}"
 
 send_file() {
 	[ "$2" = "" ] && return
-	local CAPTION
-	local chat_id=$1
-	local file=$2
+	local file="$2"
+	local CAPTION=',"caption":"'$3'"'; [ "$3" = "" ] && CAPTION="" 
 	# file access checks ...
 	[[ "$file" = *'..'* ]] && return # no directory traversal
 	[[ "$file" = '.'* ]] && return	# no hidden or relative files
@@ -105,45 +104,40 @@ send_file() {
 	local ext="${file##*.}"
 	case $ext in
         	mp3|flac)
-			CUR_URL=$AUDIO_URL
-			WHAT=audio
-			STATUS=upload_audio
-			CAPTION="$3"
+			CUR_URL="$AUDIO_URL"
+			WHAT="audio"
+			STATUS="upload_audio"
 			;;
 		png|jpg|jpeg|gif)
-			CUR_URL=$PHO_URL
-			WHAT=photo
-			STATUS=upload_photo
-			CAPTION="$3"
+			CUR_URL="$PHO_URL"
+			WHAT="photo"
+			STATUS="upload_photo"
 			;;
 		webp)
-			CUR_URL=$STICKER_URL
-			WHAT=sticker
-			STATUS=
+			CUR_URL="$STICKER_URL"
+			WHAT="sticker"
+			STATUS="upload_photo"
 			;;
 		mp4)
-			CUR_URL=$VIDEO_URL
-			WHAT=video
-			STATUS=upload_video
-			CAPTION="$3"
+			CUR_URL="$VIDEO_URL"
+			WHAT="video"
+			STATUS="upload_video"
 			;;
 
 		ogg)
-			CUR_URL=$VOICE_URL
-			WHAT=voice
-			STATUS=
+			CUR_URL="$VOICE_URL"
+			WHAT="voice"
+			STATUS="upload_audio"
 			;;
 		*)
-			CUR_URL=$DOCUMENT_URL
-			WHAT=document
-			STATUS=upload_document
-			CAPTION="$3"
+			CUR_URL="$DOCUMENT_URL"
+			WHAT="document"
+			STATUS="upload_document"
 			;;
 	esac
-	send_action "$chat_id" "$STATUS"
-	# convert over to sendJson!! much better: use sendjson in case above ...
+	send_action "${1}" "$STATUS"
 	# shellcheck disable=SC2034
-	res="$(curl -s "$CUR_URL" -F "chat_id=$chat_id" -F "$WHAT=@$file" -F "caption=$CAPTION")"
+	sendJson "${1}" '"'"$WHAT"'":"'"$2"'"'"$CAPTION"'"' "$CUR_URL"
 }
 
 # typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location

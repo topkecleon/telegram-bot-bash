@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-11-gb55c171
+#### $$VERSION$$ v0.80-dev2-12-gdf03727
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -64,16 +64,6 @@ if [ ! -f "${TOKENFILE}" ]; then
 	read -r token
 	echo "${token}" > "${TOKENFILE}"
    fi
-fi
-
-JSONSHFILE="${BASHBOT_JSONSH:-${RUNDIR}/JSON.sh/JSON.sh}"
-[[ "${JSONSHFILE}" != *"/JSON.sh" ]] && echo -e "${RED}ERROR: \"${JSONSHFILE}\" ends not with \"JSONS.sh\".${NC}" && exit 3
-
-if [ ! -f "${JSONSHFILE}" ]; then
-	echo "Seems to be first run, Downloading ${JSONSHFILE}..."
-	[[ "${JSONSHFILE}" = "${RUNDIR}/JSON.sh/JSON.sh" ]] && mkdir "JSON.sh" 2>/dev/null;
-	curl -sL -o "${JSONSHFILE}" "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh"
-	chmod +x "${JSONSHFILE}" 
 fi
 
 BOTADMIN="${BASHBOT_ETC:-.}/botadmin"
@@ -144,20 +134,58 @@ if [ "$1" != "source" ]; then
 fi
 
 
+# returns true if command exist
+_exists()
+{
+	[ "$(LC_ALL=C type -t "$1")" = "file" ]
+}
+
+# returns true if function exist
+_is_function()
+{
+	[ "$(LC_ALL=C type -t "$1")" = "function" ]
+}
+
 DELETE_URL=$URL'/deleteMessage'
 delete_message() {
 	sendJson "${1}" 'message_id: '"${2}"'' "${DELETE_URL}"
 }
 
+get_file() {
+	[ "$1" = "" ] && return
+	local JSON='"file_id": '"${1}"
+	sendJson "" "${JSON}" "${GETFILE_URL}"
+	echo "${URL}/$(echo "${res}" | jsonGetString '"result","file_path"')"
+}
+
 # usage: sendJson "chat" "JSON" "URL"
-sendJson(){
+if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
+  # simple curl or wget call, output to stdout
+  getJson(){
+	curl -sL "$1"
+  }
+  sendJson(){
 	local chat="";
 	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
 	res="$(curl -s -d '{'"${chat} $2"'}' -X POST "${3}" \
 		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
-}
+  }
+else
+  # simple curl or wget call outputs result to stdout
+  getJson(){
+	wegt -q -O- "$1"
+  }
+  sendJson(){
+	local chat="";
+	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
+	res="$(wget -q -O- --post-data='{'"${chat} $2"'}' \
+		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
+	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
+	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
+  }
+fi 
 
 # convert common telegram entities to JSON
 # title caption description markup inlinekeyboard
@@ -171,18 +199,49 @@ title2Json(){
 	echo "${title}${caption}${desc}${markup}${keyboard}"
 }
 
-get_file() {
-	[ "$1" = "" ] && return
-	local JSON='"file_id": '"${1}"
-	sendJson "" "${JSON}" "${GETFILE_URL}"
-	echo "${URL}/$(echo "${res}" | jsonGetString '"result","file_path"')"
+# get bot name
+getBotName() {
+	sendJson "" "" "$ME_URL"
+	JsonGetString '"result","username"' <<< "$res"
 }
 
-# returns true if function exist
-_is_function()
-{
-	[ "$(LC_ALL=C type -t "$1")" = "function" ]
+# use phyton JSON to decode JSON UFT-8, provide bash implementaion as fallback
+if [ "${BASHBOT_DECODE}" != "" ] && _exists python ; then
+    JsonDecode() {
+	printf '"%s\\n"' "${1//\"/\\\"}" | python -c 'import json, sys; sys.stdout.write(json.load(sys.stdin).encode("utf-8"))'
+    }
+else
+    # pure bash implementaion, done by KayM (@gnadelwartz)
+    # see https://stackoverflow.com/a/55666449/9381171
+    JsonDecode() {
+        local out="$1"
+        local remain=""
+        local regexp='(.*)\\u[dD]([0-9a-fA-F]{3})\\u[dD]([0-9a-fA-F]{3})(.*)'
+	local W1 W2 U
+        while [[ "${out}" =~ $regexp ]] ; do
+		# match 2 \udxxx hex values, calculate new U, then split and replace
+                W1=$(( ( 0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ))
+                W2=$(( 0xd${BASH_REMATCH[3]} & 0x3ff ))
+                U=$(( ( W1 | W2 ) + 0x10000 ))
+                remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
+                out="${BASH_REMATCH[1]}"
+        done
+        echo -e "${out}${remain}"
+    }
+fi
+
+JsonGetString() {
+	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]"\(.*\)"$/\1/p'
 }
+JsonGetLine() {
+	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]//p'
+}
+JsonGetValue() {
+	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]\([0-9.,]*\).*/\1/p'
+}
+
+################
+# processing of updates starts here
 process_updates() {
 	MAX_PROCESS_NUMBER="$(sed <<< "${UPDATE}" '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')"
 	for ((PROCESS_NUMBER=0; PROCESS_NUMBER<=MAX_PROCESS_NUMBER; PROCESS_NUMBER++)); do
@@ -207,16 +266,6 @@ process_client() {
 	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || echo "$tmpcount">>"${COUNTFILE}"
 	# To get user count execute bash bashbot.sh count
 }
-JsonGetString() {
-	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]"\(.*\)"$/\1/p'
-}
-JsonGetLine() {
-	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]//p'
-}
-JsonGetValue() {
-	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]\([0-9.,]*\).*/\1/p'
-}
-
 process_inline() {
 	local num="${1}"
 	iQUERY[0]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",0,"inline_query","query"')")"
@@ -304,6 +353,8 @@ process_message() {
 	rm "$TMP"
 }
 
+
+#########################
 # main get updates loop, should never terminate
 start_bot() {
 	local DEBUG="$1"
@@ -315,7 +366,7 @@ start_bot() {
 	[ "${DEBUG}" != "" ] && date && echo "Start BASHBOT in Mode \"${DEBUG}\""
 	[[ "${DEBUG}" = "xdebug"* ]] && set -x 
 	while true; do
-		UPDATE="$(curl -s "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n)"
+		UPDATE="$(getJson "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n)"
 
 		# Offset
 		OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
@@ -358,11 +409,15 @@ bot_init() {
 	fi
 }
 
-# get bot name
-getBotName() {
-	sendJson "" "" "$ME_URL"
-	JsonGetString '"result","username"' <<< "$res"
-}
+JSONSHFILE="${BASHBOT_JSONSH:-${RUNDIR}/JSON.sh/JSON.sh}"
+[[ "${JSONSHFILE}" != *"/JSON.sh" ]] && echo -e "${RED}ERROR: \"${JSONSHFILE}\" ends not with \"JSONS.sh\".${NC}" && exit 3
+
+if [ ! -f "${JSONSHFILE}" ]; then
+	echo "Seems to be first run, Downloading ${JSONSHFILE}..."
+	[[ "${JSONSHFILE}" = "${RUNDIR}/JSON.sh/JSON.sh" ]] && mkdir "JSON.sh" 2>/dev/null;
+	getJson "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh" >"${JSONSHFILE}"
+	chmod +x "${JSONSHFILE}" 
+fi
 
 ME="$(getBotName)"
 if [ "$ME" = "" ]; then
@@ -372,31 +427,6 @@ if [ "$ME" = "" ]; then
 	echo -e "${RED}ERROR: Can't connect to Telegram Bot! May be your TOKEN is invalid ...${NC}"
 	exit 1
    fi
-fi
-
-# use phyton JSON to decode JSON UFT-8, provide bash implementaion as fallback
-if [ "${BASHBOT_DECODE}" != "" ] && which python >/dev/null 2>&1 ; then
-    JsonDecode() {
-	printf '"%s\\n"' "${1//\"/\\\"}" | python -c 'import json, sys; sys.stdout.write(json.load(sys.stdin).encode("utf-8"))'
-    }
-else
-    # pure bash implementaion, done by KayM (@gnadelwartz)
-    # see https://stackoverflow.com/a/55666449/9381171
-    JsonDecode() {
-        local out="$1"
-        local remain=""
-        local regexp='(.*)\\u[dD]([0-9a-fA-F]{3})\\u[dD]([0-9a-fA-F]{3})(.*)'
-	local W1 W2 U
-        while [[ "${out}" =~ $regexp ]] ; do
-		# match 2 \udxxx hex values, calculate new U, then split and replace
-                W1=$(( ( 0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ))
-                W2=$(( 0xd${BASH_REMATCH[3]} & 0x3ff ))
-                U=$(( ( W1 | W2 ) + 0x10000 ))
-                remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
-                out="${BASH_REMATCH[1]}"
-        done
-        echo -e "${out}${remain}"
-    }
 fi
 
 # source the script with source as param to use functions in other scripts
