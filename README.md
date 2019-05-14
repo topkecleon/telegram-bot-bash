@@ -12,7 +12,9 @@ Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/cop
 Depends on [tmux](http://github.com/tmux/tmux).
 Uses [JSON.sh](http://github.com/dominictarr/JSON.sh).
 
-Most complete [UTF-8 support for bashbot](doc/4_expert.md#Bashbot-UTF-8-Support) is availible if phyton is installed (optional).
+Even bashbot is written in bash, it depends on commands typically availible in a Unix/Linux Environment.
+More concret on the command set provided by [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or [toybox](https://landley.net/toybox/help.html).
+
 
 Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Downloads](https://github.com/topkecleon/telegram-bot-bash/releases) are availible on www.github.com
 
@@ -105,4 +107,4 @@ Well, thats a damn good question ... may be because I'm an Unix/Linux admin from
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.80-dev2-5-gd08d912
+#### $$VERSION$$ v0.80-dev2-14-gaacdc76

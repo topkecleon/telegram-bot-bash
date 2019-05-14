@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-13-gbce7f1a
+#### $$VERSION$$ v0.80-dev2-14-gaacdc76
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -110,7 +110,7 @@ fi
 
 
 BOTTOKEN="$(< "${TOKENFILE}")"
-URL='https://api.telegram.org/bot'$BOTTOKEN
+URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
 
 ME_URL=$URL'/getMe'
 

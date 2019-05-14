@@ -48,17 +48,31 @@ Full path to JSON.sh script, default: './JSON.sh/JSON.sh', must end with '/JSON.
 
 ### Change config values
 
-#### BASHBOT_DECODE
-Bashbot offers two variants for decoding JSON UTF format to UTF-8. By default bashbot uses 'json.encode' if python is installed.
-If 'BASHBOT_DECODE' is set to any value (not undefined or not empty) the bash only implementation will be used.  
-```bash
-  unset  BASHBOT_DECODE       # autodetect python (default)
-  export BASHBOT_DECODE ""    # autodetect python
+#### BASHBOT_URL
+Uses given URL instead of offical telegram API URL, useful if you have your own telegram server or for testing.
 
-  export BASHBOT_DECODE "yes" # force internal
-  export BASHBOT_DECODE "no"  # also force internal!
+```bash
+  unset  BASHBOT_URL       # use Telegram URL https://api.telegram.org/bot<token> (default)
+
+  export BASHBOT_URL ""    # use use Telegram https://api.telegram.org/bot<token>
+
+  export BASHBOT_URL "https://my.url.com/bot" # use your URL https://my.url.com/bot<token>
+
 ```
 
+#### BASHBOT_TOKEN
+
+#### BASHBOT_WGET
+Bashbot uses ```curl``` to communicate with telegram server. if ```curl``` is not availible ```wget``` is used.
+If 'BASHBOT_WGET' is set to any value (not undefined or not empty) wget is used even is curl is availible.  
+```bash
+  unset  BASHBOT_WGET       # use curl (default)
+  export BASHBOT_WGET ""    # use curl 
+
+  export BASHBOT_WGET "yes" # use wget
+  export BASHBOT_WGET "no"  # use wget!
+
+```
 
 #### BASHBOT_SLEEP
 Instead of polling permanently or with a fixed delay, bashbot offers a simple adaptive polling.
@@ -117,5 +131,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 
 #### [Prev Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.80-dev2-1-g0b36bc5
+#### $$VERSION$$ v0.80-dev2-14-gaacdc76
 
