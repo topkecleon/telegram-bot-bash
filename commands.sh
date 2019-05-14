@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-11-gb55c171
+#### $$VERSION$$ v0.80-dev2-13-gbce7f1a
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -35,6 +35,9 @@ bashbot_help='*Available commands*:
 Written by Drew (@topkecleon), Daniil Gentili (@danogentili) and KayM(@gnadelwartz).
 Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
+# we don't know whom we are ...
+copname=""
+
 
 # load modues on startup and always on on debug
 if [ "${1}" = "source" ] || [[ "${1}" = *"debug"* ]] ; then

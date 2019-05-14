@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-12-gdf03727
+#### $$VERSION$$ v0.80-dev2-13-gbce7f1a
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -205,30 +205,18 @@ getBotName() {
 	JsonGetString '"result","username"' <<< "$res"
 }
 
-# use phyton JSON to decode JSON UFT-8, provide bash implementaion as fallback
-if [ "${BASHBOT_DECODE}" != "" ] && _exists python ; then
-    JsonDecode() {
-	printf '"%s\\n"' "${1//\"/\\\"}" | python -c 'import json, sys; sys.stdout.write(json.load(sys.stdin).encode("utf-8"))'
-    }
-else
-    # pure bash implementaion, done by KayM (@gnadelwartz)
-    # see https://stackoverflow.com/a/55666449/9381171
-    JsonDecode() {
-        local out="$1"
-        local remain=""
-        local regexp='(.*)\\u[dD]([0-9a-fA-F]{3})\\u[dD]([0-9a-fA-F]{3})(.*)'
-	local W1 W2 U
+# pure bash implementaion, done by KayM (@gnadelwartz)
+# see https://stackoverflow.com/a/55666449/9381171
+JsonDecode() {
+        local out="$1" remain="" U=""
+	local regexp='(.*)\\u[dD]([0-9a-fA-F]{3})\\u[dD]([0-9a-fA-F]{3})(.*)'
         while [[ "${out}" =~ $regexp ]] ; do
-		# match 2 \udxxx hex values, calculate new U, then split and replace
-                W1=$(( ( 0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ))
-                W2=$(( 0xd${BASH_REMATCH[3]} & 0x3ff ))
-                U=$(( ( W1 | W2 ) + 0x10000 ))
+		U=$(( ( (0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ) | ( 0xd${BASH_REMATCH[3]} & 0x3ff ) + 0x10000 ))
                 remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
                 out="${BASH_REMATCH[1]}"
         done
         echo -e "${out}${remain}"
-    }
-fi
+}
 
 JsonGetString() {
 	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]"\(.*\)"$/\1/p'
