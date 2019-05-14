@@ -16,10 +16,11 @@ Uses [JSON.sh](http://github.com/dominictarr/JSON.sh).
 
 Even bashbot is written in bash, it depends on commands typically availible in 
 a Unix/Linux Environment.
-More concret on the command set provided by 
+More concret on the common commands provided by 
 [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), 
 [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or 
-[toybox](https://landley.net/toybox/help.html).
+[toybox](https://landley.net/toybox/help.html), see [Developer 
+Notes](doc/7_develop.md#common-commands)
 
 
 Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and 
@@ -152,4 +153,4 @@ health status
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.80-dev2-14-gaacdc76
+#### $$VERSION$$ v0.80-dev2-15-geb0cde5

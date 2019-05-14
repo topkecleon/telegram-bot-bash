@@ -51,27 +51,28 @@ A typical bashbot develop loop looks as follow:
 
 **If you setup your dev environment with hooks and use the scripts above, versioning, addding and testing is done automatically.**
 
-### bash only commands
+### common commands
 We state bashbot is a bash only bot, but this is not true. bashbot is a bash script using bash features PLUS external commands.
 Usually bash is used in a unix/linux environment where many (GNU) commands are availible, but if commands are missing, bashbot may not work.
 
 To avoid this and make bashbot working on as many platforms as possible - from embedded linux to mainframe - I recommed to restrict
-ourself to the commands provided by bash and busybox/toybox.
-See [Bash Builtins](https://www.gnu.org/software/bash/manual/html_node/Shell-Builtin-Commands.html) and
-[Busybox Builtins](https://busybox.net/downloads/BusyBox.html)
+ourself to the common commands provided by bash and coreutils/busybox/toybox.
+See [Bash Builtins](https://www.gnu.org/software/bash/manual/html_node/Shell-Builtin-Commands.html),
+[coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands),
+[busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) and [toybox](https://landley.net/toybox/help.html)
 
-mumimum availible commands in bash and busybox. Do you find curl on the list?
+Availible commands in bash, coreutils, busybox and toybox. Do you find curl on the list?
 ```bash
 	.*, [*, [[*, basename, break, builtin*, bzcat, caller*, cat, cd*, chattr,
 	chgrp, chmod, chown, clear, command*, continue *, cp, cut, date, declare*,
-	dc, dd, df, diff, dirname, du, echo*, ed, eval*, exec*, exit *, expr*, find,
+	dc, dd, df, diff, dirname, du, echo*, eval*, exec*, exit *, expr*, find,
 	fuser, getopt*, grep, hash*, head, hexdump, id, kill, killall, last, length,
 	less, let*, ln, local*, logname, ls, lsattr, lsmod, man, mapfile*, md5sum, mkdir,
 	mkfifo, mknod, more, mv, nice, nohup, passwd, patch, printf*, ps, pwd*, read*,
-	readarray*, readonly* return*, rm, rmdir, sed, seq, sha1sum, sha256sum, sha512sum,
-	shift*, sleep, source*, sort, split, stat, strings, su, sync, tail, tar, tee, test,
-	time, times*, timeout, touch, tr, trap*, true, umask*, unix2dos, usleep, uudecode,
-	uuencode, vi, wc, wget, which, who, whoami, xargs, yes
+	readarray*, readonly* return*, rm, rmdir, sed, seq, sha1sum, shift*, sleep,
+	source*, sort, split, stat, strings, su, sync, tail, tar, tee, test,
+	time, times*, timeout, touch, tr, trap*, true, umask*, usleep, uudecode,
+	uuencode, wc, wget, which, who, whoami, xargs, yes
 ```
 commands marked with \* are bash builtins, all others are external programms. Calling an external programm is more expensive then using bulitins
 or using an internal replacement. Here are some examples of internal replacement for external commands:
@@ -187,5 +188,5 @@ fi
 #### [Prev Function Reference](6_reference.md)
 #### [Next Bashbot Environment](8_custom.md)
 
-#### $$VERSION$$ v0.80-dev2-11-gb55c171
+#### $$VERSION$$ v0.80-dev2-15-geb0cde5
 

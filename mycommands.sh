@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.80-dev2-11-gb55c171
+#### $$VERSION$$ v0.80-dev2-15-geb0cde5
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -31,7 +31,7 @@ else
 		'/question'*) # start interactive questions
 			checkproc 
 			if [ "$res" -gt 0 ] ; then
-				startproc "example/question"
+				startproc "examples/question,sh"
 			else
 				send_normal_message "${CHAT[ID]}" "$MESSAGE already running ..."
 			fi
@@ -40,7 +40,7 @@ else
 		'/run_notify'*) # start notify background job
 			myback="notify"; checkback "$myback"
 			if [ "$res" -gt 0 ] ; then
-				background "example/notify 60" "$myback" # notify every 60 seconds
+				background "examples/notify.sh 60" "$myback" # notify every 60 seconds
 			else
 				send_normal_message "${CHAT[ID]}" "Background command $myback already running ..."
 			fi
