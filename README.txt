@@ -1,8 +1,8 @@
-<h1 align="center"><img 
+<h2><img align="middle" 
 src="https://raw.githubusercontent.com/odb/official-bash-logo/master/assets/Logo
 s/Icons/PNG/64x64.png" >
 Bashbot - A Telegram bot written in bash.
-</h1>
+</h2>
 Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M 
 (@gnadelwartz).
 
@@ -155,4 +155,4 @@ health status
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.80-dev2-16-gd599416
+#### $$VERSION$$ v0.80-dev2-19-g417bc37
