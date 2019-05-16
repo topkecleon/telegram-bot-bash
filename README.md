@@ -107,4 +107,4 @@ Well, thats a damn good question ... may be because I'm an Unix/Linux admin from
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.80-dev2-19-g417bc37
+#### $$VERSION$$ v0.76-0-g6d497d5
