@@ -131,5 +131,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 
 #### [Prev Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.76-0-g6d497d5
+#### $$VERSION$$ v0.76-1-ge8a1fd0
 

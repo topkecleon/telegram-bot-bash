@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.76-0-g6d497d5
+#### $$VERSION$$ v0.76-1-ge8a1fd0
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -30,7 +30,7 @@ if [ "$1" != "source" ];then
 		'/question'*) # start interactive questions
 			checkproc 
 			if [ "$res" -gt 0 ] ; then
-				startproc "examples/question,sh"
+				startproc "examples/question.sh"
 			else
 				send_normal_message "${CHAT[ID]}" "$MESSAGE already running ..."
 			fi
