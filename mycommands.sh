@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.80-dev2-15-geb0cde5
+#### $$VERSION$$ v0.80-dev2-21-gd01addf
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -12,14 +12,13 @@
 #'
 res=""
 
-if [ "$1" = "source" ];then
-    # Set INLINE to 1 in order to receive inline queries.
-    # To enable this option in your bot, send the /setinline command to @BotFather.
-    export INLINE="0"
-    # Set to .* to allow sending files from all locations
-    export FILE_REGEX='/home/user/allowed/.*'
+# Set INLINE to 1 in order to receive inline queries.
+# To enable this option in your bot, send the /setinline command to @BotFather.
+export INLINE="0"
+# Set to .* to allow sending files from all locations
+export FILE_REGEX='/home/user/allowed/.*'
 
-else
+if [ "$1" != "source" ];then
     # your additional bahsbot commands
     # NOTE: command can have @botname attached, you must add * in case tests... 
     mycommands() {
@@ -106,6 +105,7 @@ else
 			answer_inline_query "${iQUERY[ID]}" "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
 			;;
 	esac
+set +x
      }
 
     # place your processing functions here
