@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-15-geb0cde5
+#### $$VERSION$$ v0.80-dev2-20-g412173c
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -155,15 +155,16 @@ get_file() {
 	[ "$1" = "" ] && return
 	local JSON='"file_id": '"${1}"
 	sendJson "" "${JSON}" "${GETFILE_URL}"
-	echo "${URL}/$(echo "${res}" | jsonGetString '"result","file_path"')"
+	jsonGetString <<< "${URL}/""${res}" '"result","file_path"'
 }
 
-# usage: sendJson "chat" "JSON" "URL"
+# curl is preffered, but may not availible on ebedded systems
 if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
   # simple curl or wget call, output to stdout
   getJson(){
 	curl -sL "$1"
   }
+  # usage: sendJson "chat" "JSON" "URL"
   sendJson(){
 	local chat="";
 	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
@@ -175,12 +176,13 @@ if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
 else
   # simple curl or wget call outputs result to stdout
   getJson(){
-	wegt -q -O- "$1"
+	wget -qO - "$1"
   }
+  # usage: sendJson "chat" "JSON" "URL"
   sendJson(){
 	local chat="";
 	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
-	res="$(wget -q -O- --post-data='{'"${chat} $2"'}' \
+	res="$(wget -qO - --post-data='{'"${chat} $2"'}' \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
@@ -382,7 +384,7 @@ bot_init() {
 	echo -n "Enter User to run basbot [$RUNUSER]: "
 	read -r TOUSER
 	[ "$TOUSER" = "" ] && TOUSER="$RUNUSER"
-	if ! compgen -u "$TOUSER" >/dev/null 2>&1; then
+	if ! id "$TOUSER" >/dev/null 2>&1; then
 		echo -e "${RED}User \"$TOUSER\" not found!${NC}"
 		exit 3
 	else
