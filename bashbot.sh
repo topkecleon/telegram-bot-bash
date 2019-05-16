@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev2-21-gd01addf
+#### $$VERSION$$ v0.80-dev2-23-g085d85d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -475,12 +475,10 @@ if [ "$1" != "source" ]; then
 		tmux kill-session -t "$ME" &>/dev/null
 		tmux new-session -d -s "$ME" "bash $SCRIPT startbot" && echo -e "${GREEN}Bot started successfully.${NC}"
 		echo "Tmux session name $ME" || echo -e "${RED}An error occurred while starting the bot. ${NC}"
-		send_markdown_message "${CHAT[ID]}" "*Bot started*"
 		;;
 	"kill")
 		${CLEAR}
 		tmux kill-session -t "$ME" &>/dev/null
-		send_markdown_message "${CHAT[ID]}" "*Bot stopped*"
 		echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
 		;;
 	"background" | "resumeback")
