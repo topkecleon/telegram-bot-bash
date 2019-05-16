@@ -251,7 +251,6 @@ process_client() {
 	copname="$ME"_"${CHAT[ID]}"
 	# shellcheck source=./commands.sh
 	source "${COMMANDS}" "$1"
-
 	tmpcount="COUNT${CHAT[ID]}"
 	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || echo "$tmpcount">>"${COUNTFILE}"
 	# To get user count execute bash bashbot.sh count
