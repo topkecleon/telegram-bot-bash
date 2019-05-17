@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.72-1-g67c47ac
+#### $$VERSION$$ v0.76-1-ge8a1fd0
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -24,18 +24,22 @@ export FAIL="0"
 for file in ${TESTFILES}
 do
 	ls -d "${TESTDIR}/${file}" >>"${LOGFILE}"
-	if ! diff -q "${TESTDIR}/${file}" "${REFDIR}/${file}" >>"${LOGFILE}"; then echo "${NOSUCCESS} Fail diff ${file}!"; FAIL="1"; fi
-	
+	diff -q "${TESTDIR}/${file}" "${REFDIR}/${file}" >>"${LOGFILE}" || { echo "${NOSUCCESS} Fail diff ${file}!"; FAIL="1"; }
 done
 [ "${FAIL}" != "0" ] && exit "${FAIL}"
 echo "${SUCCESS}"
 
-echo "Test Sourcing of bashbot.sh ..."
 trap exit 1 EXIT
 cd "${TESTDIR}" || exit
 
+echo "Test if $JSONSHFILE exists ..."
+[ ! -x "$JSONSHFILE" ] && { echo "${NOSUCCESS} Fail diff ${file}!"; exit 1; }
+
+echo "Test Sourcing of bashbot.sh ..."
 # shellcheck source=./bashbot.sh
 source "${TESTDIR}/bashbot.sh" source
+source "${TESTDIR}/commands.sh" source 
+
 trap '' EXIT
 cd "${DIRME}" || exit 1
 echo "${SUCCESS}"

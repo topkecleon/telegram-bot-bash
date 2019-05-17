@@ -4,7 +4,7 @@
 
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
-#### $$VERSION$$ v0.72-1-g67c47ac
+#### $$VERSION$$ v0.76-1-ge8a1fd0
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
@@ -27,6 +27,7 @@ else
 fi
 
 # output current time every $1 seconds
+date "+* It's %k:%M:%S o' clock ..."
 while sleep $SLEEP
 do
 	date "+* It's %k:%M:%S o' clock ..."

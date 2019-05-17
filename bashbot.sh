@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.72-1-g67c47ac
+#### $$VERSION$$ v0.76-1-ge8a1fd0
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -32,6 +32,7 @@ if [ -t 1 ] && [ "$TERM" != "" ];  then
 fi
 
 # get location and name of bashbot.sh
+export SCRIPT SCRIPTDIR MODULEDIR RUNDIR RUNUSER
 SCRIPT="$0"
 SCRIPTDIR="$(dirname "$0")"
 MODULEDIR="${SCRIPTDIR}/modules"
@@ -63,16 +64,6 @@ if [ ! -f "${TOKENFILE}" ]; then
 	read -r token
 	echo "${token}" > "${TOKENFILE}"
    fi
-fi
-
-JSONSHFILE="${BASHBOT_JSONSH:-${RUNDIR}/JSON.sh/JSON.sh}"
-[[ "${JSONSHFILE}" != *"/JSON.sh" ]] && echo -e "${RED}ERROR: \"${JSONSHFILE}\" ends not with \"JSONS.sh\".${NC}" && exit 3
-
-if [ ! -f "${JSONSHFILE}" ]; then
-	echo "Seems to be first run, Downloading ${JSONSHFILE}..."
-	[[ "${JSONSHFILE}" = "${RUNDIR}/JSON.sh/JSON.sh" ]] && mkdir "JSON.sh" 2>/dev/null;
-	curl -sL -o "${JSONSHFILE}" "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh"
-	chmod +x "${JSONSHFILE}" 
 fi
 
 BOTADMIN="${BASHBOT_ETC:-.}/botadmin"
@@ -118,33 +109,17 @@ elif [ ! -w "${COUNTFILE}" ]; then
 fi
 
 
-BOTTOKEN="$(cat "${TOKENFILE}")"
-URL='https://api.telegram.org/bot'$BOTTOKEN
+BOTTOKEN="$(< "${TOKENFILE}")"
+URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
 
-MSG_URL=$URL'/sendMessage'
-LEAVE_URL=$URL'/leaveChat'
-KICK_URL=$URL'/kickChatMember'
-UNBAN_URL=$URL'/unbanChatMember'
-PHO_URL=$URL'/sendPhoto'
-AUDIO_URL=$URL'/sendAudio'
-DOCUMENT_URL=$URL'/sendDocument'
-STICKER_URL=$URL'/sendSticker'
-VIDEO_URL=$URL'/sendVideo'
-VOICE_URL=$URL'/sendVoice'
-LOCATION_URL=$URL'/sendLocation'
-VENUE_URL=$URL'/sendVenue'
-ACTION_URL=$URL'/sendChatAction'
-FORWARD_URL=$URL'/forwardMessage'
 ME_URL=$URL'/getMe'
-DELETE_URL=$URL'/deleteMessage'
-GETMEMBER_URL=$URL'/getChatMember'
 
 UPD_URL=$URL'/getUpdates?offset='
 GETFILE_URL=$URL'/getFile'
 
 unset USER
-declare -A BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
-export BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
+declare -A BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
+export res BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY CAPTION NAME
 
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
 if [ "$1" != "source" ]; then
@@ -159,126 +134,60 @@ if [ "$1" != "source" ]; then
 fi
 
 
-send_normal_message() {
-	local text="${2}"
-	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'"' "${MSG_URL}"
-		text="${text:4096}"
-	done
+# returns true if command exist
+_exists()
+{
+	[ "$(LC_ALL=C type -t "$1")" = "file" ]
 }
 
-send_markdown_message() {
-	local text="${2}"
-	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdown"' "${MSG_URL}"
-		text="${text:4096}"
-	done
+# returns true if function exist
+_is_function()
+{
+	[ "$(LC_ALL=C type -t "$1")" = "function" ]
 }
 
-send_html_message() {
-	local text="${2}"
-	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"html"' "${MSG_URL}"
-		text="${text:4096}"
-	done
-}
-
+DELETE_URL=$URL'/deleteMessage'
 delete_message() {
 	sendJson "${1}" 'message_id: '"${2}"'' "${DELETE_URL}"
 }
 
-# usage: status="$(get_chat_member_status "chat" "user")"
-get_chat_member_status() {
-	sendJson "$1" 'user_id: '"$2"'' "$GETMEMBER_URL"
-	JsonGetString '"result","status"' <<< "$res"
+get_file() {
+	[ "$1" = "" ] && return
+	local JSON='"file_id": '"${1}"
+	sendJson "" "${JSON}" "${GETFILE_URL}"
+	jsonGetString <<< "${URL}/""${res}" '"result","file_path"'
 }
 
-kick_chat_member() {
-	sendJson "$1" 'user_id: '"$2"'' "$KICK_URL"
-}
-
-unban_chat_member() {
-	sendJson "$1" 'user_id: '"$2"'' "$UNBAN_URL"
-}
-
-leave_chat() {
-	sendJson "$1" "" "$LEAVE_URL"
-}
-
-user_is_creator() {
-	if [ "${1:--}" = "${2:-+}" ] || [ "$(get_chat_member_status "$1" "$2")" = "creator" ]; then return 0; fi
-	return 1 
-}
-
-user_is_admin() {
-	local me; me="$(get_chat_member_status "$1" "$2")"
-	if [ "${me}" = "creator" ] || [ "${me}" = "administrator" ]; then return 0; fi
-	return 1 
-}
-
-user_is_botadmin() {
-	local admin; admin="$(head -n 1 "${BOTADMIN}")"
-	[ "${admin}" = "${1}" ] && return 0
-	[[ "${admin}" = "@*" ]] && [[ "${admin}" = "${2}" ]] && return 0
-	if [ "${admin}" = "?" ]; then echo "${1:-?}" >"${BOTADMIN}"; return 0; fi
-	return 1
-}
-
-user_is_allowed() {
-	local acl="$1"
-	[ "$1" = "" ] && return 1
-	grep -F -xq "${acl}:*:*" <"${BOTACL}" && return 0
-	[ "$2" != "" ] && acl="${acl}:$2"
-	grep -F -xq "${acl}:*" <"${BOTACL}" && return 0
-	[ "$3" != "" ] && acl="${acl}:$3"
-	grep -F -xq "${acl}" <"${BOTACL}"
-}
-
-old_send_keyboard() {
-	local text='"text":"'"${2}"'"'
-	shift 2
-	local keyboard=init
-	OLDIFS=$IFS
-	IFS=$(echo -en "\"")
-	for f in "$@" ;do [ "$f" != " " ] && keyboard="$keyboard, [\"$f\"]";done
-	IFS=$OLDIFS
-	keyboard=${keyboard/init, /}
-	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${keyboard}"' ],"one_time_keyboard": true}' "$MSG_URL"
-}
-
-ISEMPTY="ThisTextIsEmptyAndWillBeDeleted"
-send_keyboard() {
-	if [[ "$3" != *'['* ]]; then old_send_keyboard "$@"; return; fi
-	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${ISEMPTY}"'"'
-	local one_time=', "one_time_keyboard":true' && [ "$4" != "" ] && one_time=""
-	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"'}' "$MSG_URL"
-	# '"text":"$2", "reply_markup": {"keyboard": [ ${3} ], "one_time_keyboard": true}'
-}
-
-remove_keyboard() {
-	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${ISEMPTY}"'"'
-	sendJson "${1}" "${text}"', "reply_markup": {"remove_keyboard":true}' "$MSG_URL"
-	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
-}
-send_inline_keyboard() {
-	local text='"text":"'"${2}"'"'; [ "${2}" = "" ] && text='"text":"'"${ISEMPTY}"'"'
-	sendJson "${1}" "${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]}' "$MSG_URL"
-	# JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
-}
-send_button() {
-	send_inline_keyboard "${1}" "${2}" '[ {"text":"'"${3}"'", "url":"'"${4}"'"}]' 
-}
-
-# usage: sendJson "chat" "JSON" "URL"
-sendJson(){
+# curl is preffered, but may not availible on ebedded systems
+if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
+  # simple curl or wget call, output to stdout
+  getJson(){
+	curl -sL "$1"
+  }
+  # usage: sendJson "chat" "JSON" "URL"
+  sendJson(){
 	local chat="";
 	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
 	res="$(curl -s -d '{'"${chat} $2"'}' -X POST "${3}" \
 		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
-	[[ "${2}" = *"${ISEMPTY}"* ]] && delete_message "${1}" "${BOTSENT[ID]}"
-}
+  }
+else
+  # simple curl or wget call outputs result to stdout
+  getJson(){
+	wget -qO - "$1"
+  }
+  # usage: sendJson "chat" "JSON" "URL"
+  sendJson(){
+	local chat="";
+	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
+	res="$(wget -qO - --post-data='{'"${chat} $2"'}' \
+		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
+	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
+	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
+  }
+fi 
 
 # convert common telegram entities to JSON
 # title caption description markup inlinekeyboard
@@ -292,94 +201,37 @@ title2Json(){
 	echo "${title}${caption}${desc}${markup}${keyboard}"
 }
 
-get_file() {
-	[ "$1" = "" ] && return
-	local JSON='"file_id": '"${1}"
-	sendJson "" "${JSON}" "${GETFILE_URL}"
-	echo "${URL}/$(echo "${res}" | jsonGetString '"result","file_path"')"
+# get bot name
+getBotName() {
+	sendJson "" "" "$ME_URL"
+	JsonGetString '"result","username"' <<< "$res"
 }
 
-send_file() {
-	[ "$2" = "" ] && return
-	local CAPTION
-	local chat_id=$1
-	local file=$2
-	echo "$file" | grep -qE "$FILE_REGEX" || return
-	local ext="${file##*.}"
-	case $ext in
-        	mp3|flac)
-			CUR_URL=$AUDIO_URL
-			WHAT=audio
-			STATUS=upload_audio
-			CAPTION="$3"
-			;;
-		png|jpg|jpeg|gif)
-			CUR_URL=$PHO_URL
-			WHAT=photo
-			STATUS=upload_photo
-			CAPTION="$3"
-			;;
-		webp)
-			CUR_URL=$STICKER_URL
-			WHAT=sticker
-			STATUS=
-			;;
-		mp4)
-			CUR_URL=$VIDEO_URL
-			WHAT=video
-			STATUS=upload_video
-			CAPTION="$3"
-			;;
-
-		ogg)
-			CUR_URL=$VOICE_URL
-			WHAT=voice
-			STATUS=
-			;;
-		*)
-			CUR_URL=$DOCUMENT_URL
-			WHAT=document
-			STATUS=upload_document
-			CAPTION="$3"
-			;;
-	esac
-	send_action "$chat_id" "$STATUS"
-	res="$(curl -s "$CUR_URL" -F "chat_id=$chat_id" -F "$WHAT=@$file" -F "caption=$CAPTION")"
+# pure bash implementaion, done by KayM (@gnadelwartz)
+# see https://stackoverflow.com/a/55666449/9381171
+JsonDecode() {
+        local out="$1" remain="" U=""
+	local regexp='(.*)\\u[dD]([0-9a-fA-F]{3})\\u[dD]([0-9a-fA-F]{3})(.*)'
+        while [[ "${out}" =~ $regexp ]] ; do
+		U=$(( ( (0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ) | ( 0xd${BASH_REMATCH[3]} & 0x3ff ) + 0x10000 ))
+                remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
+                out="${BASH_REMATCH[1]}"
+        done
+        echo -e "${out}${remain}"
 }
 
-# typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
-
-send_action() {
-	[ "$2" = "" ] && return
-	sendJson "${1}" '"action": "'"${2}"'"' "$ACTION_URL"
+JsonGetString() {
+	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]"\(.*\)"$/\1/p'
+}
+JsonGetLine() {
+	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]//p'
+}
+JsonGetValue() {
+	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]\([0-9.,]*\).*/\1/p'
 }
 
-send_location() {
-	[ "$3" = "" ] && return
-	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"'' "$LOCATION_URL"
-}
-
-send_venue() {
-	local add=""
-	[ "$5" = "" ] && return
-	[ "$6" != "" ] && add=', "foursquare_id": '"$6"''
-	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"', "address": "'"${5}"'", "title": "'"${4}"'"'"${add}" "$VENUE_URL"
-}
-
-
-forward_message() {
-	[ "$3" = "" ] && return
-	sendJson "${1}" '"from_chat_id": '"${2}"', "message_id": '"${3}"'' "$FORWARD_URL"
-}
-forward() { # backward compatibility
-	forward_message "$@" || return
-}
-
-# returns true if function exist
-_is_function()
-{
-	[ "$(LC_ALL=C type -t "$1")" = "function" ]
-}
+################
+# processing of updates starts here
 process_updates() {
 	MAX_PROCESS_NUMBER="$(sed <<< "${UPDATE}" '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')"
 	for ((PROCESS_NUMBER=0; PROCESS_NUMBER<=MAX_PROCESS_NUMBER; PROCESS_NUMBER++)); do
@@ -397,19 +249,19 @@ process_client() {
 	fi
 	# Tmux
 	copname="$ME"_"${CHAT[ID]}"
-	source "${COMMANDS}"
+	# shellcheck source=./commands.sh
+	source "${COMMANDS}" "$1"
 	tmpcount="COUNT${CHAT[ID]}"
 	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || echo "$tmpcount">>"${COUNTFILE}"
 	# To get user count execute bash bashbot.sh count
 }
-JsonGetString() {
-	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]"\(.*\)"$/\1/p'
-}
-JsonGetLine() {
-	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]//p'
-}
-JsonGetValue() {
-	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]\([0-9.,]*\).*/\1/p'
+process_inline() {
+	local num="${1}"
+	iQUERY[0]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",0,"inline_query","query"')")"
+	iQUERY[USER_ID]="$(JsonGetValue <<<"${UPDATE}" '"result",'"${num}"',"inline_query","from","id"')"
+	iQUERY[FIRST_NAME]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",'"${num}"',"inline_query","from","first_name"')")"
+	iQUERY[LAST_NAME]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",'"${num}"',"inline_query","from","last_name"')")"
+	iQUERY[USERNAME]="$(JsonDecode "$(JsonGetString <<<"${UPDATE}" '"result",'"${num}"',"inline_query","from","username"')")"
 }
 process_message() {
 	local num="$1"
@@ -490,6 +342,8 @@ process_message() {
 	rm "$TMP"
 }
 
+
+#########################
 # main get updates loop, should never terminate
 start_bot() {
 	local DEBUG="$1"
@@ -500,13 +354,12 @@ start_bot() {
 	[[ "${DEBUG}" = *"debug" ]] && exec &>>"DEBUG.log"
 	[ "${DEBUG}" != "" ] && date && echo "Start BASHBOT in Mode \"${DEBUG}\""
 	[[ "${DEBUG}" = "xdebug"* ]] && set -x 
-	while true; do {
-
-		UPDATE="$(curl -s "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n)"
+	while true; do
+		UPDATE="$(getJson "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n)"
 
 		# Offset
 		OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
-		OFFSET=$((OFFSET+1))
+		((OFFSET++))
 
 		if [ "$OFFSET" != "1" ]; then
 			mysleep="100"
@@ -514,21 +367,23 @@ start_bot() {
 		fi
 		# adaptive sleep in ms rounded to next lower second
 		[ "${mysleep}" -gt "999" ] && sleep "${mysleep%???}"
-		mysleep=$((mysleep+addsleep)); [ "${mysleep}" -gt "${maxsleep}" ] && mysleep="${maxsleep}"
-  	}
+		# bash aritmetic
+		((mysleep+= addsleep , mysleep= mysleep>maxsleep ?maxsleep:mysleep))
 	done
 }
 
 # initialize bot environment, user and permissions
 bot_init() {
-	# move tmpdir to datadir
+	# upgrade from old version
 	local OLDTMP="${BASHBOT_VAR:-.}/tmp-bot-bash"
 	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${TMPDIR}"; rmdir "${OLDTMP}"; }
+	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
+	#setup bashbot
 	[[ "$(id -u)" -eq "0" ]] && RUNUSER="nobody"
 	echo -n "Enter User to run basbot [$RUNUSER]: "
 	read -r TOUSER
 	[ "$TOUSER" = "" ] && TOUSER="$RUNUSER"
-	if ! compgen -u "$TOUSER" >/dev/null 2>&1; then
+	if ! id "$TOUSER" >/dev/null 2>&1; then
 		echo -e "${RED}User \"$TOUSER\" not found!${NC}"
 		exit 3
 	else
@@ -543,44 +398,24 @@ bot_init() {
 	fi
 }
 
-# get bot name
-getBotName() {
-	sendJson "" "" "$ME_URL"
-	JsonGetString '"result","username"' <<< "$res"
-}
+JSONSHFILE="${BASHBOT_JSONSH:-${RUNDIR}/JSON.sh/JSON.sh}"
+[[ "${JSONSHFILE}" != *"/JSON.sh" ]] && echo -e "${RED}ERROR: \"${JSONSHFILE}\" ends not with \"JSONS.sh\".${NC}" && exit 3
+
+if [ ! -f "${JSONSHFILE}" ]; then
+	echo "Seems to be first run, Downloading ${JSONSHFILE}..."
+	[[ "${JSONSHFILE}" = "${RUNDIR}/JSON.sh/JSON.sh" ]] && mkdir "JSON.sh" 2>/dev/null && chmod +w "JSON.sh"
+	getJson "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh" >"${JSONSHFILE}"
+	chmod +x "${JSONSHFILE}" 
+fi
 
 ME="$(getBotName)"
 if [ "$ME" = "" ]; then
-   if [ "$(cat "${TOKENFILE}")" = "bashbottestscript" ]; then
+   if [ "$(< "${TOKENFILE}")" = "bashbottestscript" ]; then
 	ME="bashbottestscript"
    else
 	echo -e "${RED}ERROR: Can't connect to Telegram Bot! May be your TOKEN is invalid ...${NC}"
 	exit 1
    fi
-fi
-
-# use phyton JSON to decode JSON UFT-8, provide bash implementaion as fallback
-if [ "${BASHBOT_DECODE}" != "" ] && which python >/dev/null 2>&1 ; then
-    JsonDecode() {
-	printf '"%s\\n"' "${1//\"/\\\"}" | python -c 'import json, sys; sys.stdout.write(json.load(sys.stdin).encode("utf-8"))'
-    }
-else
-    # pure bash implementaion, done by KayM (@gnadelwartz)
-    # see https://stackoverflow.com/a/55666449/9381171
-    JsonDecode() {
-        local out="$1"
-        local remain=""
-        local regexp='(.*)\\u[dD]([0-9a-fA-F]{3})\\u[dD]([0-9a-fA-F]{3})(.*)'
-        while [[ "${out}" =~ $regexp ]] ; do
-		# match 2 \udxxx hex values, calculate new U, then split and replace
-                local W1=$(( ( 0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ))
-                local W2=$(( 0xd${BASH_REMATCH[3]} & 0x3ff ))
-                local U=$(( ( W1 | W2 ) + 0x10000 ))
-                remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
-                out="${BASH_REMATCH[1]}"
-        done
-        echo -e "${out}${remain}"
-    }
 fi
 
 # source the script with source as param to use functions in other scripts
@@ -592,6 +427,8 @@ if [ "$1" != "source" ]; then
   # internal options only for use from bashbot and developers
   case "$1" in
 	"outproc") # forward output from interactive and jobs to chat
+		[ "$3" = "" ] && echo "No file to read from" && exit 3
+		[ "$2" = "" ] && echo "No chat to send to" && exit 3
 		until [ "$line" = "imprettydarnsuredatdisisdaendofdacmd" ];do
 			line=""
 			read -r -t 10 line
@@ -637,12 +474,10 @@ if [ "$1" != "source" ]; then
 		tmux kill-session -t "$ME" &>/dev/null
 		tmux new-session -d -s "$ME" "bash $SCRIPT startbot" && echo -e "${GREEN}Bot started successfully.${NC}"
 		echo "Tmux session name $ME" || echo -e "${RED}An error occurred while starting the bot. ${NC}"
-		send_markdown_message "${CHAT[ID]}" "*Bot started*"
 		;;
 	"kill")
 		${CLEAR}
 		tmux kill-session -t "$ME" &>/dev/null
-		send_markdown_message "${CHAT[ID]}" "*Bot stopped*"
 		echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
 		;;
 	"background" | "resumeback")

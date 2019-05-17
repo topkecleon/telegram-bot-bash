@@ -5,10 +5,8 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.72-1-g67c47ac
+#### $$VERSION$$ v0.76-1-ge8a1fd0
 #
-# shellcheck disable=SC2154
-# shellcheck disable=SC2034
 
 # adjust your language setting here, e.g.when run from other user or cron.
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
@@ -37,22 +35,23 @@ bashbot_help='*Available commands*:
 Written by Drew (@topkecleon), Daniil Gentili (@danogentili) and KayM(@gnadelwartz).
 Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
+# we don't know whom we are ...
+copname=""
 
-if [ "${1}" != "source" ]; then
-	# load modules needed for commands.sh only
-	# shellcheck source=./modules/aliases.sh
-	[ -r "${MODULEDIR:-.}/aliases.sh" ] && source "${MODULEDIR:-.}/aliases.sh"
-	# shellcheck source=./modules/background.sh
-	[ -r "${MODULEDIR:-.}/background.sh" ] && source "${MODULEDIR:-.}/background.sh"
-else
-	# defaults to no inline and nonsense home dir
-	INLINE="0"
-	FILE_REGEX='/home/user/allowed/.*'
 
-	# load modules needed for bashbot.sh also
-	# shellcheck source=./modules/background.sh
-	[ -r "${MODULEDIR:-.}/inline.sh" ] && source "${MODULEDIR:-.}/inline.sh"
+# load modues on startup and always on on debug
+if [ "${1}" = "source" ] || [[ "${1}" = *"debug"* ]] ; then
+	# load all readable modules
+	for modules in ${MODULEDIR:-.}/*.sh ; do
+		# shellcheck source=./modules/aliases.sh
+		[ -r "${modules}" ] && source "${modules}" "${1}"
+	done
 fi
+
+# defaults to no inline and nonsense home dir
+export INLINE="0"
+export FILE_REGEX='/home/user/allowed/.*'
+
 
 # load mycommands
 # shellcheck source=./commands.sh
@@ -60,24 +59,18 @@ fi
 
 
 if [ "${1}" != "source" ];then
-    if ! tmux ls 2>/dev/null | grep -v send | grep -q "$copname"; then
-		# interactive running?
-		[ ! -z "${URLS[*]}" ] && {
-			curl -s "${URLS[*]}" -o "$NAME"
-			send_file "${CHAT[ID]}" "$NAME" "$CAPTION"
-			rm -f "$NAME"
-		}
-		[ ! -z "${LOCATION[*]}" ] && send_location "${CHAT[ID]}" "${LOCATION[LATITUDE]}" "${LOCATION[LONGITUDE]}"
-
-    fi
-
+    # detect inline commands....
+    # no default commands, all processing is done in myinlines()
     if [ "$INLINE" != "0" ] && [ "${iQUERY[ID]}" != "" ]; then
 	if _is_function process_inline; then
 	    # forward iinline query to optional dispatcher
 	    _is_function myinlines && myinlines
 	fi
+
+    # regular (gobal) commands ...
+    # your commands are in mycommands() 
     else
-	
+
 	case "${MESSAGE}" in
 		################################################
 		# GLOBAL commands start here, edit messages only

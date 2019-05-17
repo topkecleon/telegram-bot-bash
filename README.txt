@@ -1,6 +1,8 @@
-# bashbot
-A Telegram bot written in bash.
-
+<h2><img align="middle" 
+src="https://raw.githubusercontent.com/odb/official-bash-logo/master/assets/Logo
+s/Icons/PNG/64x64.png" >
+Bashbot - A Telegram bot written in bash.
+</h2>
 Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M 
 (@gnadelwartz).
 
@@ -14,9 +16,14 @@ Elsewhere, consider it released under the
 Depends on [tmux](http://github.com/tmux/tmux).
 Uses [JSON.sh](http://github.com/dominictarr/JSON.sh).
 
-Most complete [UTF-8 support for 
-bashbot](doc/4_expert.md#Bashbot-UTF-8-Support) is availible if phyton is 
-installed (optional).
+Even bashbot is written in bash, it depends on commands typically availible in 
+a Unix/Linux Environment.
+More concret on the common commands provided by 
+[coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), 
+[busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or 
+[toybox](https://landley.net/toybox/help.html), see [Developer 
+Notes](doc/7_develop.md#common-commands)
+
 
 Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and 
 [Downloads](https://github.com/topkecleon/telegram-bot-bash/releases) are 
@@ -63,6 +70,17 @@ all](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
     * Bashbot testsuite
 * [Customize bashbot environment](doc/8_custom.md)
 * [Examples](examples/README.md)
+
+
+#### You don't like the many bashbot files?
+At the beginning bashbot was simply the file ```bashbot.sh``` I can copy 
+everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 
+'modules/*.sh' and much more.
+
+Hey no Problem, if you are finished with your cool bot simply run 
+```dev/make-standalone.sh``` to create a stripped down Version containing only
+'bashbot.sh' and 'commands.sh'! For more information see [Create a stripped 
+down Version of your Bot](doc/7_develop.md)
 
 ## Security Considerations
 Running a Telegram Bot means it is connected to the public and you never know 
@@ -137,4 +155,4 @@ health status
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.72-1-g67c47ac
+#### $$VERSION$$ v0.76-1-ge8a1fd0

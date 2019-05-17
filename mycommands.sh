@@ -2,38 +2,35 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.72-1-g67c47ac
+#### $$VERSION$$ v0.76-1-ge8a1fd0
 #
-# shellcheck disable=SC2154
-# shellcheck disable=SC2034
-
 
 # uncomment the following lines to overwrite info and help messages
 # bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
 #'
 # bashbot_help='*Available commands*:
 #'
+res=""
 
-if [ "$1" = "source" ];then
-    # Set INLINE to 1 in order to receive inline queries.
-    # To enable this option in your bot, send the /setinline command to @BotFather.
-    INLINE="0"
-    # Set to .* to allow sending files from all locations
-    FILE_REGEX='/home/user/allowed/.*'
+# Set INLINE to 1 in order to receive inline queries.
+# To enable this option in your bot, send the /setinline command to @BotFather.
+export INLINE="0"
+# Set to .* to allow sending files from all locations
+export FILE_REGEX='/home/user/allowed/.*'
 
-else
+if [ "$1" != "source" ];then
     # your additional bahsbot commands
     # NOTE: command can have @botname attached, you must add * in case tests... 
     mycommands() {
 
-	case "$MESSAGE" in
+	case "${MESSAGE}" in
 		'/echo'*) # example echo command
 			send_normal_message "${CHAT[ID]}" "$MESSAGE"
 			;;
 		'/question'*) # start interactive questions
 			checkproc 
 			if [ "$res" -gt 0 ] ; then
-				startproc "example/question"
+				startproc "examples/question.sh"
 			else
 				send_normal_message "${CHAT[ID]}" "$MESSAGE already running ..."
 			fi
@@ -42,7 +39,7 @@ else
 		'/run_notify'*) # start notify background job
 			myback="notify"; checkback "$myback"
 			if [ "$res" -gt 0 ] ; then
-				background "example/notify 60" "$myback" # notify every 60 seconds
+				background "examples/notify.sh 60" "$myback" # notify every 60 seconds
 			else
 				send_normal_message "${CHAT[ID]}" "Background command $myback already running ..."
 			fi
@@ -64,6 +61,7 @@ else
 	#######################
 	# Inline query examples, do not use them in production (exept image search ;-)
 	# shellcheck disable=SC2128
+	iQUERY="${iQUERY,,}" # all lowercase
 	case "${iQUERY}" in
 		"image "*) # search images with yahoo
 			local search="${iQUERY#* }"
@@ -107,6 +105,7 @@ else
 			answer_inline_query "${iQUERY[ID]}" "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
 			;;
 	esac
+set +x
      }
 
     # place your processing functions here
@@ -116,7 +115,7 @@ else
 	local image result sep="" count="1"
 	result="$(wget --user-agent 'Mozilla/5.0' -qO - "https://images.search.yahoo.com/search/images?p=$1" |  sed 's/</\n</g' | grep "<img src=")"
 	while read -r image; do
-		[ "$count" -gt "9" ] && break
+		[ "$count" -gt "20" ] && break
 		image="${image#* src=\'}"; image="${image%%&pid=*}"
 		[[ "${image}" = *"src="* ]] && continue
 		echo "${sep}"; inline_query_compose "$RANDOM" "photo" "${image}"; sep=","
