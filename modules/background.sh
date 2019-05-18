@@ -5,48 +5,103 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.76-1-ge8a1fd0
+#### $$VERSION$$ v0.80-dev3-0-g31a5d00
 
 # source from commands.sh if you want ro use interactive or background jobs
 
 ######
 # interactive and background functions
 
+# old syntax as aliases
 background() {
-	echo "${CHAT[ID]}:$2:$1" >"${TMPDIR:-.}/${copname:--}$2-back.cmd"
-	startproc "$1" "back-$2-"
+	start_back "${CHAT[ID]}" "$1" "$2"
 }
-
 startproc() {
-	killproc "$2"
-	local fifo="$2${copname}"
-	mkfifo "${TMPDIR:-.}/${fifo}"
-	tmux new-session -d -s "${fifo}" "$1 &>${TMPDIR:-.}/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>${TMPDIR:-.}/${fifo}"
-	tmux new-session -d -s "sendprocess_${fifo}" "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
+	start_proc "${CHAT[ID]}" "$1" "$2"
 }
-
-
 checkback() {
-	checkproc "back-$1-"
+	check_back "${CHAT[ID]}" "$1"
+}
+checkproc() {
+	check_proc "${CHAT[ID]}" "$1"
+}
+killback() {
+	kill_back  "${CHAT[ID]}" "$1"
+}
+killproc() {
+	kill_proc "${CHAT[ID]}" "$1"
 }
 
-checkproc() {
-	tmux ls | grep -q "$1${copname}"
+# internal functions
+# $1 chatid
+# $2 prefix
+fifoname(){
+	echo "$2${ME}_$1"
+}
+
+# $1 pipename
+listproc() {
+	# shellcheck disable=SC2009
+	ps -ef | grep -v grep| grep "$1" | sed 's/\s\+/\t/g' | cut -f 2
+}
+
+# inline and backgound functions
+# $1 chatid
+# $2 program
+# $3 jobname
+start_back() {
+	local fifo; fifo="$(fifoname "$1")"
+	echo "$1:$3:$2" >"${TMPDIR:-.}/${fifo}$3-back.cmd"
+	start_proc "$1" "$2" "back-$3-"
+}
+
+
+# $1 chatid
+# $2 program
+# $3 prefix
+start_proc() {
+	[ "$2" = "" ] && return
+	kill_proc "$1" "$3"
+	local fifo; fifo="$(fifoname "$1" "$3")"
+	mkfifo "${TMPDIR:-.}/${fifo}"
+	( $2 <"${TMPDIR:-.}/${fifo}"  | "${SCRIPT}" outproc "${1}" "${fifo}"; ) &>>"${TMPDIR:-.}/${fifo}.log" &
+	disown -a
+}
+
+
+# $1 chatid
+# $2 jobname
+check_back() {
+	check_proc "$1" "back-$2-"
+}
+
+# $1 chatid
+# $2 prefix
+check_proc() {
+	[ "$(listproc "$(fifoname "$1" "$2")")" != "" ]
 	# shellcheck disable=SC2034
 	res=$?; return $?
 }
 
-killback() {
-	killproc "back-$1-"
-	rm -f "${TMPDIR:-.}/${copname}$1-back.cmd"
+# $1 chatid
+# $2 jobname
+kill_back() {
+	kill_proc "$1" "back-$2-"
+	rm -f "${TMPDIR:-.}/$(fifoname "$1")$2-back.cmd"
 }
 
-killproc() {
-	local fifo="$1${copname}"
-	(tmux kill-session -t "${fifo}"; echo imprettydarnsuredatdisisdaendofdacmd>"${TMPDIR:-.}/${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}")2>/dev/null
+
+# $1 chatid
+# $2 prefix
+kill_proc() {
+	local fifo; fifo="$(fifoname "$1" "$2")"
+	kill -15 "$(listproc "${fifo}")" 2>/dev/null
+	rm -f -r "${TMPDIR:-.}/${fifo}";
 }
 
-inproc() {
-	tmux send-keys -t "$copname" "${MESSAGE[0]} ${URLS[*]}
-"
+# $1 chat
+# $2 message
+forward_interactive() {
+	local fifo; fifo="$(fifoname "$1")"
+	[ -p "${fifo}" ] && echo "$2" >"${fifo}"
 }

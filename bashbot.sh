@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.76-1-ge8a1fd0
+#### $$VERSION$$ v0.80-dev3-0-g31a5d00
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -58,7 +58,6 @@ if [ ! -f "${TOKENFILE}" ]; then
 	echo "Running headless, run ${SCRIPT} init first!"
 	exit 2 
    else
-	${CLEAR}
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NC}"
 	read -r token
@@ -72,7 +71,6 @@ if [ ! -f "${BOTADMIN}" ]; then
 	echo "Running headless, set botadmin to AUTO MODE!"
 	echo '?' > "${BOTADMIN}"
    else
-	${CLEAR}
 	echo -e "${RED}BOTADMIN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR ENTER '?'${NC}"
 	echo -e "${ORANGE}TO MAKE FIRST USER TYPING '/start' TO BOTADMIN${NC}"
@@ -92,7 +90,6 @@ TMPDIR="${BASHBOT_VAR:-.}/data-bot-bash"
 if [ ! -d "${TMPDIR}" ]; then
 	mkdir "${TMPDIR}"
 elif [ ! -w "${TMPDIR}" ]; then
-	${CLEAR}
 	echo -e "${RED}ERROR: Can't write to ${TMPDIR}!.${NC}"
 	ls -ld "${TMPDIR}"
 	exit 2
@@ -102,7 +99,6 @@ COUNTFILE="${BASHBOT_VAR:-.}/count"
 if [ ! -f "${COUNTFILE}" ]; then
 	echo "" >"${COUNTFILE}"
 elif [ ! -w "${COUNTFILE}" ]; then
-	${CLEAR}
 	echo -e "${RED}ERROR: Can't write to ${COUNTFILE}!.${NC}"
 	ls -l "${COUNTFILE}"
 	exit 2
@@ -124,7 +120,6 @@ export res BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
 if [ "$1" != "source" ]; then
 	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
-		${CLEAR}
 		echo -e "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NC}"
 		ls -l "${COMMANDS}"
 		exit 3
@@ -429,11 +424,11 @@ if [ "$1" != "source" ]; then
 	"outproc") # forward output from interactive and jobs to chat
 		[ "$3" = "" ] && echo "No file to read from" && exit 3
 		[ "$2" = "" ] && echo "No chat to send to" && exit 3
-		until [ "$line" = "imprettydarnsuredatdisisdaendofdacmd" ];do
+		while true ;do
 			line=""
 			read -r -t 10 line
-			[ "$line" != "" ] && [ "$line" != "imprettydarnsuredatdisisdaendofdacmd" ] && send_message "$2" "$line"
-		done <"${TMPDIR:-.}/$3"
+			[ "$line" != "" ] && send_message "$2" "$line"
+		done 
 		rm -f -r "${TMPDIR:-.}/$3"
 		exit
 		;;
@@ -470,18 +465,15 @@ if [ "$1" != "source" ]; then
 		while read -r f; do send_markdown_message "${f//COUNT}" "$*"; $sleep; done <"${COUNTFILE}"
 		;;
 	"start")
-		${CLEAR}
 		tmux kill-session -t "$ME" &>/dev/null
 		tmux new-session -d -s "$ME" "bash $SCRIPT startbot" && echo -e "${GREEN}Bot started successfully.${NC}"
 		echo "Tmux session name $ME" || echo -e "${RED}An error occurred while starting the bot. ${NC}"
 		;;
 	"kill")
-		${CLEAR}
 		tmux kill-session -t "$ME" &>/dev/null
 		echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
 		;;
 	"background" | "resumeback")
-		${CLEAR}
 		echo -e "${GREEN}Restart background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
 		    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
@@ -492,33 +484,30 @@ if [ "$1" != "source" ]; then
 			JOB="${RESTART#*:}"
 			PROG="${JOB#*:}"
 			JOB="${JOB%:*}"
-			fifo="back-${JOB}-${ME}_${CHAT[ID]}" # compose fifo from jobname, $ME (botname) and CHAT[ID] 
+			fifo="$(fifoname "${CHAT[ID]}" "back-${JOB}")" 
 			echo "restartbackground  ${PROG}  ${fifo}"
-			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}") 2>/dev/null
-			mkfifo "${TMPDIR:-.}/${fifo}"
-			tmux new-session -d -s "${fifo}" "${PROG} &>${TMPDIR:-.}/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>${TMPDIR:-.}/${fifo}"
-			tmux new-session -d -s "sendprocess_${fifo}" "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
+			start_back "${CHAT[ID]}" "${PROG}" "${JOB}"
 		    fi
 		done
 		;;
 	"killback" | "suspendback")
-		${CLEAR}
 		echo -e "${GREEN}Stopping background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
 		    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes.${NC}"; break
 		    else
 			REMOVE="$(< "${FILE}")"
+			CHAT[ID]="${RESTART%%:*}"
 			JOB="${REMOVE#*:}"
-			fifo="back-${JOB%:*}-${ME}_${REMOVE%%:*}"
+			JOB="${JOB%:*}"
+			fifo="$(fifoname "${CHAT[ID]}" "back-${JOB}")"
 			echo "killbackground  ${fifo}"
 			[ "$1" = "killback" ] && rm -f "${FILE}" # remove job
-			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}") 2>/dev/null
+			kill_proc "${CHAT[ID]}" "back-${JOB}"
 		    fi
 		done
 		;;
 	"help")
-		${CLEAR}
 		less "README.txt"
 		exit
 		;;
