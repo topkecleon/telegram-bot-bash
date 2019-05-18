@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev3-0-g31a5d00
+#### $$VERSION$$ v0.80-dev3-1-gbccd064
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -424,12 +424,11 @@ if [ "$1" != "source" ]; then
 	"outproc") # forward output from interactive and jobs to chat
 		[ "$3" = "" ] && echo "No file to read from" && exit 3
 		[ "$2" = "" ] && echo "No chat to send to" && exit 3
-		while true ;do
-			line=""
-			read -r -t 10 line
+		while read -r -t 10 line ;do
 			[ "$line" != "" ] && send_message "$2" "$line"
 		done 
 		rm -f -r "${TMPDIR:-.}/$3"
+		[ -s "${TMPDIR:-.}/$3.log" ] || rm -f "${TMPDIR:-.}/$3.log"
 		exit
 		;;
 	"startbot" )

@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev3-0-g31a5d00
+#### $$VERSION$$ v0.80-dev3-1-gbccd064
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -50,8 +50,8 @@ listproc() {
 # $2 program
 # $3 jobname
 start_back() {
-	local fifo; fifo="$(fifoname "$1")"
-	echo "$1:$3:$2" >"${TMPDIR:-.}/${fifo}$3-back.cmd"
+	local fifo; fifo="${TMPDIR:-.}/$(fifoname "$1")"
+	echo "$1:$3:$2" >"${fifo}$3-back.cmd"
 	start_proc "$1" "$2" "back-$3-"
 }
 
@@ -62,9 +62,12 @@ start_back() {
 start_proc() {
 	[ "$2" = "" ] && return
 	kill_proc "$1" "$3"
-	local fifo; fifo="$(fifoname "$1" "$3")"
-	mkfifo "${TMPDIR:-.}/${fifo}"
-	( $2 <"${TMPDIR:-.}/${fifo}"  | "${SCRIPT}" outproc "${1}" "${fifo}"; ) &>>"${TMPDIR:-.}/${fifo}.log" &
+	local fifo; fifo="${TMPDIR:-.}/$(fifoname "$1" "$3")"
+	mkfifo "${fifo}"
+	{ set -f
+	  # shellcheck disable=SC2002
+	  cat "${fifo}" | $2 | "${SCRIPT}" outproc "${1}" "${fifo}"
+	} &>>"${fifo}.log" &
 	disown -a
 }
 
@@ -96,12 +99,14 @@ kill_back() {
 kill_proc() {
 	local fifo; fifo="$(fifoname "$1" "$2")"
 	kill -15 "$(listproc "${fifo}")" 2>/dev/null
-	rm -f -r "${TMPDIR:-.}/${fifo}";
+	fifo="${TMPDIR:-.}/${fifo}"
+	[ -s "${fifo}.log" ] || rm -f "${fifo}.log"
+	[ -p "${fifo}" ] && rm -f "${fifo}";
 }
 
 # $1 chat
 # $2 message
 forward_interactive() {
-	local fifo; fifo="$(fifoname "$1")"
+	local fifo; fifo="${TMPDIR:-.}/$(fifoname "$1")"
 	[ -p "${fifo}" ] && echo "$2" >"${fifo}"
 }
