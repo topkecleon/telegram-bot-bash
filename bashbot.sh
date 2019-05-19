@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev3-4-ge7d2eff
+#### $$VERSION$$ v0.80-dev3-5-g83623ec
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -392,7 +392,7 @@ bot_init() {
 	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${TMPDIR}"; rmdir "${OLDTMP}"; }
 	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
 	#setup bashbot
-	[[ "$(id -u)" -eq "0" ]] && RUNUSER="nobody"
+	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
 	echo -n "Enter User to run basbot [$RUNUSER]: "
 	read -r TOUSER
 	[ "$TOUSER" = "" ] && TOUSER="$RUNUSER"
@@ -460,15 +460,14 @@ if [ "$1" != "source" ]; then
 		bot_init
 		exit
 		;;
-	"attach")
-		tmux attach -t "$ME"
-		exit
-		;;
   esac
 
 
   ###############
   # "official" arguments as shown to users
+  SESSION="$ME-startbot"
+  BOTPID="$(proclist "${SESSION}")"
+
   case "$1" in
 	"count")
 		echo "A total of $(wc -l <"${COUNTFILE}") users used me."
@@ -481,46 +480,75 @@ if [ "$1" != "source" ]; then
 		shift
 		while read -r f; do send_markdown_message "${f//COUNT}" "$*"; $sleep; done <"${COUNTFILE}"
 		;;
+	"status")
+		if [ "${BOTPID}" != "" ]; then
+			echo -e "${GREEN}Bot is running.${NC}"
+			exit
+		else
+			echo -e "${ORANGE}Bot not running.${NC}"
+			exit 5
+		fi
+		;;
+		 
 	"start")
-		tmux kill-session -t "$ME" &>/dev/null
-		tmux new-session -d -s "$ME" "bash $SCRIPT startbot" && echo -e "${GREEN}Bot started successfully.${NC}"
-		echo "Tmux session name $ME" || echo -e "${RED}An error occurred while starting the bot. ${NC}"
+		# shellcheck disable=SC2086
+		[ "${BOTPID}" != "" ] && kill ${BOTPID}
+		nohup "$SCRIPT" "startbot" "$2" "${SESSION}" &>/dev/null &
+		echo "Session Name: ${SESSION}"
+		if [ "$(proclist "${SESSION}")" != "" ]; then
+		 	echo -e "${GREEN}Bot started successfully.${NC}"
+		else
+			echo -e "${RED}An error occurred while starting the bot.${NC}"
+			exit 5
+		fi
 		;;
-	"kill")
-		tmux kill-session -t "$ME" &>/dev/null
-		echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
+	"kill"|"stop")
+		if [ "${BOTPID}" != "" ]; then
+			# shellcheck disable=SC2086
+			if kill ${BOTPID}; then
+				echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
+			else
+				echo -e "${RED}An error occured while stopping bot.${NC}"
+				exit 5
+			fi
+		fi
+		exit
 		;;
-	"background" | "resumeback")
+	"backgr"* | "resumeb"*)
 		echo -e "${GREEN}Restart background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
 		    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes to start.${NC}"; break
 		    else
-			RESTART="$(< "${FILE}")"
-			CHAT[ID]="${RESTART%%:*}"
-			JOB="${RESTART#*:}"
+			CONTENT="$(< "${FILE}")"
+			CHAT[ID]="${CONTENT%%:*}"
+			JOB="${CONTENT#*:}"
 			PROG="${JOB#*:}"
 			JOB="${JOB%:*}"
-			fifo="$(fifoname "${CHAT[ID]}" "back-${JOB}")" 
-			echo "restartbackground  ${PROG}  ${fifo}"
+			fifo="$(procname "${CHAT[ID]}" "back-${JOB}-")" 
+			echo "restart background job ${PROG}  ${fifo}"
 			start_back "${CHAT[ID]}" "${PROG}" "${JOB}"
 		    fi
 		done
 		;;
-	"killback" | "suspendback")
+	"killb"* | "suspendb"*)
 		echo -e "${GREEN}Stopping background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
 		    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
 			echo -e "${RED}No background processes.${NC}"; break
 		    else
-			REMOVE="$(< "${FILE}")"
-			CHAT[ID]="${RESTART%%:*}"
-			JOB="${REMOVE#*:}"
+			CONTENT="$(< "${FILE}")"
+			CHAT[ID]="${CONTENT%%:*}"
+			JOB="${CONTENT#*:}"
 			JOB="${JOB%:*}"
-			fifo="$(fifoname "${CHAT[ID]}" "back-${JOB}")"
-			echo "killbackground  ${fifo}"
-			[ "$1" = "killback" ] && rm -f "${FILE}" # remove job
-			kill_proc "${CHAT[ID]}" "back-${JOB}"
+			fifo="$(procname "${CHAT[ID]}" "back-${JOB}-")"
+			if [[ "$1" = "killb"* ]]; then
+				rm -f "${FILE}" # remove job
+				echo "kill background job  ${fifo}"
+			else
+				echo "suspend background job  ${fifo}"
+			fi
+			kill_proc "${CHAT[ID]}" "back-${JOB}-"
 		    fi
 		done
 		;;
@@ -530,13 +558,13 @@ if [ "$1" != "source" ]; then
 		;;
 	*)
 		echo -e "${RED}${ME}: BAD REQUEST${NC}"
-		echo -e "${RED}Available arguments: start, kill, count, broadcast, help, suspendback, resumeback, killback${NC}"
+		echo -e "${RED}Available arguments: start, stop, kill, status, count, broadcast, help, suspendback, resumeback, killback${NC}"
 		exit 4
 		;;
   esac
 
   # warn if root
-  if [[ "$(id -u)" -eq "0" ]] ; then
+  if [[ "${UID}" -eq "0" ]] ; then
 	echo -e "\\n${ORANGE}WARNING: ${SCRIPT} was started as ROOT (UID 0)!${NC}"
 	echo -e "${ORANGE}You are at HIGH RISK when processing user input with root privilegs!${NC}"
   fi

@@ -13,8 +13,7 @@ Elsewhere, consider it released under the
 [WTFPLv2](http://www.wtfpl.net/txt/copying/).
 
 ## Prerequisites
-Depends on [tmux](http://github.com/tmux/tmux).
-Uses [JSON.sh](http://github.com/dominictarr/JSON.sh).
+Uses [JSON.sh](http://github.com/dominictarr/JSON.sh), but no more TMUX.
 
 Even bashbot is written in bash, it depends on commands typically availible in 
 a Unix/Linux Environment.
@@ -155,4 +154,4 @@ health status
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.80-dev3-0-g31a5d00
+#### $$VERSION$$ v0.80-dev3-5-g83623ec
