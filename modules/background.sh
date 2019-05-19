@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev3-3-ga3c0d31
+#### $$VERSION$$ v0.80-dev3-4-ge7d2eff
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -48,12 +48,11 @@ start_back() {
 # $3 prefix
 start_proc() {
 	[ "$2" = "" ] && return
-	kill_proc "$1" "$3"
 	local fifo; fifo="${TMPDIR:-.}/$(procname "$1" "$3")"
+	kill_proc "$1" "$3"
 	mkfifo "${fifo}"
-	nohup bash -c "{ set -f; exec 3>\"${fifo}\" &
-	  cat \"${fifo}\" | $2 \"\" \"\" \"$fifo\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"
-	}" &>>"${fifo}.log" &
+	nohup bash -c "{ tail -f  \"${fifo}\" | $2 \"\" \"\" \"$fifo\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"
+			 rm \"${fifo}\"; [ -s \"${fifo}.log\" ] || rm -f \"${fifo}.log\"; }" &>>"${fifo}.log" &
 }
 
 

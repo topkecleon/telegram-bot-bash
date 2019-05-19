@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev3-3-ga3c0d31
+#### $$VERSION$$ v0.80-dev3-4-ge7d2eff
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -253,16 +253,16 @@ process_client() {
 	local num="$1" debug="$2" 
 	iQUERY[ID]="$(JsonGetString <<<"${UPDATE}" '"result",'"${num}"',"inline_query","id"')"
 	if [ "${iQUERY[ID]}" = "" ]; then
-		[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE$'\\n'" >>"MESSAGE.log"
+		[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"MESSAGE.log"
 		process_message "${num}" "${debug}"
 	else
-		[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE$'\\n'" >>"INLINE.log"
+		[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"INLINE.log"
 		[ "$INLINE" != "0" ] && _is_function process_inline && process_inline "${num}" "${debug}"
 	fi
 	# shellcheck source=./commands.sh
 	source "${COMMANDS}" "${debug}"
 	tmpcount="COUNT${CHAT[ID]}"
-	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || cat <<< "$tmpcount$'\\n'" >>"${COUNTFILE}"
+	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || cat <<< "$tmpcount" >>"${COUNTFILE}"
 	# To get user count execute bash bashbot.sh count
 }
 process_inline() {
@@ -276,7 +276,7 @@ process_inline() {
 process_message() {
 	local num="$1"
 	local TMP="${TMPDIR:-.}/$RANDOM$RANDOM-MESSAGE"
-	cat <<< "$UPDATE$'\\n'" >"$TMP"
+	cat <<< "$UPDATE" >"$TMP"
 	# Message
 	MESSAGE[0]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","text"' <"$TMP")" | sed 's#\\/#/#g')"
 	MESSAGE[ID]="$(JsonGetValue '"result",'"${num}"',"message","message_id"' <"$TMP" )"
