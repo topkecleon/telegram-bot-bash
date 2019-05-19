@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev3-2-ga1a823b
+#### $$VERSION$$ v0.80-dev3-3-ga3c0d31
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -51,11 +51,9 @@ start_proc() {
 	kill_proc "$1" "$3"
 	local fifo; fifo="${TMPDIR:-.}/$(procname "$1" "$3")"
 	mkfifo "${fifo}"
-	{ set -f
-	  # shellcheck disable=SC2002
-	  cat "${fifo}" | $2 | "${SCRIPT}" outproc "${1}" "${fifo}"
-	} &>>"${fifo}.log" &
-	disown -a
+	nohup bash -c "{ set -f; exec 3>\"${fifo}\" &
+	  cat \"${fifo}\" | $2 \"\" \"\" \"$fifo\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"
+	}" &>>"${fifo}.log" &
 }
 
 
@@ -84,9 +82,12 @@ kill_back() {
 # $1 chatid
 # $2 prefix
 kill_proc() {
-	local fifo; fifo="$(procname "$1" "$2")"
-	kill -15 "$(proclist "${fifo}")" 2>/dev/null
+	local fifo prid
+	fifo="$(procname "$1" "$2")"
+	prid="$(proclist "${fifo}")"
 	fifo="${TMPDIR:-.}/${fifo}"
+	# shellcheck disable=SC2086
+	[ "${prid}" != "" ] && kill ${prid}
 	[ -s "${fifo}.log" ] || rm -f "${fifo}.log"
 	[ -p "${fifo}" ] && rm -f "${fifo}";
 }
