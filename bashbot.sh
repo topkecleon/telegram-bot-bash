@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev3-5-g83623ec
+#### $$VERSION$$ v0.80-dev3-6-gbeb77a4
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -391,6 +391,9 @@ bot_init() {
 	local OLDTMP="${BASHBOT_VAR:-.}/tmp-bot-bash"
 	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${TMPDIR}"; rmdir "${OLDTMP}"; }
 	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
+	# shellcheck disable=SC2009
+	oldbot="$(ps -ef | grep startbot | grep -v -e 'grep' -e '\-startbot' )"
+	[ "${oldbot}" != "" ] && echo -e "${ORANGE}Warning: Old TMUX bot is running! You must kill it manually first:${NC}\\n$${oldbot}" && exit 5
 	#setup bashbot
 	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
 	echo -n "Enter User to run basbot [$RUNUSER]: "
@@ -442,7 +445,7 @@ if [ "$1" != "source" ]; then
 	"outproc") # forward output from interactive and jobs to chat
 		[ "$3" = "" ] && echo "No file to read from" && exit 3
 		[ "$2" = "" ] && echo "No chat to send to" && exit 3
-		while read -r -t 10 line ;do
+		while read -r line ;do
 			[ "$line" != "" ] && send_message "$2" "$line"
 		done 
 		rm -f -r "${TMPDIR:-.}/$3"
