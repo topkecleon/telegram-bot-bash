@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev3-1-gbccd064
+#### $$VERSION$$ v0.80-dev3-2-ga1a823b
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -58,6 +58,7 @@ if [ ! -f "${TOKENFILE}" ]; then
 	echo "Running headless, run ${SCRIPT} init first!"
 	exit 2 
    else
+	${CLEAR}
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NC}"
 	read -r token
@@ -71,6 +72,7 @@ if [ ! -f "${BOTADMIN}" ]; then
 	echo "Running headless, set botadmin to AUTO MODE!"
 	echo '?' > "${BOTADMIN}"
    else
+	${CLEAR}
 	echo -e "${RED}BOTADMIN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR ENTER '?'${NC}"
 	echo -e "${ORANGE}TO MAKE FIRST USER TYPING '/start' TO BOTADMIN${NC}"
@@ -128,6 +130,19 @@ if [ "$1" != "source" ]; then
 	source "${COMMANDS}" "source"
 fi
 
+
+# internal functions
+# $1 postfix, e.g. chatid
+# $2 prefix, back- or startbot-
+procname(){
+	echo "$2${ME}_$1"
+}
+
+# $1 proc name
+proclist() {
+	# shellcheck disable=SC2009
+	ps -ef | grep -v grep| grep "$1" | sed 's/\s\+/\t/g' | cut -f 2
+}
 
 # returns true if command exist
 _exists()
@@ -228,26 +243,26 @@ JsonGetValue() {
 ################
 # processing of updates starts here
 process_updates() {
-	MAX_PROCESS_NUMBER="$(sed <<< "${UPDATE}" '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')"
-	for ((PROCESS_NUMBER=0; PROCESS_NUMBER<=MAX_PROCESS_NUMBER; PROCESS_NUMBER++)); do
-		process_client "$1"
+	local max num debug="$1"
+	max="$(sed <<< "${UPDATE}" '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')"
+	for ((num=0; num<=max; num++)); do
+		process_client "$num" "${debug}"
 	done
 }
 process_client() {
-	iQUERY[ID]="$(JsonGetString <<<"${UPDATE}" '"result",'"${PROCESS_NUMBER}"',"inline_query","id"')"
+	local num="$1" debug="$2" 
+	iQUERY[ID]="$(JsonGetString <<<"${UPDATE}" '"result",'"${num}"',"inline_query","id"')"
 	if [ "${iQUERY[ID]}" = "" ]; then
-		[[ "$1" = *"debug"* ]] && echo "$UPDATE" >>"MESSAGE.log"
-		process_message "$PROCESS_NUMBER" "$1"
+		[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE$'\\n'" >>"MESSAGE.log"
+		process_message "${num}" "${debug}"
 	else
-		[[ "$1" = *"debug"* ]] && echo "$UPDATE" >>"INLINE.log"
-		[ "$INLINE" != "0" ] && _is_function process_inline && process_inline "$PROCESS_NUMBER" "$1"
+		[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE$'\\n'" >>"INLINE.log"
+		[ "$INLINE" != "0" ] && _is_function process_inline && process_inline "${num}" "${debug}"
 	fi
-	# Tmux
-	copname="$ME"_"${CHAT[ID]}"
 	# shellcheck source=./commands.sh
-	source "${COMMANDS}" "$1"
+	source "${COMMANDS}" "${debug}"
 	tmpcount="COUNT${CHAT[ID]}"
-	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || echo "$tmpcount">>"${COUNTFILE}"
+	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || cat <<< "$tmpcount$'\\n'" >>"${COUNTFILE}"
 	# To get user count execute bash bashbot.sh count
 }
 process_inline() {
@@ -261,7 +276,7 @@ process_inline() {
 process_message() {
 	local num="$1"
 	local TMP="${TMPDIR:-.}/$RANDOM$RANDOM-MESSAGE"
-	echo "$UPDATE" >"$TMP"
+	cat <<< "$UPDATE$'\\n'" >"$TMP"
 	# Message
 	MESSAGE[0]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","text"' <"$TMP")" | sed 's#\\/#/#g')"
 	MESSAGE[ID]="$(JsonGetValue '"result",'"${num}"',"message","message_id"' <"$TMP" )"
@@ -333,7 +348,7 @@ process_message() {
 	# Location
 	LOCATION[LONGITUDE]="$(JsonGetValue '"result",'"${num}"',"message","location","longitude"' <"$TMP")"
 	LOCATION[LATITUDE]="$(JsonGetValue '"result",'"${num}"',"message","location","latitude"' <"$TMP")"
-	NAME="$(echo "${URLS[*]}" | sed 's/.*\///g')"
+	NAME="$(sed 's/.*\///g' <<< "${URLS[*]}")"
 	rm "$TMP"
 }
 
