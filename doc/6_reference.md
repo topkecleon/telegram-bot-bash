@@ -330,20 +330,24 @@ see [InlineQueryResult for more information](https://core.telegram.org/bots/api#
 ### Background and Interactive jobs
 You must include  ```source modules/background.sh``` in 'commands.sh' to have the following functions availible.
 
-##### startproc
+##### start_proc
 ```startproc``` starts a script, the output of the script is sent to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
 
-*usage:* startproc "script"
+*usage:* start_proc "${CHAT[ID]}" "script"
+
+*alias:* startproc "${CHAT[ID]}" "script"
 
 *example:* 
 ```bash
 startproc 'examples/calc.sh'
 ```
 
-##### checkproc
+##### check_proc
 Return true (0) if an interactive script is running in the chat. 
 
-*usage:* checkprog
+*usage:* check_prog "${CHAT[ID]}"
+
+*alias:* checkprog 
 
 *example:* 
 ```bash
@@ -355,10 +359,12 @@ else
 fi
 ```
 
-##### killproc
+##### kill_proc
 Kill the interactive script running in the chat
 
-*usage:* killproc
+*usage:* kill_proc "${CHAT[ID]}"
+
+*alias:* killproc
 
 *example:* 
 ```bash
@@ -372,22 +378,26 @@ fi
 
 ----
 
-##### background
+##### start_back
 Starts a script as a background job and attaches a jobname to it. All output from a background job is sent to the associated chat.
 
 In contrast to interactive chats, background jobs do not recieve user input and can run forever. In addition you can suspend and restart running jobs, e.g. after reboot.
 
-*usage:* background "script" "jobname"
+*usage:* start_back "${CHAT[ID]}" "script" "jobname"
+
+*alias:* background "script" "jobname"
 
 *example:* 
 ```bash
 background "examples/notify.sh" "notify"
 ```
 
-##### checkback
+##### check_back
 Return true (0) if an background job is active in the given chat. 
 
-*usage:*  checkback "jobname"
+*usage:*  check_back "${CHAT[ID]}" "jobname"
+
+*alias:*  checkback "jobname"
 
 *example:* 
 ```bash
@@ -400,8 +410,11 @@ else
 fi
 ```
 
-##### killback
-*usage:* killback "jobname"
+##### kill_back
+
+*usage:* kill_back "${CHAT[ID]}" "jobname"
+
+*alias:* killback "jobname"
 
 *example:* 
 ```bash
@@ -525,6 +538,16 @@ You must include  ```source modules/aliases.sh``` in 'commands.sh' to have the f
 
 ### Helper functions
 
+##### _exists
+Returns true if the given function exist, can be used to check if a module is loaded.
+
+*usage* _exists command
+
+*example:* 
+```bash
+_exists "curl" && _message "Command curl is not installed!"
+```
+
 ##### _is_function
 Returns true if the given function exist, can be used to check if a module is loaded.
 
@@ -535,10 +558,21 @@ Returns true if the given function exist, can be used to check if a module is lo
 _is_function "background" && _message "you can run background jobs!"
 ```
 
+
 ----
 
 ### Bashbot internal functions
 These functions are for internal use only and must not used in your bot commands.
+
+##### procname
+Returns PrefixBotname-Postfix
+
+*usage:* procname postfix prefix
+
+##### proclist
+Returns process IDs from ps -ef containing procname
+
+*usage:* proclist procname
 
 ##### get_file
 *usage:* url="$(get_file "${CHAT[ID]}" "message")"
@@ -592,5 +626,5 @@ Send Input from Telegram to waiting Interactive Chat.
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.80-dev3-0-g31a5d00
+#### $$VERSION$$ v0.80-dev3-7-g7190c6e
 
