@@ -59,12 +59,6 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
 * [Examples](examples/README.md)
 
 
-#### You don't like the many bashbot files?
-At the beginning bashbot was simply the file ```bashbot.sh``` I can copy everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 'modules/*.sh' and much more.
-
-Hey no Problem, if you are finished with your cool bot simply run ```dev/make-standalone.sh``` to create a stripped down Version containing only
-'bashbot.sh' and 'commands.sh'! For more information see [Create a stripped down Version of your Bot](doc/7_develop.md)
-
 ## Security Considerations
 Running a Telegram Bot means it is connected to the public and you never know whats send to your Bot.
 
@@ -89,6 +83,8 @@ Everyone with read access to your Bot files can extract your Bots data. Especial
 
 To set access rights for your bashbot installation to a reasonable default run ```sudo ./bashbot.sh init``` after every update or change to your installation directory.
 
+## FAQ
+
 ### Is this Bot insecure?
 Bashbot is not more (in)secure as any other Bot written in any other language, we have done our best to make it as secure as possible. But YOU are responsible for the bot commands you wrote and you should know about the risks ...
 
@@ -100,10 +96,17 @@ Well, thats a damn good question ... may be because I'm an Unix/Linux admin from
 - no need to install or learn a new programming language, library or framework
 - no database, not event driven, not OO ...
 
+#### Can I have the single bashbot.sh file back?
+At the beginning bashbot was simply the file ```bashbot.sh``` you can copy everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 'modules/*.sh' and much more.
+
+Hey no Problem, if you are finished with your cool bot run ```dev/make-standalone.sh``` to create a stripped down Version of your bot containing only
+'bashbot.sh' and 'commands.sh'! For more information see [Create a stripped down Version of your Bot](doc/7_develop.md)
+
+
 @Gnadelwartz
 
 ## That's it!
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.80-pre-0-gdd7c66d
+#### $$VERSION$$ v0.80-pre-8-gf1ebdbb

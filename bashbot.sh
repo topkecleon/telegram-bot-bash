@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-pre-7-g300553f
+#### $$VERSION$$ v0.80-pre-8-gf1ebdbb
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -543,6 +543,7 @@ if [ "$1" != "source" ]; then
 		exit
 		;;
 	"backgr"* | "resumeb"*)
+		_is_function start_proc || { echo -e "${RED}Module background not availible.${NC}"; exit 3; }
 		echo -e "${GREEN}Restart background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
 		    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
@@ -555,11 +556,12 @@ if [ "$1" != "source" ]; then
 			JOB="${JOB%:*}"
 			fifo="$(procname "${CHAT[ID]}" "back-${JOB}-")" 
 			echo "restart background job ${PROG}  ${fifo}"
-			start_back "${CHAT[ID]}" "${PROG}" "${JOB}"
+			start_proc "${CHAT[ID]}" "${PROG}" "back-${JOB}-"
 		    fi
 		done
 		;;
 	"killb"* | "suspendb"*)
+		_is_function start_proc || { echo -e "${RED}Module background not availible.${NC}"; exit 3; }
 		echo -e "${GREEN}Stopping background processes ...${NC}"
 		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
 		    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
