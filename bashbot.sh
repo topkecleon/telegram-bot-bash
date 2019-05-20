@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-pre-8-gf1ebdbb
+#### $$VERSION$$ v0.80-pre-9-g8dfdf2e
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -542,45 +542,9 @@ if [ "$1" != "source" ]; then
 		fi
 		exit
 		;;
-	"backgr"* | "resumeb"*)
-		_is_function start_proc || { echo -e "${RED}Module background not availible.${NC}"; exit 3; }
-		echo -e "${GREEN}Restart background processes ...${NC}"
-		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
-		    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
-			echo -e "${RED}No background processes to start.${NC}"; break
-		    else
-			CONTENT="$(< "${FILE}")"
-			CHAT[ID]="${CONTENT%%:*}"
-			JOB="${CONTENT#*:}"
-			PROG="${JOB#*:}"
-			JOB="${JOB%:*}"
-			fifo="$(procname "${CHAT[ID]}" "back-${JOB}-")" 
-			echo "restart background job ${PROG}  ${fifo}"
-			start_proc "${CHAT[ID]}" "${PROG}" "back-${JOB}-"
-		    fi
-		done
-		;;
-	"killb"* | "suspendb"*)
-		_is_function start_proc || { echo -e "${RED}Module background not availible.${NC}"; exit 3; }
-		echo -e "${GREEN}Stopping background processes ...${NC}"
-		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
-		    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
-			echo -e "${RED}No background processes.${NC}"; break
-		    else
-			CONTENT="$(< "${FILE}")"
-			CHAT[ID]="${CONTENT%%:*}"
-			JOB="${CONTENT#*:}"
-			JOB="${JOB%:*}"
-			fifo="$(procname "${CHAT[ID]}" "back-${JOB}-")"
-			if [[ "$1" = "killb"* ]]; then
-				rm -f "${FILE}" # remove job
-				echo "kill background job  ${fifo}"
-			else
-				echo "suspend background job  ${fifo}"
-			fi
-			kill_proc "${CHAT[ID]}" "back-${JOB}-"
-		    fi
-		done
+	"resumeb"* | "killb"* | "suspendb"*)
+  		_is_function job_control || { echo -e "${RED}Module background is not availible!${NC}"; exit 3; }
+		job_control "$1"
 		;;
 	"help")
 		less "README.txt"

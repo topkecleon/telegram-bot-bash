@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-pre-3-g3c5ffdb
+#### $$VERSION$$ v0.80-pre-9-g8dfdf2e
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -102,4 +102,45 @@ send_interactive() {
 # old style but may not work because of local checks
 inproc() {
 	send_interactive "${CHAT[ID]}" "${MESSAGE}"
+}
+
+# start stopp all jobs
+# $1 command
+#	killb*
+#	suspendb*
+#	resumeb*
+job_control() {
+	local content proc CHAT job fifo
+	for FILE in "${TMPDIR:-.}/"*-back.cmd; do
+	    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
+		echo -e "${RED}No background processes.${NC}"
+		break
+	    else
+		content="$(< "${FILE}")"
+		CHAT="${content%%:*}"
+		job="${content#*:}"
+		proc="${job#*:}"
+		job="back-${job%:*}-"
+		fifo="$(procname "${CHAT}" "${job}")" 
+		case "$1" in
+		"resumeb"*|"backgr"*)
+			echo "Restart Job: ${proc}  ${fifo}"
+			start_proc "${CHAT}" "${proc}" "${job}"
+			;;
+		"suspendb"*)
+			echo "Suspend Job: ${proc}  ${fifo}"
+			kill_proc "${CHAT}" "${proc}" "${job}"
+			rm -f "${TMPDIR:-.}/${fifo}" 
+			[ -s "${TMPDIR:-.}/${fifo}.log" ] || rm -f "${TMPDIR:-.}/${fifo}.log"
+			;;
+		"killb"*)
+			echo "Kill Job: ${proc}  ${fifo}"
+			kill_proc "${CHAT}" "${proc}" "${job}"
+			rm -f "${FILE}" # remove job
+			rm -f "${TMPDIR:-.}/${fifo}" 
+			[ -s "${TMPDIR:-.}/${fifo}.log" ] || rm -f "${TMPDIR:-.}/${fifo}.log"
+			;;
+		esac
+	    fi
+	done
 }
