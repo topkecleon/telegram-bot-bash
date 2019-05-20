@@ -8,11 +8,10 @@
 # https://github.com/topkecleon/telegram-bot-bash
 
 # Depends on JSON.sh (http://github.com/dominictarr/JSON.sh) (MIT/Apache),
-# and on tmux (http://github.com/tmux/tmux) (BSD).
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-pre-6-gd34c22f
+#### $$VERSION$$ v0.80-pre-7-g300553f
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
