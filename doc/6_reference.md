@@ -84,6 +84,17 @@ See also [deleteMessage limitations](https://core.telegram.org/bots/api#deleteme
 
 ----
 
+##### send_message
+```send_message``` sends any type of message to the given chat. Type of output is steered by keywords within the message. 
+
+The main use case for send_message is to process the output of interactive chats and background jobs. **For regular Bot commands I recommend using of the dedicated send_xxx_message() functions from above.**
+
+*usage:* send_message "${CHAT[ID]}" "message"
+
+*example:* - see [Usage](2_usage.md#send_message) and [Advanced Usage](3_advanced.md#Interactive-Chats)
+
+----
+
 ### File, Location, Venue, Keyboard 
 
 
@@ -335,12 +346,13 @@ You must include  ```source modules/background.sh``` in 'commands.sh' to have th
 
 *usage:* start_proc "${CHAT[ID]}" "script"
 
-*alias:* startproc "${CHAT[ID]}" "script"
+*alias:* startproc "script"
 
 *example:* 
 ```bash
 startproc 'examples/calc.sh'
 ```
+
 
 ##### check_proc
 Return true (0) if an interactive script is running in the chat. 
@@ -351,8 +363,7 @@ Return true (0) if an interactive script is running in the chat.
 
 *example:* 
 ```bash
-checkproc 
-if [ "$res" -gt 0 ] ; then
+if ! check_proc "${CHAT[ID]}" ; then
   startproc "examples/calc.sh"
 else
    send_normal_message "${CHAT[ID]}" "Calc already running ..."
@@ -368,8 +379,7 @@ Kill the interactive script running in the chat
 
 *example:* 
 ```bash
-checkprog
-if [ "$res" -eq 0 ]; then
+if check_proc "${CHAT[ID]}" ; then
   killproc && send_message "${CHAT[ID]}" "Command canceled."
 else
   send_message "${CHAT[ID]}" "Command is not running."
@@ -401,8 +411,7 @@ Return true (0) if an background job is active in the given chat.
 
 *example:* 
 ```bash
-checkback "notify"
-if [ "$res" -gt 0 ] ; then
+if ! checkback "notify" ; then
   send_normal_message "${CHAT[ID]}" "Start notify"
   background "examples/notify.sh" "notify"
 else
@@ -429,16 +438,13 @@ fi
 
 ----
 
-##### send_message
-```send_message``` sends any type of message to the given chat. Type of output is steered by keywords within the message. 
+##### send_interactive
+Form version 0.80 on forward_message is used to forward messages to interactive job. It replaces the old 'inproc' commands used for TMUX.
+Usually  message is automatically forwarded in 'commands.sh', but you can forward messages wihle processing also or send your own messages.
 
-The main use case for send_message is to process the output of interactive chats and background jobs. **For regular Bot commands I recommend using of the dedicated send_xxx_message() functions from above.**
+*usage:* send_interactive "${CHAT[ID]}" "message"
 
-*usage:* send_message "${CHAT[ID]}" "message"
-
-*example:* - see [Usage](2_usage.md#send_message) and [Advanced Usage](3_advanced.md#Interactive-Chats)
-
-----
+*replaces:*' incproc
 
 ### Aliases - shortcuts for often used funtions 
 You must include  ```source modules/aliases.sh``` in 'commands.sh' to have the following functions availible.
@@ -565,7 +571,7 @@ _is_function "background" && _message "you can run background jobs!"
 These functions are for internal use only and must not used in your bot commands.
 
 ##### procname
-Returns PrefixBotname-Postfix
+Returns PrefixBotname_Postfix
 
 *usage:* procname postfix prefix
 
@@ -620,11 +626,8 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 
 *usage:* ME="$(getBotNiname)"
 
-##### inproc
-Send Input from Telegram to waiting Interactive Chat.
-
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.80-dev3-7-g7190c6e
+#### $$VERSION$$ v0.80-pre-0-gdd7c66d
 

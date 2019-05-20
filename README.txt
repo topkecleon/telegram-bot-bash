@@ -154,4 +154,4 @@ health status
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.80-dev3-5-g83623ec
+#### $$VERSION$$ v0.80-pre-0-gdd7c66d

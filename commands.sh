@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev3-0-g31a5d00
+#### $$VERSION$$ v0.80-pre-0-gdd7c66d
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -107,7 +107,7 @@ if [ "${1}" != "source" ];then
 			if [ "$res" -eq 0 ] ; then killproc && _message "Command canceled.";else _message "No command is currently running.";fi
 			;;
 		*)	# forward messages to optional dispatcher
-			_is_function forward_interactive && forward_interactive "${CHAT[ID]}" "${MESSAGE}" # interactive running
+			_is_function send_interactive && send_interactive "${CHAT[ID]}" "${MESSAGE}"
 			_is_function mycommands && mycommands
 			;;
 	esac

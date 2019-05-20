@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev3-0-g31a5d00
+#### $$VERSION$$ v0.80-pre-0-gdd7c66d
 
 # source from commands.sh to use the sendMessage functions
 
@@ -48,12 +48,12 @@ send_html_message() {
 old_send_keyboard() {
 	local text='"text":"'"${2}"'"'
 	shift 2
-	local keyboard=init
-	OLDIFS=$IFS
-	IFS=$(echo -en "\"")
+	local keyboard="init"
+	OLDIFS="$IFS"
+	IFS="\""
 	for f in "$@" ;do [ "$f" != " " ] && keyboard="$keyboard, [\"$f\"]";done
-	IFS=$OLDIFS
-	keyboard=${keyboard/init, /}
+	IFS="$OLDIFS"
+	keyboard="${keyboard/init, /}"
 	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${keyboard}"' ],"one_time_keyboard": true}' "$MSG_URL"
 }
 

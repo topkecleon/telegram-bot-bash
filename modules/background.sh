@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev3-6-gbeb77a4
+#### $$VERSION$$ v0.80-pre-0-gdd7c66d
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -38,7 +38,7 @@ killproc() {
 # $3 jobname
 start_back() {
 	local fifo; fifo="${TMPDIR:-.}/$(procname "$1")"
-	echo "$1:$3:$2" >"${fifo}$3-back.cmd"
+	printf '%s\n' "$1:$3:$2" >"${fifo}$3-back.cmd"
 	start_proc "$1" "$2" "back-$3-"
 }
 
@@ -95,7 +95,12 @@ kill_proc() {
 
 # $1 chat
 # $2 message
-forward_interactive() {
+send_interactive() {
 	local fifo; fifo="${TMPDIR:-.}/$(procname "$1")"
-	[ -p "${fifo}" ] && echo "$2" >"${fifo}"
+	[ -p "${fifo}" ] && printf '%s\n' "$2" >"${fifo}" & # not blocking!
+}
+
+# old style but may not work because of local checks
+inproc() {
+	send_interactive "${CHAT[ID]}" "${MESSAGE}"
 }

@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-dev3-6-gbeb77a4
+#### $$VERSION$$ v0.80-pre-0-gdd7c66d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -62,7 +62,7 @@ if [ ! -f "${TOKENFILE}" ]; then
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NC}"
 	read -r token
-	echo "${token}" > "${TOKENFILE}"
+	printf '%s\n' "${token}" > "${TOKENFILE}"
    fi
 fi
 
@@ -70,22 +70,22 @@ BOTADMIN="${BASHBOT_ETC:-.}/botadmin"
 if [ ! -f "${BOTADMIN}" ]; then
    if [ "${CLEAR}" = "" ]; then
 	echo "Running headless, set botadmin to AUTO MODE!"
-	echo '?' > "${BOTADMIN}"
+	printf '%s\n' '?' > "${BOTADMIN}"
    else
 	${CLEAR}
 	echo -e "${RED}BOTADMIN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR ENTER '?'${NC}"
 	echo -e "${ORANGE}TO MAKE FIRST USER TYPING '/start' TO BOTADMIN${NC}"
-	read -r token
-	echo "${token}" > "${BOTADMIN}"
-	[ "${token}" = "" ] && echo '?' > "${BOTADMIN}"
+	read -r admin
+	printf '%S\n' "${admin}" > "${BOTADMIN}"
+	[ "${admin}" = "" ] && printf '%s\n' '?' > "${BOTADMIN}"
    fi
 fi
 
 BOTACL="${BASHBOT_ETC:-.}/botacl"
 if [ ! -f "${BOTACL}" ]; then
 	echo -e "${ORANGE}Create empty ${BOTACL} file.${NC}"
-	echo "" >"${BOTACL}"
+	printf '\n' >"${BOTACL}"
 fi
 
 TMPDIR="${BASHBOT_VAR:-.}/data-bot-bash"
@@ -99,7 +99,7 @@ fi
 
 COUNTFILE="${BASHBOT_VAR:-.}/count"
 if [ ! -f "${COUNTFILE}" ]; then
-	echo "" >"${COUNTFILE}"
+	printf '\n' >"${COUNTFILE}"
 elif [ ! -w "${COUNTFILE}" ]; then
 	echo -e "${RED}ERROR: Can't write to ${COUNTFILE}!.${NC}"
 	ls -l "${COUNTFILE}"
@@ -135,7 +135,7 @@ fi
 # $1 postfix, e.g. chatid
 # $2 prefix, back- or startbot-
 procname(){
-	echo "$2${ME}_$1"
+	printf '%s\n' "$2${ME}_$1"
 }
 
 # $1 proc name
@@ -262,7 +262,7 @@ process_client() {
 	# shellcheck source=./commands.sh
 	source "${COMMANDS}" "${debug}"
 	tmpcount="COUNT${CHAT[ID]}"
-	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || cat <<< "$tmpcount" >>"${COUNTFILE}"
+	grep -q "$tmpcount" <"${COUNTFILE}" &>/dev/null || cat <<< "$tmpcount" >>"${COUNTFILE}"
 	# To get user count execute bash bashbot.sh count
 }
 process_inline() {
@@ -329,8 +329,8 @@ process_message() {
 	URLS[VOICE]="$(get_file "$(JsonGetString '"result",'"${num}"',"message","voice","file_id"' <"$TMP")")"
 
 	# Contact
-	CONTACT[USER_ID]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","user_id"' <"$TMP")")"
 	CONTACT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","first_name"' <"$TMP")")"
+	CONTACT[USER_ID]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","user_id"' <"$TMP")")"
 	CONTACT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","last_name"' <"$TMP")")"
 	CONTACT[NUMBER]="$(JsonGetString '"result",'"${num}"',"message","contact","phone_number"' <"$TMP")"
 	CONTACT[VCARD]="$(JsonGetString '"result",'"${num}"',"message","contact","vcard"' <"$TMP")"
@@ -393,13 +393,13 @@ bot_init() {
 	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
 	# shellcheck disable=SC2009
 	oldbot="$(ps -ef | grep startbot | grep -v -e 'grep' -e '\-startbot' )"
-	[ "${oldbot}" != "" ] && echo -e "${ORANGE}Warning: Old TMUX bot is running! You must kill it manually first:${NC}\\n$${oldbot}" && exit 5
+	[ "${oldbot}" != "" ] && echo -e "${ORANGE}Warning: Old TMUX bot is running! You must kill it manually first:${NC}\\n${oldbot}"
 	#setup bashbot
 	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
 	echo -n "Enter User to run basbot [$RUNUSER]: "
 	read -r TOUSER
 	[ "$TOUSER" = "" ] && TOUSER="$RUNUSER"
-	if ! id "$TOUSER" >/dev/null 2>&1; then
+	if ! id "$TOUSER" &>/dev/null; then
 		echo -e "${RED}User \"$TOUSER\" not found!${NC}"
 		exit 3
 	else

@@ -188,5 +188,5 @@ fi
 #### [Prev Function Reference](6_reference.md)
 #### [Next Bashbot Environment](8_custom.md)
 
-#### $$VERSION$$ v0.80-dev3-5-g83623ec
+#### $$VERSION$$ v0.80-pre-0-gdd7c66d
 
