@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.80-pre-0-gdd7c66d
+#### $$VERSION$$ v0.80-pre-3-g3c5ffdb
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -33,10 +33,21 @@ sendJson() {
 
 echo -n "  Send line ..."
 
+# create dummy files for upload
+ALLOW='/tmp/allowed'
+FILE_REGEX="$ALLOW/.*"
+[ -d "$ALLOW" ] || mkdir "$ALLOW"
+touch "$ALLOW/this_is_my.gif" "$ALLOW/this_is_my.doc"
+touch "$TMPDIR/this_is_my.gif" "$TMPDIR/this_is_my.doc"
+
 while read -r line ; do
 	echo -n "."
+	set -x
 	send_message "123456" "$line" >>"${OUTPUTFILE}"
-done < "${INPUTFILE}" #2>>"${LOGFILE}"
+	set +x
+done < "${INPUTFILE}" 2>>"${LOGFILE}"
+[ -d "$ALLOW" ] && rm -rf "$ALLOW"
+
 echo " done."
 
 { diff -c "${REFFILE}" "${OUTPUTFILE}" || exit 1; } | cat -v

@@ -47,3 +47,18 @@ second part of text
 plus newline.", "reply_markup": {"inline_keyboard": [ [ {"text":"Bei Amazon ansehen ...", "url":"https://www.amazon.de/dp/B014TN3JYW"}] ]}
 URL:https://api.telegram.org/botbashbottestscript/sendMessage
 
+chat:123456	JSON:"text":"# test for sendfile"
+URL:https://api.telegram.org/botbashbottestscript/sendMessage
+
+chat:123456	JSON:"action": "upload_photo"
+URL:https://api.telegram.org/botbashbottestscript/sendChatAction
+
+chat:123456	JSON:"photo":"/tmp/allowed/this_is_my.gif","caption":"Text plus absolute file will appear in chat""
+URL:https://api.telegram.org/botbashbottestscript/sendPhoto
+
+chat:123456	JSON:"action": "upload_document"
+URL:https://api.telegram.org/botbashbottestscript/sendChatAction
+
+chat:123456	JSON:"document":"/tmp/allowed/this_is_my.doc","caption":"Text plus absolute file will appear in chat""
+URL:https://api.telegram.org/botbashbottestscript/sendDocument
+

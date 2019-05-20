@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-pre-2-g9482bd6
+#### $$VERSION$$ v0.80-pre-3-g3c5ffdb
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -141,7 +141,7 @@ procname(){
 # $1 proc name
 proclist() {
 	# shellcheck disable=SC2009
-	ps -ef | grep -v grep| grep "$1" | sed 's/\s\+/\t/g' | cut -f 2
+	ps -fu "${UID}" | grep -v grep| grep "$1" | sed 's/\s\+/\t/g' | cut -f 2
 }
 
 # returns true if command exist
@@ -392,10 +392,6 @@ bot_init() {
 	local OLDTMP="${BASHBOT_VAR:-.}/tmp-bot-bash"
 	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${TMPDIR}"; rmdir "${OLDTMP}"; }
 	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
-	# shellcheck disable=SC2009
-	oldbot="$(ps -ef | grep startbot | grep -v -e 'grep' -e '\-startbot' )"
-	[ "${oldbot}" != "" ] && \
-		echo -e "${ORANGE}Warning: At least one not upgraded TMUX bot is running! It is not possible to stop it by this script:${NC}\\n${oldbot}"
 	#setup bashbot
 	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
 	echo -n "Enter User to run basbot [$RUNUSER]: "
@@ -405,6 +401,10 @@ bot_init() {
 		echo -e "${RED}User \"$TOUSER\" not found!${NC}"
 		exit 3
 	else
+		# shellcheck disable=SC2009
+		oldbot="$(ps -fu "$TOUSER" | grep startbot | grep -v -e 'grep' -e '\-startbot' )"
+		[ "${oldbot}" != "" ] && \
+			echo -e "${ORANGE}Warning: At least one not upgraded TMUX bot is running! You must stop it with kill command:${NC}\\n${oldbot}"
 		echo "Adjusting user \"${TOUSER}\" files and permissions ..."
 		[ -w "bashbot.rc" ] && sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' "bashbot.rc"
 		chown -R "$TOUSER" . ./*
