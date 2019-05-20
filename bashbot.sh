@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-pre-5-ge5f7b2d
+#### $$VERSION$$ v0.80-pre-6-gd34c22f
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -142,10 +142,6 @@ download() {
 	printf '%s\n' "${TMPDIR:-.}/${file}"
 }
 
-# easy handling of users:
-_is_botadmin() {
-	user_is_botadmin "${USER[ID]}"
-}
 # $1 postfix, e.g. chatid
 # $2 prefix, back- or startbot-
 procname(){
