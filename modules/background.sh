@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-pre-9-g8dfdf2e
+#### $$VERSION$$ v0.80-pre-10-gfd7ca77
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -112,10 +112,7 @@ inproc() {
 job_control() {
 	local content proc CHAT job fifo
 	for FILE in "${TMPDIR:-.}/"*-back.cmd; do
-	    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
-		echo -e "${RED}No background processes.${NC}"
-		break
-	    else
+		[ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ] && echo -e "${RED}No background processes.${NC}" && break
 		content="$(< "${FILE}")"
 		CHAT="${content%%:*}"
 		job="${content#*:}"
@@ -130,17 +127,12 @@ job_control() {
 		"suspendb"*)
 			echo "Suspend Job: ${proc}  ${fifo}"
 			kill_proc "${CHAT}" "${proc}" "${job}"
-			rm -f "${TMPDIR:-.}/${fifo}" 
-			[ -s "${TMPDIR:-.}/${fifo}.log" ] || rm -f "${TMPDIR:-.}/${fifo}.log"
 			;;
 		"killb"*)
 			echo "Kill Job: ${proc}  ${fifo}"
 			kill_proc "${CHAT}" "${proc}" "${job}"
 			rm -f "${FILE}" # remove job
-			rm -f "${TMPDIR:-.}/${fifo}" 
-			[ -s "${TMPDIR:-.}/${fifo}.log" ] || rm -f "${TMPDIR:-.}/${fifo}.log"
 			;;
 		esac
-	    fi
 	done
 }
