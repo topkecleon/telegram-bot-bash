@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-pre-1-gb8ae9ec
+#### $$VERSION$$ v0.80-pre-2-g9482bd6
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -364,8 +364,9 @@ start_bot() {
 	[[ "${DEBUG}" = *"debug" ]] && exec &>>"DEBUG.log"
 	[ "${DEBUG}" != "" ] && date && echo "Start BASHBOT in Mode \"${DEBUG}\""
 	[[ "${DEBUG}" = "xdebug"* ]] && set -x 
-	#cleaup old pipes
+	#cleaup old pipes and empty logfiles
 	find "${TMPDIR}" -type p -delete
+	find "${TMPDIR}" -size 0 -name "*.log" -delete
 
 	while true; do
 		UPDATE="$(getJson "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n)"

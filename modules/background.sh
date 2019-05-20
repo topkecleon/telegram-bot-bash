@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-pre-0-gdd7c66d
+#### $$VERSION$$ v0.80-pre-2-g9482bd6
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -48,6 +48,7 @@ start_back() {
 # $3 prefix
 start_proc() {
 	[ "$2" = "" ] && return
+	[ -x "${2%% *}" ] || return 1
 	local fifo; fifo="${TMPDIR:-.}/$(procname "$1" "$3")"
 	kill_proc "$1" "$3"
 	mkfifo "${fifo}"
