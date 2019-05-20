@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-pre-0-gdd7c66d
+#### $$VERSION$$ v0.80-pre-1-gb8ae9ec
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -393,7 +393,8 @@ bot_init() {
 	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
 	# shellcheck disable=SC2009
 	oldbot="$(ps -ef | grep startbot | grep -v -e 'grep' -e '\-startbot' )"
-	[ "${oldbot}" != "" ] && echo -e "${ORANGE}Warning: Old TMUX bot is running! You must kill it manually first:${NC}\\n${oldbot}"
+	[ "${oldbot}" != "" ] && \
+		echo -e "${ORANGE}Warning: At least one not upgraded TMUX bot is running! It is not possible to stop it by this script:${NC}\\n${oldbot}"
 	#setup bashbot
 	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
 	echo -n "Enter User to run basbot [$RUNUSER]: "
