@@ -544,6 +544,20 @@ You must include  ```source modules/aliases.sh``` in 'commands.sh' to have the f
 
 ### Helper functions
 
+##### download
+Download the fiven URL ans returns the final filename in TMPDIR. If the given filename exists,the filename is prefixed with a
+random number. filename is not allowed to contain '/' or '..'.
+
+*usage:* download URL filename
+
+*example:* 
+```bash
+file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
+echo "$file" -> ./data-bot-bash/avatar.jpg
+file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
+echo "$file" -> ./data-bot-bash/12345-avatar.jpg
+```
+
 ##### _exists
 Returns true if the given function exist, can be used to check if a module is loaded.
 
@@ -629,5 +643,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.80-pre-0-gdd7c66d
+#### $$VERSION$$ v0.80-pre-5-ge5f7b2d
 

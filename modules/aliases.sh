@@ -5,14 +5,10 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-pre-0-gdd7c66d
+#### $$VERSION$$ v0.80-pre-5-ge5f7b2d
 #
 # source from commands.sh to use the aliases
 
-# easy handling of users:
-_is_botadmin() {
-	user_is_botadmin "${USER[ID]}"
-}
 _is_admin() {
 	user_is_admin "${CHAT[ID]}" "${USER[ID]}"
 }

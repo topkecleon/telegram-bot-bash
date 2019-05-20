@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-pre-4-gd1a3372
+#### $$VERSION$$ v0.80-pre-5-ge5f7b2d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -132,6 +132,20 @@ fi
 
 
 # internal functions
+# $1 URL, $2 filename in TMPDIR
+# outputs final filename
+download() {
+	local empty="no.file" file="${2:-${empty}}"
+	if [[ "$file" = *"/"* ]] || [[ "$file" = "."* ]]; then file="${empty}"; fi
+	while [ -f "${TMPDIR:-.}/${file}" ] ; do file="$RAMDOM-${file}"; done
+	getJson "$1" >"${TMPDIR:-.}/${file}" || return
+	printf '%s\n' "${TMPDIR:-.}/${file}"
+}
+
+# easy handling of users:
+_is_botadmin() {
+	user_is_botadmin "${USER[ID]}"
+}
 # $1 postfix, e.g. chatid
 # $2 prefix, back- or startbot-
 procname(){
