@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-pre-3-g3c5ffdb
+#### $$VERSION$$ v0.80-pre-4-gd1a3372
 
 # source from commands.sh to use the sendMessage functions
 
@@ -87,10 +87,16 @@ send_button() {
 
 UPLOADDIR="${BASHBOT_UPLOAD:-${TMPDIR}/upload}"
 
+# for now this can only send local files with curl!
+# extend to allow send files by URL or telegram ID
 send_file() {
-	[ "$2" = "" ] && return 0
+	[ "$2" = "" ] && return 
+	[[ "$2" = "http"* ]] && return # currently we do not support URL
+	upload_file "${@}"
+}
+
+upload_file(){
 	local CUR_URL WHAT STATUS file="$2"
-	local CAPTION=',"caption":"'$3'"'; [ "$3" = "" ] && CAPTION="" 
 	# file access checks ...
 	[[ "$file" = *'..'* ]] && return  # no directory traversal
 	[[ "$file" = '.'* ]] && return	 # no hidden or relative files
@@ -136,8 +142,7 @@ send_file() {
 			;;
 	esac
 	send_action "${1}" "$STATUS"
-	# shellcheck disable=SC2034
-	sendJson "${1}" '"'"$WHAT"'":"'"$2"'"'"$CAPTION"'"' "$CUR_URL"
+	sendUpload "$1" "${WHAT}" "${file}" "${CUR_URL}" "$3"
 }
 
 # typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location

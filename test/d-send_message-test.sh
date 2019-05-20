@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.80-pre-3-g3c5ffdb
+#### $$VERSION$$ v0.80-pre-4-gd1a3372
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -27,6 +27,10 @@ sendEmpty() {
 
 sendJson() {
 	printf 'chat:%s\tJSON:%s\nURL:%s\n\n' "${1}" "${2}" "${3}"
+}
+sendUpload() {
+#JSON:"document":"/tmp/allowed/this_is_my.doc","caption":"Text plus absolute file will appear in chat""
+	printf 'chat:%s\tJSON:"%s":"%s","caption":"%s"\nURL:%s\n\n' "${1}" "${2}" "${3}" "${5}" "${4}"
 }
 
 # send text input to send_message

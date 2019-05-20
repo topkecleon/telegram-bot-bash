@@ -12,7 +12,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-pre-3-g3c5ffdb
+#### $$VERSION$$ v0.80-pre-4-gd1a3372
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -183,6 +183,16 @@ if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
   }
+  #$1 Chat, $2 what , $3 file, $4 URL, $5 caption
+  sendUpload() {
+	[ "$#" -lt 4  ] && return
+	if [ "$5" != "" ]; then
+		res="$(curl -s "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n )"
+	else
+		res="$(curl -s "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
+	fi
+	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
+  }
 else
   # simple curl or wget call outputs result to stdout
   getJson(){
@@ -196,6 +206,10 @@ else
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
+  }
+  sendUpload() {
+	sendJson "$1" '"text":"Sorry, wget does not support file upload"' "${MSG_URL}"
+	BOTSENT[OK]="false"
   }
 fi 
 
