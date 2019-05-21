@@ -18,7 +18,7 @@
 <p>Contributions by JuanPotato, BigNerd95, TiagoDanin, and iicc1.</p>
 <p>Released to the public domain wherever applicable. Elsewhere, consider it released under the <a href="http://www.wtfpl.net/txt/copying/">WTFPLv2</a>.</p>
 <h2 id="prerequisites">Prerequisites</h2>
-<p>Depends on <a href="http://github.com/tmux/tmux">tmux</a>. Uses <a href="http://github.com/dominictarr/JSON.sh">JSON.sh</a>.</p>
+<p>Uses <a href="http://github.com/dominictarr/JSON.sh">JSON.sh</a>, but no more TMUX.</p>
 <p>Even bashbot is written in bash, it depends on commands typically availible in a Unix/Linux Environment. More concret on the common commands provided by <a href="https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands">coreutils</a>, <a href="https://en.wikipedia.org/wiki/BusyBox#Commands">busybox</a> or <a href="https://landley.net/toybox/help.html">toybox</a>, see <a href="doc/7_develop.md#common-commands">Developer Notes</a></p>
 <p>Bashbot <a href="https://github.com/topkecleon/telegram-bot-bash">Documentation</a> and <a href="https://github.com/topkecleon/telegram-bot-bash/releases">Downloads</a> are availible on www.github.com</p>
 <h2 id="documentation">Documentation</h2>
@@ -79,9 +79,6 @@
 <li><a href="doc/8_custom.md">Customize bashbot environment</a></li>
 <li><a href="examples/README.md">Examples</a></li>
 </ul>
-<h4 id="you-dont-like-the-many-bashbot-files">You don’t like the many bashbot files?</h4>
-<p>At the beginning bashbot was simply the file <code>bashbot.sh</code> I can copy everywhere and run the bot. Now we have ‘commands.sh’, ‘mycommands.sh’, ’modules/*.sh’ and much more.</p>
-<p>Hey no Problem, if you are finished with your cool bot simply run <code>dev/make-standalone.sh</code> to create a stripped down Version containing only ‘bashbot.sh’ and ‘commands.sh’! For more information see <a href="doc/7_develop.md">Create a stripped down Version of your Bot</a></p>
 <h2 id="security-considerations">Security Considerations</h2>
 <p>Running a Telegram Bot means it is connected to the public and you never know whats send to your Bot.</p>
 <p>Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. Bash programmers often struggle with ‘quoting hell’ and globbing, see <a href="https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells">Implications of wrong quoting</a></p>
@@ -94,6 +91,7 @@
 <p><strong>Your Bot configuration must no be readable from other users.</strong> Everyone who can read your Bots token can act as your Bot and has access to all chats your Bot is in!</p>
 <p>Everyone with read access to your Bot files can extract your Bots data. Especially your Bot Token in <code>token</code> must be protected against other users. No one exept you must have write access to the Bot files. The Bot must be restricted to have write access to <code>count</code> and <code>tmp-bot-bash</code> only, all other files must be write protected.</p>
 <p>To set access rights for your bashbot installation to a reasonable default run <code>sudo ./bashbot.sh init</code> after every update or change to your installation directory.</p>
+<h2 id="faq">FAQ</h2>
 <h3 id="is-this-bot-insecure">Is this Bot insecure?</h3>
 <p>Bashbot is not more (in)secure as any other Bot written in any other language, we have done our best to make it as secure as possible. But YOU are responsible for the bot commands you wrote and you should know about the risks …</p>
 <h3 id="why-bash-and-not-the-much-better-xyz">Why Bash and not the much better xyz?</h3>
@@ -104,9 +102,12 @@
 <li>no need to install or learn a new programming language, library or framework</li>
 <li>no database, not event driven, not OO …</li>
 </ul>
+<h3 id="can-i-have-the-single-bashbot.sh-file-back">Can I have the single bashbot.sh file back?</h3>
+<p>At the beginning bashbot was simply the file <code>bashbot.sh</code> you can copy everywhere and run the bot. Now we have ‘commands.sh’, ‘mycommands.sh’, ’modules/*.sh’ and much more.</p>
+<p>Hey no Problem, if you are finished with your cool bot run <code>dev/make-standalone.sh</code> to create a stripped down Version of your bot containing only ‘bashbot.sh’ and ‘commands.sh’! For more information see <a href="doc/7_develop.md">Create a stripped down Version of your Bot</a></p>
 <p><span class="citation">@Gnadelwartz</span></p>
 <h2 id="thats-it">That’s it!</h2>
 <p>If you feel that there’s something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4 id="version-v0.76-1-ge8a1fd0"><br /><span class="math display"><em>V</em><em>E</em><em>R</em><em>S</em><em>I</em><em>O</em><em>N</em></span><br /> v0.76-1-ge8a1fd0</h4>
+<h4 id="version-v0.80-pre-11-g8669cfb"><br /><span class="math display"><em>V</em><em>E</em><em>R</em><em>S</em><em>I</em><em>O</em><em>N</em></span><br /> v0.80-pre-11-g8669cfb</h4>
 </body>
 </html>

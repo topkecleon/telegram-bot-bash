@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.76-1-ge8a1fd0
+#### $$VERSION$$ v0.80-pre-4-gd1a3372
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -28,15 +28,30 @@ sendEmpty() {
 sendJson() {
 	printf 'chat:%s\tJSON:%s\nURL:%s\n\n' "${1}" "${2}" "${3}"
 }
+sendUpload() {
+#JSON:"document":"/tmp/allowed/this_is_my.doc","caption":"Text plus absolute file will appear in chat""
+	printf 'chat:%s\tJSON:"%s":"%s","caption":"%s"\nURL:%s\n\n' "${1}" "${2}" "${3}" "${5}" "${4}"
+}
 
 # send text input to send_message
 
 echo -n "  Send line ..."
 
+# create dummy files for upload
+ALLOW='/tmp/allowed'
+FILE_REGEX="$ALLOW/.*"
+[ -d "$ALLOW" ] || mkdir "$ALLOW"
+touch "$ALLOW/this_is_my.gif" "$ALLOW/this_is_my.doc"
+touch "$TMPDIR/this_is_my.gif" "$TMPDIR/this_is_my.doc"
+
 while read -r line ; do
 	echo -n "."
+	set -x
 	send_message "123456" "$line" >>"${OUTPUTFILE}"
-done < "${INPUTFILE}" #2>>"${LOGFILE}"
+	set +x
+done < "${INPUTFILE}" 2>>"${LOGFILE}"
+[ -d "$ALLOW" ] && rm -rf "$ALLOW"
+
 echo " done."
 
 { diff -c "${REFFILE}" "${OUTPUTFILE}" || exit 1; } | cat -v

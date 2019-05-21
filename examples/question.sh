@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 
-#### $$VERSION$$ v0.76-1-ge8a1fd0
+#### $$VERSION$$ v0.80-pre-0-gdd7c66d
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
@@ -26,6 +26,7 @@ until [ "$SUCCESS" = "y" ] ;do
 	case $answer in
 		'Yass!') echo "Goody! mykeyboardendshere";SUCCESS=y;;
 		'No') echo "Well that's weird. mykeyboardendshere";SUCCESS=y;;
+		'') echo "empty answer!" && exit;;
 		*) SUCCESS=n;;
 	esac
 done

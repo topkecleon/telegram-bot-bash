@@ -8,11 +8,10 @@
 # https://github.com/topkecleon/telegram-bot-bash
 
 # Depends on JSON.sh (http://github.com/dominictarr/JSON.sh) (MIT/Apache),
-# and on tmux (http://github.com/tmux/tmux) (BSD).
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.76-1-ge8a1fd0
+#### $$VERSION$$ v0.80-pre-11-g8669cfb
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -62,7 +61,7 @@ if [ ! -f "${TOKENFILE}" ]; then
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NC}"
 	read -r token
-	echo "${token}" > "${TOKENFILE}"
+	printf '%s\n' "${token}" > "${TOKENFILE}"
    fi
 fi
 
@@ -70,29 +69,28 @@ BOTADMIN="${BASHBOT_ETC:-.}/botadmin"
 if [ ! -f "${BOTADMIN}" ]; then
    if [ "${CLEAR}" = "" ]; then
 	echo "Running headless, set botadmin to AUTO MODE!"
-	echo '?' > "${BOTADMIN}"
+	printf '%s\n' '?' > "${BOTADMIN}"
    else
 	${CLEAR}
 	echo -e "${RED}BOTADMIN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR ENTER '?'${NC}"
 	echo -e "${ORANGE}TO MAKE FIRST USER TYPING '/start' TO BOTADMIN${NC}"
-	read -r token
-	echo "${token}" > "${BOTADMIN}"
-	[ "${token}" = "" ] && echo '?' > "${BOTADMIN}"
+	read -r admin
+	printf '%S\n' "${admin}" > "${BOTADMIN}"
+	[ "${admin}" = "" ] && printf '%s\n' '?' > "${BOTADMIN}"
    fi
 fi
 
 BOTACL="${BASHBOT_ETC:-.}/botacl"
 if [ ! -f "${BOTACL}" ]; then
 	echo -e "${ORANGE}Create empty ${BOTACL} file.${NC}"
-	echo "" >"${BOTACL}"
+	printf '\n' >"${BOTACL}"
 fi
 
 TMPDIR="${BASHBOT_VAR:-.}/data-bot-bash"
 if [ ! -d "${TMPDIR}" ]; then
 	mkdir "${TMPDIR}"
 elif [ ! -w "${TMPDIR}" ]; then
-	${CLEAR}
 	echo -e "${RED}ERROR: Can't write to ${TMPDIR}!.${NC}"
 	ls -ld "${TMPDIR}"
 	exit 2
@@ -100,9 +98,8 @@ fi
 
 COUNTFILE="${BASHBOT_VAR:-.}/count"
 if [ ! -f "${COUNTFILE}" ]; then
-	echo "" >"${COUNTFILE}"
+	printf '\n' >"${COUNTFILE}"
 elif [ ! -w "${COUNTFILE}" ]; then
-	${CLEAR}
 	echo -e "${RED}ERROR: Can't write to ${COUNTFILE}!.${NC}"
 	ls -l "${COUNTFILE}"
 	exit 2
@@ -124,7 +121,6 @@ export res BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
 if [ "$1" != "source" ]; then
 	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
-		${CLEAR}
 		echo -e "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NC}"
 		ls -l "${COMMANDS}"
 		exit 3
@@ -132,6 +128,44 @@ if [ "$1" != "source" ]; then
 	# shellcheck source=./commands.sh
 	source "${COMMANDS}" "source"
 fi
+
+
+# internal functions
+# $1 URL, $2 filename in TMPDIR
+# outputs final filename
+download() {
+	local empty="no.file" file="${2:-${empty}}"
+	if [[ "$file" = *"/"* ]] || [[ "$file" = "."* ]]; then file="${empty}"; fi
+	while [ -f "${TMPDIR:-.}/${file}" ] ; do file="$RAMDOM-${file}"; done
+	getJson "$1" >"${TMPDIR:-.}/${file}" || return
+	printf '%s\n' "${TMPDIR:-.}/${file}"
+}
+
+# $1 postfix, e.g. chatid
+# $2 prefix, back- or startbot-
+procname(){
+	printf '%s\n' "$2${ME}_$1"
+}
+
+# $1 sting to search for proramm incl. parameters
+# retruns a list of PIDs of all current bot proceeses matching $1
+proclist() {
+	# shellcheck disable=SC2009
+	ps -fu "${UID}" | grep -F "$1" | grep -v ' grep'| grep -F "${ME}" | sed 's/\s\+/\t/g' | cut -f 2
+}
+
+# $1 sting to search for proramm to kill
+killallproc() {
+	local procid; procid="$(proclist "$1")"
+	if [ "${procid}" != "" ] ; then
+		# shellcheck disable=SC2046
+		kill $(proclist "$1")
+		sleep 1
+		procid="$(proclist "$1")"
+		# shellcheck disable=SC2046
+		[ "${procid}" != "" ] && kill $(proclist -9 "$1")
+	fi
+}
 
 
 # returns true if command exist
@@ -173,6 +207,16 @@ if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
   }
+  #$1 Chat, $2 what , $3 file, $4 URL, $5 caption
+  sendUpload() {
+	[ "$#" -lt 4  ] && return
+	if [ "$5" != "" ]; then
+		res="$(curl -s "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n )"
+	else
+		res="$(curl -s "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
+	fi
+	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
+  }
 else
   # simple curl or wget call outputs result to stdout
   getJson(){
@@ -186,6 +230,10 @@ else
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
+  }
+  sendUpload() {
+	sendJson "$1" '"text":"Sorry, wget does not support file upload"' "${MSG_URL}"
+	BOTSENT[OK]="false"
   }
 fi 
 
@@ -233,26 +281,26 @@ JsonGetValue() {
 ################
 # processing of updates starts here
 process_updates() {
-	MAX_PROCESS_NUMBER="$(sed <<< "${UPDATE}" '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')"
-	for ((PROCESS_NUMBER=0; PROCESS_NUMBER<=MAX_PROCESS_NUMBER; PROCESS_NUMBER++)); do
-		process_client "$1"
+	local max num debug="$1"
+	max="$(sed <<< "${UPDATE}" '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')"
+	for ((num=0; num<=max; num++)); do
+		process_client "$num" "${debug}"
 	done
 }
 process_client() {
-	iQUERY[ID]="$(JsonGetString <<<"${UPDATE}" '"result",'"${PROCESS_NUMBER}"',"inline_query","id"')"
+	local num="$1" debug="$2" 
+	iQUERY[ID]="$(JsonGetString <<<"${UPDATE}" '"result",'"${num}"',"inline_query","id"')"
 	if [ "${iQUERY[ID]}" = "" ]; then
-		[[ "$1" = *"debug"* ]] && echo "$UPDATE" >>"MESSAGE.log"
-		process_message "$PROCESS_NUMBER" "$1"
+		[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"MESSAGE.log"
+		process_message "${num}" "${debug}"
 	else
-		[[ "$1" = *"debug"* ]] && echo "$UPDATE" >>"INLINE.log"
-		[ "$INLINE" != "0" ] && _is_function process_inline && process_inline "$PROCESS_NUMBER" "$1"
+		[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"INLINE.log"
+		[ "$INLINE" != "0" ] && _is_function process_inline && process_inline "${num}" "${debug}"
 	fi
-	# Tmux
-	copname="$ME"_"${CHAT[ID]}"
 	# shellcheck source=./commands.sh
-	source "${COMMANDS}" "$1"
+	source "${COMMANDS}" "${debug}"
 	tmpcount="COUNT${CHAT[ID]}"
-	grep -q "$tmpcount" <"${COUNTFILE}" >/dev/null 2>&1 || echo "$tmpcount">>"${COUNTFILE}"
+	grep -q "$tmpcount" <"${COUNTFILE}" &>/dev/null || cat <<< "$tmpcount" >>"${COUNTFILE}"
 	# To get user count execute bash bashbot.sh count
 }
 process_inline() {
@@ -266,7 +314,7 @@ process_inline() {
 process_message() {
 	local num="$1"
 	local TMP="${TMPDIR:-.}/$RANDOM$RANDOM-MESSAGE"
-	echo "$UPDATE" >"$TMP"
+	cat <<< "$UPDATE" >"$TMP"
 	# Message
 	MESSAGE[0]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","text"' <"$TMP")" | sed 's#\\/#/#g')"
 	MESSAGE[ID]="$(JsonGetValue '"result",'"${num}"',"message","message_id"' <"$TMP" )"
@@ -319,8 +367,8 @@ process_message() {
 	URLS[VOICE]="$(get_file "$(JsonGetString '"result",'"${num}"',"message","voice","file_id"' <"$TMP")")"
 
 	# Contact
-	CONTACT[USER_ID]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","user_id"' <"$TMP")")"
 	CONTACT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","first_name"' <"$TMP")")"
+	CONTACT[USER_ID]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","user_id"' <"$TMP")")"
 	CONTACT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","last_name"' <"$TMP")")"
 	CONTACT[NUMBER]="$(JsonGetString '"result",'"${num}"',"message","contact","phone_number"' <"$TMP")"
 	CONTACT[VCARD]="$(JsonGetString '"result",'"${num}"',"message","contact","vcard"' <"$TMP")"
@@ -338,7 +386,7 @@ process_message() {
 	# Location
 	LOCATION[LONGITUDE]="$(JsonGetValue '"result",'"${num}"',"message","location","longitude"' <"$TMP")"
 	LOCATION[LATITUDE]="$(JsonGetValue '"result",'"${num}"',"message","location","latitude"' <"$TMP")"
-	NAME="$(echo "${URLS[*]}" | sed 's/.*\///g')"
+	NAME="$(sed 's/.*\///g' <<< "${URLS[*]}")"
 	rm "$TMP"
 }
 
@@ -354,6 +402,10 @@ start_bot() {
 	[[ "${DEBUG}" = *"debug" ]] && exec &>>"DEBUG.log"
 	[ "${DEBUG}" != "" ] && date && echo "Start BASHBOT in Mode \"${DEBUG}\""
 	[[ "${DEBUG}" = "xdebug"* ]] && set -x 
+	#cleaup old pipes and empty logfiles
+	find "${TMPDIR}" -type p -delete
+	find "${TMPDIR}" -size 0 -name "*.log" -delete
+
 	while true; do
 		UPDATE="$(getJson "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n)"
 
@@ -379,14 +431,18 @@ bot_init() {
 	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${TMPDIR}"; rmdir "${OLDTMP}"; }
 	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
 	#setup bashbot
-	[[ "$(id -u)" -eq "0" ]] && RUNUSER="nobody"
+	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
 	echo -n "Enter User to run basbot [$RUNUSER]: "
 	read -r TOUSER
 	[ "$TOUSER" = "" ] && TOUSER="$RUNUSER"
-	if ! id "$TOUSER" >/dev/null 2>&1; then
+	if ! id "$TOUSER" &>/dev/null; then
 		echo -e "${RED}User \"$TOUSER\" not found!${NC}"
 		exit 3
 	else
+		# shellcheck disable=SC2009
+		oldbot="$(ps -fu "$TOUSER" | grep startbot | grep -v -e 'grep' -e '\-startbot' )"
+		[ "${oldbot}" != "" ] && \
+			echo -e "${ORANGE}Warning: At least one not upgraded TMUX bot is running! You must stop it with kill command:${NC}\\n${oldbot}"
 		echo "Adjusting user \"${TOUSER}\" files and permissions ..."
 		[ -w "bashbot.rc" ] && sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' "bashbot.rc"
 		chown -R "$TOUSER" . ./*
@@ -429,12 +485,11 @@ if [ "$1" != "source" ]; then
 	"outproc") # forward output from interactive and jobs to chat
 		[ "$3" = "" ] && echo "No file to read from" && exit 3
 		[ "$2" = "" ] && echo "No chat to send to" && exit 3
-		until [ "$line" = "imprettydarnsuredatdisisdaendofdacmd" ];do
-			line=""
-			read -r -t 10 line
-			[ "$line" != "" ] && [ "$line" != "imprettydarnsuredatdisisdaendofdacmd" ] && send_message "$2" "$line"
-		done <"${TMPDIR:-.}/$3"
+		while read -r line ;do
+			[ "$line" != "" ] && send_message "$2" "$line"
+		done 
 		rm -f -r "${TMPDIR:-.}/$3"
+		[ -s "${TMPDIR:-.}/$3.log" ] || rm -f "${TMPDIR:-.}/$3.log"
 		exit
 		;;
 	"startbot" )
@@ -448,15 +503,14 @@ if [ "$1" != "source" ]; then
 		bot_init
 		exit
 		;;
-	"attach")
-		tmux attach -t "$ME"
-		exit
-		;;
   esac
 
 
   ###############
   # "official" arguments as shown to users
+  SESSION="$ME-startbot"
+  BOTPID="$(proclist "${SESSION}")"
+
   case "$1" in
 	"count")
 		echo "A total of $(wc -l <"${COUNTFILE}") users used me."
@@ -469,68 +523,57 @@ if [ "$1" != "source" ]; then
 		shift
 		while read -r f; do send_markdown_message "${f//COUNT}" "$*"; $sleep; done <"${COUNTFILE}"
 		;;
+	"status")
+		if [ "${BOTPID}" != "" ]; then
+			echo -e "${GREEN}Bot is running.${NC}"
+			exit
+		else
+			echo -e "${ORANGE}Bot not running.${NC}"
+			exit 5
+		fi
+		;;
+		 
 	"start")
-		${CLEAR}
-		tmux kill-session -t "$ME" &>/dev/null
-		tmux new-session -d -s "$ME" "bash $SCRIPT startbot" && echo -e "${GREEN}Bot started successfully.${NC}"
-		echo "Tmux session name $ME" || echo -e "${RED}An error occurred while starting the bot. ${NC}"
+		# shellcheck disable=SC2086
+		[ "${BOTPID}" != "" ] && kill ${BOTPID}
+		nohup "$SCRIPT" "startbot" "$2" "${SESSION}" &>/dev/null &
+		echo "Session Name: ${SESSION}"
+		if [ "$(proclist "${SESSION}")" != "" ]; then
+		 	echo -e "${GREEN}Bot started successfully.${NC}"
+		else
+			echo -e "${RED}An error occurred while starting the bot.${NC}"
+			exit 5
+		fi
 		;;
-	"kill")
-		${CLEAR}
-		tmux kill-session -t "$ME" &>/dev/null
-		echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
+	"kill"|"stop")
+		if [ "${BOTPID}" != "" ]; then
+			# shellcheck disable=SC2086
+			if kill ${BOTPID}; then
+				echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
+			else
+				echo -e "${RED}An error occured while stopping bot.${NC}"
+				exit 5
+			fi
+		fi
+		exit
 		;;
-	"background" | "resumeback")
-		${CLEAR}
-		echo -e "${GREEN}Restart background processes ...${NC}"
-		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
-		    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
-			echo -e "${RED}No background processes to start.${NC}"; break
-		    else
-			RESTART="$(< "${FILE}")"
-			CHAT[ID]="${RESTART%%:*}"
-			JOB="${RESTART#*:}"
-			PROG="${JOB#*:}"
-			JOB="${JOB%:*}"
-			fifo="back-${JOB}-${ME}_${CHAT[ID]}" # compose fifo from jobname, $ME (botname) and CHAT[ID] 
-			echo "restartbackground  ${PROG}  ${fifo}"
-			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}") 2>/dev/null
-			mkfifo "${TMPDIR:-.}/${fifo}"
-			tmux new-session -d -s "${fifo}" "${PROG} &>${TMPDIR:-.}/${fifo}; echo imprettydarnsuredatdisisdaendofdacmd>${TMPDIR:-.}/${fifo}"
-			tmux new-session -d -s "sendprocess_${fifo}" "bash $SCRIPT outproc ${CHAT[ID]} ${fifo}"
-		    fi
-		done
-		;;
-	"killback" | "suspendback")
-		${CLEAR}
-		echo -e "${GREEN}Stopping background processes ...${NC}"
-		for FILE in "${TMPDIR:-.}/"*-back.cmd; do
-		    if [ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ]; then
-			echo -e "${RED}No background processes.${NC}"; break
-		    else
-			REMOVE="$(< "${FILE}")"
-			JOB="${REMOVE#*:}"
-			fifo="back-${JOB%:*}-${ME}_${REMOVE%%:*}"
-			echo "killbackground  ${fifo}"
-			[ "$1" = "killback" ] && rm -f "${FILE}" # remove job
-			( tmux kill-session -t "${fifo}"; tmux kill-session -t "sendprocess_${fifo}"; rm -f -r "${TMPDIR:-.}/${fifo}") 2>/dev/null
-		    fi
-		done
+	"resumeb"* | "killb"* | "suspendb"*)
+  		_is_function job_control || { echo -e "${RED}Module background is not availible!${NC}"; exit 3; }
+		job_control "$1"
 		;;
 	"help")
-		${CLEAR}
 		less "README.txt"
 		exit
 		;;
 	*)
 		echo -e "${RED}${ME}: BAD REQUEST${NC}"
-		echo -e "${RED}Available arguments: start, kill, count, broadcast, help, suspendback, resumeback, killback${NC}"
+		echo -e "${RED}Available arguments: start, stop, kill, status, count, broadcast, help, suspendback, resumeback, killback${NC}"
 		exit 4
 		;;
   esac
 
   # warn if root
-  if [[ "$(id -u)" -eq "0" ]] ; then
+  if [[ "${UID}" -eq "0" ]] ; then
 	echo -e "\\n${ORANGE}WARNING: ${SCRIPT} was started as ROOT (UID 0)!${NC}"
 	echo -e "${ORANGE}You are at HIGH RISK when processing user input with root privilegs!${NC}"
   fi

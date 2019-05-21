@@ -61,7 +61,7 @@ every line from ```'/command')``` to ```;;```.
 		#	;;
 
 		*)	# forward other messages to optional dispatcher
-			_is_function startproc && if tmux ls | grep -v send | grep -q "$copname"; then inproc; fi # interactive running
+			_is_function send_interactive && send_interactive "${CHAT[ID]}" "${MESSAGE}"
 			_is_function mycommands && mycommands
 			;;
 	esac
@@ -153,5 +153,5 @@ The second warning is about an unused variable, this is true because in our exam
 #### [Prev Best Practice](5_practice.md)
 #### [Next Functions Reference](6_reference.md)
 
-#### $$VERSION$$ v0.76-1-ge8a1fd0
+#### $$VERSION$$ v0.80-pre-7-g300553f
 

@@ -84,6 +84,17 @@ See also [deleteMessage limitations](https://core.telegram.org/bots/api#deleteme
 
 ----
 
+##### send_message
+```send_message``` sends any type of message to the given chat. Type of output is steered by keywords within the message. 
+
+The main use case for send_message is to process the output of interactive chats and background jobs. **For regular Bot commands I recommend using of the dedicated send_xxx_message() functions from above.**
+
+*usage:* send_message "${CHAT[ID]}" "message"
+
+*example:* - see [Usage](2_usage.md#send_message) and [Advanced Usage](3_advanced.md#Interactive-Chats)
+
+----
+
 ### File, Location, Venue, Keyboard 
 
 
@@ -330,40 +341,45 @@ see [InlineQueryResult for more information](https://core.telegram.org/bots/api#
 ### Background and Interactive jobs
 You must include  ```source modules/background.sh``` in 'commands.sh' to have the following functions availible.
 
-##### startproc
+##### start_proc
 ```startproc``` starts a script, the output of the script is sent to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
 
-*usage:* startproc "script"
+*usage:* start_proc "${CHAT[ID]}" "script"
+
+*alias:* startproc "script"
 
 *example:* 
 ```bash
 startproc 'examples/calc.sh'
 ```
 
-##### checkproc
+
+##### check_proc
 Return true (0) if an interactive script is running in the chat. 
 
-*usage:* checkprog
+*usage:* check_prog "${CHAT[ID]}"
+
+*alias:* checkprog 
 
 *example:* 
 ```bash
-checkproc 
-if [ "$res" -gt 0 ] ; then
+if ! check_proc "${CHAT[ID]}" ; then
   startproc "examples/calc.sh"
 else
    send_normal_message "${CHAT[ID]}" "Calc already running ..."
 fi
 ```
 
-##### killproc
+##### kill_proc
 Kill the interactive script running in the chat
 
-*usage:* killproc
+*usage:* kill_proc "${CHAT[ID]}"
+
+*alias:* killproc
 
 *example:* 
 ```bash
-checkprog
-if [ "$res" -eq 0 ]; then
+if check_proc "${CHAT[ID]}" ; then
   killproc && send_message "${CHAT[ID]}" "Command canceled."
 else
   send_message "${CHAT[ID]}" "Command is not running."
@@ -372,27 +388,30 @@ fi
 
 ----
 
-##### background
+##### start_back
 Starts a script as a background job and attaches a jobname to it. All output from a background job is sent to the associated chat.
 
 In contrast to interactive chats, background jobs do not recieve user input and can run forever. In addition you can suspend and restart running jobs, e.g. after reboot.
 
-*usage:* background "script" "jobname"
+*usage:* start_back "${CHAT[ID]}" "script" "jobname"
+
+*alias:* background "script" "jobname"
 
 *example:* 
 ```bash
 background "examples/notify.sh" "notify"
 ```
 
-##### checkback
+##### check_back
 Return true (0) if an background job is active in the given chat. 
 
-*usage:*  checkback "jobname"
+*usage:*  check_back "${CHAT[ID]}" "jobname"
+
+*alias:*  checkback "jobname"
 
 *example:* 
 ```bash
-checkback "notify"
-if [ "$res" -gt 0 ] ; then
+if ! checkback "notify" ; then
   send_normal_message "${CHAT[ID]}" "Start notify"
   background "examples/notify.sh" "notify"
 else
@@ -400,8 +419,11 @@ else
 fi
 ```
 
-##### killback
-*usage:* killback "jobname"
+##### kill_back
+
+*usage:* kill_back "${CHAT[ID]}" "jobname"
+
+*alias:* killback "jobname"
 
 *example:* 
 ```bash
@@ -416,16 +438,13 @@ fi
 
 ----
 
-##### send_message
-```send_message``` sends any type of message to the given chat. Type of output is steered by keywords within the message. 
+##### send_interactive
+Form version 0.80 on forward_message is used to forward messages to interactive job. It replaces the old 'inproc' commands used for TMUX.
+Usually  message is automatically forwarded in 'commands.sh', but you can forward messages wihle processing also or send your own messages.
 
-The main use case for send_message is to process the output of interactive chats and background jobs. **For regular Bot commands I recommend using of the dedicated send_xxx_message() functions from above.**
+*usage:* send_interactive "${CHAT[ID]}" "message"
 
-*usage:* send_message "${CHAT[ID]}" "message"
-
-*example:* - see [Usage](2_usage.md#send_message) and [Advanced Usage](3_advanced.md#Interactive-Chats)
-
-----
+*replaces:*' incproc
 
 ### Aliases - shortcuts for often used funtions 
 You must include  ```source modules/aliases.sh``` in 'commands.sh' to have the following functions availible.
@@ -525,6 +544,30 @@ You must include  ```source modules/aliases.sh``` in 'commands.sh' to have the f
 
 ### Helper functions
 
+##### download
+Download the fiven URL ans returns the final filename in TMPDIR. If the given filename exists,the filename is prefixed with a
+random number. filename is not allowed to contain '/' or '..'.
+
+*usage:* download URL filename
+
+*example:* 
+```bash
+file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
+echo "$file" -> ./data-bot-bash/avatar.jpg
+file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
+echo "$file" -> ./data-bot-bash/12345-avatar.jpg
+```
+
+##### _exists
+Returns true if the given function exist, can be used to check if a module is loaded.
+
+*usage* _exists command
+
+*example:* 
+```bash
+_exists "curl" && _message "Command curl is not installed!"
+```
+
 ##### _is_function
 Returns true if the given function exist, can be used to check if a module is loaded.
 
@@ -535,11 +578,60 @@ Returns true if the given function exist, can be used to check if a module is lo
 _is_function "background" && _message "you can run background jobs!"
 ```
 
+
 ----
 
 ### Bashbot internal functions
 These functions are for internal use only and must not used in your bot commands.
 
+##### procname
+Returns PrefixBotname_Postfix
+
+*usage:* procname postfix prefix
+
+*example:*
+```bash
+# returns botname, if already set
+procname 
+# returns unique identifier for everthing related to chat
+procname "${CHAT[ID]}"
+# returns unique identifier for job, regardless of chat
+procname "" "back-jobname-"
+# returns unique identifier for a job related to a chat
+# e.g. fifo, cmd and logfile name
+procname "${CHAT[ID]}" "back-jobname-"
+```
+
+##### proclist
+Returns process IDs of current bot processes containing string 'pattern' in name or argument.
+
+*usage:* proclist pattern
+
+*example:*
+```bash
+# list PIDs of all background processes
+proclist "back-"
+# list PIDs of all processes of a job
+proclist "back-jobname-"
+# list PIDs of all processes for a chat
+proclist "_${CHAT[ID]}"
+# list PIDs of all bot processes
+proclist 
+```
+##### killallproc
+kill all current bot processes containing string 'pattern' in name or argument
+
+*usage:* killallproc pattern
+
+*example:* 
+```bash
+# kill all background processes
+killallproc "back-"
+# kill all processes for a chat
+killallproc "_${CHAT[ID]}"
+# kill all bot processes, including YOURSELF!
+killallproc 
+```
 ##### get_file
 *usage:* url="$(get_file "${CHAT[ID]}" "message")"
 
@@ -586,11 +678,8 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 
 *usage:* ME="$(getBotNiname)"
 
-##### inproc
-Send Input from Telegram to waiting Interactive Chat.
-
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.76-1-ge8a1fd0
+#### $$VERSION$$ v0.80-pre-11-g8669cfb
 

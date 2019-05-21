@@ -35,18 +35,33 @@ As an alternative to download the zip files, you can clone the github repository
 3. Extract all files to your existing bashbot dir 
    **Note: all files execpt 'mycommands.sh' and 'commands.sh' may overwritten!**
 4. Save your your current 'commands.sh' and run ```cp commands.sh.dist commands.sh```
-5. Run ```sudo ./bashbot.sh init``` to setup your environment after the update
+5. Stop all running instances of bashbot at this point latest
+6. Run ```sudo ./bashbot.sh init``` to setup your environment after the update
 
 If you modified 'commands.sh' re apply all changes to the new 'commands.sh'. To avoid this all your modifications
 must be done in 'mycommands.sh' only.
 
+Now you can restart your bashbot instances.
+
 ### Notes on Updates
 
-#### Location of tmp / data dir
-From version 0.70 on the tmp dir is renamed to 'data-bot-bash' to reflect the fact that not only temporary files are stored. an existing 'tmp-bot-bash' will be automatically renamed after update.
+#### removal of TMUX
+From version 0.80 on TMUX is no longer needed and the bachsbot command 'attach' is deleted. Old function 'inproc'
+is replaced by 'send_interactive'. send_interactive does checks if an interactive job is running internaly.
+Pls check if you make use of inproc and remove it including the old checks, e.g.
+```bash
+if tmux ls | grep -v send | grep -q "$copname"; then inproc; fi
+# or
+[ checkprog ] && inproc
+```
+must be replaced by ```send_interactive "${CHATD[ID]}" "${MESSAGE}"```
 
+### Do not edit commands.sh
 From version 0.60 on your commands must be placed in 'mycommands.sh'. If you update from a version with your commands
 in 'commands.sh' move all your commands and functions to 'mycommands.sh'.
+
+#### Location of var / tmp / data dirs
+From version 0.70 on the tmp dir is renamed to 'data-bot-bash' to reflect the fact that not only temporary files are stored. an existing 'tmp-bot-bash' will be automatically renamed after update.
 
 From version 0.50 on the temporary files are no more placed in '/tmp'. instead a dedicated tmp dir is used.
 
@@ -70,5 +85,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v0.76-1-ge8a1fd0
+#### $$VERSION$$ v0.80-pre-0-gdd7c66d
 

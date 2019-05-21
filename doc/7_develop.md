@@ -5,7 +5,7 @@ This section is about help and best practices for new bashbot developers. The ma
 bashbot development is done on github. If you want to provide fixes or new features [fork bashbot on githup](https://help.github.com/en/articles/fork-a-repo) and provide changes as [pull request on github](https://help.github.com/en/articles/creating-a-pull-request).
 
 ### Debugging Bashbot
-In normal mode of operation all bashbot output is discarded one more correct sent to TMUX console.
+In normal mode of operation all bashbot output is discarded.
 To get these messages (and more) you can start bashbot in the current shell ```./bashbot.sh startbot```. Now you can see all output or erros from bashbot.
 In addition you can change the change the level of verbosity by adding a third argument after startbot.
 ```
@@ -188,5 +188,5 @@ fi
 #### [Prev Function Reference](6_reference.md)
 #### [Next Bashbot Environment](8_custom.md)
 
-#### $$VERSION$$ v0.76-1-ge8a1fd0
+#### $$VERSION$$ v0.80-pre-0-gdd7c66d
 

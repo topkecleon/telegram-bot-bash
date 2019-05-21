@@ -13,8 +13,7 @@ Elsewhere, consider it released under the
 [WTFPLv2](http://www.wtfpl.net/txt/copying/).
 
 ## Prerequisites
-Depends on [tmux](http://github.com/tmux/tmux).
-Uses [JSON.sh](http://github.com/dominictarr/JSON.sh).
+Uses [JSON.sh](http://github.com/dominictarr/JSON.sh), but no more TMUX.
 
 Even bashbot is written in bash, it depends on commands typically availible in 
 a Unix/Linux Environment.
@@ -72,16 +71,6 @@ all](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
 * [Examples](examples/README.md)
 
 
-#### You don't like the many bashbot files?
-At the beginning bashbot was simply the file ```bashbot.sh``` I can copy 
-everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 
-'modules/*.sh' and much more.
-
-Hey no Problem, if you are finished with your cool bot simply run 
-```dev/make-standalone.sh``` to create a stripped down Version containing only
-'bashbot.sh' and 'commands.sh'! For more information see [Create a stripped 
-down Version of your Bot](doc/7_develop.md)
-
 ## Security Considerations
 Running a Telegram Bot means it is connected to the public and you never know 
 whats send to your Bot.
@@ -132,6 +121,8 @@ To set access rights for your bashbot installation to a reasonable default run
 ```sudo ./bashbot.sh init``` after every update or change to your installation 
 directory.
 
+## FAQ
+
 ### Is this Bot insecure?
 Bashbot is not more (in)secure as any other Bot written in any other language, 
 we have done our best to make it as secure as possible. But YOU are responsible 
@@ -148,6 +139,18 @@ health status
 - no need to install or learn a new programming language, library or framework
 - no database, not event driven, not OO ...
 
+### Can I have the single bashbot.sh file back?
+At the beginning bashbot was simply the file ```bashbot.sh``` you can copy 
+everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 
+'modules/*.sh' and much more.
+
+Hey no Problem, if you are finished with your cool bot run 
+```dev/make-standalone.sh``` to create a stripped down Version of your bot 
+containing only
+'bashbot.sh' and 'commands.sh'! For more information see [Create a stripped 
+down Version of your Bot](doc/7_develop.md)
+
+
 @Gnadelwartz
 
 ## That's it!
@@ -155,4 +158,4 @@ health status
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.76-1-ge8a1fd0
+#### $$VERSION$$ v0.80-pre-11-g8669cfb
