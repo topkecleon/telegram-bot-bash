@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.80-pre-2-g9482bd6
+#### $$VERSION$$ v80-rc1-0-gb096ea3
 #
 
 # uncomment the following lines to overwrite info and help messages
