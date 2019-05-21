@@ -96,7 +96,7 @@ Well, thats a damn good question ... may be because I'm an Unix/Linux admin from
 - no need to install or learn a new programming language, library or framework
 - no database, not event driven, not OO ...
 
-#### Can I have the single bashbot.sh file back?
+### Can I have the single bashbot.sh file back?
 At the beginning bashbot was simply the file ```bashbot.sh``` you can copy everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 'modules/*.sh' and much more.
 
 Hey no Problem, if you are finished with your cool bot run ```dev/make-standalone.sh``` to create a stripped down Version of your bot containing only
@@ -109,4 +109,4 @@ Hey no Problem, if you are finished with your cool bot run ```dev/make-standalon
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.80-pre-8-gf1ebdbb
+#### $$VERSION$$ v0.80-pre-11-g8669cfb

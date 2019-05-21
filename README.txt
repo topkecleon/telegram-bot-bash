@@ -139,7 +139,7 @@ health status
 - no need to install or learn a new programming language, library or framework
 - no database, not event driven, not OO ...
 
-#### Can I have the single bashbot.sh file back?
+### Can I have the single bashbot.sh file back?
 At the beginning bashbot was simply the file ```bashbot.sh``` you can copy 
 everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 
 'modules/*.sh' and much more.
@@ -158,4 +158,4 @@ down Version of your Bot](doc/7_develop.md)
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.80-pre-8-gf1ebdbb
+#### $$VERSION$$ v0.80-pre-11-g8669cfb

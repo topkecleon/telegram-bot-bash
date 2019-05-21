@@ -589,11 +589,49 @@ Returns PrefixBotname_Postfix
 
 *usage:* procname postfix prefix
 
+*example:*
+```bash
+# returns botname, if already set
+procname 
+# returns unique identifier for everthing related to chat
+procname "${CHAT[ID]}"
+# returns unique identifier for job, regardless of chat
+procname "" "back-jobname-"
+# returns unique identifier for a job related to a chat
+# e.g. fifo, cmd and logfile name
+procname "${CHAT[ID]}" "back-jobname-"
+```
+
 ##### proclist
-Returns process IDs from ps -ef containing procname
+Returns process IDs of current bot processes containing string 'pattern' in name or argument.
 
-*usage:* proclist procname
+*usage:* proclist pattern
 
+*example:*
+```bash
+# list PIDs of all background processes
+proclist "back-"
+# list PIDs of all processes of a job
+proclist "back-jobname-"
+# list PIDs of all processes for a chat
+proclist "_${CHAT[ID]}"
+# list PIDs of all bot processes
+proclist 
+```
+##### killallproc
+kill all current bot processes containing string 'pattern' in name or argument
+
+*usage:* killallproc pattern
+
+*example:* 
+```bash
+# kill all background processes
+killallproc "back-"
+# kill all processes for a chat
+killallproc "_${CHAT[ID]}"
+# kill all bot processes, including YOURSELF!
+killallproc 
+```
 ##### get_file
 *usage:* url="$(get_file "${CHAT[ID]}" "message")"
 
@@ -643,5 +681,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.80-pre-5-ge5f7b2d
+#### $$VERSION$$ v0.80-pre-11-g8669cfb
 

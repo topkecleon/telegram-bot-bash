@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-pre-9-g8dfdf2e
+#### $$VERSION$$ v0.80-pre-11-g8669cfb
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -147,11 +147,26 @@ procname(){
 	printf '%s\n' "$2${ME}_$1"
 }
 
-# $1 proc name
+# $1 sting to search for proramm incl. parameters
+# retruns a list of PIDs of all current bot proceeses matching $1
 proclist() {
 	# shellcheck disable=SC2009
-	ps -fu "${UID}" | grep -v grep| grep "$1" | sed 's/\s\+/\t/g' | cut -f 2
+	ps -fu "${UID}" | grep -F "$1" | grep -v ' grep'| grep -F "${ME}" | sed 's/\s\+/\t/g' | cut -f 2
 }
+
+# $1 sting to search for proramm to kill
+killallproc() {
+	local procid; procid="$(proclist "$1")"
+	if [ "${procid}" != "" ] ; then
+		# shellcheck disable=SC2046
+		kill $(proclist "$1")
+		sleep 1
+		procid="$(proclist "$1")"
+		# shellcheck disable=SC2046
+		[ "${procid}" != "" ] && kill $(proclist -9 "$1")
+	fi
+}
+
 
 # returns true if command exist
 _exists()
