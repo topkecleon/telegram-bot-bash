@@ -28,15 +28,15 @@ As an alternative to download the zip files, you can clone the github repository
 
 ###  Update bashbot
 
+**Note: all files including 'mycommands.sh' may overwritten, make a backup!**
+
 1. Go to the directory where you had installed bashbot, e.g.
     * your $HOME directory
     * /usr/local
 2. [Download latest release zip from github](https://github.com/topkecleon/telegram-bot-bash/releases)
-3. Extract all files to your existing bashbot dir 
-   **Note: all files execpt 'mycommands.sh' and 'commands.sh' may overwritten!**
-4. Save your your current 'commands.sh' and run ```cp commands.sh.dist commands.sh```
-5. Stop all running instances of bashbot at this point latest
-6. Run ```sudo ./bashbot.sh init``` to setup your environment after the update
+3. Stop all running instances of bashbot
+4. Extract all files to your existing bashbot dir 
+5. Run ```sudo ./bashbot.sh init``` to setup your environment after the update
 
 If you modified 'commands.sh' re apply all changes to the new 'commands.sh'. To avoid this all your modifications
 must be done in 'mycommands.sh' only.
@@ -59,6 +59,8 @@ must be replaced by ```send_interactive "${CHATD[ID]}" "${MESSAGE}"```
 ### Do not edit commands.sh
 From version 0.60 on your commands must be placed in 'mycommands.sh'. If you update from a version with your commands
 in 'commands.sh' move all your commands and functions to 'mycommands.sh'.
+
+From version 0.80 on 'commands.sh' will be overwritten on update!
 
 #### Location of var / tmp / data dirs
 From version 0.70 on the tmp dir is renamed to 'data-bot-bash' to reflect the fact that not only temporary files are stored. an existing 'tmp-bot-bash' will be automatically renamed after update.

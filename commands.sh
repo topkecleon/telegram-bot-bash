@@ -35,9 +35,6 @@ bashbot_help='*Available commands*:
 Written by Drew (@topkecleon), Daniil Gentili (@danogentili) and KayM(@gnadelwartz).
 Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
-# we don't know whom we are ...
-copname=""
-
 
 # load modues on startup and always on on debug
 if [ "${1}" = "source" ] || [[ "${1}" = *"debug"* ]] ; then
