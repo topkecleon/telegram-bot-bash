@@ -1,8 +1,7 @@
 ["ok"]	true
 ["result",0,"update_id"]	146860800
-["result",0,"message","message_id"]	6541 6541 # this is a cross check for JsonGetValue
+["result",0,"message","message_id"]	6541
 ["result",0,"message","text"]	"\ud83d\ude02\ud83d\ude1d\ud83d\udc4c\u263a\u2764\ud83d\ude15\ud83d\ude08#\u20e3\ud83c\udf0f\ud83c\udf89\ud83d\ude4a\ud83d\ude49\u2615\ud83d\ude80\u2708\ud83d\ude82\ud83d\udcaf\u2714\u303d\ud83d\udd1a"
-["result",0,"message","text"]	"Cross check, this second text must be ignored"
 ["result",0,"message","from","id"]	123456789
 ["result",0,"message","from","is_bot"]	false
 ["result",0,"message","from","first_name"]	"Kay"
@@ -89,5 +88,4 @@
 ["result",0,"message","contact","vcard"]	"BEGIN:VCARD\nVERSION:2.1\nN:Pannenhilfe;ADAC;;;\nFN:ADAC Pannenhilfe\nTEL;CELL;PREF:+49179222222\nTEL;X-Mobil:222222\nEND:VCARD"
 ["result",0,"message","voice","duration"]	2
 ["result",0,"message","voice","mime_type"]	"audio/ogg"
-["result",0,"message","voice","file_id"]	"AwADAgADOAQAAqd24Emnm_VGmmVEuAI"
 ["result",0,"message","voice","file_size"]	4262
