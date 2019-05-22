@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v80-rc1-0-gb096ea3
+#### $$VERSION$$ v80-rc1-2-g9ef99ee
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -187,9 +187,8 @@ delete_message() {
 
 get_file() {
 	[ "$1" = "" ] && return
-	local JSON='"file_id": '"${1}"
-	sendJson "" "${JSON}" "${GETFILE_URL}"
-	jsonGetString <<< "${URL}/""${res}" '"result","file_path"'
+	sendJson ""  '"file_id": '"${1}""${GETFILE_URL}"
+	printf '%s\n' "${URL}"/"$(jsonGetString <<< "${res}" '"result","file_path"')"
 }
 
 # curl is preffered, but may not availible on ebedded systems
