@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v80-rc1-2-g9ef99ee
+#### $$VERSION$$ v80-rc1-3-gd8e0b5c
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -116,7 +116,7 @@ GETFILE_URL=$URL'/getFile'
 
 unset USER
 declare -A BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
-export res BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY CAPTION NAME
+export res BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY CAPTION
 
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
 if [ "$1" != "source" ]; then
@@ -367,17 +367,21 @@ process_message() {
 
 	# Contact
 	CONTACT[FIRST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","first_name"' <"$TMP")")"
-	CONTACT[USER_ID]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","user_id"' <"$TMP")")"
-	CONTACT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","last_name"' <"$TMP")")"
-	CONTACT[NUMBER]="$(JsonGetString '"result",'"${num}"',"message","contact","phone_number"' <"$TMP")"
-	CONTACT[VCARD]="$(JsonGetString '"result",'"${num}"',"message","contact","vcard"' <"$TMP")"
+	if [ "${CONTACT[FIRST_NAME]}" != "" ]; then
+		CONTACT[USER_ID]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","user_id"' <"$TMP")")"
+		CONTACT[LAST_NAME]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","contact","last_name"' <"$TMP")")"
+		CONTACT[NUMBER]="$(JsonGetString '"result",'"${num}"',"message","contact","phone_number"' <"$TMP")"
+		CONTACT[VCARD]="$(JsonGetString '"result",'"${num}"',"message","contact","vcard"' <"$TMP")"
+	fi
 
 	# vunue
 	VENUE[TITLE]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","venue","title"' <"$TMP")")"
-	VENUE[ADDRESS]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","venue","address"' <"$TMP")")"
-	VENUE[LONGITUDE]="$(JsonGetValue '"result",'"${num}"',"message","venue","location","longitude"' <"$TMP")"
-	VENUE[LATITUDE]="$(JsonGetValue '"result",'"${num}"',"message","venue","location","latitude"' <"$TMP")"
-	VENUE[FOURSQUARE]="$(JsonGetString '"result",'"${num}"',"message","venue","foursquare_id"' <"$TMP")"
+	if [ "${VENUE[TITLE]}" != "" ]; then
+		VENUE[ADDRESS]="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","venue","address"' <"$TMP")")"
+		VENUE[LONGITUDE]="$(JsonGetValue '"result",'"${num}"',"message","venue","location","longitude"' <"$TMP")"
+		VENUE[LATITUDE]="$(JsonGetValue '"result",'"${num}"',"message","venue","location","latitude"' <"$TMP")"
+		VENUE[FOURSQUARE]="$(JsonGetString '"result",'"${num}"',"message","venue","foursquare_id"' <"$TMP")"
+	fi
 
 	# Caption
 	CAPTION="$(JsonDecode "$(JsonGetString '"result",'"${num}"',"message","caption"' <"$TMP")")"
@@ -385,7 +389,6 @@ process_message() {
 	# Location
 	LOCATION[LONGITUDE]="$(JsonGetValue '"result",'"${num}"',"message","location","longitude"' <"$TMP")"
 	LOCATION[LATITUDE]="$(JsonGetValue '"result",'"${num}"',"message","location","latitude"' <"$TMP")"
-	NAME="$(sed 's/.*\///g' <<< "${URLS[*]}")"
 	rm "$TMP"
 }
 
