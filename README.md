@@ -104,6 +104,17 @@ At the beginning bashbot was simply the file ```bashbot.sh``` you can copy every
 Hey no Problem, if you are finished with your cool bot run ```dev/make-standalone.sh``` to create a stripped down Version of your bot containing only
 'bashbot.sh' and 'commands.sh'! For more information see [Create a stripped down Version of your Bot](doc/7_develop.md)
 
+### I get "EXPECTED value GOT EOF" on start
+May be your IP is blocked by telgram and curl/wget reach it's timeout (default 20s in bashbot). You can test this by running curl or wget manually:
+```bash
+curl -m 10  https://api.telegram.org/bot
+curl: (28) Connection timed out after 10001 milliseconds
+
+wget -t 1 -T 10 https://api.telegram.org/bot
+Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.
+```
+This may happen if someone send to many wrong requests, e.g. wrong bot token, to api.telegram.org. If you have a fixed IP you can ask telegram service to unblock your ip or change your IP. If you are running a tor proxy on your server you may uncomment the 'BASHBOT_CURL_ARGS' line in 'mycommands.sh' 
+
 
 @Gnadelwartz
 
