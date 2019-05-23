@@ -571,13 +571,12 @@ if [ "$1" != "source" ]; then
 	*)
 		echo -e "${RED}${ME}: BAD REQUEST${NC}"
 		echo -e "${RED}Available arguments: start, stop, kill, status, count, broadcast, help, suspendback, resumeback, killback${NC}"
-		exit 4
 		;;
   esac
 
   # warn if root
   if [[ "${UID}" -eq "0" ]] ; then
 	echo -e "\\n${ORANGE}WARNING: ${SCRIPT} was started as ROOT (UID 0)!${NC}"
-	echo -e "${ORANGE}You are at HIGH RISK when processing user input with root privilegs!${NC}"
+	echo -e "${ORANGE}You are at HIGH RISK when running a Telegram BOT with root privilegs!${NC}"
   fi
 fi # end source
