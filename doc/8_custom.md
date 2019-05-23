@@ -3,19 +3,23 @@
 ## Expert use
 
 ### Use bashbot from CLI and scripts
-You can use bashbot to send messages, locations, venues, pictures etc from command line and scripts.
+You can use bashbot to send *messages*, *locations*, *venues*, *pictures* etc. from command line and scripts
+by sourcing it:
 
-For interactive use and script use should set and export BASHBOT_HOME to bashbots installation dir,
-e.g. '/usr/local/telegram-bot-bash'. see [Bashbot environemnt](#Bashbot-environment)
+*usage:* .  bashbot.sh source
 
-**Note:** If you don't set BASHBOT_HOME bashbot will use the actual directory as NEW home directory
-which means it will create all needed files and ask for bot token and botadmin if you are not in the real bot home!
+Before sourcing 'bahsbot.sh' for interactive and script use, you should export and set BASHBOT_HOME to bashbots installation dir,
+e.g. '/usr/local/telegram-bot-bash'. see [Bashbot Environemt](#Bashbot-environment)
 
-*usage:* source bashbot.sh source
+**Note:** *If you don't set BASHBOT_HOME bashbot will use the actual directory as NEW home directory
+which means it will create all needed files and ask for bot token and botadmin if you are not in the real bot home!*
 
 *Examples:*
 ```bash
 # if you are in the bashbot directory
+.  bashbot.sh source
+
+# same, but more readable in scripts
 source ./bashbot.sh source
 
 # use bashbot config in BASHBOT_HOME from any directory
@@ -27,28 +31,26 @@ unset  BASHBOT_HOME
 source /path/to/bashbot.sh source
 
 ```
-**Warning:** If you forget the 'source' parameter for bashbot while sourcing you may geht error messages and
+**Warning:** If you forget the 'source' parameter while sourcing you may geht error messages and
 your current shell or script may terminate!
 
 #### Environment variable exported from bashbot
-If you have sourced 'bashbot.sh' you have the following bashot internal variables availible to
-locate varoius ressources:
+If you have sourced 'bashbot.sh' you have the following bashot internal variables availible:
 ```bash
-COMMANDS	# default ./commands.sh"
-MODULEDIR	# default ./modules"
-TOKENFILE	# default ./token"
-BOTADMIN	# default ./botadmin"
-BOTACL		# default ./botacl"
-TMPDIR		# default ./data-bot-bash"
-COUNTFILE	# default ./count"
+COMMANDS	# default: ./commands.sh"
+MODULEDIR	# default: ./modules"
+TOKENFILE	# default: ./token"
+BOTADMIN	# default: ./botadmin"
+BOTACL		# default: ./botacl"
+TMPDIR		# default: ./data-bot-bash"
+COUNTFILE	# default: ./count"
 
-BOTTOKEN	# default content of ${TOKENFILE}
-URL		# telegram api URL -default https://api.telegram.org/bot${BOTTOKEN}"
+BOTTOKEN	# default: content of ${TOKENFILE}
+URL		# telegram api URL - default: https://api.telegram.org/bot${BOTTOKEN}"
 ```
 
 #### Interacctive use
-For Test purposes you can use bashbot functions from bash command line after setting BASHBOT_HOME
-and sourcing 'bashbot.sh'.
+For testing your setup or sending messages yoursel you can use bashbot functions from bash command line:
 ```bash
 # are we running bash?
 echo $SHELL
@@ -57,10 +59,10 @@ echo $SHELL
 # source bashbot.sh WITHOUT BASHBOT_HOME set
 ./bashbot.sh source
 
-
 # output bashbot internal variables
 echo $COMMANDS $MODULEDIR $TOKENFILE $BOTADMIN $BOTACL $TMPDIR $COUNTFILE
 ./commands.sh ./modules ./token ./botadmin ./botacl ./data-bot-bash ./count
+
 
 # source bashbot.sh WITH BASHBOT_HOME set
 export BASHBOT_HOME=/usr/local/telegram-bot-bash
@@ -73,7 +75,7 @@ echo $COMMANDS $MODULEDIR $TOKENFILE $BOTADMIN $BOTACL $TMPDIR $COUNTFILE
 /usr/local/telegram-bot-bash/count
 
 ``` 
-Now you can use the bashot 'send_xxx' functions to send Message, Locations, Pictures etc. to any Telegram
+After sourcing you can use bashbot functions to send Messages, Locations, Pictures etc. to any Telegram
 User or Chat you are in. See [Send Messages](2_usage.md#sending-messages).
 
 *Examples:* You can test this by sending messages to yourself:
@@ -86,7 +88,7 @@ send_markdown_message 	"$(< $BOTADMIN)"  '*Hello World!* _This is my first markd
 send_html_message	"$(< $BOTADMIN)"  '<b>Hello World!</b> <em>This is my first HTML message</em>'
 send_keyboard "$(< $BOTADMIN)"  'Do you like it?' '[ "Yep" , "No" ]'
 ```
-Nnow something more useful ...
+Now something more useful ...
 ```bash
 # sending output from system commands:
 send_normal_message	"$(< $BOTADMIN)"  "$(date)"
@@ -94,7 +96,8 @@ send_normal_message	"$(< $BOTADMIN)"  "$(date)"
 send_normal_message	"$(< $BOTADMIN)"  "$(uptime)"
 
 send_normal_message       "$(< $BOTADMIN)"  '`'$(free)'`'
-# same but sent as monospaced text
+
+# same but markdown style 'code' (monospaced)
 send_markdown_message	"$(< $BOTADMIN)"  "\`$(free)\`"
 ```
 
@@ -147,17 +150,16 @@ Full path to JSON.sh script, default: './JSON.sh/JSON.sh', must end with '/JSON.
 ```
 
 ##### BASHBOT_HOME
-Bashbot Home directory (where bashbot is installed). If set bashbot autodetection of installation dir is disabled
-and value of BASHBOT_HOME is used.
+Set bashbot home directory, where bashot will look for additional files.
+If BASHBOT_ETC, BASHBOT_VAR or BASHBOT_JSONSH are set the have precedence over BASHBOT_HOME.
 
-This is usefull if you want to force bashbot to always use full pathnames instead of relative ones or if you
-want to tell your own scripts where to look for bashbot.sh.
+This is also usefull if you want to force bashbot to always use full pathnames instead of relative ones.
 ```bash
   unset  BASHBOT_HOME     # autodetection (default)
   export BASHBOT_HOME ""  # autodetection
 
   export BASHBOT_HOME "/usr/local/telegram-bot-bash"	# unix like location
-  export BASHBOT_HOME "/usr/local/bin"			# Note: you MUST set ETC, VAR and JSONSH correct to make this work!
+  export BASHBOT_HOME "/usr/local/bin"	# Note: you MUST set ETC, VAR and JSONSH to other locations to make this work!
 ```
 
 ----
@@ -247,5 +249,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 
 #### [Prev Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.90-dev-3-g80a4778
+#### $$VERSION$$ v0.90-dev-4-ge0bb9f8
 
