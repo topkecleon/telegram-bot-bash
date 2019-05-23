@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.90-dev-0-g75691dc
+#### $$VERSION$$ v0.90-dev-5-gb1fb35d
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -17,6 +17,8 @@ res=""
 export INLINE="0"
 # Set to .* to allow sending files from all locations
 export FILE_REGEX='/home/user/allowed/.*'
+# example: run bashbot over TOR
+# export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1:9050"
 
 if [ "$1" != "source" ];then
     # your additional bahsbot commands

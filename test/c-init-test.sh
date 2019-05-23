@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.90-dev-0-g75691dc
+#### $$VERSION$$ v0.90-dev-5-gb1fb35d
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -46,5 +46,4 @@ echo "${SUCCESS}"
 
 echo "Test bashbot.sh count"
 cp "${REFDIR}/count.test" "${TESTDIR}/count"
-"${TESTDIR}/bashbot.sh" count
-
+#"${TESTDIR}/bashbot.sh" count

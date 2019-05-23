@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev-3-g80a4778
+#### $$VERSION$$ v0.90-dev-5-gb1fb35d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -34,7 +34,19 @@ fi
 # get location and name of bashbot.sh
 export SCRIPT SCRIPTDIR MODULEDIR RUNDIR RUNUSER
 SCRIPT="$0"
-SCRIPTDIR="$(dirname "$0")"
+REALME="${BASH_SOURCE[0]}"
+
+SCRIPTDIR="$(dirname "${REALME}")"
+RUNDIR="$(dirname "$0")"
+
+MODULEDIR="${SCRIPTDIR}/modules"
+
+
+if [ "${SCRIPT}" != "${REALME}" ] || [ "$1" = "source" ]; then
+	SOURCE="yes"
+else
+	SCRIPT="./$(basename "${SCRIPT}")"
+fi
 
 if [ "$BASHBOT_HOME" != "" ]; then
 	SCRIPTDIR="$BASHBOT_HOME"
@@ -42,14 +54,11 @@ if [ "$BASHBOT_HOME" != "" ]; then
 	[ "${BASHBOT_VAR}" = "" ] && BASHBOT_VAR="$BASHBOT_HOME"
 fi
 
-MODULEDIR="${SCRIPTDIR}/modules"
 
-RUNDIR="${SCRIPTDIR}"
-[ "${RUNDIR}" = "${SCRIPTDIR}" ] && SCRIPT="./$(basename "${SCRIPT}")"
 
 RUNUSER="${USER}" # USER is overwritten by bashbot array
 
-if [ "$1" != "source" ] && [ "$BASHBOT_HOME" != "" ] && ! cd "${RUNDIR}" ; then
+if [ "${SOURCE}" != "yes" ] && [ "$BASHBOT_HOME" = "" ] && ! cd "${RUNDIR}" ; then
 	echo -e "${RED}ERROR: Can't change to ${RUNDIR} ...${NC}"
 	exit 1
 fi
@@ -114,7 +123,6 @@ elif [ ! -w "${COUNTFILE}" ]; then
 	exit 2
 fi
 
-
 BOTTOKEN="$(< "${TOKENFILE}")"
 URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
 
@@ -128,7 +136,12 @@ declare -A UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO V
 export res UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY CAPTION
 
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
-if [ "$1" != "source" ]; then
+if [ "${SOURCE}" = "yes" ]; then
+	for modules in ${MODULEDIR:-.}/*.sh ; do
+		# shellcheck source=./modules/aliases.sh
+		[ -r "${modules}" ] && source "${modules}" "source"
+	done
+else
 	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
 		echo -e "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NC}"
 		ls -l "${COMMANDS}"
@@ -201,16 +214,21 @@ get_file() {
 }
 
 # curl is preffered, but may not availible on ebedded systems
+TIMEOUT="${BASHBOT_TIMEOUT}"
+[[ "$TIMEOUT" =~ ^[0-9]+$ ]] || TIMEOUT="20"
+
 if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
   # simple curl or wget call, output to stdout
   getJson(){
-	curl -sL "$1"
+	# shellcheck disable=SC2086
+	curl -sL ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
   }
   # usage: sendJson "chat" "JSON" "URL"
   sendJson(){
 	local chat="";
 	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
-	res="$(curl -s -d '{'"${chat} $2"'}' -X POST "${3}" \
+	# shellcheck disable=SC2086
+	res="$(curl -s ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" -d '{'"${chat} $2"'}' -X POST "${3}" \
 		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
@@ -219,22 +237,26 @@ if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
   sendUpload() {
 	[ "$#" -lt 4  ] && return
 	if [ "$5" != "" ]; then
-		res="$(curl -s "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n )"
+	# shellcheck disable=SC2086
+		res="$(curl -s ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n )"
 	else
-		res="$(curl -s "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
+	# shellcheck disable=SC2086
+		res="$(curl -s ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
 	fi
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
   }
 else
   # simple curl or wget call outputs result to stdout
   getJson(){
-	wget -qO - "$1"
+	# shellcheck disable=SC2086
+	wget -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
   }
   # usage: sendJson "chat" "JSON" "URL"
   sendJson(){
 	local chat="";
 	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
-	res="$(wget -qO - --post-data='{'"${chat} $2"'}' \
+	# shellcheck disable=SC2086
+	res="$(wget -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $2"'}' \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
@@ -475,16 +497,19 @@ if [ ! -f "${JSONSHFILE}" ]; then
 	chmod +x "${JSONSHFILE}" 
 fi
 
-ME="$(getBotName)"
-if [ "$ME" = "" ] && [ "$1" != "source" ]; then
+
+if [ "${SOURCE}" != "yes" ] && [ "$1" != "init" ] &&  [ "$1" != "help" ] && [ "$1" != "" ]; then
+  ME="$(getBotName)"
+  if [ "$ME" = "" ]; then
 	echo -e "${RED}ERROR: Can't connect to Telegram Bot! May be your TOKEN is invalid ...${NC}"
 	exit 1
+  fi
 fi
 
 # source the script with source as param to use functions in other scripts
 # do not execute if read from other scripts
 
-if [ "$1" != "source" ]; then
+if [ "${SOURCE}" != "yes" ]; then
 
   ##############
   # internal options only for use from bashbot and developers
@@ -501,9 +526,6 @@ if [ "$1" != "source" ]; then
 		;;
 	"startbot" )
 		start_bot "$2"
-		exit
-		;;
-	"source") # this should never arrive here
 		exit
 		;;
 	"init") # adjust users and permissions
@@ -573,8 +595,9 @@ if [ "$1" != "source" ]; then
 		exit
 		;;
 	*)
-		echo -e "${RED}${ME}: BAD REQUEST${NC}"
+		echo -e "${RED}${REALME}: BAD REQUEST${NC}"
 		echo -e "${RED}Available arguments: start, stop, kill, status, count, broadcast, help, suspendback, resumeback, killback${NC}"
+		exit 4
 		;;
   esac
 

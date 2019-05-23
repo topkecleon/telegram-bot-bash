@@ -31,8 +31,6 @@ unset  BASHBOT_HOME
 source /path/to/bashbot.sh source
 
 ```
-**Warning:** If you forget the 'source' parameter while sourcing you may geht error messages and
-your current shell or script may terminate!
 
 #### Environment variable exported from bashbot
 If you have sourced 'bashbot.sh' you have the following bashot internal variables availible:
@@ -249,5 +247,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 
 #### [Prev Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.90-dev-4-ge0bb9f8
+#### $$VERSION$$ v0.90-dev-5-gb1fb35d
 
