@@ -8,8 +8,27 @@ You can use bashbot to send messages, locations, venues, pictures etc from comma
 For interactive use and script use should set and export BASHBOT_HOME to bashbots installation dir,
 e.g. '/usr/local/telegram-bot-bash'. see [Bashbot environemnt](#Bashbot-environment)
 
-**Note:** If you don't set BASHBOT_HOME bashbot is expecting you are in the installation directory
-of bashbot and will use relative pathnames to access ressources.
+**Note:** If you don't set BASHBOT_HOME bashbot will use the actual directory as NEW home directory
+which means it will create all needed files and ask for bot token and botadmin if you are not in the real bot home!
+
+*usage:* source bashbot.sh source
+
+*Examples:*
+```bash
+# if you are in the bashbot directory
+source ./bashbot.sh source
+
+# use bashbot config in BASHBOT_HOME from any directory
+export BASHBOT_HOME=/usr/local/telegram-bot-bash
+source ${BASHBOT_HOME}/bashbot.sh source
+
+# use / create new config in current directory
+unset  BASHBOT_HOME
+source /path/to/bashbot.sh source
+
+```
+**Warning:** If you forget the 'source' parameter for bashbot while sourcing you may geht error messages and
+your current shell or script may terminate!
 
 #### Environment variable exported from bashbot
 If you have sourced 'bashbot.sh' you have the following bashot internal variables availible to
@@ -228,5 +247,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 
 #### [Prev Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.90-dev-2-g51aa2ed
+#### $$VERSION$$ v0.90-dev-3-g80a4778
 

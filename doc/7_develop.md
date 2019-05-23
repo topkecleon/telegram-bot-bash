@@ -186,7 +186,7 @@ fi
 ```
 
 #### [Prev Function Reference](6_reference.md)
-#### [Next Bashbot Environment](8_custom.md)
+#### [Next Expert Use](8_custom.md)
 
-#### $$VERSION$$ v0.90-dev-0-g75691dc
+#### $$VERSION$$ v0.90-dev-3-g80a4778
 

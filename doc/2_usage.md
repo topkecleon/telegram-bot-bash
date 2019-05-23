@@ -9,7 +9,7 @@ To stop the Bot run ```./bashbot.sh kill```
 If some thing doesn't work as it should, you can debug with ```./bashbot.sh startbot DEBUG``` where DEBUG can be 'debug', 'xdebug' or 'xdebugx'.
 See [Bashbot Development](7_develop.md) for more information.
 
-To use the functions provided in this script in other scripts simply source bashbot: ```source bashbot.sh```
+To use the functions provided in this script in other scripts simply source bashbot: ```source bashbot.sh source```. see [Expert Use](8_expert.md#Expert-use)
 
 Have FUN!
 
@@ -182,5 +182,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.90-dev-0-g75691dc
+#### $$VERSION$$ v0.90-dev-3-g80a4778
 

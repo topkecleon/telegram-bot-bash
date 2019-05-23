@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev-2-g51aa2ed
+#### $$VERSION$$ v0.90-dev-3-g80a4778
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -85,8 +85,8 @@ if [ ! -f "${BOTADMIN}" ]; then
 	echo -e "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR ENTER '?'${NC}"
 	echo -e "${ORANGE}TO MAKE FIRST USER TYPING '/start' TO BOTADMIN${NC}"
 	read -r admin
-	printf '%S\n' "${admin}" > "${BOTADMIN}"
-	[ "${admin}" = "" ] && printf '%s\n' '?' > "${BOTADMIN}"
+	[ "${admin}" = "" ] && admin='?'
+	printf '%s\n' "${admin}" > "${BOTADMIN}"
    fi
 fi
 
@@ -476,13 +476,9 @@ if [ ! -f "${JSONSHFILE}" ]; then
 fi
 
 ME="$(getBotName)"
-if [ "$ME" = "" ]; then
-   if [ "$(< "${TOKENFILE}")" = "bashbottestscript" ]; then
-	ME="bashbottestscript"
-   else
+if [ "$ME" = "" ] && [ "$1" != "source" ]; then
 	echo -e "${RED}ERROR: Can't connect to Telegram Bot! May be your TOKEN is invalid ...${NC}"
 	exit 1
-   fi
 fi
 
 # source the script with source as param to use functions in other scripts
