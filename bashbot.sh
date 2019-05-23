@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev-5-gb1fb35d
+#### $$VERSION$$ v0.90-dev-6-gcb77d41
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -537,7 +537,7 @@ if [ "${SOURCE}" != "yes" ]; then
 
   ###############
   # "official" arguments as shown to users
-  SESSION="$ME-startbot"
+  SESSION="${ME:-unknown}-startbot"
   BOTPID="$(proclist "${SESSION}")"
 
   case "$1" in
