@@ -55,7 +55,9 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Test, Add, Push changes
     * Prepare a new version
     * Bashbot testsuite
-* [Customize bashbot environment](doc/8_custom.md)
+* [Expert Use](doc/8_custom.md)
+    * Use from CLI and Scripts
+    * Customize Bashbot Environment
 * [Examples](examples/README.md)
 
 
@@ -109,4 +111,4 @@ Hey no Problem, if you are finished with your cool bot run ```dev/make-standalon
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.90-dev-0-g75691dc
+#### $$VERSION$$ v0.90-dev-2-g51aa2ed

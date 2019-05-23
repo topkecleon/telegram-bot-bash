@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev-0-g75691dc
+#### $$VERSION$$ v0.90-dev-2-g51aa2ed
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -35,6 +35,13 @@ fi
 export SCRIPT SCRIPTDIR MODULEDIR RUNDIR RUNUSER
 SCRIPT="$0"
 SCRIPTDIR="$(dirname "$0")"
+
+if [ "$BASHBOT_HOME" != "" ]; then
+	SCRIPTDIR="$BASHBOT_HOME"
+	[ "${BASHBOT_ETC}" = "" ] && BASHBOT_ETC="$BASHBOT_HOME"
+	[ "${BASHBOT_VAR}" = "" ] && BASHBOT_VAR="$BASHBOT_HOME"
+fi
+
 MODULEDIR="${SCRIPTDIR}/modules"
 
 RUNDIR="${SCRIPTDIR}"
@@ -42,7 +49,7 @@ RUNDIR="${SCRIPTDIR}"
 
 RUNUSER="${USER}" # USER is overwritten by bashbot array
 
-if [ "$1" != "source" ] && ! cd "${RUNDIR}" ; then
+if [ "$1" != "source" ] && [ "$BASHBOT_HOME" != "" ] && ! cd "${RUNDIR}" ; then
 	echo -e "${RED}ERROR: Can't change to ${RUNDIR} ...${NC}"
 	exit 1
 fi
@@ -51,6 +58,7 @@ if [ ! -w "." ]; then
 	echo -e "${ORANGE}WARNING: ${RUNDIR} is not writeable!${NC}"
 	ls -ld .
 fi
+
 
 TOKENFILE="${BASHBOT_ETC:-.}/token"
 if [ ! -f "${TOKENFILE}" ]; then
