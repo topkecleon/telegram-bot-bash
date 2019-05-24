@@ -1,4 +1,10 @@
 {
+  "usage": 
+     {
+	"ok":true,
+	"url":"https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/",
+	"description":"Testing of JSON reponses for github.com/topkecleon/telegram-bot-bash"
+    } ,
   "false": 
      {
 	"ok":false,
