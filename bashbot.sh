@@ -496,7 +496,6 @@ if [ ! -f "${JSONSHFILE}" ]; then
 	chmod +x "${JSONSHFILE}" 
 fi
 
-
 if [ "${SOURCE}" != "yes" ] && [ "$1" != "init" ] &&  [ "$1" != "help" ] && [ "$1" != "" ]; then
   ME="$(getBotName)"
   if [ "$ME" = "" ]; then
