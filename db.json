@@ -1,0 +1,23 @@
+{
+  "false": [
+     {
+	"ok":false,
+	"error_code":404,
+	"description":"Not Found"
+    }
+  ],
+  "ok": [
+    {
+	"ok": true,
+	"description": "test for ok"
+    }
+  ],
+  "getMe": [
+    {
+	"ok": true,
+	"result": [
+		"username": "TestBotBash"
+	]
+    }
+  ]
+}
