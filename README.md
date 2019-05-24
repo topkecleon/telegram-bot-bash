@@ -149,4 +149,4 @@ Hey no Problem, if you are finished with your cool bot run ```dev/make-standalon
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.80-7-gad98a6c
+#### $$VERSION$$ v0.80-8-g5296820

@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-0-g5bce3f7
+#### $$VERSION$$ v0.80-10-g48022e4
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -250,8 +250,7 @@ title2Json(){
 
 # get bot name
 getBotName() {
-	sendJson "" "" "$ME_URL"
-	JsonGetString '"result","username"' <<< "$res"
+	getJson "$ME_URL"  | "${JSONSHFILE}" -s -b -n | JsonGetString '"result","username"'
 }
 
 # pure bash implementaion, done by KayM (@gnadelwartz)
@@ -466,14 +465,12 @@ if [ ! -f "${JSONSHFILE}" ]; then
 	chmod +x "${JSONSHFILE}" 
 fi
 
-ME="$(getBotName)"
-if [ "$ME" = "" ]; then
-   if [ "$(< "${TOKENFILE}")" = "bashbottestscript" ]; then
-	ME="bashbottestscript"
-   else
+if [ "${SOURCE}" != "yes" ] && [ "$1" != "init" ] &&  [ "$1" != "help" ] && [ "$1" != "" ]; then
+  ME="$(getBotName)"
+  if [ "$ME" = "" ]; then
 	echo -e "${RED}ERROR: Can't connect to Telegram Bot! May be your TOKEN is invalid ...${NC}"
 	exit 1
-   fi
+  fi
 fi
 
 # source the script with source as param to use functions in other scripts

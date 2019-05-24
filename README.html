@@ -6,6 +6,43 @@
   <meta name="generator" content="pandoc" />
   <title>Bashbot README</title>
   <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
 </head>
 <body>
 <div id="header">
@@ -79,6 +116,29 @@
 <li><a href="doc/8_custom.md">Customize bashbot environment</a></li>
 <li><a href="examples/README.md">Examples</a></li>
 </ul>
+<h3 id="your-really-first-bashbot-in-a-nutshell">Your really first bashbot in a nutshell</h3>
+<p>To install and run bashbot you need acess to a linux/unix/bsd command line. If you don’t know how to get accces to a linux/unix/bsd like command line you should stop reading here :-(</p>
+<p>In addition you need a <a href="https://telegram.org">Telegram client</a> and a mobile phone to <a href="https://telegramguide.com/create-a-telegram-account/">register an account</a>. If you don’t want to register for Telegram you should stop reading here ;-)</p>
+<p>After you’re registered to Telegram send a message to <span class="citation">[@botfather]</span>(https://telegram.me/botfather), <a href="doc/1_firstbot.md">create a new Telegram Bot token</a> and write it down. You need the token to install the bot.</p>
+<p>Now open a linux/unix/bsd terminal and check if bash is installed: <code>which bash &amp;&amp; echo &quot;bash installed!&quot;</code>. If you get an error message bash is not installed.</p>
+<p>Create a new directory and change to it: <code>mkdir tbb; cd tbb</code> and download the latest ’*.tar.gz’ file from <a href="https://github.com/topkecleon/telegram-bot-bash/releases" class="uri">https://github.com/topkecleon/telegram-bot-bash/releases</a>. This can be done with the commands:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">wget</span> -q https://github.com/<span class="va">$(</span><span class="fu">wget</span> -q https://github.com/topkecleon/telegram-bot-bash/releases/latest -O - <span class="kw">|</span> <span class="fu">egrep</span> <span class="st">&#39;/.*/.*/.*tar.gz&#39;</span> -o<span class="va">)</span></code></pre></div>
+<p>Extract the ’*.tar.gz’ file and change to bashbot directory: <code>tar -xzf *.tar.gz; cd telegram-bot-bash</code>, install bashbot: <code>./bashbot.sh init</code> and enter your bot token when asked. All other questions can be answered by hitting the &lt;Return&gt; key.</p>
+<p>Thats all, now you can start your bot with <code>./bashbot.sh start</code> and send him messages:</p>
+<pre><code>/start
+
+You are Botadmin
+*Available commands*:
+*• /start*: _Start bot and get this message_.
+*• /help*: _Get this message_.
+*• /info*: _Get shorter info message about this bot_....
+
+/info
+
+his is bashbot, the Telegram bot written entirely in bash.
+It features background tasks and interactive chats, and can serve as an interface for CLI programs.</code></pre>
+<p>For more Information on how to install, customize and use your new bot, read the <a href="#Documentation">Documentation</a></p>
+<hr />
 <h2 id="security-considerations">Security Considerations</h2>
 <p>Running a Telegram Bot means it is connected to the public and you never know whats send to your Bot.</p>
 <p>Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. Bash programmers often struggle with ‘quoting hell’ and globbing, see <a href="https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells">Implications of wrong quoting</a></p>
@@ -108,6 +168,6 @@
 <p><span class="citation">@Gnadelwartz</span></p>
 <h2 id="thats-it">That’s it!</h2>
 <p>If you feel that there’s something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4 id="version-v0.80-0-g5bce3f7"><br /><span class="math display"><em>V</em><em>E</em><em>R</em><em>S</em><em>I</em><em>O</em><em>N</em></span><br /> v0.80-0-g5bce3f7</h4>
+<h4 id="version-v0.80-8-g5296820"><br /><span class="math display"><em>V</em><em>E</em><em>R</em><em>S</em><em>I</em><em>O</em><em>N</em></span><br /> v0.80-8-g5296820</h4>
 </body>
 </html>
