@@ -1,18 +1,16 @@
 {
-  "false": [
+  "false": 
      {
 	"ok":false,
 	"error_code":404,
 	"description":"Not Found"
-    }
-  ],
-  "ok": [
+    } ,
+  "ok": 
     {
 	"ok":true,
 	"description":"Ttest for ok"
-    }
-  ],
-  "getMe": [
+    } ,
+  "getMe": 
     {
 	"ok":true,
 	"result":
@@ -23,5 +21,5 @@
 		"username":"TestBotBash"
 	}
     }
-  ]
+  
 }
