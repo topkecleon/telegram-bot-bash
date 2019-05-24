@@ -76,7 +76,7 @@ if [ ! -f "${BOTADMIN}" ]; then
 	echo -e "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR ENTER '?'${NC}"
 	echo -e "${ORANGE}TO MAKE FIRST USER TYPING '/start' TO BOTADMIN${NC}"
 	read -r admin
-	printf '%S\n' "${admin}" > "${BOTADMIN}"
+	printf '%s\n' "${admin}" > "${BOTADMIN}"
 	[ "${admin}" = "" ] && printf '%s\n' '?' > "${BOTADMIN}"
    fi
 fi
