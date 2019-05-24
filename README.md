@@ -58,6 +58,46 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
 * [Customize bashbot environment](doc/8_custom.md)
 * [Examples](examples/README.md)
 
+### Your really first bashbot in a nutshell
+To install an run bashbot you need acess to a linux/unix/bsd etc. command line. All linux/unix/bsd systems has the comamnds to run bashbot installed if bash is availible. If you don't know how to get accces to a linux/unix/bsd like command line you should stop reading here :-(
+
+In addition you need a [Telegram client](https://telegram.org) and an a mobile phone to [register an account](https://telegramguide.com/create-a-telegram-account/).
+If you don't want to install and register for Telegram you should stop reading here ;-)
+
+After you are registered to telegram open a chat with [@botfather](https://telegram.me/botfather) to
+[create a new Telegram Bot token](doc/1_firstbot.md). Write down the bot token you get from botfather, you need it while installing the bot.
+
+Now open the linux/unix/bsd command line and check if bash is installed by running ```which bash && echo "bash installed!"```.
+If you get an error message conatct you system administrator to install bash.
+
+Create a new, empty drirectory and change to it, e.g.  ```mkdir tbb; cd tbb```, and download the '*.tar.gz' file from the lastest bashbot release from
+```https://github.com/topkecleon/telegram-bot-bash/releases``` an copy it to the new directory. This can be done with the following command:
+```bash
+wget -q https://github.com/$(wget -q https://github.com/topkecleon/telegram-bot-bash/releases/latest -O - | egrep '/.*/.*/.*tar.gz' -o)
+```
+
+To install bashbot extract thew archive an change to bashbot directory by running ```tar -xzf *.tar.gz; cd telegram-bot-bash```,
+install bashbot with the command ```./bashbot.sh init``` and enter your bot token when asked. All other questions can be answered
+by hitting the <Return> key.
+
+Thats all, now you can start your bot with ```./bashbot.sh start``` and send him messages:
+```
+/start
+
+You are Botadmin
+*Available commands*:
+*• /start*: _Start bot and get this message_.
+*• /help*: _Get this message_.
+*• /info*: _Get shorter info message about this bot_....
+
+/info
+
+his is bashbot, the Telegram bot written entirely in bash.
+It features background tasks and interactive chats, and can serve as an interface for CLI programs.
+```
+For more Information on how to install, customize and use your new bot, read the [Documentation](Documentation)
+
+----
 
 ## Security Considerations
 Running a Telegram Bot means it is connected to the public and you never know whats send to your Bot.
