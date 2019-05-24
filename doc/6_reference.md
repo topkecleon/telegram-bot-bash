@@ -101,6 +101,13 @@ The main use case for send_message is to process the output of interactive chats
 ##### send_file
 send_file allows you to send different type's of files, e.g. photos, stickers, audio, media, etc. [see more](https://core.telegram.org/bots/api#sending-files)
 
+Starting with version 0.80 send_file implements the following rules:
+
+- file names must not contain ".."
+- file names must not start with "."
+- file names not starting wit "/" are realtive to $TMPDIR, e.g. ./data-bot-bash
+- abolute filenames must match $FILE_REGEX
+
 *usage:* send_file "${CHAT[ID]}" "file" "caption"
 
 *example:* 

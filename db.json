@@ -1,0 +1,31 @@
+{
+  "usage": 
+     {
+	"ok":true,
+	"url":"https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/",
+	"description":"Testing of JSON reponses for github.com/topkecleon/telegram-bot-bash"
+    } ,
+  "false": 
+     {
+	"ok":false,
+	"error_code":404,
+	"description":"Not Found"
+    } ,
+  "ok": 
+    {
+	"ok":true,
+	"description":"Ttest for ok"
+    } ,
+  "getMe": 
+    {
+	"ok":true,
+	"result":
+	{
+		"id":123456789,
+		"is_bot":true,
+		"first_name":"bashbot",
+		"username":"TestBotBash"
+	}
+    }
+  
+}
