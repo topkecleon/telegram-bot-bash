@@ -188,5 +188,5 @@ fi
 #### [Prev Function Reference](6_reference.md)
 #### [Next Expert Use](8_custom.md)
 
-#### $$VERSION$$ v0.90-dev-3-g80a4778
+#### $$VERSION$$ v0.90-dev-18-g0f6864f
 
