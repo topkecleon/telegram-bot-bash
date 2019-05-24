@@ -208,6 +208,29 @@ containing only
 'bashbot.sh' and 'commands.sh'! For more information see [Create a stripped 
 down Version of your Bot](doc/7_develop.md)
 
+### Can I send messages from CLI and scripts?
+Of course, you can send messages from CLI and scripts, simply install bashbot 
+as [described here](#Your-really-first-bashbot-in-a-nutshell),
+send the messsage '/start' to set yourself as botadmin and stop the bot with 
+```./bashbot.sh kill```.
+
+Run the following commands in your bash shell or script while you are in the 
+installation directory:
+
+```bash
+# prepare bash / script to send commands
+export BASHBOT_HOME="$(pwd)"
+source ./bashbot.sh source
+
+# send me a test message
+send_message "$(cat "$BOTADMIN")" "test"
+
+# send me output of a system command
+send_message "$(<"$BOTADMIN")" "$(df -h)"
+```
+For more information see [Expert Use](doc/8_custom.md)
+
+
 ### Why do I get "EXPECTED value GOT EOF" on start?
 May be your IP is blocked by telegram. You can test this by running curl or 
 wget manually:
@@ -233,4 +256,4 @@ tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.80-18-g6b88656
+#### $$VERSION$$ v0.80-22-g15e7f01
