@@ -13,7 +13,38 @@ To use the functions provided in this script in other scripts simply source bash
 
 Have FUN!
 
-## Managing your own Bot
+### Files
+```
+.
+├── bashbot.sh		# main bashbot script - do not edit
+├── commands.sh		# command dispatcher - do not edit
+├── mycommands.sh	# place your functions and commands here!
+├── JSON.sh		# bashbots JSON parser, see https://github.com/dominictarr/JSON.sh
+│
+├── modules		# optional functions, sourced by commands.sh
+│   ├── aliases.sh		# to disable modules rename them xxx.sh.off
+│   ├── answerInline.sh
+│   ├── background.sh
+│   ├── chatMember.sh
+│   └── sendMessage.sh		# main send message functions, do not disable
+│
+├── bashbot.rc			# start/stop script if you run basbot as service
+│
+├── examples			# example scripts and configs for bashbot
+│   └── bashbot.cron		# example crontab
+│
+├── doc			# Documentation and License
+├── html
+├── LICENSE
+├── README.html
+├── README.md
+└── README.txt
+
+```
+
+----
+
+## Managing your Bot
 #### Note: running bashbot as root is highly danger and not recommended. See Expert use.
 
 ### Start / Stop
@@ -36,6 +67,8 @@ To send a broadcast to all of users that ever used the bot run the following com
 ```bash
 ./bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
 ```
+
+----
 
 ## Recieve data
 Evertime a Message is recieved, you can read incoming data using the following variables:
@@ -182,5 +215,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.90-dev-18-g0f6864f
+#### $$VERSION$$ v0.80-21-gf019ab1
 
