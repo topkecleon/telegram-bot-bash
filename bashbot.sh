@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev-6-gcb77d41
+#### $$VERSION$$ v0.90-dev-8-gf74e95d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -249,14 +249,14 @@ else
   # simple curl or wget call outputs result to stdout
   getJson(){
 	# shellcheck disable=SC2086
-	wget -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
+	wget -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
   }
   # usage: sendJson "chat" "JSON" "URL"
   sendJson(){
 	local chat="";
 	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
 	# shellcheck disable=SC2086
-	res="$(wget -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $2"'}' \
+	res="$(wget -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $2"'}' \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
@@ -281,8 +281,7 @@ title2Json(){
 
 # get bot name
 getBotName() {
-	sendJson "" "" "$ME_URL"
-	JsonGetString '"result","username"' <<< "$res"
+	getJson "$ME_URL"  | "${JSONSHFILE}" -s -b -n | JsonGetString '"result","username"'
 }
 
 # pure bash implementaion, done by KayM (@gnadelwartz)

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.90-dev-0-g75691dc
+#### $$VERSION$$ v0.90-dev-8-gf74e95d
 
 # common variables
 export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
@@ -29,6 +29,10 @@ export  INPUTFILE REFFILE OUTPUTFILE
  INPUTFILE="${DIRME}/${REFDIR}/${REFDIR}.input"
  REFFILE="${DIRME}/${REFDIR}/${REFDIR}.result"
  OUTPUTFILE="${TESTDIR}/${REFDIR}.out"
+
+# do not query telegram when testing
+export BASHBOT_URL
+BASHBOT_URL="https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/getMe?"
 
 # print arrays in reproducible order
 print_array() {

@@ -152,6 +152,23 @@ containing only
 'bashbot.sh' and 'commands.sh'! For more information see [Create a stripped 
 down Version of your Bot](doc/7_develop.md)
 
+### Why do I get "EXPECTED value GOT EOF" on start?
+May be your IP is blocked by telegram. You can test this by running curl or 
+wget manually:
+```bash
+curl -m 10  https://api.telegram.org/bot
+#curl: (28) Connection timed out after 10001 milliseconds
+
+wget -t 1 -T 10 https://api.telegram.org/bot
+#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... 
+failed: Connection timed out.
+```
+This may happen if to many wrong requests are sent to api.telegram.org, e.g. 
+using a wrong token or not existing API calls.  If you have a fixed IP you can 
+ask telegram service to unblock your ip or change your IP. If you are running a 
+tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in 
+'mycommands.sh' 
+
 
 @Gnadelwartz
 
@@ -160,4 +177,4 @@ down Version of your Bot](doc/7_develop.md)
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.90-dev-3-g80a4778
+#### $$VERSION$$ v0.90-dev-8-gf74e95d
