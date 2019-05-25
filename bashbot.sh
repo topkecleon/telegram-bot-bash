@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-26-g9f74bcf
+#### $$VERSION$$ v0.80-28-g64b4055
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -54,7 +54,7 @@ if [ "$BASHBOT_HOME" != "" ]; then
 	[ "${BASHBOT_VAR}" = "" ] && BASHBOT_VAR="$BASHBOT_HOME"
 fi
 
-
+ADDONDIR="${BASHBOT_ETC:-./addons}"
 
 RUNUSER="${USER}" # USER is overwritten by bashbot array
 
@@ -328,11 +328,87 @@ process_client() {
 		[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"INLINE.log"
 		[ "$INLINE" != "0" ] && _is_function process_inline && process_inline "${num}" "${debug}"
 	fi
+	#####
+	# process inline and message events
+	# first classic commnad dispatcher
 	# shellcheck source=./commands.sh
-	source "${COMMANDS}" "${debug}"
+	source "${COMMANDS}" "${debug}" &
+
+	# then all registered addons
+	if [ "${iQUERY[ID]}" = "" ]; then
+		_is_function process_inline && event_inline "${debug}"
+	else
+		event_message "${debug}"
+	fi
+
+	# last count users
 	tmpcount="COUNT${CHAT[ID]}"
 	grep -q "$tmpcount" <"${COUNTFILE}" &>/dev/null || cat <<< "$tmpcount" >>"${COUNTFILE}"
-	# To get user count execute bash bashbot.sh count
+}
+
+event_inline() {
+	local event debug="$1"
+	# shellcheck disable=SC2153
+	for event in "${!BASHBOT_EVENT_INLINE[@]}"
+	do
+		"${BASHBOT_EVENT_INLINE[${event}]}" "inline" "${debug}"
+	done
+}
+event_message() {
+	local event debug="$1"
+	# ${MESSAEG[*]} event_message
+	# shellcheck disable=SC2153
+	for event in "${!BASHBOT_EVENT_MESSAGE[@]}"
+	do
+		"${BASHBOT_EVENT_MESSAGE[${event}]}" "messsage" "${debug}"
+	done
+	
+	# ${REPLYTO[*]} event_replyto
+	if [ "${REPLYTO[UID]}" != "" ]; then
+		# shellcheck disable=SC2153
+		for event in "${!BASHBOT_EVENT_REPLYTO[@]}"
+		do
+			"${BASHBOT_EVENT_REPLYTO[${event}]}" "replyto" "${debug}"
+		done
+	fi
+
+	# ${FORWARD[*]} event_forward
+	if [ "${FORWARD[UID]}" != "" ]; then
+		# shellcheck disable=SC2153
+		for event in "${!BASHBOT_EVENT_FORWARD[@]}"
+		do
+			"${BASHBOT_EVENT_FORWARD[${event}]}" "forward" "${debug}"
+		done
+	fi
+
+	# ${CONTACT[*]} event_contact
+	if [ "${CONTACT[FIRST_NAME]}" != "" ]; then
+		# shellcheck disable=SC2153
+		for event in "${!BASHBOT_EVENT_CONTACT[@]}"
+		do
+			"${BASHBOT_EVENT_CONTACT[${event}]}" "contact" "${debug}"
+		done
+	fi
+
+	# ${VENUE[*]} event_location
+	# ${LOCALTION[*]} event_location
+	if [ "${LOCATION[*]}" != "" ] || [ "${VENUE[TITLE]}" != "" ]; then
+		# shellcheck disable=SC2153
+		for event in "${!BASHBOT_EVENT_LOCATION[@]}"
+		do
+			"${BASHBOT_EVENT_LOCATION[${event}]}" "location" "${debug}"
+		done
+	fi
+
+	# ${URLS[*]} event_file
+	if [ "${URLS[*]}" = "" ]; then
+		# shellcheck disable=SC2153
+		for event in "${!BASHBOT_EVENT_FILE[@]}"
+		do
+			"${BASHBOT_EVENT_FILE[${event}]}" "file" "${debug}"
+		done
+	fi
+
 }
 process_inline() {
 	local num="${1}"
@@ -426,17 +502,6 @@ process_message() {
 declare -A BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE 
 export BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE 
 
-# event_inline() {
-#}
-# event_message() {
-#	# ${REPLYTO[*]} event_reply
-#	# ${FORWARD[*]} event_forward
-#	# ${CONTACT[*]} event_contact
-#	# ${VENUE[*]} event_location
-#	# ${LOCALTION[*]} event_location
-#	# ${URL[*]} event_file
-#}
-
 
 #########################
 # main get updates loop, should never terminate
@@ -452,6 +517,11 @@ start_bot() {
 	#cleaup old pipes and empty logfiles
 	find "${TMPDIR}" -type p -delete
 	find "${TMPDIR}" -size 0 -name "*.log" -delete
+	# load addons on startup
+	for addons in ${ADDONDIR:-.}/*.sh ; do
+		# shellcheck source=./modules/aliases.sh
+		[ -r "${addons}" ] && source "${addons}" "startbot" "${DEBUG}"
+	done
 
 	while true; do
 		UPDATE="$(getJson "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n)"
@@ -462,7 +532,7 @@ start_bot() {
 
 		if [ "$OFFSET" != "1" ]; then
 			mysleep="100"
-			process_updates "${DEBUG}" &
+			process_updates "${DEBUG}"
 		fi
 		# adaptive sleep in ms rounded to next lower second
 		[ "${mysleep}" -gt "999" ] && sleep "${mysleep%???}"
@@ -473,10 +543,16 @@ start_bot() {
 
 # initialize bot environment, user and permissions
 bot_init() {
+	local DEBUG="$1"
 	# upgrade from old version
 	local OLDTMP="${BASHBOT_VAR:-.}/tmp-bot-bash"
 	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${TMPDIR}"; rmdir "${OLDTMP}"; }
 	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
+	# load addons on startup
+	for addons in ${ADDONDIR:-.}/*.sh ; do
+		# shellcheck source=./modules/aliases.sh
+		[ -r "${addons}" ] && source "${addons}" "init" "${DEBUG}"
+	done
 	#setup bashbot
 	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
 	echo -n "Enter User to run basbot [$RUNUSER]: "
@@ -542,7 +618,7 @@ if [ "${SOURCE}" != "yes" ]; then
 		exit
 		;;
 	"init") # adjust users and permissions
-		bot_init
+		bot_init "$2"
 		exit
 		;;
   esac
