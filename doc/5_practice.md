@@ -35,34 +35,33 @@ mycommands() {
 }
 ```
 
-### Reuse or disable global commands
+### Overwrite, extend and disable global commands
 
-If you want to disable or reuse a global bashbot command comment it out in 'commands.sh' by placing a '#' in front of
-every line from ```'/command')``` to ```;;```. 
+You can overwrite a global bashbot command by placing the same commands in ```mycommands.sh``` and add ```return 1```
+ad the end of your command, see '/kickme' below.
+
+To disable a global bashbot command place create a command simply containing 'return 1', see '/leave' below.
+
+In case you want to add some processing to the global bashbot command add ```return 0```, then both command will be executed.
 
 **Learn more about [Bot commands](https://core.telegram.org/bots#commands).**
 
-**Note: Never disable the catchall command ```*)``` in 'commands.sh'!!**
 ```bash
 # file: commands.sh
 
 	case "$MESSAGE" in
-		################################################
-		# GLOBAL commands start here, edit messages only
-
-		#'/start'*)
-		#	send_action "${CHAT[ID]}" "typing"
-		#	_is_botadmin && _markdown_message "You are *BOTADMIN*."
-		#	if _is_allowed "start" ; then
-		#		_markdown_message "${bot_help}"
-		#	else
-		#		_message "You are not allowed to start Bot."
-		#	fi
-		#	;;
-
-		*)	# forward other messages to optional dispatcher
-			_is_function send_interactive && send_interactive "${CHAT[ID]}" "${MESSAGE}"
-			_is_function mycommands && mycommands
+		##########
+		# command overwrite examples
+		'info'*) # output date in front of regular info
+			send_normal_message "${CHAT[ID]}" "$(date)"
+			return 0
+			;;
+		'/kickme'*) # this will replace the /kickme command
+			send_markdown_mesage "${CHAT[ID]}" "*This bot will not kick you!*"
+			return 1
+			;;
+		'/leave'*) # disable all commands starting with leave
+			return 1
 			;;
 	esac
 ```
@@ -153,5 +152,5 @@ The second warning is about an unused variable, this is true because in our exam
 #### [Prev Best Practice](5_practice.md)
 #### [Next Functions Reference](6_reference.md)
 
-#### $$VERSION$$ v0.80-18-g6b88656
+#### $$VERSION$$ v0.80-24-g68bee46
 
