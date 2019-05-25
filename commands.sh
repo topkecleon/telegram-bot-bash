@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-18-g6b88656
+#### $$VERSION$$ v0.80-23-g25c9b62
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -68,7 +68,14 @@ if [ "${1}" != "source" ];then
     # your commands are in mycommands() 
     else
 
-	case "${MESSAGE}" in
+	###################
+	# user defined commands must plaed in mycommands
+	! _is_function mycommands ||  mycommands # return true if not exist!
+
+	# run commands if true (0) is returned or if mycommands dose not exist
+	# shellcheck disable=SC2181
+	if [ "$?" = "0" ]; then
+	    case "${MESSAGE}" in
 		################################################
 		# GLOBAL commands start here, edit messages only
 		'/info'*)
@@ -105,8 +112,8 @@ if [ "${1}" != "source" ];then
 			;;
 		*)	# forward messages to optional dispatcher
 			_is_function send_interactive && send_interactive "${CHAT[ID]}" "${MESSAGE}"
-			_is_function mycommands && mycommands
 			;;
-	esac
-    fi
+	     esac
+	fi
+    fi 
 fi

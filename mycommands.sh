@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.80-18-g6b88656
+#### $$VERSION$$ v0.80-23-g25c9b62
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -26,6 +26,8 @@ if [ "$1" != "source" ];then
     mycommands() {
 
 	case "${MESSAGE}" in
+		##################
+		# example commands, replace thm by your own
 		'/echo'*) # example echo command
 			send_normal_message "${CHAT[ID]}" "$MESSAGE"
 			;;
@@ -56,6 +58,16 @@ if [ "$1" != "source" ];then
 			fi
 			;;
 
+		##########
+		# command overwrite examples
+		'info'*) # output date in front of regular info
+			send_normal_message "${CHAT[ID]}" "$(date)"
+			return 0
+			;;
+		'/kickme'*) # this will replace the /kickme command
+			send_markdown_mesage "${CHAT[ID]}" "*This bot will not kick you!*"
+			return 1
+			;;
 	esac
      }
 
