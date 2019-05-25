@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-28-g64b4055
+#### $$VERSION$$ v0.80-29-gbee9f33
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -55,6 +55,7 @@ if [ "$BASHBOT_HOME" != "" ]; then
 fi
 
 ADDONDIR="${BASHBOT_ETC:-./addons}"
+
 
 RUNUSER="${USER}" # USER is overwritten by bashbot array
 
@@ -152,7 +153,8 @@ else
 fi
 
 
-# internal functions
+#################
+# BASHBOT INTERNAL functions
 # $1 URL, $2 filename in TMPDIR
 # outputs final filename
 download() {
@@ -576,6 +578,11 @@ bot_init() {
 		ls -la
 	fi
 }
+
+if _is_function send_message ; then
+	echo -e "${RED}ERROR: send_message is not availible, did you deactivate ${MODULEDIR}/senMessage.sh?${NC}"
+	exit 1
+fi
 
 JSONSHFILE="${BASHBOT_JSONSH:-${RUNDIR}/JSON.sh/JSON.sh}"
 [[ "${JSONSHFILE}" != *"/JSON.sh" ]] && echo -e "${RED}ERROR: \"${JSONSHFILE}\" ends not with \"JSONS.sh\".${NC}" && exit 3
