@@ -20,22 +20,25 @@
 # all global variables and functions can be used.
 
 # any global variable defined by addons MUST be prefixed by addon name
-# funtion local varibales can have an name
 EXAMPLE_ME="example"
 
 # register to inline
 export BASBOT_EVENT_INLINE["${EXAMPLE_ME}"]="${EXAMPLE_ME}_inline"
 
 # any function defined by addons MUST be prefixed by addon name
+# function local variables can have any name, but must be LOCAL
 example_inline(){
-	send_normal_message "${CHAT[ID]}" "Inline query received: ${MESSAGE}"
+	local msg="${MESSAGE}"
+	send_normal_message "${CHAT[ID]}" "Inline query received: ${msg}"
 }
 
 # register to reply
 export BASBOT_EVENT_REPLY["${EXAMPLE_ME}"]="${EXAMPLE_ME}_reply"
 
 # any function defined by addons MUST be prefixed by addon name
+# function local variables can have any name, but must be LOCAL
 example_reply(){
-	send_markdown_message "${CHAT[ID]}" "User *${USER[USERNAME]}* replied to message from *${REPLYTO[USERNAME]}*"
+	local msg="message"
+	send_markdown_message "${CHAT[ID]}" "User *${USER[USERNAME]}* replied to ${msg} from *${REPLYTO[USERNAME]}*"
 }
 
