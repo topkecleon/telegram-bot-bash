@@ -2,7 +2,7 @@
 # file: make-distribution.sh
 # creates files and arcchives to dirtribute bashbot
 #
-#### $$VERSION$$ v0.80-18-g6b88656
+#### $$VERSION$$ v0.80-26-g9f74bcf
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -36,11 +36,14 @@ mkdir -p "${DISTDIR}" 2>/dev/null
 cp -r ${DISTFILES} "${DISTDIR}"
 cd "${DISTDIR}" || exit 1
 
-# additional stuff
-mv "bashbot.rc" "bashbot.rc.dist"
-# mv "commands.sh" "commands.sh.dist" # will be overwritten from v0.80 on
-mv "mycommands.sh" "mycommands.sh.dist"
+# do not overwrite on update
+for file in mycommands.sh bashbot.rc addons/*.sh
+do
+	[ "${file}" = "addons/*.sh" ] && continue
+	mv "${file}" "${file}.dist"
+done
 
+# dwonload JSON.sh
 JSONSHFILE="JSON.sh/JSON.sh"
 if [ ! -f "${JSONSHFILE}" ]; then
 	mkdir "JSON.sh" 2>/dev/null

@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-18-g6b88656
+#### $$VERSION$$ v0.80-26-g9f74bcf
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -341,6 +341,7 @@ process_inline() {
 	iQUERY[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","first_name"]}")"
 	iQUERY[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","last_name"]}")"
 	iQUERY[USERNAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","username"]}")"
+	# event_inline &
 }
 process_message() {
 	local num="$1"
@@ -420,7 +421,21 @@ process_message() {
 	# Location
 	LOCATION[LONGITUDE]="${UPD["result",${num},"message","location","longitude"]}"
 	LOCATION[LATITUDE]="${UPD["result",${num},"message","location","latitude"]}"
+	# event_message &
 }
+declare -A BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE 
+export BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE 
+
+# event_inline() {
+#}
+# event_message() {
+#	# ${REPLYTO[*]} event_reply
+#	# ${FORWARD[*]} event_forward
+#	# ${CONTACT[*]} event_contact
+#	# ${VENUE[*]} event_location
+#	# ${LOCALTION[*]} event_location
+#	# ${URL[*]} event_file
+#}
 
 
 #########################
