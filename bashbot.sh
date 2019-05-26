@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-3-g483da5a
+#### $$VERSION$$ v0.90-dev2-4-gb60f33a
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -198,6 +198,10 @@ _exists()
 	[ "$(LC_ALL=C type -t "$1")" = "file" ]
 }
 
+# execute function if exists
+_execute_function() {
+	[ "$(LC_ALL=C type -t "${1}")" = "function" ] && "$@"
+}
 # returns true if function exist
 _is_function()
 {
