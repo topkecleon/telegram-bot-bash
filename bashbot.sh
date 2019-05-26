@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-29-gbee9f33
+#### $$VERSION$$ v0.90-dev2-0-gec85636
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -579,11 +579,6 @@ bot_init() {
 	fi
 }
 
-if _is_function send_message ; then
-	echo -e "${RED}ERROR: send_message is not availible, did you deactivate ${MODULEDIR}/senMessage.sh?${NC}"
-	exit 1
-fi
-
 JSONSHFILE="${BASHBOT_JSONSH:-${RUNDIR}/JSON.sh/JSON.sh}"
 [[ "${JSONSHFILE}" != *"/JSON.sh" ]] && echo -e "${RED}ERROR: \"${JSONSHFILE}\" ends not with \"JSONS.sh\".${NC}" && exit 3
 
@@ -598,6 +593,10 @@ if [ "${SOURCE}" != "yes" ] && [ "$1" != "init" ] &&  [ "$1" != "help" ] && [ "$
   ME="$(getBotName)"
   if [ "$ME" = "" ]; then
 	echo -e "${RED}ERROR: Can't connect to Telegram Bot! May be your TOKEN is invalid ...${NC}"
+	exit 1
+  fi
+  if _is_function send_message ; then
+	echo -e "${RED}ERROR: send_message is not availible, did you deactivate ${MODULEDIR}/senMessage.sh?${NC}"
 	exit 1
   fi
 fi
