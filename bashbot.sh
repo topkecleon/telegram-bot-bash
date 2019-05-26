@@ -353,7 +353,7 @@ event_inline() {
 	# shellcheck disable=SC2153
 	for event in "${!BASHBOT_EVENT_INLINE[@]}"
 	do
-		"${BASHBOT_EVENT_INLINE[${event}]}" "inline" "${debug}"
+		_is_function "${BASHBOT_EVENT_INLINE[${event}]}" && "${BASHBOT_EVENT_INLINE[${event}]}" "inline" "${debug}"
 	done
 }
 event_message() {
@@ -362,7 +362,7 @@ event_message() {
 	# shellcheck disable=SC2153
 	for event in "${!BASHBOT_EVENT_MESSAGE[@]}"
 	do
-		"${BASHBOT_EVENT_MESSAGE[${event}]}" "messsage" "${debug}"
+		 _is_function "${BASHBOT_EVENT_MESSAGE[${event}]}" && "${BASHBOT_EVENT_MESSAGE[${event}]}" "messsage" "${debug}"
 	done
 	
 	# ${REPLYTO[*]} event_replyto
@@ -370,7 +370,7 @@ event_message() {
 		# shellcheck disable=SC2153
 		for event in "${!BASHBOT_EVENT_REPLYTO[@]}"
 		do
-			"${BASHBOT_EVENT_REPLYTO[${event}]}" "replyto" "${debug}"
+			_is_function "${BASHBOT_EVENT_REPLYTO[${event}]}" && "${BASHBOT_EVENT_REPLYTO[${event}]}" "replyto" "${debug}"
 		done
 	fi
 
@@ -379,7 +379,7 @@ event_message() {
 		# shellcheck disable=SC2153
 		for event in "${!BASHBOT_EVENT_FORWARD[@]}"
 		do
-			"${BASHBOT_EVENT_FORWARD[${event}]}" "forward" "${debug}"
+			 _is_function "${BASHBOT_EVENT_FORWARD[${event}]}" && "${BASHBOT_EVENT_FORWARD[${event}]}" "forward" "${debug}"
 		done
 	fi
 
@@ -388,7 +388,7 @@ event_message() {
 		# shellcheck disable=SC2153
 		for event in "${!BASHBOT_EVENT_CONTACT[@]}"
 		do
-			"${BASHBOT_EVENT_CONTACT[${event}]}" "contact" "${debug}"
+			_is_function "${BASHBOT_EVENT_CONTACT[${event}]}" && "${BASHBOT_EVENT_CONTACT[${event}]}" "contact" "${debug}"
 		done
 	fi
 
@@ -398,7 +398,7 @@ event_message() {
 		# shellcheck disable=SC2153
 		for event in "${!BASHBOT_EVENT_LOCATION[@]}"
 		do
-			"${BASHBOT_EVENT_LOCATION[${event}]}" "location" "${debug}"
+			_is_function "${BASHBOT_EVENT_LOCATION[${event}]}" && "${BASHBOT_EVENT_LOCATION[${event}]}" "location" "${debug}"
 		done
 	fi
 
@@ -407,7 +407,7 @@ event_message() {
 		# shellcheck disable=SC2153
 		for event in "${!BASHBOT_EVENT_FILE[@]}"
 		do
-			"${BASHBOT_EVENT_FILE[${event}]}" "file" "${debug}"
+			_is_function "${BASHBOT_EVENT_FILE[${event}]}" && "${BASHBOT_EVENT_FILE[${event}]}" "file" "${debug}"
 		done
 	fi
 
