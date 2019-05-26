@@ -17,13 +17,13 @@
 # Availible events:
 # on events startbot and init, this file is sourced
 #
-# BASBOT_EVENT_INLINE	inline query received
-# BASBOT_EVENT_MESSAGE	any type of message received
-# BASBOT_EVENT_REPLYTO	reply to message received
-# BASBOT_EVENT_FORWARD	forwarded message received
-# BASBOT_EVENT_CONTACT	contact received
-# BASBOT_EVENT_LOCATION	location or venue received
-# BASBOT_EVENT_FILE	file received
+# BASHBOT_EVENT_INLINE	inline query received
+# BASHBOT_EVENT_MESSAGE	any type of message received
+# BASHBOT_EVENT_REPLYTO	reply to message received
+# BASHBOT_EVENT_FORWARD	forwarded message received
+# BASHBOT_EVENT_CONTACT	contact received
+# BASHBOT_EVENT_LOCATION	location or venue received
+# BASHBOT_EVENT_FILE	file received
 #
 # all global variables and functions can be used in registered functions.
 #
@@ -35,6 +35,9 @@
 # $1 event: inline, message, ..., file
 # $2 debug: use "[[ "$2" = *"debug"* ]]" if you want to output extra diagnostic
 #
+
+# export used events
+export BASHBOT_EVENT_INLINE BASHBOT_EVENT_REPLY
 
 # any global variable defined by addons MUST be prefixed by addon name
 EXAMPLE_ME="example"
@@ -48,7 +51,7 @@ fi
 # register on startbot
 if [[ "$1" = "start"* ]]; then 
     # register to inline
-    export BASBOT_EVENT_INLINE["${EXAMPLE_ME}"]="${EXAMPLE_ME}_inline"
+    BASHBOT_EVENT_INLINE["${EXAMPLE_ME}"]="${EXAMPLE_ME}_inline"
 
     # any function defined by addons MUST be prefixed by addon name
     # function local variables can have any name, but must be LOCAL
@@ -58,7 +61,7 @@ if [[ "$1" = "start"* ]]; then
     }
 
     # register to reply
-    export BASBOT_EVENT_REPLY["${EXAMPLE_ME}"]="${EXAMPLE_ME}_reply"
+    BASHBOT_EVENT_REPLY["${EXAMPLE_ME}"]="${EXAMPLE_ME}_reply"
 
     # any function defined by addons MUST be prefixed by addon name
     # function local variables can have any name, but must be LOCAL

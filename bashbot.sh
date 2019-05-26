@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-0-gec85636
+#### $$VERSION$$ v0.90-dev2-3-g483da5a
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -338,9 +338,9 @@ process_client() {
 
 	# then all registered addons
 	if [ "${iQUERY[ID]}" = "" ]; then
-		_is_function process_inline && event_inline "${debug}"
-	else
 		event_message "${debug}"
+	else
+		_is_function process_inline && event_inline "${debug}"
 	fi
 
 	# last count users
