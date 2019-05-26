@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-4-gb60f33a
+#### $$VERSION$$ v0.90-dev2-6-g3c6b2d3
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -136,6 +136,7 @@ unset USER
 declare -A UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
 export res UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY CAPTION
 
+
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
 if [ "${SOURCE}" = "yes" ]; then
 	for modules in ${MODULEDIR:-.}/*.sh ; do
@@ -199,8 +200,8 @@ _exists()
 }
 
 # execute function if exists
-_execute_function() {
-	[ "$(LC_ALL=C type -t "${1}")" = "function" ] && "$@"
+_exec_if_function() {
+	[ "$(LC_ALL=C type -t "${1}")" != "function" ] || "$@"
 }
 # returns true if function exist
 _is_function()
@@ -332,7 +333,7 @@ process_client() {
 		process_message "${num}" "${debug}"
 	else
 		[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"INLINE.log"
-		[ "$INLINE" != "0" ] && _is_function process_inline && process_inline "${num}" "${debug}"
+		[ "$INLINE" != "0" ] && _exec_if_function process_inline "${num}" "${debug}"
 	fi
 	#####
 	# process inline and message events
@@ -357,7 +358,7 @@ event_inline() {
 	# shellcheck disable=SC2153
 	for event in "${!BASHBOT_EVENT_INLINE[@]}"
 	do
-		_is_function "${BASHBOT_EVENT_INLINE[${event}]}" && "${BASHBOT_EVENT_INLINE[${event}]}" "inline" "${debug}"
+		_exec_if_function "${BASHBOT_EVENT_INLINE[${event}]}" "inline" "${debug}"
 	done
 }
 event_message() {
@@ -366,7 +367,7 @@ event_message() {
 	# shellcheck disable=SC2153
 	for event in "${!BASHBOT_EVENT_MESSAGE[@]}"
 	do
-		 _is_function "${BASHBOT_EVENT_MESSAGE[${event}]}" && "${BASHBOT_EVENT_MESSAGE[${event}]}" "messsage" "${debug}"
+		 _exec_if_function "${BASHBOT_EVENT_MESSAGE[${event}]}" "messsage" "${debug}"
 	done
 	
 	# ${REPLYTO[*]} event_replyto
@@ -374,7 +375,7 @@ event_message() {
 		# shellcheck disable=SC2153
 		for event in "${!BASHBOT_EVENT_REPLYTO[@]}"
 		do
-			_is_function "${BASHBOT_EVENT_REPLYTO[${event}]}" && "${BASHBOT_EVENT_REPLYTO[${event}]}" "replyto" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_REPLYTO[${event}]}" "replyto" "${debug}"
 		done
 	fi
 
@@ -383,7 +384,7 @@ event_message() {
 		# shellcheck disable=SC2153
 		for event in "${!BASHBOT_EVENT_FORWARD[@]}"
 		do
-			 _is_function "${BASHBOT_EVENT_FORWARD[${event}]}" && "${BASHBOT_EVENT_FORWARD[${event}]}" "forward" "${debug}"
+			 _exec_if_function && "${BASHBOT_EVENT_FORWARD[${event}]}" "forward" "${debug}"
 		done
 	fi
 
@@ -392,7 +393,7 @@ event_message() {
 		# shellcheck disable=SC2153
 		for event in "${!BASHBOT_EVENT_CONTACT[@]}"
 		do
-			_is_function "${BASHBOT_EVENT_CONTACT[${event}]}" && "${BASHBOT_EVENT_CONTACT[${event}]}" "contact" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_CONTACT[${event}]}" "contact" "${debug}"
 		done
 	fi
 
@@ -402,7 +403,7 @@ event_message() {
 		# shellcheck disable=SC2153
 		for event in "${!BASHBOT_EVENT_LOCATION[@]}"
 		do
-			_is_function "${BASHBOT_EVENT_LOCATION[${event}]}" && "${BASHBOT_EVENT_LOCATION[${event}]}" "location" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_LOCATION[${event}]}" "location" "${debug}"
 		done
 	fi
 
@@ -411,7 +412,7 @@ event_message() {
 		# shellcheck disable=SC2153
 		for event in "${!BASHBOT_EVENT_FILE[@]}"
 		do
-			_is_function "${BASHBOT_EVENT_FILE[${event}]}" && "${BASHBOT_EVENT_FILE[${event}]}" "file" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_FILE[${event}]}" "file" "${debug}"
 		done
 	fi
 

@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-0-gec85636
+#### $$VERSION$$ v0.90-dev2-6-g3c6b2d3
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -61,7 +61,7 @@ if [ "${1}" != "source" ];then
     if [ "$INLINE" != "0" ] && [ "${iQUERY[ID]}" != "" ]; then
 	if _is_function process_inline; then
 	    # forward iinline query to optional dispatcher
-	    _is_function myinlines && myinlines
+	    _exec_if_function myinlines
 	fi
 
     # regular (gobal) commands ...
@@ -69,8 +69,8 @@ if [ "${1}" != "source" ];then
     else
 
 	###################
-	# user defined commands must plaed in mycommands
-	! _is_function mycommands ||  mycommands # return true if not exist!
+	# user defined commands must placed in mycommands
+	_exec_if_function mycommands
 
 	# run commands if true (0) is returned or if mycommands dose not exist
 	# shellcheck disable=SC2181
@@ -111,7 +111,7 @@ if [ "${1}" != "source" ];then
 			if [ "$res" -eq 0 ] ; then killproc && _message "Command canceled.";else _message "No command is currently running.";fi
 			;;
 		*)	# forward messages to optional dispatcher
-			_is_function send_interactive && send_interactive "${CHAT[ID]}" "${MESSAGE}"
+			_exec_if_function send_interactive "${CHAT[ID]}" "${MESSAGE}"
 			;;
 	     esac
 	fi
