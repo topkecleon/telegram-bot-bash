@@ -19,6 +19,8 @@
 #
 # BASHBOT_EVENT_INLINE	inline query received
 # BASHBOT_EVENT_MESSAGE	any type of message received
+# BASHBOT_EVENT_TEXT	message containing message text received
+# BASHBOT_EVENT_CMD	a command is recieved
 # BASHBOT_EVENT_REPLYTO	reply to message received
 # BASHBOT_EVENT_FORWARD	forwarded message received
 # BASHBOT_EVENT_CONTACT	contact received
@@ -37,29 +39,19 @@
 #
 
 # export used events
-export BASHBOT_EVENT_INLINE BASHBOT_EVENT_REPLY
+export BASHBOT_EVENT_INLINE BASHBOT_EVENT_CMD BASHBOT_EVENT_REPLY
 
 # any global variable defined by addons MUST be prefixed by addon name
 EXAMPLE_ME="example"
 
 # initialize after installation or update
 if [[ "$1" = "init"* ]]; then 
-	: # notihung to do
+	: # nothing to do
 fi
 
 
 # register on startbot
 if [[ "$1" = "start"* ]]; then 
-    # register to inline
-    BASHBOT_EVENT_INLINE["${EXAMPLE_ME}"]="${EXAMPLE_ME}_inline"
-
-    # any function defined by addons MUST be prefixed by addon name
-    # function local variables can have any name, but must be LOCAL
-    example_inline(){
-	local msg="${MESSAGE}"
-	send_normal_message "${CHAT[ID]}" "Inline query received: ${msg}"
-    }
-
     # register to reply
     BASHBOT_EVENT_REPLY["${EXAMPLE_ME}"]="${EXAMPLE_ME}_reply"
 
@@ -68,5 +60,19 @@ if [[ "$1" = "start"* ]]; then
     example_reply(){
 	local msg="message"
 	send_markdown_message "${CHAT[ID]}" "User *${USER[USERNAME]}* replied to ${msg} from *${REPLYTO[USERNAME]}*"
+    }
+
+    # register to inline and command
+    BASHBOT_EVENT_INLINE["${EXAMPLE_ME}"]="${EXAMPLE_ME}_multievent"
+    BASHBOT_EVENT_CMD["${EXAMPLE_ME}"]="${EXAMPLE_ME}_multievent"
+
+    # any function defined by addons MUST be prefixed by addon name
+    # function local variables can have any name, but must be LOCAL
+    example_multievent(){
+	local type="$1"
+	local msg="${MESSAGE[0]}"
+	# shellcheck disable=SC2154
+	[ "${type}" = "inline" ] && msg="${iQUERY[0]}"
+	send_normal_message "${CHAT[ID]}" "${type} received: ${msg}"
     }
 fi

@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-6-g3c6b2d3
+#### $$VERSION$$ v0.90-dev2-8-g9b05ae0
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -133,8 +133,9 @@ UPD_URL=$URL'/getUpdates?offset='
 GETFILE_URL=$URL'/getFile'
 
 unset USER
+declare -a CMD
 declare -A UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
-export res UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY CAPTION
+export res CMD UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY CAPTION
 
 
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
@@ -327,6 +328,7 @@ process_updates() {
 }
 process_client() {
 	local num="$1" debug="$2" 
+	CMD=( )
 	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
 	if [ "${iQUERY[ID]}" = "" ]; then
 		[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"MESSAGE.log"
@@ -353,6 +355,11 @@ process_client() {
 	grep -q "$tmpcount" <"${COUNTFILE}" &>/dev/null || cat <<< "$tmpcount" >>"${COUNTFILE}"
 }
 
+declare -A BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD 
+declare -A BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE BASHBOT_EVENT_TEXT
+export BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD
+export BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE BASHBOT_EVENT_TEXT
+
 event_inline() {
 	local event debug="$1"
 	# shellcheck disable=SC2153
@@ -370,6 +377,24 @@ event_message() {
 		 _exec_if_function "${BASHBOT_EVENT_MESSAGE[${event}]}" "messsage" "${debug}"
 	done
 	
+	# ${TEXT[*]} event_text
+	if [ "${MESSAGE[0]}" != "" ]; then
+		# shellcheck disable=SC2153
+		for event in "${!BASHBOT_EVENT_TEXT[@]}"
+		do
+			_exec_if_function "${BASHBOT_EVENT_TEXT[${event}]}" "text" "${debug}"
+		done
+
+		# ${CMD[*]} event_cmd
+		if [ "${CMD[0]}" != "" ]; then
+			# shellcheck disable=SC2153
+			for event in "${!BASHBOT_EVENT_CMD[@]}"
+			do
+				_exec_if_function "${BASHBOT_EVENT_CMD[${event}]}" "command" "${debug}"
+			done
+		fi
+	fi
+
 	# ${REPLYTO[*]} event_replyto
 	if [ "${REPLYTO[UID]}" != "" ]; then
 		# shellcheck disable=SC2153
@@ -504,11 +529,15 @@ process_message() {
 	# Location
 	LOCATION[LONGITUDE]="${UPD["result",${num},"message","location","longitude"]}"
 	LOCATION[LATITUDE]="${UPD["result",${num},"message","location","latitude"]}"
-	# event_message &
-}
-declare -A BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE 
-export BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE 
 
+	# split message in command and args
+	if [[ "${MESSAGE[0]}" = "/"* ]]; then
+		set -f; unset IFS
+		# shellcheck disable=SC2206
+		CMD=( ${MESSAGE[0]} )
+		set +f
+	fi 
+}
 
 #########################
 # main get updates loop, should never terminate
