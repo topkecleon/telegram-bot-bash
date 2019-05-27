@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-8-g9b05ae0
+#### $$VERSION$$ v0.90-dev2-9-gbbbc8ae
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -314,14 +314,29 @@ JsonGetLine() {
 JsonGetValue() {
 	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]\([0-9.,]*\).*/\1/p'
 }
+# read JSON.sh style data and asssign to an ARRAY
+# $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
+Json2Array() {
+	# shellcheck source=./commands.sh
+	[ "$1" = "" ] || source <( printf "$1"'=( %s )' "$(sed -E -e 's/\t/=/g' -e 's/=(true|false)/="\1"/')" )
+}
+# output ARRAY as JSON.sh style data
+# $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
+Array2Json() {
+	local ARRAY, key
+	declare -n ARRAY="$1"
+	for key in "${!ARRAY[@]}"
+       	do
+		printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${ARRAY[${key}]//\"/\\\"}"
+       	done
+}
 
 ################
 # processing of updates starts here
 process_updates() {
 	local max num debug="$1"
 	max="$(sed <<< "${UPDATE}" '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')"
-	# shellcheck source=./commands.sh
-	source <( printf 'UPD=( %s )' "$(sed <<<"${UPDATE}" -E -e 's/\t/=/g' -e 's/=(true|false)/="\1"/')" )
+	Json2Array 'UPD' <<<"${UPDATE}"
 	for ((num=0; num<=max; num++)); do
 		process_client "$num" "${debug}"
 	done
