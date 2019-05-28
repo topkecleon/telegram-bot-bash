@@ -29,8 +29,7 @@ export BASHBOT_EVENT_TEXT BASHBOT_EVENT_CMD BASHBOT_EVENT_FILE
 # any global variable defined by addons MUST be prefixed by addon name
 ANTIFLOOD_ME="antiflood"
 
-declare -A ANTIFLOOD_CHATS ANTIFLOOD_ACTUALS
-export ANTIFLOOD_CHATS ANTIFLOOD_ACTUALS
+declare -Ax ANTIFLOOD_CHATS ANTIFLOOD_ACTUALS
 
 ANTIFLOOD_DEFAULT="5"	# 5 files per minute
 ANTIFLOOD_BAN="5"	# 5 minutes
