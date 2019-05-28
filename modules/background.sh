@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-0-gec85636
+#### $$VERSION$$ v0.90-dev2-11-g59aa9fc
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -37,7 +37,7 @@ killproc() {
 # $2 program
 # $3 jobname
 start_back() {
-	local fifo; fifo="${TMPDIR:-.}/$(procname "$1")"
+	local fifo; fifo="${DATADIR:-.}/$(procname "$1")"
 	printf '%s\n' "$1:$3:$2" >"${fifo}$3-back.cmd"
 	start_proc "$1" "$2" "back-$3-"
 }
@@ -49,7 +49,7 @@ start_back() {
 start_proc() {
 	[ "$2" = "" ] && return
 	[ -x "${2%% *}" ] || return 1
-	local fifo; fifo="${TMPDIR:-.}/$(procname "$1" "$3")"
+	local fifo; fifo="${DATADIR:-.}/$(procname "$1" "$3")"
 	kill_proc "$1" "$3"
 	mkfifo "${fifo}"
 	nohup bash -c "{ tail -f  < \"${fifo}\" | $2 \"\" \"\" \"$fifo\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"
@@ -75,7 +75,7 @@ check_proc() {
 # $2 jobname
 kill_back() {
 	kill_proc "$1" "back-$2-"
-	rm -f "${TMPDIR:-.}/$(procname "$1")$2-back.cmd"
+	rm -f "${DATADIR:-.}/$(procname "$1")$2-back.cmd"
 }
 
 
@@ -85,7 +85,7 @@ kill_proc() {
 	local fifo prid
 	fifo="$(procname "$1" "$2")"
 	prid="$(proclist "${fifo}")"
-	fifo="${TMPDIR:-.}/${fifo}"
+	fifo="${DATADIR:-.}/${fifo}"
 	# shellcheck disable=SC2086
 	[ "${prid}" != "" ] && kill ${prid}
 	[ -s "${fifo}.log" ] || rm -f "${fifo}.log"
@@ -95,7 +95,7 @@ kill_proc() {
 # $1 chat
 # $2 message
 send_interactive() {
-	local fifo; fifo="${TMPDIR:-.}/$(procname "$1")"
+	local fifo; fifo="${DATADIR:-.}/$(procname "$1")"
 	[ -p "${fifo}" ] && printf '%s\n' "$2" >"${fifo}" & # not blocking!
 }
 
@@ -111,8 +111,8 @@ inproc() {
 #	resumeb*
 job_control() {
 	local content proc CHAT job fifo killall=""
-	for FILE in "${TMPDIR:-.}/"*-back.cmd; do
-		[ "${FILE}" = "${TMPDIR:-.}/*-back.cmd" ] && echo -e "${RED}No background processes.${NC}" && break
+	for FILE in "${DATADIR:-.}/"*-back.cmd; do
+		[ "${FILE}" = "${DATADIR:-.}/*-back.cmd" ] && echo -e "${RED}No background processes.${NC}" && break
 		content="$(< "${FILE}")"
 		CHAT="${content%%:*}"
 		job="${content#*:}"

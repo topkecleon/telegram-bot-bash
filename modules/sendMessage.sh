@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-0-gec85636
+#### $$VERSION$$ v0.90-dev2-11-g59aa9fc
 
 # source from commands.sh to use the sendMessage functions
 
@@ -85,7 +85,7 @@ send_button() {
 }
 
 
-UPLOADDIR="${BASHBOT_UPLOAD:-${TMPDIR}/upload}"
+UPLOADDIR="${BASHBOT_UPLOAD:-${DATADIR}/upload}"
 
 # for now this can only send local files with curl!
 # extend to allow send files by URL or telegram ID

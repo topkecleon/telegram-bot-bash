@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-9-gbbbc8ae
+#### $$VERSION$$ v0.90-dev2-11-g59aa9fc
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -106,12 +106,12 @@ if [ ! -f "${BOTACL}" ]; then
 	printf '\n' >"${BOTACL}"
 fi
 
-TMPDIR="${BASHBOT_VAR:-.}/data-bot-bash"
-if [ ! -d "${TMPDIR}" ]; then
-	mkdir "${TMPDIR}"
-elif [ ! -w "${TMPDIR}" ]; then
-	echo -e "${RED}ERROR: Can't write to ${TMPDIR}!.${NC}"
-	ls -ld "${TMPDIR}"
+DATADIR="${BASHBOT_VAR:-.}/data-bot-bash"
+if [ ! -d "${DATADIR}" ]; then
+	mkdir "${DATADIR}"
+elif [ ! -w "${DATADIR}" ]; then
+	echo -e "${RED}ERROR: Can't write to ${DATADIR}!.${NC}"
+	ls -ld "${DATADIR}"
 	exit 2
 fi
 
@@ -157,14 +157,14 @@ fi
 
 #################
 # BASHBOT INTERNAL functions
-# $1 URL, $2 filename in TMPDIR
+# $1 URL, $2 filename in DATADIR
 # outputs final filename
 download() {
 	local empty="no.file" file="${2:-${empty}}"
 	if [[ "$file" = *"/"* ]] || [[ "$file" = "."* ]]; then file="${empty}"; fi
-	while [ -f "${TMPDIR:-.}/${file}" ] ; do file="$RAMDOM-${file}"; done
-	getJson "$1" >"${TMPDIR:-.}/${file}" || return
-	printf '%s\n' "${TMPDIR:-.}/${file}"
+	while [ -f "${DATADIR:-.}/${file}" ] ; do file="$RAMDOM-${file}"; done
+	getJson "$1" >"${DATADIR:-.}/${file}" || return
+	printf '%s\n' "${DATADIR:-.}/${file}"
 }
 
 # $1 postfix, e.g. chatid
@@ -566,8 +566,8 @@ start_bot() {
 	[ "${DEBUG}" != "" ] && date && echo "Start BASHBOT in Mode \"${DEBUG}\""
 	[[ "${DEBUG}" = "xdebug"* ]] && set -x 
 	#cleaup old pipes and empty logfiles
-	find "${TMPDIR}" -type p -delete
-	find "${TMPDIR}" -size 0 -name "*.log" -delete
+	find "${DATADIR}" -type p -delete
+	find "${DATADIR}" -size 0 -name "*.log" -delete
 	# load addons on startup
 	for addons in ${ADDONDIR:-.}/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
@@ -597,7 +597,7 @@ bot_init() {
 	local DEBUG="$1"
 	# upgrade from old version
 	local OLDTMP="${BASHBOT_VAR:-.}/tmp-bot-bash"
-	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${TMPDIR}"; rmdir "${OLDTMP}"; }
+	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${DATADIR}"; rmdir "${OLDTMP}"; }
 	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
 	# load addons on startup
 	for addons in ${ADDONDIR:-.}/*.sh ; do
@@ -622,8 +622,8 @@ bot_init() {
 		chown -R "$TOUSER" . ./*
 		chmod 711 .
 		chmod -R a-w ./*
-		chmod -R u+w "${COUNTFILE}" "${TMPDIR}" "${BOTADMIN}" ./*.log 2>/dev/null
-		chmod -R o-r,o-w "${COUNTFILE}" "${TMPDIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
+		chmod -R u+w "${COUNTFILE}" "${DATADIR}" "${BOTADMIN}" ./*.log 2>/dev/null
+		chmod -R o-r,o-w "${COUNTFILE}" "${DATADIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
 		ls -la
 	fi
 }
@@ -665,8 +665,8 @@ if [ "${SOURCE}" != "yes" ]; then
 		while read -r line ;do
 			[ "$line" != "" ] && send_message "$2" "$line"
 		done 
-		rm -f -r "${TMPDIR:-.}/$3"
-		[ -s "${TMPDIR:-.}/$3.log" ] || rm -f "${TMPDIR:-.}/$3.log"
+		rm -f -r "${DATADIR:-.}/$3"
+		[ -s "${DATADIR:-.}/$3.log" ] || rm -f "${DATADIR:-.}/$3.log"
 		exit
 		;;
 	"startbot" )
