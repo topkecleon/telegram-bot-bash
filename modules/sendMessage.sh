@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-11-g59aa9fc
+#### $$VERSION$$ v0.90-dev2-13-gcb3f3e3
 
 # source from commands.sh to use the sendMessage functions
 

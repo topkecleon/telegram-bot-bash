@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-12-gf2f5e11
+#### $$VERSION$$ v0.90-dev2-13-gcb3f3e3
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -32,10 +32,8 @@ if [ -t 1 ] && [ "$TERM" != "" ];  then
 fi
 
 # get location and name of bashbot.sh
-export SCRIPT SCRIPTDIR MODULEDIR RUNDIR RUNUSER
 SCRIPT="$0"
 REALME="${BASH_SOURCE[0]}"
-
 SCRIPTDIR="$(dirname "${REALME}")"
 RUNDIR="$(dirname "$0")"
 
@@ -55,7 +53,6 @@ if [ "$BASHBOT_HOME" != "" ]; then
 fi
 
 ADDONDIR="${BASHBOT_ETC:-./addons}"
-
 
 RUNUSER="${USER}" # USER is overwritten by bashbot array
 
@@ -132,7 +129,9 @@ ME_URL=$URL'/getMe'
 UPD_URL=$URL'/getUpdates?offset='
 GETFILE_URL=$URL'/getFile'
 
-unset USER
+declare -rx SCRIPT SCRIPTDIR MODULEDIR RUNDIR ADDONDIR TOKENFILE BOTADMIN BOTACL DATADIR COUNTFILE
+declare -rx BOTTOKEN URL ME_URL UPD_URL GETFILE_URL
+
 declare -ax CMD
 declare -Ax UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
 export res CAPTION
@@ -210,7 +209,7 @@ _is_function()
 	[ "$(LC_ALL=C type -t "$1")" = "function" ]
 }
 
-DELETE_URL=$URL'/deleteMessage'
+declare -xr DELETE_URL=$URL'/deleteMessage'
 delete_message() {
 	sendJson "${1}" 'message_id: '"${2}"'' "${DELETE_URL}"
 }
@@ -323,7 +322,7 @@ Json2Array() {
 # output ARRAY as JSON.sh style data
 # $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
 Array2Json() {
-	local ARRAY, key
+	local key
 	declare -n ARRAY="$1"
 	for key in "${!ARRAY[@]}"
        	do
