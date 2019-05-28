@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-6-g3c6b2d3
+#### $$VERSION$$ v0.90-dev2-14-gafc669c
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -59,10 +59,8 @@ if [ "${1}" != "source" ];then
     # detect inline commands....
     # no default commands, all processing is done in myinlines()
     if [ "$INLINE" != "0" ] && [ "${iQUERY[ID]}" != "" ]; then
-	if _is_function process_inline; then
-	    # forward iinline query to optional dispatcher
-	    _exec_if_function myinlines
-	fi
+    	# forward iinline query to optional dispatcher
+	_exec_if_function myinlines
 
     # regular (gobal) commands ...
     # your commands are in mycommands() 

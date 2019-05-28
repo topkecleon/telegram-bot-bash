@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-13-gcb3f3e3
+#### $$VERSION$$ v0.90-dev2-14-gafc669c
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -349,7 +349,7 @@ process_client() {
 		process_message "${num}" "${debug}"
 	else
 		[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"INLINE.log"
-		[ "$INLINE" != "0" ] && _exec_if_function process_inline "${num}" "${debug}"
+		process_inline "${num}" "${debug}"
 	fi
 	#####
 	# process inline and message events
@@ -361,7 +361,7 @@ process_client() {
 	if [ "${iQUERY[ID]}" = "" ]; then
 		event_message "${debug}"
 	else
-		_is_function process_inline && event_inline "${debug}"
+		event_inline "${debug}"
 	fi
 
 	# last count users
