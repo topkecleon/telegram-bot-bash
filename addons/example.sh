@@ -27,6 +27,9 @@
 # BASHBOT_EVENT_LOCATION	location or venue received
 # BASHBOT_EVENT_FILE	file received
 #
+# BAHSBOT_EVENT_TIMER	this event is a bit special as it fires every Minute
+#			and has 3 meanings: oneshot, everytime, every X minutes.
+#
 # all global variables and functions can be used in registered functions.
 #
 # parameters when loaded
@@ -39,7 +42,7 @@
 #
 
 # export used events
-export BASHBOT_EVENT_INLINE BASHBOT_EVENT_CMD BASHBOT_EVENT_REPLY
+export BASHBOT_EVENT_INLINE BASHBOT_EVENT_CMD BASHBOT_EVENT_REPLY BASHBOT_EVENT_TIMER
 
 # any global variable defined by addons MUST be prefixed by addon name
 EXAMPLE_ME="example"
@@ -59,7 +62,7 @@ if [[ "$1" = "start"* ]]; then
     # function local variables can have any name, but must be LOCAL
     example_reply(){
 	local msg="message"
-	send_markdown_message "${CHAT[ID]}" "User *${USER[USERNAME]}* replied to ${msg} from *${REPLYTO[USERNAME]}*"
+	send_markdown_message "${CHAT[ID]}" "User *${USER[USERNAME]}* replied to ${msg} from *${REPLYTO[USERNAME]}*" &
     }
 
     # register to inline and command
@@ -73,6 +76,22 @@ if [[ "$1" = "start"* ]]; then
 	local msg="${MESSAGE[0]}"
 	# shellcheck disable=SC2154
 	[ "${type}" = "inline" ] && msg="${iQUERY[0]}"
-	send_normal_message "${CHAT[ID]}" "${type} received: ${msg}"
+	send_normal_message "${CHAT[ID]}" "${type} received: ${msg}" &
+    }
+
+    BASHBOT_EVENT_TIMER["${EXAMPLE_ME}after5min","-5"]="${EXAMPLE_ME}_after5min"
+
+    # any function defined by addons MUST be prefixed by addon name
+    # function local variables can have any name, but must be LOCAL
+    example_after5min(){
+	send_markdown_message "$(< "${BOTADMIN}")" "This is a one time event after 5 Minutes!" &
+    }
+
+    BASHBOT_EVENT_TIMER["${EXAMPLE_ME}every2min","2"]="${EXAMPLE_ME}_every2min"
+
+    # any function defined by addons MUST be prefixed by addon name
+    # function local variables can have any name, but must be LOCAL
+    example_every2min(){
+	send_markdown_message "$(< "${BOTADMIN}")" "This a a every 2 minute event ..." &
     }
 fi

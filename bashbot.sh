@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-14-gafc669c
+#### $$VERSION$$ v0.90-dev2-15-g6651cf4
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -370,7 +370,25 @@ process_client() {
 }
 
 declare -Ax BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD 
-declare -Ax BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE BASHBOT_EVENT_TEXT
+declare -Ax BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE BASHBOT_EVENT_TEXT BASHBOT_EVENT_TIMER
+
+EVENT_TIMER="0"
+event_timer() {
+	local event timer debug="$1"
+	(( EVENT_TIMER += 1 ))
+	# shellcheck disable=SC2153
+	for event in "${!BASHBOT_EVENT_TIMER[@]}"
+	do
+		timer="${BASHBOT_EVENT_TIMER[${event}]##*,}"
+		[[ ! "$timer" =~ ^-*[0-9]+$ ]] && continue
+		[[ "$timer" =~ ^-*0+$ ]] && continue
+		if [ "$(( EVENT_TIMER % timer ))" = "0" ]; then
+			_exec_if_function "${BASHBOT_EVENT_TIMER[${event}]}" "timer" "${debug}"
+			[ "$(( EVENT_TIMER % timer ))" -lt "0" ] && \
+				unset BASHBOT_EVENT_TIMER["${event}"]
+		fi
+	done
+}
 
 event_inline() {
 	local event debug="$1"
