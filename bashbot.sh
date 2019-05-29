@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-15-g6651cf4
+#### $$VERSION$$ v0.90-dev2-16-g74cb204
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -372,6 +372,14 @@ process_client() {
 declare -Ax BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD 
 declare -Ax BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE BASHBOT_EVENT_TEXT BASHBOT_EVENT_TIMER
 
+start_timer(){
+	# send alarm every ~60 s
+	while :; do
+		sleep 59.5
+    		kill -ALRM $$
+	done;
+}
+
 EVENT_TIMER="0"
 event_timer() {
 	local event timer debug="$1"
@@ -588,7 +596,14 @@ start_bot() {
 		# shellcheck source=./modules/aliases.sh
 		[ -r "${addons}" ] && source "${addons}" "startbot" "${DEBUG}"
 	done
-
+	# start timer events
+	if _is_function start_timer ; then
+		# shellcheck disable=SC2064
+		trap "event_timer $DEBUG" ALRM
+		start_timer &
+		# shellcheck disable=SC2064
+		trap "kill -9 $!; exit" EXIT INT HUP TERM QUIT 
+	fi
 	while true; do
 		UPDATE="$(getJson "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n)"
 
