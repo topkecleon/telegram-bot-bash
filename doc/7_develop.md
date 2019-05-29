@@ -4,6 +4,18 @@ This section is about help and best practices for new bashbot developers. The ma
 
 bashbot development is done on github. If you want to provide fixes or new features [fork bashbot on githup](https://help.github.com/en/articles/fork-a-repo) and provide changes as [pull request on github](https://help.github.com/en/articles/creating-a-pull-request).
 
+### Debugging Bashbot
+In normal mode of operation all bashbot output is discarded.
+To get these messages (and more) you can start bashbot in the current shell ```./bashbot.sh startbot```. Now you can see all output or erros from bashbot.
+In addition you can change the change the level of verbosity by adding a third argument after startbot.
+```
+	"debug"		redirects all output to "DEBUG.log", in addtion every update is logged in "MESSAGE.LOG" and "INLINE.log"
+	"debugterm"	same as debug but output and errors are sent to terminal
+
+	"xdebug"	same as debug plus set bash option '-x' to log any executed command
+	"xdebugterm"	same as xdebug but output and errors are sent to terminal
+```
+
 ### Modules and Addons
 Modules live in ```modules/*.sh``` are bashbot functions factored out in seperate files, gouped by functionality. Main reason for creating modules was
 to make bashbot.sh smaller and contain only initalisation and a basic set of functions. In addition not every functionality is needed ba every bot, so you can
@@ -18,19 +30,72 @@ This is similar on how 'commands.sh' works, but imore flexible and a major diffe
 while 'commands.sh' is executed as a seperate process.
 
 This is why addons are time critical and must return as fast as possible and spawn every action as a seperate process or function with '&'!
-If you want to send out a message from aa addon use ```send_message "${CHAT[ID]} "Message to send ..." &``` to not wait for completion, witch may take several seconds.
+If you want to send out a message from aa addon use ```send_message "${CHAT[ID]}" "Message to send ..." &``` to not wait for completion, witch may take several seconds.
 
-### Debugging Bashbot
-In normal mode of operation all bashbot output is discarded.
-To get these messages (and more) you can start bashbot in the current shell ```./bashbot.sh startbot```. Now you can see all output or erros from bashbot.
-In addition you can change the change the level of verbosity by adding a third argument after startbot.
-```
-	"debug"		redirects all output to "DEBUG.log", in addtion every update is logged in "MESSAGE.LOG" and "INLINE.log"
-	"debugterm"	same as debug but output and errors are sent to terminal
+### Bashbot Events
+Addons can register functions to bashbot events at startup by providing their name and a and a fucnction name per event
+If an event occours each registered event function is called.
 
-	"xdebug"	same as debug plus set bash option '-x' to log any executed command
-	"xdebugterm"	same as xdebug but output and errors are sent to terminal
+Events run in the same context as the main bashbot event loop so variables set here are persistent as long bashbot is running.
+
+Note: For the same reason event function MUST return imideatly!  Time consuming tasks must be run in background or as a subshell, e.g. "long running &"
+
+Availible events:
+
+* BASHBOT_EVENT_INLINE		an inline query is received
+* BASHBOT_EVENT_MESSAGE		any type of message is received
+* BASHBOT_EVENT_TEXT		a message containing text is received
+* BASHBOT_EVENT_CMD		a command is recieved (fist word starts with /)
+* BASHBOT_EVENT_REPLYTO		a reply to a message is received
+* BASHBOT_EVENT_FORWARD		a forwarded message is received
+* BASHBOT_EVENT_CONTACT		a contact is received
+* BASHBOT_EVENT_LOCATION	a location or a venue is received
+* BASHBOT_EVENT_FILE		a file is received
+
+*usage*: BASHBOT_EVENT_xxx["name]="function"
+
+*Example:* Register a function to echo to any Text send to the bot
+```bash
+# register callback:
+BASHBOT_EVENT_TEXT["example"]="example_echo"
+
+# function called if a text is recieved
+example_echo() {
+	# all availible bashbot functions and variables can be used
+	send_normal_message "${CHAT[ID]}" "${MESSAGE[0]}" & # note the &!
+}
 ```
+* BAHSBOT_EVENT_TIMER		is executed every minute and can be uses in variants: oneshot, every minute, every X minutes.
+
+Registering to BASHBOT_EVENT_TIMER works a little different, you have to add a timing argument to the index name.
+
+*usage: * BAHSBOT_EVENT_TIMER["name","time"], where time is:
+
+* -x	execute ONCE in x minutes
+* 0	ignored
+* 1	execute every minute
+* x	execute every x minutes
+
+*Examples:*
+```bash
+# register callback:
+BAHSBOT_EVENT_TIMER["example1","1"]="example_everymin"
+
+# function called every minute
+example_everymin() {
+	# timer events has no chat id, so send to yourself
+	send_normal_message "$(< "${BOTADMIN})" "$(date)" & # note the &!
+}
+
+# register other callback:
+BAHSBOT_EVENT_TIMER["example2","-10"]="example_in10min"
+
+BAHSBOT_EVENT_TIMER["example3","5"]="example_every5min"
+
+
+```
+
+----
 
 ### Create a stripped down Version of your Bot
 Currently bashbot is more a bot development environment than a bot, containing examples, developer scripts, modules, documentation and more.
@@ -204,5 +269,5 @@ fi
 #### [Prev Function Reference](6_reference.md)
 #### [Next Expert Use](8_custom.md)
 
-#### $$VERSION$$ v0.90-dev2-17-gce6749e
+#### $$VERSION$$ v0.90-dev2-18-ga1a4829
 
