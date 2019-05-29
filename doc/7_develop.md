@@ -4,6 +4,22 @@ This section is about help and best practices for new bashbot developers. The ma
 
 bashbot development is done on github. If you want to provide fixes or new features [fork bashbot on githup](https://help.github.com/en/articles/fork-a-repo) and provide changes as [pull request on github](https://help.github.com/en/articles/creating-a-pull-request).
 
+### Modules and Addons
+Modules live in ```modules/*.sh``` are bashbot functions factored out in seperate files, gouped by functionality. Main reason for creating modules was
+to make bashbot.sh smaller and contain only initalisation and a basic set of functions. In addition not every functionality is needed ba every bot, so you can
+e.g. disable inline or background processing by renaming the respective module files to 'module.sh.off'.
+
+Modules must onyl use functions provieded by 'bahsbot.sh' or the module itself, no depedencies to other modules or addons must exist.
+If a module function is called from 'bashbot.sh' for whatever reason, you must test with '_is_function' or '_execute_if_function' if the
+module is availible.
+
+Addons live in ```addons/*.sh.dist``` and are disabled by default. To activate an addon remove the dist from filename, e.g. ```cp addons/example.sh.dist addons/example.sh```. Addons have to register themself to BASHBOT_EVENTS at startup, e.g. to call a function everytime a message is recieved.
+This is similar on how 'commands.sh' works, but imore flexible and a major difference: Addons are executed in the context of the main script,
+while 'commands.sh' is executed as a seperate process.
+
+This is why addons are time critical and must return as fast as possible and spawn every action as a seperate process or function with '&'!
+If you want to send out a message from aa addon use ```send_message "${CHAT[ID]} "Message to send ..." &``` to not wait for completion, witch may take several seconds.
+
 ### Debugging Bashbot
 In normal mode of operation all bashbot output is discarded.
 To get these messages (and more) you can start bashbot in the current shell ```./bashbot.sh startbot```. Now you can see all output or erros from bashbot.
@@ -188,5 +204,5 @@ fi
 #### [Prev Function Reference](6_reference.md)
 #### [Next Expert Use](8_custom.md)
 
-#### $$VERSION$$ v0.90-dev2-0-gec85636
+#### $$VERSION$$ v0.90-dev2-17-gce6749e
 
