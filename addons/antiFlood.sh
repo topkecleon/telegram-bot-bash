@@ -4,6 +4,7 @@
 # this addon counts how many files, e.g. stickers, are sent to
 # a chat and takes actions if threshold is reached
 #  
+#### $$VERSION$$ v0.90-rc1-0-g93b4914
 
 # used events:
 #
@@ -86,21 +87,23 @@ if [[ "$1" = "start"* ]]; then
     antiFlood_multievent(){
 	# not started
 	[ "${ANTIFL_CHATS["${CHAT[ID]}","level"]}" = "" ] && return
-	# check user flood text
+	# count user flood text
 	if [ "$1" = "text" ]; then
 		if [ "${#MESSAGE[0]}" -gt "${ANTIFL_CHATS["${CHAT[ID]}","level"]}" ]; then
 			(( ANTIFL_ACTUALS["${CHAT[ID]}","${USER[ID]}"]-- ))
 			# shellcheck disable=SC2154
 			(( ANTIFL_ACTUALS["${CHAT[ID]}","${USER[ID]}","file"]-- ))
-		fi
-	else
+		else
 			# shellcheck disable=SC2154
 			(( ANTIFL_ACTUALS["${CHAT[ID]}","${USER[ID]}"]++ ))
+		fi
 	fi
-	# check user flood picture
-	# shellcheck disable=SC2154
+	# count user chat flood 
 	if [ "$1" = "file" ]; then
+		# shellcheck disable=SC2154
 		(( ANTIFL_ACTUALS["${CHAT[ID]}","${USER[ID]}","file"]++ ))
+		# shellcheck disable=SC2154
+		(( ANTIFL_ACTUALS["${CHAT[ID]}","file"]++ ))
 		antiFlood_action & # do actions in subshell
 	fi
     }
@@ -115,6 +118,16 @@ if [[ "$1" = "start"* ]]; then
 		else
 			# inform admin
 			send_markdown_message "${ANTIFL_ADMIN}" "User ${USER[USERNAME]} reached flood level in chat ${CHAT[USERNAME]}!"
+		fi
+	fi
+	# check flood level of chat
+	if [ "$(( ANTIFL_ACTUALS["${CHAT[ID]}","file"] +1))" -gt "$(( ANTIFL_CHATS["${CHAT[ID]}","level"] * ANTIFL_BAN ))" ]; then
+		if [ "${ANTIFL_CHATS["${CHAT[ID]}","active"]}" = "yes" ]; then
+			# remove message
+			delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
+		else
+			# inform admin
+			send_markdown_message "${ANTIFL_ADMIN}" "Chat ${CHAT[USERNAME]} reached max flood level!"
 		fi
 	fi
     }

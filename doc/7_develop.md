@@ -275,5 +275,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.90-rc1-0-ge80b98a
+#### $$VERSION$$ v0.90-rc1-0-g93b4914
 

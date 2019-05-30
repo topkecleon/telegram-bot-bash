@@ -774,13 +774,13 @@ Every Inline Message sent to your Bot is processd by this function. It parse the
 Start the the every minute timer ...
 
 ##### event_timer
-Dispachter for BASHBOT_EVENT_TIMER
+Dispatcher for BASHBOT_EVENT_TIMER
 
 ##### event_timer
-Dispachter for BASHBOT_EVENT_INLINE
+Dispatcher for BASHBOT_EVENT_INLINE
 
 ##### event_timer
-Dispachter for BASHBOT_EVENT_MESSAGE and related
+Dispatcher for BASHBOT_EVENT_MESSAGE and related
 
 ----
 
@@ -792,5 +792,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.90-rc1-0-ge80b98a
+#### $$VERSION$$ v0.90-rc1-0-g93b4914
 
