@@ -64,7 +64,7 @@ all](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
     * User Access Control
     * Inline Queries
     * Background and Interactive Jobs
-* [Deveoper Notess](doc/7_develop.md)
+* [Deveoper Notes](doc/7_develop.md)
     * Debug bashbot
     * Modules, addons, events
     * Setup your environment

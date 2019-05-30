@@ -272,5 +272,5 @@ fi
 #### [Prev Function Reference](6_reference.md)
 #### [Next Expert Use](8_custom.md)
 
-#### $$VERSION$$ v0.90-dev2-19-g5779acc
+#### $$VERSION$$ v0.90-dev2-20-g60b1a59
 
