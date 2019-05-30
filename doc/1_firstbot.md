@@ -65,5 +65,5 @@ group. This step is up to you actually.
 #### [Prev Installation](0_install.md)
 #### [Next Getting started](2_usage.md)
 
-#### $$VERSION$$ v0.90-dev2-0-gec85636
+#### $$VERSION$$ v0.90-rc1-0-ge80b98a
 
