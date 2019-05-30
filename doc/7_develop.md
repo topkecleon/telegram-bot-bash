@@ -7,7 +7,8 @@ bashbot development is done on github. If you want to provide fixes or new featu
 
 ### Debugging Bashbot
 In normal mode of operation all bashbot output is discarded.
-To get these messages (and more) you can start bashbot in the current shell ```./bashbot.sh startbot```. Now you can see all output or erros from bashbot.
+To get these messages (and more) you can start bashbot in the current shell with ```./bashbot.sh startbot &```.
+Now you can see all output or erros from bashbot.
 In addition you can change the change the level of verbosity by adding a third argument after startbot.
 ```
 	"debug"		redirects all output to "DEBUG.log", in addtion every update is logged in "MESSAGE.LOG" and "INLINE.log"
@@ -16,6 +17,8 @@ In addition you can change the change the level of verbosity by adding a third a
 	"xdebug"	same as debug plus set bash option '-x' to log any executed command
 	"xdebugterm"	same as xdebug but output and errors are sent to terminal
 ```
+
+To stop bashhbot in debugging mode use ```./bashbot.sh kill``` as ususal.
 
 ### Modules and Addons
 **Modules** live in ```modules/*.sh``` and are bashbot functions factored out in seperate files, gouped by functionality. Main reason for creating modules was
@@ -272,5 +275,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.90-dev2-22-g9148dc5
+#### $$VERSION$$ v0.90-dev2-24-g1c5594a
 

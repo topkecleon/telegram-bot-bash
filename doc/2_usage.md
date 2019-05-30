@@ -5,7 +5,7 @@ The Bots standard commands are in the commands dispatcher ```commands.sh```, Do 
 
 Once you're done with editing start the Bot with ```./bashbot.sh start```.  To stop the Bot run ```./bashbot.sh kill```
 
-If something doesn't work as expected, debug with ```./bashbot.sh startbot DEBUG```, where DEBUG can be 'debug', 'xdebug' or 'xdebugx'.
+If something doesn't work as expected, debug with ```./bashbot.sh startbot DEBUG &```, where DEBUG can be 'debug', 'xdebug' or 'xdebugx'.
 See [Bashbot Development](7_develop.md) for more information.
 
 To use the functions provided in this script in other scripts simply source bashbot: ```source bashbot.sh source```. see [Expert Use](8_expert.md#Expert-use)
@@ -223,5 +223,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.90-dev2-0-gec85636
+#### $$VERSION$$ v0.90-dev2-24-g1c5594a
 
