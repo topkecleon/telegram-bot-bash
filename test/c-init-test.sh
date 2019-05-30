@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.80-0-g5bce3f7
+#### $$VERSION$$ v0.90-rc1-0-ge80b98a
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -38,6 +38,7 @@ echo "Test if $JSONSHFILE exists ..."
 echo "Test Sourcing of bashbot.sh ..."
 # shellcheck source=./bashbot.sh
 source "${TESTDIR}/bashbot.sh" source
+echo "Test Sourcing of commands.sh ..."
 source "${TESTDIR}/commands.sh" source 
 
 trap '' EXIT
@@ -46,5 +47,4 @@ echo "${SUCCESS}"
 
 echo "Test bashbot.sh count"
 cp "${REFDIR}/count.test" "${TESTDIR}/count"
-"${TESTDIR}/bashbot.sh" count
-
+#"${TESTDIR}/bashbot.sh" count

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.80-0-g5bce3f7
+#### $$VERSION$$ v0.90-rc1-0-ge80b98a
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -20,8 +20,10 @@ get_file() {
 }
 
 # get telegram input from file
-export UPDATE
+export UPDATE UPD
 UPDATE="$(cat "${INPUTFILE}")"
+declare -A UPD
+source <( printf 'UPD=( %s )' "$(sed <<<"${UPDATE}" -E -e 's/\t/=/g' -e 's/=(true|false)/="\1"/')" )
 
 # run process_message with and without phyton
 echo "Check process_inline ..."

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.80-0-g5bce3f7
+#### $$VERSION$$ v0.90-rc1-0-ge80b98a
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -42,7 +42,7 @@ ALLOW='/tmp/allowed'
 FILE_REGEX="$ALLOW/.*"
 [ -d "$ALLOW" ] || mkdir "$ALLOW"
 touch "$ALLOW/this_is_my.gif" "$ALLOW/this_is_my.doc"
-touch "$TMPDIR/this_is_my.gif" "$TMPDIR/this_is_my.doc"
+touch "$DATADIR/this_is_my.gif" "$DATADIR/this_is_my.doc"
 
 while read -r line ; do
 	echo -n "."

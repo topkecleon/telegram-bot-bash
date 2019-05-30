@@ -30,15 +30,12 @@ availible on www.github.com
 
 ## Documentation
 * [Introdution to Telegram Bots](https://core.telegram.org/bots)
-    * [One Bot to rule them 
-all](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
-    * [Bot commands](https://core.telegram.org/bots#commands)
 * [Install Bashbot](doc/0_install.md)
     * Install release
     * Install from githup
     * Update Bashbot
     * Notes on Updates
-* [Create a new Telegram Bot with botfather](doc/1_firstbot.md)
+* [Get Bottoken from Botfather](doc/1_firstbot.md)
 * [Getting Started](doc/2_usage.md)
     * Managing your Bot
     * Recieve data
@@ -53,6 +50,8 @@ all](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
     * Handling UTF-8 character sets
     * Run as other user or system service
     * Scedule bashbot from Cron
+    * Use from CLI and Scripts
+    * Customize Bashbot Environment
 * [Best Practices](doc/5_practice.md)
     * Customize commands.sh
     * Seperate logic from commands
@@ -62,13 +61,12 @@ all](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
     * User Access Control
     * Inline Queries
     * Background and Interactive Jobs
-* [Deveoper Notess](doc/7_develop.md)
+* [Deveoper Notes](doc/7_develop.md)
+    * Debug bashbot
+    * Modules, addons, events
     * Setup your environment
-    * Test, Add, Push changes
-    * Prepare a new version
     * Bashbot testsuite
-* [Customize bashbot environment](doc/8_custom.md)
-* [Examples](examples/README.md)
+* [Examples Dir](examples/README.md)
 
 ### Your really first bashbot in a nutshell
 To install and run bashbot you need acess to a linux/unix/bsd command line. If 
@@ -206,6 +204,46 @@ containing only
 'bashbot.sh' and 'commands.sh'! For more information see [Create a stripped 
 down Version of your Bot](doc/7_develop.md)
 
+### Can I send messages from CLI and scripts?
+Of course, you can send messages from CLI and scripts, simply install bashbot 
+as [described here](#Your-really-first-bashbot-in-a-nutshell),
+send the messsage '/start' to set yourself as botadmin and stop the bot with 
+```./bashbot.sh kill```.
+
+Run the following commands in your bash shell or script while you are in the 
+installation directory:
+
+```bash
+# prepare bash / script to send commands
+export BASHBOT_HOME="$(pwd)"
+source ./bashbot.sh source
+
+# send me a test message
+send_message "$(cat "$BOTADMIN")" "test"
+
+# send me output of a system command
+send_message "$(<"$BOTADMIN")" "$(df -h)"
+```
+For more information see [Expert Use](doc/8_custom.md)
+
+
+### Why do I get "EXPECTED value GOT EOF" on start?
+May be your IP is blocked by telegram. You can test this by running curl or 
+wget manually:
+```bash
+curl -m 10  https://api.telegram.org/bot
+#curl: (28) Connection timed out after 10001 milliseconds
+
+wget -t 1 -T 10 https://api.telegram.org/bot
+#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... 
+failed: Connection timed out.
+```
+This may happen if to many wrong requests are sent to api.telegram.org, e.g. 
+using a wrong token or not existing API calls.  If you have a fixed IP you can 
+ask telegram service to unblock your ip or change your IP. If you are running a 
+tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in 
+'mycommands.sh' 
+
 
 @Gnadelwartz
 
@@ -214,4 +252,4 @@ down Version of your Bot](doc/7_develop.md)
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.80-8-g5296820
+#### $$VERSION$$ v0.90-rc1-0-ge80b98a

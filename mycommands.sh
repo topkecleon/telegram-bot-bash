@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.80-0-g5bce3f7
+#### $$VERSION$$ v0.90-rc1-0-ge80b98a
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -17,6 +17,8 @@ res=""
 export INLINE="0"
 # Set to .* to allow sending files from all locations
 export FILE_REGEX='/home/user/allowed/.*'
+# example: run bashbot over TOR
+# export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1:9050"
 
 if [ "$1" != "source" ];then
     # your additional bahsbot commands
@@ -24,6 +26,8 @@ if [ "$1" != "source" ];then
     mycommands() {
 
 	case "${MESSAGE}" in
+		##################
+		# example commands, replace thm by your own
 		'/echo'*) # example echo command
 			send_normal_message "${CHAT[ID]}" "$MESSAGE"
 			;;
@@ -54,6 +58,16 @@ if [ "$1" != "source" ];then
 			fi
 			;;
 
+		##########
+		# command overwrite examples
+		'info'*) # output date in front of regular info
+			send_normal_message "${CHAT[ID]}" "$(date)"
+			return 0
+			;;
+		'/kickme'*) # this will replace the /kickme command
+			send_markdown_mesage "${CHAT[ID]}" "*This bot will not kick you!*"
+			return 1
+			;;
 	esac
      }
 

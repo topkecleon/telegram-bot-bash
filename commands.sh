@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.80-0-g5bce3f7
+#### $$VERSION$$ v0.90-rc1-0-ge80b98a
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -59,16 +59,21 @@ if [ "${1}" != "source" ];then
     # detect inline commands....
     # no default commands, all processing is done in myinlines()
     if [ "$INLINE" != "0" ] && [ "${iQUERY[ID]}" != "" ]; then
-	if _is_function process_inline; then
-	    # forward iinline query to optional dispatcher
-	    _is_function myinlines && myinlines
-	fi
+    	# forward iinline query to optional dispatcher
+	_exec_if_function myinlines
 
     # regular (gobal) commands ...
     # your commands are in mycommands() 
     else
 
-	case "${MESSAGE}" in
+	###################
+	# user defined commands must placed in mycommands
+	_exec_if_function mycommands
+
+	# run commands if true (0) is returned or if mycommands dose not exist
+	# shellcheck disable=SC2181
+	if [ "$?" = "0" ]; then
+	    case "${MESSAGE}" in
 		################################################
 		# GLOBAL commands start here, edit messages only
 		'/info'*)
@@ -104,9 +109,9 @@ if [ "${1}" != "source" ];then
 			if [ "$res" -eq 0 ] ; then killproc && _message "Command canceled.";else _message "No command is currently running.";fi
 			;;
 		*)	# forward messages to optional dispatcher
-			_is_function send_interactive && send_interactive "${CHAT[ID]}" "${MESSAGE}"
-			_is_function mycommands && mycommands
+			_exec_if_function send_interactive "${CHAT[ID]}" "${MESSAGE}"
 			;;
-	esac
-    fi
+	     esac
+	fi
+    fi 
 fi

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.80-0-g5bce3f7
+#### $$VERSION$$ v0.90-rc1-0-ge80b98a
 
 # common variables
 export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
@@ -30,6 +30,10 @@ export  INPUTFILE REFFILE OUTPUTFILE
  REFFILE="${DIRME}/${REFDIR}/${REFDIR}.result"
  OUTPUTFILE="${TESTDIR}/${REFDIR}.out"
 
+# do not query telegram when testing
+export BASHBOT_URL
+BASHBOT_URL="https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/getMe?"
+
 # print arrays in reproducible order
 print_array() {
   local idx t
@@ -50,6 +54,6 @@ echo "............................"
 [ "${TESTDIR}" = "" ] && echo "${NOSUCCESS} not called from testsuite, exit" && exit 1
 
 # reset env for test
-unset IFS; set -f
+unset IFS;
 export TERM=""
 
