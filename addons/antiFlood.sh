@@ -27,7 +27,7 @@
 export BASHBOT_EVENT_TEXT BASHBOT_EVENT_CMD BASHBOT_EVENT_FILE BASHBOT_EVENT_TIMER
 
 # any global variable defined by addons MUST be prefixed by addon name
-ANTIFL_ME="antiflood"
+ANTIFL_ME="antiFlood"
 
 declare -Ax ANTIFL_CHATS ANTIFL_ACTUALS
 
@@ -67,8 +67,7 @@ if [[ "$1" = "start"* ]]; then
     }
 
     # register to timer
-    #BASHBOT_EVENT_TIMER["${ANTIFL_ME}","${ANTIFL_BAN}"]="antiflood_timer"
-    BASHBOT_EVENT_TIMER["${ANTIFL_ME}","1"]="antiflood_timer"
+    BASHBOT_EVENT_TIMER["${ANTIFL_ME}","${ANTIFL_BAN}"]="antiflood_timer"
 
     # save settings and reset flood level every BAN Min
     antiflood_timer(){
