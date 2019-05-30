@@ -99,8 +99,10 @@ if [[ "$1" = "start"* ]]; then
 	fi
 	# check user flood picture
 	# shellcheck disable=SC2154
-	[ "$1" = "file" ] && (( ANTIFL_ACTUALS["${CHAT[ID]}","${USER[ID]}","file"]++ ))
-	antiFlood_action & # do actions in subshell
+	if [ "$1" = "file" ]; then
+		(( ANTIFL_ACTUALS["${CHAT[ID]}","${USER[ID]}","file"]++ ))
+		antiFlood_action & # do actions in subshell
+	fi
     }
 
     # check and handle actions
