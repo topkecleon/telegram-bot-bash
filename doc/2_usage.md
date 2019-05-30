@@ -25,18 +25,20 @@ Have FUN!
 ├── modules		# optional functions, sourced by commands.sh
 │   ├── aliases.sh		# to disable modules rename them xxx.sh.off
 │   ├── answerInline.sh
-│   ├── jsonDB.sh
-│   ├── background.sh
+│   ├── jsshDB.sh		# read and store JSON.sh stlye JSON
+│   ├── background.sh		# interactive and background functions
 │   ├── chatMember.sh
 │   └── sendMessage.sh		# main send message functions, do not disable
 │
 ├── addons		# optional addons, disbaled by default
 │   ├── example.sh		# to enable addons change their XXX_ENABLE to true
+│   ├── antiFlood.sh		# simple addon taking actions based on # files and text sent to chat
 │   └── xxxxxage.sh
 │
 ├── bashbot.rc			# start/stop script if you run basbot as service
 │
 ├── examples			# example scripts and configs for bashbot
+│   ├── README.md		# description of files and examples
 │   └── bashbot.cron		# example crontab
 │
 ├── doc			# Documentation and License

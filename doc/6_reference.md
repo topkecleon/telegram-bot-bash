@@ -453,6 +453,58 @@ Usually  message is automatically forwarded in 'commands.sh', but you can forwar
 
 *replaces:*' incproc
 
+### JSON.sh DB
+Since output of JSON.sh is so handy to use in bash, we provide a simple wrapper to read and write JSON.sh style data from and to files.
+All file names must be relaitive to BASHBOT_ETC and must not contain '..'. The suffix '.jssh' is added to file name!
+
+You must include  ```source modules/jsshDB.sh``` in 'commands.sh' to have the following functions availible.
+
+##### jssh_newDB
+Creats new empty "DB" file if not exist.
+
+*usage:*  jssh_newDB "filename"
+
+##### jssh_readDB
+Read content of a file in JSON.sh format into given ARRAY.  ARRAY name must be delared with "declare -A ARRAY" upfront,
+
+*usage:*  jssh_readDB "ARRAY" "filename"
+
+*example:* 
+```bash
+# read file data-bot-bash/somevalues.jssh into array SOMEVALUES
+jssh_readDB "SOMEVALUES" "${DATADIR:-}/somevalues"
+
+print "${SOMEVALUES[*]}"
+```
+
+##### jssh_writeDB
+wWrite content of given ARRAY into file.  ARRAY name must be delared with "declare -A ARRAY" upfront,
+"DB" file MUST exist or nothing is written.
+
+*usage:*  jssh_writeDB "ARRAY" "filename"
+
+*example:* 
+```bash
+MYVALUES["value1"]="value1"
+MYVALUES["loveit"]="value2"
+MYVALUES["whynot"]="value3"
+
+# create DB
+jssh_newDB "${DATADIR:-}/myvalues"
+
+# write to file data-bot-bash/somevalues.jssh from array MYVALUES
+jssh_writeDB "MYVALUES" "${DATADIR:-}/myvalues"
+
+# show whats written
+cat ""${DATADIR:-}/myvalues.jssh"
+["value1"]	"value1"
+["loveit"]	"value2"
+["whynot"]	"value3"
+
+```
+
+----
+
 ### Aliases - shortcuts for often used funtions 
 You must include  ```source modules/aliases.sh``` in 'commands.sh' to have the following functions availible.
 
@@ -732,5 +784,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.90-dev2-0-gec85636
+#### $$VERSION$$ v0.90-dev2-22-g9148dc5
 

@@ -19,14 +19,12 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
 
 ## Documentation
 * [Introdution to Telegram Bots](https://core.telegram.org/bots)
-    * [One Bot to rule them all](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
-    * [Bot commands](https://core.telegram.org/bots#commands)
 * [Install Bashbot](doc/0_install.md)
     * Install release
     * Install from githup
     * Update Bashbot
     * Notes on Updates
-* [Create a new Telegram Bot with botfather](doc/1_firstbot.md)
+* [Get Bottoken from Botfather](doc/1_firstbot.md)
 * [Getting Started](doc/2_usage.md)
     * Managing your Bot
     * Recieve data
