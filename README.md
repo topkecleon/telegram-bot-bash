@@ -41,6 +41,8 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Handling UTF-8 character sets
     * Run as other user or system service
     * Scedule bashbot from Cron
+    * Use from CLI and Scripts
+    * Customize Bashbot Environment
 * [Best Practices](doc/5_practice.md)
     * Customize commands.sh
     * Seperate logic from commands
@@ -51,14 +53,11 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Inline Queries
     * Background and Interactive Jobs
 * [Deveoper Notess](doc/7_develop.md)
+    * Debug bashbot
+    * Modules, addons, events
     * Setup your environment
-    * Test, Add, Push changes
-    * Prepare a new version
     * Bashbot testsuite
-* [Expert Use](doc/8_custom.md)
-    * Use from CLI and Scripts
-    * Customize Bashbot Environment
-* [Examples](examples/README.md)
+* [Examples Dir](examples/README.md)
 
 ### Your really first bashbot in a nutshell
 To install and run bashbot you need acess to a linux/unix/bsd command line. If you don't know how to get accces to a linux/unix/bsd like command line you should stop reading here :-(
@@ -182,4 +181,4 @@ This may happen if to many wrong requests are sent to api.telegram.org, e.g. usi
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.90-dev2-0-gec85636
+#### $$VERSION$$ v0.90-dev2-19-g5779acc

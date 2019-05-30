@@ -1,4 +1,5 @@
 #### [Home](../README.md)
+
 ## Notes for bashbot developers
 This section is about help and best practices for new bashbot developers. The main focus on is creating new versions of bashbot, not on develop your individual bot. Nevertheless the rules and tools described here can also help you with your bot development.
 
@@ -17,26 +18,26 @@ In addition you can change the change the level of verbosity by adding a third a
 ```
 
 ### Modules and Addons
-Modules live in ```modules/*.sh``` are bashbot functions factored out in seperate files, gouped by functionality. Main reason for creating modules was
-to make bashbot.sh smaller and contain only initalisation and a basic set of functions. In addition not every functionality is needed ba every bot, so you can
-e.g. disable inline or background processing by renaming the respective module files to 'module.sh.off'.
+**Modules** live in ```modules/*.sh``` and are bashbot functions factored out in seperate files, gouped by functionality. Main reason for creating modules was
+to keep 'bashbot.sh' small, while extending functionality. In addition not every functionality is needed by a bot, so you can
+disable modules by removing them, e.g. rename the respective module files to 'module.sh.off'.
 
-Modules must onyl use functions provieded by 'bahsbot.sh' or the module itself, no depedencies to other modules or addons must exist.
-If a module function is called from 'bashbot.sh' for whatever reason, you must test with '_is_function' or '_execute_if_function' if the
-module is availible.
+Modules must use onyl functions provided by 'bahsbot.sh' or the module itself, no depedencies to other modules or addons must exist.
+If a module function is called from 'bashbot.sh', bashbot must work if the module is disabled, so it's madatory to use '_is_function'
+or '_execute_if_function' if a module function is called.
 
-Addons live in ```addons/*.sh.dist``` and are disabled by default. To activate an addon remove the dist from filename, e.g. ```cp addons/example.sh.dist addons/example.sh```. Addons have to register themself to BASHBOT_EVENTS at startup, e.g. to call a function everytime a message is recieved.
-This is similar on how 'commands.sh' works, but imore flexible and a major difference: Addons are executed in the context of the main script,
-while 'commands.sh' is executed as a seperate process.
+**Addons** live in ```addons/*.sh.dist``` and are disabled by default. To activate an addon remove the '.dist' from filename, e.g. ```cp addons/example.sh.dist addons/example.sh```. Addons must register themself to BASHBOT_EVENTS at startup, e.g. to call a function everytime a message is recieved.
+Registering to EVENTS is similar on how 'commands.sh' is ececuted, but more flexible and one major difference:
+**Addons are executed in the context of the main script**, while 'commands.sh' is executed as a seperate process.
 
-This is why addons are time critical and must return as fast as possible and spawn every action as a seperate process or function with '&'!
-If you want to send out a message from aa addon use ```send_message "${CHAT[ID]}" "Message to send ..." &``` to not wait for completion, witch may take several seconds.
+This is why event functions are time critical and must return as fast as possible. Spawn actions as a seperate process or function with '&', e.g.
+send a message as respone from an addon: ```send_message "${CHAT[ID]}" "Message to send ..." &```.
 
-### Bashbot Events
-Addons can register functions to bashbot events at startup by providing their name and a and a fucnction name per event
-If an event occours each registered event function is called.
+#### Bashbot Events
+Addons can register functions to bashbot events at startup by providing their name and a callback function.
+If an event occours each registered function for the event is called.
 
-Events run in the same context as the main bashbot event loop so variables set here are persistent as long bashbot is running.
+Events run in the same context as the main bashbot loop, so variables set here are persistent as long bashbot is running.
 
 Note: For the same reason event function MUST return imideatly!  Time consuming tasks must be run in background or as a subshell, e.g. "long running &"
 
@@ -52,12 +53,14 @@ Availible events:
 * BASHBOT_EVENT_LOCATION	a location or a venue is received
 * BASHBOT_EVENT_FILE		a file is received
 
-*usage*: BASHBOT_EVENT_xxx["name]="function"
+*usage*: BASHBOT_EVENT_xxx["uniqe-name"]="callback"
+
+"unique-name" can be every alphanumeric string incl. '-' and '_'. Per convention it should be name of the addon followed by an internal identyfier.
 
 *Example:* Register a function to echo to any Text send to the bot
 ```bash
 # register callback:
-BASHBOT_EVENT_TEXT["example"]="example_echo"
+BASHBOT_EVENT_TEXT["example_1"]="example_echo"
 
 # function called if a text is recieved
 example_echo() {
@@ -79,7 +82,7 @@ Registering to BASHBOT_EVENT_TIMER works a little different, you have to add a t
 *Examples:*
 ```bash
 # register callback:
-BAHSBOT_EVENT_TIMER["example1","1"]="example_everymin"
+BAHSBOT_EVENT_TIMER["example_every","1"]="example_everymin"
 
 # function called every minute
 example_everymin() {
@@ -88,16 +91,16 @@ example_everymin() {
 }
 
 # register other callback:
-BAHSBOT_EVENT_TIMER["example2","-10"]="example_in10min"
+BAHSBOT_EVENT_TIMER["example_10min","-10"]="example_in10min"
 
-BAHSBOT_EVENT_TIMER["example3","5"]="example_every5min"
+BAHSBOT_EVENT_TIMER["example_every5","5"]="example_every5min"
 
 
 ```
 
 ----
 
-### Create a stripped down Version of your Bot
+#### Create a stripped down Version of your Bot
 Currently bashbot is more a bot development environment than a bot, containing examples, developer scripts, modules, documentation and more.
 You don't need all these files after you're finished with your cool new bot.
 
@@ -120,7 +123,7 @@ Now have a look at the directory 'standalone', here you find the files 'bashbot.
 5. give your (dev) fork a new version tag: ```git tag vx.xx```(optional) 
 6. setup github hooks by running ```dev/install-hooks.sh``` (optional)
 
-### Test, Add, Push changes
+#### Test, Add, Push changes
 A typical bashbot develop loop looks as follow:
 
 1. start developing - *change, copy, edit bashbot files ...*
@@ -132,7 +135,7 @@ A typical bashbot develop loop looks as follow:
 
 **If you setup your dev environment with hooks and use the scripts above, versioning, addding and testing is done automatically.**
 
-### common commands
+#### common commands
 We state bashbot is a bash only bot, but this is not true. bashbot is a bash script using bash features PLUS external commands.
 Usually bash is used in a unix/linux environment where many (GNU) commands are availible, but if commands are missing, bashbot may not work.
 
@@ -175,7 +178,7 @@ INDEX="$(( ${INDEX} + 1 ))" -> (( INDEX++ ))
 ```
 For more examples see [Pure bash bible](https://github.com/dylanaraps/pure-bash-bible)
 
-### Prepare a new version
+#### Prepare a new version
 After some development it may time to create a new version for the users. a new version can be in sub version upgrade, e.g. for fixes and smaller additions or
 a new release version for new features. To mark a new version use ```git tag NEWVERSION``` and run ```dev/version.sh``` to update all version strings.
 
@@ -186,7 +189,7 @@ Usually I start with pre versions and when everything looks good I push out a re
 
 If you release a new Version run ```dev/make-distribution.sh``` to create the zip and tar.gz archives in the dist directory and attach them to the github release. Do not forget to delete directory dist afterwards.
 
-### Versioning
+#### Versioning
 
 Bashbot is tagged with version numbers. If you start a new development cycle you can tag your fork with a version higher than the current version.
 E.g. if you fork 'v0.60' the next develop version should tagged as ```git tag "v0.61-dev"``` for fixes or ```git tag "v0.70-dev"``` for new features.
@@ -197,22 +200,22 @@ To update the Version Number in files run ```dev/version.sh files```, it will up
 To update version in all files run 'dev/version.sh' without parameter.
 
 
-### Shellcheck
+#### Shellcheck
 
 For a shell script running as a service it's important to be paranoid about quoting, globbing and other common problems. So it's a must to run shellchek on all shell scripts before you commit a change. this is automated by a git hook activated in Setup step 6.
 
 To run shellcheck for a single script run ```shellcheck -x script.sh```, to check all schripts run ```dev/hooks/pre-commit.sh```.
 
 
-## bashbot tests
+### bashbot tests
 Starting with version 0.70 bashbot has a test suite. To start testsuite run ```dev/all-tests.sh```. all-tests.sh will return 'SUCCESS' only if all tests pass.
 
-### enabling / disabling tests
+#### enabling / disabling tests
 
 All tests are placed in the directory  ```test```. To disable a test remove the execute flag from the '*-test.sh' script, to (re)enable a test make the script executable again.
 
 
-### creating new tests
+#### creating new tests
 To create a new test run ```test/ADD-test-new.sh``` and answer the questions, it will create the usually needed files and dirs:
 
 Each test consists of a script script named after ```p-name-test.sh``` *(where p is test pass 'a-z' and name the name
@@ -269,5 +272,5 @@ fi
 #### [Prev Function Reference](6_reference.md)
 #### [Next Expert Use](8_custom.md)
 
-#### $$VERSION$$ v0.90-dev2-18-ga1a4829
+#### $$VERSION$$ v0.90-dev2-19-g5779acc
 
