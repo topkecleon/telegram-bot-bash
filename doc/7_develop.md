@@ -18,7 +18,7 @@ In addition you can change the change the level of verbosity by adding a third a
 	"xdebugterm"	same as xdebug but output and errors are sent to terminal
 ```
 
-To stop bashhbot in debugging mode use ```./bashbot.sh kill``` as ususal.
+To stop bashhbot in debugging mode run ```ps -uf | grep debug``` and use 'kill -9' to kill all processes shwon.
 
 ### Modules and Addons
 **Modules** live in ```modules/*.sh``` and are bashbot functions factored out in seperate files, gouped by functionality. Main reason for creating modules was
@@ -275,5 +275,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.90-dev2-24-g1c5594a
+#### $$VERSION$$ v0.90-dev2-25-gb240ede
 

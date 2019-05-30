@@ -455,7 +455,15 @@ Usually  message is automatically forwarded in 'commands.sh', but you can forwar
 
 ### JSON.sh DB
 Since output of JSON.sh is so handy to use in bash, we provide a simple wrapper to read and write JSON.sh style data from and to files.
-All file names must be relaitive to BASHBOT_ETC and must not contain '..'. The suffix '.jssh' is added to file name!
+File name is prefixed with BASHBOT_ETC and the suffix '.jssh' is added to file name! File names must not contain '..'
+
+*Example:* for file name:
+```bash
+# bashbot is installed in /usr/local/telegram-bot-bash, no BASHBOT_ETC set.
+"myfile" -> /usr/local/telegram-bot-bash/myfile.jssh
+"addons/myfile" -> /usr/local/telegram-bot-bash/addons/myfile.jssh
+"${DATADIR}/myfile usr/local/telegram-bot-bash/data-bot-bash/myfile.jssh
+```
 
 You must include  ```source modules/jsshDB.sh``` in 'commands.sh' to have the following functions availible.
 
@@ -784,5 +792,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.90-dev2-23-g2a28e7f
+#### $$VERSION$$ v0.90-dev2-25-gb240ede
 

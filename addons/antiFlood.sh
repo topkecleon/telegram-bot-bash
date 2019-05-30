@@ -36,14 +36,16 @@ ANTIFL_BAN="5"	# 5 minutes
 
 # initialize after installation or update
 if [[ "$1" = "init"* ]]; then 
-	ANTIFL_ADMIN="$(< "${BOTADMIN}")"
+	jssh_newDB "addons/$ANTIFL_ME"
 fi
+
 
 
 # register on startbot
 if [[ "$1" = "start"* ]]; then 
+    ANTIFL_ADMIN="$(< "${BOTADMIN}")"
     #load existing chat settings on start
-    jssh_readDB "ANTIFL_CHATS" "${ADDONDIR:-./addons}/$ANTIFL_ME"
+    jssh_readDB "ANTIFL_CHATS" "addons/$ANTIFL_ME"
 
     # register to CMD
     BASHBOT_EVENT_CMD["${ANTIFL_ME}"]="${ANTIFL_ME}_cmd"
@@ -55,7 +57,7 @@ if [[ "$1" = "start"* ]]; then
 			ANTIFL_CHATS["${CHAT[ID]}","level"]="${ANTIFL_DEFAULT}"
 			ANTIFL_CHATS["${CHAT[ID]}","ban"]="${ANTIFL_BAN}"
 			[[ "${CMD[1]}"  =~ ^[0-9]+$  ]] && ANTIFL_CHATS["${CHAT[ID]}","level"]="${CMD[1]}"
-			# antiflood_save &
+			antiflood_timer
 		;;
 		# command /floodapply starts counter meausares
 		"/floodap"*)
@@ -65,12 +67,13 @@ if [[ "$1" = "start"* ]]; then
     }
 
     # register to timer
-    BASHBOT_EVENT_TIMER["${ANTIFL_ME}","${ANTIFL_BAN}"]="antiflood_timer"
+    #BASHBOT_EVENT_TIMER["${ANTIFL_ME}","${ANTIFL_BAN}"]="antiflood_timer"
+    BASHBOT_EVENT_TIMER["${ANTIFL_ME}","1"]="antiflood_timer"
 
     # save settings and reset flood level every BAN Min
     antiflood_timer(){
-	unset ANTIFL_ACTUALS
-	jssh_writeBD "ANTIFL_CHATS" "${ADDONDIR:-./addons}/$ANTIFL_ME" &
+	ANTIFL_ACTUALS=( ) 
+	jssh_writeDB "ANTIFL_CHATS" "addons/$ANTIFL_ME" &
     }
 
     # register to inline and command

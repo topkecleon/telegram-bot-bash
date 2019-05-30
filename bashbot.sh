@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-16-g74cb204
+#### $$VERSION$$ v0.90-dev2-25-gb240ede
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -387,7 +387,7 @@ event_timer() {
 	# shellcheck disable=SC2153
 	for event in "${!BASHBOT_EVENT_TIMER[@]}"
 	do
-		timer="${BASHBOT_EVENT_TIMER[${event}]##*,}"
+		timer="${event##*,}"
 		[[ ! "$timer" =~ ^-*[0-9]+$ ]] && continue
 		[[ "$timer" =~ ^-*0+$ ]] && continue
 		if [ "$(( EVENT_TIMER % timer ))" = "0" ]; then
