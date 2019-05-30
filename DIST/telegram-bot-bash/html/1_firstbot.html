@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Bashobot Documentation - doc/1_firstbot.html</title>
+  <style type="text/css">code{white-space: pre;}</style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Bashobot Documentation - doc/1_firstbot.html</h1>
+</div>
+<h4 id="home"><a href="../README.html">Home</a></h4>
+<h2 id="create-a-telegram-bot-with-botfather">Create a Telegram Bot with botfather</h2>
+<p><strong><a href="https://core.telegram.org/bots#3-how-do-i-create-a-bot">BotFather is the one bot to rule them all</a>. It will help you create new bots and change settings for existing ones.</strong> <a href="https://core.telegram.org/bots#generating-an-authorization-token">Commands known by Botfather</a></p>
+<h3 id="creating-a-new-bot">Creating a new Bot</h3>
+<ol style="list-style-type: decimal">
+<li>Message <span class="citation">@botfather</span> https://telegram.me/botfather with the following text: <code>/newbot</code> If you don’t know how to message by username, click the search field on your Telegram app and type <code>@botfather</code>, you should be able to initiate a conversation. Be careful not to send it to the wrong contact, because some users has similar usernames to <code>botfather</code>.</li>
+</ol>
+<div class="figure">
+<img src="http://i.imgur.com/aI26ixR.png" alt="botfather initial conversation" />
+<p class="caption">botfather initial conversation</p>
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li><p><span class="citation">@botfather</span> replies with <code>Alright, a new bot. How are we going to call it? Please choose a name for your bot.</code></p></li>
+<li><p>Type whatever name you want for your bot.</p></li>
+<li><p><span class="citation">@botfather</span> replies with <code>Good. Now let's choose a username for your bot. It must end in bot. Like this, for example: TetrisBot or tetris_bot.</code></p></li>
+<li><p>Type whatever username you want for your bot, minimum 5 characters, and must end with <code>bot</code>. For example: <code>telesample_bot</code></p></li>
+<li><p><span class="citation">@botfather</span> replies with:</p>
+<p>Done! Congratulations on your new bot. You will find it at telegram.me/telesample_bot. You can now add a description, about section and profile picture for your bot, see /help for a list of commands.</p>
+<p>Use this token to access the HTTP API: <b>123456789:AAG90e14-0f8-40183D-18491dDE</b></p>
+<p>For a description of the Bot API, see this page: https://core.telegram.org/bots/api</p></li>
+<li><p>Note down the ‘token’ mentioned above.</p></li>
+<li><p>Type <code>/setprivacy</code> to <span class="citation">@botfather</span>.</p></li>
+</ol>
+<div class="figure">
+<img src="http://i.imgur.com/tWDVvh4.png" alt="botfather later conversation" />
+<p class="caption">botfather later conversation</p>
+</div>
+<ol start="9" style="list-style-type: decimal">
+<li><p><span class="citation">@botfather</span> replies with <code>Choose a bot to change group messages settings.</code></p></li>
+<li><p>Type <code>@telesample_bot</code> (change to the username you set at step 5 above, but start it with <code>@</code>)</p></li>
+<li><p><span class="citation">@botfather</span> replies with</p>
+<p>‘Enable’ - your bot will only receive messages that either start with the ‘/’ symbol or mention the bot by username. ‘Disable’ - your bot will receive all messages that people send to groups. Current status is: ENABLED</p></li>
+<li><p>Type <code>Disable</code> to let your bot receive all messages sent to a group. This step is up to you actually.</p></li>
+<li><p><span class="citation">@botfather</span> replies with <code>Success! The new status is: DISABLED. /help</code></p></li>
+</ol>
+<h4 id="prev-installation"><a href="0_install.html">Prev Installation</a></h4>
+<h4 id="next-getting-started"><a href="2_usage.html">Next Getting started</a></h4>
+<h4 id="version-v0.90-dev2-0-gec85636"><br /><span class="math display"><em>V</em><em>E</em><em>R</em><em>S</em><em>I</em><em>O</em><em>N</em></span><br /> v0.90-dev2-0-gec85636</h4>
+</body>
+</html>

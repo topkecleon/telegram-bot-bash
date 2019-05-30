@@ -1,0 +1,86 @@
+#!/bin/sh
+# description: Start or stop telegram-bash-bot
+#
+#### $$VERSION$$ v0.90-dev2-0-gec85636
+# shellcheck disable=SC2009
+# shellcheck disable=SC2181
+
+#
+### BEGIN INIT INFO
+# Provides: bashbot
+# Required-Start: $network $syslog
+# Required-Stop: $network
+# Default-Start: 2 3 5
+# Default-Stop: 0 1 6
+# Description: Start or stop telegram-bot-bash server
+### END INIT INFO
+
+# save default values
+TERM="" # disable bashbot clear and color output
+runas="nobody"
+runcmd="echo Dry run:" # not actived until you edit lines below
+
+#######################
+# Configuration Section
+
+# edit the next line to fit the user you want to run bashbot, e.g. nobody:
+# runas="nobody" 
+
+# uncomment one of the following lines to fit your system 
+# runcmd="su $runas -s /bin/bash -c "      # runasuser with *su*
+# runcmd="runuser $runas -s /bin/bash -c " # runasuser with *runuser*
+
+# edit the values of the following lines to fit your config:
+start="/usr/local/telegram-bot-bash/bashbot.sh"	# location of your bashbot.sh script
+name='' 	# your bot name as given to botfather, e.g. mysomething_bot
+
+# END Configuration
+#######################
+
+lockfile="$(dirname $start)/lockfile"
+[ "$name" = "" ] && name="$runas"
+
+case "$1" in
+'start')
+	$runcmd "$start start" # >/dev/null 2>&1 </dev/null
+	RETVAL=$?
+	if [ "$RETVAL" = "0" ]; then
+		touch "$lockfile" >/dev/null 2>&1
+	fi
+	;;
+'stop')
+	$runcmd "$start kill"
+	RETVAL=$?
+	if [ "$RETVAL" = "0" ]; then
+		rm -f "$lockfile"
+	fi
+	;;
+'status')
+	ps -f -u "$runas" | grep "$name" | grep -qF "bashbot.sh startbot"
+	if [ "$?" = "0" ]; then
+		echo "bashbot ($name) is running"
+		RETVAL=0
+	else
+		echo "bashbot ($name) is stopped"
+		RETVAL=1
+	fi
+	;;
+'restart'|'reload')
+	$0 stop; $0 start 
+	RETVAL=$?
+	;;
+'restartback')
+	$0 suspendback; $0 resumeback 
+	RETVAL=$?
+	;;
+'suspendback'|'resumeback'|'killback')
+	$runcmd "$start $1"
+	RETVAL=$?
+	;;
+*)
+	echo "Usage: $0 { start | stop | restart | reload | restartback | suspendback | resumeback | killback }"
+	RETVAL=1
+	;;
+esac
+exit $RETVAL
+

@@ -1,0 +1,18 @@
+# file: botacl
+# a user not listed here, will return false from 'user_is_allowed'
+#
+#### $$VERSION$$ v0.90-dev2-0-gec85636
+# Format:
+# user:ressource:chat
+
+# allow user 123456789 access to all resources in all chats
+123456789:*:*
+
+# allow user 12131415 to request systemstatus in all chats
+12131415:systemstatus:*
+
+# * are only allowed on the right hand side and not for user!
+# the following exaples are NOT valid!
+*:*:*
+*:start:*
+*:*:98979695

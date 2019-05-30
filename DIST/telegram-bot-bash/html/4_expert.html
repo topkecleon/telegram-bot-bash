@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Bashobot Documentation - doc/4_expert.html</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Bashobot Documentation - doc/4_expert.html</h1>
+</div>
+<h4 id="home"><a href="../README.html">Home</a></h4>
+<h2 id="expert-use">Expert Use</h2>
+<h3 id="handling-utf-8-character-sets">Handling UTF-8 character sets</h3>
+<p>UTF-8 is a variable length encoding of Unicode. UTF-8 is recommended as the default encoding in JSON, XML and HTML, also Telegram make use of it.</p>
+<p>The first 128 characters are regular ASCII, so it’s a superset of and compatible with ASCII environments. The next 1,920 characters need two bytes for encoding and covers almost all <code>Latin</code> alphabets, also <code>Greek</code>, <code>Cyrillic</code>, <code>Hebrew</code>, <code>Arabic</code> and more. See <a href="https://en.wikipedia.org/wiki/UTF-8">Wikipedia</a> for more details.</p>
+<h4 id="setting-up-your-environment">Setting up your Environment</h4>
+<p>In general <code>bash</code> and <code>GNU</code> utitities are UTF-8 aware if you to setup your environment and your scripts accordingly:</p>
+<ol style="list-style-type: decimal">
+<li><p>Your Terminal and Editor must support UTF-8: Set Terminal and Editor locale to UTF-8, eg. in <code>Settings/Configuration</code> select UTF-8 (Unicode) as Charset.</p></li>
+<li><p>Set <code>Shell</code> environment to UTF-8 in your <code>.profile</code> and your scripts. The usual settings are:</p></li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">export</span> <span class="st">&#39;LC_ALL=C.UTF-8&#39;</span>
+<span class="bu">export</span> <span class="st">&#39;LANG=C.UTF-8&#39;</span>
+<span class="bu">export</span> <span class="st">&#39;LANGUAGE=C.UTF-8&#39;</span></code></pre></div>
+<p>If you use other languages, eg. german or US english, change the shell settings to:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">export</span> <span class="st">&#39;LC_ALL=de_DE.UTF-8&#39;</span>
+<span class="bu">export</span> <span class="st">&#39;LANG=de_DE.UTF-8&#39;</span>
+<span class="bu">export</span> <span class="st">&#39;LANGUAGE=de_DE.UTF-8&#39;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">export</span> <span class="st">&#39;LC_ALL=en_US.UTF-8&#39;</span>
+<span class="bu">export</span> <span class="st">&#39;LANG=de_en_US.UTF-8&#39;</span>
+<span class="bu">export</span> <span class="st">&#39;LANGUAGE=den_US.UTF-8&#39;</span></code></pre></div>
+<ol start="3" style="list-style-type: decimal">
+<li>make shure your bot scripts use the correct settings, eg. include the lines above at the beginning of your scripts</li>
+</ol>
+<p>To display all availible locales on your system run <code>locale -a | more</code>. <a href="https://wiki.gentoo.org/wiki/UTF-8">Gentoo Wiki</a></p>
+<h4 id="bashbot-utf-8-support">Bashbot UTF-8 Support</h4>
+<p>Bashbot handles all messages transparently, regardless of the charset in use. The only exception is when converting from JSON data to strings.</p>
+<p>Telegram use JSON to send / recieve data. JSON encodes strings as follow: Characters not ASCII <em>(&gt;127)</em> are escaped as sequences of <code>\uxxxx</code> to be regular ASCII. In addition multibyte characters, <em>e.g. Emoticons or Arabic characters</em>, are send in double byte UTF-16 notation. The Emoticons <code>😁 😘 ❤️ 😊 👍</code> are encoded as: <code>\uD83D\uDE01 \uD83D\uDE18 \u2764\uFE0F \uD83D\uDE0A \uD83D\uDC4D</code></p>
+<p><strong>This “mixed” JSON encoding needs special handling and can not decoded from</strong> <code>echo -e</code> or <code>printf '%s\\n'</code></p>
+<p>Most complete support for decoding of multibyte characters can only be provided if python is installed on your system. <strong>Without phyton bashbot falls back to an internal, pure bash implementation which may not work for some corner cases</strong>.</p>
+<h3 id="run-as-other-user-or-system-service">Run as other user or system service</h3>
+<p>Bashbot is desingned to run manually by the user who installed it. Nevertheless it’s possible to run it by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for experiend linux users.</p>
+<p>Setup the environment for the user you want to run bashbot and enter desired username, e.g. nobody :</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> ./bashbot.sh init</code></pre></div>
+<p>Edit the file <code>bashbot.rc</code> and edit the following lines to fit your configuration:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#######################</span>
+<span class="co"># Configuration Section</span>
+
+<span class="co"># edit the next line to fit the user you want to run bashbot, e.g. nobody:</span>
+<span class="va">runas=</span><span class="st">&quot;nobody&quot;</span> 
+
+<span class="co"># uncomment one of the following lines </span>
+<span class="co"># runcmd=&quot;su $runas -s /bin/bash -c &quot;      # runasuser with su</span>
+<span class="co"># runcmd=&quot;runuser $runas -s /bin/bash -c &quot; # runasuser with runuser</span>
+
+<span class="co"># edit the values of the following lines to fit your config:</span>
+<span class="va">start=</span><span class="st">&quot;/usr/local/telegram-bot-bash/bashbot.sh&quot;</span> <span class="co"># location of your bashbot.sh script</span>
+<span class="va">name=</span><span class="st">&#39;&#39;</span>   # <span class="ex">your</span> bot name as given to botfather, e.g. mysomething_bot
+
+<span class="co"># </span><span class="re">END</span><span class="co"> Configuration</span>
+<span class="co">#######################</span></code></pre></div>
+<p>From now on use ‘bashbot.rc’ to manage your bot:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> ./bashbot.rc start</code></pre></div>
+<p>Type <code>ps -ef | grep bashbot</code> to verify your Bot is running as the desired user.</p>
+<p>If your Bot is started by ‘bashbot.rc’, you must use ‘bashbot.rc’ also to manage your Bot! The following commands are availible:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> ./bashbot.rc start
+<span class="fu">sudo</span> ./bashbot.rc stop
+<span class="fu">sudo</span> ./bashbot.rc status
+<span class="fu">sudo</span> ./bashbot.rc suspendback
+<span class="fu">sudo</span> ./bashbot.rc resumeback
+<span class="fu">sudo</span> ./bashbot.rc killback</code></pre></div>
+<p>To change back the environment to your user-ID run <code>sudo ./bashbot.sh init</code> again and enter your user name.</p>
+<p>To use bashbot as a system servive include a working <code>bashbot.rc</code> in your init system (systemd, /etc/init.d).</p>
+<h3 id="scedule-bashbot-from-cron">Scedule bashbot from Cron</h3>
+<p>An example crontab is provided in <code>examples/bashbot.cron</code>.</p>
+<ul>
+<li>If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username <code>nobody</code>.</li>
+<li>if you run bashbot as an other user or a system service edit <code>examples/bashbot.cron</code> to fit your needs and replace username<code>nobody</code> with the username you want to run bashbot. copy the modified file to <code>/etc/cron.d/bashbot</code></li>
+</ul>
+<h3 id="use-bashbot-from-cli-and-scripts">Use bashbot from CLI and scripts</h3>
+<p>You can use bashbot to send <em>messages</em>, <em>locations</em>, <em>venues</em>, <em>pictures</em> etc. from command line and scripts by sourcing it:</p>
+<p><em>usage:</em> . bashbot.sh source</p>
+<p>Before sourcing ‘bahsbot.sh’ for interactive and script use, you should export and set BASHBOT_HOME to bashbots installation dir, e.g. ‘/usr/local/telegram-bot-bash’. see <a href="#Bashbot-environment">Bashbot Environemt</a></p>
+<p><strong>Note:</strong> <em>If you don’t set BASHBOT_HOME bashbot will use the actual directory as NEW home directory which means it will create all needed files and ask for bot token and botadmin if you are not in the real bot home!</em></p>
+<p><em>Examples:</em></p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># if you are in the bashbot directory</span>
+<span class="bu">.</span>  <span class="ex">bashbot.sh</span> source
+
+<span class="co"># same, but more readable in scripts</span>
+<span class="bu">source</span> ./bashbot.sh source
+
+<span class="co"># use bashbot config in BASHBOT_HOME from any directory</span>
+<span class="bu">export</span> <span class="va">BASHBOT_HOME=</span>/usr/local/telegram-bot-bash
+<span class="bu">source</span> <span class="va">${BASHBOT_HOME}</span>/bashbot.sh source
+
+<span class="co"># use / create new config in current directory</span>
+<span class="bu">unset</span>  <span class="va">BASHBOT_HOME</span>
+<span class="bu">source</span> /path/to/bashbot.sh source</code></pre></div>
+<h4 id="environment-variable-exported-from-bashbot">Environment variable exported from bashbot</h4>
+<p>If you have sourced ‘bashbot.sh’ you have the following bashot internal variables availible:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">COMMANDS</span>    # default: ./commands.sh<span class="st">&quot;</span>
+<span class="st">MODULEDIR   # default: ./modules&quot;</span>
+<span class="ex">TOKENFILE</span>   # default: ./token<span class="st">&quot;</span>
+<span class="st">BOTADMIN    # default: ./botadmin&quot;</span>
+<span class="ex">BOTACL</span>      # default: ./botacl<span class="st">&quot;</span>
+<span class="st">TMPDIR      # default: ./data-bot-bash&quot;</span>
+<span class="ex">COUNTFILE</span>   # default: ./count<span class="st">&quot;</span>
+
+<span class="st">BOTTOKEN    # default: content of </span><span class="va">${TOKENFILE}</span>
+<span class="st">URL     # telegram api URL - default: https://api.telegram.org/bot</span><span class="va">${BOTTOKEN}</span><span class="st">&quot;</span></code></pre></div>
+<h4 id="interacctive-use">Interacctive use</h4>
+<p>For testing your setup or sending messages yoursel you can use bashbot functions from bash command line:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># are we running bash?</span>
+<span class="bu">echo</span> <span class="va">$SHELL</span>
+<span class="ex">/bin/bash</span>
+
+<span class="co"># source bashbot.sh WITHOUT BASHBOT_HOME set</span>
+<span class="ex">./bashbot.sh</span> source
+
+<span class="co"># output bashbot internal variables</span>
+<span class="bu">echo</span> <span class="va">$COMMANDS</span> <span class="va">$MODULEDIR</span> <span class="va">$TOKENFILE</span> <span class="va">$BOTADMIN</span> <span class="va">$BOTACL</span> <span class="va">$TMPDIR</span> <span class="va">$COUNTFILE</span>
+<span class="ex">./commands.sh</span> ./modules ./token ./botadmin ./botacl ./data-bot-bash ./count
+
+
+<span class="co"># source bashbot.sh WITH BASHBOT_HOME set</span>
+<span class="bu">export</span> <span class="va">BASHBOT_HOME=</span>/usr/local/telegram-bot-bash
+<span class="bu">source</span> ./bashbot.sh source
+
+<span class="co"># output bashbot internal variables</span>
+<span class="bu">echo</span> <span class="va">$COMMANDS</span> <span class="va">$MODULEDIR</span> <span class="va">$TOKENFILE</span> <span class="va">$BOTADMIN</span> <span class="va">$BOTACL</span> <span class="va">$TMPDIR</span> <span class="va">$COUNTFILE</span>
+<span class="ex">/usr/local/telegram-bot-bash/commands.sh</span> /usr/local/telegram-bot-bash/modules /usr/local/telegram-bot-bash/token
+<span class="ex">/usr/local/telegram-bot-bash/botadmin</span> /usr/local/telegram-bot-bash/botacl /usr/local/telegram-bot-bash/data-bot-bash
+<span class="ex">/usr/local/telegram-bot-bash/count</span></code></pre></div>
+<p>After sourcing you can use bashbot functions to send Messages, Locations, Pictures etc. to any Telegram User or Chat you are in. See <a href="2_usage.html">Send Messages</a>.</p>
+<p><em>Examples:</em> You can test this by sending messages to yourself:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># fist Hello World</span>
+<span class="ex">send_normal_message</span> <span class="st">&quot;</span><span class="op">$(&lt;</span> <span class="va">$BOTADMIN</span><span class="op">)</span><span class="st">&quot;</span>  <span class="st">&quot;Hello World! This is my first message&quot;</span>
+
+<span class="co"># now with some markdown and  HTML</span>
+<span class="ex">send_markdown_message</span>   <span class="st">&quot;</span><span class="op">$(&lt;</span> <span class="va">$BOTADMIN</span><span class="op">)</span><span class="st">&quot;</span>  <span class="st">&#39;*Hello World!* _This is my first markdown message_&#39;</span>
+<span class="ex">send_html_message</span>   <span class="st">&quot;</span><span class="op">$(&lt;</span> <span class="va">$BOTADMIN</span><span class="op">)</span><span class="st">&quot;</span>  <span class="st">&#39;&lt;b&gt;Hello World!&lt;/b&gt; &lt;em&gt;This is my first HTML message&lt;/em&gt;&#39;</span>
+<span class="ex">send_keyboard</span> <span class="st">&quot;</span><span class="op">$(&lt;</span> <span class="va">$BOTADMIN</span><span class="op">)</span><span class="st">&quot;</span>  <span class="st">&#39;Do you like it?&#39;</span> <span class="st">&#39;[ &quot;Yep&quot; , &quot;No&quot; ]&#39;</span></code></pre></div>
+<p>Now something more useful …</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># sending output from system commands:</span>
+<span class="ex">send_normal_message</span> <span class="st">&quot;</span><span class="op">$(&lt;</span> <span class="va">$BOTADMIN</span><span class="op">)</span><span class="st">&quot;</span>  <span class="st">&quot;</span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">&quot;</span>
+
+<span class="ex">send_normal_message</span> <span class="st">&quot;</span><span class="op">$(&lt;</span> <span class="va">$BOTADMIN</span><span class="op">)</span><span class="st">&quot;</span>  <span class="st">&quot;</span><span class="va">$(</span><span class="fu">uptime</span><span class="va">)</span><span class="st">&quot;</span>
+
+<span class="ex">send_normal_message</span>       <span class="st">&quot;</span><span class="op">$(&lt;</span> <span class="va">$BOTADMIN</span><span class="op">)</span><span class="st">&quot;</span>  <span class="st">&#39;`&#39;</span><span class="va">$(</span><span class="fu">free</span><span class="va">)</span><span class="st">&#39;`&#39;</span>
+
+<span class="co"># same but markdown style &#39;code&#39; (monospaced)</span>
+<span class="ex">send_markdown_message</span>   <span class="st">&quot;</span><span class="op">$(&lt;</span> <span class="va">$BOTADMIN</span><span class="op">)</span><span class="st">&quot;</span>  <span class="st">&quot;</span><span class="dt">\`</span><span class="va">$(</span><span class="fu">free</span><span class="va">)</span><span class="dt">\`</span><span class="st">&quot;</span></code></pre></div>
+<h3 id="bashbot-environment">Bashbot environment</h3>
+<p>This section describe how you can customize bashbot to your needs by setting environment variables.</p>
+<h4 id="change-file-locations">Change file locations</h4>
+<p>In standard setup bashbot is self containing, this means you can place ‘telegram-bot-bash’ any location and run it from there. All files - programm, config, data etc - will reside in ‘telegram-bot-bash’.</p>
+<p>If you want to have other locations for config, data etc, define and export the following environment variables. <strong>Note: all specified directories and files must exist or running ‘bashbot.sh’ will fail.</strong></p>
+<h5 id="bashbot_etc">BASHBOT_ETC</h5>
+<p>Location of the files <code>commands.sh</code>, <code>mycommands.sh</code>, <code>token</code>, <code>botadmin</code>, <code>botacl</code> …</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">  <span class="bu">unset</span>  <span class="va">BASHBOT_ETC</span>     <span class="co"># keep in telegram-bot-bash (default)</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_ETC</span> <span class="st">&quot;&quot;</span>  <span class="co"># keep in telegram-bot-bash</span>
+
+  <span class="bu">export</span> <span class="va">BASHBOT_ETC</span> <span class="st">&quot;/etc/bashbot&quot;</span>  <span class="co"># unix like config location</span>
+
+  <span class="bu">export</span> <span class="va">BASHBOT_ETC</span> <span class="st">&quot;/etc/bashbot/bot1&quot;</span>  <span class="co"># multibot configuration bot 1</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_ETC</span> <span class="st">&quot;/etc/bashbot/bot2&quot;</span>  <span class="co"># multibot configuration bot 2</span></code></pre></div>
+<p>e.g. /etc/bashbot</p>
+<h5 id="bashbot_var">BASHBOT_VAR</h5>
+<p>Location of runtime data <code>data-bot-bash</code>, <code>count</code></p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">  <span class="bu">unset</span>  <span class="va">BASHBOT_VAR</span>     <span class="co"># keep in telegram-bot-bash (default)</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_VAR</span> <span class="st">&quot;&quot;</span>  <span class="co"># keep in telegram-bot-bash</span>
+
+  <span class="bu">export</span> <span class="va">BASHBOT_VAR</span> <span class="st">&quot;/var/spool/bashbot&quot;</span>  <span class="co"># unix like config location</span>
+
+  <span class="bu">export</span> <span class="va">BASHBOT_VAR</span> <span class="st">&quot;/var/spool/bashbot/bot1&quot;</span>  <span class="co"># multibot configuration bot 1</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_VAR</span> <span class="st">&quot;/var/spool/bashbot/bot2&quot;</span>  <span class="co"># multibot configuration bot 2</span></code></pre></div>
+<h5 id="bashbot_jsonsh">BASHBOT_JSONSH</h5>
+<p>Full path to JSON.sh script, default: ‘./JSON.sh/JSON.sh’, must end with ‘/JSON.sh’.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">  <span class="bu">unset</span>  <span class="va">BASHBOT_JSONSH</span>     <span class="co"># telegram-bot-bash/JSON.sh/JSON.sh (default)</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_JSONSH</span> <span class="st">&quot;&quot;</span>  <span class="co"># telegram-bot-bash/JSON.sh/JSON.sh</span>
+
+  <span class="bu">export</span> <span class="va">BASHBOT_JSONSH</span> <span class="st">&quot;/usr/local/bin/JSON.sh&quot;</span>  <span class="co"># installed in /usr/local/bin</span></code></pre></div>
+<h5 id="bashbot_home">BASHBOT_HOME</h5>
+<p>Set bashbot home directory, where bashot will look for additional files. If BASHBOT_ETC, BASHBOT_VAR or BASHBOT_JSONSH are set the have precedence over BASHBOT_HOME.</p>
+<p>This is also usefull if you want to force bashbot to always use full pathnames instead of relative ones.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">  <span class="bu">unset</span>  <span class="va">BASHBOT_HOME</span>     <span class="co"># autodetection (default)</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_HOME</span> <span class="st">&quot;&quot;</span>  <span class="co"># autodetection</span>
+
+  <span class="bu">export</span> <span class="va">BASHBOT_HOME</span> <span class="st">&quot;/usr/local/telegram-bot-bash&quot;</span>    <span class="co"># unix like location</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_HOME</span> <span class="st">&quot;/usr/local/bin&quot;</span>  <span class="co"># Note: you MUST set ETC, VAR and JSONSH to other locations to make this work!</span></code></pre></div>
+<hr />
+<h4 id="change-config-values">Change config values</h4>
+<h5 id="bashbot_url">BASHBOT_URL</h5>
+<p>Uses given URL instead of offical telegram API URL, useful if you have your own telegram server or for testing.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">  <span class="bu">unset</span>  <span class="va">BASHBOT_URL</span>       <span class="co"># use Telegram URL https://api.telegram.org/bot&lt;token&gt; (default)</span>
+
+  <span class="bu">export</span> <span class="va">BASHBOT_URL</span> <span class="st">&quot;&quot;</span>    <span class="co"># use use Telegram https://api.telegram.org/bot&lt;token&gt;</span>
+
+  <span class="bu">export</span> <span class="va">BASHBOT_URL</span> <span class="st">&quot;https://my.url.com/bot&quot;</span> <span class="co"># use your URL https://my.url.com/bot&lt;token&gt;</span></code></pre></div>
+<h5 id="bashbot_token">BASHBOT_TOKEN</h5>
+<h5 id="bashbot_wget">BASHBOT_WGET</h5>
+<p>Bashbot uses <code>curl</code> to communicate with telegram server. if <code>curl</code> is not availible <code>wget</code> is used. If ‘BASHBOT_WGET’ is set to any value (not undefined or not empty) wget is used even is curl is availible.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">  <span class="bu">unset</span>  <span class="va">BASHBOT_WGET</span>       <span class="co"># use curl (default)</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_WGET</span> <span class="st">&quot;&quot;</span>    <span class="co"># use curl </span>
+
+  <span class="bu">export</span> <span class="va">BASHBOT_WGET</span> <span class="st">&quot;yes&quot;</span> <span class="co"># use wget</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_WGET</span> <span class="st">&quot;no&quot;</span>  <span class="co"># use wget!</span></code></pre></div>
+<h5 id="bashbot_sleep">BASHBOT_SLEEP</h5>
+<p>Instead of polling permanently or with a fixed delay, bashbot offers a simple adaptive polling. If messages are recieved bashbot polls with no dealy. If no messages are availible bashbot add 100ms delay for every poll until the maximum of BASHBOT_SLEEP ms.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">  <span class="bu">unset</span>  <span class="va">BASHBOT_SLEEP</span>       <span class="co"># 5000ms (default)</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_SLEEP</span> <span class="st">&quot;&quot;</span>    <span class="co"># 5000ms </span>
+
+  <span class="bu">export</span> <span class="va">BASHBOT_SLEEP</span> <span class="st">&quot;1000&quot;</span>     <span class="co"># 1s maximum sleep </span>
+  <span class="bu">export</span> <span class="va">BASHBOT_SLEEP</span> <span class="st">&quot;10000&quot;</span>    <span class="co"># 10s maximum sleep</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_SLEEP</span> <span class="st">&quot;1&quot;</span>        <span class="co"># values &lt; 1000 disables sleep (not recommended) </span>
+  </code></pre></div>
+<h4 id="testet-configs-as-of-v0.90-release">Testet configs as of v0.90 release</h4>
+<p><strong>Note: Environment variables are not stored, you must setup them before every call to bashbot.sh, e.g. from a script.</strong></p>
+<h5 id="simple-unix-like-config-for-one-bot.-bashbot-is-installed-in-usrlocaltelegram-bot-bash">simple Unix like config, for one bot. bashbot is installed in ‘/usr/local/telegram-bot-bash’</h5>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">  <span class="co"># Note: all dirs and files must exist!</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_ETC</span> <span class="st">&quot;/etc/bashbot&quot;</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_VAR</span> <span class="st">&quot;/var/spool/bashbot&quot;</span>
+
+  <span class="ex">/usr/local/telegram-bot-bash/bashbot.sh</span> start</code></pre></div>
+<h5 id="unix-like-config-for-one-bot.-bashbot.sh-is-installed-in-usrbin">Unix like config for one bot. bashbot.sh is installed in ‘/usr/bin’</h5>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">  <span class="co"># Note: all dirs and files must exist!</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_ETC</span> <span class="st">&quot;/etc/bashbot&quot;</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_VAR</span> <span class="st">&quot;/var/spool/bashbot&quot;</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_JSONSH</span> <span class="st">&quot;/var/spool/bashbot&quot;</span>
+
+  <span class="ex">/usr/local/bin/bashbot.sh</span> start</code></pre></div>
+<h5 id="simple-multibot-config-everything-is-keept-inside-telegram-bot-bash-dir">simple multibot config, everything is keept inside ‘telegram-bot-bash’ dir</h5>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">  <span class="co"># config for running Bot 1</span>
+  <span class="co"># Note: all dirs and files must exist!</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_ETC</span> <span class="st">&quot;./mybot1&quot;</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_VAR</span> <span class="st">&quot;./mybot1&quot;</span>
+
+  <span class="ex">/usr/local/telegram-bot-bash/bashbot.sh</span> start</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">  <span class="co"># config for running Bot 2</span>
+  <span class="co"># Note: all dirs and files must exist!</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_ETC</span> <span class="st">&quot;./mybot2&quot;</span>
+  <span class="bu">export</span> <span class="va">BASHBOT_VAR</span> <span class="st">&quot;./mybot2&quot;</span>
+
+  <span class="ex">/usr/local/telegram-bot-bash/bashbot.sh</span> start</code></pre></div>
+<h4 id="prev-advanced-use"><a href="3_advanced.html">Prev Advanced Use</a></h4>
+<h4 id="next-best-practice"><a href="5_practice.html">Next Best Practice</a></h4>
+<h4 id="version-v0.90-dev2-19-g5779acc"><br /><span class="math display"><em>V</em><em>E</em><em>R</em><em>S</em><em>I</em><em>O</em><em>N</em></span><br /> v0.90-dev2-19-g5779acc</h4>
+</body>
+</html>

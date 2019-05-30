@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Bashobot Documentation - examples/README.html</title>
+  <style type="text/css">code{white-space: pre;}</style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Bashobot Documentation - examples/README.html</h1>
+</div>
+<h4 id="home"><a href="../README.html">Home</a></h4>
+<h2 id="bashbot-examples">Bashbot examples</h2>
+<h3 id="bashbot-multi">bashbot multi</h3>
+<p>An example wrapper to run multiple instances of bashbot, use <code>./bashbot-multi.sh botname command</code></p>
+<h3 id="bashbot.cron">bashbot.cron</h3>
+<p>An example crontab is provided in <code>examples/bashbot.cron</code>, see <a href="../html/4_expert.html">Expert use</a></p>
+<h3 id="interactive-chats">Interactive chats</h3>
+<p>Two examples for interactive scripts are provided as <strong>calc.sh</strong> and <strong>question.sh</strong>, see <a href="../html/3_advanced.html">Advanced use</a></p>
+<h3 id="background-scripts">Background scripts</h3>
+<p>Background jobs are an easy way to provide sceduled messages or alerts if something happens. <strong>notify.sh</strong> is a simple example on how to send a message every x seonds, e.g. current time.</p>
+<p><strong>background-scripts</strong> contains a more useful example on how to start and stop different scripts plus some example backgound scripts.</p>
+<pre><code>    mycommands.sh - /run_xxx and /kill-xxx wil start any script named run_xxx.sh
+
+    run_diskusage.sh - shows disk usage every 100 seconds
+    run_filename.sh - shown the name of new files in a named dir
+    run_filecontent.sh  - shown the content of new files in a named dir
+    run_notify.sh - same as notify.sh</code></pre>
+<p><strong>Note:</strong> Output of system commands often contains newlines, each newline results in a telegram message, the function ‘send_telegram’ in mycommands.sh avoids this by converting each newline to ‘mynewlinestartshere’ before output the string.</p>
+<h3 id="system-status">System Status</h3>
+<p><strong>send-system-status</strong> contains an example for commands showing status of different subsystems. This example is adapted from https://github.com/RG72/telegram-bot-bash to current bashbot commands, but not fully tested. This will show how easy you can convert existing bots.</p>
+<pre><code>    mycommands.sh - commands to show system status
+    botacl - controls who can show system status
+
+*Availiable commands*:
+    /se *sensors*
+    /smb *smbstatus*
+    /free *memory status*
+    /md *raid status*
+    /lvm *lvm status*
+    /lvsd *Datailed lvm status*
+    /df *disk space*
+    /ifconfig *ifconfig output*
+    /smart *sda* _smart status for sda drive_</code></pre>
+<h3 id="external-scripts">External scripts</h3>
+<p><strong>external-use</strong> will contain some examples on how to send messages from external scripts to Telegram chats or users.</p>
+<h4 id="version-v0.90-dev2-0-gec85636"><br /><span class="math display"><em>V</em><em>E</em><em>R</em><em>S</em><em>I</em><em>O</em><em>N</em></span><br /> v0.90-dev2-0-gec85636</h4>
+</body>
+</html>

@@ -27,7 +27,7 @@ If a module function is called from 'bashbot.sh', bashbot must work if the modul
 or '_execute_if_function' if a module function is called.
 
 **Addons** live in ```addons/*.sh.dist``` and are disabled by default. To activate an addon remove the '.dist' from filename, e.g. ```cp addons/example.sh.dist addons/example.sh```. Addons must register themself to BASHBOT_EVENTS at startup, e.g. to call a function everytime a message is recieved.
-Registering to EVENTS is similar on how 'commands.sh' is executed, but more flexible and one major difference:
+Registering to EVENTS is similar on how 'commands.sh' is ececuted, but more flexible and one major difference:
 **Addons are executed in the context of the main script**, while 'commands.sh' is executed as a seperate process.
 
 This is why event functions are time critical and must return as fast as possible. Spawn actions as a seperate process or function with '&', e.g.
@@ -45,7 +45,7 @@ Availible events:
 
 * BASHBOT_EVENT_INLINE		an inline query is received
 * BASHBOT_EVENT_MESSAGE		any type of message is received
-* BASHBOT_EVENT_TEXT		a message containing text is recieved
+* BASHBOT_EVENT_TEXT		a message containing text is received
 * BASHBOT_EVENT_CMD		a command is recieved (fist word starts with /)
 * BASHBOT_EVENT_REPLYTO		a reply to a message is received
 * BASHBOT_EVENT_FORWARD		a forwarded message is received
@@ -53,31 +53,31 @@ Availible events:
 * BASHBOT_EVENT_LOCATION	a location or a venue is received
 * BASHBOT_EVENT_FILE		a file is received
 
-*usage*: BASHBOT_EVENT_xxx[ "uniqe-name" ]="callback"
+*usage*: BASHBOT_EVENT_xxx["uniqe-name"]="callback"
 
-"unique-name" can be every alphanumeric string incl. '-' and '_'. Per convention it is the name of the addon followed by an internal identyfier.
+"unique-name" can be every alphanumeric string incl. '-' and '_'. Per convention it should be name of the addon followed by an internal identyfier.
 
 *Example:* Register a function to echo to any Text send to the bot
 ```bash
 # register callback:
 BASHBOT_EVENT_TEXT["example_1"]="example_echo"
 
-# function called if a text is received
+# function called if a text is recieved
 example_echo() {
 	# all availible bashbot functions and variables can be used
 	send_normal_message "${CHAT[ID]}" "${MESSAGE[0]}" & # note the &!
 }
 ```
-* BAHSBOT_EVENT_TIMER		is executed every minute and can be used in 3 variants: oneshot, every minute, every X minutes.
+* BAHSBOT_EVENT_TIMER		is executed every minute and can be uses in variants: oneshot, every minute, every X minutes.
 
-Registering to BASHBOT_EVENT_TIMER works isimilar as for message events, but you must add a timing argument to the index name.
+Registering to BASHBOT_EVENT_TIMER works a little different, you have to add a timing argument to the index name.
 
-*usage:* BAHSBOT_EVENT_TIMER[ "name" , "time" ], where time is:
+*usage: * BAHSBOT_EVENT_TIMER["name","time"], where time is:
 
-    * -x execute ONCE in x minutes
-    * 0	ignored
-    * 1	execute every minute
-    * x	execute every x minutes
+* -x	execute ONCE in x minutes
+* 0	ignored
+* 1	execute every minute
+* x	execute every x minutes
 
 *Examples:*
 ```bash

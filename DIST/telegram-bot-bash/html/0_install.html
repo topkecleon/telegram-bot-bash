@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Bashobot Documentation - doc/0_install.html</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Bashobot Documentation - doc/0_install.html</h1>
+</div>
+<h4 id="home"><a href="../README.html">Home</a></h4>
+<h2 id="install-bashbot">Install bashbot</h2>
+<ol style="list-style-type: decimal">
+<li>Go to the directory you want to install bashbot, e.g.
+<ul>
+<li>your $HOME directory (install and run with your user-ID)</li>
+<li>/usr/local if you want to run as service</li>
+</ul></li>
+<li><a href="https://github.com/topkecleon/telegram-bot-bash/releases">Download latest release zip from github</a> and extract all files.</li>
+<li>Change into the directory <code>telegram-bot-bash</code></li>
+<li>Acticate the bot example commands ``cp mycommands.sh.dist mycommands.sh```</li>
+<li>Run <code>./bashbot.sh init</code> to setup the environment and enter your Bots token given by botfather.</li>
+</ol>
+<p>Edit ’mycommands.sh to your needs. Now your Bot is ready to start …</p>
+<p><strong>If you are new to Bot development read <a href="https://core.telegram.org/bots">Bots: An introduction for developers</a></strong></p>
+<h3 id="install-from-github">Install from Github</h3>
+<p>As an alternative to download the zip files, you can clone the github repository to get the latest improvements/fixes.</p>
+<ol style="list-style-type: decimal">
+<li>Go to the directory you want to install bashbot, e.g.
+<ul>
+<li>your $HOME directory (install and run with your user-ID)</li>
+<li>/usr/local if you want to run as service</li>
+</ul></li>
+<li>Run <code>git clone https://github.com/topkecleon/telegram-bot-bash.git</code></li>
+<li>Change into the directory <code>telegram-bot-bash</code></li>
+<li>Run <code>test/ALL-tests.sh</code> and if everthing finish OK …</li>
+<li>Run <code>sudo ./bashbot.sh init</code> to setup the environment and enter your Bots token given by botfather.</li>
+</ol>
+<h3 id="update-bashbot">Update bashbot</h3>
+<p><strong>Note: all files including ‘mycommands.sh’ may overwritten, make a backup!</strong></p>
+<ol style="list-style-type: decimal">
+<li>Go to the directory where you had installed bashbot, e.g.
+<ul>
+<li>your $HOME directory</li>
+<li>/usr/local</li>
+</ul></li>
+<li><a href="https://github.com/topkecleon/telegram-bot-bash/releases">Download latest release zip from github</a></li>
+<li>Stop all running instances of bashbot</li>
+<li>Extract all files to your existing bashbot dir</li>
+<li>Run <code>sudo ./bashbot.sh init</code> to setup your environment after the update</li>
+</ol>
+<p>If you modified ‘commands.sh’ move your changes to ‘mycommands.sh’, this avoids overwrrite of you changes on updates.</p>
+<p>Now you can restart your bashbot instances.</p>
+<h3 id="notes-on-updates">Notes on Updates</h3>
+<h4 id="removal-of-tmux">removal of TMUX</h4>
+<p>From version 0.80 on TMUX is no longer needed and the bachsbot command ‘attach’ is deleted. Old function ‘inproc’ is replaced by ‘send_interactive’. send_interactive does checks if an interactive job is running internaly. Pls check if you make use of inproc and remove it including the old checks, e.g.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">if</span> <span class="ex">tmux</span> ls <span class="kw">|</span> <span class="fu">grep</span> -v send <span class="kw">|</span> <span class="fu">grep</span> -q <span class="st">&quot;</span><span class="va">$copname</span><span class="st">&quot;</span><span class="kw">;</span> <span class="kw">then</span> <span class="ex">inproc</span><span class="kw">;</span> <span class="kw">fi</span>
+<span class="co"># or</span>
+<span class="bu">[</span> checkprog<span class="bu"> ]</span> <span class="kw">&amp;&amp;</span> <span class="ex">inproc</span></code></pre></div>
+<p>must be replaced by <code>send_interactive &quot;${CHATD[ID]}&quot; &quot;${MESSAGE}&quot;</code></p>
+<h3 id="do-not-edit-commands.sh">Do not edit commands.sh</h3>
+<p>From version 0.60 on your commands must be placed in ‘mycommands.sh’. If you update from a version with your commands in ‘commands.sh’ move all your commands and functions to ‘mycommands.sh’.</p>
+<p>From version 0.80 on ‘commands.sh’ will be overwritten on update!</p>
+<h4 id="location-of-var-tmp-data-dirs">Location of var / tmp / data dirs</h4>
+<p>From version 0.70 on the tmp dir is renamed to ‘data-bot-bash’ to reflect the fact that not only temporary files are stored. an existing ‘tmp-bot-bash’ will be automatically renamed after update.</p>
+<p>From version 0.50 on the temporary files are no more placed in ‘/tmp’. instead a dedicated tmp dir is used.</p>
+<h4 id="changes-to-send_keyboard-in-v0.6">Changes to send_keyboard in v0.6</h4>
+<p>From Version 0.60 on keybord format for <code>send_keyboard</code> and <code>send_message &quot;mykeyboardstartshere ...&quot;</code> was changed. Keybords are now defined in JSON Array notation e.g. “[ \“yes\” , \“no\” ]”. This has the advantage that you can create any type of keyboard supported by Telegram. The old format is supported for backward compatibility, but may fail for corner cases.</p>
+<p><em>Example Keyboards</em>:</p>
+<ul>
+<li>yes no in two rows:
+<ul>
+<li>OLD format: ‘yes’ ‘no’ <em>(two strings)</em></li>
+<li>NEW format: ‘[ “yes” ] , [ “no” ]’ <em>(two arrays with a string)</em></li>
+</ul></li>
+<li>new layouts made easy with NEW format:
+<ul>
+<li>Yes No in one row: ‘[ “yes” , “no” ]’</li>
+<li>Yes No plus Maybe in 2.row: ‘[ “yes” , “no” ] , [ “maybe” ]’</li>
+<li>numpad style keyboard: ‘[ “1” , “2” , “3” ] , [ “4” , “5” , “6” ] , [ “7” , “8” , “9” ] , [ “0” ]’</li>
+</ul></li>
+</ul>
+<h4 id="next-create-bot"><a href="1_firstbot.html">Next Create Bot</a></h4>
+<h4 id="version-v0.90-dev2-0-gec85636"><br /><span class="math display"><em>V</em><em>E</em><em>R</em><em>S</em><em>I</em><em>O</em><em>N</em></span><br /> v0.90-dev2-0-gec85636</h4>
+</body>
+</html>
