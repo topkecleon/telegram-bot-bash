@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-rc1-0-g93b4914
+#### $$VERSION$$ v0.90-rc1-1-g46271cc
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -72,14 +72,14 @@ if [ "${1}" != "source" ];then
 
 	# run commands if true (0) is returned or if mycommands dose not exist
 	# shellcheck disable=SC2181
-	if [ "$?" = "0" ]; then
-	    case "${MESSAGE}" in
+	if [ "$?" = "0" ] && [ "${CMD}" != "" ]; then
+	    case "${CMD}" in
 		################################################
 		# GLOBAL commands start here, edit messages only
-		'/info'*)
+		'/info')
 			_markdown_message "${bashbot_info}"
 			;;
-		'/start'*)
+		'/start')
 			send_action "${CHAT[ID]}" "typing"
 			_is_botadmin && _markdown_message "You are *BOTADMIN*."
 			if _is_botadmin || _is_allowed "start" ; then
@@ -89,22 +89,22 @@ if [ "${1}" != "source" ];then
 			fi
 			;;
 			
-		'/help'*)
+		'/help')
 			_markdown_message "${bashbot_help}"
 			;;
-		'/leavechat'*) # bot leave chat if user is admin in chat
+		'/leavechat') # bot leave chat if user is admin in chat
 			if _is_admin ; then 
 				_markdown_message "*LEAVING CHAT...*"
    				_leave
 			fi
      			;;
      			
-     		'/kickme'*)
+     		'/kickme')
      			_kick_user "${USER[ID]}"
      			_unban_user "${USER[ID]}"
      			;;
      			
-		'/cancel'*)
+		'/cancel')
 			checkproc
 			if [ "$res" -eq 0 ] ; then killproc && _message "Command canceled.";else _message "No command is currently running.";fi
 			;;

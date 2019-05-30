@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-rc1-0-g93b4914
+#### $$VERSION$$ v0.90-rc1-1-g46271cc
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -580,7 +580,10 @@ process_message() {
 		set -f; unset IFS
 		# shellcheck disable=SC2206
 		CMD=( ${MESSAGE[0]} )
+		CMD[0]="${CMD[0]%%@*}"
 		set +f
+	else
+		CMD[0]=""
 	fi 
 }
 
