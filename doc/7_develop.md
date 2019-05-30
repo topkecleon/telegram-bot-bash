@@ -22,11 +22,12 @@ In addition you can change the change the level of verbosity by adding a third a
 to keep 'bashbot.sh' small, while extending functionality. In addition not every functionality is needed by a bot, so you can
 disable modules by removing them, e.g. rename the respective module files to 'module.sh.off'.
 
-Modules must use onyl functions provided by 'bahsbot.sh' or the module itself, no depedencies to other modules or addons must exist.
-If a module function is called from 'bashbot.sh', bashbot must work if the module is disabled, so it's madatory to use '_is_function'
-or '_execute_if_function' if a module function is called.
+Modules must use only functions provided by 'bahsbot.sh' or the module itself, no depedencies to other modules or addons must exist.
+If a module function is called from 'bashbot.sh', bashbot must work if the module is disabled, so the use of ```_is_function``` and
+```_execute_if_function``` is mandatory.
 
-**Addons** live in ```addons/*.sh.dist``` and are disabled by default. To activate an addon remove the '.dist' from filename, e.g. ```cp addons/example.sh.dist addons/example.sh```. Addons must register themself to BASHBOT_EVENTS at startup, e.g. to call a function everytime a message is recieved.
+**Addons** live in ```addons/*.sh.dist``` and are disabled by default. To activate an addon remove '.dist' from the filename, e.g.
+```cp addons/example.sh.dist addons/example.sh```. Addons must register to BASHBOT_EVENTS at startup, e.g. to call a function everytime a message is recieved.
 Registering to EVENTS is similar on how 'commands.sh' is executed, but more flexible and one major difference:
 **Addons are executed in the context of the main script**, while 'commands.sh' is executed as a seperate process.
 
@@ -34,7 +35,7 @@ This is why event functions are time critical and must return as fast as possibl
 send a message as respone from an addon: ```send_message "${CHAT[ID]}" "Message to send ..." &```.
 
 #### Bashbot Events
-Addons can register functions to bashbot events at startup by providing their name and a callback function.
+Addons must register functions to bashbot events at startup by providing their name and a callback function.
 If an event occours each registered function for the event is called.
 
 Events run in the same context as the main bashbot loop, so variables set here are persistent as long bashbot is running.
@@ -270,7 +271,6 @@ fi
 ```
 
 #### [Prev Function Reference](6_reference.md)
-#### [Next Expert Use](8_custom.md)
 
-#### $$VERSION$$ v0.90-dev2-20-g60b1a59
+#### $$VERSION$$ v0.90-dev2-21-g405276b
 

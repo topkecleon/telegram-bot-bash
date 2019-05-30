@@ -565,10 +565,28 @@ file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg"
 echo "$file" -> ./data-bot-bash/12345-avatar.jpg
 ```
 
+##### _exec_if_function
+Returns true, even if the given function does not exist. Return false if function exist but returns false.
+
+*usage:* _exec_if_function function
+
+*example:* 
+```bash
+_exec_if_function "answer_inline_query" "${iQUERY[ID]}" "Answer params"
+
+# fast replacment for module functions exists check:
+if _is_function "answer_inline_query"
+then
+	"answer_inline_query" "${iQUERY[ID]}" "Answer params"
+fi
+
+```
+
 ##### _exists
 Returns true if the given function exist, can be used to check if a module is loaded.
 
 *usage* _exists command
+
 
 *example:* 
 ```bash
@@ -584,7 +602,6 @@ Returns true if the given function exist, can be used to check if a module is lo
 ```bash
 _is_function "background" && _message "you can run background jobs!"
 ```
-
 
 ----
 
@@ -655,7 +672,7 @@ Outputs decoded string to STDOUT
 *usage:* JsonDecode "string"
 
 ##### JsonGetString
-Reads JSON fro STDIN and Outputs found String to STDOUT
+Reads JSON from STDIN and Outputs found String to STDOUT
 
 *usage:*  JsonGetString `"path","to","string"`
 
@@ -664,12 +681,23 @@ Reads JSON fro STDIN and Outputs found Value to STDOUT
 
 *usage:*  JsonGetValue `"path","to","value"`
 
+
+##### Json2Array
+Read JSON.sh style data from STDIN and asssign to given ARRAY
+ARRAY name  must be declared with "declare -A ARRAY" before calling
+
+*usage:* Json2Array "ARRAY"
+
+##### Array2Json
+Output ARRAY as JSON.sh style data to STDOUT
+
+*usage:* Array2Json "ARRAY"
+
 ----
 
 ##### get_chat_member_status
 *usage:* get_chat_member_status "${CHAT[ID]}" "${USER[ID]}"
 
-this may get an official function ...
 
 ----
 
@@ -679,11 +707,27 @@ Every Message sent to your Bot is processd by this function. It parse the send J
 ##### process_updates
 If new updates are availible, this functions gets the JSON from Telegram and dispatch it.
 
+##### process_inline
+Every Inline Message sent to your Bot is processd by this function. It parse the send JSON and assign the found Values to bash variables.
+
+##### start_timer
+Start the the every minute timer ...
+
+##### event_timer
+Dispachter for BASHBOT_EVENT_TIMER
+
+##### event_timer
+Dispachter for BASHBOT_EVENT_INLINE
+
+##### event_timer
+Dispachter for BASHBOT_EVENT_MESSAGE and related
+
 ----
+
 ##### getBotName
 The name of your bot is availible as bash variable "$ME", there is no need to call this function if Bot is running.
 
-*usage:* ME="$(getBotNiname)"
+*usage:* ME="$(getBotName)"
 
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
