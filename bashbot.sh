@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-dev2-25-gb240ede
+#### $$VERSION$$ v0.90-dev2-27-gfc36de9
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -216,8 +216,8 @@ delete_message() {
 
 get_file() {
 	[ "$1" = "" ] && return
-	sendJson ""  '"file_id": '"${1}""${GETFILE_URL}"
-	printf '%s\n' "${URL}"/"$(jsonGetString <<< "${res}" '"result","file_path"')"
+	sendJson ""  '"file_id": "'"${1}"'"' "${GETFILE_URL}"
+	printf '%s\n' "${URL}"/"$(JsonGetString <<< "${res}" '"result","file_path"')"
 }
 
 # curl is preffered, but may not availible on ebedded systems
@@ -342,7 +342,7 @@ process_updates() {
 }
 process_client() {
 	local num="$1" debug="$2" 
-	CMD=( )
+	CMD=( ); iQUERY=( )
 	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
 	if [ "${iQUERY[ID]}" = "" ]; then
 		[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"MESSAGE.log"
@@ -407,6 +407,7 @@ event_inline() {
 	done
 }
 event_message() {
+echo "${MESSAGE[0]}"
 	local event debug="$1"
 	# ${MESSAEG[*]} event_message
 	# shellcheck disable=SC2153
@@ -432,7 +433,6 @@ event_message() {
 			done
 		fi
 	fi
-
 	# ${REPLYTO[*]} event_replyto
 	if [ "${REPLYTO[UID]}" != "" ]; then
 		# shellcheck disable=SC2153
@@ -462,7 +462,7 @@ event_message() {
 
 	# ${VENUE[*]} event_location
 	# ${LOCALTION[*]} event_location
-	if [ "${LOCATION[*]}" != "" ] || [ "${VENUE[TITLE]}" != "" ]; then
+	if [ "${LOCATION[LONGITUDE]}" != "" ] || [ "${VENUE[TITLE]}" != "" ]; then
 		# shellcheck disable=SC2153
 		for event in "${!BASHBOT_EVENT_LOCATION[@]}"
 		do
@@ -471,7 +471,8 @@ event_message() {
 	fi
 
 	# ${URLS[*]} event_file
-	if [ "${URLS[*]}" = "" ]; then
+	# NOTE: compare again #URLS -1 blanks!
+	if [[ "${URLS[*]}" != "     " ]]; then
 		# shellcheck disable=SC2153
 		for event in "${!BASHBOT_EVENT_FILE[@]}"
 		do
@@ -512,6 +513,7 @@ process_message() {
 	USER[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","from","username"]}")"
 
 	# in reply to message from
+	REPLYTO=( )
 	REPLYTO[UID]="${UPD["result",${num},"message","reply_to_message","from","id"]}"
 	if [ "${REPLYTO[UID]}" != "" ]; then
 	   REPLYTO[0]="$(JsonDecode "${UPD["result",${num},"message","reply_to_message","text"]}")"
@@ -522,6 +524,7 @@ process_message() {
 	fi
 
 	# forwarded message from
+	FORWARD=( )
 	FORWARD[UID]="${UPD["result",${num},"message","forward_from","id"]}"
 	if [ "${FORWARD[UID]}" != "" ]; then
 	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
@@ -531,6 +534,7 @@ process_message() {
 	fi
 
 	# Audio
+	URLS=( )
 	URLS[AUDIO]="$(get_file "${UPD["result",${num},"message","audio","file_id"]}")"
 	# Document
 	URLS[DOCUMENT]="$(get_file "${UPD["result",${num},"message","document","file_id"]}")"
@@ -544,6 +548,7 @@ process_message() {
 	URLS[VOICE]="$(get_file "${UPD["result",${num},"message","voice","file_id"]}")"
 
 	# Contact
+	CONTACT=( )
 	CONTACT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","first_name"]}")"
 	if [ "${CONTACT[FIRST_NAME]}" != "" ]; then
 		CONTACT[USER_ID]="$(JsonDecode  "${UPD["result",${num},"message","contact","user_id"]}")"
@@ -553,6 +558,7 @@ process_message() {
 	fi
 
 	# vunue
+	VENUE=( )
 	VENUE[TITLE]="$(JsonDecode "${UPD["result",${num},"message","venue","title"]}")"
 	if [ "${VENUE[TITLE]}" != "" ]; then
 		VENUE[ADDRESS]="$(JsonDecode "${UPD["result",${num},"message","venue","address"]}")"
@@ -565,6 +571,7 @@ process_message() {
 	CAPTION="$(JsonDecode "${UPD["result",${num},"message","caption"]}")"
 
 	# Location
+	LOCATION=( )
 	LOCATION[LONGITUDE]="${UPD["result",${num},"message","location","longitude"]}"
 	LOCATION[LATITUDE]="${UPD["result",${num},"message","location","latitude"]}"
 

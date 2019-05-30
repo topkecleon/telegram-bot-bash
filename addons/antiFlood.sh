@@ -50,27 +50,31 @@ if [[ "$1" = "start"* ]]; then
     # register to CMD
     BASHBOT_EVENT_CMD["${ANTIFL_ME}"]="${ANTIFL_ME}_cmd"
 
-    antiflood_cmd(){
+    antiFlood_cmd(){
 	case "${CMD[0]}" in
-		# command /antiflood starts detection, $1 floodlevel
-		"/antifl"*)
+		# command /afstart starts detection, $1 floodlevel
+		"/afstart")
 			ANTIFL_CHATS["${CHAT[ID]}","level"]="${ANTIFL_DEFAULT}"
 			ANTIFL_CHATS["${CHAT[ID]}","ban"]="${ANTIFL_BAN}"
 			[[ "${CMD[1]}"  =~ ^[0-9]+$  ]] && ANTIFL_CHATS["${CHAT[ID]}","level"]="${CMD[1]}"
-			antiflood_timer
+			antiFlood_timer
 		;;
-		# command /floodapply starts counter meausares
-		"/floodap"*)
+		# command /afactive starts counter meausares
+		"/afdo")
 			ANTIFL_CHATS["${CHAT[ID]}","active"]="yes"
+		;;
+		# command /afactive starts counter meausares
+		"/afstop")
+			ANTIFL_CHATS["${CHAT[ID]}","active"]="no"
 		;;
 	esac
     }
 
     # register to timer
-    BASHBOT_EVENT_TIMER["${ANTIFL_ME}","${ANTIFL_BAN}"]="antiflood_timer"
+    BASHBOT_EVENT_TIMER["${ANTIFL_ME}","${ANTIFL_BAN}"]="antiFlood_timer"
 
     # save settings and reset flood level every BAN Min
-    antiflood_timer(){
+    antiFlood_timer(){
 	ANTIFL_ACTUALS=( ) 
 	jssh_writeDB "ANTIFL_CHATS" "addons/$ANTIFL_ME" &
     }
@@ -79,7 +83,7 @@ if [[ "$1" = "start"* ]]; then
     BASHBOT_EVENT_TEXT["${ANTIFL_ME}"]="${ANTIFL_ME}_multievent"
     BASHBOT_EVENT_FILE["${ANTIFL_ME}"]="${ANTIFL_ME}_multievent"
 
-    antiflood_multievent(){
+    antiFlood_multievent(){
 	# not started
 	[ "${ANTIFL_CHATS["${CHAT[ID]}","level"]}" = "" ] && return
 	# check user flood text
@@ -88,21 +92,21 @@ if [[ "$1" = "start"* ]]; then
 			(( ANTIFL_ACTUALS["${CHAT[ID]}","${USER[ID]}"]-- ))
 			# shellcheck disable=SC2154
 			(( ANTIFL_ACTUALS["${CHAT[ID]}","${USER[ID]}","file"]-- ))
-		else
+		fi
+	else
 			# shellcheck disable=SC2154
 			(( ANTIFL_ACTUALS["${CHAT[ID]}","${USER[ID]}"]++ ))
-		fi
 	fi
 	# check user flood picture
 	# shellcheck disable=SC2154
 	[ "$1" = "file" ] && (( ANTIFL_ACTUALS["${CHAT[ID]}","${USER[ID]}","file"]++ ))
-	antiflood_action & # do actions in subshell
+	antiFlood_action & # do actions in subshell
     }
 
     # check and handle actions
-    antiflood_action() {
+    antiFlood_action() {
 	# check flood level of user
-	if [ "${ANTIFL_ACTUALS["${CHAT[ID]}","${USER[ID]}","file"]}" -gt "${ANTIFL_CHATS["${CHAT[ID]}","level"]}" ]; then
+	if [ "$(( ANTIFL_ACTUALS["${CHAT[ID]}","${USER[ID]}","file"] +1))" -gt "${ANTIFL_CHATS["${CHAT[ID]}","level"]}" ]; then
 		if [ "${ANTIFL_CHATS["${CHAT[ID]}","active"]}" = "yes" ]; then
 			# remove message
 			delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
