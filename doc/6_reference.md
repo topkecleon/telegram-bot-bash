@@ -317,28 +317,28 @@ inline_query_compose composes one response element to to send back.
 
 Currently the following types and arguments are implemented (optional arguments in parenthesis)
 ```
-	"article"|"message"	title message (markup description)
+	"article"|"message"	title message (parse_mode description)
 
-	"photo"			photo_URL (thumb_URL title description caption)
-	"gif"			photo_URL (thumb_URL title caption)
-	"mpeg4_gif"		mpeg_URL (thumb_URL title caption)
-	"video"			video_URL mime_type thumb_URL title (caption)
-	"audio"			audio_URL title (caption)
-	"voice"			voice_URL title (caption)
-	"document"		title document_URL mime_type (caption description)
+	"photo"			photo_URL (thumb_URL title description caption parse_mode keyboard)
+	"gif"			photo_URL (thumb_URL title caption parse_mode keyboard)
+	"mpeg4_gif"		mpeg_URL (thumb_URL title caption  parse_mode keyboard)
+	"video"			video_URL mime_type thumb_URL title (caption parse_mode keyboard)
+	"audio"			audio_URL title (caption parse_mode keyboard)
+	"voice"			voice_URL title (caption parse_mode keyboard)
+	"document"		title document_URL mime_type (caption description parse_mode)
 
 	"location"		latitude longitude title
 	"venue"			latitude longitude title (adress foursquare)
 	"contact"		phone first (last thumb)
 
-	"cached_photo"		file (title description caption)
-	"cached_gif"		file (title caption)
-	"cached_mpeg4_gif"	file (title caption)
-	"cached_sticker"	file 
-	"cached_document"	title file (description caption)
-	"cached_video"		file title (description caption)
-	"cached_voice"		file title (caption)
-	"cached_audio"		file title (caption)
+	"cached_photo"		file (title description caption parse_mode keyboard)
+	"cached_gif"		file (title caption parse_mode keyboard)
+	"cached_mpeg4_gif"	file (title caption parse_mode keyboard)
+	"cached_sticker"	file (keyboard)
+	"cached_document"	title file (description caption description parse_mode keyboard)
+	"cached_video"		file title (description caption description parse_mode keyboard)
+	"cached_voice"		file title (caption parse_mode keyboard)
+	"cached_audio"		file title (caption parse_mode keyboard)
 ```
 see [InlineQueryResult for more information](https://core.telegram.org/bots/api#inlinequeryresult) about response types and their arguments.
 
@@ -792,5 +792,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.90-rc1-0-g93b4914
+#### $$VERSION$$ v0.90-rc1-2-gffec76a
 
