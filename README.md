@@ -42,7 +42,8 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Use from CLI and Scripts
     * Customize Bashbot Environment
 * [Best Practices](doc/5_practice.md)
-    * Customize commands.sh
+    * Customize mycommands.sh
+    * Overwrite/disable commands
     * Seperate logic from commands
     * Test your Bot with shellcheck
 * [Function Reference](doc/6_reference.md)
