@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-rc1-1-g46271cc
+#### $$VERSION$$ v0.90-rc1-3-g4297fc1
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -44,6 +44,7 @@ if [ "${SCRIPT}" != "${REALME}" ] || [ "$1" = "source" ]; then
 	SOURCE="yes"
 else
 	SCRIPT="./$(basename "${SCRIPT}")"
+	MODULEDIR="./$(basename "${MODULEDIR}")"
 fi
 
 if [ "$BASHBOT_HOME" != "" ]; then
@@ -59,6 +60,8 @@ RUNUSER="${USER}" # USER is overwritten by bashbot array
 if [ "${SOURCE}" != "yes" ] && [ "$BASHBOT_HOME" = "" ] && ! cd "${RUNDIR}" ; then
 	echo -e "${RED}ERROR: Can't change to ${RUNDIR} ...${NC}"
 	exit 1
+else
+	RUNDIR="."
 fi
 
 if [ ! -w "." ]; then
@@ -152,7 +155,6 @@ else
 	# shellcheck source=./commands.sh
 	source "${COMMANDS}" "source"
 fi
-
 
 #################
 # BASHBOT INTERNAL functions
