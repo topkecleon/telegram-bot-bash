@@ -5,7 +5,7 @@
 # If you your bot is finished you can use make-standalone.sh to create the
 # the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v0.90-rc1-0-g93b4914
+#### $$VERSION$$ v0.90-rc1-4-gdbb6caf
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -65,7 +65,7 @@ echo "    ... create unified bashbot.sh"
 
 { 
   # first head of bashbot.sh
-  sed -n '0,/\/commands.sh"/ p' bashbot.sh | head -n -2
+  sed -n '0,/for modules in/ p' bashbot.sh | head -n -3
 
   # then mycommands from first non comment line on
   printf '\n##############################\n# bashbot modules starts here ...\n'
@@ -73,7 +73,7 @@ echo "    ... create unified bashbot.sh"
 
   # last tail of commands.sh
   printf '\n##############################\n# bashbot internal functions starts here ...\n\n'
-  sed -n '/\/commands.sh"/,$ p' bashbot.sh 
+  sed -n '/BASHBOT INTERNAL functions/,$ p' bashbot.sh | head -n -4
 
 } >>$$bashbot.sh
 

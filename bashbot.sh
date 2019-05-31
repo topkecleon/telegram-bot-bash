@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-rc1-3-g4297fc1
+#### $$VERSION$$ v0.90-rc1-4-gdbb6caf
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -141,12 +141,7 @@ export res CAPTION
 
 
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
-if [ "${SOURCE}" = "yes" ]; then
-	for modules in ${MODULEDIR:-.}/*.sh ; do
-		# shellcheck source=./modules/aliases.sh
-		[ -r "${modules}" ] && source "${modules}" "source"
-	done
-else
+if [ "${SOURCE}" != "yes" ]; then
 	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
 		echo -e "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NC}"
 		ls -l "${COMMANDS}"
@@ -155,6 +150,13 @@ else
 	# shellcheck source=./commands.sh
 	source "${COMMANDS}" "source"
 fi
+
+###############
+# load modules
+for modules in ${MODULEDIR:-.}/*.sh ; do
+	# shellcheck source=./modules/aliases.sh
+	[ -r "${modules}" ] && source "${modules}" "source"
+done
 
 #################
 # BASHBOT INTERNAL functions
