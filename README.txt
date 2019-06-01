@@ -53,7 +53,8 @@ availible on www.github.com
     * Use from CLI and Scripts
     * Customize Bashbot Environment
 * [Best Practices](doc/5_practice.md)
-    * Customize commands.sh
+    * Customize mycommands.sh
+    * Overwrite/disable commands
     * Seperate logic from commands
     * Test your Bot with shellcheck
 * [Function Reference](doc/6_reference.md)
@@ -252,4 +253,4 @@ tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.90-0-g7029f7f
+#### $$VERSION$$ v0.90-1-g5ebfacc

@@ -180,4 +180,4 @@ This may happen if to many wrong requests are sent to api.telegram.org, e.g. usi
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.90-0-g7029f7f
+#### $$VERSION$$ v0.90-1-g5ebfacc

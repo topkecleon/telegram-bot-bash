@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-0-g7029f7f
+#### $$VERSION$$ v0.90-2-g274f5d8
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -348,11 +348,10 @@ process_client() {
 	local num="$1" debug="$2" 
 	CMD=( ); iQUERY=( )
 	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
+	[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"MESSAGE.log"
 	if [ "${iQUERY[ID]}" = "" ]; then
-		[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"MESSAGE.log"
 		process_message "${num}" "${debug}"
 	else
-		[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"INLINE.log"
 		process_inline "${num}" "${debug}"
 	fi
 	#####
@@ -387,13 +386,12 @@ start_timer(){
 EVENT_TIMER="0"
 event_timer() {
 	local event timer debug="$1"
-	(( EVENT_TIMER += 1 ))
+	(( EVENT_TIMER++ ))
 	# shellcheck disable=SC2153
 	for event in "${!BASHBOT_EVENT_TIMER[@]}"
 	do
 		timer="${event##*,}"
-		[[ ! "$timer" =~ ^-*[0-9]+$ ]] && continue
-		[[ "$timer" =~ ^-*0+$ ]] && continue
+		[[ ! "$timer" =~ ^-*[1-9][0-9]*$ ]] && continue
 		if [ "$(( EVENT_TIMER % timer ))" = "0" ]; then
 			_exec_if_function "${BASHBOT_EVENT_TIMER[${event}]}" "timer" "${debug}"
 			[ "$(( EVENT_TIMER % timer ))" -lt "0" ] && \
@@ -492,7 +490,6 @@ process_inline() {
 	iQUERY[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","first_name"]}")"
 	iQUERY[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","last_name"]}")"
 	iQUERY[USERNAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","username"]}")"
-	# event_inline &
 }
 process_message() {
 	local num="$1"
@@ -538,7 +535,6 @@ process_message() {
 	fi
 
 	# Audio
-	URLS=( )
 	URLS[AUDIO]="$(get_file "${UPD["result",${num},"message","audio","file_id"]}")"
 	# Document
 	URLS[DOCUMENT]="$(get_file "${UPD["result",${num},"message","document","file_id"]}")"
@@ -575,19 +571,17 @@ process_message() {
 	CAPTION="$(JsonDecode "${UPD["result",${num},"message","caption"]}")"
 
 	# Location
-	LOCATION=( )
 	LOCATION[LONGITUDE]="${UPD["result",${num},"message","location","longitude"]}"
 	LOCATION[LATITUDE]="${UPD["result",${num},"message","location","latitude"]}"
 
 	# split message in command and args
+	CMD=( )
 	if [[ "${MESSAGE[0]}" = "/"* ]]; then
 		set -f; unset IFS
 		# shellcheck disable=SC2206
 		CMD=( ${MESSAGE[0]} )
 		CMD[0]="${CMD[0]%%@*}"
 		set +f
-	else
-		CMD[0]=""
 	fi 
 }
 
