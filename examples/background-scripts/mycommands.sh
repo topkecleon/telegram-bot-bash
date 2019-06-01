@@ -36,12 +36,6 @@ mycommands() {
 
 # place your additional processing functions here ...
 
-# returns true if function exist
-_is_function()
-{
-  [ "$(LC_ALL=C type -t "$1")" = "function" ]
-}
-
 # inifnite loop for waching a given dir for new files
 # $1 dir to wtach for new files
 watch_dir_loop() {

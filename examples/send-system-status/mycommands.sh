@@ -5,7 +5,7 @@
 # to show how you can customize bashbot by only editing mycommands.sh
 # NOTE: this is not tested, simply copied from original source and reworked!
 #
-#### $$VERSION$$ v0.90-0-g7029f7f
+#### $$VERSION$$ v0.90-3-g9a81e44
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -35,16 +35,10 @@ bashbot_help='*Availiable commands*:
 # your additional bahsbot commands
 # NOTE: command can have @botname attached, you must add * in case tests... 
 mycommands() {
-    [[ "$MESSAGE" = '/'* ]] || return
-    set +f
-    # shellcheck disable=SC2206
-    local arg=( $MESSAGE )
-    set -f
-    local cmd="${arg[0]}"
     local msg=""
 
     if user_is_botadmin "${USER[ID]}" || user_is_allowed "${USER[ID]}" "systemstatus"; then
-	case "$cmd" in
+	case "$CMD" in
 		'/md'*) msg="$(cat /proc/mdstat)";;
 		'/smb'*) msg="$(smbstatus)" ;;
 		'/se'*) msg="$(sensors | sed -r 's/\s|\)+//g' | sed -r 's/\(high=|\(min=/\//' | sed -r 's/\,crit=|\,max=/\//')";;
@@ -55,8 +49,8 @@ mycommands() {
 		'/lvm'*) msg="$(lvs | sed -r 's/\s+/\n/g')";;
 		'/lvsd'*) msg="$(lvs -a -o +devices | sed -r 's/\s+/\n/g')";;
 		'/smart'*)
-			[ "${arg[0]}" == "" ] && msg="example \`/smart sda\`" && return
-			drive="$(echo "${arg[0]}" | cut -c 1-3)"
+			[ "${CMD[1]}" == "" ] && msg="example \`/smart sda\`" && return
+			drive="$(echo "${CMD[1]}" | cut -c 1-3)"
 			echo "smartctl -a /dev/$drive"
 			msg="$(smartctl -a "/dev/$drive")"
 			;;
