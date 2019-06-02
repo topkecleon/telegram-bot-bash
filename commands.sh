@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-0-g7029f7f
+#### $$VERSION$$ v0.90-4-g6302ef4
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -37,7 +37,7 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
 
 # load modues on startup and always on on debug
-if [[ "${1}" = *"debug"* ]] ; then
+if [ "${1}" = "source" ] || [[ "${1}" = *"debug"* ]] ; then
 	# load all readable modules
 	for modules in ${MODULEDIR:-.}/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
@@ -72,42 +72,38 @@ if [ "${1}" != "source" ];then
 
 	# run commands if true (0) is returned or if mycommands dose not exist
 	# shellcheck disable=SC2181
-	if [ "$?" = "0" ] && [ "${CMD}" != "" ]; then
-	    case "${CMD}" in
+	if [ "$?" = "0" ]; then
+	    case "${MESSAGE}" in
 		################################################
 		# GLOBAL commands start here, edit messages only
-		'/info')
-			_markdown_message "${bashbot_info}"
+		'/info'*)
+			send_markdown_message "${bashbot_info}"
 			;;
-		'/start')
+		'/start'*)
 			send_action "${CHAT[ID]}" "typing"
-			_is_botadmin && _markdown_message "You are *BOTADMIN*."
+			user_is_botadmin "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
 			if _is_botadmin || _is_allowed "start" ; then
-				_markdown_message "${bashbot_help}"
+				send_markdown_message "${CHAT[ID]}" "${bashbot_help}"
 			else
-				_message "You are not allowed to start Bot."
+				send_normal_message "${CHAT[ID]}" "You are not allowed to start Bot."
 			fi
 			;;
 			
-		'/help')
-			_markdown_message "${bashbot_help}"
+		'/help'*)
+			send_markdown_message "${CHAT[ID]}" "${bashbot_help}"
 			;;
-		'/leavechat') # bot leave chat if user is admin in chat
-			if _is_admin ; then 
-				_markdown_message "*LEAVING CHAT...*"
-   				_leave
+		'/leavechat'*) # bot leave chat if user is admin in chat
+			if user_is_botadmin "${USER[ID]}" ; then 
+				send_markdown_message "${CHAT[ID]}" "*LEAVING CHAT...*"
+   				 leave_chat "${CHAT[ID]}"
 			fi
      			;;
      			
-     		'/kickme')
-     			_kick_user "${USER[ID]}"
-     			_unban_user "${USER[ID]}"
+     		'/kickme'*)
+     			kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
+     			unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
      			;;
      			
-		'/cancel')
-			checkproc
-			if [ "$res" -eq 0 ] ; then killproc && _message "Command canceled.";else _message "No command is currently running.";fi
-			;;
 		*)	# forward messages to optional dispatcher
 			_exec_if_function send_interactive "${CHAT[ID]}" "${MESSAGE}"
 			;;

@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.90-0-g7029f7f
+#### $$VERSION$$ v0.90-4-g6302ef4
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -40,6 +40,10 @@ if [ "$1" != "source" ];then
 			fi
 			;;
 
+		'/cancel'*) # cancel interactive command
+			checkproc
+			if [ "$res" -gt 0 ] ;then killproc && _message "Command canceled.";else _message "No command is currently running.";fi
+			;;
 		'/run_notify'*) # start notify background job
 			myback="notify"; checkback "$myback"
 			if [ "$res" -gt 0 ] ; then
@@ -60,7 +64,7 @@ if [ "$1" != "source" ];then
 
 		##########
 		# command overwrite examples
-		'info'*) # output date in front of regular info
+		'/info'*) # output date in front of regular info
 			send_normal_message "${CHAT[ID]}" "$(date)"
 			return 0
 			;;
