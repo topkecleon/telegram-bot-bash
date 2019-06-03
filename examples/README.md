@@ -55,6 +55,6 @@ convert existing bots.
 
 **external-use** will contain some examples on how to send messages from external scripts to Telegram chats or users.
 
-#### $$VERSION$$ v0.91-0-ge2c998c
+#### $$VERSION$$ v0.91-0-g31808a9
 
 
