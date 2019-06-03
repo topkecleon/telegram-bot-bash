@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.91-0-g31808a9
+#### $$VERSION$$ v0.91-1-gdb03e23
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -385,80 +385,80 @@ start_timer(){
 
 EVENT_TIMER="0"
 event_timer() {
-	local event timer debug="$1"
+	local key timer debug="$1"
 	(( EVENT_TIMER++ ))
 	# shellcheck disable=SC2153
-	for event in "${!BASHBOT_EVENT_TIMER[@]}"
+	for key in "${!BASHBOT_EVENT_TIMER[@]}"
 	do
-		timer="${event##*,}"
+		timer="${key##*,}"
 		[[ ! "$timer" =~ ^-*[1-9][0-9]*$ ]] && continue
 		if [ "$(( EVENT_TIMER % timer ))" = "0" ]; then
-			_exec_if_function "${BASHBOT_EVENT_TIMER[${event}]}" "timer" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_TIMER[${key}]}" "timer" "${key}" "${debug}"
 			[ "$(( EVENT_TIMER % timer ))" -lt "0" ] && \
-				unset BASHBOT_EVENT_TIMER["${event}"]
+				unset BASHBOT_EVENT_TIMER["${key}"]
 		fi
 	done
 }
 
 event_inline() {
-	local event debug="$1"
+	local key debug="$1"
 	# shellcheck disable=SC2153
-	for event in "${!BASHBOT_EVENT_INLINE[@]}"
+	for key in "${!BASHBOT_EVENT_INLINE[@]}"
 	do
-		_exec_if_function "${BASHBOT_EVENT_INLINE[${event}]}" "inline" "${debug}"
+		_exec_if_function "${BASHBOT_EVENT_INLINE[${key}]}" "inline" "${key}" "${debug}"
 	done
 }
 event_message() {
 echo "${MESSAGE[0]}"
-	local event debug="$1"
+	local key debug="$1"
 	# ${MESSAEG[*]} event_message
 	# shellcheck disable=SC2153
-	for event in "${!BASHBOT_EVENT_MESSAGE[@]}"
+	for key in "${!BASHBOT_EVENT_MESSAGE[@]}"
 	do
-		 _exec_if_function "${BASHBOT_EVENT_MESSAGE[${event}]}" "messsage" "${debug}"
+		 _exec_if_function "${BASHBOT_EVENT_MESSAGE[${key}]}" "messsage" "${key}" "${debug}"
 	done
 	
 	# ${TEXT[*]} event_text
 	if [ "${MESSAGE[0]}" != "" ]; then
 		# shellcheck disable=SC2153
-		for event in "${!BASHBOT_EVENT_TEXT[@]}"
+		for key in "${!BASHBOT_EVENT_TEXT[@]}"
 		do
-			_exec_if_function "${BASHBOT_EVENT_TEXT[${event}]}" "text" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_TEXT[${key}]}" "text" "${key}" "${debug}"
 		done
 
 		# ${CMD[*]} event_cmd
 		if [ "${CMD[0]}" != "" ]; then
 			# shellcheck disable=SC2153
-			for event in "${!BASHBOT_EVENT_CMD[@]}"
+			for key in "${!BASHBOT_EVENT_CMD[@]}"
 			do
-				_exec_if_function "${BASHBOT_EVENT_CMD[${event}]}" "command" "${debug}"
+				_exec_if_function "${BASHBOT_EVENT_CMD[${key}]}" "command" "${key}" "${debug}"
 			done
 		fi
 	fi
 	# ${REPLYTO[*]} event_replyto
 	if [ "${REPLYTO[UID]}" != "" ]; then
 		# shellcheck disable=SC2153
-		for event in "${!BASHBOT_EVENT_REPLYTO[@]}"
+		for key in "${!BASHBOT_EVENT_REPLYTO[@]}"
 		do
-			_exec_if_function "${BASHBOT_EVENT_REPLYTO[${event}]}" "replyto" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_REPLYTO[${key}]}" "replyto" "${key}" "${debug}"
 		done
 	fi
 
 	# ${FORWARD[*]} event_forward
 	if [ "${FORWARD[UID]}" != "" ]; then
 		# shellcheck disable=SC2153
-		for event in "${!BASHBOT_EVENT_FORWARD[@]}"
+		for key in "${!BASHBOT_EVENT_FORWARD[@]}"
 		do
-			 _exec_if_function && "${BASHBOT_EVENT_FORWARD[${event}]}" "forward" "${debug}"
+			 _exec_if_function && "${BASHBOT_EVENT_FORWARD[${key}]}" "forward" "${key}" "${debug}"
 		done
 	fi
 
 	# ${CONTACT[*]} event_contact
 	if [ "${CONTACT[FIRST_NAME]}" != "" ]; then
 		# shellcheck disable=SC2153
-		for event in "${!BASHBOT_EVENT_CONTACT[@]}"
+		for key in "${!BASHBOT_EVENT_CONTACT[@]}"
 		do
-			_exec_if_function "${BASHBOT_EVENT_CONTACT[${event}]}" "contact" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_CONTACT[${key}]}" "contact" "${key}" "${debug}"
 		done
 	fi
 
@@ -466,9 +466,9 @@ echo "${MESSAGE[0]}"
 	# ${LOCALTION[*]} event_location
 	if [ "${LOCATION[LONGITUDE]}" != "" ] || [ "${VENUE[TITLE]}" != "" ]; then
 		# shellcheck disable=SC2153
-		for event in "${!BASHBOT_EVENT_LOCATION[@]}"
+		for key in "${!BASHBOT_EVENT_LOCATION[@]}"
 		do
-			_exec_if_function "${BASHBOT_EVENT_LOCATION[${event}]}" "location" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_LOCATION[${key}]}" "location" "${key}" "${debug}"
 		done
 	fi
 
@@ -476,9 +476,9 @@ echo "${MESSAGE[0]}"
 	# NOTE: compare again #URLS -1 blanks!
 	if [[ "${URLS[*]}" != "     " ]]; then
 		# shellcheck disable=SC2153
-		for event in "${!BASHBOT_EVENT_FILE[@]}"
+		for key in "${!BASHBOT_EVENT_FILE[@]}"
 		do
-			_exec_if_function "${BASHBOT_EVENT_FILE[${event}]}" "file" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_FILE[${key}]}" "file" "${key}" "${debug}"
 		done
 	fi
 

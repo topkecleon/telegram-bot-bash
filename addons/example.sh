@@ -4,7 +4,7 @@
 # Addons can register to bashbot events at statup
 # by providing their name and a callback per event
 #
-#### $$VERSION$$ v0.91-0-g31808a9
+#### $$VERSION$$ v0.91-1-gdb03e23
 #
 # If an event occours each registered event function is called.
 #
@@ -40,7 +40,8 @@
 #
 # prameters on events
 # $1 event: inline, message, ..., file
-# $2 debug: use "[[ "$2" = *"debug"* ]]" if you want to output extra diagnostic
+# $2 key: key of array BASHBOT_EVENT_xxx 
+# $3 debug: use "[[ "$2" = *"debug"* ]]" if you want to output extra diagnostic
 #
 
 # export used events
@@ -63,8 +64,8 @@ if [[ "$1" = "start"* ]]; then
     # any function defined by addons MUST be prefixed by addon name
     # function local variables can have any name, but must be LOCAL
     example_reply(){
-	local msg="message"
-	send_markdown_message "${CHAT[ID]}" "User *${USER[USERNAME]}* replied to ${msg} from *${REPLYTO[USERNAME]}*" &
+	local msg="message" event="$1" key="$2"
+	send_markdown_message "${CHAT[ID]}" "User *${USER[USERNAME]}* replied to ${msg} from *${REPLYTO[USERNAME]}* (Event: ${event} Key:{${key})" &
     }
 
     # register to inline and command
@@ -74,11 +75,11 @@ if [[ "$1" = "start"* ]]; then
     # any function defined by addons MUST be prefixed by addon name
     # function local variables can have any name, but must be LOCAL
     example_multievent(){
-	local type="$1"
+	local event="$1" key="$2"
 	local msg="${MESSAGE[0]}"
 	# shellcheck disable=SC2154
 	[ "${type}" = "inline" ] && msg="${iQUERY[0]}"
-	send_normal_message "${CHAT[ID]}" "${type} received: ${msg}" &
+	send_normal_message "${CHAT[ID]}" "${event} from ${key} received: ${msg}" &
     }
 
     BASHBOT_EVENT_TIMER["${EXAMPLE_ME}after5min","-5"]="${EXAMPLE_ME}_after5min"
