@@ -3,7 +3,7 @@
 #
 # works together with git pre-push.sh and ADD all changed files since last push
 
-#### $$VERSION$$ v0.90-0-g7029f7f
+#### $$VERSION$$ v0.91-0-ge2c998c
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script

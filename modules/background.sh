@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-0-g7029f7f
+#### $$VERSION$$ v0.91-0-ge2c998c
 
 # source from commands.sh if you want ro use interactive or background jobs
 
