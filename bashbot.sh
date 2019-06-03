@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.90-3-g9a81e44
+#### $$VERSION$$ v0.90-6-g5819b5c
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -215,7 +215,7 @@ _is_function()
 
 declare -xr DELETE_URL=$URL'/deleteMessage'
 delete_message() {
-	sendJson "${1}" 'message_id: '"${2}"'' "${DELETE_URL}"
+	sendJson "${1}" '"message_id": '"${2}"'' "${DELETE_URL}"
 }
 
 get_file() {

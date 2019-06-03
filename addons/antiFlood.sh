@@ -4,7 +4,7 @@
 # this addon counts how many files, e.g. stickers, are sent to
 # a chat and takes actions if threshold is reached
 #  
-#### $$VERSION$$ v0.90-0-g7029f7f
+#### $$VERSION$$ v0.90-6-g5819b5c
 
 # used events:
 #
@@ -58,15 +58,18 @@ if [[ "$1" = "start"* ]]; then
 			ANTIFL_CHATS["${CHAT[ID]}","level"]="${ANTIFL_DEFAULT}"
 			ANTIFL_CHATS["${CHAT[ID]}","ban"]="${ANTIFL_BAN}"
 			[[ "${CMD[1]}"  =~ ^[0-9]+$  ]] && ANTIFL_CHATS["${CHAT[ID]}","level"]="${CMD[1]}"
+			[[ "${CMD[2]}"  =~ ^[0-9]+$  ]] && ANTIFL_CHATS["${CHAT[ID]}","ban"]="${CMD[2]}"
 			antiFlood_timer
 		;;
 		# command /afactive starts counter meausares
-		"/afdo")
+		"/afdo" | "/afactive")
 			ANTIFL_CHATS["${CHAT[ID]}","active"]="yes"
+			jssh_writeDB "ANTIFL_CHATS" "addons/$ANTIFL_ME" &
 		;;
 		# command /afactive starts counter meausares
 		"/afstop")
 			ANTIFL_CHATS["${CHAT[ID]}","active"]="no"
+			jssh_writeDB "ANTIFL_CHATS" "addons/$ANTIFL_ME" &
 		;;
 	esac
     }
