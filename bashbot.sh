@@ -662,6 +662,8 @@ bot_init() {
 		chmod -R a-w ./*
 		chmod -R u+w "${COUNTFILE}" "${DATADIR}" "${BOTADMIN}" ./*.log 2>/dev/null
 		chmod -R o-r,o-w "${COUNTFILE}" "${DATADIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
+		# jsshDB must writeable by owner
+		find . -name '*.jssh' -exec chmod u+w \{\} +
 		ls -la
 	fi
 }
