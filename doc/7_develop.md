@@ -87,7 +87,7 @@ This means if you register a every 5 Minutes event its first execution may < 5 M
     * 0	ignored
     * 1	execute every minute
     * x	execute every x minutes
-    * -x execute ONCE in x minutes*\**
+    * -x execute ONCE in x minutes *\**
 
 *\* if you really want "in x minutes" you must use ```-(EVENT_TIMER+x)```* 
 
@@ -286,5 +286,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.91-1-gdb03e23
+#### $$VERSION$$ v0.91-4-gaad0bfe
 
