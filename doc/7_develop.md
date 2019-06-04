@@ -61,6 +61,9 @@ Availible events:
 
 "unique-name" can be every alphanumeric string incl. '-' and '_'. Per convention it is the name of the addon followed by an internal identyfier.
 
+"callback" is called as ```callback "event" "unique-name" "debug"``` where "event" is the event name in lower case, e.g. inline, message ... ,
+and "unique-name" is the key you provided when registering the event. 
+
 *Example:* Register a function to echo to any Text send to the bot
 ```bash
 # register callback:
@@ -68,20 +71,25 @@ BASHBOT_EVENT_TEXT["example_1"]="example_echo"
 
 # function called if a text is received
 example_echo() {
+	local event="$1" key="$2"
 	# all availible bashbot functions and variables can be used
-	send_normal_message "${CHAT[ID]}" "${MESSAGE[0]}" & # note the &!
+	send_normal_message "${CHAT[ID]}" "Event: ${event} Key: ${key} : ${MESSAGE[0]}" & # note the &!
 }
 ```
 * BAHSBOT_EVENT_TIMER		is executed every minute and can be used in 3 variants: oneshot, every minute, every X minutes.
 
 Registering to BASHBOT_EVENT_TIMER works isimilar as for message events, but you must add a timing argument to the index name.
+Timer counts minutes since last (re)start in 'EVENT_TIMER', next execution of 'x' is sceduled if ```EVENT_TIMER % x``` is '0' (true).
+This means if you register a every 5 Minutes event its first execution may < 5 Minutes after registration. 
 
 *usage:* BAHSBOT_EVENT_TIMER[ "name" , "time" ], where time is:
 
-    * -x execute ONCE in x minutes
     * 0	ignored
     * 1	execute every minute
     * x	execute every x minutes
+    * -x execute ONCE in x minutes*\**
+
+*\* if you really want "in x minutes" you must use ```-(EVENT_TIMER+x)```* 
 
 *Examples:*
 ```bash
@@ -95,10 +103,13 @@ example_everymin() {
 }
 
 # register other callback:
-BAHSBOT_EVENT_TIMER["example_10min","-10"]="example_in10min"
-
 BAHSBOT_EVENT_TIMER["example_every5","5"]="example_every5min"
 
+# execute once in the next 10 minutes
+BAHSBOT_EVENT_TIMER["example_10min","-10"]="example_in10min"
+
+# once in 10 minutes
+BAHSBOT_EVENT_TIMER["example_10min","$(( (EVENT_TIMER+10) * -1 ))"]="example_in10min"
 
 ```
 
