@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.91-3-g4594e05
+#### $$VERSION$$ v0.91-6-g9b9125c
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -243,6 +243,7 @@ if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
 		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
+	[ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "send" "$@" &
   }
   #$1 Chat, $2 what , $3 file, $4 URL, $5 caption
   sendUpload() {
@@ -255,6 +256,7 @@ if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
 		res="$(curl -s ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
 	fi
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
+	[ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "upload" "$@" &
   }
 else
   # simple curl or wget call outputs result to stdout
@@ -271,10 +273,12 @@ else
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
+	[ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "send" "$@" &
   }
   sendUpload() {
 	sendJson "$1" '"text":"Sorry, wget does not support file upload"' "${MSG_URL}"
 	BOTSENT[OK]="false"
+	[ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "upload" "$@" &
   }
 fi 
 
@@ -372,7 +376,7 @@ process_client() {
 	grep -q "$tmpcount" <"${COUNTFILE}" &>/dev/null || cat <<< "$tmpcount" >>"${COUNTFILE}"
 }
 
-declare -Ax BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD 
+declare -Ax BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD BASHBOT_EVENT_SENDBASHBOT_EVENT_SEND
 declare -Ax BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE BASHBOT_EVENT_TEXT BASHBOT_EVENT_TIMER
 
 start_timer(){
@@ -381,6 +385,17 @@ start_timer(){
 		sleep 59.5
     		kill -ALRM $$
 	done;
+}
+
+EVENT_SEND="0"
+event_send() {
+	# max recursion level 5 to avoid fork bombs
+	(( EVENT_SEND++ )); [ "$EVENT_SEND" -gt "5" ] && return
+	# shellcheck disable=SC2153
+	for key in "${!BASHBOT_EVENT_SEND[@]}"
+	do
+		_exec_if_function "${BASHBOT_EVENT_SEND[${key}]}" "$@"
+	done
 }
 
 EVENT_TIMER="0"

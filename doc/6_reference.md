@@ -457,6 +457,8 @@ Usually  message is automatically forwarded in 'commands.sh', but you can forwar
 Since output of JSON.sh is so handy to use in bash, we provide a simple wrapper to read and write JSON.sh style data from and to files.
 File name is prefixed with BASHBOT_ETC and the suffix '.jssh' is added to file name! File names must not contain '..'
 
+A 'jsshDB' file is a simple 'kay=value' storage.
+
 *Example:* for file name:
 ```bash
 # bashbot is installed in /usr/local/telegram-bot-bash, no BASHBOT_ETC set.
@@ -468,12 +470,20 @@ File name is prefixed with BASHBOT_ETC and the suffix '.jssh' is added to file n
 You must include  ```source modules/jsshDB.sh``` in 'commands.sh' to have the following functions availible.
 
 ##### jssh_newDB
-Creats new empty "DB" file if not exist.
+Creats new empty jsshDB file if not exist.
 
 *usage:*  jssh_newDB "filename"
 
+##### jssh_checkDB
+Check if DB name respects the rules and returns the real/final path to DB file.
+Used internally by all jssh DB functions, but can also used to get the real filename for a jssh DB.
+
+*usage:*  jssh_checkDB "filename"
+
+
+
 ##### jssh_readDB
-Read content of a file in JSON.sh format into given ARRAY.  ARRAY name must be delared with "declare -A ARRAY" upfront,
+Read content of a .jssh file in JSON.sh format into given ARRAY.  ARRAY name must be delared with "declare -A ARRAY" upfront,
 
 *usage:*  jssh_readDB "ARRAY" "filename"
 
@@ -486,13 +496,16 @@ print "${SOMEVALUES[*]}"
 ```
 
 ##### jssh_writeDB
-wWrite content of given ARRAY into file.  ARRAY name must be delared with "declare -A ARRAY" upfront,
+Write content of given ARRAY into jsshDB file.  ARRAY name must be delared with "declare -A ARRAY" upfront,
 "DB" file MUST exist or nothing is written.
+
+Note: Every existing content is overwritten.
 
 *usage:*  jssh_writeDB "ARRAY" "filename"
 
 *example:* 
 ```bash
+declare -A MYVALUES
 MYVALUES["value1"]="value1"
 MYVALUES["loveit"]="value2"
 MYVALUES["whynot"]="value3"
@@ -504,11 +517,70 @@ jssh_newDB "${DATADIR:-}/myvalues"
 jssh_writeDB "MYVALUES" "${DATADIR:-}/myvalues"
 
 # show whats written
-cat ""${DATADIR:-}/myvalues.jssh"
+DBfile="$(jssh_checkDB "${DATADIR:-}/myvalues.jssh")"
+
+cat "DB$file"
 ["value1"]	"value1"
 ["loveit"]	"value2"
 ["whynot"]	"value3"
 
+```
+
+##### jssh_updateDB
+Update/write content of given ARRAY into a jsshDB file.  ARRAY name must be delared with "declare -A ARRAY" upfront,
+"DB" file MUST exist or nothing is written.
+
+Note: Existing DB content not in ARRAY is kept.
+
+*usage:*  jssh_updateDB "ARRAY" "filename"
+
+*example:* 
+```bash
+# continued example from writeDB
+MYVALUES=()
+MYVALUES["newvalue"]="this is new"
+
+# update file data-bot-bash/somevalues.jssh from array MYVALUES
+jssh_updateDB "MYVALUES" "${DATADIR:-}/myvalues"
+
+# show whats written
+["value1"]	"value1"
+["loveit"]	"value2"
+["whynot"]	"value3"
+["newvalue"]	"this is new"
+
+# now writeDB
+cat "$DBfile"
+jssh_writeDB "MYVALUES" "${DATADIR:-}/myvalues"
+
+# show whats written, ups!
+cat "$DBfile"
+["newvalue"]	"this is new"
+
+```
+
+##### jssh_insertDB
+Insert, update, append a key=value pair to a jsshDB file, key name is only allowed to contain '-a-zA-Z0-9,._'
+
+*usage:*  jssh_insertDB "key" "value" "filename"
+
+*example:* 
+```bash
+jssh_insertDB "newkey" "an other value" "${DATADIR:-}/myvalues"
+```
+
+##### jssh_getDB
+Read a key=value pair from a jsshDB file, key name is only allowed to contain '-a-zA-Z0-9,._'
+
+*usage:*  jssh_getDB "key" "filename"
+
+*example:* 
+```bash
+result="$(jssh_getDB "newvalue" "${DATADIR:-}/myvalues")"
+
+# lets see whats the value of key newvalue
+echo "$result"
+this is new
 ```
 
 ----
@@ -792,5 +864,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.91-0-g31808a9
+#### $$VERSION$$ v0.91-6-g9b9125c
 

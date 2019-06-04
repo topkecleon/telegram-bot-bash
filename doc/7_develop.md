@@ -113,6 +113,18 @@ BAHSBOT_EVENT_TIMER["example_10min","$(( (EVENT_TIMER+10) * -1 ))"]="example_in1
 
 ```
 
+* BASHBOT_EVENT_SEND	is exceuted if sendJson or sendUpload is used to send data to Telegram server
+
+In contrast to other events, BASHBOT_EVENT_SEND is excecuted as in a subshell, so there no need to spawn
+a subshell for longer running commands and changes to shanges to variables are not persistent.
+
+BASHBOT_EVENT_SEND is mainly for logging purposes and you must not send messages while processing this event.
+To avoid fork bombs event processing is suspended if recursion because of sending messages is detected.
+
+*usage*: BASHBOT_EVENT_SEND[ "uniqe-name" ]="callback"
+
+"callback" is called with paramter "send" for events from 'sendJson' or "upload" for events from 'sendUpload', followed by the arguments send to the respective function.
+
 ----
 
 #### Create a stripped down Version of your Bot
@@ -286,5 +298,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.91-4-gaad0bfe
+#### $$VERSION$$ v0.91-6-g9b9125c
 

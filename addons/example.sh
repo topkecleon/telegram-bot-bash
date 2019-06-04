@@ -4,7 +4,7 @@
 # Addons can register to bashbot events at statup
 # by providing their name and a callback per event
 #
-#### $$VERSION$$ v0.91-1-gdb03e23
+#### $$VERSION$$ v0.91-6-g9b9125c
 #
 # If an event occours each registered event function is called.
 #
@@ -45,7 +45,7 @@
 #
 
 # export used events
-export BASHBOT_EVENT_INLINE BASHBOT_EVENT_CMD BASHBOT_EVENT_REPLY BASHBOT_EVENT_TIMER
+export BASHBOT_EVENT_INLINE BASHBOT_EVENT_CMD BASHBOT_EVENT_REPLY BASHBOT_EVENT_TIMER BASHBOT_EVENT_SEND
 
 # any global variable defined by addons MUST be prefixed by addon name
 EXAMPLE_ME="example"
@@ -96,5 +96,19 @@ if [[ "$1" = "start"* ]]; then
     # function local variables can have any name, but must be LOCAL
     example_every2min(){
 	send_markdown_message "$(< "${BOTADMIN}")" "This a a every 2 minute event ..." &
+    }
+
+    # register to send
+    BASHBOT_EVENT_SEND["${EXAMPLE_ME}"]="${EXAMPLE_ME}_log"
+    EXAMPLE_LOG="${BASHBOT_ETC:-.}/addons/${EXAMPLE_ME}.log"
+
+    # any function defined by addons MUST be prefixed by addon name
+    # function local variables can have any name, but must be LOCAL
+    # $1 = send / upload
+    # $* remaining args are from sendJson and sendUpload
+    # Note: do not call any send message functions from EVENT_SEND!
+    example_log(){
+	local send="$1"; shift
+	echo "$(date): Type: ${send} Args: $*" >>"${EXAMPLE_LOG}"
     }
 fi
