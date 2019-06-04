@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.91-1-gdb03e23
+#### $$VERSION$$ v0.91-2-g1e851bd
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -321,7 +321,7 @@ JsonGetValue() {
 # $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
 Json2Array() {
 	# shellcheck source=./commands.sh
-	[ "$1" = "" ] || source <( printf "$1"'=( %s )' "$(sed -E -e 's/\t/=/g' -e 's/=(true|false)/="\1"/')" )
+	[ "$1" = "" ] || source <( printf "$1"'=( %s )' "$(sed -E -n -e '/\["[-0-9a-zA-Z_,."]+"\]\t/ s/\t/=/gp' -e 's/=(true|false)/="\1"/')" )
 }
 # output ARRAY as JSON.sh style data
 # $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
