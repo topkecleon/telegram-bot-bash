@@ -4,7 +4,7 @@
 # this addon counts how many files, e.g. stickers, are sent to
 # a chat and takes actions if threshold is reached
 #  
-#### $$VERSION$$ v0.91-1-gdb03e23
+#### $$VERSION$$ v0.94-dev2-1-gaec6de0
 
 # used events:
 #
@@ -52,24 +52,34 @@ if [[ "$1" = "start"* ]]; then
     BASHBOT_EVENT_CMD["${ANTIFL_ME}"]="${ANTIFL_ME}_cmd"
 
     antiFlood_cmd(){
+	# shellcheck disable=SC2153
+	local chat="${CHAT[ID]}"
+
 	case "${CMD[0]}" in
 		# command /afstart starts detection, $1 floodlevel
 		"/afstart")
-			ANTIFL_CHATS["${CHAT[ID]}","level"]="${ANTIFL_DEFAULT}"
-			ANTIFL_CHATS["${CHAT[ID]}","ban"]="${ANTIFL_BAN}"
-			[[ "${CMD[1]}"  =~ ^[0-9]+$  ]] && ANTIFL_CHATS["${CHAT[ID]}","level"]="${CMD[1]}"
-			[[ "${CMD[2]}"  =~ ^[0-9]+$  ]] && ANTIFL_CHATS["${CHAT[ID]}","ban"]="${CMD[2]}"
+			# allow bot admin to activate for other chats
+			[[ "${CMD[3]}"  =~ ^[-0-9]+$  ]] && user_is_botadmin "${USER[ID]}" && chat="$3"
+			[[ "${CMD[1]}"  =~ ^[0-9]+$  ]] && ANTIFL_CHATS["${chat}","level"]="${CMD[1]}" \
+				|| ANTIFL_CHATS["${chat}","level"]="${ANTIFL_DEFAULT}"
+			[[ "${CMD[2]}"  =~ ^[0-9]+$  ]] && ANTIFL_CHATS["${chat}","ban"]="${CMD[2]}" \
+				|| ANTIFL_CHATS["${chat}","ban"]="${ANTIFL_BAN}"
 			antiFlood_timer
+			send_normal_message "${USER[ID]}" "Antiflood set for chat ${chat}" &
 		;;
 		# command /afactive starts counter meausares
 		"/afdo" | "/afactive")
-			ANTIFL_CHATS["${CHAT[ID]}","active"]="yes"
+			[[ "${CMD[1]}"  =~ ^[-0-9]+$  ]] && user_is_botadmin "${USER[ID]}" && chat="$3"
+			ANTIFL_CHATS["${chat}","active"]="yes"
 			jssh_writeDB "ANTIFL_CHATS" "addons/$ANTIFL_ME" &
+			send_normal_message "${USER[ID]}" "Antiflood activated for chat ${chat}" &
 		;;
 		# command /afactive starts counter meausares
 		"/afstop")
-			ANTIFL_CHATS["${CHAT[ID]}","active"]="no"
+			[[ "${CMD[1]}"  =~ ^[-0-9]+$  ]] && user_is_botadmin "${USER[ID]}" && chat="$3"
+			ANTIFL_CHATS["${chat}","active"]="no"
 			jssh_writeDB "ANTIFL_CHATS" "addons/$ANTIFL_ME" &
+			send_normal_message "${USER[ID]}" "Antiflood stopped for chat ${chat}" &
 		;;
 	esac
     }
