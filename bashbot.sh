@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-dev2-0-g0497513
+#### $$VERSION$$ v0.94-dev2-4-gd4f415f
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -698,11 +698,15 @@ if [ ! -f "${JSONSHFILE}" ]; then
 	chmod +x "${JSONSHFILE}" 
 fi
 
-if [ "${SOURCE}" != "yes" ] && [ "$1" != "init" ] &&  [ "$1" != "help" ] && [ "$1" != "" ]; then
+if [ "${SOURCE}" != "yes" ] && [ "$1" != "init" ] &&  [ "$1" != "help" ]; then
   ME="$(getBotName)"
   if [ "$ME" = "" ]; then
-	echo -e "${RED}ERROR: Can't connect to Telegram Bot! May be your TOKEN is invalid ...${NC}"
-	exit 1
+	echo -e "${RED}ERROR: Can't connect to Telegram! Your TOKEN is invalid or you are blocked by ${URL%/*} ...${NC}"
+	case "$1" in
+		"" | "stop" | "kill"* | "suspendb"* ) # warn, but do not exit
+			echo -e "${RED}Ignored to continue for $1  ... ${NC}";;
+		*) exit 1;;
+	esac
   fi
 fi
 
