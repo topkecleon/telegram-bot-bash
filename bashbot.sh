@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-dev2-4-gd4f415f
+#### $$VERSION$$ v0.94-dev2-5-gc5caf93
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -232,14 +232,14 @@ if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
   # simple curl or wget call, output to stdout
   getJson(){
 	# shellcheck disable=SC2086
-	curl -sL ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
+	curl -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
   }
   # usage: sendJson "chat" "JSON" "URL"
   sendJson(){
 	local chat="";
 	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
 	# shellcheck disable=SC2086
-	res="$(curl -s ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" -d '{'"${chat} $2"'}' -X POST "${3}" \
+	res="$(curl -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" -d '{'"${chat} $2"'}' -X POST "${3}" \
 		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
@@ -250,10 +250,10 @@ if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
 	[ "$#" -lt 4  ] && return
 	if [ "$5" != "" ]; then
 	# shellcheck disable=SC2086
-		res="$(curl -s ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n )"
+		res="$(curl -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n )"
 	else
 	# shellcheck disable=SC2086
-		res="$(curl -s ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
+		res="$(curl -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
 	fi
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	[ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "upload" "$@" &
@@ -262,14 +262,14 @@ else
   # simple curl or wget call outputs result to stdout
   getJson(){
 	# shellcheck disable=SC2086
-	wget -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
+	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
   }
   # usage: sendJson "chat" "JSON" "URL"
   sendJson(){
 	local chat="";
 	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
 	# shellcheck disable=SC2086
-	res="$(wget -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $2"'}' \
+	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $2"'}' \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
