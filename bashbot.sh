@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-dev2-5-gc5caf93
+#### $$VERSION$$ v0.94-dev2-6-g7843de5
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -243,7 +243,7 @@ if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
 		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
-	[ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "send" "$@" &
+	[ "${SOURCE}" != "yes" ] && [ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "send" "$@" &
   }
   #$1 Chat, $2 what , $3 file, $4 URL, $5 caption
   sendUpload() {
@@ -256,7 +256,7 @@ if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
 		res="$(curl -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
 	fi
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
-	[ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "upload" "$@" &
+	[ "${SOURCE}" != "yes" ] && [ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "upload" "$@" &
   }
 else
   # simple curl or wget call outputs result to stdout
@@ -273,12 +273,12 @@ else
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
-	[ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "send" "$@" &
+	[ "${SOURCE}" != "yes" ] && [ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "send" "$@" &
   }
   sendUpload() {
 	sendJson "$1" '"text":"Sorry, wget does not support file upload"' "${MSG_URL}"
 	BOTSENT[OK]="false"
-	[ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "upload" "$@" &
+	[ "${SOURCE}" != "yes" ] && [ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "upload" "$@" &
   }
 fi 
 
