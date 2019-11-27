@@ -77,7 +77,7 @@ if [ "${1}" != "source" ];then
 		################################################
 		# GLOBAL commands start here, edit messages only
 		'/info'*)
-			send_markdown_message "${bashbot_info}"
+			send_markdown_message "${CHAT[ID]}" "${bashbot_info}"
 			;;
 		'/start'*)
 			send_action "${CHAT[ID]}" "typing"
