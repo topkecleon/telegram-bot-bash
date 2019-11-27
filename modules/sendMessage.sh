@@ -101,7 +101,7 @@ upload_file(){
 	[[ "$file" = *'..'* ]] && return  # no directory traversal
 	[[ "$file" = '.'* ]] && return	 # no hidden or relative files
 	if [[ "$file" = '/'* ]] ; then
-		[[ ! "$file" =~ $FILE_REGEX ]] && return # absulute must match REGEX
+		[[ ! "$file" =~ "$FILE_REGEX" ]] && return # absulute must match REGEX
 	else
 		file="${UPLOADDIR:-NOUPLOADDIR}/${file}" # othiers must be in UPLOADDIR
 	fi
