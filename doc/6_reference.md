@@ -105,6 +105,7 @@ Starting with version 0.80 send_file implements the following rules:
 - file names must not start with "."
 - file names not starting wit "/" are realtive to $TMPDIR, e.g. ./data-bot-bash
 - abolute filenames must match $FILE_REGEX
+- FILE_REGEX is a regular expression, not shell globbing, test you rexexes: http://www.softlion.com/webTools/RegExpTest/
 
 *usage:* send_file "${CHAT[ID]}" "file" "caption"
 
@@ -889,5 +890,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.94-dev2-0-g3d636f7
+#### $$VERSION$$ v0.94-dev2-1-g4f90215
 
