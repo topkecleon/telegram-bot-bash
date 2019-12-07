@@ -889,5 +889,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.94-dev2-3-ga7769ad
+#### $$VERSION$$ v0.94-dev2-0-g3d636f7
 
