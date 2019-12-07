@@ -153,7 +153,7 @@ fi
 
 ###############
 # load modules
-for modules in ${MODULEDIR:-.}/*.sh ; do
+for modules in "${MODULEDIR:-.}"/*.sh ; do
 	# shellcheck source=./modules/aliases.sh
 	[ -r "${modules}" ] && source "${modules}" "source"
 done
@@ -615,7 +615,7 @@ start_bot() {
 	find "${DATADIR}" -type p -delete
 	find "${DATADIR}" -size 0 -name "*.log" -delete
 	# load addons on startup
-	for addons in ${ADDONDIR:-.}/*.sh ; do
+	for addons in "${ADDONDIR:-.}"/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
 		[ -r "${addons}" ] && source "${addons}" "startbot" "${DEBUG}"
 	done
@@ -653,7 +653,7 @@ bot_init() {
 	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${DATADIR}"; rmdir "${OLDTMP}"; }
 	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
 	# load addons on startup
-	for addons in ${ADDONDIR:-.}/*.sh ; do
+	for addons in "${ADDONDIR:-.}"/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
 		[ -r "${addons}" ] && source "${addons}" "init" "${DEBUG}"
 	done

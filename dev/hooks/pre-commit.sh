@@ -21,7 +21,7 @@ echo "............................"
 unset IFS; set -f
 
 # check for shellcheck
-if which shellcheck >/dev/null 2>&1; then
+if command -v  shellcheck >/dev/null 2>&1; then
 	echo "  Test all scripts with shellcheck ..."
 else
 	echo "Error: shellcheck is not installed. Install shellcheck or delete $0"

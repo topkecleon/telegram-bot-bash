@@ -39,7 +39,7 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 # load modues on startup and always on on debug
 if [ "${1}" = "source" ] || [[ "${1}" = *"debug"* ]] ; then
 	# load all readable modules
-	for modules in ${MODULEDIR:-.}/*.sh ; do
+	for modules in "${MODULEDIR:-.}"/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
 		[ -r "${modules}" ] && source "${modules}" "${1}"
 	done

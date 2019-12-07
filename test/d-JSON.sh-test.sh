@@ -20,7 +20,7 @@ do
     [ "${i}" = "1" ] && echo "  ... JSON.sh -s -b -n"
     [ "${i}" = "2" ] && echo "  ... JSON.sh"
     set +f
-    for jsonfile in ${REFDIR}/*.in
+    for jsonfile in "${REFDIR}"/*.in
     do
 	set -f
 	[ "${i}" = "1" ] && "${JSON}"  -s -b -n <"${jsonfile}"  >"${jsonfile}.out-${i}"
