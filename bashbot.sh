@@ -282,15 +282,22 @@ else
   }
 fi 
 
+# escape / remove text charaters for json strings, eg. " -> \" 
+# $1 string
+# output escaped string
+JsonEscape() {
+	sed 's/\([-"`´,§$%&ß/(){}#@?*]\)/\\\1/g' <<< "$1"
+}
+
 # convert common telegram entities to JSON
 # title caption description markup inlinekeyboard
 title2Json(){
 	local title caption desc markup keyboard
-	[ "$1" != "" ] && title=',"title":"'$1'"'
-	[ "$2" != "" ] && caption=',"caption":"'$2'"'
-	[ "$3" != "" ] && desc=',"description":"'$3'"'
-	[ "$4" != "" ] && markup=',"parse_mode":"'$4'"'
-	[ "$5" != "" ] && keyboard=',"reply_markup":"'$5'"'
+	[ "$1" != "" ] && title=',"title":"'$(JsonEscape "$1")'"'
+	[ "$2" != "" ] && caption=',"caption":"'$(JsonEscape "$2")'"'
+	[ "$3" != "" ] && desc=',"description":"'$(JsonEscape "$3")'"'
+	[ "$4" != "" ] && markup=',"parse_mode":"'$(JsonEscape "$4")'"'
+	[ "$5" != "" ] && keyboard=',"reply_markup":"'$(JsonEscape "$5")'"'
 	echo "${title}${caption}${desc}${markup}${keyboard}"
 }
 
