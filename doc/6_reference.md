@@ -479,10 +479,13 @@ Read content of a file in JSON.sh format into given ARRAY.  ARRAY name must be d
 
 *example:* 
 ```bash
-# read file data-bot-bash/somevalues.jssh into array SOMEVALUES
-jssh_readDB "SOMEVALUES" "${DATADIR:-}/somevalues"
+# Prepare array to store vaules
+declare -A  READVALUES
 
-print "${SOMEVALUES[*]}"
+# read file data-bot-bash/somevalues.jssh into array SOMEVALUES
+jssh_readDB "READVALUES" "${DATADIR:-}/somevalues"
+
+print "${READVALUES[*]}"
 ```
 
 ##### jssh_writeDB
@@ -493,21 +496,24 @@ wWrite content of given ARRAY into file.  ARRAY name must be delared with "decla
 
 *example:* 
 ```bash
-MYVALUES["value1"]="value1"
-MYVALUES["loveit"]="value2"
-MYVALUES["whynot"]="value3"
+# Prepare array to store vaules
+declare -A  WRITEVALUES
+
+WRITEVALUES["value1"]="value1"
+WRITEVALUES["loveit"]="value2"
+WRITEVALUES["whynot-subindex"]["subindex"]="value3"
 
 # create DB
 jssh_newDB "${DATADIR:-}/myvalues"
 
 # write to file data-bot-bash/somevalues.jssh from array MYVALUES
-jssh_writeDB "MYVALUES" "${DATADIR:-}/myvalues"
+jssh_writeDB "WRITEVALUES" "${DATADIR:-}/myvalues"
 
 # show whats written
-cat ""${DATADIR:-}/myvalues.jssh"
+cat "${DATADIR:-}/myvalues.jssh"
 ["value1"]	"value1"
 ["loveit"]	"value2"
-["whynot"]	"value3"
+["whynot-subindex"]	"value3"
 
 ```
 
