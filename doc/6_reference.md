@@ -472,22 +472,6 @@ Creats new empty "DB" file if not exist.
 
 *usage:*  jssh_newDB "filename"
 
-##### jssh_readDB
-Read content of a file in JSON.sh format into given ARRAY.  ARRAY name must be delared with "declare -A ARRAY" upfront,
-
-*usage:*  jssh_readDB "ARRAY" "filename"
-
-*example:* 
-```bash
-# Prepare array to store vaules
-declare -A  READVALUES
-
-# read file data-bot-bash/somevalues.jssh into array SOMEVALUES
-jssh_readDB "READVALUES" "${DATADIR:-}/somevalues"
-
-print "${READVALUES[*]}"
-```
-
 ##### jssh_writeDB
 wWrite content of given ARRAY into file.  ARRAY name must be delared with "declare -A ARRAY" upfront,
 "DB" file MUST exist or nothing is written.
@@ -499,9 +483,11 @@ wWrite content of given ARRAY into file.  ARRAY name must be delared with "decla
 # Prepare array to store vaules
 declare -A  WRITEVALUES
 
-WRITEVALUES["value1"]="value1"
-WRITEVALUES["loveit"]="value2"
-WRITEVALUES["whynot-subindex"]["subindex"]="value3"
+WRITEVALUES["value1"]="example"
+WRITEVALUES["value2"]="an other value"
+WRITEVALUES["whynot","subindex1"]="whynot A"
+WRITEVALUES["whynot","subindex2"]="whynot B"
+WRITEVALUES["whynot","subindex2","text"]="This is an example content for pseudo multidimensional bash array"
 
 # create DB
 jssh_newDB "${DATADIR:-}/myvalues"
@@ -511,13 +497,44 @@ jssh_writeDB "WRITEVALUES" "${DATADIR:-}/myvalues"
 
 # show whats written
 cat "${DATADIR:-}/myvalues.jssh"
-["value1"]	"value1"
-["loveit"]	"value2"
-["whynot-subindex"]	"value3"
-
+["value1"]	"example"
+["value2"]	"an other value"
+["whynot","subindex2","text"]	"This is an example content for pseudo multidimensional bash array"
+["whynot","subindex2"]	"whynot B"
+["whynot","subindex1"]	"whynot A"```
 ```
 
+
 ----
+
+##### jssh_readDB
+Read content of a file in JSON.sh format into given ARRAY.  ARRAY name must be delared with "declare -A ARRAY" upfront,
+
+*usage:*  jssh_readDB "ARRAY" "filename"
+
+*example:* 
+```bash
+# Prepare array to read vaules
+declare -A  READVALUES
+
+# read file data-bot-bash/myvalues.jssh into array READVALUES
+jssh_readDB "READVALUES" "${DATADIR:-}/myvalues"
+
+# sinple command to output values ONLY
+printf "${READVALUES[*]}"
+
+# output key and value in a loop
+for x in "${!READVALUES[@]}"; do printf "[%s]=%s\n" "$x" "${READVALUES[$x]}" ; done
+
+[value1]=example
+[value2]=an other value
+[whynot,subindex2,text]=This is an example content for pseudo multidimensional bash array
+[whynot,subindex2]=whynot B
+[whynot,subindex1]=whynot A
+[whynot,subindex]=value3
+```
+
+
 
 ### Aliases - shortcuts for often used funtions 
 You must include  ```source modules/aliases.sh``` in 'commands.sh' to have the following functions availible.
