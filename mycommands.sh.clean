@@ -4,7 +4,7 @@
 # files: mycommands.sh.clean
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.94-dev3-2-gbf8a911
+#### $$VERSION$$ v0.94-dev3-3-ga5975d9
 #
 
 ##########
@@ -27,6 +27,9 @@ export INLINE="0"
 # do NOT set to .* as this allow sending files from all locations!
 export FILE_REGEX='^/home/user/allowed/.*'
 
+# set to "yes" and give your bot admin privilegs to remove service messaes from groups
+export SILENCER="no"
+
 ########
 # special network setups may require to provide additional ARGS to curl
 #
@@ -34,10 +37,32 @@ export FILE_REGEX='^/home/user/allowed/.*'
 # export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1:9050" # TOR
 # export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1" # regular SOCKS
 
-if [ "$1" != "source" ];then
-    # your additional bahsbot commands
+if [ "$1" = "startbot" ];then
+    # run once after startup when the first message is recieved
+    my_startup(){
+	:
+    }
+    touch .mystartup
+else
+    # here we call the function above when the mesage arrives
+    # things to do only at soure, eg. after startup
+    [ -f .mystartup ] && rm -f .mystartup && _exec_if_function my_startup
+
+    #############################
+    # your own bashbot commands
     # NOTE: command can have @botname attached, you must add * in case tests... 
     mycommands() {
+
+	##############
+	# a service Message was recieved
+	# add your own stuff here
+	if [[ "${SERVICE}" != "" ]]; then
+
+		# example: delete every service message
+		if [ "${SILENCER}" = "yes" ]; then
+			delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
+		fi
+	fi
 
 	case "${MESSAGE}" in
 		##################

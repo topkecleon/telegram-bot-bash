@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-dev3-0-geef955a
+#### $$VERSION$$ v0.94-dev3-3-ga5975d9
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -431,7 +431,6 @@ event_inline() {
 	done
 }
 event_message() {
-echo "${MESSAGE[0]}"
 	local key debug="$1"
 	# ${MESSAEG[*]} event_message
 	# shellcheck disable=SC2153
@@ -610,6 +609,8 @@ process_message() {
 	SERVICE[NEWTILE]="${UPD["result",${num},"message","new_chat_title"]}"
 	SERVICE[NEWPHOTO]="${UPD["result",${num},"message","new_chat_photo"]}"
 	SERVICE[PINNED]="${UPD["result",${num},"message","pinned_message"]}"
+	# set SSERVICE to yes if a service message was recieved
+	[[ "${SERVICE[*]}" =~  ^[[:blank:]]+$ ]] || SERVICE[0]="yes"
 
 
 	# split message in command and args
