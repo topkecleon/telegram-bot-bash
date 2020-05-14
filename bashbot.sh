@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-dev2-0-g3d636f7
+#### $$VERSION$$ v0.94-dev3-0-geef955a
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -136,7 +136,7 @@ declare -rx SCRIPT SCRIPTDIR MODULEDIR RUNDIR ADDONDIR TOKENFILE BOTADMIN BOTACL
 declare -rx BOTTOKEN URL ME_URL UPD_URL GETFILE_URL
 
 declare -ax CMD
-declare -Ax UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
+declare -Ax UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY SERVICE NEWMEMBER
 export res CAPTION
 
 
@@ -239,7 +239,7 @@ if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
 	local chat="";
 	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
 	# shellcheck disable=SC2086
-	res="$(curl -s ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" -d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
+	res="$(curl -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" -d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
 		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
@@ -269,7 +269,7 @@ else
 	local chat="";
 	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
 	# shellcheck disable=SC2086
-	res="$(wget -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
+	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
@@ -596,9 +596,25 @@ process_message() {
 	LOCATION[LONGITUDE]="${UPD["result",${num},"message","location","longitude"]}"
 	LOCATION[LATITUDE]="${UPD["result",${num},"message","location","latitude"]}"
 
+	# service messages
+	SERVICE=( ); NEWMEMBER=( )
+	SERVICE[NEWMEMBER]="${UPD["result",${num},"message","new_chat_member","id"]}"
+	if [ "${SERVICE[NEWMEMBER]}" != "" ]; then
+		NEWMEMBER[ID]="${SERVICE[NEWMEMBER]}"
+		NEWMEMBER[FIRSTNAME]="${UPD["result",${num},"message","new_chat_member","first_name"]}"
+		NEWMEMBER[LASTNAME]="${UPD["result",${num},"message","new_chat_member","last_name"]}"
+		NEWMEMBER[USERNAME]="${UPD["result",${num},"message","new_chat_member","username"]}"
+		NEWMEMBER[ISBOT]="${UPD["result",${num},"message","new_chat_member","is_bot"]}"
+	fi
+	SERVICE[LEFTMEMBER]="${UPD["result",${num},"message","left_chat_member","id"]}"
+	SERVICE[NEWTILE]="${UPD["result",${num},"message","new_chat_title"]}"
+	SERVICE[NEWPHOTO]="${UPD["result",${num},"message","new_chat_photo"]}"
+	SERVICE[PINNED]="${UPD["result",${num},"message","pinned_message"]}"
+
+
 	# split message in command and args
 	CMD=( )
-	if [[ "${MESSAGE[0]}" = "/"* ]]; then
+	if [[ "${MESSAGE[0]}" == "/"* ]]; then
 		set -f; unset IFS
 		# shellcheck disable=SC2206
 		CMD=( ${MESSAGE[0]} )
@@ -626,6 +642,8 @@ start_bot() {
 		# shellcheck source=./modules/aliases.sh
 		[ -r "${addons}" ] && source "${addons}" "startbot" "${DEBUG}"
 	done
+	# shellcheck source=./commands.sh
+	source "${COMMANDS}" "startbot"
 	# start timer events
 	if _is_function start_timer ; then
 		# shellcheck disable=SC2064

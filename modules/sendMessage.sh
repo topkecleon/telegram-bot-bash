@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-dev2-0-g3d636f7
+#### $$VERSION$$ v0.94-dev3-0-geef955a
 
 # source from commands.sh to use the sendMessage functions
 
@@ -22,7 +22,7 @@ ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
 
 send_normal_message() {
-	local text="$(JsonEscape "${2}")"
+	local text; text="$(JsonEscape "${2}")"
 	until [ -z "${text}" ]; do
 		sendJson "${1}" '"text":"'"${text:0:4096}"'"' "${MSG_URL}"
 		text="${text:4096}"
@@ -30,7 +30,7 @@ send_normal_message() {
 }
 
 send_markdown_message() {
-	local text="$(JsonEscape "${2}")"
+	local text; text="$(JsonEscape "${2}")"
 	until [ -z "${text}" ]; do
 		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdown"' "${MSG_URL}"
 		text="${text:4096}"
@@ -38,7 +38,7 @@ send_markdown_message() {
 }
 
 send_html_message() {
-	local text="$(JsonEscape "${2}")"
+	local text; text="$(JsonEscape "${2}")"
 	until [ -z "${text}" ]; do
 		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"html"' "${MSG_URL}"
 		text="${text:4096}"
@@ -46,7 +46,7 @@ send_html_message() {
 }
 
 old_send_keyboard() {
-	local text='"text":"'$(JsonEscape "${2}")'"'
+	local text; text='"text":"'$(JsonEscape "${2}")'"'
 	shift 2
 	local keyboard="init"
 	OLDIFS="$IFS"
@@ -64,24 +64,24 @@ sendEmpty() {
 }
 send_keyboard() {
 	if [[ "$3" != *'['* ]]; then old_send_keyboard "${@}"; return; fi
-	local text='"text":"'$(JsonEscape "${2}")'"'; [ "${2}" = "" ] && text='"text":"'"${ISEMPTY}"'"'
+	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ "${2}" = "" ] && text='"text":"'"${ISEMPTY}"'"'
 	local one_time=', "one_time_keyboard":true' && [ "$4" != "" ] && one_time=""
 	sendEmpty "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"'}' "$MSG_URL"
 	# '"text":"$2", "reply_markup": {"keyboard": [ ${3} ], "one_time_keyboard": true}'
 }
 
 remove_keyboard() {
-	local text='"text":"'$(JsonEscape "${2}")'"'; [ "${2}" = "" ] && text='"text":"'"${ISEMPTY}"'"'
+	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ "${2}" = "" ] && text='"text":"'"${ISEMPTY}"'"'
 	sendEmpty "${1}" "${text}"', "reply_markup": {"remove_keyboard":true}' "$MSG_URL"
 	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
 }
 send_inline_keyboard() {
-	local text='"text":"'$(JsonEscape "${2}")'"'; [ "${2}" = "" ] && text='"text":"'"${ISEMPTY}"'"'
+	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ "${2}" = "" ] && text='"text":"'"${ISEMPTY}"'"'
 	sendEmpty "${1}" "${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]}' "$MSG_URL"
 	# JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
 }
 send_button() {
-	send_inline_keyboard "${1}" "${2}" '[ {"text":"'$(JsonEscape "${3}")'", "url":"'"${4}"'"}]' 
+	send_inline_keyboard "${1}" "${2}" '[ {"text":"'"$(JsonEscape "${3}")"'", "url":"'"${4}"'"}]' 
 }
 
 
@@ -114,7 +114,7 @@ upload_file(){
 			WHAT="audio"
 			STATUS="upload_audio"
 			;;
-		png|jpg|jpeg|gif)
+		png|jpg|jpeg|gif|pic)
 			CUR_URL="$PHO_URL"
 			WHAT="photo"
 			STATUS="upload_photo"
