@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-pre-0-gac2ec02
+#### $$VERSION$$ v0.94-pre-1-g4aa7561
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -51,12 +51,14 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
 
 # load modues on startup and always on on debug
-if [ "${1}" = "startbot" ] || [[ "${1}" = *"debug"* ]] ; then
-	# load all readable modules
-	for modules in "${MODULEDIR:-.}"/*.sh ; do
+if [ "${1}" != "" ]; then
+    # load all readable modules
+    for modules in "${MODULEDIR:-.}"/*.sh ; do
+	if [[ "${1}" == *"debug"* ]] || ! _is_function "$(basename "${modules}")"; then
 		# shellcheck source=./modules/aliases.sh
 		[ -r "${modules}" ] && source "${modules}" "${1}"
-	done
+	fi
+    done
 fi
 
 #                                                            

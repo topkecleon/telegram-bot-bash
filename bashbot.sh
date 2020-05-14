@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-pre-0-gac2ec02
+#### $$VERSION$$ v0.94-pre-1-g4aa7561
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -39,7 +39,7 @@ RUNDIR="$(dirname "$0")"
 
 MODULEDIR="${SCRIPTDIR}/modules"
 
-
+# adjust locations based on source and real name
 if [ "${SCRIPT}" != "${REALME}" ] || [ "$1" = "source" ]; then
 	SOURCE="yes"
 else
@@ -69,20 +69,21 @@ if [ ! -w "." ]; then
 	ls -ld .
 fi
 
-
+# if BOTTOKEN is empty read from file
 TOKENFILE="${BASHBOT_ETC:-.}/token"
-if [ ! -f "${TOKENFILE}" ]; then
+if [ -z  "${BOTTOKEN}" ] && [ ! -f "${TOKENFILE}" ]; then
    if [ "${CLEAR}" = "" ] && [ "$1" != "init" ]; then
-	echo "Running headless, run ${SCRIPT} init first!"
+	echo "Running headless, set BOTTOKEN or run ${SCRIPT} init first!"
 	exit 2 
    else
 	${CLEAR}
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NC}"
-	read -r token
-	printf '%s\n' "${token}" > "${TOKENFILE}"
+	read -r BOTTOKEN
+	printf '%s\n' "${BOTTOKEN}" > "${TOKENFILE}"
    fi
 fi
+[ -z  "${BOTTOKEN}" ] && BOTTOKEN="$(< "${TOKENFILE}")"
 
 BOTADMIN="${BASHBOT_ETC:-.}/botadmin"
 if [ ! -f "${BOTADMIN}" ]; then
@@ -124,7 +125,6 @@ elif [ ! -w "${COUNTFILE}" ]; then
 	exit 2
 fi
 
-BOTTOKEN="$(< "${TOKENFILE}")"
 URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
 
 ME_URL=$URL'/getMe'
@@ -155,7 +155,7 @@ fi
 # load modules
 for modules in "${MODULEDIR:-.}"/*.sh ; do
 	# shellcheck source=./modules/aliases.sh
-	[ -r "${modules}" ] && source "${modules}" "source"
+	if ! _is_function "$(basename "${modules}")" && [ -r "${modules}" ]; then source "${modules}" "source"; fi
 done
 
 #################
@@ -677,6 +677,7 @@ bot_init() {
 	# upgrade from old version
 	local OLDTMP="${BASHBOT_VAR:-.}/tmp-bot-bash"
 	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${DATADIR}"; rmdir "${OLDTMP}"; }
+	# no more existing modules
 	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
 	# load addons on startup
 	for addons in "${ADDONDIR:-.}"/*.sh ; do

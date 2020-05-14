@@ -5,9 +5,12 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-dev3-0-geef955a
+#### $$VERSION$$ v0.94-pre-1-g4aa7561
 #
 # source from commands.sh to use the aliases
+
+# source once magic, function named like file
+eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 
 # easy handling of users:
 _is_botadmin() {

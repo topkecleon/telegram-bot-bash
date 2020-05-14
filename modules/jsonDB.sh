@@ -5,12 +5,15 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-dev3-0-geef955a
+#### $$VERSION$$ v0.94-pre-1-g4aa7561
 #
 # source from commands.sh to use jsonDB functions
 #
 # jsonDB provides simple functions to read and store bash Arrays
 # from to file in JSON.sh output format, its a simple key/value storage.
+
+# source once magic, function named like file
+eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 
 # read content of a file in JSON.sh format into given ARRAY
 # $1 ARRAY name, must be delared with "declare -A ARRAY" upfront
