@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-pre-1-g4aa7561
+#### $$VERSION$$ v0.94-pre-2-gc0a633f
 
 # source once magic, function named like file
 eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
@@ -58,10 +58,10 @@ user_is_botadmin() {
 
 user_is_allowed() {
 	local acl="$1"
-	[ "$1" = "" ] && return 1
+	[ -z "$1" ] && return 1
 	grep -F -xq "${acl}:*:*" <"${BOTACL}" && return 0
-	[ "$2" != "" ] && acl="${acl}:$2"
+	[ -n "$2" ] && acl="${acl}:$2"
 	grep -F -xq "${acl}:*" <"${BOTACL}" && return 0
-	[ "$3" != "" ] && acl="${acl}:$3"
+	[ -n "$3" ] && acl="${acl}:$3"
 	grep -F -xq "${acl}" <"${BOTACL}"
 }

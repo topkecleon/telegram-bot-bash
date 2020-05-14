@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-pre-1-g4aa7561
+#### $$VERSION$$ v0.94-pre-2-gc0a633f
 
 # source from commands.sh to use the inline functions
 
@@ -36,15 +36,15 @@ inline_query_compose(){
 			JSON='{"type":"article","id":"'$ID'","input_message_content": {"message_text":"'$4'"} '$(title2Json "$3" "" "$5" "$6" "$7")'}'
 		;;
 		"photo") # photo ID photoURL (thumbURL title description caption)
-			[ "$4" = "" ] && tumb="$3"
+			[ -z "$4" ] && tumb="$3"
 			JSON='{"type":"photo","id":"'$ID'","photo_url":"'$3'","thumb_url":"'$4${tumb}'"'$(title2Json "$5" "$7" "$6" "$7" "$8")'}'
 		;;
 		"gif") # gif ID photoURL (thumbURL title caption)
-			[ "$4" = "" ] && tumb="$3"
+			[ -z "$4" ] && tumb="$3"
 			JSON='{"type":"gif","id":"'$ID'","gif_url":"'$3'", "thumb_url":"'$4${tumb}'"'$(title2Json "$5" "$6" "$7" "$8" "$9")'}'
 		;;
 		"mpeg4_gif") # mpeg4_gif ID mpegURL (thumbURL title caption)
-			[ "$4" != "" ] && tumb='","thumb_url":"'$4'"'
+			[ -n "$4" ] && tumb='","thumb_url":"'$4'"'
 			JSON='{"type":"mpeg4_gif","id":"'$ID'","mpeg4_url":"'$3'"'${tumb}$(title2Json "$5" "$6" "" "$7" "$8")'}'
 		;;
 		"video") # video ID videoURL mime thumbURL title (caption)
@@ -63,13 +63,13 @@ inline_query_compose(){
 			JSON='{"type":"location","id":"'$ID'","latitude":"'$3'","longitude":"'$4'","title":"'$5'"}'
 		;;
 		"venue") # venue ID lat long title (adress forsquare)
-			[ "$6" = "" ] && addr="$5"
-			[ "$7" != "" ] && fours=',"foursquare_id":"'$7'"'
+			[ -z "$6" ] && addr="$5"
+			[ -n "$7" ] && fours=',"foursquare_id":"'$7'"'
 			JSON='{"type":"venue","id":"'$ID'","latitude":"'$3'","longitude":"'$4'","title":"'$5'","address":"'$6${addr}'"'${fours}'}'
 		;;
 		"contact") # contact ID phone first (last thumb)
-			[ "$5" != "" ] && last=',"last_name":"'$5'"'
-			[ "$6" != "" ] && tumb='","thumb_url":"'$6'"'
+			[ -n "$5" ] && last=',"last_name":"'$5'"'
+			[ -n "$6" ] && tumb='","thumb_url":"'$6'"'
 			JSON='{"type":"contact","id":"'$ID'","phone_number":"'$3'","first_name":"'$4'"'${last}'"}'
 		;;
 								# title2Json title caption description markup inlinekeyboard
