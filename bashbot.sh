@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-pre-3-g0e75138
+#### $$VERSION$$ v0.94-pre-4-gd28f975
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -30,6 +30,23 @@ if [ -t 1 ] && [ -n "$TERM" ];  then
     ORANGE='\e[35m'
     NC='\e[0m'
 fi
+
+# some important helper functions
+# returns true if command exist
+_exists()
+{
+	[ "$(LC_ALL=C type -t "$1")" = "file" ]
+}
+
+# execute function if exists
+_exec_if_function() {
+	[ "$(LC_ALL=C type -t "${1}")" != "function" ] || "$@"
+}
+# returns true if function exist
+_is_function()
+{
+	[ "$(LC_ALL=C type -t "$1")" = "function" ]
+}
 
 # get location and name of bashbot.sh
 SCRIPT="$0"
@@ -79,7 +96,7 @@ DATADIR="${BASHBOT_VAR:-.}/data-bot-bash"
 COUNTFILE="${BASHBOT_VAR:-.}/count"
 
 # we assume everthing is already set up correctly if we have TOKEN
-if [ -n "${BOTTOKEN}" ]; then
+if [ -z "${BOTTOKEN}" ]; then
   # BOTTOKEN empty read from file
   if [ ! -f "${TOKENFILE}" ]; then
      if [ -z "${CLEAR}" ] && [ "$1" != "init" ]; then
@@ -207,22 +224,6 @@ killallproc() {
 	fi
 }
 
-
-# returns true if command exist
-_exists()
-{
-	[ "$(LC_ALL=C type -t "$1")" = "file" ]
-}
-
-# execute function if exists
-_exec_if_function() {
-	[ "$(LC_ALL=C type -t "${1}")" != "function" ] || "$@"
-}
-# returns true if function exist
-_is_function()
-{
-	[ "$(LC_ALL=C type -t "$1")" = "function" ]
-}
 
 declare -xr DELETE_URL=$URL'/deleteMessage'
 delete_message() {
