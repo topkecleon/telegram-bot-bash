@@ -457,7 +457,7 @@ Usually  message is automatically forwarded in 'commands.sh', but you can forwar
 
 *usage:* send_interactive "${CHAT[ID]}" "message"
 
-*replaces:*' incproc
+*replaces:* incproc
 
 ----
 
@@ -537,6 +537,28 @@ cat "${DATADIR:-}/myvalues.jssh"
 ["value2"]	"a value"
 ["whynot","subindex2","text"]	"This is an example content for pseudo multidimensional bash array"
 ["whynot","subindex2"]	"whynot B"
+["whynot","subindex1"]	"whynot A"
+```
+
+##### jssh_printDB
+Print content of an ARRAY to STDOUT. ARRAY name must be delared with "declare -A ARRAY" before calling printDB..
+
+*usage:*  jssh_printDB "ARRAY" 
+
+*example:* 
+```bash
+# Prepare array to store vaules
+declare -A  PRINTVALUES
+
+# read file data-bot-bash/myvalues.jssh into array READVALUES
+jssh_readDB "PRINTVALUES" "${DATADIR:-}/myvalues"
+
+# print DB to stdout
+jssh_printDB READVALUES
+["value1"]	"example"
+["value2"]	"a value"
+["whynot","subindex2","text"]	"This is an example content for pseudo multidimensional bash array"
+["whynot","subindex2"]	"whynot B"
 ["whynot","subindex1"]	"whynot A"```
 ```
 
@@ -612,17 +634,15 @@ jssh_readDB "READVALUES" "${DATADIR:-}/myvalues"
 
 # sinple command to output values ONLY
 printf "${READVALUES[*]}"
+example a value This is an example content for pseudo multidimensional bash array whynot B whynot A
 
-
-# function to output key and value
-printarr() { declare -n __p="$1"; for k in "${!__p[@]}"; do printf "%s=%s\n" "$k" "${__p[$k]}" ; done ;  } 
-
-printarr READVALUES
-value1=example
-value2=a value
-whynot,subindex2,text=This is an example content for pseudo multidimensional bash array
-whynot,subindex2=whynot B
-whynot,subindex1=whynot A
+# print DB to stdout
+jssh_printDB READVALUES
+["value1"]	"example"
+["value2"]	"a value"
+["whynot","subindex2","text"]	"This is an example content for pseudo multidimensional bash array"
+["whynot","subindex2"]	"whynot B"
+["whynot","subindex1"]	"whynot A"
 
 
 # access Arrray
@@ -639,13 +659,14 @@ READVALUES["value3"]="new value"
 READVALUES[whynot,subindex3]="new subindex value"
 
 # new output
-printarr READVALUES
-value1=example
-value2=this is a changed value
-whynot,subindex2,text=This is an example content for pseudo multidimensional bash array
-whynot,subindex3=new subindex value
-whynot,subindex2=whynot B
-whynot,subindex1=whynot A
+jssh_printDB READVALUES
+["value1"]	"example"
+["value3"]	"new value"
+["value2"]	"this is a changed value"
+["whynot","subindex2","text"]	"This is an example content for pseudo multidimensional bash array"
+["whynot","subindex3"]	"new subindex value"
+["whynot","subindex2"]	"whynot B"
+["whynot","subindex1"]	"whynot A"
 ```
 
 https://linuxhint.com/associative_array_bash/
@@ -935,5 +956,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.94-pre-7-g64efe96
+#### $$VERSION$$ v0.94-pre-9-gd1f509a
 
