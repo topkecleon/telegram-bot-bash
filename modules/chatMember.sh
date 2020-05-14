@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-pre-2-gc0a633f
+#### $$VERSION$$ v0.94-pre-5-g6c6b312
 
 # source once magic, function named like file
 eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
@@ -51,6 +51,7 @@ user_is_admin() {
 user_is_botadmin() {
 	local admin; admin="$(head -n 1 "${BOTADMIN}")"
 	[ "${admin}" = "${1}" ] && return 0
+	[ "${admin}" = "${2}" ] && return 0
 	[[ "${admin}" = "@*" ]] && [[ "${admin}" = "${2}" ]] && return 0
 	if [ "${admin}" = "?" ]; then printf '%s\n' "${1:-?}" >"${BOTADMIN}"; return 0; fi
 	return 1
