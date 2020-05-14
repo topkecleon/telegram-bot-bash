@@ -16,7 +16,7 @@ GETMEMBER_URL=$URL'/getChatMember'
 
 # usage: status="$(get_chat_member_status "chat" "user")"
 get_chat_member_status() {
-	sendJson "$1" 'user_id: '"$2"'' "$GETMEMBER_URL"
+	sendJson "$1" '"user_id":'"$2"'' "$GETMEMBER_URL"
 	# shellcheck disable=SC2154
 	JsonGetString '"result","status"' <<< "$res"
 }
@@ -39,6 +39,7 @@ user_is_creator() {
 }
 
 user_is_admin() {
+	[ "$1" = "$2" ] && return 0
 	local me; me="$(get_chat_member_status "$1" "$2")"
 	if [ "${me}" = "creator" ] || [ "${me}" = "administrator" ]; then return 0; fi
 	return 1 

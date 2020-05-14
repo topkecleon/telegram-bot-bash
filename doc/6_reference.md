@@ -529,25 +529,28 @@ Note: Existing content is overwritten.
 
 *example:* 
 ```bash
-declare -A MYVALUES
-MYVALUES["value1"]="value1"
-MYVALUES["loveit"]="value2"
-MYVALUES["whynot"]="value3"
+# Prepare array to store vaules
+declare -A  WRITEVALUES
+
+WRITEVALUES["value1"]="example"
+WRITEVALUES["value2"]="a value"
+WRITEVALUES["whynot","subindex1"]="whynot A"
+WRITEVALUES["whynot","subindex2"]="whynot B"
+WRITEVALUES["whynot","subindex2","text"]="This is an example content for pseudo multidimensional bash array"
 
 # create DB
 jssh_newDB "${DATADIR:-.}/myvalues"
 
 # write to file data-bot-bash/somevalues.jssh from array MYVALUES
-jssh_writeDB "MYVALUES" "${DATADIR:-.}/myvalues"
+jssh_writeDB "WRITEVALUES" "${DATADIR:-}/myvalues"
 
 # show whats written
-DBfile="$(jssh_checkDB "${DATADIR:-.}/myvalues.jssh")"
-
-cat "DB$file"
-["value1"]	"value1"
-["loveit"]	"value2"
-["whynot"]	"value3"
-
+cat "${DATADIR:-}/myvalues.jssh"
+["value1"]	"example"
+["value2"]	"a value"
+["whynot","subindex2","text"]	"This is an example content for pseudo multidimensional bash array"
+["whynot","subindex2"]	"whynot B"
+["whynot","subindex1"]	"whynot A"```
 ```
 
 ##### jssh_updateDB
@@ -608,6 +611,60 @@ this is new
 ```
 
 ----
+
+##### jssh_readDB
+Read content of a file in JSON.sh format into given ARRAY.  ARRAY name must be delared with "declare -A ARRAY" upfront,
+
+*usage:*  jssh_readDB "ARRAY" "filename"
+
+*example:* 
+```bash
+# Prepare array to read vaules
+declare -A  READVALUES
+
+# read file data-bot-bash/myvalues.jssh into array READVALUES
+jssh_readDB "READVALUES" "${DATADIR:-}/myvalues"
+
+# sinple command to output values ONLY
+printf "${READVALUES[*]}"
+
+
+# function to output key and value
+printarr() { declare -n __p="$1"; for k in "${!__p[@]}"; do printf "%s=%s\n" "$k" "${__p[$k]}" ; done ;  } 
+
+printarr READVALUES
+value1=example
+value2=a value
+whynot,subindex2,text=This is an example content for pseudo multidimensional bash array
+whynot,subindex2=whynot B
+whynot,subindex1=whynot A
+
+
+# access Arrray
+echo "${READVALUES[vaule2]}"
+a value
+
+# change / add values
+READVALUES["value2"]="this is a changed value"
+
+echo "${READVALUES[vaule2]}"
+this is a changed value
+
+READVALUES["value3"]="new value"
+READVALUES[whynot,subindex3]="new subindex value"
+
+# new output
+printarr READVALUES
+value1=example
+value2=this is a changed value
+whynot,subindex2,text=This is an example content for pseudo multidimensional bash array
+whynot,subindex3=new subindex value
+whynot,subindex2=whynot B
+whynot,subindex1=whynot A
+```
+https://linuxhint.com/associative_array_bash/
+https://linuxconfig.org/how-to-use-arrays-in-bash-script
+
 
 ### Aliases - shortcuts for often used funtions 
 Aliases are handy shortcuts for using in 'mycommands.sh', they avoid error prone typing of  "${CHAT[ID]}" "${USER[ID]}" as much as possible.
