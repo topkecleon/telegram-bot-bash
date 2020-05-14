@@ -4,7 +4,7 @@
 # files: mycommands.sh.clean
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.94-pre-0-gac2ec02
+#### $$VERSION$$ v0.94-pre-3-g0e75138
 #
 
 ##########
@@ -56,7 +56,7 @@ else
 	##############
 	# a service Message was recieved
 	# add your own stuff here
-	if [[ "${SERVICE}" != "" ]]; then
+	if [ -n "${SERVICE}" ]; then
 
 		# example: delete every service message
 		if [ "${SILENCER}" = "yes" ]; then

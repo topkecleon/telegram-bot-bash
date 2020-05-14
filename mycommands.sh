@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.94-pre-0-gac2ec02
+#### $$VERSION$$ v0.94-pre-3-g0e75138
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -55,7 +55,7 @@ else
 	##############
 	# a service Message was recieved
 	# add your own stuff here
-	if [[ "${SERVICE}" != "" ]]; then
+	if [ -n "${SERVICE}" ]; then
 
 		# example: delete every service message
 		if [ "${SILENCER}" = "yes" ]; then

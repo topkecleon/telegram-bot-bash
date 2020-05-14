@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-pre-2-gc0a633f
+#### $$VERSION$$ v0.94-pre-3-g0e75138
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -51,7 +51,7 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
 
 # load modues on startup and always on on debug
-if [ "${1}" != "" ]; then
+if [ -n "${1}" ]; then
     # load all readable modules
     for modules in "${MODULEDIR:-.}"/*.sh ; do
 	if [[ "${1}" == *"debug"* ]] || ! _is_function "$(basename "${modules}")"; then
@@ -74,10 +74,10 @@ export FILE_REGEX='/home/user/allowed/.*'
 [ -r "${BASHBOT_ETC:-.}/mycommands.sh" ] && source "${BASHBOT_ETC:-.}/mycommands.sh"  "${1}"
 
 
-if [ "${1}" = "" ] || [[ "${1}" == *"debug"* ]];then
+if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
     # detect inline commands....
     # no default commands, all processing is done in myinlines()
-    if [ "$INLINE" != "0" ] && [ "${iQUERY[ID]}" != "" ]; then
+    if [ "$INLINE" != "0" ] && [ -n "${iQUERY[ID]}" ]; then
     	# forward iinline query to optional dispatcher
 	_exec_if_function myinlines
 
