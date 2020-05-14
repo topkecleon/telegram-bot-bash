@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-pre-4-gd28f975
+#### $$VERSION$$ v0.94-pre-7-g64efe96
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -66,7 +66,7 @@ fi
 # copy "mycommands.sh.dist" to "mycommnds.sh" and change the values there
 # defaults to no inline and nonsense home dir
 export INLINE="0"
-export FILE_REGEX='/home/user/allowed/.*'
+export FILE_REGEX="${BASHBOT_ETC}/.*"
 
 
 # load mycommands

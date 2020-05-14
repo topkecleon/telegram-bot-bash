@@ -8,15 +8,15 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.94-pre-4-gd28f975
+#### $$VERSION$$ v0.94-pre-7-g64efe96
 #
 
 # uncomment the following lines to overwrite info and help messages
-# bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
+# export bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
 #'
-# bashbot_help='*Available commands*:
+# export bashbot_help='*Available commands*:
 #'
-res=""
+export res=""
 
 # Set INLINE to 1 in order to receive inline queries.
 # To enable this option in your bot, send the /setinline command to @BotFather.
@@ -25,7 +25,7 @@ export INLINE="0"
 # NOTE: this is a regex, not shell globbing! you must use a valid egex,
 # '.' matches any charater and '.*' matches all remaining charatcers!
 # additionally you must escape special charaters with '\', e.g. '\. \? \[ \*" to match them literally  
-export FILE_REGEX='^/home/user/allowed/.*'
+export FILE_REGEX="${BASHBOT_ETC}/.*"
 # example: run bashbot over TOR
 # export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1:9050"
 
