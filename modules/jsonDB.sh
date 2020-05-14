@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-pre-7-g64efe96
+#### $$VERSION$$ v0.94-pre-8-g284172f
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -34,6 +34,12 @@ jssh_writeDB() {
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
 	Array2Json "$1" >"${DB}"
+}
+
+# print ARRAY content to stdout instead of file
+# $1 ARRAY name, must be delared with "declare -A ARRAY" upfront
+jssh_printDB() {
+	Array2Json "$1"
 }
 
 # update/write ARRAY content in file without deleting keys not in ARRAY

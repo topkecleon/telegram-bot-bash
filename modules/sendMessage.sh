@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-pre-2-gc0a633f
+#### $$VERSION$$ v0.94-pre-8-g284172f
 
 # source once magic, function named like file
 eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
@@ -151,7 +151,7 @@ upload_file(){
 # typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
 send_action() {
 	[ -z "$2" ] && return
-	sendJson "${1}" '"action": "'"${2}"'"' "$ACTION_URL"
+	sendJson "${1}" '"action": "'"${2}"'"' "$ACTION_URL" &
 }
 
 send_location() {
