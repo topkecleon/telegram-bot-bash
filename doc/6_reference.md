@@ -506,19 +506,6 @@ Something wrong with /home/someuser/myfile
 Something wrong with data-bot-bash/../../../somevalues
 ```
 
-##### jssh_readDB
-Read content of a .jssh file in JSON.sh format into given ARRAY.  ARRAY name must be delared with "declare -A ARRAY" before calling readDB.
-
-*usage:*  jssh_readDB "ARRAY" "filename"
-
-*example:* 
-```bash
-# read file data-bot-bash/somevalues.jssh into array SOMEVALUES
-jssh_readDB "SOMEVALUES" "${DATADIR:-.}/somevalues"
-
-print "${SOMEVALUES[*]}"
-```
-
 ##### jssh_writeDB
 Write content of an ARRAY into jsshDB file. ARRAY name must be delared with "declare -A ARRAY" before calling writeDB.
 "DB" file MUST exist or nothing is written.
@@ -610,8 +597,6 @@ echo "$result"
 this is new
 ```
 
-----
-
 ##### jssh_readDB
 Read content of a file in JSON.sh format into given ARRAY.  ARRAY name must be delared with "declare -A ARRAY" upfront,
 
@@ -662,9 +647,12 @@ whynot,subindex3=new subindex value
 whynot,subindex2=whynot B
 whynot,subindex1=whynot A
 ```
+
 https://linuxhint.com/associative_array_bash/
 https://linuxconfig.org/how-to-use-arrays-in-bash-script
 
+
+----
 
 ### Aliases - shortcuts for often used funtions 
 Aliases are handy shortcuts for using in 'mycommands.sh', they avoid error prone typing of  "${CHAT[ID]}" "${USER[ID]}" as much as possible.
@@ -947,5 +935,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.94-dev3-0-geef955a
+#### $$VERSION$$ v0.94-pre-0-gac2ec02
 

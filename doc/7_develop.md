@@ -7,17 +7,24 @@ If you want to provide fixes or new features [fork bashbot on githup](https://he
 
 ### Debugging Bashbot
 Usually all bashbot output is discarded.
-If you want to get error messages (and more) start bashbot in the current shell with ```./bashbot.sh startbot```.
-In addition you can the change the level of verbosity by adding a 'debug' as third argument.
+If you want to get error messages (and more) start bashbot  ```./bashbot.sh startbot debug```.
+you can the change the level of verbosity of the debug argument: 
+
 ```
+	"debug"		all output is redirected to "DEBUG.log", in addtion every incomming message is logged in "MESSAGE.log" and "INLINE.log"
+	"xdebug"	same as debug plus set bash option '-x' to log any executed command in "DEBUG.log"
+
+	use the command tail to watch your bot live, e.g. "tail -f DEBUG.log", to obtain more information place set -x; set +x in your code.
+```
+
+```
+	sometimes its useful to watch the bot live in the terminal:
+
 	"debugx"	debug output and errors are sent to terminal
         "xdebugx"       same as debugx plus set bash option '-x' to show any executed command
 
-	"debug"		all output is redirected to "DEBUG.log", in addtion every incomming message is logged in "MESSAGE.LOG" and "INLINE.log"
-	"xdebug"	same as debug plus set bash option '-x' to log any executed command in "DEBUG.log"
 ```
 
-To stop bashhbot in debugging mode press CRTL+C. If this does not stop bashbot or you run it in background execute ```ps -uf | grep debug``` and kill all shown processes.
 
 ### Modules and Addons
 **Modules** resides in ```modules/*.sh``` and are colletions of optional bashbot functions grouped by functionality. Main reason for creating modules was
@@ -321,5 +328,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.94-dev3-0-geef955a
+#### $$VERSION$$ v0.94-pre-0-gac2ec02
 
