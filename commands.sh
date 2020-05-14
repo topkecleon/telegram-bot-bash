@@ -8,14 +8,14 @@
 # | |__/ / |_| |  | | | | |_| | |__   | |____( (_| | | |__ _ 
 # |_____/ \___/   |_| |_|\___/ \___)  |_______)____|_|\___)_|
 #
-# this file *MUST* not edited! palce your config and commands in
-# the provided mycommnds.sh. a clean version is avalible as mycommands.clean
+# this file *MUST* not be edited! palce your config and commands in
+# the file "mycommnds.sh". a clean version is provided as "mycommands.clean"
 #
 
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-dev3-1-g8a119f8
+#### $$VERSION$$ v0.94-dev3-2-gbf8a911
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -29,7 +29,7 @@ unset IFS
 
 #                                                            
 # this file *MUST* not edited!
-# copy "mycommands,sh,dist" to "mycommnds,sh" and change the strings there
+# copy "mycommands.sh.dist" to "mycommnds.sh" and change the strings there
 bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.
 It currently can send, recieve and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
@@ -37,7 +37,7 @@ It currently can send, recieve and forward messages, custom keyboards, photos, a
 
 #                                                            
 # this file *MUST* not edited!
-# copy "mycommands,sh,dist" to "mycommnds,sh" and change the strings there
+# copy "mycommands.sh.dist" to "mycommnds.sh" and change the strings there
 bashbot_help='*Available commands*:
 *• /start*: _Start bot and get this message_.
 *• /help*: _Get this message_.
@@ -61,7 +61,7 @@ fi
 
 #                                                            
 # this file *MUST* not edited!
-# copy "mycommands,sh,dist" to "mycommnds,sh" and change the values there
+# copy "mycommands.sh.dist" to "mycommnds.sh" and change the values there
 # defaults to no inline and nonsense home dir
 export INLINE="0"
 export FILE_REGEX='/home/user/allowed/.*'
@@ -93,7 +93,7 @@ if [ "${1}" = "" ] || [[ "${1}" == *"debug"* ]];then
 	    case "${MESSAGE}" in
 		################################################
 		# this file *MUST* not edited!
-		# copy "mycommands,sh,dist" to "mycommnds,sh" and change the values and add your commands there
+		# copy "mycommands.sh.dist" to "mycommnds.sh" and change the values and add your commands there
 		#
 		# GLOBAL commands start here, edit messages only
 		'/info'*)

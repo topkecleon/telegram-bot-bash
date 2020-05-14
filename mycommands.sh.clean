@@ -1,0 +1,98 @@
+#!/bin/bash
+########
+#
+# files: mycommands.sh.clean
+# copy to mycommands.sh and add all your commands and functions here ...
+#
+#### $$VERSION$$ v0.94-dev3-2-gbf8a911
+#
+
+##########
+# edit the following lines to fit your bot usage
+
+bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
+'
+
+bashbot_help='*Available commands*:
+'
+res=""
+
+# Set INLINE to 1 in order to receive inline queries.
+# To enable this option in your bot ypu must also send the /setinline command to @BotFather.
+export INLINE="0"
+
+# NOTE: this is a regex, not shell globbing! you must use a valid egex,
+# '.' matches any charater and '.*' matches all remaining charatcers!
+# additionally you must escape special charaters with '\', e.g. '\. \? \[ \*" to match them literally  
+# do NOT set to .* as this allow sending files from all locations!
+export FILE_REGEX='^/home/user/allowed/.*'
+
+########
+# special network setups may require to provide additional ARGS to curl
+#
+# example: run bashbot over TOR or SOCKS proxy
+# export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1:9050" # TOR
+# export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1" # regular SOCKS
+
+if [ "$1" != "source" ];then
+    # your additional bahsbot commands
+    # NOTE: command can have @botname attached, you must add * in case tests... 
+    mycommands() {
+
+	case "${MESSAGE}" in
+		##################
+		# example command, replace them by your own
+		'/echo'*) # example echo command
+			send_normal_message "${CHAT[ID]}" "$MESSAGE"
+			;;
+
+		##########
+		# command overwrite examples
+		# return 0 -> run default command afterwards
+		# return 1 -> skip possible default commands
+		'/info'*) # output date in front of regular info
+			send_normal_message "${CHAT[ID]}" "$(date)"
+			return 0
+			;;
+		'/kickme'*) # this will replace the /kickme command
+			send_markdown_mesage "${CHAT[ID]}" "*This bot will not kick you!*"
+			return 1
+			;;
+	esac
+     }
+
+     myinlines() {
+	#######################
+	# this fuinction is called only if you has set INLINE=1 !!
+	# shellcheck disable=SC2128
+	iQUERY="${iQUERY,,}"
+
+	
+	case "${iQUERY}" in
+		##################
+		# example inline command, replace it by your own
+		"image "*) # search images with yahoo
+			local search="${iQUERY#* }"
+			answer_inline_multi "${iQUERY[ID]}" "$(my_image_search "${search}")"
+			;;
+	esac
+     }
+
+    #####################
+    # place your processing functions here
+
+    # example inline processing function, not really useful
+    # $1 search parameter
+    my_image_search(){
+	local image result sep="" count="1"
+	result="$(wget --user-agent 'Mozilla/5.0' -qO - "https://images.search.yahoo.com/search/images?p=$1" |  sed 's/</\n</g' | grep "<img src=")"
+	while read -r image; do
+		[ "$count" -gt "20" ] && break
+		image="${image#* src=\'}"; image="${image%%&pid=*}"
+		[[ "${image}" = *"src="* ]] && continue
+		echo "${sep}"; inline_query_compose "$RANDOM" "photo" "${image}"; sep=","
+		count=$(( count + 1 ))
+	done <<<"${result}"
+    }
+
+fi

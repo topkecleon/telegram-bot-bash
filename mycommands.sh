@@ -1,8 +1,14 @@
 #!/bin/bash
-# files: mycommands.sh.dist
-# copy to mycommands.sh and add all your commands and functions here ...
+#########
 #
-#### $$VERSION$$ v0.94-dev3-0-geef955a
+# files: mycommands.sh.dist
+#
+# this is an out of the box test and example file to show what you can do in mycommands.ah
+#
+# #### if you start to develop you own bot, use the clean version of this file:
+# #### mycommands.clean
+#
+#### $$VERSION$$ v0.94-dev3-2-gbf8a911
 #
 
 # uncomment the following lines to overwrite info and help messages
