@@ -48,6 +48,7 @@ user_is_admin() {
 user_is_botadmin() {
 	local admin; admin="$(head -n 1 "${BOTADMIN}")"
 	[ "${admin}" = "${1}" ] && return 0
+	[ "${admin}" = "${2}" ] && return 0
 	[[ "${admin}" = "@*" ]] && [[ "${admin}" = "${2}" ]] && return 0
 	if [ "${admin}" = "?" ]; then printf '%s\n' "${1:-?}" >"${BOTADMIN}"; return 0; fi
 	return 1
