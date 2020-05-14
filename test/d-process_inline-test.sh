@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.91-0-g31808a9
+#### $$VERSION$$ v0.94-dev2-0-g3d636f7
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -29,7 +29,7 @@ source <( printf 'UPD=( %s )' "$(sed <<<"${UPDATE}" -E -e 's/\t/=/g' -e 's/=(tru
 echo "Check process_inline ..."
 for i in 1 2
 do
-	[ "${i}" = "1" ] && ! which python >/dev/null 2>&1 && continue
+	[ "${i}" = "1" ] && ! command -v python >/dev/null 2>&1 && continue
 	[ "${i}" = "1" ] && echo "  ... with JsonDecode Phyton" && unset BASHBOT_DECODE
 	[ "${i}" = "2" ] && echo "  ... with JsonDecode Bash" && export BASHBOT_DECODE="yes"
 	set -x

@@ -1,89 +1,106 @@
 #### [Home](../README.md)
 
 ## Notes for bashbot developers
-This section is about help and best practices for new bashbot developers. The main focus on is creating new versions of bashbot, not on develop your individual bot. Nevertheless the rules and tools described here can also help you with your bot development.
+This section is about help and best practices for new bashbot developers. The main focus on is creating new versions of bashbot, modules and addons, not on develop your individual bot. Nevertheless the information provided here should help your bot development also.
 
-bashbot development is done on github. If you want to provide fixes or new features [fork bashbot on githup](https://help.github.com/en/articles/fork-a-repo) and provide changes as [pull request on github](https://help.github.com/en/articles/creating-a-pull-request).
+If you want to provide fixes or new features [fork bashbot on githup](https://help.github.com/en/articles/fork-a-repo) and provide changes as [pull request on github](https://help.github.com/en/articles/creating-a-pull-request).
 
 ### Debugging Bashbot
-In normal mode of operation all bashbot output is discarded.
-To get these messages (and more) you can start bashbot in the current shell with ```./bashbot.sh startbot &```.
-Now you can see all output or erros from bashbot.
-In addition you can change the change the level of verbosity by adding a third argument after startbot.
+Usually all bashbot output is discarded.
+If you want to get error messages (and more) start bashbot in the current shell with ```./bashbot.sh startbot```.
+In addition you can the change the level of verbosity by adding a 'debug' as third argument.
 ```
-	"debug"		redirects all output to "DEBUG.log", in addtion every update is logged in "MESSAGE.LOG" and "INLINE.log"
-	"debugterm"	same as debug but output and errors are sent to terminal
+	"debugx"	debug output and errors are sent to terminal
+        "xdebugx"       same as debugx plus set bash option '-x' to show any executed command
 
-	"xdebug"	same as debug plus set bash option '-x' to log any executed command
-	"xdebugterm"	same as xdebug but output and errors are sent to terminal
+	"debug"		all output is redirected to "DEBUG.log", in addtion every incomming message is logged in "MESSAGE.LOG" and "INLINE.log"
+	"xdebug"	same as debug plus set bash option '-x' to log any executed command in "DEBUG.log"
 ```
 
-To stop bashhbot in debugging mode run ```ps -uf | grep debug``` and use 'kill -9' to kill all processes shwon.
+To stop bashhbot in debugging mode press CRTL+C. If this does not stop bashbot or you run it in background execute ```ps -uf | grep debug``` and kill all shown processes.
 
 ### Modules and Addons
-**Modules** live in ```modules/*.sh``` and are bashbot functions factored out in seperate files, gouped by functionality. Main reason for creating modules was
-to keep 'bashbot.sh' small, while extending functionality. In addition not every functionality is needed by a bot, so you can
-disable modules by removing them, e.g. rename the respective module files to 'module.sh.off'.
+**Modules** resides in ```modules/*.sh``` and are colletions of optional bashbot functions grouped by functionality. Main reason for creating modules was
+to keep 'bashbot.sh' small, while extending functionality. In addition not every funtion is needed by all bots, so you can
+disable modules, e.g. by rename the respective module file to 'module.sh.off'.
 
-Modules must use only functions provided by 'bahsbot.sh' or the module itself, no depedencies to other modules or addons must exist.
-If a module function is called from 'bashbot.sh', bashbot must work if the module is disabled, so the use of ```_is_function``` and
-```_execute_if_function``` is mandatory.
+Modules must use functions provided by 'bahsbot.sh' or the module itself and sould not depend on other modules or addons.
+The only mandatory module is 'module/sendMessage.sh'.
 
-**Addons** live in ```addons/*.sh.dist``` and are disabled by default. To activate an addon remove '.dist' from the filename, e.g.
-```cp addons/example.sh.dist addons/example.sh```. Addons must register to BASHBOT_EVENTS at startup, e.g. to call a function everytime a message is recieved.
-Registering to EVENTS is similar on how 'commands.sh' is executed, but more flexible and one major difference:
-**Addons are executed in the context of the main script**, while 'commands.sh' is executed as a seperate process.
+If a not mandatory module is used in 'bashbot.sh' or 'commands.sh', the use of ```_is_function``` or
+```_execute_if_function``` is mandatory to catch absense of the module.
 
-This is why event functions are time critical and must return as fast as possible. Spawn actions as a seperate process or function with '&', e.g.
-send a message as respone from an addon: ```send_message "${CHAT[ID]}" "Message to send ..." &```.
+**Addons** resides in ```addons/*.sh.dist``` and are not endabled by default. To activate an addon rename it to end with '.sh', e.g. by
+```cp addons/example.sh.dist addons/example.sh```. 
+
+Addons must register themself to BASHBOT_EVENTS at startup, e.g. to call a function everytime a message is recieved.
+Addons works similar as 'commands.sh' and 'mycommands.sh' but are much more flexible on when functions/commands are triggered.
+
+Another major difference is: **Addons are executed in the context of the main script**, while 'commands.sh' and 'macommands.sh' are executed as a seperate process.
+This is why event functions are time critical and must return as fast as possible.
 
 #### Bashbot Events
-Addons must register functions to bashbot events at startup by providing their name and a callback function.
+Addons must register functions to bashbot events by providing their name, and internal identifier and a callback function.
 If an event occours each registered function for the event is called.
 
-Events run in the same context as the main bashbot loop, so variables set here are persistent as long bashbot is running.
+Registered functions run in the same process as bashbot, not as a sub process, so variables set here are persistent as long bashbot is running.
 
-Note: For the same reason event function MUST return imideatly!  Time consuming tasks must be run in background or as a subshell, e.g. "long running &"
+Note: For the same reason event function MUST return immediately! Time consuming tasks must be run as a background process, e.g. "long running &"
 
-Availible events:
+##### MESSAGE events (all iQuery and/or Message variables are avalible):
 
 * BASHBOT_EVENT_INLINE		an inline query is received
-* BASHBOT_EVENT_MESSAGE		any type of message is received
-* BASHBOT_EVENT_TEXT		a message containing text is recieved
-* BASHBOT_EVENT_CMD		a command is recieved (fist word starts with /)
-* BASHBOT_EVENT_REPLYTO		a reply to a message is received
-* BASHBOT_EVENT_FORWARD		a forwarded message is received
-* BASHBOT_EVENT_CONTACT		a contact is received
-* BASHBOT_EVENT_LOCATION	a location or a venue is received
-* BASHBOT_EVENT_FILE		a file is received
 
-*usage*: BASHBOT_EVENT_xxx[ "uniqe-name" ]="callback"
+* BASHBOT_EVENT_MESSAGE		any of the following message types is received
+    * BASHBOT_EVENT_TEXT	a message containing text is recieved
+    * BASHBOT_EVENT_CMD		a message containing a command is recieved (starts with /)
+    * BASHBOT_EVENT_REPLYTO	a reply to a message is received
+    * BASHBOT_EVENT_FORWARD	a forwarded message is received
+    * BASHBOT_EVENT_CONTACT	a contact is received
+    * BASHBOT_EVENT_LOCATION	a location or a venue is received
+    * BASHBOT_EVENT_FILE	a file is received
 
-"unique-name" can be every alphanumeric string incl. '-' and '_'. Per convention it is the name of the addon followed by an internal identyfier.
+*usage*: BASHBOT_EVENT_xxx[ "unique-name" ]="callback"
 
-*Example:* Register a function to echo to any Text send to the bot
+"unique-name" can be every alphanumeric string incl. '-' and '_'. Per convention the name of the addon followed by an internal identyfier should be used.
+
+"callback" is called as the the parameters "event" "unique-name" "debug", where "event" is the event name in lower case, e.g. inline, messagei, text ... ,
+and "unique-name" is the name provided when registering the event. 
+
+*Example:* Register a function to echo to any Text sent to the bot
 ```bash
 # register callback:
 BASHBOT_EVENT_TEXT["example_1"]="example_echo"
 
 # function called if a text is received
 example_echo() {
+	local event="$1" key="$2"
 	# all availible bashbot functions and variables can be used
-	send_normal_message "${CHAT[ID]}" "${MESSAGE[0]}" & # note the &!
+	send_normal_message "${CHAT[ID]}" "Event: ${event} Key: ${key} : ${MESSAGE[0]}" & # note the &!
 }
 ```
-* BAHSBOT_EVENT_TIMER		is executed every minute and can be used in 3 variants: oneshot, every minute, every X minutes.
 
-Registering to BASHBOT_EVENT_TIMER works isimilar as for message events, but you must add a timing argument to the index name.
+##### Other types of events
+
+* BAHSBOT_EVENT_TIMER		executed every minute and can be used in 3 variants: oneshot, once a minute, every X minutes.
+
+Registering to BASHBOT_EVENT_TIMER works similar as for message events, but you must add a timing argument to the name.
+EVENT_TIMER is triggered every 60s and waits until the current running command is finished, so ist not excactly every
+minute, but once a minute.
+
+Every time EVENT_TIMER is triggered the variable "EVENT_TIMER" is increased. each callback is executed if ```EVENT_TIMER % time``` is '0' (true).
+This means if you register an every 5 minutes callback first execution may < 5 Minutes, all subsequent executions are once every 5. Minute.
 
 *usage:* BAHSBOT_EVENT_TIMER[ "name" , "time" ], where time is:
 
-    * -x execute ONCE in x minutes
     * 0	ignored
-    * 1	execute every minute
+    * 1	execute once every minute
     * x	execute every x minutes
+    * -x execute ONCE in (next) x minutes *
 
-*Examples:*
+*\* if you really want "in x minutes" you must use ```-(EVENT_TIMER+x)```* 
+
+*Example:*
 ```bash
 # register callback:
 BAHSBOT_EVENT_TIMER["example_every","1"]="example_everymin"
@@ -95,10 +112,39 @@ example_everymin() {
 }
 
 # register other callback:
-BAHSBOT_EVENT_TIMER["example_10min","-10"]="example_in10min"
-
 BAHSBOT_EVENT_TIMER["example_every5","5"]="example_every5min"
 
+# execute once in the next 10 minutes
+BAHSBOT_EVENT_TIMER["example_10min","-10"]="example_in10min"
+
+# once in 10 minutes
+BAHSBOT_EVENT_TIMER["example_10min","$(( (EVENT_TIMER+10) * -1 ))"]="example_in10min"
+
+```
+
+* BASHBOT_EVENT_SEND	is exceuted if data is send or uploaded to Telegram server
+
+In contrast to other events, BASHBOT_EVENT_SEND is excecuted in a subshell, so there is no need to spawn
+a background process for longer running commands and changes to variables are not persistent!
+
+BASHBOT_EVENT_SEND is for logging purposes, you must not send messages while processing this event.
+To avoid wrong use of EVENT_SEND, e.g. fork bomb, event processing is suspended if recursion is detected.
+
+*usage*: BASHBOT_EVENT_SEND[ "unique-name" ]="callback"
+
+"callback" is called with paramter "send"  or "upload", followed by the arguments used for 'sendJson' or 'upload' functions.
+
+*Example:*
+```bash
+# register callback:
+BAHSBOT_EVENT_SEND["example_log","1"]="example_log"
+EXAMPLE_LOG="${BASHBOT_ETC:-.}/addons/${EXAMPLE_ME}.log"
+
+# Note: do not call any send message functions from EVENT_SEND!
+example_log(){
+	local send="$1"; shift
+	echo "$(date): Type: ${send} Args: $*" >>"${EXAMPLE_LOG}"
+}
 
 ```
 
@@ -275,5 +321,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.91-0-g31808a9
+#### $$VERSION$$ v0.94-dev2-0-g3d636f7
 

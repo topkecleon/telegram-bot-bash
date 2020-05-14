@@ -4,7 +4,7 @@
 # Addons can register to bashbot events at statup
 # by providing their name and a callback per event
 #
-#### $$VERSION$$ v0.91-0-g31808a9
+#### $$VERSION$$ v0.94-dev2-0-g3d636f7
 #
 # If an event occours each registered event function is called.
 #
@@ -40,11 +40,12 @@
 #
 # prameters on events
 # $1 event: inline, message, ..., file
-# $2 debug: use "[[ "$2" = *"debug"* ]]" if you want to output extra diagnostic
+# $2 key: key of array BASHBOT_EVENT_xxx 
+# $3 debug: use "[[ "$2" = *"debug"* ]]" if you want to output extra diagnostic
 #
 
 # export used events
-export BASHBOT_EVENT_INLINE BASHBOT_EVENT_CMD BASHBOT_EVENT_REPLY BASHBOT_EVENT_TIMER
+export BASHBOT_EVENT_INLINE BASHBOT_EVENT_CMD BASHBOT_EVENT_REPLY BASHBOT_EVENT_TIMER BASHBOT_EVENT_SEND
 
 # any global variable defined by addons MUST be prefixed by addon name
 EXAMPLE_ME="example"
@@ -63,8 +64,8 @@ if [[ "$1" = "start"* ]]; then
     # any function defined by addons MUST be prefixed by addon name
     # function local variables can have any name, but must be LOCAL
     example_reply(){
-	local msg="message"
-	send_markdown_message "${CHAT[ID]}" "User *${USER[USERNAME]}* replied to ${msg} from *${REPLYTO[USERNAME]}*" &
+	local msg="message" event="$1" key="$2"
+	send_markdown_message "${CHAT[ID]}" "User *${USER[USERNAME]}* replied to ${msg} from *${REPLYTO[USERNAME]}* (Event: ${event} Key:{${key})" &
     }
 
     # register to inline and command
@@ -74,11 +75,11 @@ if [[ "$1" = "start"* ]]; then
     # any function defined by addons MUST be prefixed by addon name
     # function local variables can have any name, but must be LOCAL
     example_multievent(){
-	local type="$1"
+	local event="$1" key="$2"
 	local msg="${MESSAGE[0]}"
 	# shellcheck disable=SC2154
 	[ "${type}" = "inline" ] && msg="${iQUERY[0]}"
-	send_normal_message "${CHAT[ID]}" "${type} received: ${msg}" &
+	send_normal_message "${CHAT[ID]}" "${event} from ${key} received: ${msg}" &
     }
 
     BASHBOT_EVENT_TIMER["${EXAMPLE_ME}after5min","-5"]="${EXAMPLE_ME}_after5min"
@@ -95,5 +96,19 @@ if [[ "$1" = "start"* ]]; then
     # function local variables can have any name, but must be LOCAL
     example_every2min(){
 	send_markdown_message "$(< "${BOTADMIN}")" "This a a every 2 minute event ..." &
+    }
+
+    # register to send
+    BASHBOT_EVENT_SEND["${EXAMPLE_ME}"]="${EXAMPLE_ME}_log"
+    EXAMPLE_LOG="${BASHBOT_ETC:-.}/addons/${EXAMPLE_ME}.log"
+
+    # any function defined by addons MUST be prefixed by addon name
+    # function local variables can have any name, but must be LOCAL
+    # $1 = send / upload
+    # $* remaining args are from sendJson and sendUpload
+    # Note: do not call any send message functions from EVENT_SEND!
+    example_log(){
+	local send="$1"; shift
+	echo "$(date): Type: ${send} Args: $*" >>"${EXAMPLE_LOG}"
     }
 fi

@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.91-0-g31808a9
+#### $$VERSION$$ v0.94-dev2-0-g3d636f7
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -153,7 +153,7 @@ fi
 
 ###############
 # load modules
-for modules in ${MODULEDIR:-.}/*.sh ; do
+for modules in "${MODULEDIR:-.}"/*.sh ; do
 	# shellcheck source=./modules/aliases.sh
 	[ -r "${modules}" ] && source "${modules}" "source"
 done
@@ -232,61 +232,72 @@ if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
   # simple curl or wget call, output to stdout
   getJson(){
 	# shellcheck disable=SC2086
-	curl -sL ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
+	curl -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
   }
   # usage: sendJson "chat" "JSON" "URL"
   sendJson(){
 	local chat="";
 	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
 	# shellcheck disable=SC2086
-	res="$(curl -s ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" -d '{'"${chat} $2"'}' -X POST "${3}" \
+	res="$(curl -s ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" -d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
 		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
+	[ "${SOURCE}" != "yes" ] && [ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "send" "$@" &
   }
   #$1 Chat, $2 what , $3 file, $4 URL, $5 caption
   sendUpload() {
 	[ "$#" -lt 4  ] && return
 	if [ "$5" != "" ]; then
 	# shellcheck disable=SC2086
-		res="$(curl -s ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n )"
+		res="$(curl -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n )"
 	else
 	# shellcheck disable=SC2086
-		res="$(curl -s ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
+		res="$(curl -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
 	fi
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
+	[ "${SOURCE}" != "yes" ] && [ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "upload" "$@" &
   }
 else
   # simple curl or wget call outputs result to stdout
   getJson(){
 	# shellcheck disable=SC2086
-	wget -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
+	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
   }
   # usage: sendJson "chat" "JSON" "URL"
   sendJson(){
 	local chat="";
 	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
 	# shellcheck disable=SC2086
-	res="$(wget -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $2"'}' \
+	res="$(wget -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
+	[ "${SOURCE}" != "yes" ] && [ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "send" "$@" &
   }
   sendUpload() {
 	sendJson "$1" '"text":"Sorry, wget does not support file upload"' "${MSG_URL}"
 	BOTSENT[OK]="false"
+	[ "${SOURCE}" != "yes" ] && [ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "upload" "$@" &
   }
 fi 
+
+# escape / remove text charaters for json strings, eg. " -> \" 
+# $1 string
+# output escaped string
+JsonEscape() {
+	sed 's/\([-"`´,§$%&ß/(){}#@?*]\)/\\\1/g' <<< "$1"
+}
 
 # convert common telegram entities to JSON
 # title caption description markup inlinekeyboard
 title2Json(){
 	local title caption desc markup keyboard
-	[ "$1" != "" ] && title=',"title":"'$1'"'
-	[ "$2" != "" ] && caption=',"caption":"'$2'"'
-	[ "$3" != "" ] && desc=',"description":"'$3'"'
-	[ "$4" != "" ] && markup=',"parse_mode":"'$4'"'
-	[ "$5" != "" ] && keyboard=',"reply_markup":"'$5'"'
+	[ "$1" != "" ] && title=',"title":"'$(JsonEscape "$1")'"'
+	[ "$2" != "" ] && caption=',"caption":"'$(JsonEscape "$2")'"'
+	[ "$3" != "" ] && desc=',"description":"'$(JsonEscape "$3")'"'
+	[ "$4" != "" ] && markup=',"parse_mode":"'$(JsonEscape "$4")'"'
+	[ "$5" != "" ] && keyboard=',"reply_markup":"'$(JsonEscape "$5")'"'
 	echo "${title}${caption}${desc}${markup}${keyboard}"
 }
 
@@ -321,7 +332,7 @@ JsonGetValue() {
 # $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
 Json2Array() {
 	# shellcheck source=./commands.sh
-	[ "$1" = "" ] || source <( printf "$1"'=( %s )' "$(sed -E -e 's/\t/=/g' -e 's/=(true|false)/="\1"/')" )
+	[ "$1" = "" ] || source <( printf "$1"'=( %s )' "$(sed -E -n -e '/\["[-0-9a-zA-Z_,."]+"\]\t/ s/\t/=/gp' -e 's/=(true|false)/="\1"/')" )
 }
 # output ARRAY as JSON.sh style data
 # $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
@@ -372,7 +383,7 @@ process_client() {
 	grep -q "$tmpcount" <"${COUNTFILE}" &>/dev/null || cat <<< "$tmpcount" >>"${COUNTFILE}"
 }
 
-declare -Ax BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD 
+declare -Ax BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD BASHBOT_EVENT_SEND
 declare -Ax BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE BASHBOT_EVENT_TEXT BASHBOT_EVENT_TIMER
 
 start_timer(){
@@ -383,82 +394,93 @@ start_timer(){
 	done;
 }
 
+EVENT_SEND="0"
+event_send() {
+	# max recursion level 5 to avoid fork bombs
+	(( EVENT_SEND++ )); [ "$EVENT_SEND" -gt "5" ] && return
+	# shellcheck disable=SC2153
+	for key in "${!BASHBOT_EVENT_SEND[@]}"
+	do
+		_exec_if_function "${BASHBOT_EVENT_SEND[${key}]}" "$@"
+	done
+}
+
 EVENT_TIMER="0"
 event_timer() {
-	local event timer debug="$1"
+	local key timer debug="$1"
 	(( EVENT_TIMER++ ))
 	# shellcheck disable=SC2153
-	for event in "${!BASHBOT_EVENT_TIMER[@]}"
+	for key in "${!BASHBOT_EVENT_TIMER[@]}"
 	do
-		timer="${event##*,}"
+		timer="${key##*,}"
 		[[ ! "$timer" =~ ^-*[1-9][0-9]*$ ]] && continue
 		if [ "$(( EVENT_TIMER % timer ))" = "0" ]; then
-			_exec_if_function "${BASHBOT_EVENT_TIMER[${event}]}" "timer" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_TIMER[${key}]}" "timer" "${key}" "${debug}"
 			[ "$(( EVENT_TIMER % timer ))" -lt "0" ] && \
-				unset BASHBOT_EVENT_TIMER["${event}"]
+				unset BASHBOT_EVENT_TIMER["${key}"]
 		fi
 	done
 }
 
 event_inline() {
-	local event debug="$1"
+	local key debug="$1"
 	# shellcheck disable=SC2153
-	for event in "${!BASHBOT_EVENT_INLINE[@]}"
+	for key in "${!BASHBOT_EVENT_INLINE[@]}"
 	do
-		_exec_if_function "${BASHBOT_EVENT_INLINE[${event}]}" "inline" "${debug}"
+		_exec_if_function "${BASHBOT_EVENT_INLINE[${key}]}" "inline" "${key}" "${debug}"
 	done
 }
 event_message() {
 echo "${MESSAGE[0]}"
-	local event debug="$1"
+	local key debug="$1"
 	# ${MESSAEG[*]} event_message
 	# shellcheck disable=SC2153
-	for event in "${!BASHBOT_EVENT_MESSAGE[@]}"
+	for key in "${!BASHBOT_EVENT_MESSAGE[@]}"
 	do
-		 _exec_if_function "${BASHBOT_EVENT_MESSAGE[${event}]}" "messsage" "${debug}"
+		 _exec_if_function "${BASHBOT_EVENT_MESSAGE[${key}]}" "messsage" "${key}" "${debug}"
 	done
 	
 	# ${TEXT[*]} event_text
 	if [ "${MESSAGE[0]}" != "" ]; then
 		# shellcheck disable=SC2153
-		for event in "${!BASHBOT_EVENT_TEXT[@]}"
+		for key in "${!BASHBOT_EVENT_TEXT[@]}"
 		do
-			_exec_if_function "${BASHBOT_EVENT_TEXT[${event}]}" "text" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_TEXT[${key}]}" "text" "${key}" "${debug}"
 		done
 
 		# ${CMD[*]} event_cmd
 		if [ "${CMD[0]}" != "" ]; then
 			# shellcheck disable=SC2153
-			for event in "${!BASHBOT_EVENT_CMD[@]}"
+			for key in "${!BASHBOT_EVENT_CMD[@]}"
 			do
-				_exec_if_function "${BASHBOT_EVENT_CMD[${event}]}" "command" "${debug}"
+				_exec_if_function "${BASHBOT_EVENT_CMD[${key}]}" "command" "${key}" "${debug}"
 			done
 		fi
 	fi
 	# ${REPLYTO[*]} event_replyto
 	if [ "${REPLYTO[UID]}" != "" ]; then
 		# shellcheck disable=SC2153
-		for event in "${!BASHBOT_EVENT_REPLYTO[@]}"
+		for key in "${!BASHBOT_EVENT_REPLYTO[@]}"
 		do
-			_exec_if_function "${BASHBOT_EVENT_REPLYTO[${event}]}" "replyto" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_REPLYTO[${key}]}" "replyto" "${key}" "${debug}"
 		done
 	fi
 
 	# ${FORWARD[*]} event_forward
 	if [ "${FORWARD[UID]}" != "" ]; then
 		# shellcheck disable=SC2153
-		for event in "${!BASHBOT_EVENT_FORWARD[@]}"
+		for key in "${!BASHBOT_EVENT_FORWARD[@]}"
 		do
-			 _exec_if_function && "${BASHBOT_EVENT_FORWARD[${event}]}" "forward" "${debug}"
+			 _exec_if_function && "${BASHBOT_EVENT_FORWARD[${key}]}" "forward" "${key}" "${debug}"
 		done
 	fi
 
 	# ${CONTACT[*]} event_contact
 	if [ "${CONTACT[FIRST_NAME]}" != "" ]; then
 		# shellcheck disable=SC2153
-		for event in "${!BASHBOT_EVENT_CONTACT[@]}"
+		for key in "${!BASHBOT_EVENT_CONTACT[@]}"
 		do
-			_exec_if_function "${BASHBOT_EVENT_CONTACT[${event}]}" "contact" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_CONTACT[${key}]}" "contact" "${key}" "${debug}"
 		done
 	fi
 
@@ -466,9 +488,9 @@ echo "${MESSAGE[0]}"
 	# ${LOCALTION[*]} event_location
 	if [ "${LOCATION[LONGITUDE]}" != "" ] || [ "${VENUE[TITLE]}" != "" ]; then
 		# shellcheck disable=SC2153
-		for event in "${!BASHBOT_EVENT_LOCATION[@]}"
+		for key in "${!BASHBOT_EVENT_LOCATION[@]}"
 		do
-			_exec_if_function "${BASHBOT_EVENT_LOCATION[${event}]}" "location" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_LOCATION[${key}]}" "location" "${key}" "${debug}"
 		done
 	fi
 
@@ -476,9 +498,9 @@ echo "${MESSAGE[0]}"
 	# NOTE: compare again #URLS -1 blanks!
 	if [[ "${URLS[*]}" != "     " ]]; then
 		# shellcheck disable=SC2153
-		for event in "${!BASHBOT_EVENT_FILE[@]}"
+		for key in "${!BASHBOT_EVENT_FILE[@]}"
 		do
-			_exec_if_function "${BASHBOT_EVENT_FILE[${event}]}" "file" "${debug}"
+			_exec_if_function "${BASHBOT_EVENT_FILE[${key}]}" "file" "${key}" "${debug}"
 		done
 	fi
 
@@ -600,7 +622,7 @@ start_bot() {
 	find "${DATADIR}" -type p -delete
 	find "${DATADIR}" -size 0 -name "*.log" -delete
 	# load addons on startup
-	for addons in ${ADDONDIR:-.}/*.sh ; do
+	for addons in "${ADDONDIR:-.}"/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
 		[ -r "${addons}" ] && source "${addons}" "startbot" "${DEBUG}"
 	done
@@ -613,7 +635,7 @@ start_bot() {
 		trap "kill -9 $!; exit" EXIT INT HUP TERM QUIT 
 	fi
 	while true; do
-		UPDATE="$(getJson "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n)"
+		UPDATE="$(getJson "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n | iconv -f utf-8 -t utf-8 -c)"
 
 		# Offset
 		OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
@@ -638,7 +660,7 @@ bot_init() {
 	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${DATADIR}"; rmdir "${OLDTMP}"; }
 	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
 	# load addons on startup
-	for addons in ${ADDONDIR:-.}/*.sh ; do
+	for addons in "${ADDONDIR:-.}"/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
 		[ -r "${addons}" ] && source "${addons}" "init" "${DEBUG}"
 	done
@@ -683,11 +705,15 @@ if [ ! -f "${JSONSHFILE}" ]; then
 	chmod +x "${JSONSHFILE}" 
 fi
 
-if [ "${SOURCE}" != "yes" ] && [ "$1" != "init" ] &&  [ "$1" != "help" ] && [ "$1" != "" ]; then
+if [ "${SOURCE}" != "yes" ] && [ "$1" != "init" ] &&  [ "$1" != "help" ]; then
   ME="$(getBotName)"
   if [ "$ME" = "" ]; then
-	echo -e "${RED}ERROR: Can't connect to Telegram Bot! May be your TOKEN is invalid ...${NC}"
-	exit 1
+	echo -e "${RED}ERROR: Can't connect to Telegram! Your TOKEN is invalid or you are blocked by ${URL%/*} ...${NC}"
+	case "$1" in
+		"" | "stop" | "kill"* | "suspendb"* ) # warn, but do not exit
+			echo -e "${RED}Ignored to continue for $1  ... ${NC}";;
+		*) exit 1;;
+	esac
   fi
 fi
 

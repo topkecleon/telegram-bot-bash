@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.91-0-g31808a9
+#### $$VERSION$$ v0.94-dev2-0-g3d636f7
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
@@ -21,7 +21,7 @@ echo "............................"
 unset IFS; set -f
 
 # check for shellcheck
-if which shellcheck >/dev/null 2>&1; then
+if command -v  shellcheck >/dev/null 2>&1; then
 	echo "  Test all scripts with shellcheck ..."
 else
 	echo "Error: shellcheck is not installed. Install shellcheck or delete $0"

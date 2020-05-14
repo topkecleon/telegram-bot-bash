@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.91-0-g31808a9
+#### $$VERSION$$ v0.94-dev2-0-g3d636f7
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -16,7 +16,10 @@ res=""
 # To enable this option in your bot, send the /setinline command to @BotFather.
 export INLINE="0"
 # Set to .* to allow sending files from all locations
-export FILE_REGEX='/home/user/allowed/.*'
+# NOTE: this is a regex, not shell globbing! you must use a valid egex,
+# '.' matches any charater and '.*' matches all remaining charatcers!
+# additionally you must escape special charaters with '\', e.g. '\. \? \[ \*" to match them literally  
+export FILE_REGEX='^/home/user/allowed/.*'
 # example: run bashbot over TOR
 # export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1:9050"
 

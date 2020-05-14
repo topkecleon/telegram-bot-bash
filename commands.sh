@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.91-0-g31808a9
+#### $$VERSION$$ v0.94-dev2-0-g3d636f7
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -39,7 +39,7 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 # load modues on startup and always on on debug
 if [ "${1}" = "source" ] || [[ "${1}" = *"debug"* ]] ; then
 	# load all readable modules
-	for modules in ${MODULEDIR:-.}/*.sh ; do
+	for modules in "${MODULEDIR:-.}"/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
 		[ -r "${modules}" ] && source "${modules}" "${1}"
 	done
@@ -77,7 +77,7 @@ if [ "${1}" != "source" ];then
 		################################################
 		# GLOBAL commands start here, edit messages only
 		'/info'*)
-			send_markdown_message "${bashbot_info}"
+			send_markdown_message "${CHAT[ID]}" "${bashbot_info}"
 			;;
 		'/start'*)
 			send_action "${CHAT[ID]}" "typing"

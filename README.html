@@ -1,64 +1,99 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Bashbot README</title>
-  <style type="text/css">code{white-space: pre;}</style>
-  <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
+  <style>
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
 </head>
 <body>
-<div id="header">
+<header id="title-block-header">
 <h1 class="title">Bashbot README</h1>
-</div>
-<h2>
-<img align="middle" src="https://raw.githubusercontent.com/odb/official-bash-logo/master/assets/Logos/Icons/PNG/64x64.png" > Bashbot - A Telegram bot written in bash.
+</header>
+<h2><img align="middle" src="https://raw.githubusercontent.com/odb/official-bash-logo/master/assets/Logos/Icons/PNG/64x64.png" >
+Bashbot - A Telegram bot written in bash.
 </h2>
-<p>Written by Drew (<span class="citation">@topkecleon</span>), Daniil Gentili (<span class="citation">@danogentili</span>), and Kay M (<span class="citation">@gnadelwartz</span>).</p>
+Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M (@gnadelwartz).
+
 <p>Contributions by JuanPotato, BigNerd95, TiagoDanin, and iicc1.</p>
 <p>Released to the public domain wherever applicable. Elsewhere, consider it released under the <a href="http://www.wtfpl.net/txt/copying/">WTFPLv2</a>.</p>
-<h2 id="prerequisites">Prerequisites</h2>
+<h2>Prerequisites</h2>
 <p>Uses <a href="http://github.com/dominictarr/JSON.sh">JSON.sh</a>, but no more TMUX.</p>
 <p>Even bashbot is written in bash, it depends on commands typically availible in a Unix/Linux Environment. More concret on the common commands provided by <a href="https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands">coreutils</a>, <a href="https://en.wikipedia.org/wiki/BusyBox#Commands">busybox</a> or <a href="https://landley.net/toybox/help.html">toybox</a>, see <a href="doc/7_develop.md#common-commands">Developer Notes</a></p>
 <p>Bashbot <a href="https://github.com/topkecleon/telegram-bot-bash">Documentation</a> and <a href="https://github.com/topkecleon/telegram-bot-bash/releases">Downloads</a> are availible on www.github.com</p>
-<h2 id="documentation">Documentation</h2>
+<h2>Documentation</h2>
 <ul>
 <li><a href="https://core.telegram.org/bots">Introdution to Telegram Bots</a></li>
 <li><a href="doc/0_install.md">Install Bashbot</a>
@@ -114,14 +149,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li><a href="examples/README.md">Examples Dir</a></li>
 </ul>
-<h3 id="your-really-first-bashbot-in-a-nutshell">Your really first bashbot in a nutshell</h3>
-<p>To install and run bashbot you need acess to a linux/unix/bsd command line. If you don’t know how to get accces to a linux/unix/bsd like command line you should stop reading here :-(</p>
-<p>In addition you need a <a href="https://telegram.org">Telegram client</a> and a mobile phone to <a href="https://telegramguide.com/create-a-telegram-account/">register an account</a>. If you don’t want to register for Telegram you should stop reading here ;-)</p>
-<p>After you’re registered to Telegram send a message to <span class="citation">[@botfather]</span>(https://telegram.me/botfather), <a href="doc/1_firstbot.md">create a new Telegram Bot token</a> and write it down. You need the token to install the bot.</p>
-<p>Now open a linux/unix/bsd terminal and check if bash is installed: <code>which bash &amp;&amp; echo &quot;bash installed!&quot;</code>. If you get an error message bash is not installed.</p>
-<p>Create a new directory and change to it: <code>mkdir tbb; cd tbb</code> and download the latest ’*.tar.gz’ file from <a href="https://github.com/topkecleon/telegram-bot-bash/releases" class="uri">https://github.com/topkecleon/telegram-bot-bash/releases</a>. This can be done with the commands:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">wget</span> -q https://github.com/<span class="va">$(</span><span class="fu">wget</span> -q https://github.com/topkecleon/telegram-bot-bash/releases/latest -O - <span class="kw">|</span> <span class="fu">egrep</span> <span class="st">&#39;/.*/.*/.*tar.gz&#39;</span> -o<span class="va">)</span></code></pre></div>
-<p>Extract the ’*.tar.gz’ file and change to bashbot directory: <code>tar -xzf *.tar.gz; cd telegram-bot-bash</code>, install bashbot: <code>./bashbot.sh init</code> and enter your bot token when asked. All other questions can be answered by hitting the &lt;Return&gt; key.</p>
+<h3>Your really first bashbot in a nutshell</h3>
+<p>To install and run bashbot you need acess to a linux/unix/bsd command line. If you don't know how to get accces to a linux/unix/bsd like command line you should stop reading here :-(</p>
+<p>In addition you need a <a href="https://telegram.org">Telegram client</a> and a mobile phone to <a href="https://telegramguide.com/create-a-telegram-account/">register an account</a>. If you don't want to register for Telegram you should stop reading here ;-)</p>
+<p>After you're registered to Telegram send a message to <a href="https://telegram.me/botfather">@botfather</a>, <a href="doc/1_firstbot.md">create a new Telegram Bot token</a> and write it down. You need the token to install the bot.</p>
+<p>Now open a linux/unix/bsd terminal and check if bash is installed: <code>which bash &amp;&amp; echo "bash installed!"</code>. If you get an error message bash is not installed.</p>
+<p>Create a new directory and change to it: <code>mkdir tbb; cd tbb</code> and download the latest '*.tar.gz' file from <a href="https://github.com/topkecleon/telegram-bot-bash/releases">https://github.com/topkecleon/telegram-bot-bash/releases</a>. This can be done with the commands:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" title="1"><span class="fu">wget</span> -q https://github.com/<span class="va">$(</span><span class="fu">wget</span> -q https://github.com/topkecleon/telegram-bot-bash/releases/latest -O - <span class="kw">|</span> <span class="fu">egrep</span> <span class="st">&#39;/.*/.*/.*tar.gz&#39;</span> -o<span class="va">)</span></a></code></pre></div>
+<p>Extract the '*.tar.gz' file and change to bashbot directory: <code>tar -xzf *.tar.gz; cd telegram-bot-bash</code>, install bashbot: <code>./bashbot.sh init</code> and enter your bot token when asked. All other questions can be answered by hitting the &lt;Return&gt; key.</p>
 <p>Thats all, now you can start your bot with <code>./bashbot.sh start</code> and send him messages:</p>
 <pre><code>/start
 
@@ -134,59 +169,60 @@ You are Botadmin
 /info
 
 his is bashbot, the Telegram bot written entirely in bash.
-It features background tasks and interactive chats, and can serve as an interface for CLI programs.</code></pre>
+It features background tasks and interactive chats, and can serve as an interface for CLI programs.
+</code></pre>
 <p>For more Information on how to install, customize and use your new bot, read the <a href="#Documentation">Documentation</a></p>
 <hr />
-<h2 id="security-considerations">Security Considerations</h2>
+<h2>Security Considerations</h2>
 <p>Running a Telegram Bot means it is connected to the public and you never know whats send to your Bot.</p>
-<p>Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. Bash programmers often struggle with ‘quoting hell’ and globbing, see <a href="https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells">Implications of wrong quoting</a></p>
-<p>Whenever you are processing input from from untrusted sources (messages, files, network) you must be as carefull as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everthing. In addition delete unused scripts and examples from your Bot, e.g. scripts ‘notify’, ‘calc’, ‘question’, and disable all not used commands.</p>
-<p>A powerful tool to improve your scripts is <code>shellcheck</code>. You can <a href="https://www.shellcheck.net/">use it online</a> or <a href="https://github.com/koalaman/shellcheck#installing">install shellcheck locally</a>. Shellcheck is used extensive in bashbot development to enshure a high code quality, e.g. it’s not allowed to push changes without passing all shellcheck tests. In addition bashbot has a <a href="doc/7_develop.md">test suite</a> to check if important functionality is working as expected.</p>
-<h3 id="run-your-bot-as-a-restricted-user">Run your Bot as a restricted user</h3>
+<p>Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. Bash programmers often struggle with 'quoting hell' and globbing, see <a href="https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells">Implications of wrong quoting</a></p>
+<p>Whenever you are processing input from from untrusted sources (messages, files, network) you must be as carefull as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everthing. In addition delete unused scripts and examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable all not used commands.</p>
+<p>A powerful tool to improve your scripts is <code>shellcheck</code>. You can <a href="https://www.shellcheck.net/">use it online</a> or <a href="https://github.com/koalaman/shellcheck#installing">install shellcheck locally</a>. Shellcheck is used extensive in bashbot development to enshure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests. In addition bashbot has a <a href="doc/7_develop.md">test suite</a> to check if important functionality is working as expected.</p>
+<h3>Run your Bot as a restricted user</h3>
 <p><strong>I recommend to run your bot as a user, with almost no access rights.</strong> All files your Bot have write access to are in danger to be overwritten/deleted if your bot is hacked. For the same reason ervery file your Bot can read is in danger to be disclosed. Restict your Bots access rigths to the absolute minimum.</p>
-<p><strong>Never run your Bot as root, this is the most dangerous you can do!</strong> Usually the user ‘nobody’ has almost no rights on Unix/Linux systems. See <a href="doc/4_expert.md">Expert use</a> on how to run your Bot as an other user.</p>
-<h3 id="secure-your-bot-installation">Secure your Bot installation</h3>
+<p><strong>Never run your Bot as root, this is the most dangerous you can do!</strong> Usually the user 'nobody' has almost no rights on Unix/Linux systems. See <a href="doc/4_expert.md">Expert use</a> on how to run your Bot as an other user.</p>
+<h3>Secure your Bot installation</h3>
 <p><strong>Your Bot configuration must no be readable from other users.</strong> Everyone who can read your Bots token can act as your Bot and has access to all chats your Bot is in!</p>
 <p>Everyone with read access to your Bot files can extract your Bots data. Especially your Bot Token in <code>token</code> must be protected against other users. No one exept you must have write access to the Bot files. The Bot must be restricted to have write access to <code>count</code> and <code>tmp-bot-bash</code> only, all other files must be write protected.</p>
 <p>To set access rights for your bashbot installation to a reasonable default run <code>sudo ./bashbot.sh init</code> after every update or change to your installation directory.</p>
-<h2 id="faq">FAQ</h2>
-<h3 id="is-this-bot-insecure">Is this Bot insecure?</h3>
-<p>Bashbot is not more (in)secure as any other Bot written in any other language, we have done our best to make it as secure as possible. But YOU are responsible for the bot commands you wrote and you should know about the risks …</p>
-<h3 id="why-bash-and-not-the-much-better-xyz">Why Bash and not the much better xyz?</h3>
-<p>Well, thats a damn good question … may be because I’m an Unix/Linux admin from stone age. Nevertheless there are more reasons from my side:</p>
+<h2>FAQ</h2>
+<h3>Is this Bot insecure?</h3>
+<p>Bashbot is not more (in)secure as any other Bot written in any other language, we have done our best to make it as secure as possible. But YOU are responsible for the bot commands you wrote and you should know about the risks ...</p>
+<h3>Why Bash and not the much better xyz?</h3>
+<p>Well, thats a damn good question ... may be because I'm an Unix/Linux admin from stone age. Nevertheless there are more reasons from my side:</p>
 <ul>
 <li>bashbot will run everywhere where bash is availible, from ebedded linux to mainframe</li>
-<li>easy to integrate with other shell script, e.g. for sending system message / health status</li>
+<li>easy to integrate with other shell script, e.g. for sending system message / health status</li>
 <li>no need to install or learn a new programming language, library or framework</li>
-<li>no database, not event driven, not OO …</li>
+<li>no database, not event driven, not OO ...</li>
 </ul>
-<h3 id="can-i-have-the-single-bashbot.sh-file-back">Can I have the single bashbot.sh file back?</h3>
-<p>At the beginning bashbot was simply the file <code>bashbot.sh</code> you can copy everywhere and run the bot. Now we have ‘commands.sh’, ‘mycommands.sh’, ’modules/*.sh’ and much more.</p>
-<p>Hey no Problem, if you are finished with your cool bot run <code>dev/make-standalone.sh</code> to create a stripped down Version of your bot containing only ‘bashbot.sh’ and ‘commands.sh’! For more information see <a href="doc/7_develop.md">Create a stripped down Version of your Bot</a></p>
-<h3 id="can-i-send-messages-from-cli-and-scripts">Can I send messages from CLI and scripts?</h3>
-<p>Of course, you can send messages from CLI and scripts, simply install bashbot as <a href="#Your-really-first-bashbot-in-a-nutshell">described here</a>, send the messsage ‘/start’ to set yourself as botadmin and stop the bot with <code>./bashbot.sh kill</code>.</p>
+<h3>Can I have the single bashbot.sh file back?</h3>
+<p>At the beginning bashbot was simply the file <code>bashbot.sh</code> you can copy everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 'modules/*.sh' and much more.</p>
+<p>Hey no Problem, if you are finished with your cool bot run <code>dev/make-standalone.sh</code> to create a stripped down Version of your bot containing only 'bashbot.sh' and 'commands.sh'! For more information see <a href="doc/7_develop.md">Create a stripped down Version of your Bot</a></p>
+<h3>Can I send messages from CLI and scripts?</h3>
+<p>Of course, you can send messages from CLI and scripts, simply install bashbot as <a href="#Your-really-first-bashbot-in-a-nutshell">described here</a>, send the messsage '/start' to set yourself as botadmin and stop the bot with <code>./bashbot.sh kill</code>.</p>
 <p>Run the following commands in your bash shell or script while you are in the installation directory:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># prepare bash / script to send commands</span>
-<span class="bu">export</span> <span class="va">BASHBOT_HOME=</span><span class="st">&quot;</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st">&quot;</span>
-<span class="bu">source</span> ./bashbot.sh source
-
-<span class="co"># send me a test message</span>
-<span class="ex">send_message</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">cat</span> <span class="st">&quot;</span><span class="va">$BOTADMIN</span><span class="st">&quot;</span><span class="va">)</span><span class="st">&quot;</span> <span class="st">&quot;test&quot;</span>
-
-<span class="co"># send me output of a system command</span>
-<span class="ex">send_message</span> <span class="st">&quot;</span><span class="op">$(&lt;</span><span class="st">&quot;</span><span class="va">$BOTADMIN</span><span class="st">&quot;</span><span class="op">)</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">df</span> -h<span class="va">)</span><span class="st">&quot;</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># prepare bash / script to send commands</span></a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="bu">export</span> <span class="va">BASHBOT_HOME=</span><span class="st">&quot;</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st">&quot;</span></a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="bu">source</span> ./bashbot.sh source</a>
+<a class="sourceLine" id="cb3-4" title="4"></a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="co"># send me a test message</span></a>
+<a class="sourceLine" id="cb3-6" title="6"><span class="ex">send_message</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">cat</span> <span class="st">&quot;</span><span class="va">$BOTADMIN</span><span class="st">&quot;</span><span class="va">)</span><span class="st">&quot;</span> <span class="st">&quot;test&quot;</span></a>
+<a class="sourceLine" id="cb3-7" title="7"></a>
+<a class="sourceLine" id="cb3-8" title="8"><span class="co"># send me output of a system command</span></a>
+<a class="sourceLine" id="cb3-9" title="9"><span class="ex">send_message</span> <span class="st">&quot;</span><span class="op">$(&lt;</span><span class="st">&quot;</span><span class="va">$BOTADMIN</span><span class="st">&quot;</span><span class="op">)</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">df</span> -h<span class="va">)</span><span class="st">&quot;</span></a></code></pre></div>
 <p>For more information see <a href="doc/8_custom.md">Expert Use</a></p>
-<h3 id="why-do-i-get-expected-value-got-eof-on-start">Why do I get “EXPECTED value GOT EOF” on start?</h3>
+<h3>Why do I get "EXPECTED value GOT EOF" on start?</h3>
 <p>May be your IP is blocked by telegram. You can test this by running curl or wget manually:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">curl</span> -m 10  https://api.telegram.org/bot
-<span class="co">#curl: (28) Connection timed out after 10001 milliseconds</span>
-
-<span class="fu">wget</span> -t 1 -T 10 https://api.telegram.org/bot
-<span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></code></pre></div>
-<p>This may happen if to many wrong requests are sent to api.telegram.org, e.g. using a wrong token or not existing API calls. If you have a fixed IP you can ask telegram service to unblock your ip or change your IP. If you are running a tor proxy on your server you may uncomment the <code>BASHBOT_CURL_ARGS</code> line in ‘mycommands.sh’</p>
-<p><span class="citation">@Gnadelwartz</span></p>
-<h2 id="thats-it">That’s it!</h2>
-<p>If you feel that there’s something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4 id="version-v0.91-0-g31808a9"><br /><span class="math display"><em>V</em><em>E</em><em>R</em><em>S</em><em>I</em><em>O</em><em>N</em></span><br /> v0.91-0-g31808a9</h4>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1"><span class="ex">curl</span> -m 10  https://api.telegram.org/bot</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="co">#curl: (28) Connection timed out after 10001 milliseconds</span></a>
+<a class="sourceLine" id="cb4-3" title="3"></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="fu">wget</span> -t 1 -T 10 https://api.telegram.org/bot</a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></a></code></pre></div>
+<p>This may happen if to many wrong requests are sent to api.telegram.org, e.g. using a wrong token or not existing API calls. If you have a fixed IP you can ask telegram service to unblock your ip or change your IP. If you are running a tor proxy on your server you may uncomment the <code>BASHBOT_CURL_ARGS</code> line in 'mycommands.sh'</p>
+<p>@Gnadelwartz</p>
+<h2>That's it!</h2>
+<p>If you feel that there's something missing or if you found a bug, feel free to submit a pull request!</p>
+<h4>$$VERSION$$ v0.94-dev2-0-g3d636f7</h4>
 </body>
 </html>
