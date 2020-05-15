@@ -468,6 +468,11 @@ The file extions is '.jssh' and for security reasons location of jssh files is r
 
 Note: File names containg '..' and absolute file names pointing outside BASHBOT_ETC or BASHBOT_DATA are refused by jsshDB functions. 
 
+Note2: Since version 0.94 jsshDB functions support file locking with flock. Write / Update operations use flock to wait until
+previous operations are finished. see "man flock" for more information. Bashbot uses a maximum timeout of 10 seconds for flock.
+
+If you don't want atomic write / update operations use the *_async variant of jsshDB functions. If flock is not availible
+the *_async variant is automatically used.
 
 *Example:* for file name:
 ```bash
@@ -513,6 +518,8 @@ Write content of an ARRAY into jsshDB file. ARRAY name must be delared with "dec
 Note: Existing content is overwritten.
 
 *usage:*  jssh_writeDB "ARRAY" "filename"
+
+*usage:*  jssh_writeDB_async "ARRAY" "filename"
 
 *example:* 
 ```bash
@@ -570,6 +577,8 @@ Note: Existing content not in ARRAY is kept in file.
 
 *usage:*  jssh_updateDB "ARRAY" "filename"
 
+*usage:*  jssh_updateDB_async "ARRAY" "filename"
+
 *example:* 
 ```bash
 # continued example from writeDB
@@ -595,34 +604,15 @@ cat "$DBfile"
 
 ```
 
-##### jssh_insertDB
-Insert, update, append a key=value pair to a jsshDB file, key name is only allowed to contain '-a-zA-Z0-9,._'
-
-*usage:*  jssh_insertDB "key" "value" "filename"
-
-*example:* 
-```bash
-jssh_insertDB "newkey" "an other value" "${DATADIR:-.}/myvalues"
-```
-
-##### jssh_getDB
-Read a key=value pair from a jsshDB file, key name is only allowed to contain '-a-zA-Z0-9,._'
-
-*usage:*  jssh_getDB "key" "filename"
-
-*example:* 
-```bash
-result="$(jssh_getDB "newvalue" "${DATADIR:-.}/myvalues")"
-
-# lets see whats the value of key newvalue
-echo "$result"
-this is new
-```
-
 ##### jssh_readDB
 Read content of a file in JSON.sh format into given ARRAY.  ARRAY name must be delared with "declare -A ARRAY" upfront,
 
 *usage:*  jssh_readDB "ARRAY" "filename"
+
+*usage:*  jssh_readDB_async "ARRAY" "filename"
+
+Note: readDB uses concurrent / shared locking from flock so multiple proceses can read from file, as long no process is writing.
+Maximum timeour for reading is 1s to not block readers.
 
 *example:* 
 ```bash
@@ -669,7 +659,34 @@ jssh_printDB READVALUES
 ["whynot","subindex1"]	"whynot A"
 ```
 
+##### jssh_insertDB
+Insert, update, append a key=value pair to a jsshDB file, key name is only allowed to contain '-a-zA-Z0-9,._'
+
+*usage:*  jssh_insertDB "key" "value" "filename"
+
+*usage:*  jssh_insertDB_asnyc "key" "value" "filename"
+
+Note: insertDB uses also excusiv write locking, but with a maximum timeout of 2s. insertDB is a "fast" operation, simply adding the value to the end of the file.
+
+*example:* 
+```bash
+jssh_insertDB "newkey" "an other value" "${DATADIR:-.}/myvalues"
+```
+
+##### jssh_deleteKeyDB
+Deleted a key=value pair froma jsshDB file, key name is only allowed to contain '-a-zA-Z0-9,._'
+
+*usage:*  jssh_deleteKeyDB "key" "filename"
+
+*usage:*  jssh_deleteKeyDB_async "key" "filename"
+
+*example:* 
+```bash
+jssh_deleteKeyDB "delkey"" "${DATADIR:-.}/myvalues"
+```
+
 https://linuxhint.com/associative_array_bash/
+
 https://linuxconfig.org/how-to-use-arrays-in-bash-script
 
 
@@ -956,5 +973,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.94-pre-9-gd1f509a
+#### $$VERSION$$ v0.94-pre-13-g52bde30
 

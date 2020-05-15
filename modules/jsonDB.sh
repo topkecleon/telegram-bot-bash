@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-pre-10-g23a3d4b
+#### $$VERSION$$ v0.94-pre-13-g52bde30
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -103,6 +103,23 @@ if _exists flock; then
 	
   }
 
+  # delete key/value from jsshDB
+  # $1 key name, can onyl contain -a-zA-Z0-9,._
+  # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
+  jssh_deleteKeyDB() {
+	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	declare -A oldARR
+	# start atomic delete here, exclusive max wait 10s 
+	{ flock -e -w 10 200
+	Json2Array "oldARR" <"${DB}"
+	if [[ -v "oldAR[$1]" ]] ; then
+		unset oldARR["$1"]
+		Array2Json  "oldARR" >"${DB}"
+	fi
+	} 200>"${DB}${BASHBOT_LOCKNAME}"
+  }
+
+
 else
   #########
   # we have no flock, use "old" not atomic functions
@@ -123,6 +140,9 @@ else
 	
   }
 
+  jssh_deleteKeyDB() {
+	jssh_deleteKeyDB_async "$@"
+  }
 fi
 
 ##############
@@ -188,10 +208,10 @@ jssh_updateDB_async() {
 	declare -n ARRAY="$1"
 	[ -z "${ARRAY[*]}" ] && return 1
 	declare -A oldARR newARR
-	jssh_readDB "oldARR" "$2" || return "$?"
+	jssh_readDB_async "oldARR" "$2" || return "$?"
 	if [ -z "${oldARR[*]}" ]; then
 		# no old content
-		jssh_writeDB "$1" "$2"
+		jssh_writeDB_async "$1" "$2"
 	else
 		# merge arrays
 		local o1 o2 n1 n2
@@ -201,7 +221,7 @@ jssh_updateDB_async() {
 		#shellcheck disable=SC2034,SC2190,SC2206
 		newARR=( ${o2:0:${#o2}-1} ${n2:0:${#n2}-1} )
 		set +f
-		jssh_writeDB "newARR" "$2" 
+		jssh_writeDB_async "newARR" "$2" 
 	fi
 }
 
@@ -214,5 +234,15 @@ jssh_insertDB_async() {
 	# its append, but last one counts, its a simple DB ...
 	printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${value//\"/\\\"}" >>"${DB}"
 	
+}
+
+jssh_deleteKeyDB_async() {
+	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	declare -A oldARR
+	jssh_readDB_async "oldARR" "$2" || return "$?"
+	if [[ -v "oldAR[$1]" ]] ; then
+		unset oldARR["$1"]
+		jssh_writeDB_async "oldARR" "$2"
+	fi
 }
 
