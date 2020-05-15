@@ -1,7 +1,7 @@
 #!/bin/sh
 # description: Start or stop telegram-bash-bot
 #
-#### $$VERSION$$ v0.94-pre-0-gac2ec02
+#### $$VERSION$$ v0.94-pre-11-gac9ca60
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 
@@ -76,8 +76,9 @@ case "$1" in
 'suspendback'|'resumeback'|'killback')
 	$runcmd "$start $1"
 	RETVAL=$?
-	# kill inotifywait from runuser
-	if [ "$1" != "resumeback" ]; then 
+	# kill inotifywait from runuser if long running bg scripts use it
+	KILLINOTIFY=""
+	if [ "$1" != "resumeback" ] && [ -n "${KILLINOTIFY}" ]; then 
 		kill -9 "$(ps -u "$runas" | grep inotifywait | sed 's/ .*//')" >/dev/null 2>&1
 	fi  
 	;;
