@@ -4,7 +4,7 @@
 # this addon counts how many files, e.g. stickers, are sent to
 # a chat and takes actions if threshold is reached
 #  
-#### $$VERSION$$ v0.94-dev2-0-g3d636f7
+#### $$VERSION$$ v0.94-pre-4-gd28f975
 
 # used events:
 #
@@ -99,7 +99,7 @@ if [[ "$1" = "start"* ]]; then
 
     antiFlood_multievent(){
 	# not started
-	[ "${ANTIFL_CHATS["${CHAT[ID]}","level"]}" = "" ] && return
+	[ -z "${ANTIFL_CHATS["${CHAT[ID]}","level"]}" ] && return
 	# count user flood text
 	if [ "$1" = "text" ]; then
 		if [ "${#MESSAGE[0]}" -gt "${ANTIFL_CHATS["${CHAT[ID]}","level"]}" ]; then

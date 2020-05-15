@@ -5,7 +5,10 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-dev2-0-g3d636f7
+#### $$VERSION$$ v0.94-pre-5-g6c6b312
+
+# source once magic, function named like file
+eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 
 # source from commands.sh to use the member functions
 
@@ -48,6 +51,7 @@ user_is_admin() {
 user_is_botadmin() {
 	local admin; admin="$(head -n 1 "${BOTADMIN}")"
 	[ "${admin}" = "${1}" ] && return 0
+	[ "${admin}" = "${2}" ] && return 0
 	[[ "${admin}" = "@*" ]] && [[ "${admin}" = "${2}" ]] && return 0
 	if [ "${admin}" = "?" ]; then printf '%s\n' "${1:-?}" >"${BOTADMIN}"; return 0; fi
 	return 1
@@ -55,10 +59,10 @@ user_is_botadmin() {
 
 user_is_allowed() {
 	local acl="$1"
-	[ "$1" = "" ] && return 1
+	[ -z "$1" ] && return 1
 	grep -F -xq "${acl}:*:*" <"${BOTACL}" && return 0
-	[ "$2" != "" ] && acl="${acl}:$2"
+	[ -n "$2" ] && acl="${acl}:$2"
 	grep -F -xq "${acl}:*" <"${BOTACL}" && return 0
-	[ "$3" != "" ] && acl="${acl}:$3"
+	[ -n "$3" ] && acl="${acl}:$3"
 	grep -F -xq "${acl}" <"${BOTACL}"
 }

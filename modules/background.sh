@@ -5,9 +5,12 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-dev2-0-g3d636f7
+#### $$VERSION$$ v0.94-pre-2-gc0a633f
 
 # source from commands.sh if you want ro use interactive or background jobs
+
+# source once magic, function named like file
+eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 
 ######
 # interactive and background functions
@@ -47,7 +50,7 @@ start_back() {
 # $2 program
 # $3 prefix
 start_proc() {
-	[ "$2" = "" ] && return
+	[ -z "$2" ] && return
 	[ -x "${2%% *}" ] || return 1
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1" "$3")"
 	kill_proc "$1" "$3"
@@ -66,7 +69,7 @@ check_back() {
 # $1 chatid
 # $2 prefix
 check_proc() {
-	[ "$(proclist "$(procname "$1" "$2")")" != "" ]
+	[ -n "$(proclist "$(procname "$1" "$2")")" ]
 	# shellcheck disable=SC2034
 	res=$?; return $?
 }
@@ -87,7 +90,7 @@ kill_proc() {
 	prid="$(proclist "${fifo}")"
 	fifo="${DATADIR:-.}/${fifo}"
 	# shellcheck disable=SC2086
-	[ "${prid}" != "" ] && kill ${prid}
+	[ -n "${prid}" ] && kill ${prid}
 	[ -s "${fifo}.log" ] || rm -f "${fifo}.log"
 	[ -p "${fifo}" ] && rm -f "${fifo}";
 }

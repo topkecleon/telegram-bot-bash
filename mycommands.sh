@@ -1,16 +1,22 @@
 #!/bin/bash
-# files: mycommands.sh.dist
-# copy to mycommands.sh and add all your commands and functions here ...
+#########
 #
-#### $$VERSION$$ v0.94-dev2-0-g3d636f7
+# files: mycommands.sh.dist
+#
+# this is an out of the box test and example file to show what you can do in mycommands.sh
+#
+# #### if you start to develop your own bot, use the clean version of this file:
+# #### mycommands.clean
+#
+#### $$VERSION$$ v0.94-pre-7-g64efe96
 #
 
 # uncomment the following lines to overwrite info and help messages
-# bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
+# export bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
 #'
-# bashbot_help='*Available commands*:
+# export bashbot_help='*Available commands*:
 #'
-res=""
+export res=""
 
 # Set INLINE to 1 in order to receive inline queries.
 # To enable this option in your bot, send the /setinline command to @BotFather.
@@ -19,14 +25,43 @@ export INLINE="0"
 # NOTE: this is a regex, not shell globbing! you must use a valid egex,
 # '.' matches any charater and '.*' matches all remaining charatcers!
 # additionally you must escape special charaters with '\', e.g. '\. \? \[ \*" to match them literally  
-export FILE_REGEX='^/home/user/allowed/.*'
+export FILE_REGEX="${BASHBOT_ETC}/.*"
 # example: run bashbot over TOR
 # export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1:9050"
 
-if [ "$1" != "source" ];then
-    # your additional bahsbot commands
+# set to "yes" and give your bot admin privilegs to remove service messaes from groups
+export SILENCER="no"
+
+
+if [ "$1" = "startbot" ];then
+    ###################
+    # this function is run once after startup when the first message is recieved
+    my_startup(){
+	# send message ito first user on startup
+	send_normal_message "${CHAT[ID]}" "Hi, you was the first one after startup!"
+    }
+    # reminde bot that it was started
+    touch .mystartup
+else
+    # here we call the function above when the mesage arrives
+    # things to do only at soure, eg. after startup
+    [ -f .mystartup ] && rm -f .mystartup && _exec_if_function my_startup
+
+    #############################
+    # your own bashbot commands
     # NOTE: command can have @botname attached, you must add * in case tests... 
     mycommands() {
+
+	##############
+	# a service Message was recieved
+	# add your own stuff here
+	if [ -n "${SERVICE}" ]; then
+
+		# example: delete every service message
+		if [ "${SILENCER}" = "yes" ]; then
+			delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
+		fi
+	fi
 
 	case "${MESSAGE}" in
 		##################

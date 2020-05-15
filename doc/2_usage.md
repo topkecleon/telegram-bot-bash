@@ -17,9 +17,13 @@ Have FUN!
 ### Files
 ```
 .
-├── bashbot.sh		# main bashbot script - do not edit
-├── commands.sh		# command dispatcher - do not edit
-├── mycommands.sh	# place your functions and commands here!
+├── mycommands.sh	# THIS is your bot, place logic and commands here!
+│
+├── mycommands.sh.clean	# copy to "mycommands.sh" if you start devloping your bot
+├── mycommands.sh.dist	# example bot, also used for testing bashbot internally 
+│
+├── bashbot.sh		# main bashbot script - DO NOT EDIT!
+├── commands.sh		# command dispatcher - DO NOT EDIT!
 ├── JSON.sh		# bashbots JSON parser, see https://github.com/dominictarr/JSON.sh
 │
 ├── modules		# optional functions, sourced by commands.sh
@@ -65,16 +69,13 @@ Start or Stop your Bot use the following commands:
 ```
 
 ### User count
-To count the total number of users that ever used the bot run the following command:
-```bash
-./bashbot.sh count
+
+deprecated, will be removed!
 ```
 
 ### Sending broadcasts to all users
-To send a broadcast to all of users that ever used the bot run the following command:
-```bash
-./bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
 ```
+deprecated, will be removed!
 
 ----
 
@@ -134,6 +135,22 @@ Evertime a Message is recieved, you can read incoming data using the following v
     * ```${VENUE[LONGITUDE]}```: Longitude
     * ```${VENUE[LATITUDE]}```: Latitude
     * ```${VENUE[FOURSQUARE]}```: Fouresquare ID
+* ```$SERVICE```: This array contains info abbout recived service messages.
+    * ```${SERVICE}```: set to "yes" when a service message is recived.
+    * ```${SERVICE[NEWMEMBER]```: New user's id
+        * ```${NEWMEMBER[ID]```: New user's id
+        * ```${NEWMEMBER[FIRSTNAME]```: New user's first name
+        * ```${NEWMEMBER[LASTNAME]```: New user's last name
+        * ```${NEWMEMBER[USERNAME]```: New user's username
+        * ```${NEWMEMBER[ISBOT]```: New user is a bot
+    * ```${SERVICE[LEFTMEMBER]```: Id of user left 
+    * ```${SERVICE[NEWTILE]```: Text of new title 
+    * ```${SERVICE[NEWPHOTO]```: New Chat Picture array
+    * ```${SERVICE[PINNED]```: Pinned Message structure
+
+
+
+
 
 ### Inline queries
 Evertime a Message is recieved, you can read incoming data using the following variables:
@@ -223,5 +240,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.94-dev2-0-g3d636f7
+#### $$VERSION$$ v0.94-pre-0-gac2ec02
 

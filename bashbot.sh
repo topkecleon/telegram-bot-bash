@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-dev2-0-g3d636f7
+#### $$VERSION$$ v0.94-pre-4-gd28f975
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -23,13 +23,30 @@
 # shellcheck disable=SC2140
 
 # are we runnig in a terminal?
-if [ -t 1 ] && [ "$TERM" != "" ];  then
+if [ -t 1 ] && [ -n "$TERM" ];  then
     CLEAR='clear'
     RED='\e[31m'
     GREEN='\e[32m'
     ORANGE='\e[35m'
     NC='\e[0m'
 fi
+
+# some important helper functions
+# returns true if command exist
+_exists()
+{
+	[ "$(LC_ALL=C type -t "$1")" = "file" ]
+}
+
+# execute function if exists
+_exec_if_function() {
+	[ "$(LC_ALL=C type -t "${1}")" != "function" ] || "$@"
+}
+# returns true if function exist
+_is_function()
+{
+	[ "$(LC_ALL=C type -t "$1")" = "function" ]
+}
 
 # get location and name of bashbot.sh
 SCRIPT="$0"
@@ -39,7 +56,7 @@ RUNDIR="$(dirname "$0")"
 
 MODULEDIR="${SCRIPTDIR}/modules"
 
-
+# adjust locations based on source and real name
 if [ "${SCRIPT}" != "${REALME}" ] || [ "$1" = "source" ]; then
 	SOURCE="yes"
 else
@@ -47,17 +64,17 @@ else
 	MODULEDIR="./$(basename "${MODULEDIR}")"
 fi
 
-if [ "$BASHBOT_HOME" != "" ]; then
+if [ -n "$BASHBOT_HOME" ]; then
 	SCRIPTDIR="$BASHBOT_HOME"
-	[ "${BASHBOT_ETC}" = "" ] && BASHBOT_ETC="$BASHBOT_HOME"
-	[ "${BASHBOT_VAR}" = "" ] && BASHBOT_VAR="$BASHBOT_HOME"
+	[ -z "${BASHBOT_ETC}" ] && BASHBOT_ETC="$BASHBOT_HOME"
+	[ -z "${BASHBOT_VAR}" ] && BASHBOT_VAR="$BASHBOT_HOME"
 fi
 
 ADDONDIR="${BASHBOT_ETC:-./addons}"
 
 RUNUSER="${USER}" # USER is overwritten by bashbot array
 
-if [ "${SOURCE}" != "yes" ] && [ "$BASHBOT_HOME" = "" ] && ! cd "${RUNDIR}" ; then
+if [ "${SOURCE}" != "yes" ] && [ -z "$BASHBOT_HOME" ] && ! cd "${RUNDIR}" ; then
 	echo -e "${RED}ERROR: Can't change to ${RUNDIR} ...${NC}"
 	exit 1
 else
@@ -69,62 +86,71 @@ if [ ! -w "." ]; then
 	ls -ld .
 fi
 
-
+#####################
+# Setup and check environment if BOTTOKEN is NOT set
 TOKENFILE="${BASHBOT_ETC:-.}/token"
-if [ ! -f "${TOKENFILE}" ]; then
-   if [ "${CLEAR}" = "" ] && [ "$1" != "init" ]; then
-	echo "Running headless, run ${SCRIPT} init first!"
+BOTADMIN="${BASHBOT_ETC:-.}/botadmin"
+BOTACL="${BASHBOT_ETC:-.}/botacl"
+DATADIR="${BASHBOT_VAR:-.}/data-bot-bash"
+# !!!!! DEPRECATED !!!!!
+COUNTFILE="${BASHBOT_VAR:-.}/count"
+
+# we assume everthing is already set up correctly if we have TOKEN
+if [ -z "${BOTTOKEN}" ]; then
+  # BOTTOKEN empty read from file
+  if [ ! -f "${TOKENFILE}" ]; then
+     if [ -z "${CLEAR}" ] && [ "$1" != "init" ]; then
+	echo "Running headless, set BOTTOKEN or run ${SCRIPT} init first!"
 	exit 2 
-   else
+     else
 	${CLEAR}
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NC}"
-	read -r token
-	printf '%s\n' "${token}" > "${TOKENFILE}"
-   fi
-fi
-
-BOTADMIN="${BASHBOT_ETC:-.}/botadmin"
-if [ ! -f "${BOTADMIN}" ]; then
-   if [ "${CLEAR}" = "" ]; then
+	read -r BOTTOKEN
+	printf '%s\n' "${BOTTOKEN}" > "${TOKENFILE}"
+     fi
+  fi
+  [ -z  "${BOTTOKEN}" ] && BOTTOKEN="$(< "${TOKENFILE}")"
+  # setup botadmin file
+  if [ ! -f "${BOTADMIN}" ]; then
+     if [ -z "${CLEAR}" ]; then
 	echo "Running headless, set botadmin to AUTO MODE!"
 	printf '%s\n' '?' > "${BOTADMIN}"
-   else
+     else
 	${CLEAR}
 	echo -e "${RED}BOTADMIN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR ENTER '?'${NC}"
 	echo -e "${ORANGE}TO MAKE FIRST USER TYPING '/start' TO BOTADMIN${NC}"
 	read -r admin
-	[ "${admin}" = "" ] && admin='?'
+	[ -z "${admin}" ] && admin='?'
 	printf '%s\n' "${admin}" > "${BOTADMIN}"
-   fi
-fi
-
-BOTACL="${BASHBOT_ETC:-.}/botacl"
-if [ ! -f "${BOTACL}" ]; then
+     fi
+  fi
+  # setup botacl file
+  if [ ! -f "${BOTACL}" ]; then
 	echo -e "${ORANGE}Create empty ${BOTACL} file.${NC}"
 	printf '\n' >"${BOTACL}"
-fi
-
-DATADIR="${BASHBOT_VAR:-.}/data-bot-bash"
-if [ ! -d "${DATADIR}" ]; then
+  fi
+  # setup data dir file
+  if [ ! -d "${DATADIR}" ]; then
 	mkdir "${DATADIR}"
-elif [ ! -w "${DATADIR}" ]; then
+  elif [ ! -w "${DATADIR}" ]; then
 	echo -e "${RED}ERROR: Can't write to ${DATADIR}!.${NC}"
 	ls -ld "${DATADIR}"
 	exit 2
-fi
-
-COUNTFILE="${BASHBOT_VAR:-.}/count"
-if [ ! -f "${COUNTFILE}" ]; then
+  fi
+  # setup count file !!!!! DEPRECATED !!!!!
+  if [ ! -f "${COUNTFILE}" ]; then
 	printf '\n' >"${COUNTFILE}"
-elif [ ! -w "${COUNTFILE}" ]; then
+  elif [ ! -w "${COUNTFILE}" ]; then
 	echo -e "${RED}ERROR: Can't write to ${COUNTFILE}!.${NC}"
 	ls -l "${COUNTFILE}"
 	exit 2
+  fi
 fi
 
-BOTTOKEN="$(< "${TOKENFILE}")"
+##################
+# here we start with the real stuff
 URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
 
 ME_URL=$URL'/getMe'
@@ -136,10 +162,12 @@ declare -rx SCRIPT SCRIPTDIR MODULEDIR RUNDIR ADDONDIR TOKENFILE BOTADMIN BOTACL
 declare -rx BOTTOKEN URL ME_URL UPD_URL GETFILE_URL
 
 declare -ax CMD
-declare -Ax UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
+declare -Ax UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY SERVICE NEWMEMBER
 export res CAPTION
 
 
+#################EW#
+# read commamds file if we are not sourced
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
 if [ "${SOURCE}" != "yes" ]; then
 	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
@@ -155,7 +183,7 @@ fi
 # load modules
 for modules in "${MODULEDIR:-.}"/*.sh ; do
 	# shellcheck source=./modules/aliases.sh
-	[ -r "${modules}" ] && source "${modules}" "source"
+	if ! _is_function "$(basename "${modules}")" && [ -r "${modules}" ]; then source "${modules}" "source"; fi
 done
 
 #################
@@ -186,32 +214,16 @@ proclist() {
 # $1 sting to search for proramm to kill
 killallproc() {
 	local procid; procid="$(proclist "$1")"
-	if [ "${procid}" != "" ] ; then
+	if [ -n "${procid}" ] ; then
 		# shellcheck disable=SC2046
 		kill $(proclist "$1")
 		sleep 1
 		procid="$(proclist "$1")"
 		# shellcheck disable=SC2046
-		[ "${procid}" != "" ] && kill $(proclist -9 "$1")
+		[ -n "${procid}" ] && kill $(proclist -9 "$1")
 	fi
 }
 
-
-# returns true if command exist
-_exists()
-{
-	[ "$(LC_ALL=C type -t "$1")" = "file" ]
-}
-
-# execute function if exists
-_exec_if_function() {
-	[ "$(LC_ALL=C type -t "${1}")" != "function" ] || "$@"
-}
-# returns true if function exist
-_is_function()
-{
-	[ "$(LC_ALL=C type -t "$1")" = "function" ]
-}
 
 declare -xr DELETE_URL=$URL'/deleteMessage'
 delete_message() {
@@ -219,7 +231,7 @@ delete_message() {
 }
 
 get_file() {
-	[ "$1" = "" ] && return
+	[ -z "$1" ] && return
 	sendJson ""  '"file_id": "'"${1}"'"' "${GETFILE_URL}"
 	printf '%s\n' "${URL}"/"$(JsonGetString <<< "${res}" '"result","file_path"')"
 }
@@ -228,7 +240,7 @@ get_file() {
 TIMEOUT="${BASHBOT_TIMEOUT}"
 [[ "$TIMEOUT" =~ ^[0-9]+$ ]] || TIMEOUT="20"
 
-if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
+if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
   # simple curl or wget call, output to stdout
   getJson(){
 	# shellcheck disable=SC2086
@@ -237,18 +249,18 @@ if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
   # usage: sendJson "chat" "JSON" "URL"
   sendJson(){
 	local chat="";
-	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
+	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
 	# shellcheck disable=SC2086
-	res="$(curl -s ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" -d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
+	res="$(curl -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" -d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
 		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
-	[ "${SOURCE}" != "yes" ] && [ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "send" "$@" &
+	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "$@" &
   }
   #$1 Chat, $2 what , $3 file, $4 URL, $5 caption
   sendUpload() {
 	[ "$#" -lt 4  ] && return
-	if [ "$5" != "" ]; then
+	if [ -n "$5" ]; then
 	# shellcheck disable=SC2086
 		res="$(curl -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n )"
 	else
@@ -256,7 +268,7 @@ if [ "${BASHBOT_WGET}" = "" ] && _exists curl ; then
 		res="$(curl -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
 	fi
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
-	[ "${SOURCE}" != "yes" ] && [ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "upload" "$@" &
+	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
 else
   # simple curl or wget call outputs result to stdout
@@ -267,18 +279,18 @@ else
   # usage: sendJson "chat" "JSON" "URL"
   sendJson(){
 	local chat="";
-	[ "${1}" != "" ] && chat='"chat_id":'"${1}"','
+	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
 	# shellcheck disable=SC2086
-	res="$(wget -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
+	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
-	[ "${SOURCE}" != "yes" ] && [ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "send" "$@" &
+	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "$@" &
   }
   sendUpload() {
 	sendJson "$1" '"text":"Sorry, wget does not support file upload"' "${MSG_URL}"
 	BOTSENT[OK]="false"
-	[ "${SOURCE}" != "yes" ] && [ "${BASHBOT_EVENT_SEND[*]}" != "" ] && event_send "upload" "$@" &
+	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
 fi 
 
@@ -293,11 +305,11 @@ JsonEscape() {
 # title caption description markup inlinekeyboard
 title2Json(){
 	local title caption desc markup keyboard
-	[ "$1" != "" ] && title=',"title":"'$(JsonEscape "$1")'"'
-	[ "$2" != "" ] && caption=',"caption":"'$(JsonEscape "$2")'"'
-	[ "$3" != "" ] && desc=',"description":"'$(JsonEscape "$3")'"'
-	[ "$4" != "" ] && markup=',"parse_mode":"'$(JsonEscape "$4")'"'
-	[ "$5" != "" ] && keyboard=',"reply_markup":"'$(JsonEscape "$5")'"'
+	[ -n "$1" ] && title=',"title":"'$(JsonEscape "$1")'"'
+	[ -n "$2" ] && caption=',"caption":"'$(JsonEscape "$2")'"'
+	[ -n "$3" ] && desc=',"description":"'$(JsonEscape "$3")'"'
+	[ -n "$4" ] && markup=',"parse_mode":"'$(JsonEscape "$4")'"'
+	[ -n "$5" ] && keyboard=',"reply_markup":"'$(JsonEscape "$5")'"'
 	echo "${title}${caption}${desc}${markup}${keyboard}"
 }
 
@@ -332,7 +344,7 @@ JsonGetValue() {
 # $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
 Json2Array() {
 	# shellcheck source=./commands.sh
-	[ "$1" = "" ] || source <( printf "$1"'=( %s )' "$(sed -E -n -e '/\["[-0-9a-zA-Z_,."]+"\]\t/ s/\t/=/gp' -e 's/=(true|false)/="\1"/')" )
+	[ -z "$1" ] || source <( printf "$1"'=( %s )' "$(sed -E -n -e '/\["[-0-9a-zA-Z_,."]+"\]\t/ s/\t/=/gp' -e 's/=(true|false)/="\1"/')" )
 }
 # output ARRAY as JSON.sh style data
 # $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
@@ -360,7 +372,7 @@ process_client() {
 	CMD=( ); iQUERY=( )
 	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
 	[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"MESSAGE.log"
-	if [ "${iQUERY[ID]}" = "" ]; then
+	if [ -z "${iQUERY[ID]}" ]; then
 		process_message "${num}" "${debug}"
 	else
 		process_inline "${num}" "${debug}"
@@ -372,13 +384,14 @@ process_client() {
 	source "${COMMANDS}" "${debug}" &
 
 	# then all registered addons
-	if [ "${iQUERY[ID]}" = "" ]; then
+	if [ -z "${iQUERY[ID]}" ]; then
 		event_message "${debug}"
 	else
 		event_inline "${debug}"
 	fi
 
 	# last count users
+	# !!!!! DEPRECATED !!!!!
 	tmpcount="COUNT${CHAT[ID]}"
 	grep -q "$tmpcount" <"${COUNTFILE}" &>/dev/null || cat <<< "$tmpcount" >>"${COUNTFILE}"
 }
@@ -431,7 +444,6 @@ event_inline() {
 	done
 }
 event_message() {
-echo "${MESSAGE[0]}"
 	local key debug="$1"
 	# ${MESSAEG[*]} event_message
 	# shellcheck disable=SC2153
@@ -441,7 +453,7 @@ echo "${MESSAGE[0]}"
 	done
 	
 	# ${TEXT[*]} event_text
-	if [ "${MESSAGE[0]}" != "" ]; then
+	if [ -n "${MESSAGE[0]}" ]; then
 		# shellcheck disable=SC2153
 		for key in "${!BASHBOT_EVENT_TEXT[@]}"
 		do
@@ -449,7 +461,7 @@ echo "${MESSAGE[0]}"
 		done
 
 		# ${CMD[*]} event_cmd
-		if [ "${CMD[0]}" != "" ]; then
+		if [ -n "${CMD[0]}" ]; then
 			# shellcheck disable=SC2153
 			for key in "${!BASHBOT_EVENT_CMD[@]}"
 			do
@@ -458,7 +470,7 @@ echo "${MESSAGE[0]}"
 		fi
 	fi
 	# ${REPLYTO[*]} event_replyto
-	if [ "${REPLYTO[UID]}" != "" ]; then
+	if [ -n "${REPLYTO[UID]}" ]; then
 		# shellcheck disable=SC2153
 		for key in "${!BASHBOT_EVENT_REPLYTO[@]}"
 		do
@@ -467,7 +479,7 @@ echo "${MESSAGE[0]}"
 	fi
 
 	# ${FORWARD[*]} event_forward
-	if [ "${FORWARD[UID]}" != "" ]; then
+	if [ -n "${FORWARD[UID]}" ]; then
 		# shellcheck disable=SC2153
 		for key in "${!BASHBOT_EVENT_FORWARD[@]}"
 		do
@@ -476,7 +488,7 @@ echo "${MESSAGE[0]}"
 	fi
 
 	# ${CONTACT[*]} event_contact
-	if [ "${CONTACT[FIRST_NAME]}" != "" ]; then
+	if [ -n "${CONTACT[FIRST_NAME]}" ]; then
 		# shellcheck disable=SC2153
 		for key in "${!BASHBOT_EVENT_CONTACT[@]}"
 		do
@@ -486,7 +498,7 @@ echo "${MESSAGE[0]}"
 
 	# ${VENUE[*]} event_location
 	# ${LOCALTION[*]} event_location
-	if [ "${LOCATION[LONGITUDE]}" != "" ] || [ "${VENUE[TITLE]}" != "" ]; then
+	if [ -n "${LOCATION[LONGITUDE]}" ] || [ -n "${VENUE[TITLE]}" ]; then
 		# shellcheck disable=SC2153
 		for key in "${!BASHBOT_EVENT_LOCATION[@]}"
 		do
@@ -538,7 +550,7 @@ process_message() {
 	# in reply to message from
 	REPLYTO=( )
 	REPLYTO[UID]="${UPD["result",${num},"message","reply_to_message","from","id"]}"
-	if [ "${REPLYTO[UID]}" != "" ]; then
+	if [ -n "${REPLYTO[UID]}" ]; then
 	   REPLYTO[0]="$(JsonDecode "${UPD["result",${num},"message","reply_to_message","text"]}")"
 	   REPLYTO[ID]="${UPD["result",${num},"message","reply_to_message","message_id"]}"
 	   REPLYTO[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","reply_to_message","from","first_name"]}")"
@@ -549,7 +561,7 @@ process_message() {
 	# forwarded message from
 	FORWARD=( )
 	FORWARD[UID]="${UPD["result",${num},"message","forward_from","id"]}"
-	if [ "${FORWARD[UID]}" != "" ]; then
+	if [ -n "${FORWARD[UID]}" ]; then
 	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
 	   FORWARD[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","forward_from","first_name"]}")"
 	   FORWARD[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","forward_from","last_name"]}")"
@@ -572,7 +584,7 @@ process_message() {
 	# Contact
 	CONTACT=( )
 	CONTACT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","first_name"]}")"
-	if [ "${CONTACT[FIRST_NAME]}" != "" ]; then
+	if [ -n "${CONTACT[FIRST_NAME]}" ]; then
 		CONTACT[USER_ID]="$(JsonDecode  "${UPD["result",${num},"message","contact","user_id"]}")"
 		CONTACT[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","last_name"]}")"
 		CONTACT[NUMBER]="${UPD["result",${num},"message","contact","phone_number"]}"
@@ -582,7 +594,7 @@ process_message() {
 	# vunue
 	VENUE=( )
 	VENUE[TITLE]="$(JsonDecode "${UPD["result",${num},"message","venue","title"]}")"
-	if [ "${VENUE[TITLE]}" != "" ]; then
+	if [ -n "${VENUE[TITLE]}" ]; then
 		VENUE[ADDRESS]="$(JsonDecode "${UPD["result",${num},"message","venue","address"]}")"
 		VENUE[LONGITUDE]="${UPD["result",${num},"message","venue","location","longitude"]}"
 		VENUE[LATITUDE]="${UPD["result",${num},"message","venue","location","latitude"]}"
@@ -596,9 +608,27 @@ process_message() {
 	LOCATION[LONGITUDE]="${UPD["result",${num},"message","location","longitude"]}"
 	LOCATION[LATITUDE]="${UPD["result",${num},"message","location","latitude"]}"
 
+	# service messages
+	SERVICE=( ); NEWMEMBER=( )
+	SERVICE[NEWMEMBER]="${UPD["result",${num},"message","new_chat_member","id"]}"
+	if [ -n "${SERVICE[NEWMEMBER]}" ]; then
+		NEWMEMBER[ID]="${SERVICE[NEWMEMBER]}"
+		NEWMEMBER[FIRSTNAME]="${UPD["result",${num},"message","new_chat_member","first_name"]}"
+		NEWMEMBER[LASTNAME]="${UPD["result",${num},"message","new_chat_member","last_name"]}"
+		NEWMEMBER[USERNAME]="${UPD["result",${num},"message","new_chat_member","username"]}"
+		NEWMEMBER[ISBOT]="${UPD["result",${num},"message","new_chat_member","is_bot"]}"
+	fi
+	SERVICE[LEFTMEMBER]="${UPD["result",${num},"message","left_chat_member","id"]}"
+	SERVICE[NEWTILE]="${UPD["result",${num},"message","new_chat_title"]}"
+	SERVICE[NEWPHOTO]="${UPD["result",${num},"message","new_chat_photo"]}"
+	SERVICE[PINNED]="${UPD["result",${num},"message","pinned_message"]}"
+	# set SSERVICE to yes if a service message was recieved
+	[[ "${SERVICE[*]}" =~  ^[[:blank:]]+$ ]] || SERVICE[0]="yes"
+
+
 	# split message in command and args
 	CMD=( )
-	if [[ "${MESSAGE[0]}" = "/"* ]]; then
+	if [[ "${MESSAGE[0]}" == "/"* ]]; then
 		set -f; unset IFS
 		# shellcheck disable=SC2206
 		CMD=( ${MESSAGE[0]} )
@@ -616,7 +646,7 @@ start_bot() {
 	local addsleep="100"
 	local maxsleep="$(( ${BASHBOT_SLEEP:-5000} + 100 ))"
 	[[ "${DEBUG}" = *"debug" ]] && exec &>>"DEBUG.log"
-	[ "${DEBUG}" != "" ] && date && echo "Start BASHBOT in Mode \"${DEBUG}\""
+	[ -n "${DEBUG}" ] && date && echo "Start BASHBOT in Mode \"${DEBUG}\""
 	[[ "${DEBUG}" = "xdebug"* ]] && set -x 
 	#cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
@@ -626,6 +656,8 @@ start_bot() {
 		# shellcheck source=./modules/aliases.sh
 		[ -r "${addons}" ] && source "${addons}" "startbot" "${DEBUG}"
 	done
+	# shellcheck source=./commands.sh
+	source "${COMMANDS}" "startbot"
 	# start timer events
 	if _is_function start_timer ; then
 		# shellcheck disable=SC2064
@@ -658,6 +690,7 @@ bot_init() {
 	# upgrade from old version
 	local OLDTMP="${BASHBOT_VAR:-.}/tmp-bot-bash"
 	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${DATADIR}"; rmdir "${OLDTMP}"; }
+	# no more existing modules
 	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
 	# load addons on startup
 	for addons in "${ADDONDIR:-.}"/*.sh ; do
@@ -668,14 +701,14 @@ bot_init() {
 	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
 	echo -n "Enter User to run basbot [$RUNUSER]: "
 	read -r TOUSER
-	[ "$TOUSER" = "" ] && TOUSER="$RUNUSER"
+	[ -z "$TOUSER" ] && TOUSER="$RUNUSER"
 	if ! id "$TOUSER" &>/dev/null; then
 		echo -e "${RED}User \"$TOUSER\" not found!${NC}"
 		exit 3
 	else
 		# shellcheck disable=SC2009
 		oldbot="$(ps -fu "$TOUSER" | grep startbot | grep -v -e 'grep' -e '\-startbot' )"
-		[ "${oldbot}" != "" ] && \
+		[ -n "${oldbot}" ] && \
 			echo -e "${ORANGE}Warning: At least one not upgraded TMUX bot is running! You must stop it with kill command:${NC}\\n${oldbot}"
 		echo "Adjusting user \"${TOUSER}\" files and permissions ..."
 		[ -w "bashbot.rc" ] && sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' "bashbot.rc"
@@ -707,7 +740,7 @@ fi
 
 if [ "${SOURCE}" != "yes" ] && [ "$1" != "init" ] &&  [ "$1" != "help" ]; then
   ME="$(getBotName)"
-  if [ "$ME" = "" ]; then
+  if [ -z "$ME" ]; then
 	echo -e "${RED}ERROR: Can't connect to Telegram! Your TOKEN is invalid or you are blocked by ${URL%/*} ...${NC}"
 	case "$1" in
 		"" | "stop" | "kill"* | "suspendb"* ) # warn, but do not exit
@@ -726,10 +759,10 @@ if [ "${SOURCE}" != "yes" ]; then
   # internal options only for use from bashbot and developers
   case "$1" in
 	"outproc") # forward output from interactive and jobs to chat
-		[ "$3" = "" ] && echo "No file to read from" && exit 3
-		[ "$2" = "" ] && echo "No chat to send to" && exit 3
+		[ -z "$3" ] && echo "No file to read from" && exit 3
+		[ -z "$2"  ] && echo "No chat to send to" && exit 3
 		while read -r line ;do
-			[ "$line" != "" ] && send_message "$2" "$line"
+			[ -n "$line" ] && send_message "$2" "$line"
 		done 
 		rm -f -r "${DATADIR:-.}/$3"
 		[ -s "${DATADIR:-.}/$3.log" ] || rm -f "${DATADIR:-.}/$3.log"
@@ -752,11 +785,11 @@ if [ "${SOURCE}" != "yes" ]; then
   BOTPID="$(proclist "${SESSION}")"
 
   case "$1" in
-	"count")
+	"count") # !!!!! DEPRECATED !!!!!
 		echo "A total of $(wc -l <"${COUNTFILE}") users used me."
 		exit
 		;;
-	"broadcast")
+	"broadcast") # !!!!! DEPRECATED !!!!!
 		NUMCOUNT="$(wc -l <"${COUNTFILE}")"
 		echo "Sending the broadcast $* to $NUMCOUNT users."
 		[ "$NUMCOUNT" -gt "300" ] && sleep="sleep 0.5"
@@ -764,7 +797,7 @@ if [ "${SOURCE}" != "yes" ]; then
 		while read -r f; do send_markdown_message "${f//COUNT}" "$*"; $sleep; done <"${COUNTFILE}"
 		;;
 	"status")
-		if [ "${BOTPID}" != "" ]; then
+		if [ -n "${BOTPID}" ]; then
 			echo -e "${GREEN}Bot is running.${NC}"
 			exit
 		else
@@ -775,10 +808,10 @@ if [ "${SOURCE}" != "yes" ]; then
 		 
 	"start")
 		# shellcheck disable=SC2086
-		[ "${BOTPID}" != "" ] && kill ${BOTPID}
+		[ -n "${BOTPID}" ] && kill ${BOTPID}
 		nohup "$SCRIPT" "startbot" "$2" "${SESSION}" &>/dev/null &
 		echo "Session Name: ${SESSION}"
-		if [ "$(proclist "${SESSION}")" != "" ]; then
+		if [ -n "$(proclist "${SESSION}")" ]; then
 		 	echo -e "${GREEN}Bot started successfully.${NC}"
 		else
 			echo -e "${RED}An error occurred while starting the bot.${NC}"
@@ -786,7 +819,7 @@ if [ "${SOURCE}" != "yes" ]; then
 		fi
 		;;
 	"kill"|"stop")
-		if [ "${BOTPID}" != "" ]; then
+		if [ -n "${BOTPID}" ]; then
 			# shellcheck disable=SC2086
 			if kill ${BOTPID}; then
 				echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
