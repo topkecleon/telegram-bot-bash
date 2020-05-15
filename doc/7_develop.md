@@ -328,5 +328,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.94-pre-0-gac2ec02
+#### $$VERSION$$ v0.94-0-gaaa71c8
 

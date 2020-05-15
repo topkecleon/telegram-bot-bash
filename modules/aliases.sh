@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-pre-2-gc0a633f
+#### $$VERSION$$ v0.94-0-gaaa71c8
 #
 # source from commands.sh to use the aliases
 

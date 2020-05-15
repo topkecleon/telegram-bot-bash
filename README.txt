@@ -253,4 +253,4 @@ tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.94-pre-0-gac2ec02
+#### $$VERSION$$ v0.94-0-gaaa71c8
