@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-0-gaaa71c8
+#### $$VERSION$$ v0.94-1-gf13a2d0
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -104,7 +104,7 @@ if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
 		'/start'*)
 			send_action "${CHAT[ID]}" "typing"
 			user_is_botadmin "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
-			if _is_botadmin || _is_allowed "start" ; then
+			if user_is_admin "${CHAT[ID]}" "${USER[ID]}" || user_is_allowed  "${USER[ID]}" "start" ; then
 				send_markdown_message "${CHAT[ID]}" "${bashbot_help}"
 			else
 				send_normal_message "${CHAT[ID]}" "You are not allowed to start Bot."
@@ -115,9 +115,9 @@ if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
 			send_markdown_message "${CHAT[ID]}" "${bashbot_help}"
 			;;
 		'/leavechat'*) # bot leave chat if user is admin in chat
-			if user_is_botadmin "${USER[ID]}" ; then 
+			if user_is_admin "${CHAT[ID]}" "${USER[ID]}" || user_is_allowed  "${USER[ID]}" "leave" ; then
 				send_markdown_message "${CHAT[ID]}" "*LEAVING CHAT...*"
-   				 leave_chat "${CHAT[ID]}"
+   				leave_chat "${CHAT[ID]}"
 			fi
      			;;
      			

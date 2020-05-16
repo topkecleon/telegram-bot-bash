@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-0-gaaa71c8
+#### $$VERSION$$ v0.94-1-gf13a2d0
 
 # source once magic, function named like file
 eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
@@ -45,6 +45,7 @@ user_is_admin() {
 	[ "$1" = "$2" ] && return 0
 	local me; me="$(get_chat_member_status "$1" "$2")"
 	if [ "${me}" = "creator" ] || [ "${me}" = "administrator" ]; then return 0; fi
+	user_is_botadmin "$2" && return 0
 	return 1 
 }
 
