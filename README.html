@@ -180,8 +180,8 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>Whenever you are processing input from from untrusted sources (messages, files, network) you must be as carefull as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everthing. In addition delete unused scripts and examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable all not used commands.</p>
 <p>A powerful tool to improve your scripts is <code>shellcheck</code>. You can <a href="https://www.shellcheck.net/">use it online</a> or <a href="https://github.com/koalaman/shellcheck#installing">install shellcheck locally</a>. Shellcheck is used extensive in bashbot development to enshure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests. In addition bashbot has a <a href="doc/7_develop.md">test suite</a> to check if important functionality is working as expected.</p>
 <h3>Do not use #!/usr/bin/env bash</h3>
-<p>We stay with /bin/bash shebang, because using the system bash is more save from security perspective.</p>
-<p>It makes it harder for attackers and users to place alternative versions of bash and avoids using possibly broken, mangled or compromised bash executables.</p>
+<p><strong>We stay with /bin/bash shebang, because it's more save from security perspective.</strong></p>
+<p>Using the system provided bash makes it harder for attackers or users to place alternative versions of bash and avoids using possibly broken, mangled or compromised bash executables.</p>
 <p>If you are a MacOS user or forced to use an alternative bash, see <a href="doc/0_install.md">Install Bashbot</a></p>
 <h3>Run your Bot as a restricted user</h3>
 <p><strong>I recommend to run your bot as a user, with almost no access rights.</strong> All files your Bot have write access to are in danger to be overwritten/deleted if your bot is hacked. For the same reason ervery file your Bot can read is in danger to be disclosed. Restict your Bots access rigths to the absolute minimum.</p>
@@ -228,6 +228,6 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>@Gnadelwartz</p>
 <h2>That's it!</h2>
 <p>If you feel that there's something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4>$$VERSION$$ V0.94-0-gbdb50c8</h4>
+<h4>$$VERSION$$ V0.94-1-g7aa409f</h4>
 </body>
 </html>

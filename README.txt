@@ -156,11 +156,11 @@ functionality is working as expected.
 
 ### Do not use #!/usr/bin/env bash
 
-We stay with /bin/bash shebang, because using the system bash is more save from 
-security perspective.
+**We stay with /bin/bash shebang, because it's more save from security 
+perspective.**
 
-It makes it harder for attackers and users to place alternative versions of 
-bash and avoids using
+Using the system provided bash makes it harder for attackers or users to place 
+alternative versions of bash and avoids using
 possibly broken, mangled or compromised bash executables.
 
 If you are a MacOS user or forced to use an alternative bash, see [Install 
@@ -269,4 +269,4 @@ tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ V0.94-0-gbdb50c8
+#### $$VERSION$$ V0.94-1-g7aa409f
