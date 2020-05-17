@@ -43,6 +43,7 @@ Have FUN!
 │
 ├── examples			# example scripts and configs for bashbot
 │   ├── README.md		# description of files and examples
+│   ├── bash2env.shh		# script to convert /bin/bash shebang to /usr/bin/env, see [Security Considerations](../README.md#Security-Considerations)
 │   └── bashbot.cron		# example crontab
 │
 ├── doc			# Documentation and License
@@ -240,5 +241,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.94-pre-0-gac2ec02
+#### $$VERSION$$ V0.94-0-gbdb50c8
 

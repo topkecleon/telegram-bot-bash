@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.94-pre-13-g52bde30
+#### $$VERSION$$ V0.94-0-gbdb50c8
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -108,14 +108,13 @@ if _exists flock; then
   # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
   jssh_deleteKeyDB() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	local DB; DB="$(jssh_checkDB "$2")"
 	declare -A oldARR
 	# start atomic delete here, exclusive max wait 10s 
 	{ flock -e -w 10 200
 	Json2Array "oldARR" <"${DB}"
-	if [[ -v "oldAR[$1]" ]] ; then
-		unset oldARR["$1"]
-		Array2Json  "oldARR" >"${DB}"
-	fi
+	unset oldARR["$1"]
+	Array2Json  "oldARR" >"${DB}"
 	} 200>"${DB}${BASHBOT_LOCKNAME}"
   }
 
@@ -238,11 +237,10 @@ jssh_insertDB_async() {
 
 jssh_deleteKeyDB_async() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	local DB; DB="$(jssh_checkDB "$2")"
 	declare -A oldARR
 	jssh_readDB_async "oldARR" "$2" || return "$?"
-	if [[ -v "oldAR[$1]" ]] ; then
-		unset oldARR["$1"]
-		jssh_writeDB_async "oldARR" "$2"
-	fi
+	unset oldARR["$1"]
+	jssh_writeDB_async "oldARR" "$2"
 }
 

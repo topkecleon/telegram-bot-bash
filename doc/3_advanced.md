@@ -180,5 +180,5 @@ See also [answer_inline_multi, answer_inline_compose](6_reference.md#answer_inli
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.94-pre-0-gac2ec02
+#### $$VERSION$$ V0.94-0-gbdb50c8
 

@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.94-pre-7-g64efe96
+#### $$VERSION$$ V0.94-0-gbdb50c8
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -32,6 +32,9 @@ export FILE_REGEX="${BASHBOT_ETC}/.*"
 # set to "yes" and give your bot admin privilegs to remove service messaes from groups
 export SILENCER="no"
 
+# messages for admin only commands
+NOTADMIN="Sorry, this command is allowed for admin or owner only"
+NOTBOTADMIN="Sorry, this command is allowed for bot owner only"
 
 if [ "$1" = "startbot" ];then
     ###################
@@ -62,6 +65,25 @@ else
 			delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
 		fi
 	fi
+
+	# pre-check admin only commands  
+	case "${MESSAGE}" in
+		# must be private, group admin, or botadmin
+		'/run_'*|'stop_'*)
+			send_action "${CHAT[ID]}" "typing"
+			if ! user_is_admin "${CHAT[ID]}" "${USER[ID]}" ; then
+			    send_normal_message "${CHAT[ID]}" "${NOTADMIN}"; return 1
+			fi
+			# ok, now lets process the real command 
+			;;
+		# must be botadmin
+		'/echo'*) 
+			send_action "${CHAT[ID]}" "typing"
+			if ! user_is_botadmin "${USER[ID]}" ; then
+			    send_markdown_message "${CHAT[ID]}" "*${NOTBOTADMIN}*"; return 1
+			fi
+			;;
+	esac
 
 	case "${MESSAGE}" in
 		##################

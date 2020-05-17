@@ -70,6 +70,10 @@ availible on www.github.com
 * [Examples Dir](examples/README.md)
 
 ### Your really first bashbot in a nutshell
+
+Note for MacOS: you must install install a more current bash, see [Install 
+Bashbot](doc/0_install.md)
+
 To install and run bashbot you need acess to a linux/unix/bsd command line. If 
 you don't know how to get accces to a linux/unix/bsd like command line you 
 should stop reading here :-(
@@ -149,6 +153,18 @@ extensive in bashbot development to enshure a high code quality, e.g. it's not
 allowed to push changes without passing all shellcheck tests.
 In addition bashbot has a [test suite](doc/7_develop.md) to check if important 
 functionality is working as expected.
+
+### Do not use #!/usr/bin/env bash
+
+**We stay with /bin/bash shebang, because it's more save from security 
+perspective.**
+
+Using the system provided bash makes it harder for attackers or users to place 
+alternative versions of bash and avoids using
+possibly broken, mangled or compromised bash executables.
+
+If you are a MacOS user or forced to use an alternative bash, see [Install 
+Bashbot](doc/0_install.md)
 
 ### Run your Bot as a restricted user
 **I recommend to run your bot as a user, with almost no access rights.** 
@@ -253,4 +269,4 @@ tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.94-pre-0-gac2ec02
+#### $$VERSION$$ V0.94-1-g7aa409f
