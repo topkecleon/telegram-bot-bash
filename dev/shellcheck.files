@@ -1,4 +1,4 @@
 # list of additional files to check from shellcheck
-#### $$VERSION$$ v0.94-0-gaaa71c8
+#### $$VERSION$$ V0.94-0-gbdb50c8
 bashbot.rc
 mycommands.sh.clean

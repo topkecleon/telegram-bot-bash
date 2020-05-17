@@ -154,6 +154,18 @@ allowed to push changes without passing all shellcheck tests.
 In addition bashbot has a [test suite](doc/7_develop.md) to check if important 
 functionality is working as expected.
 
+### Do not use #!/usr/bin/env bash
+
+We stay with /bin/bash shebang, because using the system bash is more save from 
+security perspective.
+
+It makes it harder for attackers and users to place alternative versions of 
+bash and avoids using
+possibly broken, mangled or compromised bash executables.
+
+If you are a MacOS user or forced to use an alternative bash, see [Install 
+Bashbot](doc/0_install.md)
+
 ### Run your Bot as a restricted user
 **I recommend to run your bot as a user, with almost no access rights.** 
 All files your Bot have write access to are in danger to be overwritten/deleted 
@@ -257,4 +269,4 @@ tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.94-5-g6531fec
+#### $$VERSION$$ V0.94-0-gbdb50c8
