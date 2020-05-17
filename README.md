@@ -117,7 +117,7 @@ In addition bashbot has a [test suite](doc/7_develop.md) to check if important f
 **We stay with /bin/bash shebang, because it's more save from security perspective.**
 
 Using the system provided bash makes it harder for attackers or users to place alternative versions of bash and avoids using
-possibly broken, mangled or compromised bash executables.
+possibly broken, mangled or compromised bash executables. 
 
 If you are a MacOS user or forced to use an alternative bash, see [Install Bashbot](doc/0_install.md)
 
