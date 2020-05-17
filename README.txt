@@ -161,7 +161,7 @@ perspective.**
 
 Using the system provided bash makes it harder for attackers or users to place 
 alternative versions of bash and avoids using
-possibly broken, mangled or compromised bash executables.
+possibly broken, mangled or compromised bash executables. 
 
 If you are a MacOS user or forced to use an alternative bash, see [Install 
 Bashbot](doc/0_install.md)
@@ -269,4 +269,4 @@ tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ V0.94-1-g7aa409f
+#### $$VERSION$$ V0.94-2-gced78d3
