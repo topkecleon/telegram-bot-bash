@@ -59,6 +59,9 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
 * [Examples Dir](examples/README.md)
 
 ### Your really first bashbot in a nutshell
+
+Note for MacOS: you must install install a more current bash, see [Install Bashbot](doc/0_install.md)
+
 To install and run bashbot you need acess to a linux/unix/bsd command line. If you don't know how to get accces to a linux/unix/bsd like command line you should stop reading here :-(
 
 In addition you need a [Telegram client](https://telegram.org) and a mobile phone to [register an account](https://telegramguide.com/create-a-telegram-account/).
@@ -180,4 +183,4 @@ This may happen if to many wrong requests are sent to api.telegram.org, e.g. usi
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.94-0-gaaa71c8
+#### $$VERSION$$ v0.94-4-gcbce60a

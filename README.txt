@@ -70,6 +70,10 @@ availible on www.github.com
 * [Examples Dir](examples/README.md)
 
 ### Your really first bashbot in a nutshell
+
+Note for MacOS: you must install install a more current bash, see [Install 
+Bashbot](doc/0_install.md)
+
 To install and run bashbot you need acess to a linux/unix/bsd command line. If 
 you don't know how to get accces to a linux/unix/bsd like command line you 
 should stop reading here :-(
@@ -253,4 +257,4 @@ tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.94-0-gaaa71c8
+#### $$VERSION$$ v0.94-4-gcbce60a
