@@ -49,7 +49,7 @@ You must install a more current version of bash, as the default bash is way to o
 see e.g. [Install Bash on Mac](http://macappstore.org/bash/)
 
 After installation / update of bashbot you must change the shebang line to point to your bash location
-e.g. with the provided script ```examples/bash2env.sh```
+e.g. with the provided script ```bash -c "examples/bash2env *.sh */*.sh"```
 
 We stay with /bin/bash shebang, because using the system bash is more save, see
 [Security Considerations](../README.md#Security-Considerations)
@@ -98,5 +98,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ V0.94-1-g7aa409f
+#### $$VERSION$$ V0.94-3-gca803c0
 

@@ -192,4 +192,4 @@ This may happen if to many wrong requests are sent to api.telegram.org, e.g. usi
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ V0.94-1-g7aa409f
+#### $$VERSION$$ V0.94-2-gced78d3
