@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ V0.94-5-g1dc0211
+#### $$VERSION$$ V0.94-6-gdcf6534
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -114,7 +114,7 @@ if [ -z "${BOTTOKEN}" ]; then
   if [ "$(cat -v "${TOKENFILE}" | wc  | sed -e 's/[[:space:]]//g')" != "1146" ]; then
 	echo -e "${ORANGE}Warning, something may wrong with your token file.${NC}"
 	echo -e "${ORANGE}The file musst be 1 newline,  1 word,  and  46 byte, your's is:${NC}\c"
-	wc "${TOKENFILE}"
+	cat -v "${TOKENFILE}" | wc | sed -e 's/[[:space:]]\+/ /g'
   fi
   BOTTOKEN="$(< "${TOKENFILE}")"
 
@@ -159,7 +159,7 @@ if [[ ! "${BOTTOKEN}" =~ ^[0-9]+:[a-zA-Z0-9_-]+$ ]]; then
 	echo -e "${ORANGE}Warning, your bottoken may incorrent. it sould have the following format:${NC}"
 	echo -e "${GREY}123456789${RED}:${GREY}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4${ORANGE} => ${NC}\c"
 	echo -e "${GREY}9 digits${RED}:${GREY}35 alnum characters + '_-'${NC}"
-	echo -e "${ORANGE}Your current token is: ${GREY}${BOTTOKEN//:/${RED}:${GREY}}${NC}"
+	echo -e "${ORANGE}Your current token is: '${GREY}$(cat -ve <<<"${BOTTOKEN//:/${RED}:${GREY}}")' (one $ is ok){NC}"
 fi
 if [ "${BOTTOKEN#bot}" != "${BOTTOKEN}" ]; then
 	echo -e "${ORANGE}Warning, your token starts with '${GREY}bot${NC}${ORANGE}', did you forget to remove it?.${NC}"
