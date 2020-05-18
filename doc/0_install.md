@@ -98,5 +98,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ V0.94-3-gca803c0
+#### $$VERSION$$ V0.94-4-gf0a7d85
 

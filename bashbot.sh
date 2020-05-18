@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ V0.94-0-gbdb50c8
+#### $$VERSION$$ V0.94-5-g1dc0211
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -28,6 +28,7 @@ if [ -t 1 ] && [ -n "$TERM" ];  then
     RED='\e[31m'
     GREEN='\e[32m'
     ORANGE='\e[35m'
+    GREY='\e[1;30m'
     NC='\e[0m'
 fi
 
@@ -110,7 +111,13 @@ if [ -z "${BOTTOKEN}" ]; then
 	printf '%s\n' "${BOTTOKEN}" > "${TOKENFILE}"
      fi
   fi
-  [ -z  "${BOTTOKEN}" ] && BOTTOKEN="$(< "${TOKENFILE}")"
+  if [ "$(cat -v "${TOKENFILE}" | wc  | sed -e 's/[[:space:]]//g')" != "1146" ]; then
+	echo -e "${ORANGE}Warning, something may wrong with your token file.${NC}"
+	echo -e "${ORANGE}The file musst be 1 newline,  1 word,  and  46 byte, your's is:${NC}\c"
+	wc "${TOKENFILE}"
+  fi
+  BOTTOKEN="$(< "${TOKENFILE}")"
+
   # setup botadmin file
   if [ ! -f "${BOTADMIN}" ]; then
      if [ -z "${CLEAR}" ]; then
@@ -147,6 +154,15 @@ if [ -z "${BOTTOKEN}" ]; then
 	ls -l "${COUNTFILE}"
 	exit 2
   fi
+fi
+if [[ ! "${BOTTOKEN}" =~ ^[0-9]+:[a-zA-Z0-9_-]+$ ]]; then
+	echo -e "${ORANGE}Warning, your bottoken may incorrent. it sould have the following format:${NC}"
+	echo -e "${GREY}123456789${RED}:${GREY}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4${ORANGE} => ${NC}\c"
+	echo -e "${GREY}9 digits${RED}:${GREY}35 alnum characters + '_-'${NC}"
+	echo -e "${ORANGE}Your current token is: ${GREY}${BOTTOKEN//:/${RED}:${GREY}}${NC}"
+fi
+if [ "${BOTTOKEN#bot}" != "${BOTTOKEN}" ]; then
+	echo -e "${ORANGE}Warning, your token starts with '${GREY}bot${NC}${ORANGE}', did you forget to remove it?.${NC}"
 fi
 
 ##################
@@ -840,7 +856,7 @@ if [ "${SOURCE}" != "yes" ]; then
 		;;
 	*)
 		echo -e "${RED}${REALME}: BAD REQUEST${NC}"
-		echo -e "${RED}Available arguments: start, stop, kill, status, count, broadcast, help, suspendback, resumeback, killback${NC}"
+		echo -e "${RED}Available arguments: ${GREY}start, stop, kill, status, count, broadcast, help, suspendback, resumeback, killback${NC}"
 		exit 4
 		;;
   esac
