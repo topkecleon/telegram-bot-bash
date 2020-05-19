@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ V0.94-0-gbdb50c8
+#### $$VERSION$$ V0.94-7-g3d92bf3
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -28,6 +28,7 @@ if [ -t 1 ] && [ -n "$TERM" ];  then
     RED='\e[31m'
     GREEN='\e[32m'
     ORANGE='\e[35m'
+    GREY='\e[1;30m'
     NC='\e[0m'
 fi
 
@@ -110,7 +111,10 @@ if [ -z "${BOTTOKEN}" ]; then
 	printf '%s\n' "${BOTTOKEN}" > "${TOKENFILE}"
      fi
   fi
-  [ -z  "${BOTTOKEN}" ] && BOTTOKEN="$(< "${TOKENFILE}")"
+  # read BOTTOKEN from file and removen everyting from first newline to end
+  BOTTOKEN="$(< "${TOKENFILE}")"
+  BOTTOKEN="${BOTTOKEN%%$'\n'*}"
+
   # setup botadmin file
   if [ ! -f "${BOTADMIN}" ]; then
      if [ -z "${CLEAR}" ]; then
@@ -148,6 +152,23 @@ if [ -z "${BOTTOKEN}" ]; then
 	exit 2
   fi
 fi
+# do we have BSD sed
+if ! sed '1ia' </dev/null 2>/dev/null; then
+	echo -e "${ORANGE}Warning: You may run on a BSD style system without gnu utils ...${NC}"
+fi
+# BOTTOKEN format checks
+if [[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ ]]; then
+	echo -e "${ORANGE}Warning, your bottoken may incorrect. it should have the following format:${NC}"
+	echo -e "${GREY}123456789${RED}:${GREY}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4${ORANGE} => ${NC}\c"
+	echo -e "${GREY}8-10 digits${RED}:${GREY}35 alnum characters + '_-'${NC}"
+	echo -e "${ORANGE}Your current token is: '${GREY}^$(cat -ve <<<"${BOTTOKEN//:/${RED}:${GREY}}")${ORANGE}'${NC}"
+	[[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}: ]] &&\
+		echo -e "${ORANGE}Possible problem in the digits part, len is $(($(wc -c <<<"${BOTTOKEN%:*}")-1))${NC}"
+	[[ ! "${BOTTOKEN}" =~ :[a-zA-Z0-9_-]{35}$ ]] &&\
+		echo -e "${ORANGE}Posilbe problem in the charatcers part, len is $(($(wc -c <<<"${BOTTOKEN#*:}")-1))${NC}"
+fi
+
+exit
 
 ##################
 # here we start with the real stuff
@@ -840,7 +861,7 @@ if [ "${SOURCE}" != "yes" ]; then
 		;;
 	*)
 		echo -e "${RED}${REALME}: BAD REQUEST${NC}"
-		echo -e "${RED}Available arguments: start, stop, kill, status, count, broadcast, help, suspendback, resumeback, killback${NC}"
+		echo -e "${RED}Available arguments: ${GREY}start, stop, kill, status, count, broadcast, help, suspendback, resumeback, killback${NC}"
 		exit 4
 		;;
   esac
