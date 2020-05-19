@@ -160,12 +160,12 @@ functionality is working as expected.
 **We stay with /bin/bash shebang, because it's more save from security 
 perspective.**
 
-Using the system provided bash makes it harder for attackers or users to place 
-alternative versions of bash and avoids using
-possibly broken, mangled or compromised bash executables. 
+Using a fixed path to the system provided bash makes it harder for attackers or 
+users to place alternative versions of bash
+and avoids using a possibly broken, mangled or compromised bash executable. 
 
-If you are a MacOS user or forced to use an alternative bash, see [Install 
-Bashbot](doc/0_install.md)
+If you are a BSD /  MacOS user or must to use an other bash location, see 
+[Install Bashbot](doc/0_install.md)
 
 ### Run your Bot as a restricted user
 **I recommend to run your bot as a user, with almost no access rights.** 
@@ -270,4 +270,4 @@ tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ V0.94-8-g876361f
+#### $$VERSION$$ V0.94-9-g46af634
