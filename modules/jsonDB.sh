@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ V0.94-0-gbdb50c8
+#### $$VERSION$$ v0.96-dev-1-g4b36432
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -119,6 +119,24 @@ if _exists flock; then
   }
 
 
+  # add a value to key, used for conters
+  # $1 key name, can onyl contain -a-zA-Z0-9,._
+  # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
+  # $3 optional count, value added to count3r, add 1 if empty 
+  jssh_countKeyDB() {
+	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	local DB COUNT="1"; DB="$(jssh_checkDB "$2")"
+	declare -A oldARR
+	# start atomic delete here, exclusive max wait 10s 
+	{ flock -e -w 10 200
+	Json2Array "oldARR" <"${DB}"
+	(( oldARR["$1"]+=COUNT ));
+	# it's append, but last one counts, its a simple DB ...
+	printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${oldARR["$1"]//\"/\\\"}" >>"${DB}"
+	} 200>"${DB}${BASHBOT_LOCKNAME}"
+  }
+
+
 else
   #########
   # we have no flock, use "old" not atomic functions
@@ -141,6 +159,10 @@ else
 
   jssh_deleteKeyDB() {
 	jssh_deleteKeyDB_async "$@"
+  }
+
+  jssh_countKeyDB() {
+	jssh_countKeyDB "$@"
   }
 fi
 
@@ -242,5 +264,17 @@ jssh_deleteKeyDB_async() {
 	jssh_readDB_async "oldARR" "$2" || return "$?"
 	unset oldARR["$1"]
 	jssh_writeDB_async "oldARR" "$2"
+}
+
+jssh_countKeyDB_async() {
+	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	local DB COUNT="1"; DB="$(jssh_checkDB "$2")"
+	declare -A oldARR
+	# start atomic delete here, exclusive max wait 10s 
+	Json2Array "oldARR" <"${DB}"
+	(( oldARR["$1"]+=COUNT ));
+	# it's append, but last one counts, its a simple DB ...
+	#printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${oldARR["$1"]//\"/\\\"}" >>"${DB}"
+	Array2Json  "oldARR" >"${DB}"
 }
 
