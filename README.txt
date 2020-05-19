@@ -17,11 +17,15 @@ Uses [JSON.sh](http://github.com/dominictarr/JSON.sh), but no more TMUX.
 
 Even bashbot is written in bash, it depends on commands typically availible in 
 a Unix/Linux Environment.
-More concret on the common commands provided by 
+More concret on the common commands provided by recent versions of 
 [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), 
 [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or 
 [toybox](https://landley.net/toybox/help.html), see [Developer 
 Notes](doc/7_develop.md#common-commands)
+
+Note for MacOS and BSD Users: As bashbot use behaivior of recent bash and 
+(gnu)sed versions, bashbot may not run without installing additional software, 
+see [Install Bashbot](doc/0_install.md)
 
 
 Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and 
@@ -71,12 +75,9 @@ availible on www.github.com
 
 ### Your really first bashbot in a nutshell
 
-Note for MacOS: you must install install a more current bash, see [Install 
-Bashbot](doc/0_install.md)
-
-To install and run bashbot you need acess to a linux/unix/bsd command line. If 
-you don't know how to get accces to a linux/unix/bsd like command line you 
-should stop reading here :-(
+To install and run bashbot you need acess to a linux/unix command line. If you 
+don't know how to get accces to a linux/unix/bsd like command line you should 
+stop reading here :-(
 
 In addition you need a [Telegram client](https://telegram.org) and a mobile 
 phone to [register an 
@@ -269,4 +270,4 @@ tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ V0.94-2-gced78d3
+#### $$VERSION$$ V0.94-7-g3d92bf3

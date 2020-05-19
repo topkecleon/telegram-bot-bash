@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ V0.94-6-gdcf6534
+#### $$VERSION$$ V0.94-7-g3d92bf3
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -111,12 +111,9 @@ if [ -z "${BOTTOKEN}" ]; then
 	printf '%s\n' "${BOTTOKEN}" > "${TOKENFILE}"
      fi
   fi
-  if [ "$(cat -v "${TOKENFILE}" | wc  | sed -e 's/[[:space:]]//g')" != "1146" ]; then
-	echo -e "${ORANGE}Warning, something may wrong with your token file.${NC}"
-	echo -e "${ORANGE}The file musst be 1 newline,  1 word,  and  46 byte, your's is:${NC}\c"
-	cat -v "${TOKENFILE}" | wc | sed -e 's/[[:space:]]\+/ /g'
-  fi
+  # read BOTTOKEN from file and removen everyting from first newline to end
   BOTTOKEN="$(< "${TOKENFILE}")"
+  BOTTOKEN="${BOTTOKEN%%$'\n'*}"
 
   # setup botadmin file
   if [ ! -f "${BOTADMIN}" ]; then
@@ -155,15 +152,23 @@ if [ -z "${BOTTOKEN}" ]; then
 	exit 2
   fi
 fi
-if [[ ! "${BOTTOKEN}" =~ ^[0-9]+:[a-zA-Z0-9_-]+$ ]]; then
-	echo -e "${ORANGE}Warning, your bottoken may incorrent. it sould have the following format:${NC}"
+# do we have BSD sed
+if ! sed '1ia' </dev/null 2>/dev/null; then
+	echo -e "${ORANGE}Warning: You may run on a BSD style system without gnu utils ...${NC}"
+fi
+# BOTTOKEN format checks
+if [[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ ]]; then
+	echo -e "${ORANGE}Warning, your bottoken may incorrect. it should have the following format:${NC}"
 	echo -e "${GREY}123456789${RED}:${GREY}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4${ORANGE} => ${NC}\c"
-	echo -e "${GREY}9 digits${RED}:${GREY}35 alnum characters + '_-'${NC}"
-	echo -e "${ORANGE}Your current token is: '${GREY}$(cat -ve <<<"${BOTTOKEN//:/${RED}:${GREY}}")' (one $ is ok){NC}"
+	echo -e "${GREY}8-10 digits${RED}:${GREY}35 alnum characters + '_-'${NC}"
+	echo -e "${ORANGE}Your current token is: '${GREY}^$(cat -ve <<<"${BOTTOKEN//:/${RED}:${GREY}}")${ORANGE}'${NC}"
+	[[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}: ]] &&\
+		echo -e "${ORANGE}Possible problem in the digits part, len is $(($(wc -c <<<"${BOTTOKEN%:*}")-1))${NC}"
+	[[ ! "${BOTTOKEN}" =~ :[a-zA-Z0-9_-]{35}$ ]] &&\
+		echo -e "${ORANGE}Posilbe problem in the charatcers part, len is $(($(wc -c <<<"${BOTTOKEN#*:}")-1))${NC}"
 fi
-if [ "${BOTTOKEN#bot}" != "${BOTTOKEN}" ]; then
-	echo -e "${ORANGE}Warning, your token starts with '${GREY}bot${NC}${ORANGE}', did you forget to remove it?.${NC}"
-fi
+
+exit
 
 ##################
 # here we start with the real stuff
