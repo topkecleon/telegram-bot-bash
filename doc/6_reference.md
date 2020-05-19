@@ -689,12 +689,12 @@ jssh_deleteKeyDB "delkey"" "${DATADIR:-.}/myvalues"
 Increase a key=value pair from a jsshDB file by 1, key name is only allowed to contain '-a-zA-Z0-9,._'
 If value is given key is increased by value.
 
-Ssde effect: if value is given key is updated "in place" (slower) and file is cleand up, if no value is given fast path is used
-and new count is added at the end of file.
+Side effect: if value is given key is updated "in place" (slower) and file is cleand up, if no value is given fast path is used
+and new count is added to the end of file.
 
 *usage:*  jssh_countKeyDB "key" "filename" ["value"]
 
-*usage:*  jssh_countKeyDB "key" "filename" ["value"]
+*usage:*  jssh_countKeyDB_async "key" "filename" ["value"]
 
 *example:* 
 ```bash
@@ -989,5 +989,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.96-dev-3-ga463666
+#### $$VERSION$$ v0.96-dev-4-gab863af
 
