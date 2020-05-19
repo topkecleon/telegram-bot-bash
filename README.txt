@@ -23,7 +23,7 @@ More concret on the common commands provided by recent versions of
 [toybox](https://landley.net/toybox/help.html), see [Developer 
 Notes](doc/7_develop.md#common-commands)
 
-Note for MacOS and BSD Users: As bashbot use behaivior of recent bash and 
+*Note for MacOS and BSD Users:* As bashbot use behavior of recent bash and 
 (gnu)sed versions, bashbot may not run without installing additional software, 
 see [Install Bashbot](doc/0_install.md)
 
@@ -270,4 +270,4 @@ tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ V0.94-7-g3d92bf3
+#### $$VERSION$$ V0.94-8-g876361f

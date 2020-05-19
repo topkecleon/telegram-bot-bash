@@ -14,7 +14,7 @@ Uses [JSON.sh](http://github.com/dominictarr/JSON.sh), but no more TMUX.
 Even bashbot is written in bash, it depends on commands typically availible in a Unix/Linux Environment.
 More concret on the common commands provided by recent versions of [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or [toybox](https://landley.net/toybox/help.html), see [Developer Notes](doc/7_develop.md#common-commands)
 
-Note for MacOS and BSD Users: As bashbot use behaivior of recent bash and (gnu)sed versions, bashbot may not run without installing additional software, see [Install Bashbot](doc/0_install.md)
+*Note for MacOS and BSD Users:* As bashbot use behavior of recent bash and (gnu)sed versions, bashbot may not run without installing additional software, see [Install Bashbot](doc/0_install.md)
 
 
 Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Downloads](https://github.com/topkecleon/telegram-bot-bash/releases) are availible on www.github.com
@@ -192,4 +192,4 @@ This may happen if to many wrong requests are sent to api.telegram.org, e.g. usi
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ V0.94-7-g3d92bf3
+#### $$VERSION$$ V0.94-8-g876361f

@@ -45,16 +45,16 @@ Now you can restart your bashbot instances.
 
 ### Note for BSD and MacOS
 
-**On MacOS** You must install a more current version of bash, as the default bash is way to old,
+**On MacOS** you must install a more recent version of bash, as the default bash is way to old,
 see e.g. [Install Bash on Mac](http://macappstore.org/bash/)
 
-**On BSD and MacOS** I recommend to install the gnu variants of coreutils and include them in front of your PATH
-environment variable before running bashbot, e.g. sed, grep, find
+**On BSD and MacOS** I recommend to install gnu coreutils and include them in front of your PATH
+environment variable before running bashbot, e.g. the gnu versions of sed, grep, find ...
 
 In adition you must adjust the shebang line of the scripts ```bashbot.sh``` and ```json.sh``` to point to to the correct bash
 or use the example script: ```examples/bash2env *.sh */*.sh```
 
-We stay with /bin/bash shebang, because using the system bash is more save, see
+Bashbot will stay with /bin/bash shebang, as using a fixed path is more secure than the portable /usr/bin/env variant, see
 [Security Considerations](../README.md#Security-Considerations)
 
 ### Notes on Updates
@@ -101,5 +101,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ V0.94-7-g3d92bf3
+#### $$VERSION$$ V0.94-8-g876361f
 
