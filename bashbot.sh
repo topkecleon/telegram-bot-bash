@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ V0.94-7-g3d92bf3
+#### $$VERSION$$ v0.96-dev-2-gb6f36c6
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -167,8 +167,6 @@ if [[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ ]]; then
 	[[ ! "${BOTTOKEN}" =~ :[a-zA-Z0-9_-]{35}$ ]] &&\
 		echo -e "${ORANGE}Posilbe problem in the charatcers part, len is $(($(wc -c <<<"${BOTTOKEN#*:}")-1))${NC}"
 fi
-
-exit
 
 ##################
 # here we start with the real stuff
