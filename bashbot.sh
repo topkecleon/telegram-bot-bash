@@ -168,7 +168,6 @@ if [[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ ]]; then
 		echo -e "${ORANGE}Posilbe problem in the charatcers part, len is $(($(wc -c <<<"${BOTTOKEN#*:}")-1))${NC}"
 fi
 
-exit
 
 ##################
 # here we start with the real stuff
