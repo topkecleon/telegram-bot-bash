@@ -685,6 +685,22 @@ Deleted a key=value pair froma jsshDB file, key name is only allowed to contain 
 jssh_deleteKeyDB "delkey"" "${DATADIR:-.}/myvalues"
 ```
 
+##### jssh_countKeyDB
+Increase a key=value pair from a jsshDB file by 1, key name is only allowed to contain '-a-zA-Z0-9,._'
+If value is given key is increased by value.
+
+Ssde effect: if value is given key is updated "in place" (slower) and file is cleand up, if no value is given fast path is used
+and new count is added at the end of file.
+
+*usage:*  jssh_countKeyDB "key" "filename" ["value"]
+
+*usage:*  jssh_countKeyDB "key" "filename" ["value"]
+
+*example:* 
+```bash
+jssh_countKeyDB "usercount"" "${DATADIR:-.}/myvalues"
+```
+
 https://linuxhint.com/associative_array_bash/
 
 https://linuxconfig.org/how-to-use-arrays-in-bash-script
@@ -973,5 +989,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ V0.94-0-gbdb50c8
+#### $$VERSION$$ v0.96-dev-3-ga463666
 
