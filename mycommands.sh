@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.96-dev-6-g7e83e5d
+#### $$VERSION$$ v0.96-dev-7-g0153928
 #
 
 # uncomment the following lines to overwrite info and help messages

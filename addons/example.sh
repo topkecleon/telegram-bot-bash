@@ -4,7 +4,7 @@
 # Addons can register to bashbot events at statup
 # by providing their name and a callback per event
 #
-#### $$VERSION$$ v0.96-dev-6-g7e83e5d
+#### $$VERSION$$ v0.96-dev-7-g0153928
 #
 # If an event occours each registered event function is called.
 #

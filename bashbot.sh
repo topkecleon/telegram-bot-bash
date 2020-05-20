@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev-6-g7e83e5d
+#### $$VERSION$$ v0.96-dev-7-g0153928
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -168,6 +168,7 @@ if [[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ ]]; then
 		echo -e "${ORANGE}Posilbe problem in the charatcers part, len is $(($(wc -c <<<"${BOTTOKEN#*:}")-1))${NC}"
 fi
 
+
 ##################
 # here we start with the real stuff
 URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
@@ -317,7 +318,7 @@ fi
 # $1 string
 # output escaped string
 JsonEscape() {
-	sed 's/\([-"`´,§$%&ß/(){}#@?*]\)/\\\1/g' <<< "$1"
+	sed 's/\([-"`´,§$%&/(){}#@!?*.]\)/\\\1/g' <<< "$1"
 }
 
 # convert common telegram entities to JSON
