@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev-5-g037b1ea
+#### $$VERSION$$ v0.96-dev-6-g7e83e5d
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -51,12 +51,14 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
 
 # load modues on startup and always on on debug
-if [ "${1}" = "startbot" ] || [[ "${1}" = *"debug"* ]] ; then
-	# load all readable modules
-	for modules in "${MODULEDIR:-.}"/*.sh ; do
+if [ -n "${1}" ]; then
+    # load all readable modules
+    for modules in "${MODULEDIR:-.}"/*.sh ; do
+	if [[ "${1}" == *"debug"* ]] || ! _is_function "$(basename "${modules}")"; then
 		# shellcheck source=./modules/aliases.sh
 		[ -r "${modules}" ] && source "${modules}" "${1}"
-	done
+	fi
+    done
 fi
 
 #                                                            
@@ -64,7 +66,7 @@ fi
 # copy "mycommands.sh.dist" to "mycommnds.sh" and change the values there
 # defaults to no inline and nonsense home dir
 export INLINE="0"
-export FILE_REGEX='/home/user/allowed/.*'
+export FILE_REGEX="${BASHBOT_ETC}/.*"
 
 
 # load mycommands
@@ -72,10 +74,10 @@ export FILE_REGEX='/home/user/allowed/.*'
 [ -r "${BASHBOT_ETC:-.}/mycommands.sh" ] && source "${BASHBOT_ETC:-.}/mycommands.sh"  "${1}"
 
 
-if [ "${1}" = "" ] || [[ "${1}" == *"debug"* ]];then
+if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
     # detect inline commands....
     # no default commands, all processing is done in myinlines()
-    if [ "$INLINE" != "0" ] && [ "${iQUERY[ID]}" != "" ]; then
+    if [ "$INLINE" != "0" ] && [ -n "${iQUERY[ID]}" ]; then
     	# forward iinline query to optional dispatcher
 	_exec_if_function myinlines
 

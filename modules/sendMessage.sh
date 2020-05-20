@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev-5-g037b1ea
+#### $$VERSION$$ v0.96-dev-6-g7e83e5d
 
 # source once magic, function named like file
 eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
