@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ V0.94-0-gbdb50c8
+#### $$VERSION$$ v0.96-dev-7-g0153928
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -36,7 +36,7 @@ if _exists flock; then
 	local DB; DB="$(jssh_checkDB "$2")"
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
-	# shared lock, many processes can read, maximum wait 1s
+	# shared lock, many processes can read, max wait 1s
 	{ flock -s -w 1 200; Json2Array "$1" <"${DB}"; } 200>"${DB}${BASHBOT_LOCKNAME}"
   }
 
@@ -95,7 +95,7 @@ if _exists flock; then
 	local DB; DB="$(jssh_checkDB "$3")"
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
-	# start atomic update here, exclusive max wait 2si, it's append, not overwrite
+	# start atomic update here, exclusive max wait 2, it's append, not overwrite
 	{ flock -e -w 2 200
 	 # it's append, but last one counts, its a simple DB ...
 	  printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${value//\"/\\\"}" >>"${DB}"
@@ -115,6 +115,44 @@ if _exists flock; then
 	Json2Array "oldARR" <"${DB}"
 	unset oldARR["$1"]
 	Array2Json  "oldARR" >"${DB}"
+	} 200>"${DB}${BASHBOT_LOCKNAME}"
+  }
+
+  # delete key/value from jsshDB
+  # $1 key name, can onyl contain -a-zA-Z0-9,._
+  # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
+  jssh_getKeyDB() {
+	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	local DB; DB="$(jssh_checkDB "$2")"
+	declare -A oldARR
+	# start atomic delete here, exclusive max wait 1s 
+	{ flock -e -w 1 200
+	Json2Array "oldARR" <"${DB}"
+	} 200>"${DB}${BASHBOT_LOCKNAME}"
+	echo "${oldARR["$1"]}"
+  }
+
+
+  # add a value to key, used for conters
+  # $1 key name, can onyl contain -a-zA-Z0-9,._
+  # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
+  # $3 optional count, value added to count3r, add 1 if empty 
+  # side effect: if $3 is not given, we add to end of file to be as fast as possible
+  jssh_countKeyDB() {
+	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	local DB; DB="$(jssh_checkDB "$2")"
+	declare -A oldARR
+	# start atomic delete here, exclusive max wait 5 
+	{ flock -e -w 5 200
+	Json2Array "oldARR" <"${DB}"
+	if [ "$3" != "" ]; then
+		(( oldARR["$1"]+="$3" ));
+		Array2Json  "oldARR" >"${DB}"
+	else
+		# it's append, but last one counts, its a simple DB ...
+		(( oldARR["$1"]++ ));
+		printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${oldARR["$1"]//\"/\\\"}" >>"${DB}"
+	fi
 	} 200>"${DB}${BASHBOT_LOCKNAME}"
   }
 
@@ -141,6 +179,13 @@ else
 
   jssh_deleteKeyDB() {
 	jssh_deleteKeyDB_async "$@"
+  }
+
+  jssh_getKeyDB() {
+	jssh_getKeyDB_async "$@"
+  }
+  jssh_countKeyDB() {
+	jssh_countKeyDB "$@"
   }
 fi
 
@@ -242,5 +287,24 @@ jssh_deleteKeyDB_async() {
 	jssh_readDB_async "oldARR" "$2" || return "$?"
 	unset oldARR["$1"]
 	jssh_writeDB_async "oldARR" "$2"
+}
+
+jssh_getKeyDB_async() {
+	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	local DB; DB="$(jssh_checkDB "$2")"
+	declare -A oldARR
+	Json2Array "oldARR" <"${DB}"
+	echo "${oldARR["$1"]}"
+}
+
+jssh_countKeyDB_async() {
+	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	local DB COUNT="1"; DB="$(jssh_checkDB "$2")"
+	[ "$3" != "" ] && COUNT="$3"
+	declare -A oldARR
+	# start atomic delete here, exclusive max wait 10s 
+	Json2Array "oldARR" <"${DB}"
+	(( oldARR["$1"]+=COUNT ));
+	Array2Json  "oldARR" >"${DB}"
 }
 
