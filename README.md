@@ -109,6 +109,9 @@ Bash scripts in general are not designed to be bullet proof, so consider this Bo
 
 Whenever you are processing input from from untrusted sources (messages, files, network) you must be as carefull as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everthing. In addition delete unused scripts and examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable all not used commands.
 
+**Note:** Until v0.941 (mai/22/2020) telegram-bot-bash has a remote code execution bug, pls update if you use an older version!
+One of the most powerful features of unix shells like bash is variable and command substitution, this can lead to RCE and information disclosing bugs if you do not escape '$' porperly, see [Issue #125](https://github.com/topkecleon/telegram-bot-bash/issues/125)
+
 A powerful tool to improve your scripts is ```shellcheck```. You can [use it online](https://www.shellcheck.net/) or [install shellcheck locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used extensive in bashbot development to enshure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests.
 In addition bashbot has a [test suite](doc/7_develop.md) to check if important functionality is working as expected.
 
@@ -139,6 +142,8 @@ To set access rights for your bashbot installation to a reasonable default run `
 
 ### Is this Bot insecure?
 Bashbot is not more (in)secure as any other Bot written in any other language, we have done our best to make it as secure as possible. But YOU are responsible for the bot commands you wrote and you should know about the risks ...
+
+**Note:** Until v0.941 (mai/22/2020) telegram-bot-bash has a remote code execution bug, pls update if you use an older version!
 
 ### Why Bash and not the much better xyz?
 Well, thats a damn good question ... may be because I'm an Unix/Linux admin from stone age. Nevertheless there are more reasons from my side:
