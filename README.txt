@@ -259,8 +259,8 @@ failed: Connection timed out.
 This may happen if to many wrong requests are sent to api.telegram.org, e.g. 
 using a wrong token or not existing API calls.  If you have a fixed IP you can 
 ask telegram service to unblock your ip or change your IP. If you are running a 
-tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in 
-'mycommands.sh' 
+socks or  tor proxy on your server look for the ```BASHBOT_CURL_ARGS``` lines 
+in 'mycommands.sh' as example.
 
 
 @Gnadelwartz
@@ -270,4 +270,4 @@ tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ v0.96-dev-8-ge63590b

@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ v0.96-dev-8-ge63590b
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -688,6 +688,7 @@ start_bot() {
 	fi
 	while true; do
 		UPDATE="$(getJson "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n | iconv -f utf-8 -t utf-8 -c)"
+		UPDATE="${UPDATE//$/\\$}"
 
 		# Offset
 		OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
