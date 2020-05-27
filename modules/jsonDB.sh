@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ 0.96-dev2-0-gcbad540
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -63,7 +63,7 @@ if _exists flock; then
 
 	declare -n ARRAY="$1"
 	[ -z "${ARRAY[*]}" ] && return 1
-	declare -A oldARR newARR
+	declare -A oldARR
 
 	# start atomic update here, exclusive max wait 10s
 	{ flock -e -w 10 200
@@ -73,14 +73,14 @@ if _exists flock; then
 		Array2Json "$1" >"${DB}"
 	else
 		# merge arrays
-		local o1 o2 n1 n2
-		o1="$(declare -p oldARR)"; o2="${o1#*\(}"
-		n1="$(declare -p ARRAY)";  n2="${n1#*\(}"
-		unset IFS; set -f
-		#shellcheck disable=SC2034,SC2190,SC2206
-		newARR=( ${o2:0:${#o2}-1} ${n2:0:${#n2}-1} )
-		set +f
-		Array2Json  "newARR" >"${DB}"
+		local key
+set -x
+		for key in "${!ARRAY[@]}"
+		do
+		    oldARR["${key}"]="${ARRAY["${key}"]}"
+		done
+		Array2Json  "oldARR" >"${DB}"
+set +x
 	fi
 	} 200>"${DB}${BASHBOT_LOCKNAME}"
   }
