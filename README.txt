@@ -147,6 +147,13 @@ globbing (set -f) and quote everthing. In addition delete unused scripts and
 examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable 
 all not used commands.
 
+**Note:** Until v0.941 (mai/22/2020) telegram-bot-bash has a remote code 
+execution bug, pls update if you use an older version!
+One of the most powerful features of unix shells like bash is variable and 
+command substitution, this can lead to RCE and information disclosing bugs if 
+you do not escape '$' porperly, see [Issue 
+#125](https://github.com/topkecleon/telegram-bot-bash/issues/125)
+
 A powerful tool to improve your scripts is ```shellcheck```. You can [use it 
 online](https://www.shellcheck.net/) or [install shellcheck 
 locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used 
@@ -199,6 +206,9 @@ directory.
 Bashbot is not more (in)secure as any other Bot written in any other language, 
 we have done our best to make it as secure as possible. But YOU are responsible 
 for the bot commands you wrote and you should know about the risks ...
+
+**Note:** Until v0.941 (mai/22/2020) telegram-bot-bash has a remote code 
+execution bug, pls update if you use an older version!
 
 ### Why Bash and not the much better xyz?
 Well, thats a damn good question ... may be because I'm an Unix/Linux admin 
@@ -270,4 +280,4 @@ in 'mycommands.sh' as example.
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.96-dev-8-ge63590b
+#### $$VERSION$$ 0.96-dev2-0-gcbad540
