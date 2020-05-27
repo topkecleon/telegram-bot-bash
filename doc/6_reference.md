@@ -470,11 +470,11 @@ The file extions is '.jssh' and for security reasons location of jssh files is r
 jsshDB files are simple text files and if you append a new Key/value pairs to the end of the file it overwrites
 an existing key/value pair. We use this behaivor for "fast" file operations.
 
-"slow funtions" simply add a new key/value pair without deleting an existing key/value pair, this is fast but over (long)
+"fast funtions" add a new key/value pair to the end of the file without deleting an existing one, this is fast but over (long)
 time the file grows infinitly.
 
-"slow funtions" in contrast modify the key/value pairs and write the whole file back,
-this is slower but does clean up the file. All duplicate key/value pairs are deleted
+"slow funtions" in contrast modify the key/value pairs in place and write the whole file back,
+this is slower but clean up the file. All previously added key/value pairs are replaced
 and only the last one is written back to the file.
 
 fast functions:
@@ -490,22 +490,21 @@ slow functions:
 ```
 
 
-#### File nameing and locking
+#### File naming and locking
 
-A jssh fileDB consists of maximum two files witch must reside inside BASHBOT_ETC or BASHBOT_DATA.
+A jssh fileDB consists of  two files which must reside inside BASHBOT_ETC or BASHBOT_DATA.
 
-- `filename.jssh` is a text file containing the data in the format as json.sh outputs.
-- optional file `filename.jssh.flock` used for read/write locking with flock
+- `filename.jssh` is a text file containing the key/value data in json.sh format´s.
+- `filename.jssh.flock` is used for read/write locking with flock
 
-Path names names containing '..' and absolute path names pointing outside BASHBOT_ETC or BASHBOT_DATA are refused by jsshDB functions. 
+Path names containing `..` or not in BASHBOT_ETC or BASHBOT_DATA are refused by jsshDB functions with an error.
 
-Since version 0.94 jsshDB functions support file locking with flock. Write / Update operations use flock to wait until
-previous operations are finished. see "man flock" for more information. Bashbot uses a maximum timeout of 10 seconds for flock.
+Since version 0.94 jsshDB functions support file locking with flock. Write/Update operations are serialised with flock to wait until
+previous operations are finished, see "man flock" for more information. To avoid deadlocks flock is used with a timeout of 10s for write and 5s for read operations. 
 
-If you don't want atomic write / update operations use the *_async variant of jsshDB functions. If flock is not availible
-the *_async variant is automatically used.
+In case flock is mot availibe or you don't want locking, jsshDB functions will be used without file locking by using *_async variants.
 
-*Example:* for file name:
+*Example:* for allowed file names:
 ```bash
 # bashbot is installed in /usr/local/telegram-bot-bash, BASHBOT_ETC is not set.
 "myfile" -> /usr/local/telegram-bot-bash/myfile.jssh
@@ -1020,5 +1019,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ 0.96-dev2-2-ga7997f2
+#### $$VERSION$$ 0.96-dev2-3-g975f99a
 
