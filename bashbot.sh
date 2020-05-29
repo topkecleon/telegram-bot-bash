@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev-8-ge63590b
+#### $$VERSION$$ 0.96-dev2-4-g2a3dcaa
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -93,7 +93,7 @@ TOKENFILE="${BASHBOT_ETC:-.}/token"
 BOTADMIN="${BASHBOT_ETC:-.}/botadmin"
 BOTACL="${BASHBOT_ETC:-.}/botacl"
 DATADIR="${BASHBOT_VAR:-.}/data-bot-bash"
-# !!!!! DEPRECATED !!!!!
+BLOCKEDFILE="${BASHBOT_VAR:-.}/blocked"
 COUNTFILE="${BASHBOT_VAR:-.}/count"
 
 # we assume everthing is already set up correctly if we have TOKEN
@@ -143,15 +143,22 @@ if [ -z "${BOTTOKEN}" ]; then
 	ls -ld "${DATADIR}"
 	exit 2
   fi
-  # setup count file !!!!! DEPRECATED !!!!!
-  if [ ! -f "${COUNTFILE}" ]; then
-	printf '\n' >"${COUNTFILE}"
-  elif [ ! -w "${COUNTFILE}" ]; then
+  # setup count file 
+  if [ ! -f "${COUNTFILE}.jssh" ]; then
+	printf '["counted_user_id"]\t"num_messages_seen"\n' >"${COUNTFILE}.jssh"
+  elif [ ! -w "${COUNTFILE}.jssh" ]; then
 	echo -e "${RED}ERROR: Can't write to ${COUNTFILE}!.${NC}"
-	ls -l "${COUNTFILE}"
+	ls -l "${COUNTFILE}.jssh"
 	exit 2
   fi
+  # setup blocked file 
+  if [ ! -f "${BLOCKEDFILE}.jssh" ]; then
+	printf '["blocked_user_or_chat_id"]\t"name and reason"\n' >"${BLOCKEDFILE}.jssh"
+  fi
 fi
+# cleanup (remove double entries) countfile on startup
+[ "${SOURCE}" != "yes" ] && _exec_if_function jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
+
 # do we have BSD sed
 if ! sed '1ia' </dev/null 2>/dev/null; then
 	echo -e "${ORANGE}Warning: You may run on a BSD style system without gnu utils ...${NC}"
@@ -390,8 +397,16 @@ process_updates() {
 process_client() {
 	local num="$1" debug="$2" 
 	CMD=( ); iQUERY=( )
-	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
 	[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"MESSAGE.log"
+	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
+	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
+	USER[ID]="${UPD["result",${num},"message","from","id"]}"
+
+	# check for uers / groups to ignore
+	if [ -n "${USER[ID]}" ]; then
+		[[ " ${!BASHBOT_BLOCKED[*]} " ==  *" ${USER[ID]} "* ]] && return
+		[ -r "${BLOCKEDFILE}" ] && _exec_if_function jssh_readDB "BASHBOT_BLOCKED" "${BLOCKEDFILE}"
+	fi
 	if [ -z "${iQUERY[ID]}" ]; then
 		process_message "${num}" "${debug}"
 	else
@@ -411,13 +426,11 @@ process_client() {
 	fi
 
 	# last count users
-	# !!!!! DEPRECATED !!!!!
-	tmpcount="COUNT${CHAT[ID]}"
-	grep -q "$tmpcount" <"${COUNTFILE}" &>/dev/null || cat <<< "$tmpcount" >>"${COUNTFILE}"
+	_exec_if_function jssh_countKeyDB "${CHAT[ID]}" "${COUNTFILE}"
 }
 
 declare -Ax BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD BASHBOT_EVENT_SEND
-declare -Ax BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE BASHBOT_EVENT_TEXT BASHBOT_EVENT_TIMER
+declare -Ax BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE BASHBOT_EVENT_TEXT BASHBOT_EVENT_TIMER BASHBOT_BLOCKED
 
 start_timer(){
 	# send alarm every ~60 s
@@ -551,8 +564,8 @@ process_message() {
 	MESSAGE[0]="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's#\\/#/#g')"
 	MESSAGE[ID]="${UPD["result",${num},"message","message_id"]}"
 
-	# Chat
-	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
+	# Chat ID is now parsed when update isrecieved
+	#CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	CHAT[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","chat","last_name"]}")"
 	CHAT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","chat","first_name"]}")"
 	CHAT[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","chat","username"]}")"
@@ -561,8 +574,8 @@ process_message() {
 	CHAT[ALL_ADMIN]="${UPD["result",${num},"message","chat","all_members_are_administrators"]}"
 	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]="${CHAT[ALL_ADMIN]}" # backward compatibility
 
-	# User
-	USER[ID]="${UPD["result",${num},"message","from","id"]}"
+	# user ID is now parsed when update isrecieved
+	#USER[ID]="${UPD["result",${num},"message","from","id"]}"
 	USER[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","from","first_name"]}")"
 	USER[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","from","last_name"]}")"
 	USER[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","from","username"]}")"
@@ -687,9 +700,9 @@ start_bot() {
 		trap "kill -9 $!; exit" EXIT INT HUP TERM QUIT 
 	fi
 	while true; do
-		UPDATE="$(getJson "$UPD_URL$OFFSET" | "${JSONSHFILE}" -s -b -n | iconv -f utf-8 -t utf-8 -c)"
+		# ignore timeout error message on waiting for updates
+		UPDATE="$(getJson "$UPD_URL$OFFSET" 2>/dev/null | "${JSONSHFILE}" -s -b -n | iconv -f utf-8 -t utf-8 -c)"
 		UPDATE="${UPDATE//$/\\$}"
-
 		# Offset
 		OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
 		((OFFSET++))
@@ -736,11 +749,11 @@ bot_init() {
 		chown -R "$TOUSER" . ./*
 		chmod 711 .
 		chmod -R a-w ./*
-		chmod -R u+w "${COUNTFILE}" "${DATADIR}" "${BOTADMIN}" ./*.log 2>/dev/null
-		chmod -R o-r,o-w "${COUNTFILE}" "${DATADIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
+		chmod -R u+w "${COUNTFILE}"* "${DATADIR}" "${BOTADMIN}" ./*.log 2>/dev/null
+		chmod -R o-r,o-w "${COUNTFILE}"* "${DATADIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
 		# jsshDB must writeable by owner
 		find . -name '*.jssh' -exec chmod u+w \{\} +
-		ls -la
+		#ls -la
 	fi
 }
 
@@ -806,16 +819,46 @@ if [ "${SOURCE}" != "yes" ]; then
   BOTPID="$(proclist "${SESSION}")"
 
   case "$1" in
-	"count") # !!!!! DEPRECATED !!!!!
-		echo "A total of $(wc -l <"${COUNTFILE}") users used me."
+	"stats"|'count')
+		declare -A STATS
+		if _is_function jssh_readDB ; then
+			jssh_readDB "STATS" "${COUNTFILE}"
+			for MSG in ${!STATS[*]}
+			do
+				[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
+				(( USERS++ ))
+			done
+			for MSG in ${STATS[*]}
+			do
+				(( MESSAGES+=MSG ))
+			done
+			echo "A total of ${MESSAGES} messages from ${USERS} users are processed."
+		else
+			echo "Module jsshDB is not availible."
+		fi
 		exit
 		;;
-	"broadcast") # !!!!! DEPRECATED !!!!!
-		NUMCOUNT="$(wc -l <"${COUNTFILE}")"
-		echo "Sending the broadcast $* to $NUMCOUNT users."
-		[ "$NUMCOUNT" -gt "300" ] && sleep="sleep 0.5"
+	'broadcast')
+		declare -A SENDALL
 		shift
-		while read -r f; do send_markdown_message "${f//COUNT}" "$*"; $sleep; done <"${COUNTFILE}"
+		if _is_function jssh_readDB ; then
+			jssh_readDB "SENDALL" "${COUNTFILE}"
+			echo -e "Sending broadcast message to all users \c"
+			for MSG in ${!SENDALL[*]}
+			do
+				[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
+				(( USERS++ ))
+				if [ -n "$*" ]; then
+					send_markdown_message "${MSG}" "$*"
+					echo -e ".\c"
+					sleep 0.1
+				fi
+			done
+			echo -e "\nMessage \"$*\" sent to ${USERS} users."
+		else
+			echo "Module jsshDB is not availible."
+		fi
+		exit
 		;;
 	"status")
 		if [ -n "${BOTPID}" ]; then
@@ -861,7 +904,7 @@ if [ "${SOURCE}" != "yes" ]; then
 		;;
 	*)
 		echo -e "${RED}${REALME}: BAD REQUEST${NC}"
-		echo -e "${RED}Available arguments: ${GREY}start, stop, kill, status, count, broadcast, help, suspendback, resumeback, killback${NC}"
+		echo -e "${RED}Available arguments: ${GREY}start, stop, kill, status, status, broadcast, help, suspendback, resumeback, killback${NC}"
 		exit 4
 		;;
   esac
