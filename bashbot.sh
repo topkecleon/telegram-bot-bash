@@ -97,7 +97,7 @@ DATADIR="${BASHBOT_VAR:-.}/data-bot-bash"
 COUNTFILE="${BASHBOT_VAR:-.}/count"
 
 # we assume everthing is already set up correctly if we have TOKEN
-if [ -n "${BOTTOKEN}" ]; then
+if [ -z "${BOTTOKEN}" ]; then
   # BOTTOKEN empty read from file
   if [ ! -f "${TOKENFILE}" ]; then
      if [ -z "${CLEAR}" ] && [ "$1" != "init" ]; then
