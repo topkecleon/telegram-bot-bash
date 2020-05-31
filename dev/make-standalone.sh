@@ -5,7 +5,7 @@
 # If you your bot is finished you can use make-standalone.sh to create the
 # the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ 0.96-dev2-6-gda98b09
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -22,7 +22,7 @@ DISTFILES="bashbot.sh  commands.sh  mycommands.sh modules LICENSE README.txt tok
 
 # run tests first!
 
-for test in "dev/all-tests.sh"
+for test in dev/all-test*.sh
 do
    [ ! -x "${test}" ] && continue
    if ! "${test}" ; then

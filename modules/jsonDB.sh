@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.96-dev2-0-gcbad540
+#### $$VERSION$$ 0.96-dev2-6-gda98b09
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -74,13 +74,11 @@ if _exists flock; then
 	else
 		# merge arrays
 		local key
-set -x
 		for key in "${!ARRAY[@]}"
 		do
 		    oldARR["${key}"]="${ARRAY["${key}"]}"
 		done
 		Array2Json  "oldARR" >"${DB}"
-set +x
 	fi
 	} 200>"${DB}${BASHBOT_LOCKNAME}"
   }
@@ -89,7 +87,9 @@ set +x
   # $1 key name, can onyl contain -a-zA-Z0-9,._
   # $2 key value
   # $3 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
-  jssh_insertDB() {
+  alias jssh_insertDB=jssh_insertKeyDB # backward compatibility
+  # renamed to be more consistent
+  jssh_insertKeyDB() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	local key="$1" value="$2"
 	local DB; DB="$(jssh_checkDB "$3")"
@@ -126,7 +126,7 @@ set +x
 	local DB; DB="$(jssh_checkDB "$2")"
 	declare -A oldARR
 	# start atomic delete here, exclusive max wait 1s 
-	{ flock -e -w 1 200
+	{ flock -s -w 1 200
 	Json2Array "oldARR" <"${DB}"
 	} 200>"${DB}${BASHBOT_LOCKNAME}"
 	echo "${oldARR["$1"]}"
@@ -136,7 +136,7 @@ set +x
   # add a value to key, used for conters
   # $1 key name, can onyl contain -a-zA-Z0-9,._
   # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
-  # $3 optional count, value added to count3r, add 1 if empty 
+  # $3 optional count, value added to counter, add 1 if empty 
   # side effect: if $3 is not given, we add to end of file to be as fast as possible
   jssh_countKeyDB() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
@@ -160,34 +160,27 @@ set +x
 else
   #########
   # we have no flock, use "old" not atomic functions
-  jssh_readDB() {
-	jssh_readDB_async "$@"
-  }
-
-  jssh_writeDB() {
-	jssh_writeDB_async "$@"
-  }
-
-  jssh_updateDB() {
-	jssh_updateDB_async "$@"
-  }
-
-  jssh_insertDB() {
-	jssh_insertDB_async "$@"
-	
-  }
-
-  jssh_deleteKeyDB() {
-	jssh_deleteKeyDB_async "$@"
-  }
-
-  jssh_getKeyDB() {
-	jssh_getKeyDB_async "$@"
-  }
-  jssh_countKeyDB() {
-	jssh_countKeyDB "$@"
-  }
+  alias jssh_readDB=ssh_readDB_async
+  alias jssh_writeDB=jssh_writeDB_async
+  alias jssh_updateDB=jssh_updateDB_async
+  alias jssh_insertDB=jssh_insertDB_async
+  alias ssh_deleteKeyDB=jssh_deleteKeyDB_async
+  alias jssh_getKeyDB=jssh_getKeyDB_async
+  alias jssh_countKeyDB=jssh_countKeyDB_async
 fi
+
+# updatie key/value in place to jsshDB
+# $1 key name, can onyl contain -a-zA-Z0-9,._
+# $2 key value
+# $3 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
+#no own locking, so async is the same as updatekeyDB
+alias jssh_updateKeyDB_async=jssh_updateKeyDB
+jssh_updateKeyDB() {
+	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	declare -A oldARR
+	oldARR["$1"]="$2"
+	jssh_updateDB "oldARR" "${3}" || return 3
+}
 
 ##############
 # no need for atomic
@@ -251,25 +244,24 @@ jssh_writeDB_async() {
 jssh_updateDB_async() {
 	declare -n ARRAY="$1"
 	[ -z "${ARRAY[*]}" ] && return 1
-	declare -A oldARR newARR
+	declare -A oldARR
 	jssh_readDB_async "oldARR" "$2" || return "$?"
 	if [ -z "${oldARR[*]}" ]; then
 		# no old content
 		jssh_writeDB_async "$1" "$2"
 	else
 		# merge arrays
-		local o1 o2 n1 n2
-		o1="$(declare -p oldARR)"; o2="${o1#*\(}"
-		n1="$(declare -p ARRAY)";  n2="${n1#*\(}"
-		unset IFS; set -f
-		#shellcheck disable=SC2034,SC2190,SC2206
-		newARR=( ${o2:0:${#o2}-1} ${n2:0:${#n2}-1} )
-		set +f
-		jssh_writeDB_async "newARR" "$2" 
+		local key
+		for key in "${!ARRAY[@]}"
+		do
+		    oldARR["${key}"]="${ARRAY["${key}"]}"
+		done
+		Array2Json "oldARR" >"${DB}"
 	fi
 }
 
-jssh_insertDB_async() {
+alias jssh_insertDB_async=jssh_insertKeyDB_async
+jssh_insertKeyDB_async() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	local key="$1" value="$2"
 	local DB; DB="$(jssh_checkDB "$3")"
