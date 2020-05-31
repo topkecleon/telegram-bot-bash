@@ -74,13 +74,11 @@ if _exists flock; then
 	else
 		# merge arrays
 		local key
-set -x
 		for key in "${!ARRAY[@]}"
 		do
 		    oldARR["${key}"]="${ARRAY["${key}"]}"
 		done
 		Array2Json  "oldARR" >"${DB}"
-set +x
 	fi
 	} 200>"${DB}${BASHBOT_LOCKNAME}"
   }
@@ -251,21 +249,19 @@ jssh_writeDB_async() {
 jssh_updateDB_async() {
 	declare -n ARRAY="$1"
 	[ -z "${ARRAY[*]}" ] && return 1
-	declare -A oldARR newARR
+	declare -A oldARR
 	jssh_readDB_async "oldARR" "$2" || return "$?"
 	if [ -z "${oldARR[*]}" ]; then
 		# no old content
 		jssh_writeDB_async "$1" "$2"
 	else
 		# merge arrays
-		local o1 o2 n1 n2
-		o1="$(declare -p oldARR)"; o2="${o1#*\(}"
-		n1="$(declare -p ARRAY)";  n2="${n1#*\(}"
-		unset IFS; set -f
-		#shellcheck disable=SC2034,SC2190,SC2206
-		newARR=( ${o2:0:${#o2}-1} ${n2:0:${#n2}-1} )
-		set +f
-		jssh_writeDB_async "newARR" "$2" 
+		local key
+		for key in "${!ARRAY[@]}"
+		do
+		    oldARR["${key}"]="${ARRAY["${key}"]}"
+		done
+		Array2Json  "oldARR" >"${DB}"
 	fi
 }
 
