@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.96-dev2-8-g46748ee
+#### $$VERSION$$ 0.96-dev2-11-ge366633
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -105,12 +105,12 @@ if [ ! -w "." ]; then
 fi
 
 #jsonDB is now mandatory
-if [ ! -r  "${MODULEDIR:-./modules}"/jsonDB.sh ]; then
-	echo -e "${RED}ERROR: Mandatory module  ${MODULEDIR:-./modules}/jsonDB.sh is missing or not readable!"
+if [ ! -r  "${MODULEDIR:-.}"/jsonDB.sh ]; then
+	echo -e "${RED}ERROR: Mandatory module  ${MODULEDIR:-.}/jsonDB.sh is missing or not readable!"
 	exit 6
 fi
 # shellcheck source=./modules/jsonDB.sh
-source "${MODULEDIR:-./modules}"/jsonDB.sh
+source "${MODULEDIR:-.}"/jsonDB.sh
 
 #####################
 # Setup and check environment if BOTTOKEN is NOT set
@@ -171,7 +171,7 @@ if [ -z "${BOTTOKEN}" ]; then
   # setup count file 
   if [ ! -f "${COUNTFILE}.jssh" ]; then
 	jssh_newDB "${COUNTFILE}"
-	jssh_insertDB 'counted_user_chat_id' "num_messages_seen" "${COUNTFILE}"
+	jssh_insertKeyDB 'counted_user_chat_id' "num_messages_seen" "${COUNTFILE}"
 	# conveqrt old file on creation
 	if [ -r  "${COUNTFILE}" ];then
 		sed 's/COUNT/\[\"/;s/$/\"\]\t\"1\"/' < "${COUNTFILE}" >> "${COUNTFILE}.jssh"
@@ -184,7 +184,7 @@ if [ -z "${BOTTOKEN}" ]; then
   # setup blocked file 
   if [ ! -f "${BLOCKEDFILE}.jssh" ]; then
 	jssh_newDB "${BLOCKEDFILE}"
-	jssh_insertDB 'blocked_user_or_chat_id' "name and reason" "${BLOCKEDFILE}"
+	jssh_insertKeyDB 'blocked_user_or_chat_id' "name and reason" "${BLOCKEDFILE}"
   fi
 fi
 # cleanup (remove double entries) countfile on startup
@@ -238,8 +238,8 @@ if [ "${SOURCE}" != "yes" ]; then
 fi
 
 ###############
-# load modules
-for modules in "${MODULEDIR:-./modules}"/*.sh ; do
+# load 
+for modules in "${MODULEDIR:-.}"/*.sh ; do
 	# shellcheck source=./modules/aliases.sh
 	if ! _is_function "$(basename "${modules}")" && [ -r "${modules}" ]; then source "${modules}" "source"; fi
 done

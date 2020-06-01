@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.96-dev2-6-gda98b09
+#### $$VERSION$$ 0.96-dev2-11-ge366633
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -208,18 +208,20 @@ jssh_newDB() {
 	local DB; DB="$(jssh_checkDB "$1")"
 	[ -z "${DB}" ] && return 1
 	[ -f "${DB}" ] && return 2 # already exist, do not zero out
-	printf '\n' >"${DB}"
+	printf '' >"${DB}"
 } 
 
-# $1 filename, check filename, it must be relative to BASHBOT_ETC, and not contain '..'
+# $1 filename, check filename, it must be relative to BASHBOT_VAR, and not contain '..'
 # returns real path to DB file if everything is ok
 jssh_checkDB(){
+	local DB
 	[ -z "$1" ] && return 1
-	local DB="${BASHBOT_ETC:-.}/$1.jssh"
-	if [[ "$1" = "${BASHBOT_ETC:-.}"* ]] || [[ "$1" = "${BASHBOT_DATA:-.}"* ]]; then
-		DB="$1.jssh"
-	fi
 	[[ "$1" = *'..'* ]] && return 2
+	if [[ "$1" == "${BASHBOT_VAR:-.}"* ]] || [[ "$1" == "${BASHBOT_DATA:-.}"* ]]; then
+		DB="$1.jssh"
+	else
+		DB="${BASHBOT_VAR:-.}/$1.jssh"
+	fi
 	printf '%s\n' "${DB}"
 }
 
