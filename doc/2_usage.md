@@ -74,14 +74,21 @@ Start or Stop your Bot use the following commands:
 ./bashbot.sh kill
 ```
 
-### User count
+### User stats
 
-deprecated, will be removed!
+To count the total number of users and messages run the following command:
+
+```
+./bashbot.sh stats
 ```
 
 ### Sending broadcasts to all users
+
+To send a broadcast to all of users that ever used the bot run the following command:
+
 ```
-deprecated, will be removed!
+./bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
+```
 
 ----
 
@@ -246,5 +253,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.96-dev3-0-gdddd1ce
+#### $$VERSION$$ v0.96-dev3-1-g2a66ee9
 
