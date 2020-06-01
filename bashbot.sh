@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.96-dev2-4-g2a3dcaa
+#### $$VERSION$$ 0.96-dev2-8-g46748ee
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -20,6 +20,7 @@
 # - 3 user / command / file not found
 # - 4 unkown command
 # - 5 cannot connect to telegram bot
+# - 6 mandatory module not found
 # shellcheck disable=SC2140
 
 # are we runnig in a terminal?
@@ -47,6 +48,22 @@ _exec_if_function() {
 _is_function()
 {
 	[ "$(LC_ALL=C type -t "$1")" = "function" ]
+}
+# read JSON.sh style data and asssign to an ARRAY
+# $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
+Json2Array() {
+	# shellcheck source=./commands.sh
+	[ -z "$1" ] || source <( printf "$1"'=( %s )' "$(sed -E -n -e '/\["[-0-9a-zA-Z_,."]+"\]\+*\t/ s/\t/=/gp' -e 's/=(true|false)/="\1"/')" )
+}
+# output ARRAY as JSON.sh style data
+# $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
+Array2Json() {
+	local key
+	declare -n ARRAY="$1"
+	for key in "${!ARRAY[@]}"
+       	do
+		printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${ARRAY[${key}]//\"/\\\"}"
+       	done
 }
 
 # get location and name of bashbot.sh
@@ -86,6 +103,14 @@ if [ ! -w "." ]; then
 	echo -e "${ORANGE}WARNING: ${RUNDIR} is not writeable!${NC}"
 	ls -ld .
 fi
+
+#jsonDB is now mandatory
+if [ ! -r  "${MODULEDIR:-./modules}"/jsonDB.sh ]; then
+	echo -e "${RED}ERROR: Mandatory module  ${MODULEDIR:-./modules}/jsonDB.sh is missing or not readable!"
+	exit 6
+fi
+# shellcheck source=./modules/jsonDB.sh
+source "${MODULEDIR:-./modules}"/jsonDB.sh
 
 #####################
 # Setup and check environment if BOTTOKEN is NOT set
@@ -145,7 +170,12 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
   # setup count file 
   if [ ! -f "${COUNTFILE}.jssh" ]; then
-	printf '["counted_user_id"]\t"num_messages_seen"\n' >"${COUNTFILE}.jssh"
+	jssh_newDB "${COUNTFILE}"
+	jssh_insertDB 'counted_user_chat_id' "num_messages_seen" "${COUNTFILE}"
+	# conveqrt old file on creation
+	if [ -r  "${COUNTFILE}" ];then
+		sed 's/COUNT/\[\"/;s/$/\"\]\t\"1\"/' < "${COUNTFILE}" >> "${COUNTFILE}.jssh"
+	fi
   elif [ ! -w "${COUNTFILE}.jssh" ]; then
 	echo -e "${RED}ERROR: Can't write to ${COUNTFILE}!.${NC}"
 	ls -l "${COUNTFILE}.jssh"
@@ -153,11 +183,12 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
   # setup blocked file 
   if [ ! -f "${BLOCKEDFILE}.jssh" ]; then
-	printf '["blocked_user_or_chat_id"]\t"name and reason"\n' >"${BLOCKEDFILE}.jssh"
+	jssh_newDB "${BLOCKEDFILE}"
+	jssh_insertDB 'blocked_user_or_chat_id' "name and reason" "${BLOCKEDFILE}"
   fi
 fi
 # cleanup (remove double entries) countfile on startup
-[ "${SOURCE}" != "yes" ] && _exec_if_function jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
+[ "${SOURCE}" != "yes" ] && jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
 
 # do we have BSD sed
 if ! sed '1ia' </dev/null 2>/dev/null; then
@@ -208,7 +239,7 @@ fi
 
 ###############
 # load modules
-for modules in "${MODULEDIR:-.}"/*.sh ; do
+for modules in "${MODULEDIR:-./modules}"/*.sh ; do
 	# shellcheck source=./modules/aliases.sh
 	if ! _is_function "$(basename "${modules}")" && [ -r "${modules}" ]; then source "${modules}" "source"; fi
 done
@@ -367,22 +398,6 @@ JsonGetLine() {
 JsonGetValue() {
 	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]\([0-9.,]*\).*/\1/p'
 }
-# read JSON.sh style data and asssign to an ARRAY
-# $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
-Json2Array() {
-	# shellcheck source=./commands.sh
-	[ -z "$1" ] || source <( printf "$1"'=( %s )' "$(sed -E -n -e '/\["[-0-9a-zA-Z_,."]+"\]\+*\t/ s/\t/=/gp' -e 's/=(true|false)/="\1"/')" )
-}
-# output ARRAY as JSON.sh style data
-# $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
-Array2Json() {
-	local key
-	declare -n ARRAY="$1"
-	for key in "${!ARRAY[@]}"
-       	do
-		printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${ARRAY[${key}]//\"/\\\"}"
-       	done
-}
 
 ################
 # processing of updates starts here
@@ -405,7 +420,7 @@ process_client() {
 	# check for uers / groups to ignore
 	if [ -n "${USER[ID]}" ]; then
 		[[ " ${!BASHBOT_BLOCKED[*]} " ==  *" ${USER[ID]} "* ]] && return
-		[ -r "${BLOCKEDFILE}" ] && _exec_if_function jssh_readDB "BASHBOT_BLOCKED" "${BLOCKEDFILE}"
+		jssh_readDB "BASHBOT_BLOCKED" "${BLOCKEDFILE}"
 	fi
 	if [ -z "${iQUERY[ID]}" ]; then
 		process_message "${num}" "${debug}"
@@ -426,7 +441,7 @@ process_client() {
 	fi
 
 	# last count users
-	_exec_if_function jssh_countKeyDB "${CHAT[ID]}" "${COUNTFILE}"
+	jssh_countKeyDB "${CHAT[ID]}" "${COUNTFILE}"
 }
 
 declare -Ax BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD BASHBOT_EVENT_SEND
@@ -748,9 +763,9 @@ bot_init() {
 		[ -w "bashbot.rc" ] && sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' "bashbot.rc"
 		chown -R "$TOUSER" . ./*
 		chmod 711 .
-		chmod -R a-w ./*
-		chmod -R u+w "${COUNTFILE}"* "${DATADIR}" "${BOTADMIN}" ./*.log 2>/dev/null
-		chmod -R o-r,o-w "${COUNTFILE}"* "${DATADIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
+		chmod -R o-w ./*
+		chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTADMIN}" ./*.log 2>/dev/null
+	chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
 		# jsshDB must writeable by owner
 		find . -name '*.jssh' -exec chmod u+w \{\} +
 		#ls -la
