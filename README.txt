@@ -65,6 +65,7 @@ availible on www.github.com
     * Sending Messages, Files, Keyboards
     * User Access Control
     * Inline Queries
+    * jsshDB Bashbot key-value storage
     * Background and Interactive Jobs
 * [Deveoper Notes](doc/7_develop.md)
     * Debug bashbot
@@ -280,4 +281,4 @@ in 'mycommands.sh' as example.
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ 0.96-dev2-0-gcbad540
+#### $$VERSION$$ v0.96-dev3-0-gdddd1ce

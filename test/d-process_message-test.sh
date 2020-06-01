@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ 0.96-dev2-10-ged373a8
+#### $$VERSION$$ v0.96-dev3-0-gdddd1ce
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -34,7 +34,7 @@ USER[ID]="123456789"
 CHAT[ID]="123456789"
 
 # output processed input
-print_array "USER" "CHAT" "REPLYTO" "FORWARD" "URLS" "CONTACT" "CAPTION" "LOCATION" "MESSAGE" "VENUE" >"${OUTPUTFILE}"
+print_array "USER" "CHAT" "REPLYTO" "FORWARD" "URLS" "CONTACT" "CAPTION" "LOCATION" "MESSAGE" "VENUE" "SERVICE">"${OUTPUTFILE}"
 diff -c "${REFFILE}" "${OUTPUTFILE}" || exit 1
 echo "${SUCCESS}"
 

@@ -52,6 +52,7 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Sending Messages, Files, Keyboards
     * User Access Control
     * Inline Queries
+    * jsshDB Bashbot key-value storage
     * Background and Interactive Jobs
 * [Deveoper Notes](doc/7_develop.md)
     * Debug bashbot
@@ -197,4 +198,4 @@ This may happen if to many wrong requests are sent to api.telegram.org, e.g. usi
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ 0.96-dev2-0-gcbad540
+#### $$VERSION$$ v0.96-dev3-0-gdddd1ce

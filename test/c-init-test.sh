@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ 0.96-dev2-10-ged373a8
+#### $$VERSION$$ v0.96-dev3-0-gdddd1ce
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
 source "./ALL-tests.inc.sh"
 
-TESTTOKEN="bashbottestscript"
-TESTFILES="${TOKENFILE} ${ACLFILE} ${COUNTFILE} ${ADMINFILE}"
+TESTFILES="${TOKENFILE} ${ACLFILE} ${COUNTFILE} ${BLOCKEDFILE} ${ADMINFILE}"
 
 set -e
 
@@ -46,5 +45,5 @@ cd "${DIRME}" || exit 1
 echo "${SUCCESS}"
 
 echo "Test bashbot.sh count"
-#cp "${REFDIR}/count.test" "${TESTDIR}/counti.jssh"
-#"${TESTDIR}/bashbot.sh" count
+cp "${REFDIR}/count.test" "${TESTDIR}/count.jssh"
+"${TESTDIR}/bashbot.sh" count
