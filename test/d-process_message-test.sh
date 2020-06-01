@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ 0.96-dev2-10-ged373a8
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -29,6 +29,9 @@ source <( printf 'UPD=( %s )' "$(sed <<<"${UPDATE}" -E -e 's/\t/=/g' -e 's/=(tru
 echo "Check process_message ..."
 set -x
 { process_message "0";  set +x; } >>"${LOGFILE}" 2>&1;
+
+USER[ID]="123456789"
+CHAT[ID]="123456789"
 
 # output processed input
 print_array "USER" "CHAT" "REPLYTO" "FORWARD" "URLS" "CONTACT" "CAPTION" "LOCATION" "MESSAGE" "VENUE" >"${OUTPUTFILE}"

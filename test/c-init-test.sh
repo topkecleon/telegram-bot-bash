@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ 0.96-dev2-10-ged373a8
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -46,5 +46,5 @@ cd "${DIRME}" || exit 1
 echo "${SUCCESS}"
 
 echo "Test bashbot.sh count"
-cp "${REFDIR}/count.test" "${TESTDIR}/count"
+#cp "${REFDIR}/count.test" "${TESTDIR}/counti.jssh"
 #"${TESTDIR}/bashbot.sh" count
