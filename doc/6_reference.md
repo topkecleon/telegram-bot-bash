@@ -480,7 +480,7 @@ and only the last one is written back to the file.
 fast functions:
 
 ```
-   jssh_insertDB , jssh_addKeyDB , jssh_countKeyDB
+   jssh_insertKeyDB , jssh_addKeyDB , jssh_countKeyDB
 ```
 
 slow functions:
@@ -519,8 +519,10 @@ Creats new empty jsshDB file if not exist.
 *usage:*  jssh_newDB "filename"
 
 ##### jssh_checkDB
-Check if DB name respects the rules mentioned above and returns the real/final path to DB file.
+Check if DB name respects the rules mentioned above and print to STDOUT  the real/final path to DB file.
 Used internally by all jssh DB functions, but can also used to get the real filename for a jssh DB.
+
+An error is returned and nothing is printed if the given filename is not valid
 
 *usage:*  jssh_checkDB "filename"
 
@@ -689,18 +691,20 @@ jssh_printDB READVALUES
 ["whynot","subindex1"]	"whynot A"
 ```
 
-##### jssh_insertDB
+##### jssh_insertKeyDB
 Insert, update, append a key=value pair to a jsshDB file, key name is only allowed to contain '-a-zA-Z0-9,._'
 
-*usage:*  jssh_insertDB "key" "value" "filename"
+*usage:*  jssh_insertKeyDB "key" "value" "filename"
 
-*usage:*  jssh_insertDB_asnyc "key" "value" "filename"
+*usage:*  jssh_insertKeyDB_asnyc "key" "value" "filename"
 
-Note: insertDB uses also excusiv write locking, but with a maximum timeout of 2s. insertDB is a "fast" operation, simply adding the value to the end of the file.
+*deprecated:* jssh_insertDB *was renamed in verion 0.96 to* jssh_insertKeyDB
+
+Note: inserKeytDB uses also excusive write locking, but with a maximum timeout of 2s. insertKeyDB is a "fast" operation, simply adding the value to the end of the file.
 
 *example:* 
 ```bash
-jssh_insertDB "newkey" "an other value" "${DATADIR:-.}/myvalues"
+jssh_insertKeyDB "newkey" "an other value" "${DATADIR:-.}/myvalues"
 ```
 
 ##### jssh_deleteKeyDB
@@ -1019,5 +1023,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ 0.96-dev2-4-g2a3dcaa
+#### $$VERSION$$ 0.96-dev2-12-g31b3203
 
