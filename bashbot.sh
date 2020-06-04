@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.96-dev2-11-ge366633
+#### $$VERSION$$ V0.94-6-gdcf6534
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -84,14 +84,16 @@ fi
 
 if [ -n "$BASHBOT_HOME" ]; then
 	SCRIPTDIR="$BASHBOT_HOME"
-	[ -z "${BASHBOT_ETC}" ] && BASHBOT_ETC="$BASHBOT_HOME"
-	[ -z "${BASHBOT_VAR}" ] && BASHBOT_VAR="$BASHBOT_HOME"
+ else
+	BASHBOT_HOME="${SCRIPTDIR}"
 fi
+[ -z "${BASHBOT_ETC}" ] && BASHBOT_ETC="$BASHBOT_HOME"
+[ -z "${BASHBOT_VAR}" ] && BASHBOT_VAR="$BASHBOT_HOME"
 
 ADDONDIR="${BASHBOT_ETC:-./addons}"
-
 RUNUSER="${USER}" # USER is overwritten by bashbot array
 
+# OK everthing setup, lest start
 if [ "${SOURCE}" != "yes" ] && [ -z "$BASHBOT_HOME" ] && ! cd "${RUNDIR}" ; then
 	echo -e "${RED}ERROR: Can't change to ${RUNDIR} ...${NC}"
 	exit 1
@@ -777,7 +779,7 @@ if ! _is_function send_message ; then
 	exit 1
 fi
 
-JSONSHFILE="${BASHBOT_JSONSH:-${RUNDIR}/JSON.sh/JSON.sh}"
+JSONSHFILE="${BASHBOT_JSONSH:-${SCRIPTDIR}/JSON.sh/JSON.sh}"
 [[ "${JSONSHFILE}" != *"/JSON.sh" ]] && echo -e "${RED}ERROR: \"${JSONSHFILE}\" ends not with \"JSONS.sh\".${NC}" && exit 3
 
 if [ ! -f "${JSONSHFILE}" ]; then
