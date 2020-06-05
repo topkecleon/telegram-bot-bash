@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-3-gc729cf4
+#### $$VERSION$$ v0.96-dev3-4-gbc74141
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -157,7 +157,7 @@ if _exists flock; then
 	} 200>"${DB}${BASHBOT_LOCKNAME}"
   }
 
-  # updatie key/value in place to jsshDB
+  # update key/value in place to jsshDB
   # $1 key name, can onyl contain -a-zA-Z0-9,._
   # $2 key value
   # $3 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
@@ -169,6 +169,14 @@ if _exists flock; then
 	jssh_updateDB "oldARR" "${3}" || return 3
   }
 
+  # $1 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
+  jssh_clearDB() {
+	local DB; DB="$(jssh_checkDB "$1")"
+	[ -z "${DB}" ] && return 1
+	{ flock -e -w 10 200
+	printf '' >"${DB}"
+	} 200>"${DB}${BASHBOT_LOCKNAME}"
+  } 
 
 else
   #########
@@ -182,6 +190,7 @@ else
   alias jssh_getKeyDB=jssh_getKeyDB_async
   alias jssh_countKeyDB=jssh_countKeyDB_async
   alias jssh_updateKeyDB=jssh_updateKeyDB_async
+  alias jssh_clearDB=jssh_clearDB_async
 fi
 
 ##############
@@ -300,11 +309,17 @@ jssh_countKeyDB_async() {
 # $2 key value
 # $3 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
 #no own locking, so async is the same as updatekeyDB
-jssh_updateKeyDB() {
+jssh_updateKeyDB_async() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	declare -A oldARR
 	oldARR["$1"]="$2"
 	jssh_updateDB_async "oldARR" "${3}" || return 3
 }
+
+jssh_clearDB_async() {
+	local DB; DB="$(jssh_checkDB "$1")"
+	[ -z "${DB}" ] && return 1
+	printf '' >"${DB}"
+} 
 
 
