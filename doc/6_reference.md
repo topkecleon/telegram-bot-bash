@@ -486,7 +486,7 @@ fast functions:
 slow functions:
 
 ```
-   jssh_writeDB, jssh_updateDB , jssh_deleteKeyDBB
+   jssh_writeDB, jssh_updateDB , jssh_deleteKeyDB, jssh_clearDB
 ```
 
 
@@ -502,7 +502,8 @@ Path names containing `..` or not located in BASHBOT_ETC or BASHBOT_DATA are ref
 Since version 0.94 jsshDB functions support file locking with flock. write/update operations are serialised with flock to wait until
 previous operations are finished, see "man flock" for information. To avoid deadlocks we use a timeout of 10s for write and 5s for read operations. 
 
-In case flock is not availibe or you don't want locking, jsshDB functions will be used without file locking.
+Every jssh_*DB function exist as jssj_*DB_async also.
+In case flock is not availibe or you don't want locking, jssh_*DB_async functions without file locking will be used.
 
 *Example:* for allowed file names:
 ```bash
@@ -518,6 +519,15 @@ Creats new empty jsshDB file if not exist.
 
 *usage:*  jssh_newDB "filename"
 
+*usage:*  jssh_newDB_async "filename"
+
+##### jssh_clearDB
+Delete all contents of jsshDB file.
+
+*usage:*  jssh_clearDB "filename"
+
+*usage:*  jssh_clearDB_async "filename"
+
 ##### jssh_checkDB
 Check if DB name respects the rules mentioned above and print to STDOUT  the real/final path to DB file.
 Used internally by all jssh DB functions, but can also used to get the real filename for a jssh DB.
@@ -525,6 +535,8 @@ Used internally by all jssh DB functions, but can also used to get the real file
 An error is returned and nothing is printed if the given filename is not valid
 
 *usage:*  jssh_checkDB "filename"
+
+*usage:*  jssh_checkDB_async "filename"
 
 ```bash
 if file=$(jssh_checkDB somename); then
@@ -1023,5 +1035,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ 0.96-dev2-12-g31b3203
+#### $$VERSION$$ v0.96-dev3-5-g407e147
 
