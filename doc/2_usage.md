@@ -29,7 +29,8 @@ Have FUN!
 ├── commands.sh		# command dispatcher - DO NOT EDIT!
 ├── JSON.sh			# bashbots JSON parser, see https://github.com/dominictarr/JSON.sh
 │
-├── scripts			# place your bashbot interactive and background scripts hereh
+├── scripts			# place your bashbot interactive and background scripts here
+├── logs			# here you'll find ERROR, DEBUG and MESSAGE.log
 │
 ├── modules		# optional functions, sourced by commands.sh
 │   ├── aliases.sh		# to disable modules rename them xxx.sh.off
@@ -253,5 +254,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.96-dev3-1-g2a66ee9
+#### $$VERSION$$ v0.96-dev3-3-gc729cf4
 

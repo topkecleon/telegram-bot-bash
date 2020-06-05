@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ V0.94-6-gdcf6534
+#### $$VERSION$$ v0.96-dev3-3-gc729cf4
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -172,9 +172,9 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
   # setup count file 
   if [ ! -f "${COUNTFILE}.jssh" ]; then
-	jssh_newDB "${COUNTFILE}"
-	jssh_insertKeyDB 'counted_user_chat_id' "num_messages_seen" "${COUNTFILE}"
-	# conveqrt old file on creation
+	jssh_newDB_async "${COUNTFILE}"
+	jssh_insertKeyDB_async 'counted_user_chat_id' "num_messages_seen" "${COUNTFILE}"
+	# convert old file on creation
 	if [ -r  "${COUNTFILE}" ];then
 		sed 's/COUNT/\[\"/;s/$/\"\]\t\"1\"/' < "${COUNTFILE}" >> "${COUNTFILE}.jssh"
 	fi
@@ -185,12 +185,12 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
   # setup blocked file 
   if [ ! -f "${BLOCKEDFILE}.jssh" ]; then
-	jssh_newDB "${BLOCKEDFILE}"
-	jssh_insertKeyDB 'blocked_user_or_chat_id' "name and reason" "${BLOCKEDFILE}"
+	jssh_newDB_async "${BLOCKEDFILE}"
+	jssh_insertKeyDB_async 'blocked_user_or_chat_id' "name and reason" "${BLOCKEDFILE}"
   fi
 fi
 # cleanup (remove double entries) countfile on startup
-[ "${SOURCE}" != "yes" ] && jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
+[ "${SOURCE}" != "yes" ] && jssh_deleteKeyDB_async "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
 
 # do we have BSD sed
 if ! sed '1ia' </dev/null 2>/dev/null; then
@@ -422,7 +422,7 @@ process_client() {
 	# check for uers / groups to ignore
 	if [ -n "${USER[ID]}" ]; then
 		[[ " ${!BASHBOT_BLOCKED[*]} " ==  *" ${USER[ID]} "* ]] && return
-		jssh_readDB "BASHBOT_BLOCKED" "${BLOCKEDFILE}"
+		jssh_readDB_async "BASHBOT_BLOCKED" "${BLOCKEDFILE}"
 	fi
 	if [ -z "${iQUERY[ID]}" ]; then
 		process_message "${num}" "${debug}"
@@ -443,7 +443,7 @@ process_client() {
 	fi
 
 	# last count users
-	jssh_countKeyDB "${CHAT[ID]}" "${COUNTFILE}"
+	jssh_countKeyDB_async "${CHAT[ID]}" "${COUNTFILE}"
 }
 
 declare -Ax BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD BASHBOT_EVENT_SEND
@@ -838,43 +838,35 @@ if [ "${SOURCE}" != "yes" ]; then
   case "$1" in
 	"stats"|'count')
 		declare -A STATS
-		if _is_function jssh_readDB ; then
-			jssh_readDB "STATS" "${COUNTFILE}"
-			for MSG in ${!STATS[*]}
-			do
-				[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
-				(( USERS++ ))
-			done
-			for MSG in ${STATS[*]}
-			do
-				(( MESSAGES+=MSG ))
-			done
-			echo "A total of ${MESSAGES} messages from ${USERS} users are processed."
-		else
-			echo "Module jsshDB is not availible."
-		fi
+		jssh_readDB_async "STATS" "${COUNTFILE}"
+		for MSG in ${!STATS[*]}
+		do
+			[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
+			(( USERS++ ))
+		done
+		for MSG in ${STATS[*]}
+		do
+			(( MESSAGES+=MSG ))
+		done
+		echo "A total of ${MESSAGES} messages from ${USERS} users are processed."
 		exit
 		;;
 	'broadcast')
 		declare -A SENDALL
 		shift
-		if _is_function jssh_readDB ; then
-			jssh_readDB "SENDALL" "${COUNTFILE}"
-			echo -e "Sending broadcast message to all users \c"
-			for MSG in ${!SENDALL[*]}
-			do
-				[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
-				(( USERS++ ))
-				if [ -n "$*" ]; then
-					send_markdown_message "${MSG}" "$*"
-					echo -e ".\c"
-					sleep 0.1
-				fi
-			done
-			echo -e "\nMessage \"$*\" sent to ${USERS} users."
-		else
-			echo "Module jsshDB is not availible."
-		fi
+		jssh_readDB_async "SENDALL" "${COUNTFILE}"
+		echo -e "Sending broadcast message to all users \c"
+		for MSG in ${!SENDALL[*]}
+		do
+			[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
+			(( USERS++ ))
+			if [ -n "$*" ]; then
+				send_markdown_message "${MSG}" "$*"
+				echo -e ".\c"
+				sleep 0.1
+			fi
+		done
+		echo -e "\nMessage \"$*\" sent to ${USERS} users."
 		exit
 		;;
 	"status")

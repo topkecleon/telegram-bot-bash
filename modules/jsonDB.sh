@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.96-dev2-11-ge366633
+#### $$VERSION$$ v0.96-dev3-3-gc729cf4
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -118,9 +118,10 @@ if _exists flock; then
 	} 200>"${DB}${BASHBOT_LOCKNAME}"
   }
 
-  # delete key/value from jsshDB
+  # get key/value from jsshDB
   # $1 key name, can onyl contain -a-zA-Z0-9,._
   # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
+  alias jssh_getDB=jssh_getKeyDB
   jssh_getKeyDB() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	local DB; DB="$(jssh_checkDB "$2")"
@@ -156,6 +157,18 @@ if _exists flock; then
 	} 200>"${DB}${BASHBOT_LOCKNAME}"
   }
 
+  # updatie key/value in place to jsshDB
+  # $1 key name, can onyl contain -a-zA-Z0-9,._
+  # $2 key value
+  # $3 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
+  #no own locking, so async is the same as updatekeyDB
+  jssh_updateKeyDB() {
+	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	declare -A oldARR
+	oldARR["$1"]="$2"
+	jssh_updateDB "oldARR" "${3}" || return 3
+  }
+
 
 else
   #########
@@ -165,45 +178,24 @@ else
   alias jssh_updateDB=jssh_updateDB_async
   alias jssh_insertDB=jssh_insertDB_async
   alias ssh_deleteKeyDB=jssh_deleteKeyDB_async
+  alias jssh_getDB=jssh_getKeyDB_async
   alias jssh_getKeyDB=jssh_getKeyDB_async
   alias jssh_countKeyDB=jssh_countKeyDB_async
+  alias jssh_updateKeyDB=jssh_updateKeyDB_async
 fi
-
-# updatie key/value in place to jsshDB
-# $1 key name, can onyl contain -a-zA-Z0-9,._
-# $2 key value
-# $3 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
-#no own locking, so async is the same as updatekeyDB
-alias jssh_updateKeyDB_async=jssh_updateKeyDB
-jssh_updateKeyDB() {
-	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	declare -A oldARR
-	oldARR["$1"]="$2"
-	jssh_updateDB "oldARR" "${3}" || return 3
-}
 
 ##############
 # no need for atomic
 
 # print ARRAY content to stdout instead of file
 # $1 ARRAY name, must be delared with "declare -A ARRAY" upfront
+alias jssh_printDB_async=jssh_printDB
 jssh_printDB() {
 	Array2Json "$1"
 }
 
-# get key/value from jsshDB
-# $1 key name, can onyl contain -a-zA-Z0-9,._
-# $2 key value
-# $3 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
-# returns value
-jssh_getDB() {
-	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	declare -A getARR
-	jssh_readDB "getARR" "$3" || return "$?"
-	printf '%s\n' "${getARR[${key}]}"
-}
-
 # $1 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
+alias jssh_newDB_async=jssh_newDB
 jssh_newDB() {
 	local DB; DB="$(jssh_checkDB "$1")"
 	[ -z "${DB}" ] && return 1
@@ -213,6 +205,7 @@ jssh_newDB() {
 
 # $1 filename, check filename, it must be relative to BASHBOT_VAR, and not contain '..'
 # returns real path to DB file if everything is ok
+alias jssh_checkDB_async=jssh_checkDB
 jssh_checkDB(){
 	local DB
 	[ -z "$1" ] && return 1
@@ -227,7 +220,7 @@ jssh_checkDB(){
 
 
 ######################
-# "old" implementations as non atomic functions
+# implementations as non atomic functions
 # can be used explictitly or as fallback if flock is not availible
 jssh_readDB_async() {
 	local DB; DB="$(jssh_checkDB "$2")"
@@ -301,4 +294,17 @@ jssh_countKeyDB_async() {
 	(( oldARR["$1"]+=COUNT ));
 	Array2Json  "oldARR" >"${DB}"
 }
+
+# updatie key/value in place to jsshDB
+# $1 key name, can onyl contain -a-zA-Z0-9,._
+# $2 key value
+# $3 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
+#no own locking, so async is the same as updatekeyDB
+jssh_updateKeyDB() {
+	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	declare -A oldARR
+	oldARR["$1"]="$2"
+	jssh_updateDB_async "oldARR" "${3}" || return 3
+}
+
 
