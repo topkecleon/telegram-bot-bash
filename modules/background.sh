@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ v0.96-dev3-9-g313ff03
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -39,23 +39,30 @@ killproc() {
 # $1 chatid
 # $2 program
 # $3 jobname
+# $4 $5 parameters
 start_back() {
-	local fifo; fifo="${DATADIR:-.}/$(procname "$1")"
-	printf '%s\n' "$1:$3:$2" >"${fifo}$3-back.cmd"
-	start_proc "$1" "$2" "back-$3-"
+	#local fifo; fifo="${DATADIR:-.}/$(procname "$1")"
+	printf '%s\n' "$1:$3:$2" >"${DATADIR:-.}/$(procname "$1")$3-back.cmd"
+	restart_back "$@"
+}
+restart_back() {
+	local fifo; fifo="${DATADIR:-.}/$(procname "$1" "back-")"
+	kill_proc "$1" "back-$3-"
+	nohup bash -c "{ $2 \"$4\" \"$5\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"; }" &>>"${fifo}.log" &
 }
 
 
 # $1 chatid
 # $2 program
 # $3 prefix
+# $4 $5 parameters
 start_proc() {
 	[ -z "$2" ] && return
 	[ -x "${2%% *}" ] || return 1
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1" "$3")"
 	kill_proc "$1" "$3"
 	mkfifo "${fifo}"
-	nohup bash -c "{ tail -f  < \"${fifo}\" | $2 \"\" \"\" \"$fifo\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"
+	nohup bash -c "{ tail -f  < \"${fifo}\" | $2 \"$4\" \"$5\" \"$fifo\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"
 		rm \"${fifo}\"; [ -s \"${fifo}.log\" ] || rm -f \"${fifo}.log\"; }" &>>"${fifo}.log" &
 }
 
@@ -120,12 +127,12 @@ job_control() {
 		CHAT="${content%%:*}"
 		job="${content#*:}"
 		proc="${job#*:}"
-		job="back-${job%:*}-"
+		job="${job%:*}"
 		fifo="$(procname "${CHAT}" "${job}")" 
 		case "$1" in
 		"resumeb"*|"backgr"*)
 			echo "Restart Job: ${proc}  ${fifo}"
-			start_proc "${CHAT}" "${proc}" "${job}"
+			restart_back "${CHAT}" "${proc}" "${job}"
 			;;
 		"suspendb"*)
 			echo "Suspend Job: ${proc}  ${fifo}"
