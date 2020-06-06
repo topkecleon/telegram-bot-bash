@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-6-gd0e9bd8
+#### $$VERSION$$ v0.96-dev3-7-g0ad70fd
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -313,8 +313,9 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 	# shellcheck disable=SC2086
 	res="$(curl -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" -d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
 		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
-	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
-	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
+	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${res}")"
+	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${res}")"
+	[ "${BOTSENT[OK]}" != "true" ] && printf "%s: %s\n" "$(date)" "${res}" >>"ERROR.log"
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "$@" &
   }
   #$1 Chat, $2 what , $3 file, $4 URL, $5 caption
@@ -327,7 +328,8 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 	# shellcheck disable=SC2086
 		res="$(curl -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
 	fi
-	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
+	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${res}")"
+	[ "${BOTSENT[OK]}" != "true" ] && printf "%s: %s\n" "$(date)" "${res}" >>"ERROR.log"
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
 else
@@ -343,12 +345,13 @@ else
 	# shellcheck disable=SC2086
 	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
-	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$res")"
-	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$res")"
+	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${res}")"
+	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${res}")"
+	[ "${BOTSENT[OK]}" != "true" ] && printf "%s: %s\n" "$(date)" "${res}" >>"ERROR.log"
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "$@" &
   }
   sendUpload() {
-	sendJson "$1" '"text":"Sorry, wget does not support file upload"' "${MSG_URL}"
+	printf "%s: %s\n" "$(date)" "Sorry, wget does not support file upload" >>"ERROR.log"
 	BOTSENT[OK]="false"
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
@@ -370,7 +373,7 @@ title2Json(){
 	[ -n "$3" ] && desc=',"description":"'$(JsonEscape "$3")'"'
 	[ -n "$4" ] && markup=',"parse_mode":"'$(JsonEscape "$4")'"'
 	[ -n "$5" ] && keyboard=',"reply_markup":"'$(JsonEscape "$5")'"'
-	echo "${title}${caption}${desc}${markup}${keyboard}"
+	printf "%s\n" "${title}${caption}${desc}${markup}${keyboard}"
 }
 
 # get bot name
@@ -695,9 +698,9 @@ start_bot() {
 	local mysleep="100" # ms
 	local addsleep="100"
 	local maxsleep="$(( ${BASHBOT_SLEEP:-5000} + 100 ))"
-	[[ "${DEBUG}" = *"debug" ]] && exec &>>"DEBUG.log"
+	[[ "${DEBUG}" == *"debug" ]] && exec &>>"DEBUG.log"
 	[ -n "${DEBUG}" ] && date && echo "Start BASHBOT in Mode \"${DEBUG}\""
-	[[ "${DEBUG}" = "xdebug"* ]] && set -x 
+	[[ "${DEBUG}" == "xdebug"* ]] && set -x 
 	#cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
 	find "${DATADIR}" -size 0 -name "*.log" -delete
