@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-4-gbc74141
+#### $$VERSION$$ v0.96-dev3-6-gd0e9bd8
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -90,7 +90,7 @@ fi
 [ -z "${BASHBOT_ETC}" ] && BASHBOT_ETC="$BASHBOT_HOME"
 [ -z "${BASHBOT_VAR}" ] && BASHBOT_VAR="$BASHBOT_HOME"
 
-ADDONDIR="${BASHBOT_ETC:-./addons}"
+ADDONDIR="${BASHBOT_ETC:-.}/addons"
 RUNUSER="${USER}" # USER is overwritten by bashbot array
 
 # OK everthing setup, lest start
