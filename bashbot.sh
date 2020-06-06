@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-7-g0ad70fd
+#### $$VERSION$$ v0.96-dev3-8-gd42429e
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -122,6 +122,11 @@ BOTACL="${BASHBOT_ETC:-.}/botacl"
 DATADIR="${BASHBOT_VAR:-.}/data-bot-bash"
 BLOCKEDFILE="${BASHBOT_VAR:-.}/blocked"
 COUNTFILE="${BASHBOT_VAR:-.}/count"
+
+LOGDIR="${RUNDIR:-.}/logs"
+if [ ! -d "${LOGDIR}" ] || [ ! -w "${LOGDIR}" ]; then
+	LOGDIR="${RUNDIR:-.}"
+fi
 
 # we assume everthing is already set up correctly if we have TOKEN
 if [ -z "${BOTTOKEN}" ]; then
@@ -315,7 +320,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${res}")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${res}")"
-	[ "${BOTSENT[OK]}" != "true" ] && printf "%s: %s\n" "$(date)" "${res}" >>"ERROR.log"
+	[ "${BOTSENT[OK]}" != "true" ] && printf "%s: %s\n" "$(date)" "${res}" >>"${LOGDIR}/ERROR.log"
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "$@" &
   }
   #$1 Chat, $2 what , $3 file, $4 URL, $5 caption
@@ -329,7 +334,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 		res="$(curl -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
 	fi
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${res}")"
-	[ "${BOTSENT[OK]}" != "true" ] && printf "%s: %s\n" "$(date)" "${res}" >>"ERROR.log"
+	[ "${BOTSENT[OK]}" != "true" ] && printf "%s: %s\n" "$(date)" "${res}" >>"${LOGDIR}/ERROR.log"
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
 else
@@ -347,11 +352,11 @@ else
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${res}")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${res}")"
-	[ "${BOTSENT[OK]}" != "true" ] && printf "%s: %s\n" "$(date)" "${res}" >>"ERROR.log"
+	[ "${BOTSENT[OK]}" != "true" ] && printf "%s: %s\n" "$(date)" "${res}" >>"${LOGDIR}/ERROR.log"
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "$@" &
   }
   sendUpload() {
-	printf "%s: %s\n" "$(date)" "Sorry, wget does not support file upload" >>"ERROR.log"
+	printf "%s: %s\n" "$(date)" "Sorry, wget does not support file upload" >>"${LOGDIR}/ERROR.log"
 	BOTSENT[OK]="false"
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
@@ -417,7 +422,7 @@ process_updates() {
 process_client() {
 	local num="$1" debug="$2" 
 	CMD=( ); iQUERY=( )
-	[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"MESSAGE.log"
+	[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
 	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
 	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	USER[ID]="${UPD["result",${num},"message","from","id"]}"
@@ -698,7 +703,7 @@ start_bot() {
 	local mysleep="100" # ms
 	local addsleep="100"
 	local maxsleep="$(( ${BASHBOT_SLEEP:-5000} + 100 ))"
-	[[ "${DEBUG}" == *"debug" ]] && exec &>>"DEBUG.log"
+	[[ "${DEBUG}" == *"debug" ]] && exec &>>"${LOGDIR}/DEBUG.log"
 	[ -n "${DEBUG}" ] && date && echo "Start BASHBOT in Mode \"${DEBUG}\""
 	[[ "${DEBUG}" == "xdebug"* ]] && set -x 
 	#cleaup old pipes and empty logfiles
@@ -769,7 +774,7 @@ bot_init() {
 		chown -R "$TOUSER" . ./*
 		chmod 711 .
 		chmod -R o-w ./*
-		chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTADMIN}" ./*.log 2>/dev/null
+		chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTADMIN}" "${LOGDIR}/"*.log 2>/dev/null
 	chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
 		# jsshDB must writeable by owner
 		find . -name '*.jssh' -exec chmod u+w \{\} +
