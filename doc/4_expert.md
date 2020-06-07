@@ -277,6 +277,26 @@ Uses given URL instead of offical telegram API URL, useful if you have your own 
 ```
 
 ##### BASHBOT_TOKEN
+If BASHBOT_TOKEN is set, bashbot assumes you know what you are doing and skips environment validation and
+uses the value of BASHBOT_TOKEN as bot token.
+
+I recommend to run 'bashbot.sh init' at least one time without BASHBOT_TOKEN set to validate and setup
+the environment. Afterwards you can delete the token file and provide the bot token in BASHBOT_TOKEN.
+
+##### BASHBOT_CURL_ARGS
+The value of BASHBOT_CURL_ARGS is passed to every curl execution.
+```bash
+  # use socks gateway on localhost
+  export BASHBOT_CURL_ARGS="--socks5-hostname localhost"
+```
+
+##### BASHBOT_CURL
+If BASHBOT_CURL is not set your systems default curl is used. If you want to use an alternative curl executable
+set BASHBOT_CURL to point to it.
+```bash
+  # use curl from /usr/local/bin
+  export BASHBOT_CURL="/usr/local/bin/mycurl"
+```
 
 ##### BASHBOT_WGET
 Bashbot uses ```curl``` to communicate with telegram server. if ```curl``` is not availible ```wget``` is used.
@@ -288,6 +308,20 @@ If 'BASHBOT_WGET' is set to any value (not undefined or not empty) wget is used 
   export BASHBOT_WGET "yes" # use wget
   export BASHBOT_WGET "no"  # use wget!
 
+```
+
+##### BASHBOT_TIMEOUT
+Bashbot uses a default timeout of 20 seconds for curl and wget. If you want a different timeout, set
+BASHBOT_TIMEOUT to a numeric value between 1 and 999. Any non numeric or negative value is ignored. 
+```bash
+  # set timeout to 100 seconds
+  export BASHBOT_TIMEOUT="100"
+
+  # 100s is not a numbers
+  export BASHBOT_TIMEOUT="100s" # wrong, default timeout is used
+
+  # -100 is not between 1 and 999s
+  export BASHBOT_TIMEOUT="-100" # wrong, default timeout is used
 ```
 
 ##### BASHBOT_SLEEP
@@ -348,5 +382,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ v0.96-dev3-16-gd11598e
 
