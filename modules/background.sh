@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-10-g4407ccf
+#### $$VERSION$$ v0.96-dev3-11-g515e07d
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -54,16 +54,14 @@ restart_back() {
 
 # $1 chatid
 # $2 program
-# $3 prefix
-# $4 $5 parameters
+# $3 $4 parameters
 start_proc() {
 	[ -z "$2" ] && return
 	[ -x "${2%% *}" ] || return 1
-	local fifo; fifo="${DATADIR:-.}/$(procname "$1" "$3")"
-	kill_proc "$1" "$3"
+	local fifo; fifo="${DATADIR:-.}/$(procname "$1")"
+	kill_proc "$1"
 	mkfifo "${fifo}"
-	nohup bash -c "{ tail -f  < \"${fifo}\" | $2 \"$4\" \"$5\" \"$fifo\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"
-		rm \"${fifo}\"; [ -s \"${fifo}.log\" ] || rm -f \"${fifo}.log\"; }" &>>"${fifo}.log" &
+	nohup bash -c "{ tail -f  < \"${fifo}\" | $2 \"$3\" \"$4\" \"${fifo}\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"; }" &>>"${fifo}.log" &
 }
 
 
@@ -102,7 +100,7 @@ kill_proc() {
 	[ -p "${fifo}" ] && rm -f "${fifo}";
 }
 
-# $1 chat
+# $1 chatid
 # $2 message
 send_interactive() {
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1")"
