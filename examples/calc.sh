@@ -1,11 +1,18 @@
 #!/bin/bash
 # file: calc.sh
 # example for an interactive chat, run with startproc calc.sh
-
+#
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
+#
+#### $$VERSION$$ v0.96-dev3-12-g3f85134
 
-#### $$VERSION$$ v0.96-dev-7-g0153928
+######
+# parameters
+# $1 $2 args as given to starct_proc chat srcipt arg1 arg2
+# $3 path to named pipe/log
+
+INPUT="${3:-/dev/stdin}"
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
@@ -18,11 +25,11 @@ unset IFS
 
 echo 'Starting Calculator ...'
 echo 'Enter first number.'
-read -r A
+read -r A <"${INPUT}"
 echo 'Enter second number.'
-read -r B
+read -r B <"${INPUT}"
 echo 'Select Operation: mykeyboardstartshere [ "Addition" , "Subtraction" , "Multiplication" , "Division" ,  "Cancel" ]'
-read -r opt
+read -r opt <"${INPUT}"
 echo -n 'Result: '
 case $opt in
 	'add'* | 'Add'* ) res="$(( A + B ))" ;;
@@ -34,3 +41,4 @@ case $opt in
 esac
 echo "$res"
 echo "Bye .."
+

@@ -2,7 +2,13 @@
 # file:  run_filename
 # background job to display content of all new files in WATCHDIR
 #
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ v0.96-dev3-12-g3f85134
+
+######
+# parameters
+# $1 $2 args as given to starct_proc chat srcipt arg1 arg2
+# $3 path to named pipe/log
+
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
@@ -33,3 +39,4 @@ loop_callback() {
 }
 
 watch_dir_loop "$WATCHDIR"
+

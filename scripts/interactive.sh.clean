@@ -1,15 +1,18 @@
 #!/bin/bash
-# file: notify.sh
-# example for an background job, run with startback notify.sh
+# file: interactive.sh
+# template for an interactive chat
+# test it with: start_proc "${CHAT[ID]}" "./scripts/interactive.sh.clean"
 #
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
+#
 #### $$VERSION$$ v0.96-dev3-12-g3f85134
 
 ######
 # parameters
 # $1 $2 args as given to starct_proc chat srcipt arg1 arg2
-# $3 path to named pipe/log
+# $3 path to named pipe
+
 
 
 # adjust your language setting here
@@ -21,20 +24,21 @@ export 'LANGUAGE=C.UTF-8'
 unset IFS
 # set -f # if you are paranoid use set -f to disable globbing
 
-# discard STDIN for background jobs!
-cat >/dev/null & 
+#######################
+# place your commands here
+#
+# IMPORTTANT: to read user input from $INPUT
+INPUT="${3:-/dev/stdin}"
+#
+# read -r variable <"${INPUT}"
 
-# check if $1 is a number
-re='^[0-9]+$'
-if [[ $1 =~ $re ]] ; then
-	SLEEP="$1"
-else
-	SLEEP=10 # time between time notifications
-fi
+# example wait form user input and echo it
+echo "Enter a message:"
 
-# output current time every $1 seconds
-while sleep $SLEEP
-do
-	date "+* It's %k:%M:%S o' clock ..."
-done
+read -r test <"${INPUT}"
+echo -e "Your Message: ${test}\nbye!"
+
+
+# your commands ends here
+######################
 

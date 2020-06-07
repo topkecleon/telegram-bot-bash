@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-8-gd42429e
+#### $$VERSION$$ v0.96-dev3-12-g3f85134
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -320,8 +320,9 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${res}")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${res}")"
-	[ "${BOTSENT[OK]}" != "true" ] && printf "%s: %s\n" "$(date)" "${res}" >>"${LOGDIR}/ERROR.log"
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "$@" &
+	[ "${BOTSENT[OK]}" != "true" ] &&\
+		printf "%s: CHAT[ID]=%s ACTION=%s\nRESULT=%s\n" "$(date)" "${1}" "${2}" "${res}" >>"${LOGDIR}/ERROR.log"
   }
   #$1 Chat, $2 what , $3 file, $4 URL, $5 caption
   sendUpload() {
@@ -334,8 +335,9 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 		res="$(curl -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1" -F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
 	fi
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${res}")"
-	[ "${BOTSENT[OK]}" != "true" ] && printf "%s: %s\n" "$(date)" "${res}" >>"${LOGDIR}/ERROR.log"
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
+	[ "${BOTSENT[OK]}" != "true" ] &&\
+		printf "%s: CHAT[ID]=%s ACTION=%s\nRESULT=%s\n" "$(date)" "${1}" "${2}" "${res}" >>"${LOGDIR}/ERROR.log"
   }
 else
   # simple curl or wget call outputs result to stdout
@@ -352,8 +354,9 @@ else
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${res}")"
 	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${res}")"
-	[ "${BOTSENT[OK]}" != "true" ] && printf "%s: %s\n" "$(date)" "${res}" >>"${LOGDIR}/ERROR.log"
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "$@" &
+	[ "${BOTSENT[OK]}" != "true" ] &&\
+		printf "%s: CHAT[ID]=%s ACTION=%s\nRESULT=%s\n" "$(date)" "${1}" "${2}" "${res}" >>"${LOGDIR}/ERROR.log"
   }
   sendUpload() {
 	printf "%s: %s\n" "$(date)" "Sorry, wget does not support file upload" >>"${LOGDIR}/ERROR.log"
