@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-12-g3f85134
+#### $$VERSION$$ v0.96-dev3-14-g5fc4d01a
 
 ######
 # parameters
@@ -34,7 +34,7 @@ until [ "$SUCCESS" = "y" ] ;do
 	case $answer in
 		'Yass!') echo "Goody! mykeyboardendshere";SUCCESS=y;;
 		'No') echo "Well that's weird. mykeyboardendshere";SUCCESS=y;;
-		'') echo "empty answer!" && cleanup "$3";;
+		'') echo "empty answer!" && exit ;;
 		*) SUCCESS=n;;
 	esac
 done

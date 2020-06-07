@@ -17,42 +17,44 @@ Have FUN!
 ### Files
 ```
 .
-├── mycommands.sh		# THIS is your bot, place logic and commands here!
+├── mycommands.sh        # THIS is your bot, place logic and commands here!
 │
-├── mycommands.sh.clean	# copy to "mycommands.sh" if you start devloping your bot
-├── mycommands.sh.dist		# example bot, also used for testing bashbot internally 
+├── mycommands.sh.clean      # copy to "mycommands.sh" if you start devloping your bot
+├── mycommands.sh.dist       # example bot, also used for testing bashbot internally 
 │
-├── count.jssh			# count bashbot usage in jssh key-value store
-├── blocked.jssh	# list of blocked USER[ID] in jssh key-value store
+├── count.jssh           # count bashbot usage in jssh key-value store
+├── blocked.jssh         # list of blocked USER[ID] in jssh key-value store
 │
-├── bashbot.sh			# main bashbot script - DO NOT EDIT!
-├── commands.sh		# command dispatcher - DO NOT EDIT!
-├── JSON.sh			# bashbots JSON parser, see https://github.com/dominictarr/JSON.sh
+├── bashbot.sh           # main bashbot script - DO NOT EDIT!
+├── commands.sh          # command dispatcher - DO NOT EDIT!
+├── JSON.sh              # bashbots JSON parser, see https://github.com/dominictarr/JSON.sh
 │
-├── scripts			# place your bashbot interactive and background scripts here
-├── logs			# here you'll find ERROR, DEBUG and MESSAGE.log
+├── scripts              # place your bashbot interactive and background scripts here
+│   └── interactive.sh.clean     # interactive script template for new scripts
 │
-├── modules		# optional functions, sourced by commands.sh
-│   ├── aliases.sh		# to disable modules rename them xxx.sh.off
+├── logs                 # here you'll find ERROR, DEBUG and MESSAGE.log
+│
+├── modules              # optional functions, sourced by commands.sh
+│   ├── aliases.sh           # to disable modules rename them xxx.sh.off
 │   ├── answerInline.sh
-│   ├── jsshDB.sh		# read and store JSON.sh stlye JSON, mandatory
-│   ├── background.sh		# interactive and background functions
+│   ├── jsshDB.sh            # read and store JSON.sh stlye JSON, mandatory
+│   ├── background.sh        # interactive and background functions
 │   ├── chatMember.sh
-│   └── sendMessage.sh		# main send message functions, mandatory
+│   └── sendMessage.sh       # main send message functions, mandatory
 │
-├── addons		# optional addons, disbaled by default
-│   ├── example.sh		# to enable addons change their XXX_ENABLE to true
-│   ├── antiFlood.sh		# simple addon taking actions based on # files and text sent to chat
+├── addons               # optional addons, disbaled by default
+│   ├── example.sh           # to enable addons change their XXX_ENABLE to true
+│   ├── antiFlood.sh         # simple addon taking actions based on # files and text sent to chat
 │   └── xxxxxage.sh
 │
-├── bashbot.rc			# start/stop script if you run basbot as service
+├── bashbot.rc           # start/stop script if you run basbot as service
 │
-├── examples			# example scripts and configs for bashbot
-│   ├── README.md		# description of files and examples
-│   ├── bash2env.shh		# script to convert /bin/bash shebang to /usr/bin/env, see [Security Considerations](../README.md#Security-Considerations)
-│   └── bashbot.cron		# example crontab
+├── examples             # example scripts and configs for bashbot
+│   ├── README.md            # description of files and examples
+│   ├── bash2env.sh          # script to convert shebang to /usr/bin/env, see [Security Considerations](../README.md#Security-Considerations)
+│   └── bashbot.cron	     # example crontab
 │
-├── doc			# Documentation and License
+├── doc		# Documentation and License
 ├── html
 ├── LICENSE
 ├── README.html
@@ -254,5 +256,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.96-dev3-4-gbc74141
+#### $$VERSION$$ v0.96-dev3-14-g5fc4d01a
 
