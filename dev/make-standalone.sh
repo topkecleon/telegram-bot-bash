@@ -5,7 +5,7 @@
 # If you your bot is finished you can use make-standalone.sh to create the
 # the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v0.96-dev3-20-gbd22e2a
+#### $$VERSION$$ v0.96-dev3-21-g6f86036
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -18,7 +18,7 @@ fi
 
 #DISTNAME="telegram-bot-bash"
 DISTDIR="./STANDALONE/${DISTNAME}" 
-DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh modules LICENSE README.txt token count botacl botadmin"
+DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh dev/obfuscate.sh modules LICENSE README.txt token count botacl botadmin"
 
 # run pre_commit on files
 dev/hooks/pre-commit.sh
