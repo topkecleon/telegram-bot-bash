@@ -5,7 +5,7 @@
 # If you your bot is finished you can use make-standalone.sh to create the
 # the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ 0.96-dev2-6-gda98b09
+#### $$VERSION$$ v0.96-dev3-19-g8792e83
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -20,16 +20,8 @@ fi
 DISTDIR="./STANDALONE/${DISTNAME}" 
 DISTFILES="bashbot.sh  commands.sh  mycommands.sh modules LICENSE README.txt token count botacl botadmin"
 
-# run tests first!
-
-for test in dev/all-test*.sh
-do
-   [ ! -x "${test}" ] && continue
-   if ! "${test}" ; then
-	echo "Test ${test} failed, can't create standalone!"
-	exit 1
-  fi
-done
+# run pre_commit on files
+dev/hooks/pre-commit.sh
 
 # create dir for distribution and copy files
 mkdir -p "${DISTDIR}" 2>/dev/null
@@ -41,7 +33,7 @@ cd "${DISTDIR}" || exit 1
 # here the magic starts
 # create all in one bashbot.sh file
 
-echo "OK, noe lets do the magic ..."
+echo "OK, now lets do the magic ..."
 echo "    ... create unified commands.sh"
 
 { 
@@ -81,6 +73,11 @@ mv $$bashbot.sh bashbot.sh
 chmod +x bashbot.sh
 
 rm -rf modules
+
+echo "Create minimized Version of bashbot.sh and commands.sh"
+sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e '/^$/d' bashbot.sh > bashbot.sh.min
+sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e '/^$/d' commands.sh > commands.sh.min
+chmod +x bashbot.sh.min
 
 echo "Done!"
 
