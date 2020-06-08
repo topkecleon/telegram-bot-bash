@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-25-g9b138ee
+#### $$VERSION$$ v0.96-dev3-26-gde74571
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -230,6 +230,7 @@ fi
 ##################
 # here we start with the real stuff
 URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
+BOTSEND_RETRY="no" # do not retry by default
 
 ME_URL=$URL'/getMe'
 
@@ -364,11 +365,31 @@ else
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
 fi 
-# checks and processes resukt
+
+# retry sendJson
+# $1 function to retry
+# $2 seconds to sleep before
+# $2 ... $n arguments
+sendJsonRetry(){
+	local retry="${1}"; shift
+	sleep "${1}"; shift
+	case "${retry}" in
+		'sendJson'*)
+			sendJson "$@"	
+			;;
+		'sendUpload'*)
+			sendUpload "$@"	
+			;;
+		*)
+			echo "SendJsonRetry: unknown, cannot rerty ${retry}" >>"${LOGDIR}/ERROR.log"
+			;;
+	esac
+}
+
+# process sendJson result
 # $1 result
 # $2 function
-# $3 .. $n original arguments
-# first argument ($3) is Chat_id
+# $3 .. $n original arguments, $3 is Chat_id
 sendJsonResult(){
 	BOTSENT=( )
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${1}")"
@@ -390,23 +411,32 @@ sendJsonResult(){
 	    # log error
 	    printf "%s: RESULT=%s CHAT[ID]=%s ACTION=%s ERROR=%s DESC=%s\n" "$(date)"\
 			"${BOTSENT[OK]}"  "${3}" "${2}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" >>"${LOGDIR}/ERROR.log"
-	    # retry once if we are throttled
+	    # warm path, do  not retry on error
 	    [ -n "${BOTSEND_RETRY}" ] && return
+
+	    # OK, we can retry sendJson, let's see wehat's failed
+	    # throttled, telegram say we send to much messages
 	    if [ -n "${BOTSENT[RETRY]}" ]; then
 		BOTSEND_RETRY="(( ${BOTSENT[RETRY]} * 15/10 ))"
 		echo "Retry ${2} in ${BOTSEND_RETRY} seconds ..." >>"${LOGDIR}/ERROR.log"
+		sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
+		unset BOTSEND_RETRY
 	    fi
-	    # timeout or failed connection
+	    # timeout, failed connection or blocked
 	    if [ "${BOTSENT[ERROR]}" == "999" ];then
 		# check if default curl and args are OK
 		if ! curl -sL -k -m 2 "${URL}" >/dev/null 2>&1 ; then
 		    echo "BASHBOT is blocked!" >>"${LOGDIR}/ERROR.log"
 		    return
+		    # can we recover from block? currently not.
 		fi
-	        # retry without custom curl and args
+	        # if we are not blocked, default curl and args are working
 		if [ -n "${BASHBOT_CURL_ARGS}" ] || [ -n "${BASHBOT_CURL}" ]; then
 		    BOTSEND_RETRY="2"
 		    echo "Timeout or broken connection, retry ${2} with default curl parameters  ..." >>"${LOGDIR}/ERROR.log"
+		    unset BASHBOT_CURL BASHBOT_CURL_ARGS
+		    sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
+		    unset BOTSEND_RETRY
 		fi
 	    fi
 	fi
