@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-23-g02e776c
+#### $$VERSION$$ v0.96-dev3-24-gb189191
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -379,7 +379,8 @@ sendJsonResult(){
 	else
 	    if [ "${res}" != "" ]; then
 		BOTSENT[ERROR]="$(JsonGetValue '"error_code"' <<< "${3}")"
-		BOTSENT[DESCRIPTION]="$(JsonGetValue '"description"' <<< "${3}")"
+		BOTSENT[DESCRIPTION]="$(JsonGetString '"description"' <<< "${3}")"
+		BOTSENT[RETRY]="$(JsonGetValue '"parameters","retry_after"' <<< "${3}")"
 	    else
 		BOTSENT[ERROR]="999"
 		BOTSENT[DESCRIPTION]="Timeout or broken/no connection"
