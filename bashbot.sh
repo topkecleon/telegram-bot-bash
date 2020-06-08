@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-24-gb189191
+#### $$VERSION$$ v0.96-dev3-25-g9b138ee
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -364,29 +364,51 @@ else
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
 fi 
-# internal function for sendJson sendUplaod etc
 # checks and processes resukt
 # $1 result
 # $2 function
 # $3 .. $n original arguments
 # first argument ($3) is Chat_id
 sendJsonResult(){
-	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${3}")"
+	BOTSENT=( )
+	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${1}")"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
-		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${3}")"
+		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${1}")"
 		[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@:2}" 
 		return
+		# hot path everthing OK!
 	else
+	    # oops something went wrong!
 	    if [ "${res}" != "" ]; then
-		BOTSENT[ERROR]="$(JsonGetValue '"error_code"' <<< "${3}")"
-		BOTSENT[DESCRIPTION]="$(JsonGetString '"description"' <<< "${3}")"
-		BOTSENT[RETRY]="$(JsonGetValue '"parameters","retry_after"' <<< "${3}")"
+		BOTSENT[ERROR]="$(JsonGeOtValue '"error_code"' <<< "${1}")"
+		BOTSENT[DESCRIPTION]="$(JsonGetString '"description"' <<< "${1}")"
+		BOTSENT[RETRY]="$(JsonGetValue '"parameters","retry_after"' <<< "${1}")"
 	    else
 		BOTSENT[ERROR]="999"
 		BOTSENT[DESCRIPTION]="Timeout or broken/no connection"
 	    fi
-	    printf "%s: CHAT[ID]=%s ACTION=%s ERROR=%s DESC=%s\n"\
-		"$(date)" "${3}" "${2}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" >>"${LOGDIR}/ERROR.log"
+	    # log error
+	    printf "%s: RESULT=%s CHAT[ID]=%s ACTION=%s ERROR=%s DESC=%s\n" "$(date)"\
+			"${BOTSENT[OK]}"  "${3}" "${2}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" >>"${LOGDIR}/ERROR.log"
+	    # retry once if we are throttled
+	    [ -n "${BOTSEND_RETRY}" ] && return
+	    if [ -n "${BOTSENT[RETRY]}" ]; then
+		BOTSEND_RETRY="(( ${BOTSENT[RETRY]} * 15/10 ))"
+		echo "Retry ${2} in ${BOTSEND_RETRY} seconds ..." >>"${LOGDIR}/ERROR.log"
+	    fi
+	    # timeout or failed connection
+	    if [ "${BOTSENT[ERROR]}" == "999" ];then
+		# check if default curl and args are OK
+		if ! curl -sL -k -m 2 "${URL}" >/dev/null 2>&1 ; then
+		    echo "BASHBOT is blocked!" >>"${LOGDIR}/ERROR.log"
+		    return
+		fi
+	        # retry without custom curl and args
+		if [ -n "${BASHBOT_CURL_ARGS}" ] || [ -n "${BASHBOT_CURL}" ]; then
+		    BOTSEND_RETRY="2"
+		    echo "Timeout or broken connection, retry ${2} with default curl parameters  ..." >>"${LOGDIR}/ERROR.log"
+		fi
+	    fi
 	fi
 }
 
