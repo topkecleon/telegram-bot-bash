@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-21-g6f86036
+#### $$VERSION$$ v0.96-dev3-23-g02e776c
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -773,6 +773,7 @@ start_bot() {
 
 # initialize bot environment, user and permissions
 bot_init() {
+	[ -n "${BASHBOT_HOME}" ] && cd "${BASHBOT_HOME}" || exit 1
 	local DEBUG="$1"
 	# upgrade from old version
 	local OLDTMP="${BASHBOT_VAR:-.}/tmp-bot-bash"
