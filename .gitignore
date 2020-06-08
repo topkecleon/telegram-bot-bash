@@ -1,9 +1,13 @@
 *~
 /.github/
-/count
-/token
+/count*
+/token*
+/bocked*
 *.save
 *.log
+*.swp
+*.swo
+/log/*
 /JSON.sh/
 /data-bot-bash/
 /DIST/
