@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-19-g8792e83
+#### $$VERSION$$ v0.96-dev3-20-gbd22e2a
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -21,7 +21,7 @@
 # - 4 unkown command
 # - 5 cannot connect to telegram bot
 # - 6 mandatory module not found
-# shellcheck disable=SC2140
+# shellcheck disable=SC2140,SC2031,SC2120,SC1091
 
 # are we runnig in a terminal?
 if [ -t 1 ] && [ -n "$TERM" ];  then
@@ -106,15 +106,28 @@ if [ ! -w "." ]; then
 	ls -ld .
 fi
 
-#jsonDB is now mandatory
-if [ ! -r  "${MODULEDIR:-.}"/jsonDB.sh ]; then
-	echo -e "${RED}ERROR: Mandatory module  ${MODULEDIR:-.}/jsonDB.sh is missing or not readable!"
-	exit 6
-fi
+###############
+# load modules
+for modules in "${MODULEDIR:-.}"/*.sh ; do
+	# shellcheck source=./modules/aliases.sh
+	if ! _is_function "$(basename "${modules}")" && [ -r "${modules}" ]; then source "${modules}" "source"; fi
+done
+
 # shellcheck source=./modules/jsonDB.sh
 source "${MODULEDIR:-.}"/jsonDB.sh
 
+
+
 #####################
+# BASHBOT INTERNAL functions
+#
+
+#jsonDB is now mandatory
+if ! _is_function jssh_newDB ; then
+	echo -e "${RED}ERROR: Mandatory module jsonDB is missing or not readable!"
+	exit 6
+fi
+
 # Setup and check environment if BOTTOKEN is NOT set
 TOKENFILE="${BASHBOT_ETC:-.}/token"
 BOTADMIN="${BASHBOT_ETC:-.}/botadmin"
@@ -231,7 +244,7 @@ declare -Ax UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO 
 export res CAPTION
 
 
-#################EW#
+##################
 # read commamds file if we are not sourced
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
 if [ "${SOURCE}" != "yes" ]; then
@@ -244,15 +257,9 @@ if [ "${SOURCE}" != "yes" ]; then
 	source "${COMMANDS}" "source"
 fi
 
-###############
-# load 
-for modules in "${MODULEDIR:-.}"/*.sh ; do
-	# shellcheck source=./modules/aliases.sh
-	if ! _is_function "$(basename "${modules}")" && [ -r "${modules}" ]; then source "${modules}" "source"; fi
-done
 
 #################
-# BASHBOT INTERNAL functions
+# BASHBOT COMMON functions
 # $1 URL, $2 filename in DATADIR
 # outputs final filename
 download() {
@@ -320,11 +327,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 	res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
 		-d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
 		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
-	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${res}")"
-	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${res}")"
-	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "$@" &
-	[ "${BOTSENT[OK]}" != "true" ] &&\
-		printf "%s: CHAT[ID]=%s ACTION=%s\nRESULT=%s\n" "$(date)" "${1}" "${2}" "${res}" >>"${LOGDIR}/ERROR.log"
+	sendJsonResult "${res}" "sendJson (curl)" "$@"
   }
   #$1 Chat, $2 what , $3 file, $4 URL, $5 caption
   sendUpload() {
@@ -338,10 +341,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
 	fi
-	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${res}")"
-	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
-	[ "${BOTSENT[OK]}" != "true" ] &&\
-		printf "%s: CHAT[ID]=%s ACTION=%s\nRESULT=%s\n" "$(date)" "${1}" "${2}" "${res}" >>"${LOGDIR}/ERROR.log"
+	sendJsonResult "${res}" "sendUpload (curl)" "$@"
   }
 else
   # simple curl or wget call outputs result to stdout
@@ -356,11 +356,7 @@ else
 	# shellcheck disable=SC2086
 	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
-	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${res}")"
-	BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${res}")"
-	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "$@" &
-	[ "${BOTSENT[OK]}" != "true" ] &&\
-		printf "%s: CHAT[ID]=%s ACTION=%s\nRESULT=%s\n" "$(date)" "${1}" "${2}" "${res}" >>"${LOGDIR}/ERROR.log"
+	sendJsonResult "${res}" "sendJson (wget)" "$@"
   }
   sendUpload() {
 	printf "%s: %s\n" "$(date)" "Sorry, wget does not support file upload" >>"${LOGDIR}/ERROR.log"
@@ -368,11 +364,36 @@ else
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
 fi 
+# internal function for sendJson sendUplaod etc
+# checks and processes resukt
+# $1 result
+# $2 function
+# $3 .. $n original arguments
+# first argument ($3) is Chat_id
+sendJsonResult(){
+	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${3}")"
+	if [ "${BOTSENT[OK]}" = "true" ]; then
+		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${3}")"
+		[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@:2}" 
+		return
+	else
+	    if [ "${res}" != "" ]; then
+		BOTSENT[ERROR]="$(JsonGetValue '"error_code"' <<< "${3}")"
+		BOTSENT[DESCRIPTION]="$(JsonGetValue '"description"' <<< "${3}")"
+	    else
+		BOTSENT[ERROR]="999"
+		BOTSENT[DESCRIPTION]="Timeout or broken/no connection"
+	    fi
+	    printf "%s: CHAT[ID]=%s ACTION=%s ERROR=%s DESC=%s\n"\
+		"$(date)" "${3}" "${2}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" >>"${LOGDIR}/ERROR.log"
+	fi
+}
+
 
 # escape / remove text charaters for json strings, eg. " -> \" 
 # $1 string
 # output escaped string
-JsonEscape() {
+JsonEscape(){
 	sed 's/\([-"`´,§$%&/(){}#@!?*.]\)/\\\1/g' <<< "$1"
 }
 

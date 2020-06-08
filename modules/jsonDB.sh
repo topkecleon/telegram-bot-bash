@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-4-gbc74141
+#### $$VERSION$$ v0.96-dev3-20-gbd22e2a
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -198,13 +198,13 @@ fi
 
 # print ARRAY content to stdout instead of file
 # $1 ARRAY name, must be delared with "declare -A ARRAY" upfront
-alias jssh_printDB_async=jssh_printDB
+jssh_printDB_async() { jssh_printDB "$@"; }
 jssh_printDB() {
 	Array2Json "$1"
 }
 
 # $1 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
-alias jssh_newDB_async=jssh_newDB
+jssh_newDB_async() { jssh_newDB "$@"; }
 jssh_newDB() {
 	local DB; DB="$(jssh_checkDB "$1")"
 	[ -z "${DB}" ] && return 1
@@ -214,7 +214,7 @@ jssh_newDB() {
 
 # $1 filename, check filename, it must be relative to BASHBOT_VAR, and not contain '..'
 # returns real path to DB file if everything is ok
-alias jssh_checkDB_async=jssh_checkDB
+jssh_checkDB_sync() { jssh_checkDB "$@"; }
 jssh_checkDB(){
 	local DB
 	[ -z "$1" ] && return 1
@@ -264,7 +264,7 @@ jssh_updateDB_async() {
 	fi
 }
 
-alias jssh_insertDB_async=jssh_insertKeyDB_async
+jssh_insertDB_async() { jssh_insertKeyDB "$@"; }
 jssh_insertKeyDB_async() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	local key="$1" value="$2"

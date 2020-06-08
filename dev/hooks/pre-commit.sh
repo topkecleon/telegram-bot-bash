@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ v0.96-dev3-20-gbd22e2a
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
@@ -30,7 +30,7 @@ fi
 
 # run shellcheck before commit
 set +f
-FILES="$(find ./* -name '*.sh' | grep -v 'DIST\/' )"
+FILES="$(find ./* -name '*.sh' | grep -v 'DIST\/' | grep -v 'STANDALONE\/')"
 set -f
 FILES="${FILES} $(sed '/^#/d' <"dev/shellcheck.files")"
 if [ "$FILES" != "" ]; then
