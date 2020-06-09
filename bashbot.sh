@@ -868,6 +868,8 @@ bot_init() {
 		find . -name '*.jssh' -exec chmod u+w \{\} +
 		#ls -la
 	fi
+	# show result
+	ls -l
 }
 
 if ! _is_function send_message ; then
