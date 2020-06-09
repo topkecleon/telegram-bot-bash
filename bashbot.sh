@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-11-g7644c6c
+#### $$VERSION$$ v0.96-pre-12-gdba4f95
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -787,9 +787,11 @@ process_message() {
 start_bot() {
 	local DEBUG="$1"
 	local OFFSET=0
-	local mysleep="100" # ms
+	# adaptive sleep deafults
+	local nextsleep="100" :
 	local addsleep="100"
 	local maxsleep="$(( ${BASHBOT_SLEEP:-5000} + 100 ))"
+	# redirect to Debug.log
 	[[ "${DEBUG}" == *"debug" ]] && exec &>>"${LOGDIR}/DEBUG.log"
 	[ -n "${DEBUG}" ] && date && echo "Start BASHBOT in Mode \"${DEBUG}\""
 	[[ "${DEBUG}" == "xdebug"* ]] && set -x 
@@ -812,21 +814,31 @@ start_bot() {
 		trap "kill -9 $!; exit" EXIT INT HUP TERM QUIT 
 	fi
 	while true; do
-		# ignore timeout error message on waiting for updates
+set -x
+		# adaptive sleep in ms rounded to next 0.1 s
+		sleep "$(printf '%.1f' "$((nextsleep))e-3")"
+		((nextsleep+= addsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
+set +x
+		# get next update
 		UPDATE="$(getJson "$UPD_URL$OFFSET" 2>/dev/null | "${JSONSHFILE}" -s -b -n | iconv -f utf-8 -t utf-8 -c)"
-		UPDATE="${UPDATE//$/\\$}"
-		# Offset
-		OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
-		((OFFSET++))
+		# did we ge an responsn0r
+		if [ -n "${UPDATE}" ]; then
+			# we got something, do processing
+			# escape bash $ expansion bug
+			UPDATE="${UPDATE//$/\\$}"
+			# Offset
+			OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
+			((OFFSET++))
 
-		if [ "$OFFSET" != "1" ]; then
-			mysleep="100"
-			process_updates "${DEBUG}"
+			if [ "$OFFSET" != "1" ]; then
+				nextsleep="100"
+				process_updates "${DEBUG}"
+			fi
+		else
+			# ups, something bad happend, wait maxsleep
+			(( nextsleep=maxsleep ))
+			printf "%s: Ups, got no response on update, sleep %.1fs" "$(date)" "$((nextsleep))e-3" >>"${ERRORLOG}"
 		fi
-		# adaptive sleep in ms rounded to next lower second
-		[ "${mysleep}" -gt "999" ] && sleep "${mysleep%???}"
-		# bash aritmetic
-		((mysleep+= addsleep , mysleep= mysleep>maxsleep ?maxsleep:mysleep))
 	done
 }
 
