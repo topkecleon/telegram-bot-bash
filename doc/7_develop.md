@@ -216,17 +216,21 @@ Availible commands in bash, coreutils, busybox and toybox. Do you find curl on t
 	uuencode, wc, wget, which, who, whoami, xargs, yes
 ```
 commands marked with \* are bash builtins, all others are external programms. Calling an external programm is more expensive then using bulitins
-or using an internal replacement. Here are some examples of internal replacement for external commands:
+or using an internal replacement. Here are some tipps for using builtins.:
 ```bash
 HOST="$(hostname)" -> HOST="$HOSTNAME"
+
+DIR="$(pwd)" -> DIR="$PWD""
 
 seq 1 100 -> {0..100}
 
 data="$(cat file)" -> data="$(<"file")"
 
-DIR="$(dirname $0) -> DIR=""${0%/*}/""
+DIR="$(dirname $0) -> DIR="${0%/*}"
 
 IAM="($basename $0)" -> IAM="${0##*/}*
+
+ADDME="$ADDME something to add" -> ADDME+=" something to add""
 
 VAR="$(( 1 + 2 ))" -> (( var=1+2 ))
 
@@ -328,5 +332,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ v0.96-pre-9-gb23aadd
 

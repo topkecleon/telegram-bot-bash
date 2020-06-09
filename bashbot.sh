@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-0-geb49241
+#### $$VERSION$$ v0.96-pre-9-gb23aadd
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -371,7 +371,7 @@ fi
 # $1 function $2 sleep $3 ... $n arguments
 sendJsonRetry(){
 	local retry="${1}"; shift
-	[[ "${1}" =~ ^[0-9.]+$ ]] && sleep "${1}"; shift
+	[[ "${1}" =~ ^\ *[0-9.]+\ *$ ]] && sleep "${1}"; shift
 	case "${retry}" in
 		'sendJson'*)
 			sendJson "$@"	
@@ -435,7 +435,7 @@ sendJsonResult(){
 		    fi
 		    return
 		fi
-	        # we are not blocked, default curl and args are working
+	        # are not blocked, default curl and args are working
 		if [ -n "${BASHBOT_CURL_ARGS}" ] || [ -n "${BASHBOT_CURL}" ]; then
 		    BOTSEND_RETRY="2"
 		    printf "Possible Problem with \"%s %s\", retry %s with default curl config  ...\n"\
