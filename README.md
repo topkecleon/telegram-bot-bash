@@ -52,6 +52,7 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Sending Messages, Files, Keyboards
     * User Access Control
     * Inline Queries
+    * jsshDB Bashbot key-value storage
     * Background and Interactive Jobs
 * [Deveoper Notes](doc/7_develop.md)
     * Debug bashbot
@@ -109,6 +110,9 @@ Bash scripts in general are not designed to be bullet proof, so consider this Bo
 
 Whenever you are processing input from from untrusted sources (messages, files, network) you must be as carefull as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everthing. In addition delete unused scripts and examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable all not used commands.
 
+**Note:** Until v0.941 (mai/22/2020) telegram-bot-bash has a remote code execution bug, pls update if you use an older version!
+One of the most powerful features of unix shells like bash is variable and command substitution, this can lead to RCE and information disclosing bugs if you do not escape '$' porperly, see [Issue #125](https://github.com/topkecleon/telegram-bot-bash/issues/125)
+
 A powerful tool to improve your scripts is ```shellcheck```. You can [use it online](https://www.shellcheck.net/) or [install shellcheck locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used extensive in bashbot development to enshure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests.
 In addition bashbot has a [test suite](doc/7_develop.md) to check if important functionality is working as expected.
 
@@ -139,6 +143,8 @@ To set access rights for your bashbot installation to a reasonable default run `
 
 ### Is this Bot insecure?
 Bashbot is not more (in)secure as any other Bot written in any other language, we have done our best to make it as secure as possible. But YOU are responsible for the bot commands you wrote and you should know about the risks ...
+
+**Note:** Until v0.941 (mai/22/2020) telegram-bot-bash has a remote code execution bug, pls update if you use an older version!
 
 ### Why Bash and not the much better xyz?
 Well, thats a damn good question ... may be because I'm an Unix/Linux admin from stone age. Nevertheless there are more reasons from my side:
@@ -183,7 +189,7 @@ curl -m 10  https://api.telegram.org/bot
 wget -t 1 -T 10 https://api.telegram.org/bot
 #Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.
 ```
-This may happen if to many wrong requests are sent to api.telegram.org, e.g. using a wrong token or not existing API calls.  If you have a fixed IP you can ask telegram service to unblock your ip or change your IP. If you are running a tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in 'mycommands.sh' 
+This may happen if to many wrong requests are sent to api.telegram.org, e.g. using a wrong token or not existing API calls.  If you have a fixed IP you can ask telegram service to unblock your ip or change your IP. If you are running a socks or  tor proxy on your server look for the ```BASHBOT_CURL_ARGS``` lines in 'mycommands.sh' as example.
 
 
 @Gnadelwartz
@@ -192,4 +198,4 @@ This may happen if to many wrong requests are sent to api.telegram.org, e.g. usi
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ V0.94-9-g46af634
+#### $$VERSION$$ v0.96-dev3-0-gdddd1ce

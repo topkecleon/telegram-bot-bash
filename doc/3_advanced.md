@@ -21,7 +21,9 @@ user_is_botadmin "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *
 user_is_admin "${CHAT[ID]}" "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *CHATADMIN*."
 
 ```
+
 In addition you can check individual capabilities of users as you must define in the file ```./botacl```:
+
 ```bash
 # file: botacl
 # a user not listed here, will return false from 'user_is_allowed'
@@ -45,6 +47,7 @@ In addition you can check individual capabilities of users as you must define in
 *:*:98979695
 ```
 You must use the function ```user_is_allowed``` to check if a user has the capability to do something. Example: Check if user has capability to start bot.
+
 ```bash
 	case "$MESSAGE" in
 		################################################
@@ -61,13 +64,37 @@ You must use the function ```user_is_allowed``` to check if a user has the capab
 **See also [Bashbot User Access Control functions](6_reference.md#User-Access-Control)**
 
 ### Interactive Chats
-To create interactive chats, write *(or edit the 'exmaples/question.sh' script)* a bash *(or C or python)* script, make it executable 
-and then use the 'startproc' function to  start the script.
-The output of the script will be sent to the user and user input will be sent to the script.
-To stop the script use the function 'killprog'
+Interactive chats are scripts, reading user input and echo data to the user.
 
-The output of the script will be processed by 'send_messages' to enable you to not only send text, but also keyboards, files, locations and more.
-Each newline in the output will start an new message to the user, to have line breaks in your message you can use 'mynewlinestartshere'.
+To create a new interactive chat script copy 'scripts/interactive.sh.clean' to e.g. 'scripts/mynewinteractive.sh', make it executeable
+and then use 'start_proc' function from your bot, it's possible to pass two arguments. You find more examples for interactive scripts in 'examples'
+
+*usage*: start_proc chat_id script arg1 arg2
+
+**Note:** From Version 0.96 on scripts must read user input from '$3' instead of stdin!
+
+```bash
+#!/bin/bash
+
+######
+# parameters
+# $1 $2 args as given to start_proc chat srcipt arg1 arg2
+# $3 path to named pipe
+
+#######################
+# place your commands here
+#
+INPUT="${3:-/dev/stdin}" # read from stdin if run in terminal
+
+echo "Enter a message:"
+read -r test <"${INPUT}"
+echo -e "Your Message: ${test}\nbye!"
+```
+
+#### message formatting and keyboards
+
+The output of the script will be processed by 'send_messages', so you can not only send text, but also keyboards, files, locations and more.
+Each newline in the output will start an new message to the user, to insert line breaks in your message you must insert ' mynewlinestartshere ' instead of a newline..
 
 To open up a keyboard in an interactive script, print out the keyboard layout in the following way:
 ```bash
@@ -107,7 +134,6 @@ out="Text that will appear mylatstartshere 45 mylongstartshere 45"
 [[ "$out" != *'in chat'* ]] &&  out="$out mytextstartshere in chat."
 echo "$out"
 ```
-Note: Interactive Chats run independent from main bot and continue running until your script exits or you /cancel if from your Bot. 
 
 ### Background Jobs
 
@@ -180,5 +206,5 @@ See also [answer_inline_multi, answer_inline_compose](6_reference.md#answer_inli
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ V0.94-0-gbdb50c8
+#### $$VERSION$$ v0.96-dev3-13-g601fe0e
 

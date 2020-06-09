@@ -2,7 +2,7 @@
 # file: make-distribution.sh
 # creates files and arcchives to dirtribute bashbot
 #
-#### $$VERSION$$ V0.94-0-gbdb50c8
+#### $$VERSION$$ 0.96-dev2-6-gda98b09
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -21,9 +21,9 @@ DISTFILES="bashbot.rc bashbot.sh commands.sh mycommands.sh mycommands.sh.clean d
 
 # run tests first!
 
-for test in "dev/all-tests.sh"
+for test in dev/all-test*.sh
 do
-   [ ! -x ""${test} ] && continue
+   [ ! -x "${test}" ] && continue
    if ! "${test}" ; then
 	echo "Test ${test} failed, can't create dist!"
 	exit 1

@@ -1,10 +1,16 @@
 #!/bin/bash
 # file: run_diskcusage.sh
 # example for an background job display a system value
-
+#
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
-#### $$VERSION$$ V0.94-0-gbdb50c8
+#### $$VERSION$$ v0.96-dev3-12-g3f85134
+
+######
+# parameters
+# $1 $2 args as given to starct_proc chat srcipt arg1 arg2
+# $3 path to named pipe/log
+
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment

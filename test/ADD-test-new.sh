@@ -2,7 +2,7 @@
 #
 # ADD a new test skeleton to test dir, but does not activate test
 #
-#### $$VERSION$$ V0.94-0-gbdb50c8
+#### $$VERSION$$ v0.96-dev-7-g0153928
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script

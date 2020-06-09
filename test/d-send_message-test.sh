@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ V0.94-0-gbdb50c8
+#### $$VERSION$$ v0.96-dev3-1-g2a66ee9
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -54,7 +54,12 @@ done < "${INPUTFILE}" 2>>"${LOGFILE}"
 
 echo " done."
 
-{ diff -c "${REFFILE}" "${OUTPUTFILE}" || exit 1; } | cat -v
+sort -d -o "${OUTPUTFILE}.sort" "${OUTPUTFILE}"
+sort -d -o "${REFFILE}.sort" "${REFFILE}"
+
+{ diff -c "${REFFILE}.sort" "${OUTPUTFILE}.sort" || exit 1; } | cat -v
+rm -f "${REFFILE}.sort"
+
 echo "  ... all \"send_message\" functions seems to work as expected."
 echo "${SUCCESS}"
 

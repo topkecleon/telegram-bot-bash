@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ V0.94-0-gbdb50c8
+#### $$VERSION$$ v0.96-dev3-0-gdddd1ce
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -33,7 +33,6 @@ cp ${TESTDIR}/*commands.sh "${BASHBOT_ETC}" || exit 1
 set -f
 cp -r "${TESTDIR}/bashbot.sh" "${TESTDIR}/modules" "${BASHBOT_BIN}" || exit 1
 
-TESTTOKEN="bashbottestscript"
 TESTFILES="${TOKENFILE} ${ACLFILE} ${ADMINFILE}"
 
 

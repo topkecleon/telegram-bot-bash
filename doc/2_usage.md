@@ -17,36 +17,44 @@ Have FUN!
 ### Files
 ```
 .
-├── mycommands.sh	# THIS is your bot, place logic and commands here!
+├── mycommands.sh        # THIS is your bot, place logic and commands here!
 │
-├── mycommands.sh.clean	# copy to "mycommands.sh" if you start devloping your bot
-├── mycommands.sh.dist	# example bot, also used for testing bashbot internally 
+├── mycommands.sh.clean      # copy to "mycommands.sh" if you start devloping your bot
+├── mycommands.sh.dist       # example bot, also used for testing bashbot internally 
 │
-├── bashbot.sh		# main bashbot script - DO NOT EDIT!
-├── commands.sh		# command dispatcher - DO NOT EDIT!
-├── JSON.sh		# bashbots JSON parser, see https://github.com/dominictarr/JSON.sh
+├── count.jssh           # count bashbot usage in jssh key-value store
+├── blocked.jssh         # list of blocked USER[ID] in jssh key-value store
 │
-├── modules		# optional functions, sourced by commands.sh
-│   ├── aliases.sh		# to disable modules rename them xxx.sh.off
+├── bashbot.sh           # main bashbot script - DO NOT EDIT!
+├── commands.sh          # command dispatcher - DO NOT EDIT!
+├── JSON.sh              # bashbots JSON parser, see https://github.com/dominictarr/JSON.sh
+│
+├── scripts              # place your bashbot interactive and background scripts here
+│   └── interactive.sh.clean     # interactive script template for new scripts
+│
+├── logs                 # here you'll find ERROR, DEBUG and MESSAGE.log
+│
+├── modules              # optional functions, sourced by commands.sh
+│   ├── aliases.sh           # to disable modules rename them xxx.sh.off
 │   ├── answerInline.sh
-│   ├── jsshDB.sh		# read and store JSON.sh stlye JSON
-│   ├── background.sh		# interactive and background functions
+│   ├── jsshDB.sh            # read and store JSON.sh stlye JSON, mandatory
+│   ├── background.sh        # interactive and background functions
 │   ├── chatMember.sh
-│   └── sendMessage.sh		# main send message functions, do not disable
+│   └── sendMessage.sh       # main send message functions, mandatory
 │
-├── addons		# optional addons, disbaled by default
-│   ├── example.sh		# to enable addons change their XXX_ENABLE to true
-│   ├── antiFlood.sh		# simple addon taking actions based on # files and text sent to chat
+├── addons               # optional addons, disbaled by default
+│   ├── example.sh           # to enable addons change their XXX_ENABLE to true
+│   ├── antiFlood.sh         # simple addon taking actions based on # files and text sent to chat
 │   └── xxxxxage.sh
 │
-├── bashbot.rc			# start/stop script if you run basbot as service
+├── bashbot.rc           # start/stop script if you run basbot as service
 │
-├── examples			# example scripts and configs for bashbot
-│   ├── README.md		# description of files and examples
-│   ├── bash2env.shh		# script to convert /bin/bash shebang to /usr/bin/env, see [Security Considerations](../README.md#Security-Considerations)
-│   └── bashbot.cron		# example crontab
+├── examples             # example scripts and configs for bashbot
+│   ├── README.md            # description of files and examples
+│   ├── bash2env.sh          # script to convert shebang to /usr/bin/env, see [Security Considerations](../README.md#Security-Considerations)
+│   └── bashbot.cron	     # example crontab
 │
-├── doc			# Documentation and License
+├── doc		# Documentation and License
 ├── html
 ├── LICENSE
 ├── README.html
@@ -69,14 +77,21 @@ Start or Stop your Bot use the following commands:
 ./bashbot.sh kill
 ```
 
-### User count
+### User stats
 
-deprecated, will be removed!
+To count the total number of users and messages run the following command:
+
+```
+./bashbot.sh stats
 ```
 
 ### Sending broadcasts to all users
+
+To send a broadcast to all of users that ever used the bot run the following command:
+
 ```
-deprecated, will be removed!
+./bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
+```
 
 ----
 
@@ -241,5 +256,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ V0.94-2-gced78d3
+#### $$VERSION$$ v0.96-dev3-14-g5fc4d01a
 

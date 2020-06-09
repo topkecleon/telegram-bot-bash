@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.941-0-ga055b77
+#### $$VERSION$$ 0.96-dev2-7-g6d1e7cc
 
 # source once magic, function named like file
 eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
@@ -36,6 +36,16 @@ send_markdown_message() {
 	local text; text="$(JsonEscape "${2}")"
 	until [ -z "${text}" ]; do
 		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdown"' "${MSG_URL}"
+		text="${text:4096}"
+	done
+}
+
+send_markdownv2_message() {
+	local text; text="$(JsonEscape "${2}")"
+	# markdown v2 needs additional double escaping!
+	text="$(sed -E -e 's|([#{}()!.-])|\\\1|g' <<< "$text")"
+	until [ -z "${text}" ]; do
+		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdownv2"' "${MSG_URL}"
 		text="${text:4096}"
 	done
 }
@@ -179,6 +189,7 @@ send_message() {
 	[ -z "$2" ] && return
 	local text keyboard btext burl no_keyboard file lat long title address sent
 	text="$(sed <<< "${2}" 's/ mykeyboardend.*//;s/ *my[kfltab][a-z]\{2,13\}startshere.*//')$(sed <<< "${2}" -n '/mytextstartshere/ s/.*mytextstartshere//p')"
+	# shellcheck disable=SC2001
 	text="$(sed <<< "${text}" 's/ *mynewlinestartshere */\r\n/g')"
 	[ "$3" != "safe" ] && {
 		no_keyboard="$(sed <<< "${2}" '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"

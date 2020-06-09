@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ V0.94-0-gbdb50c8
+#### $$VERSION$$ v0.96-dev3-0-gdddd1ce
 
 # common variables
 export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
@@ -11,10 +11,11 @@ export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
  TESTNAME="${REFDIR//-/ }"
 
 # common filenames
-export TOKENFILE ACLFILE COUNTFILE ADMINFILE DATADIR JSONSHFILE
+export TOKENFILE ACLFILE COUNTFILE BLOCKEDFILE ADMINFILE DATADIR JSONSHFILE
  TOKENFILE="token"
  ACLFILE="botacl"
- COUNTFILE="count"
+ COUNTFILE="count.jssh"
+ BLOCKEDFILE="blocked.jssh"
  ADMINFILE="botadmin"
  DATADIR="data-bot-bash"
  JSONSHFILE="JSON.sh/JSON.sh"
@@ -31,8 +32,9 @@ export  INPUTFILE REFFILE OUTPUTFILE
  OUTPUTFILE="${TESTDIR}/${REFDIR}.out"
 
 # do not query telegram when testing
-export BASHBOT_URL
+export BASHBOT_URL TESTTOKEN
 BASHBOT_URL="https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/getMe?"
+TESTTOKEN="123456789:BASHBOTTESTSCRIPTbashbottestscript_"
 
 # print arrays in reproducible order
 print_array() {

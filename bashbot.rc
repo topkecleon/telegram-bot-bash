@@ -1,7 +1,7 @@
 #!/bin/sh
 # description: Start or stop telegram-bash-bot
 #
-#### $$VERSION$$ V0.94-0-gbdb50c8
+#### $$VERSION$$ v0.96-dev3-12-g3f85134
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 
@@ -31,29 +31,22 @@ runcmd="echo Dry run:" # not actived until you edit lines below
 # runcmd="runuser $runas -s /bin/bash -c " # runasuser with *runuser*
 
 # edit the values of the following lines to fit your config:
-start="/usr/local/telegram-bot-bash/bashbot.sh"	# location of your bashbot.sh script
+start="cd /usr/local/telegram-bot-bash; /usr/local/telegram-bot-bash/bashbot.sh"	# location of your bashbot.sh script
 name='' 	# your bot name as given to botfather, e.g. mysomething_bot
 
 # END Configuration
 #######################
 
-lockfile="$(dirname $start)/lockfile"
 [ "$name" = "" ] && name="$runas"
 
 case "$1" in
 'start')
 	$runcmd "$start start" # >/dev/null 2>&1 </dev/null
 	RETVAL=$?
-	if [ "$RETVAL" = "0" ]; then
-		touch "$lockfile" >/dev/null 2>&1
-	fi
 	;;
 'stop')
 	$runcmd "$start kill"
 	RETVAL=$?
-	if [ "$RETVAL" = "0" ]; then
-		rm -f "$lockfile"
-	fi
 	;;
 'status')
 	ps -f -u "$runas" | grep "$name" | grep -qF "bashbot.sh startbot"
@@ -76,10 +69,10 @@ case "$1" in
 'suspendback'|'resumeback'|'killback')
 	$runcmd "$start $1"
 	RETVAL=$?
-	# kill inotifywait from runuser if long running bg scripts use it
-	KILLINOTIFY=""
-	if [ "$1" != "resumeback" ] && [ -n "${KILLINOTIFY}" ]; then 
-		kill -9 "$(ps -u "$runas" | grep inotifywait | sed 's/ .*//')" >/dev/null 2>&1
+	# kill inotifywait from runuser
+	if [ "$1" != "resumeback" ]; then 
+		# shellcheck disable=SC2046
+		kill -9 $(ps -u "$runas" | grep inotifywait | sed 's/ .*//') >/dev/null 2>&1
 	fi  
 	;;
 *)

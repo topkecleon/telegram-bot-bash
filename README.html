@@ -139,6 +139,7 @@ Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M (@gnadel
 <li>Sending Messages, Files, Keyboards</li>
 <li>User Access Control</li>
 <li>Inline Queries</li>
+<li>jsshDB Bashbot key-value storage</li>
 <li>Background and Interactive Jobs</li>
 </ul></li>
 <li><a href="doc/7_develop.md">Deveoper Notes</a>
@@ -178,6 +179,7 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>Running a Telegram Bot means it is connected to the public and you never know whats send to your Bot.</p>
 <p>Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. Bash programmers often struggle with 'quoting hell' and globbing, see <a href="https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells">Implications of wrong quoting</a></p>
 <p>Whenever you are processing input from from untrusted sources (messages, files, network) you must be as carefull as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everthing. In addition delete unused scripts and examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable all not used commands.</p>
+<p><strong>Note:</strong> Until v0.941 (mai/22/2020) telegram-bot-bash has a remote code execution bug, pls update if you use an older version! One of the most powerful features of unix shells like bash is variable and command substitution, this can lead to RCE and information disclosing bugs if you do not escape '$' porperly, see <a href="https://github.com/topkecleon/telegram-bot-bash/issues/125">Issue #125</a></p>
 <p>A powerful tool to improve your scripts is <code>shellcheck</code>. You can <a href="https://www.shellcheck.net/">use it online</a> or <a href="https://github.com/koalaman/shellcheck#installing">install shellcheck locally</a>. Shellcheck is used extensive in bashbot development to enshure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests. In addition bashbot has a <a href="doc/7_develop.md">test suite</a> to check if important functionality is working as expected.</p>
 <h3>Do not use #!/usr/bin/env bash</h3>
 <p><strong>We stay with /bin/bash shebang, because it's more save from security perspective.</strong></p>
@@ -193,6 +195,7 @@ It features background tasks and interactive chats, and can serve as an interfac
 <h2>FAQ</h2>
 <h3>Is this Bot insecure?</h3>
 <p>Bashbot is not more (in)secure as any other Bot written in any other language, we have done our best to make it as secure as possible. But YOU are responsible for the bot commands you wrote and you should know about the risks ...</p>
+<p><strong>Note:</strong> Until v0.941 (mai/22/2020) telegram-bot-bash has a remote code execution bug, pls update if you use an older version!</p>
 <h3>Why Bash and not the much better xyz?</h3>
 <p>Well, thats a damn good question ... may be because I'm an Unix/Linux admin from stone age. Nevertheless there are more reasons from my side:</p>
 <ul>
@@ -224,10 +227,10 @@ It features background tasks and interactive chats, and can serve as an interfac
 <a class="sourceLine" id="cb4-3" title="3"></a>
 <a class="sourceLine" id="cb4-4" title="4"><span class="fu">wget</span> -t 1 -T 10 https://api.telegram.org/bot</a>
 <a class="sourceLine" id="cb4-5" title="5"><span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></a></code></pre></div>
-<p>This may happen if to many wrong requests are sent to api.telegram.org, e.g. using a wrong token or not existing API calls. If you have a fixed IP you can ask telegram service to unblock your ip or change your IP. If you are running a tor proxy on your server you may uncomment the <code>BASHBOT_CURL_ARGS</code> line in 'mycommands.sh'</p>
+<p>This may happen if to many wrong requests are sent to api.telegram.org, e.g. using a wrong token or not existing API calls. If you have a fixed IP you can ask telegram service to unblock your ip or change your IP. If you are running a socks or tor proxy on your server look for the <code>BASHBOT_CURL_ARGS</code> lines in 'mycommands.sh' as example.</p>
 <p>@Gnadelwartz</p>
 <h2>That's it!</h2>
 <p>If you feel that there's something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4>$$VERSION$$ V0.94-9-g46af634</h4>
+<h4>$$VERSION$$ v0.96-dev3-0-gdddd1ce</h4>
 </body>
 </html>

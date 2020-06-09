@@ -89,3 +89,16 @@
 ["result",0,"message","voice","duration"]	2
 ["result",0,"message","voice","mime_type"]	"audio/ogg"
 ["result",0,"message","voice","file_size"]	4262
+["result",0,"message","new_chat_participant","id"]	123456789
+["result",0,"message","new_chat_participant","is_bot"]	false
+["result",0,"message","new_chat_participant","first_name"]	"Kay"
+["result",0,"message","new_chat_participant","last_name"]	"M"
+["result",0,"message","new_chat_member","id"]	123456789
+["result",0,"message","new_chat_member","is_bot"]	false
+["result",0,"message","new_chat_member","first_name"]	"Kay"
+["result",0,"message","new_chat_member","last_name"]	"M"
+["result",0,"message","new_chat_members",0,"id"]	123456789
+["result",0,"message","new_chat_members",0,"is_bot"]	false
+["result",0,"message","new_chat_members",0,"first_name"]	"Kay"
+["result",0,"message","new_chat_members",0,"last_name"]	"M"
+["result",0,"message","left_chat_member","id"]	123456789

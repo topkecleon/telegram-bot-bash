@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ V0.94-0-gbdb50c8
+#### $$VERSION$$ v0.96-dev3-12-g3f85134
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -126,7 +126,9 @@ if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
      			unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
      			;;
      			
-		*)	# forward messages to optional dispatcher
+		'/'*)	# discard all unkown commands
+			: ;;
+		*)	# forward message to interactive chats 
 			_exec_if_function send_interactive "${CHAT[ID]}" "${MESSAGE}"
 			;;
 	     esac
