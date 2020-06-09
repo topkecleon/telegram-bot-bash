@@ -23,8 +23,8 @@ More concret on the common commands provided by recent versions of
 [toybox](https://landley.net/toybox/help.html), see [Developer 
 Notes](doc/7_develop.md#common-commands)
 
-*Note for MacOS and BSD Users:* As bashbot use behavior of recent bash and 
-(gnu)sed versions, bashbot may not run without installing additional software, 
+*Note for MacOS and BSD Users:* As bashbot heavily uses modern bash and (gnu) 
+grep/sed features, bashbot will not run without installing additional software, 
 see [Install Bashbot](doc/0_install.md)
 
 
@@ -304,4 +304,4 @@ in 'mycommands.sh' as example.
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.96-pre-9-gb23aadd
+#### $$VERSION$$ v0.96-pre-13-ga71d68e

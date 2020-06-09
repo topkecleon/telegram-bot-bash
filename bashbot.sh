@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-12-gdba4f95
+#### $$VERSION$$ v0.96-pre-13-ga71d68e
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -789,8 +789,8 @@ start_bot() {
 	local OFFSET=0
 	# adaptive sleep deafults
 	local nextsleep="100" :
-	local addsleep="100"
-	local maxsleep="$(( ${BASHBOT_SLEEP:-5000} + 100 ))"
+	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
+	local maxsleep="${BASHBOT_SLEEP:-5000}"
 	# redirect to Debug.log
 	[[ "${DEBUG}" == *"debug" ]] && exec &>>"${LOGDIR}/DEBUG.log"
 	[ -n "${DEBUG}" ] && date && echo "Start BASHBOT in Mode \"${DEBUG}\""
@@ -806,7 +806,7 @@ start_bot() {
 	# shellcheck source=./commands.sh
 	source "${COMMANDS}" "startbot"
 	# start timer events
-	if _is_function start_timer ; then
+	if [ -n "${BASHBOT_START_TIMER}" ] ; then
 		# shellcheck disable=SC2064
 		trap "event_timer $DEBUG" ALRM
 		start_timer &
@@ -814,11 +814,9 @@ start_bot() {
 		trap "kill -9 $!; exit" EXIT INT HUP TERM QUIT 
 	fi
 	while true; do
-set -x
 		# adaptive sleep in ms rounded to next 0.1 s
 		sleep "$(printf '%.1f' "$((nextsleep))e-3")"
-		((nextsleep+= addsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
-set +x
+		((nextsleep+= stepsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
 		# get next update
 		UPDATE="$(getJson "$UPD_URL$OFFSET" 2>/dev/null | "${JSONSHFILE}" -s -b -n | iconv -f utf-8 -t utf-8 -c)"
 		# did we ge an responsn0r
