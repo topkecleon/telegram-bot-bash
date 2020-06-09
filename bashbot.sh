@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-9-gb23aadd
+#### $$VERSION$$ v0.96-pre-10-gf96625e
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -409,8 +409,8 @@ sendJsonResult(){
 	    # log error
 	    printf "%s: RESULT=%s ACTION=%s CHAT[ID]=%s ERROR=%s DESC=%s\n" "$(date)"\
 			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}"
-	    # warm path, do  not retry on error
-	    [ -n "${BOTSEND_RETRY}" ] && return
+	    # warm path, do not retry on error, also if we use wegt
+	    [ -n "${BOTSEND_RETRY}${BASHBOT_WGET}" ] && return
 
 	    # OK, we can retry sendJson, let's see what's failed
 	    # throttled, telegram say we send to much messages
@@ -436,11 +436,10 @@ sendJsonResult(){
 		    return
 		fi
 	        # are not blocked, default curl and args are working
-		if [ -n "${BASHBOT_CURL_ARGS}" ] || [ -n "${BASHBOT_CURL}" ]; then
-		    BOTSEND_RETRY="2"
+		if [ -n "${BASHBOT_CURL_ARGS}" ] || [ "${BASHBOT_CURL}" != "curl" ]; then
 		    printf "Possible Problem with \"%s %s\", retry %s with default curl config  ...\n"\
 				"${BASHBOT_CURL}" "${BASHBOT_CURL_ARGS}" "${2}"
-		    unset BASHBOT_CURL BASHBOT_CURL_ARGS
+		    BOTSEND_RETRY="2"; BASHBOT_CURL="curl"; BASHBOT_CURL_ARGS=""
 		    sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
 		    unset BOTSEND_RETRY
 		fi
