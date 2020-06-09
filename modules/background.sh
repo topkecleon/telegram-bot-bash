@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-12-g3f85134
+#### $$VERSION$$ v0.96-pre-0-geb49241
 
 # source from commands.sh if you want ro use interactive or background jobs
 
@@ -130,16 +130,16 @@ job_control() {
 		fifo="$(procname "${CHAT}" "${job}")" 
 		case "$1" in
 		"resumeb"*|"backgr"*)
-			echo "Restart Job: ${proc}  ${fifo}"
+			printf "Restart Job: %s %s\n" "${proc}" " ${fifo}"
 			restart_back "${CHAT}" "${proc}" "${job}"
 			;;
 		"suspendb"*)
-			echo "Suspend Job: ${proc}  ${fifo}"
+			printf "Suspend Job: %s %s\n" "${proc}" " ${fifo}"
 			kill_proc "${CHAT}" "${job}"
 			killall="y"
 			;;
 		"killb"*)
-			echo "Kill Job: ${proc}  ${fifo}"
+			printf "Kill Job: %s %s\n" "${proc}" " ${fifo}"
 			kill_proc "${CHAT}" "${job}"
 			rm -f "${FILE}" # remove job
 			killall="y"

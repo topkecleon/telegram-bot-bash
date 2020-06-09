@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-27-g78c066e
+#### $$VERSION$$ v0.96-pre-0-geb49241
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -361,7 +361,7 @@ else
 	sendJsonResult "${res}" "sendJson (wget)" "$@"
   }
   sendUpload() {
-	printf "%s: %s\n" "$(date)" "Sorry, wget does not support file upload" >>"${ERRORLOG}"
+	printf "%s: %s\n" "$(date)" "Sorry, wget does not support file upload\n" >>"${ERRORLOG}"
 	BOTSENT[OK]="false"
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
@@ -380,7 +380,7 @@ sendJsonRetry(){
 			sendUpload "$@"	
 			;;
 		*)
-			printf '%s: SendJsonRetry: unknown, cannot retry %s' "$(date)" "${retry}" >>"${ERRORLOG}"
+			printf "%s: SendJsonRetry: unknown, cannot retry %s\n" "$(date)" "${retry}" >>"${ERRORLOG}"
 			;;
 	esac
 }
@@ -416,7 +416,7 @@ sendJsonResult(){
 	    # throttled, telegram say we send to much messages
 	    if [ -n "${BOTSENT[RETRY]}" ]; then
 		BOTSEND_RETRY="(( ${BOTSENT[RETRY]} * 15/10 ))"
-		echo "Retry ${2} in ${BOTSEND_RETRY} seconds ..."
+		printf "Retry %s in %s seconds ...\n" "${2}" "${BOTSEND_RETRY}"
 		sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
 		unset BOTSEND_RETRY
 		return
@@ -425,20 +425,20 @@ sendJsonResult(){
 	    if [ "${BOTSENT[ERROR]}" == "999" ];then
 		# check if default curl and args are OK
 		if ! curl -sL -k -m 2 "${URL}" >/dev/null 2>&1 ; then
-		    echo "BASHBOT IP Adress is blocked!"
+		    printf "BASHBOT IP Adress is blocked!\n"
 		    # user provided function to recover or notify block
 		    if _exec_if_function bashbotBlockRecover; then
 			BOTSEND_RETRY="2"
-			echo "Function bashbotBlockRecover returned true, retry ${2}."
+			printf "Function bashbotBlockRecover returned true, retry %s.\n" "${2}"
 			sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
 			unset BOTSEND_RETRY
 		    fi
 		    return
 		fi
-	        # if we are not blocked, so default curl and args is working
+	        # we are not blocked, default curl and args are working
 		if [ -n "${BASHBOT_CURL_ARGS}" ] || [ -n "${BASHBOT_CURL}" ]; then
 		    BOTSEND_RETRY="2"
-		    printf 'Possible Problem with "%s %s", retry %s with default curl config  ...'\
+		    printf "Possible Problem with \"%s %s\", retry %s with default curl config  ...\n"\
 				"${BASHBOT_CURL}" "${BASHBOT_CURL_ARGS}" "${2}"
 		    unset BASHBOT_CURL BASHBOT_CURL_ARGS
 		    sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
@@ -465,7 +465,7 @@ title2Json(){
 	[ -n "$3" ] && desc=',"description":"'$(JsonEscape "$3")'"'
 	[ -n "$4" ] && markup=',"parse_mode":"'$(JsonEscape "$4")'"'
 	[ -n "$5" ] && keyboard=',"reply_markup":"'$(JsonEscape "$5")'"'
-	printf "%s\n" "${title}${caption}${desc}${markup}${keyboard}"
+	printf '%s\n' "${title}${caption}${desc}${markup}${keyboard}"
 }
 
 # get bot name
@@ -483,6 +483,7 @@ JsonDecode() {
                 remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
                 out="${BASH_REMATCH[1]}"
         done
+	# this echo must stay for correct decoding!
         echo -e "${out}${remain}"
 }
 

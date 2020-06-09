@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-20-gbd22e2a
+#### $$VERSION$$ v0.96-pre-0-geb49241
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -130,7 +130,7 @@ if _exists flock; then
 	{ flock -s -w 1 200
 	Json2Array "oldARR" <"${DB}"
 	} 200>"${DB}${BASHBOT_LOCKNAME}"
-	echo "${oldARR["$1"]}"
+	printf '%f' "${oldARR["$1"]}"
   }
 
 
@@ -208,8 +208,8 @@ jssh_newDB_async() { jssh_newDB "$@"; }
 jssh_newDB() {
 	local DB; DB="$(jssh_checkDB "$1")"
 	[ -z "${DB}" ] && return 1
-	[ -f "${DB}" ] && return 2 # already exist, do not zero out
-	printf '' >"${DB}"
+	[ -f "${DB}" ] && return 2 # already exist
+	touch "${DB}"
 } 
 
 # $1 filename, check filename, it must be relative to BASHBOT_VAR, and not contain '..'
@@ -224,7 +224,7 @@ jssh_checkDB(){
 	else
 		DB="${BASHBOT_VAR:-.}/$1.jssh"
 	fi
-	printf '%s\n' "${DB}"
+	printf '%s' "${DB}"
 }
 
 
@@ -290,7 +290,7 @@ jssh_getKeyDB_async() {
 	local DB; DB="$(jssh_checkDB "$2")"
 	declare -A oldARR
 	Json2Array "oldARR" <"${DB}"
-	echo "${oldARR["$1"]}"
+	printf '%s' "${oldARR["$1"]}"
 }
 
 jssh_countKeyDB_async() {
