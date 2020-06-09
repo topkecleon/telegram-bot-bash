@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-10-gf96625e
+#### $$VERSION$$ v0.96-pre-11-g7644c6c
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -407,8 +407,8 @@ sendJsonResult(){
 		BOTSENT[DESCRIPTION]="Timeout or broken/no connection"
 	    fi
 	    # log error
-	    printf "%s: RESULT=%s ACTION=%s CHAT[ID]=%s ERROR=%s DESC=%s\n" "$(date)"\
-			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}"
+	    printf "%s: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s\n=ACTION=%s\n" "$(date)"\
+			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4/[$'\n\r']*}"
 	    # warm path, do not retry on error, also if we use wegt
 	    [ -n "${BOTSEND_RETRY}${BASHBOT_WGET}" ] && return
 
