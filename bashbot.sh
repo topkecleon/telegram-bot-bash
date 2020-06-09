@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-14-g4fd6f98
+#### $$VERSION$$ v0.96-pre-15-geace5e1
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -77,9 +77,6 @@ MODULEDIR="${SCRIPTDIR}/modules"
 # adjust locations based on source and real name
 if [ "${SCRIPT}" != "${REALME}" ] || [ "$1" = "source" ]; then
 	SOURCE="yes"
-else
-	SCRIPT="./$(basename "${SCRIPT}")"
-	MODULEDIR="./$(basename "${MODULEDIR}")"
 fi
 
 if [ -n "$BASHBOT_HOME" ]; then
@@ -104,28 +101,6 @@ fi
 if [ ! -w "." ]; then
 	echo -e "${ORANGE}WARNING: ${RUNDIR} is not writeable!${NC}"
 	ls -ld .
-fi
-
-###############
-# load modules
-for modules in "${MODULEDIR:-.}"/*.sh ; do
-	# shellcheck source=./modules/aliases.sh
-	if ! _is_function "$(basename "${modules}")" && [ -r "${modules}" ]; then source "${modules}" "source"; fi
-done
-
-# shellcheck source=./modules/jsonDB.sh
-source "${MODULEDIR:-.}"/jsonDB.sh
-
-
-
-#####################
-# BASHBOT INTERNAL functions
-#
-
-#jsonDB is now mandatory
-if ! _is_function jssh_newDB ; then
-	echo -e "${RED}ERROR: Mandatory module jsonDB is missing or not readable!"
-	exit 6
 fi
 
 # Setup and check environment if BOTTOKEN is NOT set
@@ -191,8 +166,7 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
   # setup count file 
   if [ ! -f "${COUNTFILE}.jssh" ]; then
-	jssh_newDB_async "${COUNTFILE}"
-	jssh_insertKeyDB_async 'counted_user_chat_id' "num_messages_seen" "${COUNTFILE}"
+	printf '["counted_user_chat_id"]\t"num_messages_seen"\n' > "${COUNTFILE}.jssh"
 	# convert old file on creation
 	if [ -r  "${COUNTFILE}" ];then
 		sed 's/COUNT/\[\"/;s/$/\"\]\t\"1\"/' < "${COUNTFILE}" >> "${COUNTFILE}.jssh"
@@ -204,12 +178,9 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
   # setup blocked file 
   if [ ! -f "${BLOCKEDFILE}.jssh" ]; then
-	jssh_newDB_async "${BLOCKEDFILE}"
-	jssh_insertKeyDB_async 'blocked_user_or_chat_id' "name and reason" "${BLOCKEDFILE}"
+	printf '["blocked_user_or_chat_id"]\t"name and reason"\n' >"${BLOCKEDFILE}.jssh"
   fi
 fi
-# cleanup (remove double entries) countfile on startup
-[ "${SOURCE}" != "yes" ] && jssh_deleteKeyDB_async "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
 
 # do we have BSD sed
 if ! sed '1ia' </dev/null 2>/dev/null; then
@@ -230,9 +201,9 @@ fi
 
 ##################
 # here we start with the real stuff
-URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
 BOTSEND_RETRY="no" # do not retry by default
 
+URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
 ME_URL=$URL'/getMe'
 
 UPD_URL=$URL'/getUpdates?offset='
@@ -259,6 +230,25 @@ if [ "${SOURCE}" != "yes" ]; then
 	source "${COMMANDS}" "source"
 fi
 
+###############
+# load modules
+for modules in "${MODULEDIR:-.}"/*.sh ; do
+	# shellcheck source=./modules/aliases.sh
+	if ! _is_function "$(basename "${modules}")" && [ -r "${modules}" ]; then source "${modules}" "source"; fi
+done
+
+#####################
+# BASHBOT INTERNAL functions
+#
+
+#jsonDB is now mandatory
+if ! _is_function jssh_newDB ; then
+	echo -e "${RED}ERROR: Mandatory module jsonDB is missing or not readable!"
+	exit 6
+fi
+
+# cleanup (remove double entries) countfile on startup
+[ "${SOURCE}" != "yes" ] && jssh_deleteKeyDB_async "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
 
 #################
 # BASHBOT COMMON functions
@@ -890,7 +880,8 @@ JSONSHFILE="${BASHBOT_JSONSH:-${SCRIPTDIR}/JSON.sh/JSON.sh}"
 
 if [ ! -f "${JSONSHFILE}" ]; then
 	echo "Seems to be first run, Downloading ${JSONSHFILE}..."
-	mkdir "${SCRIPTDIR}/JSON.sh" 2>/dev/null && chmod +w "${SCRIPTDIR}/JSON.sh"
+	[ "${SCRIPTDIR}/JSON.sh/JSON.sh" = "${JSONSHFILE}" ] &&\
+		 mkdir "${SCRIPTDIR}/JSON.sh" 2>/dev/null && chmod +w "${SCRIPTDIR}/JSON.sh"
 	getJson "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh" >"${JSONSHFILE}"
 	chmod +x "${JSONSHFILE}" 
 fi
