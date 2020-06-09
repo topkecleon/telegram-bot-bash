@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-2-g30b5b1a
+#### $$VERSION$$ v0.96-pre-17-gdeeef7e
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -130,7 +130,7 @@ if _exists flock; then
 	{ flock -s -w 1 200
 	Json2Array "oldARR" <"${DB}"
 	} 200>"${DB}${BASHBOT_LOCKNAME}"
-	printf '%f' "${oldARR["$1"]}"
+	printf '%s' "${oldARR["$1"]}"
   }
 
 
