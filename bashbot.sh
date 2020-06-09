@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-17-gdeeef7e
+#### $$VERSION$$ v0.96-pre-18-g6d940c7
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -389,7 +389,7 @@ sendJsonResult(){
 	else
 	    # oops something went wrong!
 	    if [ "${res}" != "" ]; then
-		BOTSENT[ERROR]="$(JsonGeOtValue '"error_code"' <<< "${1}")"
+		BOTSENT[ERROR]="$(JsonGetValue '"error_code"' <<< "${1}")"
 		BOTSENT[DESCRIPTION]="$(JsonGetString '"description"' <<< "${1}")"
 		BOTSENT[RETRY]="$(JsonGetValue '"parameters","retry_after"' <<< "${1}")"
 	    else
