@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-26-gde74571
+#### $$VERSION$$ v0.96-dev3-27-g78c066e
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -140,6 +140,7 @@ LOGDIR="${RUNDIR:-.}/logs"
 if [ ! -d "${LOGDIR}" ] || [ ! -w "${LOGDIR}" ]; then
 	LOGDIR="${RUNDIR:-.}"
 fi
+ERRORLOG="${LOGDIR}/ERROR.log"
 
 # we assume everthing is already set up correctly if we have TOKEN
 if [ -z "${BOTTOKEN}" ]; then
@@ -360,19 +361,17 @@ else
 	sendJsonResult "${res}" "sendJson (wget)" "$@"
   }
   sendUpload() {
-	printf "%s: %s\n" "$(date)" "Sorry, wget does not support file upload" >>"${LOGDIR}/ERROR.log"
+	printf "%s: %s\n" "$(date)" "Sorry, wget does not support file upload" >>"${ERRORLOG}"
 	BOTSENT[OK]="false"
 	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
 fi 
 
 # retry sendJson
-# $1 function to retry
-# $2 seconds to sleep before
-# $2 ... $n arguments
+# $1 function $2 sleep $3 ... $n arguments
 sendJsonRetry(){
 	local retry="${1}"; shift
-	sleep "${1}"; shift
+	[[ "${1}" =~ ^[0-9.]+$ ]] && sleep "${1}"; shift
 	case "${retry}" in
 		'sendJson'*)
 			sendJson "$@"	
@@ -381,15 +380,14 @@ sendJsonRetry(){
 			sendUpload "$@"	
 			;;
 		*)
-			echo "SendJsonRetry: unknown, cannot rerty ${retry}" >>"${LOGDIR}/ERROR.log"
+			printf '%s: SendJsonRetry: unknown, cannot retry %s' "$(date)" "${retry}" >>"${ERRORLOG}"
 			;;
 	esac
 }
 
 # process sendJson result
-# $1 result
-# $2 function
-# $3 .. $n original arguments, $3 is Chat_id
+# stdout is written to ERROR.log
+# $1 result $2 function $3 .. $n original arguments, $3 is Chat_id
 sendJsonResult(){
 	BOTSENT=( )
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${1}")"
@@ -409,38 +407,46 @@ sendJsonResult(){
 		BOTSENT[DESCRIPTION]="Timeout or broken/no connection"
 	    fi
 	    # log error
-	    printf "%s: RESULT=%s CHAT[ID]=%s ACTION=%s ERROR=%s DESC=%s\n" "$(date)"\
-			"${BOTSENT[OK]}"  "${3}" "${2}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" >>"${LOGDIR}/ERROR.log"
+	    printf "%s: RESULT=%s ACTION=%s CHAT[ID]=%s ERROR=%s DESC=%s\n" "$(date)"\
+			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}"
 	    # warm path, do  not retry on error
 	    [ -n "${BOTSEND_RETRY}" ] && return
 
-	    # OK, we can retry sendJson, let's see wehat's failed
+	    # OK, we can retry sendJson, let's see what's failed
 	    # throttled, telegram say we send to much messages
 	    if [ -n "${BOTSENT[RETRY]}" ]; then
 		BOTSEND_RETRY="(( ${BOTSENT[RETRY]} * 15/10 ))"
-		echo "Retry ${2} in ${BOTSEND_RETRY} seconds ..." >>"${LOGDIR}/ERROR.log"
+		echo "Retry ${2} in ${BOTSEND_RETRY} seconds ..."
 		sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
 		unset BOTSEND_RETRY
+		return
 	    fi
 	    # timeout, failed connection or blocked
 	    if [ "${BOTSENT[ERROR]}" == "999" ];then
 		# check if default curl and args are OK
 		if ! curl -sL -k -m 2 "${URL}" >/dev/null 2>&1 ; then
-		    echo "BASHBOT is blocked!" >>"${LOGDIR}/ERROR.log"
+		    echo "BASHBOT IP Adress is blocked!"
+		    # user provided function to recover or notify block
+		    if _exec_if_function bashbotBlockRecover; then
+			BOTSEND_RETRY="2"
+			echo "Function bashbotBlockRecover returned true, retry ${2}."
+			sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
+			unset BOTSEND_RETRY
+		    fi
 		    return
-		    # can we recover from block? currently not.
 		fi
-	        # if we are not blocked, default curl and args are working
+	        # if we are not blocked, so default curl and args is working
 		if [ -n "${BASHBOT_CURL_ARGS}" ] || [ -n "${BASHBOT_CURL}" ]; then
 		    BOTSEND_RETRY="2"
-		    echo "Timeout or broken connection, retry ${2} with default curl parameters  ..." >>"${LOGDIR}/ERROR.log"
+		    printf 'Possible Problem with "%s %s", retry %s with default curl config  ...'\
+				"${BASHBOT_CURL}" "${BASHBOT_CURL_ARGS}" "${2}"
 		    unset BASHBOT_CURL BASHBOT_CURL_ARGS
 		    sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
 		    unset BOTSEND_RETRY
 		fi
 	    fi
 	fi
-}
+} >>"${ERRORLOG}"
 
 
 # escape / remove text charaters for json strings, eg. " -> \" 
