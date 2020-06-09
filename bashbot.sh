@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-13-ga71d68e
+#### $$VERSION$$ v0.96-pre-14-g4fd6f98
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -509,7 +509,7 @@ process_updates() {
 process_client() {
 	local num="$1" debug="$2" 
 	CMD=( ); iQUERY=( )
-	[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
+	[[ "${debug}" = *"debug"* ]] && printf "%s new Message ========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
 	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
 	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	USER[ID]="${UPD["result",${num},"message","from","id"]}"
@@ -835,7 +835,7 @@ start_bot() {
 		else
 			# ups, something bad happend, wait maxsleep
 			(( nextsleep=maxsleep ))
-			printf "%s: Ups, got no response on update, sleep %.1fs" "$(date)" "$((nextsleep))e-3" >>"${ERRORLOG}"
+			printf "%s: Got no response while wait for telegram update, sleep %ds" "$(date)" "$((nextsleep))e-3" >>"${ERRORLOG}"
 		fi
 	done
 }
