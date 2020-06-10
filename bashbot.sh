@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-28-gc2f4753
+#### $$VERSION$$ v0.96-pre-29-gaec4e71
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -363,18 +363,22 @@ fi
 sendJsonRetry(){
 	local retry="${1}"; shift
 	[[ "${1}" =~ ^\ *[0-9.]+\ *$ ]] && sleep "${1}"; shift
+	printf "%s: RETRY %s %s %s\n" "$(date)" "${retry}" "${1}" "${2/[$'\n\r']*}"
 	case "${retry}" in
 		'sendJson'*)
 			sendJson "$@"	
+
 			;;
 		'sendUpload'*)
 			sendUpload "$@"	
 			;;
 		*)
-			printf "%s: SendJsonRetry: unknown, cannot retry %s\n" "$(date)" "${retry}" >>"${ERRORLOG}"
+			printf "%s: Error: unknown function %s, cannot retry\n" "$(date)" "${retry}"
+			return
 			;;
 	esac
-}
+	[ "${BOTSENT[OK]}" = "true" ] && printf "%s: Retry  OK: %s %s\n" "$(date)" "${retry}" "${1}"
+} >>"${ERRORLOG}"
 
 # process sendJson result
 # stdout is written to ERROR.log
@@ -406,7 +410,7 @@ sendJsonResult(){
 	    # OK, we can retry sendJson, let's see what's failed
 	    # throttled, telegram say we send to much messages
 	    if [ -n "${BOTSENT[RETRY]}" ]; then
-		BOTSEND_RETRY="$(( BOTSENT[RETRY] * 15/10 ))"
+		BOTSEND_RETRY="$(( BOTSENT[RETRY]++ ))"
 		printf "Retry %s in %s seconds ...\n" "${2}" "${BOTSEND_RETRY}"
 		sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
 		unset BOTSEND_RETRY
@@ -811,7 +815,7 @@ start_bot() {
 	# bot is ready, start processing updates ...
 	while true; do
 		# adaptive sleep in ms rounded to next 0.1 s
-		sleep "$(_round_float "$((nextsleep))e-3")"
+		sleep "$(_round_float "${nextsleep}e-3" "1")"
 		((nextsleep+= stepsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
 		# get next update
 		UPDATE="$(getJson "$UPD_URL$OFFSET" 2>/dev/null | "${JSONSHFILE}" -s -b -n | iconv -f utf-8 -t utf-8 -c)"
