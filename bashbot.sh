@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-18-g6d940c7
+#### $$VERSION$$ v0.96-pre-19-g7790e47
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -77,6 +77,9 @@ MODULEDIR="${SCRIPTDIR}/modules"
 # adjust locations based on source and real name
 if [ "${SCRIPT}" != "${REALME}" ] || [ "$1" = "source" ]; then
 	SOURCE="yes"
+else
+	SCRIPT="./$(basename "${SCRIPT}")"
+	MODULEDIR="./$(basename "${MODULEDIR}")"
 fi
 
 if [ -n "$BASHBOT_HOME" ]; then
@@ -101,6 +104,28 @@ fi
 if [ ! -w "." ]; then
 	echo -e "${ORANGE}WARNING: ${RUNDIR} is not writeable!${NC}"
 	ls -ld .
+fi
+
+###############
+# load modules
+for modules in "${MODULEDIR:-.}"/*.sh ; do
+	# shellcheck source=./modules/aliases.sh
+	if ! _is_function "$(basename "${modules}")" && [ -r "${modules}" ]; then source "${modules}" "source"; fi
+done
+
+# shellcheck source=./modules/jsonDB.sh
+source "${MODULEDIR:-.}"/jsonDB.sh
+
+
+
+#####################
+# BASHBOT INTERNAL functions
+#
+
+#jsonDB is now mandatory
+if ! _is_function jssh_newDB ; then
+	echo -e "${RED}ERROR: Mandatory module jsonDB is missing or not readable!"
+	exit 6
 fi
 
 # Setup and check environment if BOTTOKEN is NOT set
@@ -166,7 +191,8 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
   # setup count file 
   if [ ! -f "${COUNTFILE}.jssh" ]; then
-	printf '["counted_user_chat_id"]\t"num_messages_seen"\n' > "${COUNTFILE}.jssh"
+	jssh_newDB_async "${COUNTFILE}"
+	jssh_insertKeyDB_async 'counted_user_chat_id' "num_messages_seen" "${COUNTFILE}"
 	# convert old file on creation
 	if [ -r  "${COUNTFILE}" ];then
 		sed 's/COUNT/\[\"/;s/$/\"\]\t\"1\"/' < "${COUNTFILE}" >> "${COUNTFILE}.jssh"
@@ -178,9 +204,12 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
   # setup blocked file 
   if [ ! -f "${BLOCKEDFILE}.jssh" ]; then
-	printf '["blocked_user_or_chat_id"]\t"name and reason"\n' >"${BLOCKEDFILE}.jssh"
+	jssh_newDB_async "${BLOCKEDFILE}"
+	jssh_insertKeyDB_async 'blocked_user_or_chat_id' "name and reason" "${BLOCKEDFILE}"
   fi
 fi
+# cleanup (remove double entries) countfile on startup
+[ "${SOURCE}" != "yes" ] && jssh_deleteKeyDB_async "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
 
 # do we have BSD sed
 if ! sed '1ia' </dev/null 2>/dev/null; then
@@ -201,9 +230,9 @@ fi
 
 ##################
 # here we start with the real stuff
+URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
 BOTSEND_RETRY="no" # do not retry by default
 
-URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
 ME_URL=$URL'/getMe'
 
 UPD_URL=$URL'/getUpdates?offset='
@@ -230,25 +259,6 @@ if [ "${SOURCE}" != "yes" ]; then
 	source "${COMMANDS}" "source"
 fi
 
-###############
-# load modules
-for modules in "${MODULEDIR:-.}"/*.sh ; do
-	# shellcheck source=./modules/aliases.sh
-	if ! _is_function "$(basename "${modules}")" && [ -r "${modules}" ]; then source "${modules}" "source"; fi
-done
-
-#####################
-# BASHBOT INTERNAL functions
-#
-
-#jsonDB is now mandatory
-if ! _is_function jssh_newDB ; then
-	echo -e "${RED}ERROR: Mandatory module jsonDB is missing or not readable!"
-	exit 6
-fi
-
-# cleanup (remove double entries) countfile on startup
-[ "${SOURCE}" != "yes" ] && jssh_deleteKeyDB_async "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
 
 #################
 # BASHBOT COMMON functions
@@ -362,6 +372,7 @@ fi
 sendJsonRetry(){
 	local retry="${1}"; shift
 	[[ "${1}" =~ ^\ *[0-9.]+\ *$ ]] && sleep "${1}"; shift
+set -x
 	case "${retry}" in
 		'sendJson'*)
 			sendJson "$@"	
@@ -373,6 +384,7 @@ sendJsonRetry(){
 			printf "%s: SendJsonRetry: unknown, cannot retry %s\n" "$(date)" "${retry}" >>"${ERRORLOG}"
 			;;
 	esac
+set +x
 }
 
 # process sendJson result
@@ -383,7 +395,7 @@ sendJsonResult(){
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${1}")"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
 		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${1}")"
-		[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@:2}" 
+		[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@:3}" 
 		return
 		# hot path everthing OK!
 	else
@@ -405,9 +417,11 @@ sendJsonResult(){
 	    # OK, we can retry sendJson, let's see what's failed
 	    # throttled, telegram say we send to much messages
 	    if [ -n "${BOTSENT[RETRY]}" ]; then
-		BOTSEND_RETRY="(( ${BOTSENT[RETRY]} * 15/10 ))"
+		BOTSEND_RETRY="$(( BOTSENT[RETRY] * 15/10 ))"
 		printf "Retry %s in %s seconds ...\n" "${2}" "${BOTSEND_RETRY}"
+set -x
 		sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
+set +x
 		unset BOTSEND_RETRY
 		return
 	    fi
@@ -499,7 +513,7 @@ process_updates() {
 process_client() {
 	local num="$1" debug="$2" 
 	CMD=( ); iQUERY=( )
-	[[ "${debug}" = *"debug"* ]] && printf "%s new Message ========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
+	[[ "${debug}" = *"debug"* ]] && printf "\n%s: New Message ========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
 	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
 	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	USER[ID]="${UPD["result",${num},"message","from","id"]}"
@@ -825,7 +839,7 @@ start_bot() {
 		else
 			# ups, something bad happend, wait maxsleep
 			(( nextsleep=maxsleep ))
-			printf "%s: Got no response while wait for telegram update, sleep %ds" "$(date)" "$((nextsleep))e-3" >>"${ERRORLOG}"
+			printf "%s: Timeout or broken/no connection on telegram update, sleep %ds\n" "$(date)" $((nextsleep))e-3 >>"${ERRORLOG}"
 		fi
 	done
 }
@@ -868,8 +882,6 @@ bot_init() {
 		find . -name '*.jssh' -exec chmod u+w \{\} +
 		#ls -la
 	fi
-	# show result
-	ls -l
 }
 
 if ! _is_function send_message ; then
@@ -882,8 +894,7 @@ JSONSHFILE="${BASHBOT_JSONSH:-${SCRIPTDIR}/JSON.sh/JSON.sh}"
 
 if [ ! -f "${JSONSHFILE}" ]; then
 	echo "Seems to be first run, Downloading ${JSONSHFILE}..."
-	[ "${SCRIPTDIR}/JSON.sh/JSON.sh" = "${JSONSHFILE}" ] &&\
-		 mkdir "${SCRIPTDIR}/JSON.sh" 2>/dev/null && chmod +w "${SCRIPTDIR}/JSON.sh"
+	mkdir "${SCRIPTDIR}/JSON.sh" 2>/dev/null && chmod +w "${SCRIPTDIR}/JSON.sh"
 	getJson "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh" >"${JSONSHFILE}"
 	chmod +x "${JSONSHFILE}" 
 fi
