@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-33-gde21079
+#### $$VERSION$$ v0.96-pre-34-gf968c8b
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -363,7 +363,7 @@ fi
 sendJsonRetry(){
 	local retry="${1}"; shift
 	[[ "${1}" =~ ^\ *[0-9.]+\ *$ ]] && sleep "${1}"; shift
-	printf "%s: RETRY %s %s %s\n" "$(date)" "${retry}" "${1}" "${2/[$'\n\r']*}"
+	printf "%s: RETRY %s %s %s\n" "$(date)" "${retry}" "${1}" "${2:0:60}"
 	case "${retry}" in
 		'sendJson'*)
 			sendJson "$@"	
@@ -376,7 +376,7 @@ sendJsonRetry(){
 			return
 			;;
 	esac
-	[ "${BOTSENT[OK]}" = "true" ] && printf "%s: Retry  OK: %s %s\n" "$(date)" "${retry}" "${1}"
+	[ "${BOTSENT[OK]}" = "true" ] && printf "%s: Retry  OK: %s %s %s\n" "$(date)" "${retry}" "${1}" "${2:0:60}"
 } >>"${ERRORLOG}"
 
 # process sendJson result
@@ -402,7 +402,7 @@ sendJsonResult(){
 	    fi
 	    # log error
 	    printf "%s: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s ACTION=%s\n" "$(date)"\
-			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4/[$'\n\r']*}"
+			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4:0:60}"
 	    # warm path, do not retry on error, also if we use wegt
 	    [ -n "${BOTSEND_RETRY}${BASHBOT_WGET}" ] && return
 
@@ -423,7 +423,7 @@ sendJsonResult(){
 		    # user provided function to recover or notify block
 		    if _exec_if_function bashbotBlockRecover; then
 			BOTSEND_RETRY="2"
-			printf "bashbotBlockRecover returned true, retry %s. ...\n" "${2}"
+			printf "bashbotBlockRecover returned true, retry %s ...\n" "${2}"
 			sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:3}"
 			unset BOTSEND_RETRY
 		    fi
