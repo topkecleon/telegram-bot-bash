@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-26-g848219d
+#### $$VERSION$$ v0.96-pre-27-gec7fce7
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -35,9 +35,8 @@ fi
 
 # some important helper functions
 # returns true if command exist
-_exists()
-{
-	[ "$(LC_ALL=C type -t "$1")" = "file" ]
+_exists() {
+	[ "$(LC_ALL=C type -t "${1}")" = "file" ]
 }
 
 # execute function if exists
@@ -45,9 +44,14 @@ _exec_if_function() {
 	[ "$(LC_ALL=C type -t "${1}")" != "function" ] || "$@"
 }
 # returns true if function exist
-_is_function()
-{
-	[ "$(LC_ALL=C type -t "$1")" = "function" ]
+_is_function() {
+	[ "$(LC_ALL=C type -t "${1}")" = "function" ]
+}
+# round $1 in international notation! , returns float with $2 decimal digits
+# if $2 is not fiven or is not a positive number, it's set to zero
+_round_float() {
+	local digit="${2}"; [[ "${2}" =~ ^[0-9]+$ ]] || digit="0"
+	LC_ALL=C printf "%.${digit}f" "${1}"
 }
 # read JSON.sh style data and asssign to an ARRAY
 # $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
@@ -807,7 +811,7 @@ start_bot() {
 	# bot is ready, start processing updates ...
 	while true; do
 		# adaptive sleep in ms rounded to next 0.1 s
-		sleep "$(printf '%.1f' "$((nextsleep))e-3")"
+		sleep "$(_round_float "$((nextsleep))e-3")"
 		((nextsleep+= stepsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
 		# get next update
 		UPDATE="$(getJson "$UPD_URL$OFFSET" 2>/dev/null | "${JSONSHFILE}" -s -b -n | iconv -f utf-8 -t utf-8 -c)"
@@ -828,7 +832,7 @@ start_bot() {
 			# ups, something bad happend, wait maxsleep
 			(( nextsleep=maxsleep*2 ))
 			printf "%s: Timeout or broken/no connection on telegram update, sleep %ds\n"\
-					"$(date)"  "$((nextsleep))e-3" >>"${ERRORLOG}"
+					"$(date)"  "$(_round_float "${nextsleep}e-3")" >>"${ERRORLOG}"
 		fi
 	done
 }
