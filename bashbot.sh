@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-29-gaec4e71
+#### $$VERSION$$ v0.96-pre-30-g769d07d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -1022,7 +1022,7 @@ if [ "${SOURCE}" != "yes" ]; then
 		;;
 	*)
 		echo -e "${RED}${REALME}: BAD REQUEST${NC}"
-		echo -e "${RED}Available arguments: ${GREY}start, stop, kill, status, status, broadcast, help, suspendback, resumeback, killback${NC}"
+		echo -e "${ORANGE}Available arguments: ${GREY}start, stop, kill, status, stats, broadcast, help, suspendback, resumeback, killback${NC}"
 		exit 4
 		;;
   esac
