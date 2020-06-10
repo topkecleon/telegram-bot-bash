@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-23-geb89aee
+#### $$VERSION$$ v0.96-pre-24-g5b25821
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -246,9 +246,6 @@ if ! _is_function jssh_newDB ; then
 	echo -e "${RED}ERROR: Mandatory module jsonDB is missing or not readable!"
 	exit 6
 fi
-
-# cleanup (remove double entries) countfile on startup
-[ "${SOURCE}" != "yes" ] && jssh_deleteKeyDB_async "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
 
 #################
 # BASHBOT COMMON functions
@@ -803,6 +800,11 @@ start_bot() {
 		# shellcheck disable=SC2064
 		trap "kill -9 $!; exit" EXIT INT HUP TERM QUIT 
 	fi
+	# cleanup countfile on startup
+	[ "${SOURCE}" != "yes" ] && jssh_deleteKeyDB_async "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
+
+	##########
+	# bot is ready, start processing updates ...
 	while true; do
 		# adaptive sleep in ms rounded to next 0.1 s
 		sleep "$(printf '%.1f' "$((nextsleep))e-3")"

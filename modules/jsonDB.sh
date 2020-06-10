@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-17-gdeeef7e
+#### $$VERSION$$ v0.96-pre-24-g5b25821
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -280,9 +280,9 @@ jssh_deleteKeyDB_async() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	local DB; DB="$(jssh_checkDB "$2")"
 	declare -A oldARR
-	jssh_readDB_async "oldARR" "$2" || return "$?"
+	Json2Array "oldARR" <"${DB}"
 	unset oldARR["$1"]
-	jssh_writeDB_async "oldARR" "$2"
+	Array2Json  "oldARR" >"${DB}"
 }
 
 jssh_getKeyDB_async() {
