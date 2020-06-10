@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-32-gd70656d
+#### $$VERSION$$ v0.96-pre-33-gde21079
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -367,7 +367,6 @@ sendJsonRetry(){
 	case "${retry}" in
 		'sendJson'*)
 			sendJson "$@"	
-
 			;;
 		'sendUpload'*)
 			sendUpload "$@"	
@@ -388,7 +387,7 @@ sendJsonResult(){
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${1}")"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
 		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${1}")"
-		[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@:2}" 
+		[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@:3}" 
 		return
 		# hot path everthing OK!
 	else
@@ -402,7 +401,7 @@ sendJsonResult(){
 		BOTSENT[DESCRIPTION]="Timeout or broken/no connection"
 	    fi
 	    # log error
-	    printf "%s: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s\n=ACTION=%s\n" "$(date)"\
+	    printf "%s: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s ACTION=%s\n" "$(date)"\
 			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4/[$'\n\r']*}"
 	    # warm path, do not retry on error, also if we use wegt
 	    [ -n "${BOTSEND_RETRY}${BASHBOT_WGET}" ] && return
@@ -412,7 +411,7 @@ sendJsonResult(){
 	    if [ -n "${BOTSENT[RETRY]}" ]; then
 		BOTSEND_RETRY="$(( BOTSENT[RETRY]++ ))"
 		printf "Retry %s in %s seconds ...\n" "${2}" "${BOTSEND_RETRY}"
-		sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
+		sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:3}"
 		unset BOTSEND_RETRY
 		return
 	    fi
@@ -420,28 +419,27 @@ sendJsonResult(){
 	    if [ "${BOTSENT[ERROR]}" == "999" ];then
 		# check if default curl and args are OK
 		if ! curl -sL -k -m 2 "${URL}" >/dev/null 2>&1 ; then
-		    printf "BASHBOT IP Adress is blocked!\n"
+		    printf "%s: BASHBOT IP Adress is blocked!\n" "$(date)"
 		    # user provided function to recover or notify block
 		    if _exec_if_function bashbotBlockRecover; then
 			BOTSEND_RETRY="2"
-			printf "Function bashbotBlockRecover returned true, retry %s.\n" "${2}"
-			sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
+			printf "bashbotBlockRecover returned true, retry %s. ...\n" "${2}"
+			sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:3}"
 			unset BOTSEND_RETRY
 		    fi
 		    return
 		fi
 	        # are not blocked, default curl and args are working
 		if [ -n "${BASHBOT_CURL_ARGS}" ] || [ "${BASHBOT_CURL}" != "curl" ]; then
-		    printf "Possible Problem with \"%s %s\", retry %s with default curl config  ...\n"\
+		    printf "Problem with \"%s %s\"? retry %s with default config ...\n"\
 				"${BASHBOT_CURL}" "${BASHBOT_CURL_ARGS}" "${2}"
 		    BOTSEND_RETRY="2"; BASHBOT_CURL="curl"; BASHBOT_CURL_ARGS=""
-		    sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
+		    sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:3}"
 		    unset BOTSEND_RETRY
 		fi
 	    fi
 	fi
 } >>"${ERRORLOG}"
-
 
 # escape / remove text charaters for json strings, eg. " -> \" 
 # $1 string
