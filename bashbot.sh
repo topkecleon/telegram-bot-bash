@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-25-gf4c1657
+#### $$VERSION$$ v0.96-pre-26-g848219d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -826,8 +826,9 @@ start_bot() {
 			fi
 		else
 			# ups, something bad happend, wait maxsleep
-			(( nextsleep=maxsleep ))
-			printf "%s: Timeout or broken/no connection on telegram update, sleep %ds\n" "$(date)" $((nextsleep))e-3 >>"${ERRORLOG}"
+			(( nextsleep=maxsleep*2 ))
+			printf "%s: Timeout or broken/no connection on telegram update, sleep %ds\n"\
+					"$(date)"  "$((nextsleep))e-3" >>"${ERRORLOG}"
 		fi
 	done
 }
