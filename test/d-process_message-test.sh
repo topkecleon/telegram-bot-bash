@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.96-dev3-0-gdddd1ce
+#### $$VERSION$$ v0.96-pre-31-ge64d066
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -35,7 +35,9 @@ CHAT[ID]="123456789"
 
 # output processed input
 print_array "USER" "CHAT" "REPLYTO" "FORWARD" "URLS" "CONTACT" "CAPTION" "LOCATION" "MESSAGE" "VENUE" "SERVICE">"${OUTPUTFILE}"
-diff -c "${REFFILE}" "${OUTPUTFILE}" || exit 1
+sort -d -o "${OUTPUTFILE}.sort" "${OUTPUTFILE}"
+sort -d -o "${REFFILE}.sort" "${REFFILE}"
+diff -c "${REFFILE}.sort" "${OUTPUTFILE}.sort" || exit 1
 echo "${SUCCESS}"
 
 cd "${DIRME}" || exit 1
