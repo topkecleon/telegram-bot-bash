@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-27-gec7fce7
+#### $$VERSION$$ v0.96-pre-28-gc2f4753
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -230,9 +230,9 @@ if [ "${SOURCE}" != "yes" ]; then
 		ls -l "${COMMANDS}"
 		exit 3
 	fi
-	# shellcheck source=./commands.sh
-	source "${COMMANDS}" "source"
 fi
+# shellcheck source=./commands.sh
+[  -r "${COMMANDS}" ] && source "${COMMANDS}" "source"
 
 ###############
 # load modules
