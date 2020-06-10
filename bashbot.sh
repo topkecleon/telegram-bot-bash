@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-24-g5b25821
+#### $$VERSION$$ v0.96-pre-25-gf4c1657
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -496,7 +496,7 @@ process_updates() {
 process_client() {
 	local num="$1" debug="$2" 
 	CMD=( ); iQUERY=( )
-	[[ "${debug}" = *"debug"* ]] && printf "\n%s New Message ========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
+	[[ "${debug}" = *"debug"* ]] && printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
 	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
 	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	USER[ID]="${UPD["result",${num},"message","from","id"]}"
@@ -780,7 +780,7 @@ start_bot() {
 	local maxsleep="${BASHBOT_SLEEP:-5000}"
 	# redirect to Debug.log
 	[[ "${DEBUG}" == *"debug" ]] && exec &>>"${LOGDIR}/DEBUG.log"
-	[ -n "${DEBUG}" ] && printf  "%s Start BASHBOT in Mode \"%s\"\n" "$(date)" "${DEBUG}"
+	[ -n "${DEBUG}" ] && printf  "%s: Start BASHBOT in Mode \"%s\" ==========\n" "$(date)" "${DEBUG}"
 	[[ "${DEBUG}" == "xdebug"* ]] && set -x 
 	#cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
@@ -801,7 +801,7 @@ start_bot() {
 		trap "kill -9 $!; exit" EXIT INT HUP TERM QUIT 
 	fi
 	# cleanup countfile on startup
-	[ "${SOURCE}" != "yes" ] && jssh_deleteKeyDB_async "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
+	jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
 
 	##########
 	# bot is ready, start processing updates ...
