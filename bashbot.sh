@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-20-g1133f25
+#### $$VERSION$$ v0.96-pre-21-g72c8531
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -405,7 +405,7 @@ sendJsonResult(){
 	    # OK, we can retry sendJson, let's see what's failed
 	    # throttled, telegram say we send to much messages
 	    if [ -n "${BOTSENT[RETRY]}" ]; then
-		BOTSEND_RETRY="(( ${BOTSENT[RETRY]} * 15/10 ))"
+		BOTSEND_RETRY="$(( BOTSENT[RETRY] * 15/10 ))"
 		printf "Retry %s in %s seconds ...\n" "${2}" "${BOTSEND_RETRY}"
 		sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
 		unset BOTSEND_RETRY
@@ -499,7 +499,7 @@ process_updates() {
 process_client() {
 	local num="$1" debug="$2" 
 	CMD=( ); iQUERY=( )
-	[[ "${debug}" = *"debug"* ]] && printf "\n%s new Message ========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
+	[[ "${debug}" = *"debug"* ]] && printf "\n%s New Message ========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
 	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
 	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	USER[ID]="${UPD["result",${num},"message","from","id"]}"
