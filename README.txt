@@ -23,8 +23,8 @@ More concret on the common commands provided by recent versions of
 [toybox](https://landley.net/toybox/help.html), see [Developer 
 Notes](doc/7_develop.md#common-commands)
 
-*Note for MacOS and BSD Users:* As bashbot use behavior of recent bash and 
-(gnu)sed versions, bashbot may not run without installing additional software, 
+*Note for MacOS and BSD Users:* As bashbot heavily uses modern bash and (gnu) 
+grep/sed features, bashbot will not run without installing additional software, 
 see [Install Bashbot](doc/0_install.md)
 
 
@@ -163,6 +163,29 @@ allowed to push changes without passing all shellcheck tests.
 In addition bashbot has a [test suite](doc/7_develop.md) to check if important 
 functionality is working as expected.
 
+### use printf whenever possible
+
+If you're writing a script and it is taking external input (from the user as 
+arguments, or file names from the file system...),
+you shouldn't use echo to display it. [Use printf whenever 
+possible](https://unix.stackexchange.com/a/6581)
+
+```bash
+  # very simple
+  echo "text with variables. PWD=$PWD"
+  printf '%s\n' "text with variables. PWD=$PWD"
+  -> text with variables. PWD=/home/xxx
+
+  # more advanced
+  FLOAT="1.2346777892864" INTEGER="12345.123"
+  echo "text with variabeles. float=$FLOAT, integer=$INTEGER, PWD=$PWD"
+  ->text with variables. float=1.2346777892864, integer=12345.123, PWD=/home/xxx
+
+  printf "text with variables. float=%.2f, integer=%d, PWD=%s\n" "" "$INTEGER" 
+"$PWD"
+  ->text with variables. float=1.23, integer=12345, PWD=/home/xxx
+```
+
 ### Do not use #!/usr/bin/env bash
 
 **We stay with /bin/bash shebang, because it's more save from security 
@@ -281,4 +304,4 @@ in 'mycommands.sh' as example.
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.96-dev3-0-gdddd1ce
+#### $$VERSION$$ v0.96-pre-13-ga71d68e

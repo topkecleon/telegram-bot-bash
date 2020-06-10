@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-0-geb49241
+#### $$VERSION$$ v0.96-pre-29-gaec4e71
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -35,9 +35,8 @@ fi
 
 # some important helper functions
 # returns true if command exist
-_exists()
-{
-	[ "$(LC_ALL=C type -t "$1")" = "file" ]
+_exists() {
+	[ "$(LC_ALL=C type -t "${1}")" = "file" ]
 }
 
 # execute function if exists
@@ -45,9 +44,14 @@ _exec_if_function() {
 	[ "$(LC_ALL=C type -t "${1}")" != "function" ] || "$@"
 }
 # returns true if function exist
-_is_function()
-{
-	[ "$(LC_ALL=C type -t "$1")" = "function" ]
+_is_function() {
+	[ "$(LC_ALL=C type -t "${1}")" = "function" ]
+}
+# round $1 in international notation! , returns float with $2 decimal digits
+# if $2 is not fiven or is not a positive number, it's set to zero
+_round_float() {
+	local digit="${2}"; [[ "${2}" =~ ^[0-9]+$ ]] || digit="0"
+	LC_ALL=C printf "%.${digit}f" "${1}"
 }
 # read JSON.sh style data and asssign to an ARRAY
 # $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
@@ -77,9 +81,6 @@ MODULEDIR="${SCRIPTDIR}/modules"
 # adjust locations based on source and real name
 if [ "${SCRIPT}" != "${REALME}" ] || [ "$1" = "source" ]; then
 	SOURCE="yes"
-else
-	SCRIPT="./$(basename "${SCRIPT}")"
-	MODULEDIR="./$(basename "${MODULEDIR}")"
 fi
 
 if [ -n "$BASHBOT_HOME" ]; then
@@ -104,28 +105,6 @@ fi
 if [ ! -w "." ]; then
 	echo -e "${ORANGE}WARNING: ${RUNDIR} is not writeable!${NC}"
 	ls -ld .
-fi
-
-###############
-# load modules
-for modules in "${MODULEDIR:-.}"/*.sh ; do
-	# shellcheck source=./modules/aliases.sh
-	if ! _is_function "$(basename "${modules}")" && [ -r "${modules}" ]; then source "${modules}" "source"; fi
-done
-
-# shellcheck source=./modules/jsonDB.sh
-source "${MODULEDIR:-.}"/jsonDB.sh
-
-
-
-#####################
-# BASHBOT INTERNAL functions
-#
-
-#jsonDB is now mandatory
-if ! _is_function jssh_newDB ; then
-	echo -e "${RED}ERROR: Mandatory module jsonDB is missing or not readable!"
-	exit 6
 fi
 
 # Setup and check environment if BOTTOKEN is NOT set
@@ -191,8 +170,7 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
   # setup count file 
   if [ ! -f "${COUNTFILE}.jssh" ]; then
-	jssh_newDB_async "${COUNTFILE}"
-	jssh_insertKeyDB_async 'counted_user_chat_id' "num_messages_seen" "${COUNTFILE}"
+	printf '["counted_user_chat_id"]\t"num_messages_seen"\n' > "${COUNTFILE}.jssh"
 	# convert old file on creation
 	if [ -r  "${COUNTFILE}" ];then
 		sed 's/COUNT/\[\"/;s/$/\"\]\t\"1\"/' < "${COUNTFILE}" >> "${COUNTFILE}.jssh"
@@ -204,12 +182,9 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
   # setup blocked file 
   if [ ! -f "${BLOCKEDFILE}.jssh" ]; then
-	jssh_newDB_async "${BLOCKEDFILE}"
-	jssh_insertKeyDB_async 'blocked_user_or_chat_id' "name and reason" "${BLOCKEDFILE}"
+	printf '["blocked_user_or_chat_id"]\t"name and reason"\n' >"${BLOCKEDFILE}.jssh"
   fi
 fi
-# cleanup (remove double entries) countfile on startup
-[ "${SOURCE}" != "yes" ] && jssh_deleteKeyDB_async "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
 
 # do we have BSD sed
 if ! sed '1ia' </dev/null 2>/dev/null; then
@@ -230,9 +205,9 @@ fi
 
 ##################
 # here we start with the real stuff
-URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
 BOTSEND_RETRY="no" # do not retry by default
 
+URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
 ME_URL=$URL'/getMe'
 
 UPD_URL=$URL'/getUpdates?offset='
@@ -255,10 +230,26 @@ if [ "${SOURCE}" != "yes" ]; then
 		ls -l "${COMMANDS}"
 		exit 3
 	fi
-	# shellcheck source=./commands.sh
-	source "${COMMANDS}" "source"
 fi
+# shellcheck source=./commands.sh
+[  -r "${COMMANDS}" ] && source "${COMMANDS}" "source"
 
+###############
+# load modules
+for modules in "${MODULEDIR:-.}"/*.sh ; do
+	# shellcheck source=./modules/aliases.sh
+	if ! _is_function "$(basename "${modules}")" && [ -r "${modules}" ]; then source "${modules}" "source"; fi
+done
+
+#####################
+# BASHBOT INTERNAL functions
+#
+
+#jsonDB is now mandatory
+if ! _is_function jssh_newDB ; then
+	echo -e "${RED}ERROR: Mandatory module jsonDB is missing or not readable!"
+	exit 6
+fi
 
 #################
 # BASHBOT COMMON functions
@@ -371,19 +362,23 @@ fi
 # $1 function $2 sleep $3 ... $n arguments
 sendJsonRetry(){
 	local retry="${1}"; shift
-	[[ "${1}" =~ ^[0-9.]+$ ]] && sleep "${1}"; shift
+	[[ "${1}" =~ ^\ *[0-9.]+\ *$ ]] && sleep "${1}"; shift
+	printf "%s: RETRY %s %s %s\n" "$(date)" "${retry}" "${1}" "${2/[$'\n\r']*}"
 	case "${retry}" in
 		'sendJson'*)
 			sendJson "$@"	
+
 			;;
 		'sendUpload'*)
 			sendUpload "$@"	
 			;;
 		*)
-			printf "%s: SendJsonRetry: unknown, cannot retry %s\n" "$(date)" "${retry}" >>"${ERRORLOG}"
+			printf "%s: Error: unknown function %s, cannot retry\n" "$(date)" "${retry}"
+			return
 			;;
 	esac
-}
+	[ "${BOTSENT[OK]}" = "true" ] && printf "%s: Retry  OK: %s %s\n" "$(date)" "${retry}" "${1}"
+} >>"${ERRORLOG}"
 
 # process sendJson result
 # stdout is written to ERROR.log
@@ -399,7 +394,7 @@ sendJsonResult(){
 	else
 	    # oops something went wrong!
 	    if [ "${res}" != "" ]; then
-		BOTSENT[ERROR]="$(JsonGeOtValue '"error_code"' <<< "${1}")"
+		BOTSENT[ERROR]="$(JsonGetValue '"error_code"' <<< "${1}")"
 		BOTSENT[DESCRIPTION]="$(JsonGetString '"description"' <<< "${1}")"
 		BOTSENT[RETRY]="$(JsonGetValue '"parameters","retry_after"' <<< "${1}")"
 	    else
@@ -407,15 +402,15 @@ sendJsonResult(){
 		BOTSENT[DESCRIPTION]="Timeout or broken/no connection"
 	    fi
 	    # log error
-	    printf "%s: RESULT=%s ACTION=%s CHAT[ID]=%s ERROR=%s DESC=%s\n" "$(date)"\
-			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}"
-	    # warm path, do  not retry on error
-	    [ -n "${BOTSEND_RETRY}" ] && return
+	    printf "%s: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s\n=ACTION=%s\n" "$(date)"\
+			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4/[$'\n\r']*}"
+	    # warm path, do not retry on error, also if we use wegt
+	    [ -n "${BOTSEND_RETRY}${BASHBOT_WGET}" ] && return
 
 	    # OK, we can retry sendJson, let's see what's failed
 	    # throttled, telegram say we send to much messages
 	    if [ -n "${BOTSENT[RETRY]}" ]; then
-		BOTSEND_RETRY="(( ${BOTSENT[RETRY]} * 15/10 ))"
+		BOTSEND_RETRY="$(( BOTSENT[RETRY]++ ))"
 		printf "Retry %s in %s seconds ...\n" "${2}" "${BOTSEND_RETRY}"
 		sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
 		unset BOTSEND_RETRY
@@ -435,12 +430,11 @@ sendJsonResult(){
 		    fi
 		    return
 		fi
-	        # we are not blocked, default curl and args are working
-		if [ -n "${BASHBOT_CURL_ARGS}" ] || [ -n "${BASHBOT_CURL}" ]; then
-		    BOTSEND_RETRY="2"
+	        # are not blocked, default curl and args are working
+		if [ -n "${BASHBOT_CURL_ARGS}" ] || [ "${BASHBOT_CURL}" != "curl" ]; then
 		    printf "Possible Problem with \"%s %s\", retry %s with default curl config  ...\n"\
 				"${BASHBOT_CURL}" "${BASHBOT_CURL_ARGS}" "${2}"
-		    unset BASHBOT_CURL BASHBOT_CURL_ARGS
+		    BOTSEND_RETRY="2"; BASHBOT_CURL="curl"; BASHBOT_CURL_ARGS=""
 		    sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
 		    unset BOTSEND_RETRY
 		fi
@@ -510,7 +504,7 @@ process_updates() {
 process_client() {
 	local num="$1" debug="$2" 
 	CMD=( ); iQUERY=( )
-	[[ "${debug}" = *"debug"* ]] && cat <<< "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
+	[[ "${debug}" = *"debug"* ]] && printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
 	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
 	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	USER[ID]="${UPD["result",${num},"message","from","id"]}"
@@ -788,11 +782,13 @@ process_message() {
 start_bot() {
 	local DEBUG="$1"
 	local OFFSET=0
-	local mysleep="100" # ms
-	local addsleep="100"
-	local maxsleep="$(( ${BASHBOT_SLEEP:-5000} + 100 ))"
+	# adaptive sleep deafults
+	local nextsleep="100" :
+	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
+	local maxsleep="${BASHBOT_SLEEP:-5000}"
+	# redirect to Debug.log
 	[[ "${DEBUG}" == *"debug" ]] && exec &>>"${LOGDIR}/DEBUG.log"
-	[ -n "${DEBUG}" ] && date && echo "Start BASHBOT in Mode \"${DEBUG}\""
+	[ -n "${DEBUG}" ] && printf  "%s: Start BASHBOT in Mode \"%s\" ==========\n" "$(date)" "${DEBUG}"
 	[[ "${DEBUG}" == "xdebug"* ]] && set -x 
 	#cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
@@ -805,29 +801,43 @@ start_bot() {
 	# shellcheck source=./commands.sh
 	source "${COMMANDS}" "startbot"
 	# start timer events
-	if _is_function start_timer ; then
+	if [ -n "${BASHBOT_START_TIMER}" ] ; then
 		# shellcheck disable=SC2064
 		trap "event_timer $DEBUG" ALRM
 		start_timer &
 		# shellcheck disable=SC2064
 		trap "kill -9 $!; exit" EXIT INT HUP TERM QUIT 
 	fi
-	while true; do
-		# ignore timeout error message on waiting for updates
-		UPDATE="$(getJson "$UPD_URL$OFFSET" 2>/dev/null | "${JSONSHFILE}" -s -b -n | iconv -f utf-8 -t utf-8 -c)"
-		UPDATE="${UPDATE//$/\\$}"
-		# Offset
-		OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
-		((OFFSET++))
+	# cleanup countfile on startup
+	jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
 
-		if [ "$OFFSET" != "1" ]; then
-			mysleep="100"
-			process_updates "${DEBUG}"
+	##########
+	# bot is ready, start processing updates ...
+	while true; do
+		# adaptive sleep in ms rounded to next 0.1 s
+		sleep "$(_round_float "${nextsleep}e-3" "1")"
+		((nextsleep+= stepsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
+		# get next update
+		UPDATE="$(getJson "$UPD_URL$OFFSET" 2>/dev/null | "${JSONSHFILE}" -s -b -n | iconv -f utf-8 -t utf-8 -c)"
+		# did we ge an responsn0r
+		if [ -n "${UPDATE}" ]; then
+			# we got something, do processing
+			# escape bash $ expansion bug
+			UPDATE="${UPDATE//$/\\$}"
+			# Offset
+			OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
+			((OFFSET++))
+
+			if [ "$OFFSET" != "1" ]; then
+				nextsleep="100"
+				process_updates "${DEBUG}"
+			fi
+		else
+			# ups, something bad happend, wait maxsleep
+			(( nextsleep=maxsleep*2 ))
+			printf "%s: Timeout or broken/no connection on telegram update, sleep %ds\n"\
+					"$(date)"  "$(_round_float "${nextsleep}e-3")" >>"${ERRORLOG}"
 		fi
-		# adaptive sleep in ms rounded to next lower second
-		[ "${mysleep}" -gt "999" ] && sleep "${mysleep%???}"
-		# bash aritmetic
-		((mysleep+= addsleep , mysleep= mysleep>maxsleep ?maxsleep:mysleep))
 	done
 }
 
@@ -867,8 +877,9 @@ bot_init() {
 	chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
 		# jsshDB must writeable by owner
 		find . -name '*.jssh' -exec chmod u+w \{\} +
-		#ls -la
 	fi
+	# show result
+	ls -l
 }
 
 if ! _is_function send_message ; then
@@ -881,7 +892,8 @@ JSONSHFILE="${BASHBOT_JSONSH:-${SCRIPTDIR}/JSON.sh/JSON.sh}"
 
 if [ ! -f "${JSONSHFILE}" ]; then
 	echo "Seems to be first run, Downloading ${JSONSHFILE}..."
-	mkdir "${SCRIPTDIR}/JSON.sh" 2>/dev/null && chmod +w "${SCRIPTDIR}/JSON.sh"
+	[ "${SCRIPTDIR}/JSON.sh/JSON.sh" = "${JSONSHFILE}" ] &&\
+		 mkdir "${SCRIPTDIR}/JSON.sh" 2>/dev/null && chmod +w "${SCRIPTDIR}/JSON.sh"
 	getJson "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh" >"${JSONSHFILE}"
 	chmod +x "${JSONSHFILE}" 
 fi

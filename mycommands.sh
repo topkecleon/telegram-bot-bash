@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ v0.96-pre-13-ga71d68e
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -28,6 +28,22 @@ export INLINE="0"
 export FILE_REGEX="${BASHBOT_ETC}/.*"
 # example: run bashbot over TOR
 # export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1:9050"
+
+# unset BASHBOT_RETRY to enable retry in case of recoverable errors, e.g.  throtteling
+# see logs/ERROR.log for information why send_messages etc. fail
+export BOTSEND_RETRY="no"
+#unset BOTSEND_RETRY
+
+# set value for adaptive sleeping while waitingnfor uodates in millisconds
+# max slepp between polling updates 10s (default 5s)
+export BASHBOT_SLEEP="10000"
+# add 0.2s if no update availble, up to BASHBOT_SLEEP (default 0.1s)
+export BASHBOT_SLEEP_STEP="200"
+
+# if you want to use timer functions, set BASHBOT_START_TImer to not empty value
+# default is to nit start timer
+unset BASHBOT_START_TIMER
+#export BASHBOT_START_TIMER="yes"
 
 # set to "yes" and give your bot admin privilegs to remove service messaes from groups
 export SILENCER="no"
