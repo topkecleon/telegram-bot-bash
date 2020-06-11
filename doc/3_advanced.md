@@ -203,8 +203,72 @@ answer_inline_query "${iQUERY[ID]}" "cached_sticker" "identifier for the sticker
 ```
 See also [answer_inline_multi, answer_inline_compose](6_reference.md#answer_inline_multi) and [mycommands.sh](../mycommands.sh) for more information.
 
+
+### Handle send message errors
+
+Usually the exmaples do not care if an error happen while sending a message, this is  because bashbot detects if a message is
+not sent and try to recover when possible, e.g. resend on throttling.
+
+In addition on every transmission to telegram the results are provided as bash in bash variables.
+
+#### Trasmission results
+
+**Note**: the values of the variables contains always the result of the LAST transmission to telegram,
+everey send action will overwrite them!
+
+* ```$BOTSENT```: This array contains the parsed results from the last transmission to telegram.
+    * ```${BOTSENT[OK]}```: contain's the string 'true' after a successful transmission
+    * ```${BOTSENT[ERROR]}```: Error code if OK is not true
+    * ```${BOTSENT[DESC]}```: Description text for error
+    * ```${BOTSENT[RETRY]}```: Seconds to wait ifntelegram requests throtteling.
+* ```$res```: temporary variable containing the full transmission result, may be overwritten by any bashbot function.
+
+By default you don't have to care about retry, as bashbot resend the message after the requested time automatically.
+Only if the retry fails also an error is returned. The downside is that send_message functions will wait until resend is done.
+
+If you want to disbale all automtic error processing  and handle all errors manually (or don't care)
+set ```BASHBOT_RETRY``` to any no zero value.
+
+[Telegram API error codes](https://core.telegram.org/api/errors)
+
+
+#### Detect bot blocked
+
+If the we can't connect to telegram, e.g. blocked from telegram server but also any other reason,
+bashbot set ```BOTSENT[ERROR]``` to '999'.
+
+To get a notification on every connection problem create a function named ```bashbotBlockRecover``` and handle blocks there.
+If the function returns true (0 or no value) bashbot will retry once and then return to the calling function.
+In case you return any non 0 value bashbot will return to the calling function without retry.
+
+
+```bash
+  # somewhere in myfunctions.sh ...
+  MYBLOCKED="0"
+
+  function bashbotBlockRecover() {
+      # ups, we are blocked!
+      (( MYBLOCKED++ ))
+      # log what we gotr
+      printf "%s: Blocked %d times: %s\n" "$(date)" "${MYBLOCKED}" "$*" >>"${ERRORLOG}" 
+
+      if [ "${MYBLOCKED}" -gt 10 ]; then
+           printf "Permanent problem abort current command: %s\n" "${MESSAGE}">>"${ERRORLOG}"
+          exit
+      fi
+      if do_something_to_unblock; then
+         # may be we removed block, e.g. changed IP address, try again
+         return 0
+      fi
+      # do not retry if we cant recover
+      return 1
+  }
+
+```
+
+
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.96-dev3-13-g601fe0e
+#### $$VERSION$$ v0.96-pre-37-g6c02bab
 
