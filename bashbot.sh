@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-41-g15f6da8
+#### $$VERSION$$ v0.96-pre-43-g471ad21
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -398,7 +398,7 @@ sendJsonResult(){
 		BOTSENT[RETRY]="$(JsonGetValue '"parameters","retry_after"' <<< "${1}")"
 	    else
 		BOTSENT[ERROR]="999"
-		BOTSENT[DESCRIPTION]="Timeout or broken/no connection"
+		BOTSENT[DESCRIPTION]="Send to telegram not possible, timeout/broken/no connection"
 	    fi
 	    # log error
 	    printf "%s: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s ACTION=%s\n" "$(date)"\
@@ -506,20 +506,22 @@ process_client() {
 	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	USER[ID]="${UPD["result",${num},"message","from","id"]}"
 	# log message on debug
-	if [[ "${debug}" = *"debug"* ]]; then
-	        printf "%s: update received FROM=%s CHAT=%s iQEUERY=%s\n" "$(date)" "${USER[ID]}" "${CHAT[ID]}" "${iQUERY[ID]}"
-		printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
-	fi
+	[[ -n "${debug}" ]] && printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
 
 	# check for uers / groups to ignore
-	if [ -n "${USER[ID]}" ]; then
-		[[ " ${!BASHBOT_BLOCKED[*]} " ==  *" ${USER[ID]} "* ]] && return
-		jssh_readDB_async "BASHBOT_BLOCKED" "${BLOCKEDFILE}"
-	fi
+	[ -n "${USER[ID]}" ] && [[ " ${!BASHBOT_BLOCKED[*]} " ==  *" ${USER[ID]} "* ]] && return
+	jssh_readDB_async "BASHBOT_BLOCKED" "${BLOCKEDFILE}"
+
+	# process per message type
 	if [ -z "${iQUERY[ID]}" ]; then
+		MESSAGE[0]="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's#\\/#/#g')"
 		process_message "${num}" "${debug}"
+	        [[ -n "${debug}" ]] &&  printf "%s: update received FROM=%s CHAT=%s CMD=%s\n"\
+			"$(date)" "${USER[USERNAME]} (${USER[ID]})" "${CHAT[USERNAME]}${CHAT[TITLE]} (${CHAT[ID]})" "${MESSAGE%% *}"
 	else
 		process_inline "${num}" "${debug}"
+	        [[ -n "${debug}" ]] && printf "%s: iQuery received FROM=%s iQUERY=%s\n"\
+			"$(date)" "${iQUERY[USERNAME]} (${iQUERY[USER_ID]})" "${iQUERY[0]}"
 	fi
 	#####
 	# process inline and message events
@@ -670,7 +672,6 @@ process_inline() {
 process_message() {
 	local num="$1"
 	# Message
-	MESSAGE[0]="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's#\\/#/#g')"
 	MESSAGE[ID]="${UPD["result",${num},"message","message_id"]}"
 
 	# Chat ID is now parsed when update isreceived
@@ -819,27 +820,32 @@ start_bot() {
 	while true; do
 		# adaptive sleep in ms rounded to next 0.1 s
 		sleep "$(_round_float "${nextsleep}e-3" "1")"
-		((nextsleep+= stepsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
 		# get next update
 		UPDATE="$(getJson "$UPD_URL$OFFSET" 2>/dev/null | "${JSONSHFILE}" -s -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
 		# did we ge an responsn0r
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
+			[ "${OFFSET}" = "-999" ] &&\
+				printf "%s: Recovered from timeout/broken/no connection, continue with telegram updates\n"\
+					"$(date)"  >>"${ERRORLOG}"
 			# escape bash $ expansion bug
 			UPDATE="${UPDATE//$/\\$}"
 			# Offset
 			OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
 			((OFFSET++))
 
+			((nextsleep+= stepsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
 			if [ "$OFFSET" != "1" ]; then
 				nextsleep="100"
 				process_updates "${DEBUG}"
 			fi
 		else
-			# ups, something bad happend, wait maxsleep
-			(( nextsleep=maxsleep*2 ))
-			printf "%s: Timeout or broken/no connection on telegram update, sleep %ds\n"\
+			# ups, something bad happend, wait maxsleep*10
+			(( nextsleep=nextsleep*2 , nextsleep= nextsleep>maxsleep*10 ?maxsleep*10:nextsleep ))
+			[ "${OFFSET}" = "-999" ] &&\
+				printf "%s: Repeated timeout/broken/no connection on telegram update, sleep %ds\n"\
 					"$(date)"  "$(_round_float "${nextsleep}e-3")" >>"${ERRORLOG}"
+			OFFSET="-999"
 		fi
 	done
 }
