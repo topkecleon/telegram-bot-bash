@@ -31,7 +31,7 @@ you can the change the level of verbosity of the debug argument:
 to keep 'bashbot.sh' small, while extending functionality. In addition not every funtion is needed by all bots, so you can
 disable modules, e.g. by rename the respective module file to 'module.sh.off'.
 
-Modules must use functions provided by 'bahsbot.sh' or the module itself and sould not depend on other modules or addons.
+Modules must use only functions provided by 'bahsbot.sh' or the module itself and sould not depend on other modules or addons.
 The only mandatory module is 'module/sendMessage.sh'.
 
 If a not mandatory module is used in 'bashbot.sh' or 'commands.sh', the use of ```_is_function``` or
@@ -40,11 +40,11 @@ If a not mandatory module is used in 'bashbot.sh' or 'commands.sh', the use of `
 **Addons** resides in ```addons/*.sh.dist``` and are not endabled by default. To activate an addon rename it to end with '.sh', e.g. by
 ```cp addons/example.sh.dist addons/example.sh```. 
 
-Addons must register themself to BASHBOT_EVENTS at startup, e.g. to call a function everytime a message is recieved.
+Addons must register themself to BASHBOT_EVENTS at startup, e.g. to call a function everytime a message is received.
 Addons works similar as 'commands.sh' and 'mycommands.sh' but are much more flexible on when functions/commands are triggered.
 
-Another major difference is: **Addons are executed in the context of the main script**, while 'commands.sh' and 'macommands.sh' are executed as a seperate process.
-This is why event functions are time critical and must return as fast as possible.
+Another major difference is: **Addons are executed in the context of the main script**, while 'commands.sh' and 'mycommands.sh' are executed new child process on efery execution.
+This is why event functions are time critical and must finish as fast as possible.
 
 #### Bashbot Events
 Addons must register functions to bashbot events by providing their name, and internal identifier and a callback function.
@@ -54,13 +54,15 @@ Registered functions run in the same process as bashbot, not as a sub process, s
 
 Note: For the same reason event function MUST return immediately! Time consuming tasks must be run as a background process, e.g. "long running &"
 
-##### MESSAGE events (all iQuery and/or Message variables are avalible):
+##### SEND RECEIVE events
+
+executed when a Message is received, same iQuery / Message variables are avalible as in commands.sh
 
 * BASHBOT_EVENT_INLINE		an inline query is received
 
 * BASHBOT_EVENT_MESSAGE		any of the following message types is received
-    * BASHBOT_EVENT_TEXT	a message containing text is recieved
-    * BASHBOT_EVENT_CMD		a message containing a command is recieved (starts with /)
+    * BASHBOT_EVENT_TEXT	a message containing text is received
+    * BASHBOT_EVENT_CMD		a message containing a command is received (starts with /)
     * BASHBOT_EVENT_REPLYTO	a reply to a message is received
     * BASHBOT_EVENT_FORWARD	a forwarded message is received
     * BASHBOT_EVENT_CONTACT	a contact is received
@@ -87,7 +89,35 @@ example_echo() {
 }
 ```
 
-##### Other types of events
+* BASHBOT_EVENT_SEND	is exceuted if data is send or uploaded to Telegram server
+
+In contrast to other events, BASHBOT_EVENT_SEND is excecuted in a subshell, so there is no need to spawn
+a background process for longer running commands and changes to variables are not persistent!
+
+BASHBOT_EVENT_SEND is for logging purposes, you must not send messages while processing this event.
+To avoid wrong use of EVENT_SEND, e.g. fork bomb, event processing is suspended if recursion is detected.
+
+*usage*: BASHBOT_EVENT_SEND[ "unique-name" ]="callback"
+
+"callback" is called with paramter "send"  or "upload", followed by the arguments used for 'sendJson' or 'upload' functions.
+
+*Example:*
+```bash
+# register callback:
+BAHSBOT_EVENT_SEND["example_log","1"]="example_log"
+EXAMPLE_LOG="${BASHBOT_ETC:-.}/addons/${EXAMPLE_ME}.log"
+
+# Note: do not call any send message functions from EVENT_SEND!
+example_log(){
+	local send="$1"; shift
+	echo "$(date): Type: ${send} Args: $*" >>"${EXAMPLE_LOG}"
+}
+
+```
+
+##### TIMER events
+
+Important: The timer tick is diabled by default and must be enabled by setting BASHBOT_START_TIMER to any value not zero.
 
 * BAHSBOT_EVENT_TIMER		executed every minute and can be used in 3 variants: oneshot, once a minute, every X minutes.
 
@@ -126,32 +156,6 @@ BAHSBOT_EVENT_TIMER["example_10min","-10"]="example_in10min"
 
 # once in 10 minutes
 BAHSBOT_EVENT_TIMER["example_10min","$(( (EVENT_TIMER+10) * -1 ))"]="example_in10min"
-
-```
-
-* BASHBOT_EVENT_SEND	is exceuted if data is send or uploaded to Telegram server
-
-In contrast to other events, BASHBOT_EVENT_SEND is excecuted in a subshell, so there is no need to spawn
-a background process for longer running commands and changes to variables are not persistent!
-
-BASHBOT_EVENT_SEND is for logging purposes, you must not send messages while processing this event.
-To avoid wrong use of EVENT_SEND, e.g. fork bomb, event processing is suspended if recursion is detected.
-
-*usage*: BASHBOT_EVENT_SEND[ "unique-name" ]="callback"
-
-"callback" is called with paramter "send"  or "upload", followed by the arguments used for 'sendJson' or 'upload' functions.
-
-*Example:*
-```bash
-# register callback:
-BAHSBOT_EVENT_SEND["example_log","1"]="example_log"
-EXAMPLE_LOG="${BASHBOT_ETC:-.}/addons/${EXAMPLE_ME}.log"
-
-# Note: do not call any send message functions from EVENT_SEND!
-example_log(){
-	local send="$1"; shift
-	echo "$(date): Type: ${send} Args: $*" >>"${EXAMPLE_LOG}"
-}
 
 ```
 
@@ -332,5 +336,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.96-pre-9-gb23aadd
+#### $$VERSION$$ v0.96-pre-36-g81c8771
 

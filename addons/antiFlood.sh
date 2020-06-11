@@ -4,12 +4,12 @@
 # this addon counts how many files, e.g. stickers, are sent to
 # a chat and takes actions if threshold is reached
 #  
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ v0.96-pre-36-g81c8771
 
 # used events:
 #
 # BASHBOT_EVENT_TEXT	message containing message text received
-# BASHBOT_EVENT_CMD	a command is recieved
+# BASHBOT_EVENT_CMD	a command is received
 # BASHBOT_EVENT_FILE	file received
 #
 # all global variables and functions can be used in registered functions.

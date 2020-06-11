@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-35-g2bc8f39
+#### $$VERSION$$ v0.96-pre-36-g81c8771
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -32,7 +32,7 @@ unset IFS
 # copy "mycommands.sh.dist" to "mycommnds.sh" and change the strings there
 bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.
-It currently can send, recieve and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
+It currently can send, receive and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
 '
 
 #                                                            

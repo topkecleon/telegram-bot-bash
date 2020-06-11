@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-35-g2bc8f39
+#### $$VERSION$$ v0.96-pre-36-g81c8771
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -669,7 +669,7 @@ process_message() {
 	MESSAGE[0]="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's#\\/#/#g')"
 	MESSAGE[ID]="${UPD["result",${num},"message","message_id"]}"
 
-	# Chat ID is now parsed when update isrecieved
+	# Chat ID is now parsed when update isreceived
 	#CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	CHAT[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","chat","last_name"]}")"
 	CHAT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","chat","first_name"]}")"
@@ -679,7 +679,7 @@ process_message() {
 	CHAT[ALL_ADMIN]="${UPD["result",${num},"message","chat","all_members_are_administrators"]}"
 	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]="${CHAT[ALL_ADMIN]}" # backward compatibility
 
-	# user ID is now parsed when update isrecieved
+	# user ID is now parsed when update isreceived
 	#USER[ID]="${UPD["result",${num},"message","from","id"]}"
 	USER[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","from","first_name"]}")"
 	USER[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","from","last_name"]}")"
@@ -760,7 +760,7 @@ process_message() {
 	SERVICE[NEWTILE]="${UPD["result",${num},"message","new_chat_title"]}"
 	SERVICE[NEWPHOTO]="${UPD["result",${num},"message","new_chat_photo"]}"
 	SERVICE[PINNED]="${UPD["result",${num},"message","pinned_message"]}"
-	# set SSERVICE to yes if a service message was recieved
+	# set SSERVICE to yes if a service message was received
 	[[ "${SERVICE[*]}" =~  ^[[:blank:]]+$ ]] || SERVICE[0]="yes"
 
 

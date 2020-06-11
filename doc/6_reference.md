@@ -404,7 +404,7 @@ fi
 ##### start_back
 Starts a script as a background job and attaches a jobname to it. All output from a background job is sent to the associated chat.
 
-In contrast to interactive chats, background jobs do not recieve user input and can run forever. In addition you can suspend and restart running jobs, e.g. after reboot.
+In contrast to interactive chats, background jobs do not receive user input and can run forever. In addition you can suspend and restart running jobs, e.g. after reboot.
 
 *usage:* start_back "${CHAT[ID]}" "script" "jobname"
 
@@ -1035,5 +1035,5 @@ The name of your bot is availible as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.96-dev3-5-g407e147
+#### $$VERSION$$ v0.96-pre-36-g81c8771
 

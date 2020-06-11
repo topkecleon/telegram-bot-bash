@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.96-pre-35-g2bc8f39
+#### $$VERSION$$ v0.96-pre-36-g81c8771
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -54,7 +54,7 @@ NOTBOTADMIN="Sorry, this command is allowed for bot owner only"
 
 if [ "$1" = "startbot" ];then
     ###################
-    # this function is run once after startup when the first message is recieved
+    # this function is run once after startup when the first message is received
     my_startup(){
 	# send message ito first user on startup
 	send_normal_message "${CHAT[ID]}" "Hi, you was the first one after startup!"
@@ -72,7 +72,7 @@ else
     mycommands() {
 
 	##############
-	# a service Message was recieved
+	# a service Message was received
 	# add your own stuff here
 	if [ -n "${SERVICE}" ]; then
 

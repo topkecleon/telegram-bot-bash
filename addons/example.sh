@@ -4,7 +4,7 @@
 # Addons can register to bashbot events at statup
 # by providing their name and a callback per event
 #
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ v0.96-pre-36-g81c8771
 #
 # If an event occours each registered event function is called.
 #
@@ -22,7 +22,7 @@
 # BASHBOT_EVENT_INLINE	inline query received
 # BASHBOT_EVENT_MESSAGE	any type of message received
 # BASHBOT_EVENT_TEXT	message containing message text received
-# BASHBOT_EVENT_CMD	a command is recieved
+# BASHBOT_EVENT_CMD	a command is received
 # BASHBOT_EVENT_REPLYTO	reply to message received
 # BASHBOT_EVENT_FORWARD	forwarded message received
 # BASHBOT_EVENT_CONTACT	contact received
