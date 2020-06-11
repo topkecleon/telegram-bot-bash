@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-dev3-12-g3f85134
+#### $$VERSION$$ v0.96-pre-35-g2bc8f39
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -38,7 +38,9 @@ It currently can send, recieve and forward messages, custom keyboards, photos, a
 #                                                            
 # this file *MUST* not edited!
 # copy "mycommands.sh.dist" to "mycommnds.sh" and change the strings there
-bashbot_help='*Available commands*:
+bashbot_help='Place your own commands and messages in mycommands.sh
+
+*Available commands*:
 *• /start*: _Start bot and get this message_.
 *• /help*: _Get this message_.
 *• /info*: _Get shorter info message about this bot_.

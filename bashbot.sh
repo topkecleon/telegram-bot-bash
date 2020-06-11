@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-34-gf968c8b
+#### $$VERSION$$ v0.96-pre-35-g2bc8f39
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -205,7 +205,7 @@ fi
 
 ##################
 # here we start with the real stuff
-BOTSEND_RETRY="no" # do not retry by default
+BASHBOT_RETRY="" # retry by default
 
 URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
 ME_URL=$URL'/getMe'
@@ -404,15 +404,15 @@ sendJsonResult(){
 	    printf "%s: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s ACTION=%s\n" "$(date)"\
 			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4:0:60}"
 	    # warm path, do not retry on error, also if we use wegt
-	    [ -n "${BOTSEND_RETRY}${BASHBOT_WGET}" ] && return
+	    [ -n "${BASHBOT_RETRY}${BASHBOT_WGET}" ] && return
 
 	    # OK, we can retry sendJson, let's see what's failed
 	    # throttled, telegram say we send to much messages
 	    if [ -n "${BOTSENT[RETRY]}" ]; then
-		BOTSEND_RETRY="$(( BOTSENT[RETRY]++ ))"
-		printf "Retry %s in %s seconds ...\n" "${2}" "${BOTSEND_RETRY}"
-		sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:3}"
-		unset BOTSEND_RETRY
+		BASHBOT_RETRY="$(( BOTSENT[RETRY]++ ))"
+		printf "Retry %s in %s seconds ...\n" "${2}" "${BASHBOT_RETRY}"
+		sendJsonRetry "${2}" "${BASHBOT_RETRY}" "${@:3}"
+		unset BASHBOT_RETRY
 		return
 	    fi
 	    # timeout, failed connection or blocked
@@ -422,10 +422,10 @@ sendJsonResult(){
 		    printf "%s: BASHBOT IP Adress is blocked!\n" "$(date)"
 		    # user provided function to recover or notify block
 		    if _exec_if_function bashbotBlockRecover; then
-			BOTSEND_RETRY="2"
+			BASHBOT_RETRY="2"
 			printf "bashbotBlockRecover returned true, retry %s ...\n" "${2}"
-			sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:3}"
-			unset BOTSEND_RETRY
+			sendJsonRetry "${2}" "${BASHBOT_RETRY}" "${@:3}"
+			unset BASHBOT_RETRY
 		    fi
 		    return
 		fi
@@ -433,9 +433,9 @@ sendJsonResult(){
 		if [ -n "${BASHBOT_CURL_ARGS}" ] || [ "${BASHBOT_CURL}" != "curl" ]; then
 		    printf "Problem with \"%s %s\"? retry %s with default config ...\n"\
 				"${BASHBOT_CURL}" "${BASHBOT_CURL_ARGS}" "${2}"
-		    BOTSEND_RETRY="2"; BASHBOT_CURL="curl"; BASHBOT_CURL_ARGS=""
-		    sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:3}"
-		    unset BOTSEND_RETRY
+		    BASHBOT_RETRY="2"; BASHBOT_CURL="curl"; BASHBOT_CURL_ARGS=""
+		    sendJsonRetry "${2}" "${BASHBOT_RETRY}" "${@:3}"
+		    unset BASHBOT_RETRY
 		fi
 	    fi
 	fi
