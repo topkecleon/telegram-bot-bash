@@ -50,6 +50,7 @@ availible on www.github.com
     * Interactive Chats
     * Background Jobs
     * Inline queries
+    * Send message errors
 * [Expert Use](doc/4_expert.md)
     * Handling UTF-8 character sets
     * Run as other user or system service
@@ -304,4 +305,4 @@ in 'mycommands.sh' as example.
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.96-pre-13-ga71d68e
+#### $$VERSION$$ v0.96-pre-39-gb6e9f9e

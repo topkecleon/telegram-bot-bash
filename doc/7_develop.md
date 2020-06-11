@@ -56,7 +56,7 @@ Note: For the same reason event function MUST return immediately! Time consuming
 
 ##### SEND RECEIVE events
 
-executed when a Message is received, same iQuery / Message variables are avalible as in commands.sh
+An RECEIVE event is executed when a Message is received, same iQuery / Message variables are avalible as in commands.sh
 
 * BASHBOT_EVENT_INLINE		an inline query is received
 
@@ -89,6 +89,8 @@ example_echo() {
 }
 ```
 
+An SEND event is executed when a Message is send tomtelegram.
+
 * BASHBOT_EVENT_SEND	is exceuted if data is send or uploaded to Telegram server
 
 In contrast to other events, BASHBOT_EVENT_SEND is excecuted in a subshell, so there is no need to spawn
@@ -117,7 +119,7 @@ example_log(){
 
 ##### TIMER events
 
-Important: The timer tick is diabled by default and must be enabled by setting BASHBOT_START_TIMER to any value not zero.
+Important: Bashbot timer tick is diabled by default and must be enabled by setting BASHBOT_START_TIMER to any value not zero.
 
 * BAHSBOT_EVENT_TIMER		executed every minute and can be used in 3 variants: oneshot, once a minute, every X minutes.
 
@@ -133,9 +135,9 @@ This means if you register an every 5 minutes callback first execution may < 5 M
     * 0	ignored
     * 1	execute once every minute
     * x	execute every x minutes
-    * -x execute ONCE in (next) x minutes *
+    * -x execute once WHITHIN the next x Minutes (10=between now and 10 Minutes)
 
-*\* if you really want "in x minutes" you must use ```-(EVENT_TIMER+x)```* 
+Note: If you want exact "in x minutes" use "EVENT_TIMER plus x" as time: ```-(EVENT_TIMER + x)```
 
 *Example:*
 ```bash
@@ -151,10 +153,10 @@ example_everymin() {
 # register other callback:
 BAHSBOT_EVENT_TIMER["example_every5","5"]="example_every5min"
 
-# execute once in the next 10 minutes
+# execute once in the next 1 to 10 minutes
 BAHSBOT_EVENT_TIMER["example_10min","-10"]="example_in10min"
 
-# once in 10 minutes
+# once in exact 10 minutes
 BAHSBOT_EVENT_TIMER["example_10min","$(( (EVENT_TIMER+10) * -1 ))"]="example_in10min"
 
 ```
@@ -336,5 +338,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.96-pre-36-g81c8771
+#### $$VERSION$$ v0.96-pre-39-gb6e9f9e
 

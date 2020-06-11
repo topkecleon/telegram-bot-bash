@@ -206,27 +206,30 @@ See also [answer_inline_multi, answer_inline_compose](6_reference.md#answer_inli
 
 ### Handle send message errors
 
-Usually the exmaples do not care if an error happen while sending a message, this is  because bashbot detects if a message is
-not sent and try to recover when possible, e.g. resend on throttling.
+Our examples usually do not care about errors happening while sending a message, this is OK as long your bot does not send an
+massive aoumnt of messages. By default bashbot detects if a message is not sent and try to recover when possible,
+e.g. resend on throttling. In addtion every send error is logged in logs/ERROR.log
 
-In addition on every transmission to telegram the results are provided as bash in bash variables.
 
 #### Trasmission results
 
+On every message send to telgram (transmission) the results are provided in bash variables, like its done when a new message
+is received.
+
 **Note**: the values of the variables contains always the result of the LAST transmission to telegram,
-everey send action will overwrite them!
+every send action will overwrite them!
 
 * ```$BOTSENT```: This array contains the parsed results from the last transmission to telegram.
-    * ```${BOTSENT[OK]}```: contain's the string 'true' after a successful transmission
-    * ```${BOTSENT[ERROR]}```: Error code if OK is not true
+    * ```${BOTSENT[OK]}```: contains the string ```true```: after a successful transmission
+    * ```${BOTSENT[ERROR]}```: Error code if an error occured
     * ```${BOTSENT[DESC]}```: Description text for error
-    * ```${BOTSENT[RETRY]}```: Seconds to wait ifntelegram requests throtteling.
+    * ```${BOTSENT[RETRY]}```: Seconds to wait if telegram requests throtteling.
 * ```$res```: temporary variable containing the full transmission result, may be overwritten by any bashbot function.
 
 By default you don't have to care about retry, as bashbot resend the message after the requested time automatically.
 Only if the retry fails also an error is returned. The downside is that send_message functions will wait until resend is done.
 
-If you want to disbale all automtic error processing  and handle all errors manually (or don't care)
+If you want to disable automtic error processing  and handle all errors manually (or don't care)
 set ```BASHBOT_RETRY``` to any no zero value.
 
 [Telegram API error codes](https://core.telegram.org/api/errors)
@@ -235,12 +238,13 @@ set ```BASHBOT_RETRY``` to any no zero value.
 #### Detect bot blocked
 
 If the we can't connect to telegram, e.g. blocked from telegram server but also any other reason,
-bashbot set ```BOTSENT[ERROR]``` to '999'.
+bashbot set ```BOTSENT[ERROR]``` to ```999```.
 
 To get a notification on every connection problem create a function named ```bashbotBlockRecover``` and handle blocks there.
 If the function returns true (0 or no value) bashbot will retry once and then return to the calling function.
 In case you return any non 0 value bashbot will return to the calling function without retry.
 
+Note: If you disable automatic retry, se above, you disable also connection problem notification.
 
 ```bash
   # somewhere in myfunctions.sh ...
@@ -249,7 +253,7 @@ In case you return any non 0 value bashbot will return to the calling function w
   function bashbotBlockRecover() {
       # ups, we are blocked!
       (( MYBLOCKED++ ))
-      # log what we gotr
+      # log what we got
       printf "%s: Blocked %d times: %s\n" "$(date)" "${MYBLOCKED}" "$*" >>"${ERRORLOG}" 
 
       if [ "${MYBLOCKED}" -gt 10 ]; then
@@ -270,5 +274,5 @@ In case you return any non 0 value bashbot will return to the calling function w
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.96-pre-37-g6c02bab
+#### $$VERSION$$ v0.96-pre-39-gb6e9f9e
 
