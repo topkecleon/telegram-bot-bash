@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-38-g15928bd
+#### $$VERSION$$ v0.96-pre-40-ge663979
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -812,6 +812,7 @@ start_bot() {
 	fi
 	# cleanup countfile on startup
 	jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
+        [ -f "${COUNTFILE}.jssh.flock" ] && rm -f "${COUNTFILE}.jssh.flock"
 
 	##########
 	# bot is ready, start processing updates ...

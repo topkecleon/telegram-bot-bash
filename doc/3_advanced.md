@@ -213,7 +213,7 @@ e.g. resend on throttling. In addtion every send error is logged in logs/ERROR.l
 
 #### Trasmission results
 
-On every message send to telgram (transmission) the results are provided in bash variables, like its done when a new message
+On every message send to telegram (transmission) the results are provided in bash variables, like its done when a new message
 is received.
 
 **Note**: the values of the variables contains always the result of the LAST transmission to telegram,
@@ -229,7 +229,7 @@ every send action will overwrite them!
 By default you don't have to care about retry, as bashbot resend the message after the requested time automatically.
 Only if the retry fails also an error is returned. The downside is that send_message functions will wait until resend is done.
 
-If you want to disable automtic error processing  and handle all errors manually (or don't care)
+If you want to disable automatic error processing  and handle all errors manually (or don't care)
 set ```BASHBOT_RETRY``` to any no zero value.
 
 [Telegram API error codes](https://core.telegram.org/api/errors)
@@ -274,5 +274,5 @@ Note: If you disable automatic retry, se above, you disable also connection prob
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.96-pre-39-gb6e9f9e
+#### $$VERSION$$ v0.96-pre-40-ge663979
 

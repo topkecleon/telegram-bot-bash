@@ -89,7 +89,7 @@ example_echo() {
 }
 ```
 
-An SEND event is executed when a Message is send tomtelegram.
+An SEND event is executed when a Message is send to telegram.
 
 * BASHBOT_EVENT_SEND	is exceuted if data is send or uploaded to Telegram server
 
@@ -338,5 +338,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.96-pre-39-gb6e9f9e
+#### $$VERSION$$ v0.96-pre-40-ge663979
 
