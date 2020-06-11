@@ -232,7 +232,7 @@ Only if the retry fails also an error is returned. The downside is that send_mes
 If you want to disable automatic error processing  and handle all errors manually (or don't care)
 set ```BASHBOT_RETRY``` to any no zero value.
 
-[Telegram API error codes](https://core.telegram.org/api/errors)
+[Telegram Bot API error codes](https://github.com/TelegramBotAPI/errors)
 
 
 #### Detect bot blocked
@@ -274,5 +274,5 @@ Note: If you disable automatic retry, se above, you disable also connection prob
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.96-pre-40-ge663979
+#### $$VERSION$$ v0.96-pre-41-g15f6da8
 

@@ -43,10 +43,15 @@ If a not mandatory module is used in 'bashbot.sh' or 'commands.sh', the use of `
 Addons must register themself to BASHBOT_EVENTS at startup, e.g. to call a function everytime a message is received.
 Addons works similar as 'commands.sh' and 'mycommands.sh' but are much more flexible on when functions/commands are triggered.
 
-Another major difference is: **Addons are executed in the context of the main script**, while 'commands.sh' and 'mycommands.sh' are executed new child process on efery execution.
-This is why event functions are time critical and must finish as fast as possible.
+Another major difference is: While regular command processing is done in as a new sub shell for every command,
+**Addons are executed in the context of bashbot event loop!**, This is why event functions are (time) critical
+and must return as fast as possible. **If an event function call exit, also bashbot exits!**
+
+*Important*: If an event function e.g. send_messages or need longer time for processing spawn a sub shell!
+This prevents blocking or exiting bashbots event loop.
 
 #### Bashbot Events
+
 Addons must register functions to bashbot events by providing their name, and internal identifier and a callback function.
 If an event occours each registered function for the event is called.
 
@@ -85,7 +90,9 @@ BASHBOT_EVENT_TEXT["example_1"]="example_echo"
 example_echo() {
 	local event="$1" key="$2"
 	# all availible bashbot functions and variables can be used
-	send_normal_message "${CHAT[ID]}" "Event: ${event} Key: ${key} : ${MESSAGE[0]}" & # note the &!
+	send_normal_message "${CHAT[ID]}" "Event: ${event} Key: ${key} : ${MESSAGE[0]}" & # NOTE the & for sub shell!!!
+
+	do_more_processing & # NOTE the & for sub shell!!!
 }
 ```
 
@@ -135,7 +142,7 @@ This means if you register an every 5 minutes callback first execution may < 5 M
     * 0	ignored
     * 1	execute once every minute
     * x	execute every x minutes
-    * -x execute once WHITHIN the next x Minutes (10=between now and 10 Minutes)
+    * -x execute once WHITHIN the next x Minutes (next 10 Minutes since start "event")
 
 Note: If you want exact "in x minutes" use "EVENT_TIMER plus x" as time: ```-(EVENT_TIMER + x)```
 
@@ -153,7 +160,7 @@ example_everymin() {
 # register other callback:
 BAHSBOT_EVENT_TIMER["example_every5","5"]="example_every5min"
 
-# execute once in the next 1 to 10 minutes
+# execute once on the next 10 minutes since start "event"
 BAHSBOT_EVENT_TIMER["example_10min","-10"]="example_in10min"
 
 # once in exact 10 minutes
@@ -338,5 +345,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.96-pre-40-ge663979
+#### $$VERSION$$ v0.96-pre-41-g15f6da8
 

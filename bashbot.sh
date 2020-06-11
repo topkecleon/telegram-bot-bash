@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-40-ge663979
+#### $$VERSION$$ v0.96-pre-41-g15f6da8
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -319,7 +319,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 	# shellcheck disable=SC2086
 	res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
 		-d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
-		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
+		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
 	sendJsonResult "${res}" "sendJson (curl)" "$@"
   }
   #$1 Chat, $2 what , $3 file, $4 URL, $5 caption
@@ -348,7 +348,7 @@ else
 	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
 	# shellcheck disable=SC2086
 	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
-		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
+		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
 	sendJsonResult "${res}" "sendJson (wget)" "$@"
   }
   sendUpload() {
@@ -462,7 +462,7 @@ title2Json(){
 
 # get bot name
 getBotName() {
-	getJson "$ME_URL"  | "${JSONSHFILE}" -s -b -n | JsonGetString '"result","username"'
+	getJson "$ME_URL"  | "${JSONSHFILE}" -s -b -n 2>/dev/null | JsonGetString '"result","username"'
 }
 
 # pure bash implementaion, done by KayM (@gnadelwartz)
@@ -821,7 +821,7 @@ start_bot() {
 		sleep "$(_round_float "${nextsleep}e-3" "1")"
 		((nextsleep+= stepsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
 		# get next update
-		UPDATE="$(getJson "$UPD_URL$OFFSET" 2>/dev/null | "${JSONSHFILE}" -s -b -n | iconv -f utf-8 -t utf-8 -c)"
+		UPDATE="$(getJson "$UPD_URL$OFFSET" 2>/dev/null | "${JSONSHFILE}" -s -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
 		# did we ge an responsn0r
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
