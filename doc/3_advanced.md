@@ -64,12 +64,16 @@ You must use the function ```user_is_allowed``` to check if a user has the capab
 **See also [Bashbot User Access Control functions](6_reference.md#User-Access-Control)**
 
 ### Interactive Chats
-Interactive chats are scripts, reading user input and echo data to the user.
+Interactive chats are short running scripts, reading user input and echo data to the user.
 
 To create a new interactive chat script copy 'scripts/interactive.sh.clean' to e.g. 'scripts/mynewinteractive.sh', make it executeable
 and then use 'start_proc' function from your bot, it's possible to pass two arguments. You find more examples for interactive scripts in 'examples'
 
 *usage*: start_proc chat_id script arg1 arg2
+
+*usage*: kill_proc chat_id
+
+*usage*: check_prog chat_id
 
 **Note:** From Version 0.96 on scripts must read user input from '$3' instead of stdin!
 
@@ -137,15 +141,26 @@ echo "$out"
 
 ### Background Jobs
 
-A background job is similar to an interactive chat, but runs in the background and does only output massages and does not get user input. In contrast to interactive chats it's possible to run multiple background jobs. To create a background job write a script or edit 'examples/notify.sh'  script and use the funtion ```background``` to start it:
+A background job is similar to an interactive chat, but can be a long running job and does only output massages, user input is ignored.
+It's possible to run multiple background jobs from the same chat.
+
+To create a new interactive chat script copy 'scripts/interactive.sh.clean' to e.g. 'scripts/mynewbackground.sh', make it executeable
+and then use 'start_back' function from your bot, it's possible to pass two arguments. You find more examples for background scripts in 'examples'
+
+*usage*: start_back chat_id script jobname arg1 arg2
+
+*usage*: kill_back chat_id jobname
+
+*usage*: check_back chat_id jobname
+
 ```bash
-background "examples/notify.sh" "jobname"
+start_back "examples/notify.sh" "${CHAT[ID]}" "jobname"
 ```
 All output of the script will be sent to the user, to stop a background job use:
 ```bash
-killback "jobname"
+kill_back "${CHAT[ID]}" "jobname"
 ```
-You can also suspend and resume the last running background jobs from outside bashbot, e.g. in your startup schripts:
+You can also suspend and resume currently running background jobs from outside bashbot, e.g. in your startup schripts:
 ```bash
 ./bashbot.sh suspendback
 ./bashbot.sh resumeback
@@ -156,7 +171,7 @@ If you want to kill all background jobs permantly run:
 ./bashbot.sh killback
 
 ```
-Note: Background Jobs run independent from main bot and continue running until your script exits or you stop if from your Bot. Backgound Jobs will continue running if your Bot is stopeda and must be terminated, e.g. by ```bashbot.sh killback``` 
+Note: Background jobs run independent from main bot and continue running until your script exits or you stop it. Backgound jobs will continue running if your Bot is stoped and must be terminated seperatly e.g. by ```bashbot.sh killback``` 
 
 ### Inline queries
 **Inline queries** allow users to send commands to your bot from every chat without going to a private chat. An inline query is started if the user type the bots name, e.g. @myBot. Everything after @myBot is immediatly send to the bot.
