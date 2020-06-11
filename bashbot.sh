@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-36-g81c8771
+#### $$VERSION$$ v0.96-pre-38-g15928bd
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -501,11 +501,15 @@ process_updates() {
 }
 process_client() {
 	local num="$1" debug="$2" 
-	CMD=( ); iQUERY=( )
-	[[ "${debug}" = *"debug"* ]] && printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
+	CMD=( ); iQUERY=( ); MESSAGE=()
 	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
 	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	USER[ID]="${UPD["result",${num},"message","from","id"]}"
+	# log message on debug
+	if [[ "${debug}" = *"debug"* ]]; then
+	        printf "%s: update received FROM=%s CHAT=%s iQEUERY=%s\n" "$(date)" "${USER[ID]}" "${CHAT[ID]}" "${iQUERY[ID]}"
+		printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
+	fi
 
 	# check for uers / groups to ignore
 	if [ -n "${USER[ID]}" ]; then
