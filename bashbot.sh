@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-0-ga8fe178
+#### $$VERSION$$ v0.98-dev-2-geb4fa68
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -534,7 +534,8 @@ process_client() {
 	if [ -z "${iQUERY[ID]}" ]; then
 		process_message "${num}" "${debug}"
 	        printf "%s: update received FROM=%s CHAT=%s CMD=%s\n" "$(date)" "${USER[USERNAME]:0:20} (${USER[ID]})"\
-			"${CHAT[USERNAME]:0:20}${CHAT[TITLE]:0:30} (${CHAT[ID]})" "${MESSAGE:0:30}" >>"${UPDATELOG}"
+			"${CHAT[USERNAME]:0:20}${CHAT[TITLE]:0:30} (${CHAT[ID]})"\
+			"${MESSAGE:0:30}${CAPTION:0:30}${URLS[*]:0:30}" >>"${UPDATELOG}"
 	else
 		process_inline "${num}" "${debug}"
 	        printf "%s: iQuery received FROM=%s iQUERY=%s\n" "$(date)"\
@@ -934,7 +935,7 @@ if [ "${SOURCE}" != "yes" ]; then
   # internal options only for use from bashbot and developers
   case "$1" in
 	# all these commands need the botname and a working connection
-	"botname"|"outproc"|"start"*|"stop"*|"kill"*|"resume"*|"suspend"*)
+	"botname"|"outproc"|"start"*|"stop"*|"kill"*|"resume"*|"suspend"*|"status")
 		ME="$(getBotName)"
 		if [ -n "${ME}" ]; then
 			# ok we have a connection an got botname, save it
@@ -949,12 +950,11 @@ if [ "${SOURCE}" != "yes" ]; then
 			    exit 1
 			fi
 		fi
-set +x
 		printf "Bot Name: %s\n" "${ME}"
 		SESSION="${ME:-_bot}-startbot"
 		BOTPID="$(proclist "${SESSION}")"
 		[ "$1" = "botname" ] && exit
-		;&
+		;;&
 	# used to send output of backgrond and interactive to chats
 	"outproc") # $2 chat_id $3 identifier of job, internal use only!
 		[ -z "$3" ] && echo "No job identifier" && exit 3
@@ -979,7 +979,8 @@ set +x
 		exit
 		;;
 	# print usage sats
-	"stats"|'count')
+	"count") echo -e "${RED}Command ${GREY}count${RED} is deprecated, use ${GREY}stats{$RED}instead.${NC}";&
+	"stats")
 		declare -A STATS
 		jssh_readDB_async "STATS" "${COUNTFILE}"
 		for MSG in ${!STATS[*]}
@@ -1016,10 +1017,10 @@ set +x
 	# does what is says
 	"status")
 		if [ -n "${BOTPID}" ]; then
-			echo -e "${GREEN}Bot is running.${NC}"
+			echo -e "${GREEN}Bot is running with UID ${RUNUSER}.${NC}"
 			exit
 		else
-			echo -e "${ORANGE}Bot not running.${NC}"
+			echo -e "${ORANGE}Bot not running with UID ${RUNUSER}.${NC}"
 			exit 5
 		fi
 		;;
@@ -1039,6 +1040,7 @@ set +x
 		fi
 		;;
 	# does what it says
+	"kill") echo -e "${RED}Command ${GREY}kill${RED} is deprecated, use ${GREY}stop{$RED}instead.${NC}";&
 	"stop")
 		if [ -n "${BOTPID}" ]; then
 			# shellcheck disable=SC2086
@@ -1048,6 +1050,8 @@ set +x
 				echo -e "${RED}An error occured while stopping bot.${NC}"
 				exit 5
 			fi
+		else
+			echo -e "${ORANGE}Bot not running with UID ${RUNUSER}.${NC}"
 		fi
 		exit
 		;;
