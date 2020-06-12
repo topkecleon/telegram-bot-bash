@@ -43,11 +43,11 @@ If a not mandatory module is used in 'bashbot.sh' or 'commands.sh', the use of `
 Addons must register themself to BASHBOT_EVENTS at startup, e.g. to call a function everytime a message is received.
 Addons works similar as 'commands.sh' and 'mycommands.sh' but are much more flexible on when functions/commands are triggered.
 
-Another major difference is: While regular command processing is done in as a new sub shell for every command,
+Another major difference is: While regular command processing is done in a new sub shell for every command,
 **Addons are executed in the context of bashbot event loop!**, This is why event functions are (time) critical
 and must return as fast as possible. **If an event function call exit, also bashbot exits!**
 
-*Important*: If an event function e.g. send_messages or need longer time for processing spawn a sub shell!
+*Important*:  Spawn a new sub shell in background for your procssing and when calling  bashbot functions, e.g. send_messages.
 This prevents blocking or exiting bashbots event loop.
 
 #### Bashbot Events
@@ -90,9 +90,11 @@ BASHBOT_EVENT_TEXT["example_1"]="example_echo"
 example_echo() {
 	local event="$1" key="$2"
 	# all availible bashbot functions and variables can be used
-	send_normal_message "${CHAT[ID]}" "Event: ${event} Key: ${key} : ${MESSAGE[0]}" & # NOTE the & for sub shell!!!
+	send_normal_message "${CHAT[ID]}" "Event: ${event} Key: ${key} : ${MESSAGE[0]}" & # run in background!
 
-	do_more_processing & # NOTE the & for sub shell!!!
+	( MYTEXT="${MESSAGE[0]}"
+	  do_more_processing
+	) & # run as sub shell in background!
 }
 ```
 
@@ -100,7 +102,7 @@ An SEND event is executed when a Message is send to telegram.
 
 * BASHBOT_EVENT_SEND	is exceuted if data is send or uploaded to Telegram server
 
-In contrast to other events, BASHBOT_EVENT_SEND is excecuted in a subshell, so there is no need to spawn
+In contrast to other events, BASHBOT_EVENT_SEND is excecuted in a sub shell, so there is no need to spawn
 a background process for longer running commands and changes to variables are not persistent!
 
 BASHBOT_EVENT_SEND is for logging purposes, you must not send messages while processing this event.
@@ -345,5 +347,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.96-pre-41-g15f6da8
+#### $$VERSION$$ v0.96-pre-44-g737d54d
 

@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-43-g471ad21
+#### $$VERSION$$ v0.96-pre-44-g737d54d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -517,7 +517,8 @@ process_client() {
 		MESSAGE[0]="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's#\\/#/#g')"
 		process_message "${num}" "${debug}"
 	        [[ -n "${debug}" ]] &&  printf "%s: update received FROM=%s CHAT=%s CMD=%s\n"\
-			"$(date)" "${USER[USERNAME]} (${USER[ID]})" "${CHAT[USERNAME]}${CHAT[TITLE]} (${CHAT[ID]})" "${MESSAGE%% *}"
+			"$(date)" "${USER[USERNAME]:0:20} (${USER[ID]})"\
+			"${CHAT[USERNAME]:0:20}${CHAT[TITLE]:0:30} (${CHAT[ID]})" "${MESSAGE%%[ \?]*}"
 	else
 		process_inline "${num}" "${debug}"
 	        [[ -n "${debug}" ]] && printf "%s: iQuery received FROM=%s iQUERY=%s\n"\
@@ -825,16 +826,16 @@ start_bot() {
 		# did we ge an responsn0r
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
-			[ "${OFFSET}" = "-999" ] &&\
+			[ "${OFFSET}" = "-999" ] && [ "${nextsleep}" -gt "${maxsleep}" ] &&\
 				printf "%s: Recovered from timeout/broken/no connection, continue with telegram updates\n"\
 					"$(date)"  >>"${ERRORLOG}"
 			# escape bash $ expansion bug
+			((nextsleep+= stepsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
 			UPDATE="${UPDATE//$/\\$}"
 			# Offset
 			OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
 			((OFFSET++))
 
-			((nextsleep+= stepsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
 			if [ "$OFFSET" != "1" ]; then
 				nextsleep="100"
 				process_updates "${DEBUG}"
