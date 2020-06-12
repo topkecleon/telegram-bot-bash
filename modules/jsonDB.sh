@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.96-1-g15e6c7b
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -60,7 +60,6 @@ if _exists flock; then
 	local DB; DB="$(jssh_checkDB "$2")"
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
-
 	declare -n ARRAY="$1"
 	[ -z "${ARRAY[*]}" ] && return 1
 	declare -A oldARR
@@ -164,9 +163,10 @@ if _exists flock; then
   #no own locking, so async is the same as updatekeyDB
   jssh_updateKeyDB() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	declare -A oldARR
-	oldARR["$1"]="$2"
-	jssh_updateDB "oldARR" "${3}" || return 3
+	declare -A updARR
+	# shellcheck disable=SC2034
+	updARR["$1"]="$2"
+	jssh_updateDB "updARR" "${3}" || return 3
   }
 
   # $1 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
@@ -311,9 +311,10 @@ jssh_countKeyDB_async() {
 #no own locking, so async is the same as updatekeyDB
 jssh_updateKeyDB_async() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	declare -A oldARR
-	oldARR["$1"]="$2"
-	jssh_updateDB_async "oldARR" "${3}" || return 3
+	declare -A updARR
+	# shellcheck disable=SC2034
+	updARR["$1"]="$2"
+	jssh_updateDB_async "updARR" "${3}" || return 3
 }
 
 jssh_clearDB_async() {
