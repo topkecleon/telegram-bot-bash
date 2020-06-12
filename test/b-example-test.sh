@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # file: b-example-test.sh
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ v0.96-0-g3871ca9
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh

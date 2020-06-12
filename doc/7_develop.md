@@ -47,7 +47,7 @@ Another major difference is: While regular command processing is done in a new s
 **Addons are executed in the context of bashbot event loop!**, This is why event functions are (time) critical
 and must return as fast as possible. **If an event function call exit, also bashbot exits!**
 
-*Important*:  Spawn a new sub shell in background for your procssing and when calling  bashbot functions, e.g. send_messages.
+*Important*: Spawn a new sub shell in background for your processing commands and when calling  bashbot functions, e.g. send_messages.
 This prevents blocking or exiting bashbots event loop.
 
 #### Bashbot Events
@@ -347,5 +347,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.96-pre-44-g737d54d
+#### $$VERSION$$ v0.96-0-g3871ca9
 

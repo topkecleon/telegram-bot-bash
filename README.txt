@@ -305,4 +305,4 @@ in 'mycommands.sh' as example.
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.96-pre-39-gb6e9f9e
+#### $$VERSION$$ v0.96-0-g3871ca9
