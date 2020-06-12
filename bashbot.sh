@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-0-ga8fe178
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -69,6 +69,12 @@ Array2Json() {
 		printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${ARRAY[${key}]//\"/\\\"}"
        	done
 }
+getConfigKey() {
+	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	declare -A confARR
+	Json2Array "confARR" <"${BOTDATABASE}.jssh"
+	printf '%s' "${confARR["$1"]}"
+}
 
 # get location and name of bashbot.sh
 SCRIPT="$0"
@@ -108,6 +114,7 @@ if [ ! -w "." ]; then
 fi
 
 # Setup and check environment if BOTTOKEN is NOT set
+BOTDATABASE="${BASHBOT_ETC:-.}/botconfig"
 TOKENFILE="${BASHBOT_ETC:-.}/token"
 BOTADMIN="${BASHBOT_ETC:-.}/botadmin"
 BOTACL="${BASHBOT_ETC:-.}/botacl"
@@ -119,13 +126,22 @@ LOGDIR="${RUNDIR:-.}/logs"
 if [ ! -d "${LOGDIR}" ] || [ ! -w "${LOGDIR}" ]; then
 	LOGDIR="${RUNDIR:-.}"
 fi
+DEBUGLOG="${LOGDIR}/DEBUG.log"
 ERRORLOG="${LOGDIR}/ERROR.log"
+UPDATELOG="${LOGDIR}/UPDATE.log"
 
 # we assume everthing is already set up correctly if we have TOKEN
 if [ -z "${BOTTOKEN}" ]; then
-  # BOTTOKEN empty read from file
-  if [ ! -f "${TOKENFILE}" ]; then
-     if [ -z "${CLEAR}" ] && [ "$1" != "init" ]; then
+  # DATABASE does not exist, create
+  [ ! -f "${BOTDATABASE}.jssh" ] &&
+		printf '["bot_config_key"]\t"config_key_value"\n' >"${BOTDATABASE}.jssh"
+  # BOTTOKEN empty read ask user
+  if ! grep -qs '\["bottoken"\]' "${BOTDATABASE}.jssh" ; then
+     # convert old token
+     if [ -r "${TOKENFILE}" ]; then
+		printf '["bottoken"]\t"%s"\n' "$(< "${TOKENFILE}")" >>"${BOTDATABASE}.jssh"
+     # no old token avalible ask user
+     elif [ -z "${CLEAR}" ] && [ "$1" != "init" ]; then
 	echo "Running headless, set BOTTOKEN or run ${SCRIPT} init first!"
 	exit 2 
      else
@@ -133,12 +149,9 @@ if [ -z "${BOTTOKEN}" ]; then
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NC}"
 	read -r BOTTOKEN
-	printf '%s\n' "${BOTTOKEN}" > "${TOKENFILE}"
+	printf '["bottoken"]\t"%s"\n'  "${BOTTOKEN}" >> "${BOTDATABASE}.jssh"
      fi
   fi
-  # read BOTTOKEN from file and removen everyting from first newline to end
-  BOTTOKEN="$(< "${TOKENFILE}")"
-  BOTTOKEN="${BOTTOKEN%%$'\n'*}"
 
   # setup botadmin file
   if [ ! -f "${BOTADMIN}" ]; then
@@ -186,10 +199,9 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
 fi
 
-# do we have BSD sed
-if ! sed '1ia' </dev/null 2>/dev/null; then
-	echo -e "${ORANGE}Warning: You may run on a BSD style system without gnu utils ...${NC}"
-fi
+# read BOTTOKEN from bot database if not set
+[ -z "${BOTTOKEN}" ] && BOTTOKEN="$(getConfigKey "bottoken")"
+
 # BOTTOKEN format checks
 if [[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ ]]; then
 	echo -e "${ORANGE}Warning, your bottoken may incorrect. it should have the following format:${NC}"
@@ -212,6 +224,9 @@ ME_URL=$URL'/getMe'
 
 UPD_URL=$URL'/getUpdates?offset='
 GETFILE_URL=$URL'/getFile'
+
+#################
+# BASHBOT COMMON functions
 
 declare -rx SCRIPT SCRIPTDIR MODULEDIR RUNDIR ADDONDIR TOKENFILE BOTADMIN BOTACL DATADIR COUNTFILE
 declare -rx BOTTOKEN URL ME_URL UPD_URL GETFILE_URL
@@ -245,14 +260,17 @@ done
 # BASHBOT INTERNAL functions
 #
 
+# do we have BSD sed
+if ! sed '1ia' </dev/null 2>/dev/null; then
+	echo -e "${ORANGE}Warning: You may run on a BSD style system without gnu utils ...${NC}"
+fi
 #jsonDB is now mandatory
 if ! _is_function jssh_newDB ; then
 	echo -e "${RED}ERROR: Mandatory module jsonDB is missing or not readable!"
 	exit 6
 fi
 
-#################
-# BASHBOT COMMON functions
+
 # $1 URL, $2 filename in DATADIR
 # outputs final filename
 download() {
@@ -328,11 +346,11 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 	if [ -n "$5" ]; then
 	# shellcheck disable=SC2086
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
-			-F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n )"
+			-F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
 	else
 	# shellcheck disable=SC2086
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
-			-F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n )"
+			-F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
 	fi
 	sendJsonResult "${res}" "sendUpload (curl)" "$@"
   }
@@ -514,15 +532,13 @@ process_client() {
 
 	# process per message type
 	if [ -z "${iQUERY[ID]}" ]; then
-		MESSAGE[0]="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's#\\/#/#g')"
 		process_message "${num}" "${debug}"
-	        [[ -n "${debug}" ]] &&  printf "%s: update received FROM=%s CHAT=%s CMD=%s\n"\
-			"$(date)" "${USER[USERNAME]:0:20} (${USER[ID]})"\
-			"${CHAT[USERNAME]:0:20}${CHAT[TITLE]:0:30} (${CHAT[ID]})" "${MESSAGE%%[ \?]*}"
+	        printf "%s: update received FROM=%s CHAT=%s CMD=%s\n" "$(date)" "${USER[USERNAME]:0:20} (${USER[ID]})"\
+			"${CHAT[USERNAME]:0:20}${CHAT[TITLE]:0:30} (${CHAT[ID]})" "${MESSAGE:0:30}" >>"${UPDATELOG}"
 	else
 		process_inline "${num}" "${debug}"
-	        [[ -n "${debug}" ]] && printf "%s: iQuery received FROM=%s iQUERY=%s\n"\
-			"$(date)" "${iQUERY[USERNAME]} (${iQUERY[USER_ID]})" "${iQUERY[0]}"
+	        printf "%s: iQuery received FROM=%s iQUERY=%s\n" "$(date)"\
+			"${iQUERY[USERNAME]:0:20} (${iQUERY[USER_ID]})" "${iQUERY[0]}" >>"${UPDATELOG}"
 	fi
 	#####
 	# process inline and message events
@@ -673,6 +689,7 @@ process_inline() {
 process_message() {
 	local num="$1"
 	# Message
+	MESSAGE[0]="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's#\\/#/#g')"
 	MESSAGE[ID]="${UPD["result",${num},"message","message_id"]}"
 
 	# Chat ID is now parsed when update isreceived
@@ -791,8 +808,8 @@ start_bot() {
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
 	local maxsleep="${BASHBOT_SLEEP:-5000}"
 	# redirect to Debug.log
-	[[ "${DEBUG}" == *"debug" ]] && exec &>>"${LOGDIR}/DEBUG.log"
-	[ -n "${DEBUG}" ] && printf  "%s: Start BASHBOT in Mode \"%s\" ==========\n" "$(date)" "${DEBUG}"
+	printf  "%s: Start BASHBOT updates in Mode \"%s\" ==========\n" "$(date)" "${DEBUG}" >>"${DEBUGLOG}"
+	[[ "${DEBUG}" == *"debug" ]] && exec &>>"${DEBUGLOG}"
 	[[ "${DEBUG}" == "xdebug"* ]] && set -x 
 	#cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
@@ -826,7 +843,7 @@ start_bot() {
 		# did we ge an responsn0r
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
-			[ "${OFFSET}" = "-999" ] && [ "${nextsleep}" -gt "${maxsleep}" ] &&\
+			[ "${OFFSET}" = "-999" ] && [ "${nextsleep}" -gt "$((maxsleep*2))" ] &&\
 				printf "%s: Recovered from timeout/broken/no connection, continue with telegram updates\n"\
 					"$(date)"  >>"${ERRORLOG}"
 			# escape bash $ expansion bug
@@ -908,18 +925,6 @@ if [ ! -f "${JSONSHFILE}" ]; then
 	chmod +x "${JSONSHFILE}" 
 fi
 
-if [ "${SOURCE}" != "yes" ] && [ "$1" != "init" ] &&  [ "$1" != "help" ]; then
-  ME="$(getBotName)"
-  if [ -z "$ME" ]; then
-	echo -e "${RED}ERROR: Can't connect to Telegram! Your TOKEN is invalid or you are blocked by ${URL%/*} ...${NC}"
-	case "$1" in
-		"" | "stop" | "kill"* | "suspendb"* ) # warn, but do not exit
-			echo -e "${RED}Ignored to continue for $1  ... ${NC}";;
-		*) exit 1;;
-	esac
-  fi
-fi
-
 # source the script with source as param to use functions in other scripts
 # do not execute if read from other scripts
 
@@ -928,33 +933,52 @@ if [ "${SOURCE}" != "yes" ]; then
   ##############
   # internal options only for use from bashbot and developers
   case "$1" in
-	"outproc") # forward output from interactive and jobs to chat
-		[ -z "$3" ] && echo "No file to read from" && exit 3
+	# all these commands need the botname and a working connection
+	"botname"|"outproc"|"start"*|"stop"*|"kill"*|"resume"*|"suspend"*)
+		ME="$(getBotName)"
+		if [ -n "${ME}" ]; then
+			# ok we have a connection an got botname, save it
+			echo -e "${GREY}Bottoken is valid ...${NC}"
+			jssh_updateKeyDB "botname" "${ME}" "${BOTDATABASE}"
+			rm -f "${BOTDATABASE}.jssh.flock"
+		else
+			echo -e "${GREY}Info: Can't get Botname from Telegram, try cached one ...${NC}"
+			ME="$(getConfigKey "botname")"
+			if [ -z "$ME" ]; then
+			    echo -e "${RED}ERROR: No cached botname, can't continue! ...${NC}"
+			    exit 1
+			fi
+		fi
+set +x
+		printf "Bot Name: %s\n" "${ME}"
+		SESSION="${ME:-_bot}-startbot"
+		BOTPID="$(proclist "${SESSION}")"
+		[ "$1" = "botname" ] && exit
+		;&
+	# used to send output of backgrond and interactive to chats
+	"outproc") # $2 chat_id $3 identifier of job, internal use only!
+		[ -z "$3" ] && echo "No job identifier" && exit 3
 		[ -z "$2"  ] && echo "No chat to send to" && exit 3
+		# read until terminated
 		while read -r line ;do
 			[ -n "$line" ] && send_message "$2" "$line"
 		done 
+		# cleanup datadir, keep logfile if not empty
 		rm -f -r "${DATADIR:-.}/$3"
 		[ -s "${DATADIR:-.}/$3.log" ] || rm -f "${DATADIR:-.}/$3.log"
 		exit
 		;;
+	# finally starts  the read update loop, internal use only1
 	"startbot" )
 		start_bot "$2"
 		exit
 		;;
-	"init") # adjust users and permissions
+	# run after every update to update files and adjust permissions
+	"init") 
 		bot_init "$2"
 		exit
 		;;
-  esac
-
-
-  ###############
-  # "official" arguments as shown to users
-  SESSION="${ME:-unknown}-startbot"
-  BOTPID="$(proclist "${SESSION}")"
-
-  case "$1" in
+	# print usage sats
 	"stats"|'count')
 		declare -A STATS
 		jssh_readDB_async "STATS" "${COUNTFILE}"
@@ -970,6 +994,7 @@ if [ "${SOURCE}" != "yes" ]; then
 		echo "A total of ${MESSAGES} messages from ${USERS} users are processed."
 		exit
 		;;
+	# sedn message to all users
 	'broadcast')
 		declare -A SENDALL
 		shift
@@ -988,6 +1013,7 @@ if [ "${SOURCE}" != "yes" ]; then
 		echo -e "\nMessage \"$*\" sent to ${USERS} users."
 		exit
 		;;
+	# does what is says
 	"status")
 		if [ -n "${BOTPID}" ]; then
 			echo -e "${GREEN}Bot is running.${NC}"
@@ -998,11 +1024,13 @@ if [ "${SOURCE}" != "yes" ]; then
 		fi
 		;;
 		 
+	# start bot as background jod and check if bot is running
 	"start")
 		# shellcheck disable=SC2086
 		[ -n "${BOTPID}" ] && kill ${BOTPID}
 		nohup "$SCRIPT" "startbot" "$2" "${SESSION}" &>/dev/null &
-		echo "Session Name: ${SESSION}"
+		printf "Session Name: %s\n" "${SESSION}"
+		sleep 1
 		if [ -n "$(proclist "${SESSION}")" ]; then
 		 	echo -e "${GREEN}Bot started successfully.${NC}"
 		else
@@ -1010,7 +1038,8 @@ if [ "${SOURCE}" != "yes" ]; then
 			exit 5
 		fi
 		;;
-	"kill"|"stop")
+	# does what it says
+	"stop")
 		if [ -n "${BOTPID}" ]; then
 			# shellcheck disable=SC2086
 			if kill ${BOTPID}; then
@@ -1022,7 +1051,8 @@ if [ "${SOURCE}" != "yes" ]; then
 		fi
 		exit
 		;;
-	"resumeb"* | "killb"* | "suspendb"*)
+	# suspend, resume or kill backgrund jobs
+	"suspendb"*|"resumeb"*|"killb"*)
   		_is_function job_control || { echo -e "${RED}Module background is not availible!${NC}"; exit 3; }
 		job_control "$1"
 		;;
@@ -1031,8 +1061,8 @@ if [ "${SOURCE}" != "yes" ]; then
 		exit
 		;;
 	*)
-		echo -e "${RED}${REALME}: BAD REQUEST${NC}"
-		echo -e "${ORANGE}Available arguments: ${GREY}start, stop, kill, status, stats, broadcast, help, suspendback, resumeback, killback${NC}"
+		echo -e "${RED}${REALME##*/}: unknown command${NC}"
+		echo -e "${ORANGE}Available commands: ${GREY}start, stop, status, stats, broadcast, help, suspendback, resumeback, killback${NC}"
 		exit 4
 		;;
   esac
