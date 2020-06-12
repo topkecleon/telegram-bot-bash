@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.96-pre-13-ga71d68e
+#### $$VERSION$$ v0.96-0-g3871ca9
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -29,10 +29,10 @@ export FILE_REGEX="${BASHBOT_ETC}/.*"
 # example: run bashbot over TOR
 # export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1:9050"
 
-# unset BASHBOT_RETRY to enable retry in case of recoverable errors, e.g.  throtteling
-# see logs/ERROR.log for information why send_messages etc. fail
-export BOTSEND_RETRY="no"
-#unset BOTSEND_RETRY
+# set BASHBOT_RETRY to enable retry in case of recoverable errors, e.g.  throtteling
+# problems with send_,´message etc are looged to  logs/ERROR.log 
+unset BASHBOT_RETRY
+#export BASHBOT_RETRY="yes"
 
 # set value for adaptive sleeping while waitingnfor uodates in millisconds
 # max slepp between polling updates 10s (default 5s)
@@ -54,7 +54,7 @@ NOTBOTADMIN="Sorry, this command is allowed for bot owner only"
 
 if [ "$1" = "startbot" ];then
     ###################
-    # this function is run once after startup when the first message is recieved
+    # this function is run once after startup when the first message is received
     my_startup(){
 	# send message ito first user on startup
 	send_normal_message "${CHAT[ID]}" "Hi, you was the first one after startup!"
@@ -72,7 +72,7 @@ else
     mycommands() {
 
 	##############
-	# a service Message was recieved
+	# a service Message was received
 	# add your own stuff here
 	if [ -n "${SERVICE}" ]; then
 

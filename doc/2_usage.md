@@ -96,7 +96,7 @@ To send a broadcast to all of users that ever used the bot run the following com
 ----
 
 ## Recieve data
-Evertime a Message is recieved, you can read incoming data using the following variables:
+Evertime a Message is received, you can read incoming data using the following variables:
 
 ### Regular Messages
 
@@ -169,7 +169,7 @@ Evertime a Message is recieved, you can read incoming data using the following v
 
 
 ### Inline queries
-Evertime a Message is recieved, you can read incoming data using the following variables:
+Evertime a Message is received, you can read incoming data using the following variables:
 
 * ```${iQUERY}```: Current inline query
 * ```$iQUERY```: This array contains the ID, First name, last name, username and user id of the sender of the current inline query.
@@ -256,5 +256,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.96-dev3-14-g5fc4d01a
+#### $$VERSION$$ v0.96-0-g3871ca9
 

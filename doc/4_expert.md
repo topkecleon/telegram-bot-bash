@@ -40,7 +40,7 @@ To display all availible locales on your system run ```locale -a | more```. [Gen
 #### Bashbot UTF-8 Support
 Bashbot handles all messages transparently, regardless of the charset in use. The only exception is when converting from JSON data to strings.
 
-Telegram use JSON to send / recieve data. JSON encodes strings as follow: Characters not ASCII *(>127)* are escaped as sequences of ```\uxxxx``` to be regular ASCII. In addition multibyte characters, *e.g. Emoticons or Arabic characters*, are send in double byte UTF-16 notation.
+Telegram use JSON to send / receive data. JSON encodes strings as follow: Characters not ASCII *(>127)* are escaped as sequences of ```\uxxxx``` to be regular ASCII. In addition multibyte characters, *e.g. Emoticons or Arabic characters*, are send in double byte UTF-16 notation.
 The Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as: ``` \uD83D\uDE01 \uD83D\uDE18 \u2764\uFE0F \uD83D\uDE0A \uD83D\uDC4D ```
 
 **This "mixed" JSON encoding needs special handling and can not decoded from** ```echo -e``` or ```printf '%s\\n'```
@@ -326,7 +326,7 @@ BASHBOT_TIMEOUT to a numeric value between 1 and 999. Any non numeric or negativ
 
 ##### BASHBOT_SLEEP
 Instead of polling permanently or with a fixed delay, bashbot offers a simple adaptive polling.
-If messages are recieved bashbot polls with no dealy. If no messages are availible bashbot add 100ms delay
+If messages are received bashbot polls with no dealy. If no messages are availible bashbot add 100ms delay
 for every poll until the maximum of BASHBOT_SLEEP ms.
 ```bash
   unset  BASHBOT_SLEEP       # 5000ms (default)
@@ -382,5 +382,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v0.96-dev3-17-g720dc59
+#### $$VERSION$$ v0.96-0-g3871ca9
 

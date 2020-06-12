@@ -31,7 +31,7 @@ you can the change the level of verbosity of the debug argument:
 to keep 'bashbot.sh' small, while extending functionality. In addition not every funtion is needed by all bots, so you can
 disable modules, e.g. by rename the respective module file to 'module.sh.off'.
 
-Modules must use functions provided by 'bahsbot.sh' or the module itself and sould not depend on other modules or addons.
+Modules must use only functions provided by 'bahsbot.sh' or the module itself and sould not depend on other modules or addons.
 The only mandatory module is 'module/sendMessage.sh'.
 
 If a not mandatory module is used in 'bashbot.sh' or 'commands.sh', the use of ```_is_function``` or
@@ -40,13 +40,18 @@ If a not mandatory module is used in 'bashbot.sh' or 'commands.sh', the use of `
 **Addons** resides in ```addons/*.sh.dist``` and are not endabled by default. To activate an addon rename it to end with '.sh', e.g. by
 ```cp addons/example.sh.dist addons/example.sh```. 
 
-Addons must register themself to BASHBOT_EVENTS at startup, e.g. to call a function everytime a message is recieved.
+Addons must register themself to BASHBOT_EVENTS at startup, e.g. to call a function everytime a message is received.
 Addons works similar as 'commands.sh' and 'mycommands.sh' but are much more flexible on when functions/commands are triggered.
 
-Another major difference is: **Addons are executed in the context of the main script**, while 'commands.sh' and 'macommands.sh' are executed as a seperate process.
-This is why event functions are time critical and must return as fast as possible.
+Another major difference is: While regular command processing is done in a new sub shell for every command,
+**Addons are executed in the context of bashbot event loop!**, This is why event functions are (time) critical
+and must return as fast as possible. **If an event function call exit, also bashbot exits!**
+
+*Important*: Spawn a new sub shell in background for your processing commands and when calling  bashbot functions, e.g. send_messages.
+This prevents blocking or exiting bashbots event loop.
 
 #### Bashbot Events
+
 Addons must register functions to bashbot events by providing their name, and internal identifier and a callback function.
 If an event occours each registered function for the event is called.
 
@@ -54,13 +59,15 @@ Registered functions run in the same process as bashbot, not as a sub process, s
 
 Note: For the same reason event function MUST return immediately! Time consuming tasks must be run as a background process, e.g. "long running &"
 
-##### MESSAGE events (all iQuery and/or Message variables are avalible):
+##### SEND RECEIVE events
+
+An RECEIVE event is executed when a Message is received, same iQuery / Message variables are avalible as in commands.sh
 
 * BASHBOT_EVENT_INLINE		an inline query is received
 
 * BASHBOT_EVENT_MESSAGE		any of the following message types is received
-    * BASHBOT_EVENT_TEXT	a message containing text is recieved
-    * BASHBOT_EVENT_CMD		a message containing a command is recieved (starts with /)
+    * BASHBOT_EVENT_TEXT	a message containing text is received
+    * BASHBOT_EVENT_CMD		a message containing a command is received (starts with /)
     * BASHBOT_EVENT_REPLYTO	a reply to a message is received
     * BASHBOT_EVENT_FORWARD	a forwarded message is received
     * BASHBOT_EVENT_CONTACT	a contact is received
@@ -83,55 +90,19 @@ BASHBOT_EVENT_TEXT["example_1"]="example_echo"
 example_echo() {
 	local event="$1" key="$2"
 	# all availible bashbot functions and variables can be used
-	send_normal_message "${CHAT[ID]}" "Event: ${event} Key: ${key} : ${MESSAGE[0]}" & # note the &!
+	send_normal_message "${CHAT[ID]}" "Event: ${event} Key: ${key} : ${MESSAGE[0]}" & # run in background!
+
+	( MYTEXT="${MESSAGE[0]}"
+	  do_more_processing
+	) & # run as sub shell in background!
 }
 ```
 
-##### Other types of events
-
-* BAHSBOT_EVENT_TIMER		executed every minute and can be used in 3 variants: oneshot, once a minute, every X minutes.
-
-Registering to BASHBOT_EVENT_TIMER works similar as for message events, but you must add a timing argument to the name.
-EVENT_TIMER is triggered every 60s and waits until the current running command is finished, so ist not excactly every
-minute, but once a minute.
-
-Every time EVENT_TIMER is triggered the variable "EVENT_TIMER" is increased. each callback is executed if ```EVENT_TIMER % time``` is '0' (true).
-This means if you register an every 5 minutes callback first execution may < 5 Minutes, all subsequent executions are once every 5. Minute.
-
-*usage:* BAHSBOT_EVENT_TIMER[ "name" , "time" ], where time is:
-
-    * 0	ignored
-    * 1	execute once every minute
-    * x	execute every x minutes
-    * -x execute ONCE in (next) x minutes *
-
-*\* if you really want "in x minutes" you must use ```-(EVENT_TIMER+x)```* 
-
-*Example:*
-```bash
-# register callback:
-BAHSBOT_EVENT_TIMER["example_every","1"]="example_everymin"
-
-# function called every minute
-example_everymin() {
-	# timer events has no chat id, so send to yourself
-	send_normal_message "$(< "${BOTADMIN})" "$(date)" & # note the &!
-}
-
-# register other callback:
-BAHSBOT_EVENT_TIMER["example_every5","5"]="example_every5min"
-
-# execute once in the next 10 minutes
-BAHSBOT_EVENT_TIMER["example_10min","-10"]="example_in10min"
-
-# once in 10 minutes
-BAHSBOT_EVENT_TIMER["example_10min","$(( (EVENT_TIMER+10) * -1 ))"]="example_in10min"
-
-```
+An SEND event is executed when a Message is send to telegram.
 
 * BASHBOT_EVENT_SEND	is exceuted if data is send or uploaded to Telegram server
 
-In contrast to other events, BASHBOT_EVENT_SEND is excecuted in a subshell, so there is no need to spawn
+In contrast to other events, BASHBOT_EVENT_SEND is excecuted in a sub shell, so there is no need to spawn
 a background process for longer running commands and changes to variables are not persistent!
 
 BASHBOT_EVENT_SEND is for logging purposes, you must not send messages while processing this event.
@@ -152,6 +123,50 @@ example_log(){
 	local send="$1"; shift
 	echo "$(date): Type: ${send} Args: $*" >>"${EXAMPLE_LOG}"
 }
+
+```
+
+##### TIMER events
+
+Important: Bashbot timer tick is diabled by default and must be enabled by setting BASHBOT_START_TIMER to any value not zero.
+
+* BAHSBOT_EVENT_TIMER		executed every minute and can be used in 3 variants: oneshot, once a minute, every X minutes.
+
+Registering to BASHBOT_EVENT_TIMER works similar as for message events, but you must add a timing argument to the name.
+EVENT_TIMER is triggered every 60s and waits until the current running command is finished, so ist not excactly every
+minute, but once a minute.
+
+Every time EVENT_TIMER is triggered the variable "EVENT_TIMER" is increased. each callback is executed if ```EVENT_TIMER % time``` is '0' (true).
+This means if you register an every 5 minutes callback first execution may < 5 Minutes, all subsequent executions are once every 5. Minute.
+
+*usage:* BAHSBOT_EVENT_TIMER[ "name" , "time" ], where time is:
+
+    * 0	ignored
+    * 1	execute once every minute
+    * x	execute every x minutes
+    * -x execute once WHITHIN the next x Minutes (next 10 Minutes since start "event")
+
+Note: If you want exact "in x minutes" use "EVENT_TIMER plus x" as time: ```-(EVENT_TIMER + x)```
+
+*Example:*
+```bash
+# register callback:
+BAHSBOT_EVENT_TIMER["example_every","1"]="example_everymin"
+
+# function called every minute
+example_everymin() {
+	# timer events has no chat id, so send to yourself
+	send_normal_message "$(< "${BOTADMIN})" "$(date)" & # note the &!
+}
+
+# register other callback:
+BAHSBOT_EVENT_TIMER["example_every5","5"]="example_every5min"
+
+# execute once on the next 10 minutes since start "event"
+BAHSBOT_EVENT_TIMER["example_10min","-10"]="example_in10min"
+
+# once in exact 10 minutes
+BAHSBOT_EVENT_TIMER["example_10min","$(( (EVENT_TIMER+10) * -1 ))"]="example_in10min"
 
 ```
 
@@ -332,5 +347,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.96-pre-9-gb23aadd
+#### $$VERSION$$ v0.96-0-g3871ca9
 

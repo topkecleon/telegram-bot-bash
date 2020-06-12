@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.96-dev3-0-gdddd1ce
+#### $$VERSION$$ v0.96-0-g3871ca9
 
 # common variables
 export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
@@ -48,6 +48,15 @@ print_array() {
   done | grep -v '^USER:	0'
 }
 
+
+compare_sorted() {
+	local ret=0
+	sort -d -o "${1}.sort" "${1}"
+	sort -d -o "${2}.sort" "${2}"
+	diff -c "${1}.sort" "${2}.sort" || ret=1
+	rm -f "${1}.sort" "${2}.sort"
+	return "$ret"
+}
 
 ######
 # lets go ...

@@ -37,6 +37,7 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Interactive Chats
     * Background Jobs
     * Inline queries
+    * Send message errors
 * [Expert Use](doc/4_expert.md)
     * Handling UTF-8 character sets
     * Run as other user or system service
@@ -218,4 +219,4 @@ This may happen if to many wrong requests are sent to api.telegram.org, e.g. usi
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.96-pre-13-ga71d68e
+#### $$VERSION$$ v0.96-0-g3871ca9

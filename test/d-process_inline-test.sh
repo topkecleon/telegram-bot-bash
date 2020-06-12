@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.96-dev-7-g0153928
+#### $$VERSION$$ v0.96-0-g3871ca9
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -37,7 +37,7 @@ do
 
 	# output processed input
 	print_array "iQUERY" >"${OUTPUTFILE}"
-	diff -c "${REFFILE}" "${OUTPUTFILE}" || exit 1
+	compare_sorted "${REFFILE}" "${OUTPUTFILE}" || exit 1
 	echo "${SUCCESS}"
 done
 

@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-pre-29-gaec4e71
+#### $$VERSION$$ v0.96-0-g3871ca9
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -205,7 +205,7 @@ fi
 
 ##################
 # here we start with the real stuff
-BOTSEND_RETRY="no" # do not retry by default
+BASHBOT_RETRY="" # retry by default
 
 URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
 ME_URL=$URL'/getMe'
@@ -319,7 +319,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 	# shellcheck disable=SC2086
 	res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
 		-d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
-		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n )"
+		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
 	sendJsonResult "${res}" "sendJson (curl)" "$@"
   }
   #$1 Chat, $2 what , $3 file, $4 URL, $5 caption
@@ -348,7 +348,7 @@ else
 	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
 	# shellcheck disable=SC2086
 	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
-		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n )"
+		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
 	sendJsonResult "${res}" "sendJson (wget)" "$@"
   }
   sendUpload() {
@@ -363,11 +363,10 @@ fi
 sendJsonRetry(){
 	local retry="${1}"; shift
 	[[ "${1}" =~ ^\ *[0-9.]+\ *$ ]] && sleep "${1}"; shift
-	printf "%s: RETRY %s %s %s\n" "$(date)" "${retry}" "${1}" "${2/[$'\n\r']*}"
+	printf "%s: RETRY %s %s %s\n" "$(date)" "${retry}" "${1}" "${2:0:60}"
 	case "${retry}" in
 		'sendJson'*)
 			sendJson "$@"	
-
 			;;
 		'sendUpload'*)
 			sendUpload "$@"	
@@ -377,7 +376,7 @@ sendJsonRetry(){
 			return
 			;;
 	esac
-	[ "${BOTSENT[OK]}" = "true" ] && printf "%s: Retry  OK: %s %s\n" "$(date)" "${retry}" "${1}"
+	[ "${BOTSENT[OK]}" = "true" ] && printf "%s: Retry  OK: %s %s %s\n" "$(date)" "${retry}" "${1}" "${2:0:60}"
 } >>"${ERRORLOG}"
 
 # process sendJson result
@@ -388,7 +387,7 @@ sendJsonResult(){
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${1}")"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
 		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${1}")"
-		[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@:2}" 
+		[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@:3}" 
 		return
 		# hot path everthing OK!
 	else
@@ -399,49 +398,48 @@ sendJsonResult(){
 		BOTSENT[RETRY]="$(JsonGetValue '"parameters","retry_after"' <<< "${1}")"
 	    else
 		BOTSENT[ERROR]="999"
-		BOTSENT[DESCRIPTION]="Timeout or broken/no connection"
+		BOTSENT[DESCRIPTION]="Send to telegram not possible, timeout/broken/no connection"
 	    fi
 	    # log error
-	    printf "%s: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s\n=ACTION=%s\n" "$(date)"\
-			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4/[$'\n\r']*}"
+	    printf "%s: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s ACTION=%s\n" "$(date)"\
+			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4:0:60}"
 	    # warm path, do not retry on error, also if we use wegt
-	    [ -n "${BOTSEND_RETRY}${BASHBOT_WGET}" ] && return
+	    [ -n "${BASHBOT_RETRY}${BASHBOT_WGET}" ] && return
 
 	    # OK, we can retry sendJson, let's see what's failed
 	    # throttled, telegram say we send to much messages
 	    if [ -n "${BOTSENT[RETRY]}" ]; then
-		BOTSEND_RETRY="$(( BOTSENT[RETRY]++ ))"
-		printf "Retry %s in %s seconds ...\n" "${2}" "${BOTSEND_RETRY}"
-		sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
-		unset BOTSEND_RETRY
+		BASHBOT_RETRY="$(( BOTSENT[RETRY]++ ))"
+		printf "Retry %s in %s seconds ...\n" "${2}" "${BASHBOT_RETRY}"
+		sendJsonRetry "${2}" "${BASHBOT_RETRY}" "${@:3}"
+		unset BASHBOT_RETRY
 		return
 	    fi
 	    # timeout, failed connection or blocked
 	    if [ "${BOTSENT[ERROR]}" == "999" ];then
 		# check if default curl and args are OK
 		if ! curl -sL -k -m 2 "${URL}" >/dev/null 2>&1 ; then
-		    printf "BASHBOT IP Adress is blocked!\n"
+		    printf "%s: BASHBOT IP Adress is blocked!\n" "$(date)"
 		    # user provided function to recover or notify block
 		    if _exec_if_function bashbotBlockRecover; then
-			BOTSEND_RETRY="2"
-			printf "Function bashbotBlockRecover returned true, retry %s.\n" "${2}"
-			sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
-			unset BOTSEND_RETRY
+			BASHBOT_RETRY="2"
+			printf "bashbotBlockRecover returned true, retry %s ...\n" "${2}"
+			sendJsonRetry "${2}" "${BASHBOT_RETRY}" "${@:3}"
+			unset BASHBOT_RETRY
 		    fi
 		    return
 		fi
 	        # are not blocked, default curl and args are working
 		if [ -n "${BASHBOT_CURL_ARGS}" ] || [ "${BASHBOT_CURL}" != "curl" ]; then
-		    printf "Possible Problem with \"%s %s\", retry %s with default curl config  ...\n"\
+		    printf "Problem with \"%s %s\"? retry %s with default config ...\n"\
 				"${BASHBOT_CURL}" "${BASHBOT_CURL_ARGS}" "${2}"
-		    BOTSEND_RETRY="2"; BASHBOT_CURL="curl"; BASHBOT_CURL_ARGS=""
-		    sendJsonRetry "${2}" "${BOTSEND_RETRY}" "${@:2}"
-		    unset BOTSEND_RETRY
+		    BASHBOT_RETRY="2"; BASHBOT_CURL="curl"; BASHBOT_CURL_ARGS=""
+		    sendJsonRetry "${2}" "${BASHBOT_RETRY}" "${@:3}"
+		    unset BASHBOT_RETRY
 		fi
 	    fi
 	fi
 } >>"${ERRORLOG}"
-
 
 # escape / remove text charaters for json strings, eg. " -> \" 
 # $1 string
@@ -464,7 +462,7 @@ title2Json(){
 
 # get bot name
 getBotName() {
-	getJson "$ME_URL"  | "${JSONSHFILE}" -s -b -n | JsonGetString '"result","username"'
+	getJson "$ME_URL"  | "${JSONSHFILE}" -s -b -n 2>/dev/null | JsonGetString '"result","username"'
 }
 
 # pure bash implementaion, done by KayM (@gnadelwartz)
@@ -503,21 +501,28 @@ process_updates() {
 }
 process_client() {
 	local num="$1" debug="$2" 
-	CMD=( ); iQUERY=( )
-	[[ "${debug}" = *"debug"* ]] && printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
+	CMD=( ); iQUERY=( ); MESSAGE=()
 	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
 	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	USER[ID]="${UPD["result",${num},"message","from","id"]}"
+	# log message on debug
+	[[ -n "${debug}" ]] && printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
 
 	# check for uers / groups to ignore
-	if [ -n "${USER[ID]}" ]; then
-		[[ " ${!BASHBOT_BLOCKED[*]} " ==  *" ${USER[ID]} "* ]] && return
-		jssh_readDB_async "BASHBOT_BLOCKED" "${BLOCKEDFILE}"
-	fi
+	[ -n "${USER[ID]}" ] && [[ " ${!BASHBOT_BLOCKED[*]} " ==  *" ${USER[ID]} "* ]] && return
+	jssh_readDB_async "BASHBOT_BLOCKED" "${BLOCKEDFILE}"
+
+	# process per message type
 	if [ -z "${iQUERY[ID]}" ]; then
+		MESSAGE[0]="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's#\\/#/#g')"
 		process_message "${num}" "${debug}"
+	        [[ -n "${debug}" ]] &&  printf "%s: update received FROM=%s CHAT=%s CMD=%s\n"\
+			"$(date)" "${USER[USERNAME]:0:20} (${USER[ID]})"\
+			"${CHAT[USERNAME]:0:20}${CHAT[TITLE]:0:30} (${CHAT[ID]})" "${MESSAGE%%[ \?]*}"
 	else
 		process_inline "${num}" "${debug}"
+	        [[ -n "${debug}" ]] && printf "%s: iQuery received FROM=%s iQUERY=%s\n"\
+			"$(date)" "${iQUERY[USERNAME]} (${iQUERY[USER_ID]})" "${iQUERY[0]}"
 	fi
 	#####
 	# process inline and message events
@@ -668,10 +673,9 @@ process_inline() {
 process_message() {
 	local num="$1"
 	# Message
-	MESSAGE[0]="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's#\\/#/#g')"
 	MESSAGE[ID]="${UPD["result",${num},"message","message_id"]}"
 
-	# Chat ID is now parsed when update isrecieved
+	# Chat ID is now parsed when update isreceived
 	#CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	CHAT[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","chat","last_name"]}")"
 	CHAT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","chat","first_name"]}")"
@@ -681,7 +685,7 @@ process_message() {
 	CHAT[ALL_ADMIN]="${UPD["result",${num},"message","chat","all_members_are_administrators"]}"
 	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]="${CHAT[ALL_ADMIN]}" # backward compatibility
 
-	# user ID is now parsed when update isrecieved
+	# user ID is now parsed when update isreceived
 	#USER[ID]="${UPD["result",${num},"message","from","id"]}"
 	USER[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","from","first_name"]}")"
 	USER[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","from","last_name"]}")"
@@ -762,7 +766,7 @@ process_message() {
 	SERVICE[NEWTILE]="${UPD["result",${num},"message","new_chat_title"]}"
 	SERVICE[NEWPHOTO]="${UPD["result",${num},"message","new_chat_photo"]}"
 	SERVICE[PINNED]="${UPD["result",${num},"message","pinned_message"]}"
-	# set SSERVICE to yes if a service message was recieved
+	# set SSERVICE to yes if a service message was received
 	[[ "${SERVICE[*]}" =~  ^[[:blank:]]+$ ]] || SERVICE[0]="yes"
 
 
@@ -810,19 +814,23 @@ start_bot() {
 	fi
 	# cleanup countfile on startup
 	jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
+        [ -f "${COUNTFILE}.jssh.flock" ] && rm -f "${COUNTFILE}.jssh.flock"
 
 	##########
 	# bot is ready, start processing updates ...
 	while true; do
 		# adaptive sleep in ms rounded to next 0.1 s
 		sleep "$(_round_float "${nextsleep}e-3" "1")"
-		((nextsleep+= stepsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
 		# get next update
-		UPDATE="$(getJson "$UPD_URL$OFFSET" 2>/dev/null | "${JSONSHFILE}" -s -b -n | iconv -f utf-8 -t utf-8 -c)"
+		UPDATE="$(getJson "$UPD_URL$OFFSET" 2>/dev/null | "${JSONSHFILE}" -s -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
 		# did we ge an responsn0r
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
+			[ "${OFFSET}" = "-999" ] && [ "${nextsleep}" -gt "${maxsleep}" ] &&\
+				printf "%s: Recovered from timeout/broken/no connection, continue with telegram updates\n"\
+					"$(date)"  >>"${ERRORLOG}"
 			# escape bash $ expansion bug
+			((nextsleep+= stepsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
 			UPDATE="${UPDATE//$/\\$}"
 			# Offset
 			OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
@@ -833,10 +841,12 @@ start_bot() {
 				process_updates "${DEBUG}"
 			fi
 		else
-			# ups, something bad happend, wait maxsleep
-			(( nextsleep=maxsleep*2 ))
-			printf "%s: Timeout or broken/no connection on telegram update, sleep %ds\n"\
+			# ups, something bad happend, wait maxsleep*10
+			(( nextsleep=nextsleep*2 , nextsleep= nextsleep>maxsleep*10 ?maxsleep*10:nextsleep ))
+			[ "${OFFSET}" = "-999" ] &&\
+				printf "%s: Repeated timeout/broken/no connection on telegram update, sleep %ds\n"\
 					"$(date)"  "$(_round_float "${nextsleep}e-3")" >>"${ERRORLOG}"
+			OFFSET="-999"
 		fi
 	done
 }
@@ -1022,7 +1032,7 @@ if [ "${SOURCE}" != "yes" ]; then
 		;;
 	*)
 		echo -e "${RED}${REALME}: BAD REQUEST${NC}"
-		echo -e "${RED}Available arguments: ${GREY}start, stop, kill, status, status, broadcast, help, suspendback, resumeback, killback${NC}"
+		echo -e "${ORANGE}Available arguments: ${GREY}start, stop, kill, status, stats, broadcast, help, suspendback, resumeback, killback${NC}"
 		exit 4
 		;;
   esac

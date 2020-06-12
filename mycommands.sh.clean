@@ -4,7 +4,7 @@
 # files: mycommands.sh.clean
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.96-pre-13-ga71d68e
+#### $$VERSION$$ v0.96-0-g3871ca9
 #
 
 ##########
@@ -27,10 +27,10 @@ export INLINE="0"
 # do NOT set to .* as this allow sending files from all locations!
 export FILE_REGEX="${BASHBOT_ETC}/.*"
 
-# unset BASHBOT_RETRY to enable retry in case of recoverable errors, e.g.  throtteling
-# see logs/ERROR.log for information why send_messages etc. fail
-export BOTSEND_RETRY="no"
-#unset BOTSEND_RETRY
+# set BASHBOT_RETRY to enable retry in case of recoverable errors, e.g.  throtteling
+# problems with send_,´message etc are looged to  logs/ERROR.log 
+unset BASHBOT_RETRY
+#export BASHBOT_RETRY="yes"
 
 # set value for adaptive sleeping while waitingnfor uodates in millisconds
 # max slepp between polling updates 10s (default 5s)
@@ -53,7 +53,7 @@ export SILENCER="no"
 # export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1" # regular SOCKS
 
 if [ "$1" = "startbot" ];then
-    # run once after startup when the first message is recieved
+    # run once after startup when the first message is received
     my_startup(){
 	:
     }
@@ -69,7 +69,7 @@ else
     mycommands() {
 
 	##############
-	# a service Message was recieved
+	# a service Message was received
 	# add your own stuff here
 	if [ -n "${SERVICE}" ]; then
 
