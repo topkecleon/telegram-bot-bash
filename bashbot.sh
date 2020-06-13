@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-4-gf32833c
+#### $$VERSION$$ v0.98-dev-5-g5baab14
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -53,27 +53,9 @@ _round_float() {
 	local digit="${2}"; [[ "${2}" =~ ^[0-9]+$ ]] || digit="0"
 	LC_ALL=C printf "%.${digit}f" "${1}"
 }
-# read JSON.sh style data and asssign to an ARRAY
-# $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
-Json2Array() {
-	# shellcheck source=./commands.sh
-	[ -z "$1" ] || source <( printf "$1"'=( %s )' "$(sed -E -n -e '/\["[-0-9a-zA-Z_,."]+"\]\+*\t/ s/\t/=/gp' -e 's/=(true|false)/="\1"/')" )
-}
-# output ARRAY as JSON.sh style data
-# $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
-Array2Json() {
-	local key
-	declare -n ARRAY="$1"
-	for key in "${!ARRAY[@]}"
-       	do
-		printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${ARRAY[${key}]//\"/\\\"}"
-       	done
-}
 getConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	declare -A confARR
-	Json2Array "confARR" <"${BOTDATABASE}.jssh"
-	printf '%s' "${confARR["$1"]}"
+	sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTDATABASE}.jssh" | tail -n 1
 }
 
 # get location and name of bashbot.sh
@@ -136,7 +118,7 @@ if [ -z "${BOTTOKEN}" ]; then
   [ ! -f "${BOTDATABASE}.jssh" ] &&
 		printf '["bot_config_key"]\t"config_key_value"\n' >"${BOTDATABASE}.jssh"
   # BOTTOKEN empty read ask user
-  if ! grep -qs '\["bottoken"\]' "${BOTDATABASE}.jssh" ; then
+  if [ -z "$(getConfigKey "bottoken")" ]; then
      # convert old token
      if [ -r "${TOKENFILE}" ]; then
 		printf '["bottoken"]\t"%s"\n' "$(< "${TOKENFILE}")" >>"${BOTDATABASE}.jssh"

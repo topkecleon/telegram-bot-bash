@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-0-ga8fe178
+#### $$VERSION$$ v0.98-dev-5-g5baab14
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -323,4 +323,22 @@ jssh_clearDB_async() {
 	printf '' >"${DB}"
 } 
 
+# read JSON.sh style data and asssign to an ARRAY
+# $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
+Json2Array() {
+	# shellcheck source=./commands.sh
+	[ -z "$1" ] || source <( printf "$1"'=( %s )' "$(sed -E -n -e '/\["[-0-9a-zA-Z_,."]+"\]\+*\t/ s/\t/=/gp' -e 's/=(true|false)/="\1"/')" )
+}
+# get Config Key from jssh file without jsshDB
+# output ARRAY as JSON.sh style data
+# $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
+Array2Json() {
+	[ -z "$1" ] && return 1
+	local key
+	declare -n ARRAY="$1"
+	for key in "${!ARRAY[@]}"
+       	do
+		printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${ARRAY[${key}]//\"/\\\"}"
+       	done
+}
 
