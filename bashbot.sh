@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-2-geb4fa68
+#### $$VERSION$$ v0.98-dev-3-ga901cc7
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -939,7 +939,7 @@ if [ "${SOURCE}" != "yes" ]; then
 		ME="$(getBotName)"
 		if [ -n "${ME}" ]; then
 			# ok we have a connection an got botname, save it
-			echo -e "${GREY}Bottoken is valid ...${NC}"
+			[ -n "${CLEAR}" ] && echo -e "${GREY}Bottoken is valid ...${NC}"
 			jssh_updateKeyDB "botname" "${ME}" "${BOTDATABASE}"
 			rm -f "${BOTDATABASE}.jssh.flock"
 		else
@@ -950,7 +950,7 @@ if [ "${SOURCE}" != "yes" ]; then
 			    exit 1
 			fi
 		fi
-		printf "Bot Name: %s\n" "${ME}"
+		[ -n "${CLEAR}" ] && printf "Bot Name: %s\n" "${ME}"
 		SESSION="${ME:-_bot}-startbot"
 		BOTPID="$(proclist "${SESSION}")"
 		[ "$1" = "botname" ] && exit
