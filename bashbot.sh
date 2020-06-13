@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-3-ga901cc7
+#### $$VERSION$$ v0.98-dev-4-gf32833c
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -698,10 +698,11 @@ process_message() {
 	CHAT[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","chat","last_name"]}")"
 	CHAT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","chat","first_name"]}")"
 	CHAT[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","chat","username"]}")"
+	# set real name as username if empty
+	: "${CHAT[USERNAME]:=${CHAT[FIRST_NAME]} ${CHAT[LAST_NAME]}}"
 	CHAT[TITLE]="$(JsonDecode "${UPD["result",${num},"message","chat","title"]}")"
 	CHAT[TYPE]="$(JsonDecode "${UPD["result",${num},"message","chat","type"]}")"
 	CHAT[ALL_ADMIN]="${UPD["result",${num},"message","chat","all_members_are_administrators"]}"
-	CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]="${CHAT[ALL_ADMIN]}" # backward compatibility
 
 	# user ID is now parsed when update isreceived
 	#USER[ID]="${UPD["result",${num},"message","from","id"]}"
@@ -775,10 +776,11 @@ process_message() {
 	SERVICE[NEWMEMBER]="${UPD["result",${num},"message","new_chat_member","id"]}"
 	if [ -n "${SERVICE[NEWMEMBER]}" ]; then
 		NEWMEMBER[ID]="${SERVICE[NEWMEMBER]}"
-		NEWMEMBER[FIRSTNAME]="${UPD["result",${num},"message","new_chat_member","first_name"]}"
-		NEWMEMBER[LASTNAME]="${UPD["result",${num},"message","new_chat_member","last_name"]}"
+		NEWMEMBER[FIRST_NAME]="${UPD["result",${num},"message","new_chat_member","first_name"]}"
+		NEWMEMBER[LAST_NAME]="${UPD["result",${num},"message","new_chat_member","last_name"]}"
 		NEWMEMBER[USERNAME]="${UPD["result",${num},"message","new_chat_member","username"]}"
 		NEWMEMBER[ISBOT]="${UPD["result",${num},"message","new_chat_member","is_bot"]}"
+		MESSAGE[0]="/new_chat_member ${NEWMEMBER[USERNAME]:=${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]}}"
 	fi
 	SERVICE[LEFTMEMBER]="${UPD["result",${num},"message","left_chat_member","id"]}"
 	SERVICE[NEWTILE]="${UPD["result",${num},"message","new_chat_title"]}"
