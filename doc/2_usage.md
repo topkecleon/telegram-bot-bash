@@ -155,11 +155,16 @@ Evertime a Message is received, you can read incoming data using the following v
     * ```${SERVICE}```: set to "yes" when a service message is recived.
     * ```${SERVICE[NEWMEMBER]```: New user's id
         * ```${NEWMEMBER[ID]```: New user's id
-        * ```${NEWMEMBER[FIRSTNAME]```: New user's first name
-        * ```${NEWMEMBER[LASTNAME]```: New user's last name
+        * ```${NEWMEMBER[FIRST_NAME]```: New user's first name
+        * ```${NEWMEMBER[LAST_NAME]```: New user's last name
         * ```${NEWMEMBER[USERNAME]```: New user's username
         * ```${NEWMEMBER[ISBOT]```: New user is a bot
     * ```${SERVICE[LEFTMEMBER]```: Id of user left 
+        * ```${LEFTMEBER[ID]```: New user's id
+        * ```${LEFTMEBER[FIRST_NAME]```: New user's first name
+        * ```${LEFTMEBER[LAST_NAME]```: New user's last name
+        * ```${LEFTMEBER[USERNAME]```: New user's username
+        * ```${LEFTMEBER[ISBOT]```: New user is a bot
     * ```${SERVICE[NEWTILE]```: Text of new title 
     * ```${SERVICE[NEWPHOTO]```: New Chat Picture array
     * ```${SERVICE[PINNED]```: Pinned Message structure
@@ -256,5 +261,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-7-gca05095
 

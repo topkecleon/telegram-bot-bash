@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-6-ge0470aa
+#### $$VERSION$$ v0.98-dev-7-gca05095
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -765,6 +765,14 @@ process_message() {
 		MESSAGE[0]="/new_chat_member ${NEWMEMBER[USERNAME]:=${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]}}"
 	fi
 	SERVICE[LEFTMEMBER]="${UPD["result",${num},"message","left_chat_member","id"]}"
+	if [ -n "${SERVICE[LEFTMEMBER]}" ]; then
+		LEFTMEBER[ID]="${SERVICE[LEFTMEBER]}"
+		LEFTMEBER[FIRST_NAME]="${UPD["result",${num},"message","left_chat_member","first_name"]}"
+		LEFTMEBER[LAST_NAME]="${UPD["result",${num},"message","left_chat_member","last_name"]}"
+		LEFTMEBER[USERNAME]="${UPD["result",${num},"message","left_chat_member","username"]}"
+		LEFTMEBER[ISBOT]="${UPD["result",${num},"message","left_chat_member","is_bot"]}"
+		MESSAGE[0]="/left_chat_member ${LEFTMEMBER[USERNAME]:=${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]}}"
+	fi
 	SERVICE[NEWTILE]="${UPD["result",${num},"message","new_chat_title"]}"
 	SERVICE[NEWPHOTO]="${UPD["result",${num},"message","new_chat_photo"]}"
 	SERVICE[PINNED]="${UPD["result",${num},"message","pinned_message"]}"
