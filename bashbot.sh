@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-7-gca05095
+#### $$VERSION$$ v0.98-dev-8-gcdc6dd3
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -52,6 +52,10 @@ _is_function() {
 _round_float() {
 	local digit="${2}"; [[ "${2}" =~ ^[0-9]+$ ]] || digit="0"
 	LC_ALL=C printf "%.${digit}f" "${1}"
+}
+setConfigKey() {
+	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${2//\"/\\\"}" >>"${BOTDATABASE}.jssh"
 }
 getConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
@@ -121,7 +125,7 @@ if [ -z "${BOTTOKEN}" ]; then
   if [ -z "$(getConfigKey "bottoken")" ]; then
      # convert old token
      if [ -r "${TOKENFILE}" ]; then
-		printf '["bottoken"]\t"%s"\n' "$(< "${TOKENFILE}")" >>"${BOTDATABASE}.jssh"
+		token="$(< "${TOKENFILE}")"
      # no old token avalible ask user
      elif [ -z "${CLEAR}" ] && [ "$1" != "init" ]; then
 	echo "Running headless, set BOTTOKEN or run ${SCRIPT} init first!"
@@ -130,25 +134,27 @@ if [ -z "${BOTTOKEN}" ]; then
 	${CLEAR}
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NC}"
-	read -r BOTTOKEN
-	printf '["bottoken"]\t"%s"\n'  "${BOTTOKEN}" >> "${BOTDATABASE}.jssh"
+	read -r token
      fi
+     [ -n "${token}" ] && printf '["bottoken"]\t"%s"\n'  "${token}" >> "${BOTDATABASE}.jssh"
   fi
 
   # setup botadmin file
-  if [ ! -f "${BOTADMIN}" ]; then
-     if [ -z "${CLEAR}" ]; then
+  if [ -z "$(getConfigKey "botadmin")" ]; then
+     # convert old token
+     if [ -r "${BOTADMIN}" ]; then
+		admin="$(< "${BOTADMIN}")"
+     elif [ -z "${CLEAR}" ]; then
 	echo "Running headless, set botadmin to AUTO MODE!"
-	printf '%s\n' '?' > "${BOTADMIN}"
      else
 	${CLEAR}
 	echo -e "${RED}BOTADMIN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR ENTER '?'${NC}"
 	echo -e "${ORANGE}TO MAKE FIRST USER TYPING '/start' TO BOTADMIN${NC}"
 	read -r admin
-	[ -z "${admin}" ] && admin='?'
-	printf '%s\n' "${admin}" > "${BOTADMIN}"
      fi
+     [ -z "${admin}" ] && admin='?'
+     printf '["botadmin"]\t"%s"\n'  "${admin}" >> "${BOTDATABASE}.jssh"
   fi
   # setup botacl file
   if [ ! -f "${BOTACL}" ]; then
@@ -825,6 +831,8 @@ start_bot() {
 	# cleanup countfile on startup
 	jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
         [ -f "${COUNTFILE}.jssh.flock" ] && rm -f "${COUNTFILE}.jssh.flock"
+	jssh_deleteKeyDB "CLEAN_BOT_DATABASE_ON_STARTUP" "${BOTDATABASE}"
+        [ -f "${BOTDATABASE}.jssh.flock" ] && rm -f "${BOTDATABASE}.jssh.flock"
 
 	##########
 	# bot is ready, start processing updates ...
@@ -998,7 +1006,7 @@ if [ "${SOURCE}" != "yes" ]; then
 			[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
 			(( USERS++ ))
 			if [ -n "$*" ]; then
-				send_markdown_message "${MSG}" "$*"
+				send_message "${MSG}" "$*"
 				echo -e ".\c"
 				sleep 0.1
 			fi
