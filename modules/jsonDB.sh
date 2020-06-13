@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-5-g5baab14
+#### $$VERSION$$ v0.98-dev-6-ge0470aa
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -124,12 +124,10 @@ if _exists flock; then
   jssh_getKeyDB() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	local DB; DB="$(jssh_checkDB "$2")"
-	declare -A oldARR
 	# start atomic delete here, exclusive max wait 1s 
 	{ flock -s -w 1 200
-	Json2Array "oldARR" <"${DB}"
+	[ -r "${DB}" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${DB}" | tail -n 1
 	} 200>"${DB}${BASHBOT_LOCKNAME}"
-	printf '%s' "${oldARR["$1"]}"
   }
 
 
@@ -288,9 +286,7 @@ jssh_deleteKeyDB_async() {
 jssh_getKeyDB_async() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	local DB; DB="$(jssh_checkDB "$2")"
-	declare -A oldARR
-	Json2Array "oldARR" <"${DB}"
-	printf '%s' "${oldARR["$1"]}"
+	[ -r "${DB}" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${DB}" | tail -n 1
 }
 
 jssh_countKeyDB_async() {
@@ -326,7 +322,7 @@ jssh_clearDB_async() {
 # read JSON.sh style data and asssign to an ARRAY
 # $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
 Json2Array() {
-	# shellcheck source=./commands.sh
+	# shellcheck disable=SC1091,SC1090
 	[ -z "$1" ] || source <( printf "$1"'=( %s )' "$(sed -E -n -e '/\["[-0-9a-zA-Z_,."]+"\]\+*\t/ s/\t/=/gp' -e 's/=(true|false)/="\1"/')" )
 }
 # get Config Key from jssh file without jsshDB

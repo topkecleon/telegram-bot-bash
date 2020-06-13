@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-5-g5baab14
+#### $$VERSION$$ v0.98-dev-6-ge0470aa
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -55,7 +55,7 @@ _round_float() {
 }
 getConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTDATABASE}.jssh" | tail -n 1
+	[ -r "${BOTDATABASE}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTDATABASE}.jssh" | tail -n 1
 }
 
 # get location and name of bashbot.sh
