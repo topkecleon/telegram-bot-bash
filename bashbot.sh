@@ -758,8 +758,8 @@ process_message() {
 	if [ -n "${SERVICE[NEWMEMBER]}" ]; then
 		NEWMEMBER[ID]="${SERVICE[NEWMEMBER]}"
 		NEWMEMBER[FIRSTNAME]="${UPD["result",${num},"message","new_chat_member","first_name"]}"
-		NEWMEMBER[LASTNAME]="${UPD["result",${num},"message","new_chat_member","last_name"]}"
-		NEWMEMBER[USERNAME]="${UPD["result",${num},"message","new_chat_member","username"]}"
+		NEWMEMBER[LAST_NAME]="${UPD["result",${num},"message","new_chat_member","last_name"]}"
+		NEWMEMBER[USER_NAME]="${UPD["result",${num},"message","new_chat_member","username"]}"
 		NEWMEMBER[ISBOT]="${UPD["result",${num},"message","new_chat_member","is_bot"]}"
 	fi
 	SERVICE[LEFTMEMBER]="${UPD["result",${num},"message","left_chat_member","id"]}"

@@ -155,8 +155,8 @@ Evertime a Message is received, you can read incoming data using the following v
     * ```${SERVICE}```: set to "yes" when a service message is recived.
     * ```${SERVICE[NEWMEMBER]```: New user's id
         * ```${NEWMEMBER[ID]```: New user's id
-        * ```${NEWMEMBER[FIRSTNAME]```: New user's first name
-        * ```${NEWMEMBER[LASTNAME]```: New user's last name
+        * ```${NEWMEMBER[FIRST_NAME]```: New user's first name
+        * ```${NEWMEMBER[LAST_NAME]```: New user's last name
         * ```${NEWMEMBER[USERNAME]```: New user's username
         * ```${NEWMEMBER[ISBOT]```: New user is a bot
     * ```${SERVICE[LEFTMEMBER]```: Id of user left 
