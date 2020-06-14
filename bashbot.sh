@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-9-ge0b9f6f
+#### $$VERSION$$ v0.98-dev-11-g6563891
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -804,9 +804,9 @@ start_bot() {
 	# startup message
 	DEBUG="$(date):Start BASHBOT updates in Mode \"${1:-normal}\" =========="
 	printf  "%s\n" "${DEBUG}" >>"${UPDATELOG}"
-	printf  "%s\n" "${DEBUG}"; DEBUG="${1}"
 	# redirect to Debug.log
-	[[ "${DEBUG}" == *"debug" ]] && exec &>>"${DEBUGLOG}"
+	[[ "${1}" == *"debug" ]] && exec &>>"${DEBUGLOG}"
+	printf  "%s\n" "${DEBUG}"; DEBUG="${1}"
 	[[ "${DEBUG}" == "xdebug"* ]] && set -x
 	#cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete

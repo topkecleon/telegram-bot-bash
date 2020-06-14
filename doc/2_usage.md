@@ -32,7 +32,7 @@ Have FUN!
 ├── scripts              # place your bashbot interactive and background scripts here
 │   └── interactive.sh.clean     # interactive script template for new scripts
 │
-├── logs                 # here you'll find ERROR, UPDSTE, DEBUG and MESSAGE.log
+├── logs                 # here you'll find ERROR, UPDATE, DEBUG and MESSAGE.log
 │
 ├── modules              # optional functions, sourced by commands.sh
 │   ├── aliases.sh           # to disable modules rename them xxx.sh.off
@@ -261,5 +261,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.98-dev-10-g74caa49
+#### $$VERSION$$ v0.98-dev-11-g6563891
 
