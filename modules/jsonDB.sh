@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-17-gdda5b6d
+#### $$VERSION$$ v0.98-dev-18-g852ab9d
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -234,12 +234,15 @@ jssh_checkDB(){
 # $1 name of array to update
 # $2 database
 # $3 id used to identify caller
-jssh_updateArray_asyn() { jssh_updateArray "$@"; }
-function jssh_updateArray() {
+jssh_updateArray() { 
+	local DB; DB="$(jssh_checkDB "$2")"
+	{ flock -s -w 1 200; jssh_updateArray_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
+}
+function jssh_updateArray_async() {
 	local DB; DB="$(jssh_checkDB "$2")"
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
-	[ "${DB}" -nt "${}.last${3}" ] && touch "${DB}.last${3}" && jssh_readDB "${1}" "${2}"
+	[ "${DB}" -nt "${DB}.last${3}" ] && touch "${DB}.last${3}" && jssh_readDB_async "${1}" "${2}"
 }
 
 
