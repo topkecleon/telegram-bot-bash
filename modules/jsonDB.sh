@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-13-g2281943
+#### $$VERSION$$ v0.98-dev-15-gbc44331
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -212,7 +212,7 @@ jssh_newDB() {
 
 # $1 filename, check filename, it must be relative to BASHBOT_VAR, and not contain '..'
 # returns real path to DB file if everything is ok
-jssh_checkDB_sync() { jssh_checkDB "$@"; }
+jssh_checkDB_async() { jssh_checkDB "$@"; }
 jssh_checkDB(){
 	local DB
 	[ -z "$1" ] && return 1
@@ -223,6 +223,18 @@ jssh_checkDB(){
 		DB="${BASHBOT_VAR:-.}/$1.jssh"
 	fi
 	printf '%s' "${DB}"
+}
+
+# updates Array if DB file has changed since last call
+# $1 name of array to update
+# $2 database
+# $3 id used to identify caller
+jssh_updateArray_asyn() { jssh_updateArray "$@"; }
+function jssh_updateArray() {
+	local DB; DB="$(jssh_checkDB "$2")"
+	[ -z "${DB}" ] && return 1
+	[ ! -f "${DB}" ] && return 2
+	[ "${DB}" -nt "${}.last${3}" ] && touch "${DB}.last${3}" && jssh_readDB "${1}" "${2}"
 }
 
 
