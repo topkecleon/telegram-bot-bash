@@ -102,6 +102,22 @@ It features background tasks and interactive chats, and can serve as an interfac
 ```
 For more Information on how to install, customize and use your new bot, read the [Documentation](#Documentation)
 
+### Log files
+
+Since version 0.96 bashbot log commands recieved (updates) and connection errors. If you start bashbot in debug mode
+bash stdout, stderr and all recieved telegram message updates are logged also.
+
+To enable debug mode start bashbot with debug as third argument: `bashbot start debug`
+
+```
+├── logs 
+│   ├── ERROR.log        # connection errors from / to telegram API
+│   ├── UPDATE.log       # summary whats received from your bot
+│   │
+│   ├── DEBUG.log        # stdout/stderr of you bot (debug mode enabled)
+│   └── MESSAGE.log      # full text of all message updates received (debug mode enabled)
+```
+
 ----
 
 ## Security Considerations
@@ -219,4 +235,4 @@ This may happen if to many wrong requests are sent to api.telegram.org, e.g. usi
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-10-g74caa49

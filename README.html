@@ -175,6 +175,16 @@ his is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.
 </code></pre>
 <p>For more Information on how to install, customize and use your new bot, read the <a href="#Documentation">Documentation</a></p>
+<h3>Log files</h3>
+<p>Since version 0.96 bashbot log commands recieved (updates) and connection errors. If you start bashbot in debug mode bash stdout, stderr and all recieved telegram message updates are logged also.</p>
+<p>To enable debug mode start bashbot with debug as third argument: <code>bashbot start debug</code></p>
+<pre><code>├── logs 
+│   ├── ERROR.log        # connection errors from / to telegram API
+│   ├── UPDATE.log       # summary whats received from your bot
+│   │
+│   ├── DEBUG.log        # stdout/stderr of you bot (debug mode enabled)
+│   └── MESSAGE.log      # full text of all message updates received (debug mode enabled)
+</code></pre>
 <hr />
 <h2>Security Considerations</h2>
 <p>Running a Telegram Bot means it is connected to the public and you never know whats send to your Bot.</p>
@@ -184,18 +194,18 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>A powerful tool to improve your scripts is <code>shellcheck</code>. You can <a href="https://www.shellcheck.net/">use it online</a> or <a href="https://github.com/koalaman/shellcheck#installing">install shellcheck locally</a>. Shellcheck is used extensive in bashbot development to enshure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests. In addition bashbot has a <a href="doc/7_develop.md">test suite</a> to check if important functionality is working as expected.</p>
 <h3>use printf whenever possible</h3>
 <p>If you're writing a script and it is taking external input (from the user as arguments, or file names from the file system...), you shouldn't use echo to display it. <a href="https://unix.stackexchange.com/a/6581">Use printf whenever possible</a></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1">  <span class="co"># very simple</span></a>
-<a class="sourceLine" id="cb3-2" title="2">  <span class="bu">echo</span> <span class="st">&quot;text with variables. PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></a>
-<a class="sourceLine" id="cb3-3" title="3">  <span class="bu">printf</span> <span class="st">&#39;%s\n&#39;</span> <span class="st">&quot;text with variables. PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></a>
-<a class="sourceLine" id="cb3-4" title="4">  <span class="ex">-</span><span class="op">&gt;</span> text with variables. PWD=/home/xxx</a>
-<a class="sourceLine" id="cb3-5" title="5"></a>
-<a class="sourceLine" id="cb3-6" title="6">  <span class="co"># more advanced</span></a>
-<a class="sourceLine" id="cb3-7" title="7">  <span class="va">FLOAT=</span><span class="st">&quot;1.2346777892864&quot;</span> <span class="va">INTEGER=</span><span class="st">&quot;12345.123&quot;</span></a>
-<a class="sourceLine" id="cb3-8" title="8">  <span class="bu">echo</span> <span class="st">&quot;text with variabeles. float=</span><span class="va">$FLOAT</span><span class="st">, integer=</span><span class="va">$INTEGER</span><span class="st">, PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></a>
-<a class="sourceLine" id="cb3-9" title="9">  <span class="ex">-</span><span class="op">&gt;</span>text with variables. float=1.2346777892864, integer=12345.123, PWD=/home/xxx</a>
-<a class="sourceLine" id="cb3-10" title="10"></a>
-<a class="sourceLine" id="cb3-11" title="11">  <span class="bu">printf</span> <span class="st">&quot;text with variables. float=%.2f, integer=%d, PWD=%s\n&quot;</span> <span class="st">&quot;&quot;</span> <span class="st">&quot;</span><span class="va">$INTEGER</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$PWD</span><span class="st">&quot;</span></a>
-<a class="sourceLine" id="cb3-12" title="12">  <span class="ex">-</span><span class="op">&gt;</span>text with variables. float=1.23, integer=12345, PWD=/home/xxx</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1">  <span class="co"># very simple</span></a>
+<a class="sourceLine" id="cb4-2" title="2">  <span class="bu">echo</span> <span class="st">&quot;text with variables. PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></a>
+<a class="sourceLine" id="cb4-3" title="3">  <span class="bu">printf</span> <span class="st">&#39;%s\n&#39;</span> <span class="st">&quot;text with variables. PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></a>
+<a class="sourceLine" id="cb4-4" title="4">  <span class="ex">-</span><span class="op">&gt;</span> text with variables. PWD=/home/xxx</a>
+<a class="sourceLine" id="cb4-5" title="5"></a>
+<a class="sourceLine" id="cb4-6" title="6">  <span class="co"># more advanced</span></a>
+<a class="sourceLine" id="cb4-7" title="7">  <span class="va">FLOAT=</span><span class="st">&quot;1.2346777892864&quot;</span> <span class="va">INTEGER=</span><span class="st">&quot;12345.123&quot;</span></a>
+<a class="sourceLine" id="cb4-8" title="8">  <span class="bu">echo</span> <span class="st">&quot;text with variabeles. float=</span><span class="va">$FLOAT</span><span class="st">, integer=</span><span class="va">$INTEGER</span><span class="st">, PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></a>
+<a class="sourceLine" id="cb4-9" title="9">  <span class="ex">-</span><span class="op">&gt;</span>text with variables. float=1.2346777892864, integer=12345.123, PWD=/home/xxx</a>
+<a class="sourceLine" id="cb4-10" title="10"></a>
+<a class="sourceLine" id="cb4-11" title="11">  <span class="bu">printf</span> <span class="st">&quot;text with variables. float=%.2f, integer=%d, PWD=%s\n&quot;</span> <span class="st">&quot;&quot;</span> <span class="st">&quot;</span><span class="va">$INTEGER</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$PWD</span><span class="st">&quot;</span></a>
+<a class="sourceLine" id="cb4-12" title="12">  <span class="ex">-</span><span class="op">&gt;</span>text with variables. float=1.23, integer=12345, PWD=/home/xxx</a></code></pre></div>
 <h3>Do not use #!/usr/bin/env bash</h3>
 <p><strong>We stay with /bin/bash shebang, because it's more save from security perspective.</strong></p>
 <p>Using a fixed path to the system provided bash makes it harder for attackers or users to place alternative versions of bash and avoids using a possibly broken, mangled or compromised bash executable.</p>
@@ -225,27 +235,27 @@ It features background tasks and interactive chats, and can serve as an interfac
 <h3>Can I send messages from CLI and scripts?</h3>
 <p>Of course, you can send messages from CLI and scripts, simply install bashbot as <a href="#Your-really-first-bashbot-in-a-nutshell">described here</a>, send the messsage '/start' to set yourself as botadmin and stop the bot with <code>./bashbot.sh kill</code>.</p>
 <p>Run the following commands in your bash shell or script while you are in the installation directory:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1"><span class="co"># prepare bash / script to send commands</span></a>
-<a class="sourceLine" id="cb4-2" title="2"><span class="bu">export</span> <span class="va">BASHBOT_HOME=</span><span class="st">&quot;</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st">&quot;</span></a>
-<a class="sourceLine" id="cb4-3" title="3"><span class="bu">source</span> ./bashbot.sh source</a>
-<a class="sourceLine" id="cb4-4" title="4"></a>
-<a class="sourceLine" id="cb4-5" title="5"><span class="co"># send me a test message</span></a>
-<a class="sourceLine" id="cb4-6" title="6"><span class="ex">send_message</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">cat</span> <span class="st">&quot;</span><span class="va">$BOTADMIN</span><span class="st">&quot;</span><span class="va">)</span><span class="st">&quot;</span> <span class="st">&quot;test&quot;</span></a>
-<a class="sourceLine" id="cb4-7" title="7"></a>
-<a class="sourceLine" id="cb4-8" title="8"><span class="co"># send me output of a system command</span></a>
-<a class="sourceLine" id="cb4-9" title="9"><span class="ex">send_message</span> <span class="st">&quot;</span><span class="op">$(&lt;</span><span class="st">&quot;</span><span class="va">$BOTADMIN</span><span class="st">&quot;</span><span class="op">)</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">df</span> -h<span class="va">)</span><span class="st">&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" title="1"><span class="co"># prepare bash / script to send commands</span></a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="bu">export</span> <span class="va">BASHBOT_HOME=</span><span class="st">&quot;</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st">&quot;</span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="bu">source</span> ./bashbot.sh source</a>
+<a class="sourceLine" id="cb5-4" title="4"></a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="co"># send me a test message</span></a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="ex">send_message</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">cat</span> <span class="st">&quot;</span><span class="va">$BOTADMIN</span><span class="st">&quot;</span><span class="va">)</span><span class="st">&quot;</span> <span class="st">&quot;test&quot;</span></a>
+<a class="sourceLine" id="cb5-7" title="7"></a>
+<a class="sourceLine" id="cb5-8" title="8"><span class="co"># send me output of a system command</span></a>
+<a class="sourceLine" id="cb5-9" title="9"><span class="ex">send_message</span> <span class="st">&quot;</span><span class="op">$(&lt;</span><span class="st">&quot;</span><span class="va">$BOTADMIN</span><span class="st">&quot;</span><span class="op">)</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">df</span> -h<span class="va">)</span><span class="st">&quot;</span></a></code></pre></div>
 <p>For more information see <a href="doc/8_custom.md">Expert Use</a></p>
 <h3>Why do I get "EXPECTED value GOT EOF" on start?</h3>
 <p>May be your IP is blocked by telegram. You can test this by running curl or wget manually:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" title="1"><span class="ex">curl</span> -m 10  https://api.telegram.org/bot</a>
-<a class="sourceLine" id="cb5-2" title="2"><span class="co">#curl: (28) Connection timed out after 10001 milliseconds</span></a>
-<a class="sourceLine" id="cb5-3" title="3"></a>
-<a class="sourceLine" id="cb5-4" title="4"><span class="fu">wget</span> -t 1 -T 10 https://api.telegram.org/bot</a>
-<a class="sourceLine" id="cb5-5" title="5"><span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" title="1"><span class="ex">curl</span> -m 10  https://api.telegram.org/bot</a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="co">#curl: (28) Connection timed out after 10001 milliseconds</span></a>
+<a class="sourceLine" id="cb6-3" title="3"></a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="fu">wget</span> -t 1 -T 10 https://api.telegram.org/bot</a>
+<a class="sourceLine" id="cb6-5" title="5"><span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></a></code></pre></div>
 <p>This may happen if to many wrong requests are sent to api.telegram.org, e.g. using a wrong token or not existing API calls. If you have a fixed IP you can ask telegram service to unblock your ip or change your IP. If you are running a socks or tor proxy on your server look for the <code>BASHBOT_CURL_ARGS</code> lines in 'mycommands.sh' as example.</p>
 <p>@Gnadelwartz</p>
 <h2>That's it!</h2>
 <p>If you feel that there's something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4>$$VERSION$$ v0.96-0-g3871ca9</h4>
+<h4>$$VERSION$$ v0.98-dev-10-g74caa49</h4>
 </body>
 </html>
