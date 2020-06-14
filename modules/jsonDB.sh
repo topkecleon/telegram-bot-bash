@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-12-gde811c1
+#### $$VERSION$$ v0.98-dev-13-g2281943
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -138,18 +138,18 @@ if _exists flock; then
   # side effect: if $3 is not given, we add to end of file to be as fast as possible
   jssh_countKeyDB() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	local DB; DB="$(jssh_checkDB "$2")"
-	declare -A oldARR
+	local VAL DB; DB="$(jssh_checkDB "$2")"
 	# start atomic delete here, exclusive max wait 5 
 	{ flock -e -w 5 200
-	Json2Array "oldARR" <"${DB}"
 	if [ -n "$3" ]; then
+		declare -A oldARR
+		Json2Array "oldARR" <"${DB}"
 		(( oldARR["$1"]+="$3" ));
 		Array2Json  "oldARR" >"${DB}"
-	else
+	elif [ -r "${DB}" ]; then
 		# it's append, but last one counts, its a simple DB ...
-		(( oldARR["$1"]++ ));
-		printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${oldARR["$1"]//\"/\\\"}" >>"${DB}"
+		VAL="$(sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${DB}" | tail -n 1)"
+		printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "$((++VAL))" >>"${DB}"
 	fi
 	} 200>"${DB}${BASHBOT_LOCKNAME}"
   }
@@ -291,17 +291,17 @@ jssh_getKeyDB_async() {
 
 jssh_countKeyDB_async() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	local DB; DB="$(jssh_checkDB "$2")"
-	declare -A oldARR
+	local VAL DB; DB="$(jssh_checkDB "$2")"
 	# start atomic delete here, exclusive max wait 5 
-	Json2Array "oldARR" <"${DB}"
 	if [ -n "$3" ]; then
+		declare -A oldARR
+		Json2Array "oldARR" <"${DB}"
 		(( oldARR["$1"]+="$3" ));
 		Array2Json  "oldARR" >"${DB}"
-	else
+	elif [ -r "${DB}" ]; then
 		# it's append, but last one counts, its a simple DB ...
-		(( oldARR["$1"]++ ));
-		printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${oldARR["$1"]//\"/\\\"}" >>"${DB}"
+		VAL="$(sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${DB}" | tail -n 1)"
+		printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "$((++VAL))" >>"${DB}"
 	fi
   }
 
