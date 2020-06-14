@@ -5,12 +5,12 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-8-gcdc6dd3
+#### $$VERSION$$ v0.98-dev-17-gdda5b6d
+
+# will be automatically sourced from bashbot
 
 # source once magic, function named like file
 eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
-
-# source from commands.sh to use the member functions
 
 LEAVE_URL=$URL'/leaveChat'
 KICK_URL=$URL'/kickChatMember'

@@ -5,9 +5,9 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-17-gdda5b6d
 
-# source from commands.sh if you want ro use interactive or background jobs
+# will be automatically sourced from bashbot
 
 # source once magic, function named like file
 eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
