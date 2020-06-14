@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-15-gbc44331
+#### $$VERSION$$ v0.98-dev-16-g2af9d76
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -22,9 +22,11 @@ eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 # tinybox
 
 # lockfile filename.flock is persistent and will be testet with flock for active lock (file open)
-export BASHBOT_LOCKNAME=".flock"
+export JSSH_LOCKNAME=".flock"
 
-if _exists flock; then
+# use flock if command exist
+if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
+
   ###############
   # we have flock
   # use flock for atomic operations
@@ -37,7 +39,7 @@ if _exists flock; then
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
 	# shared lock, many processes can read, max wait 1s
-	{ flock -s -w 1 200; Json2Array "$1" <"${DB}"; } 200>"${DB}${BASHBOT_LOCKNAME}"
+	{ flock -s -w 1 200; Json2Array "$1" <"${DB}"; } 200>"${DB}${JSSH_LOCKNAME}"
   }
 
   # write ARRAY content to a file in JSON.sh format
@@ -49,7 +51,7 @@ if _exists flock; then
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
 	# exclusive lock, no other process can read or write, maximum wait to get lock is 10s
-	{ flock -e -w 10 200; Array2Json "$1" >"${DB}"; } 200>"${DB}${BASHBOT_LOCKNAME}"
+	{ flock -e -w 10 200; Array2Json "$1" >"${DB}"; } 200>"${DB}${JSSH_LOCKNAME}"
   }
 
   # update/write ARRAY content in file without deleting keys not in ARRAY
@@ -79,7 +81,7 @@ if _exists flock; then
 		done
 		Array2Json  "oldARR" >"${DB}"
 	fi
-	} 200>"${DB}${BASHBOT_LOCKNAME}"
+	} 200>"${DB}${JSSH_LOCKNAME}"
   }
 
   # insert, update, apped key/value to jsshDB
@@ -98,7 +100,7 @@ if _exists flock; then
 	{ flock -e -w 2 200
 	 # it's append, but last one counts, its a simple DB ...
 	  printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${value//\"/\\\"}" >>"${DB}"
-	} 200>"${DB}${BASHBOT_LOCKNAME}"
+	} 200>"${DB}${JSSH_LOCKNAME}"
 	
   }
 
@@ -114,7 +116,7 @@ if _exists flock; then
 	Json2Array "oldARR" <"${DB}"
 	unset oldARR["$1"]
 	Array2Json  "oldARR" >"${DB}"
-	} 200>"${DB}${BASHBOT_LOCKNAME}"
+	} 200>"${DB}${JSSH_LOCKNAME}"
   }
 
   # get key/value from jsshDB
@@ -127,7 +129,7 @@ if _exists flock; then
 	# start atomic delete here, exclusive max wait 1s 
 	{ flock -s -w 1 200
 	[ -r "${DB}" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${DB}" | tail -n 1
-	} 200>"${DB}${BASHBOT_LOCKNAME}"
+	} 200>"${DB}${JSSH_LOCKNAME}"
   }
 
 
@@ -151,7 +153,7 @@ if _exists flock; then
 		VAL="$(sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${DB}" | tail -n 1)"
 		printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "$((++VAL))" >>"${DB}"
 	fi
-	} 200>"${DB}${BASHBOT_LOCKNAME}"
+	} 200>"${DB}${JSSH_LOCKNAME}"
   }
 
   # update key/value in place to jsshDB
@@ -173,7 +175,7 @@ if _exists flock; then
 	[ -z "${DB}" ] && return 1
 	{ flock -e -w 10 200
 	printf '' >"${DB}"
-	} 200>"${DB}${BASHBOT_LOCKNAME}"
+	} 200>"${DB}${JSSH_LOCKNAME}"
   } 
 
 else
