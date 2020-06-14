@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-6-ge0470aa
+#### $$VERSION$$ v0.98-dev-12-gde811c1
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -143,7 +143,7 @@ if _exists flock; then
 	# start atomic delete here, exclusive max wait 5 
 	{ flock -e -w 5 200
 	Json2Array "oldARR" <"${DB}"
-	if [ "$3" != "" ]; then
+	if [ -n "$3" ]; then
 		(( oldARR["$1"]+="$3" ));
 		Array2Json  "oldARR" >"${DB}"
 	else
@@ -291,14 +291,19 @@ jssh_getKeyDB_async() {
 
 jssh_countKeyDB_async() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	local DB COUNT="1"; DB="$(jssh_checkDB "$2")"
-	[ "$3" != "" ] && COUNT="$3"
+	local DB; DB="$(jssh_checkDB "$2")"
 	declare -A oldARR
-	# start atomic delete here, exclusive max wait 10s 
+	# start atomic delete here, exclusive max wait 5 
 	Json2Array "oldARR" <"${DB}"
-	(( oldARR["$1"]+=COUNT ));
-	Array2Json  "oldARR" >"${DB}"
-}
+	if [ -n "$3" ]; then
+		(( oldARR["$1"]+="$3" ));
+		Array2Json  "oldARR" >"${DB}"
+	else
+		# it's append, but last one counts, its a simple DB ...
+		(( oldARR["$1"]++ ));
+		printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${oldARR["$1"]//\"/\\\"}" >>"${DB}"
+	fi
+  }
 
 # updatie key/value in place to jsshDB
 # $1 key name, can onyl contain -a-zA-Z0-9,._
