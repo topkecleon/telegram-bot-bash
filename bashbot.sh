@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-11-g6563891
+#### $$VERSION$$ v0.98-dev-14-gcc69310
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -515,8 +515,8 @@ process_client() {
 	[[ -n "${debug}" ]] && printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
 
 	# check for uers / groups to ignore
-	[ -n "${USER[ID]}" ] && [[ " ${!BASHBOT_BLOCKED[*]} " ==  *" ${USER[ID]} "* ]] && return
-	jssh_readDB_async "BASHBOT_BLOCKED" "${BLOCKEDFILE}"
+	 [[ -n "$(jssh_getKeyDB_async "${USER[ID]}" "${BLOCKEDFILE}")" ||
+		 -n "$(jssh_getKeyDB_async "${CHAT[ID]}" "${BLOCKEDFILE}")" ]] && return
 
 	# process per message type
 	if [ -z "${iQUERY[ID]}" ]; then
@@ -802,7 +802,7 @@ start_bot() {
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
 	local maxsleep="${BASHBOT_SLEEP:-5000}"
 	# startup message
-	DEBUG="$(date):Start BASHBOT updates in Mode \"${1:-normal}\" =========="
+	DEBUG="$(date): Start BASHBOT updates in Mode \"${1:-normal}\" =========="
 	printf  "%s\n" "${DEBUG}" >>"${UPDATELOG}"
 	# redirect to Debug.log
 	[[ "${1}" == *"debug" ]] && exec &>>"${DEBUGLOG}"
@@ -1018,7 +1018,7 @@ if [ "${SOURCE}" != "yes" ]; then
 			echo -e "${GREEN}Bot is running with UID ${RUNUSER}.${NC}"
 			exit
 		else
-			echo -e "${ORANGE}Bot not running with UID ${RUNUSER}.${NC}"
+			echo -e "${ORANGE}No Bot running with UID ${RUNUSER}.${NC}"
 			exit 5
 		fi
 		;;
@@ -1049,7 +1049,7 @@ if [ "${SOURCE}" != "yes" ]; then
 				exit 5
 			fi
 		else
-			echo -e "${ORANGE}Bot not running with UID ${RUNUSER}.${NC}"
+			echo -e "${ORANGE}No Bot running with UID ${RUNUSER}.${NC}"
 		fi
 		exit
 		;;
