@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-8-gcdc6dd3
+#### $$VERSION$$ v0.98-dev-9-ge0b9f6f
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -687,7 +687,7 @@ process_message() {
 	CHAT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","chat","first_name"]}")"
 	CHAT[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","chat","username"]}")"
 	# set real name as username if empty
-	: "${CHAT[USERNAME]:=${CHAT[FIRST_NAME]} ${CHAT[LAST_NAME]}}"
+	[ -z "${CHAT[USERNAME]}" ] && CHAT[USERNAME]="${CHAT[FIRST_NAME]} ${CHAT[LAST_NAME]}"
 	CHAT[TITLE]="$(JsonDecode "${UPD["result",${num},"message","chat","title"]}")"
 	CHAT[TYPE]="$(JsonDecode "${UPD["result",${num},"message","chat","type"]}")"
 	CHAT[ALL_ADMIN]="${UPD["result",${num},"message","chat","all_members_are_administrators"]}"
@@ -719,19 +719,15 @@ process_message() {
 	   FORWARD[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","forward_from","username"]}")"
 	fi
 
-	# Audio
-	URLS[AUDIO]="$(get_file "${UPD["result",${num},"message","audio","file_id"]}")"
-	# Document
-	URLS[DOCUMENT]="$(get_file "${UPD["result",${num},"message","document","file_id"]}")"
-	# Photo
-	URLS[PHOTO]="$(get_file "${UPD["result",${num},"message","photo",0,"file_id"]}")"
-	# Sticker
-	URLS[STICKER]="$(get_file "${UPD["result",${num},"message","sticker","file_id"]}")"
-	# Video
-	URLS[VIDEO]="$(get_file "${UPD["result",${num},"message","video","file_id"]}")"
-	# Voice
-	URLS[VOICE]="$(get_file "${UPD["result",${num},"message","voice","file_id"]}")"
-
+	# get file URL from telegram
+	if grep -qs -e '\["result",'"${num}"',"message",".*,"file_id"\]' <<<"${UPDATE}"; then
+	    URLS[AUDIO]="$(get_file "${UPD["result",${num},"message","audio","file_id"]}")"
+	    URLS[DOCUMENT]="$(get_file "${UPD["result",${num},"message","document","file_id"]}")"
+	    URLS[PHOTO]="$(get_file "${UPD["result",${num},"message","photo",0,"file_id"]}")"
+	    URLS[STICKER]="$(get_file "${UPD["result",${num},"message","sticker","file_id"]}")"
+	    URLS[VIDEO]="$(get_file "${UPD["result",${num},"message","video","file_id"]}")"
+	    URLS[VOICE]="$(get_file "${UPD["result",${num},"message","voice","file_id"]}")"
+	fi
 	# Contact
 	CONTACT=( )
 	CONTACT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","first_name"]}")"
@@ -800,16 +796,18 @@ process_message() {
 #########################
 # main get updates loop, should never terminate
 start_bot() {
-	local DEBUG="$1"
-	local OFFSET=0
+	local DEBUG OFFSET=0
 	# adaptive sleep deafults
 	local nextsleep="100" :
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
 	local maxsleep="${BASHBOT_SLEEP:-5000}"
+	# startup message
+	DEBUG="$(date):Start BASHBOT updates in Mode \"${1:-normal}\" =========="
+	printf  "%s\n" "${DEBUG}" >>"${UPDATELOG}"
+	printf  "%s\n" "${DEBUG}"; DEBUG="${1}"
 	# redirect to Debug.log
-	printf  "%s: Start BASHBOT updates in Mode \"%s\" ==========\n" "$(date)" "${DEBUG}" >>"${DEBUGLOG}"
 	[[ "${DEBUG}" == *"debug" ]] && exec &>>"${DEBUGLOG}"
-	[[ "${DEBUG}" == "xdebug"* ]] && set -x 
+	[[ "${DEBUG}" == "xdebug"* ]] && set -x
 	#cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
 	find "${DATADIR}" -size 0 -name "*.log" -delete
