@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-19-g4e043c5
+#### $$VERSION$$ v0.98-dev-20-g3e4e904
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -41,7 +41,8 @@ _exists() {
 
 # execute function if exists
 _exec_if_function() {
-	[ "$(LC_ALL=C type -t "${1}")" != "function" ] || "$@"
+	[ "$(LC_ALL=C type -t "${1}")" != "function" ] && return 1
+	"$@"
 }
 # returns true if function exist
 _is_function() {
@@ -57,10 +58,14 @@ setConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${2//\"/\\\"}" >>"${BOTDATABASE}.jssh"
 }
+declare -A BASHBOTCONFIG
 getConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	# cache if aupdateArray exists, else read from file
+	_exec_if_function jssh_updateArray_async "BASHBOTCONFIG" "${BOTDATABASE}" && printf '%s' "${BASHBOTCONFIG[${1}]}" && return
 	[ -r "${BOTDATABASE}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTDATABASE}.jssh" | tail -n 1
 }
+
 
 # get location and name of bashbot.sh
 SCRIPT="$0"
