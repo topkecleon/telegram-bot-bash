@@ -445,7 +445,7 @@ sendJsonResult(){
 # $1 string
 # output escaped string
 JsonEscape(){
-	sed 's/\([-"`´,§$%&/(){}#@!?*.]\)/\\\1/g' <<< "$1"
+	sed 's/\([-"`´,§$%&/(){}#@!?*.\t]\)/\\\1/g' <<< "$1"
 }
 
 # convert common telegram entities to JSON
