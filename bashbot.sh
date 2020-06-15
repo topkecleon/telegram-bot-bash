@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-24-g4990f70
+#### $$VERSION$$ v0.98-dev-25-g4b18757
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -702,11 +702,13 @@ process_message() {
 	USER[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","from","first_name"]}")"
 	USER[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","from","last_name"]}")"
 	USER[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","from","username"]}")"
+	# set real name as username if empty
+	[ -z "${USER[USERNAME]}" ] && USER[USERNAME]="${USER[FIRST_NAME]} ${USER[LAST_NAME]}"
 
 	# in reply to message from
 	REPLYTO=( )
-	REPLYTO[UID]="${UPD["result",${num},"message","reply_to_message","from","id"]}"
-	if [ -n "${REPLYTO[UID]}" ]; then
+	if grep -qs -e '\["result",'"${num}"',"message","reply_to_message"' <<<"${UPDATE}"; then
+	   REPLYTO[UID]="${UPD["result",${num},"message","reply_to_message","from","id"]}"
 	   REPLYTO[0]="$(JsonDecode "${UPD["result",${num},"message","reply_to_message","text"]}")"
 	   REPLYTO[ID]="${UPD["result",${num},"message","reply_to_message","message_id"]}"
 	   REPLYTO[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","reply_to_message","from","first_name"]}")"
@@ -716,8 +718,8 @@ process_message() {
 
 	# forwarded message from
 	FORWARD=( )
-	FORWARD[UID]="${UPD["result",${num},"message","forward_from","id"]}"
-	if [ -n "${FORWARD[UID]}" ]; then
+	if grep -qs -e '\["result",'"${num}"',"message","forward_from"' <<<"${UPDATE}"; then
+	   FORWARD[UID]="${UPD["result",${num},"message","forward_from","id"]}"
 	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
 	   FORWARD[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","forward_from","first_name"]}")"
 	   FORWARD[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","forward_from","last_name"]}")"
@@ -725,6 +727,7 @@ process_message() {
 	fi
 
 	# get file URL from telegram
+	URLS=()
 	if grep -qs -e '\["result",'"${num}"',"message",".*,"file_id"\]' <<<"${UPDATE}"; then
 	    URLS[AUDIO]="$(get_file "${UPD["result",${num},"message","audio","file_id"]}")"
 	    URLS[DOCUMENT]="$(get_file "${UPD["result",${num},"message","document","file_id"]}")"
@@ -735,8 +738,8 @@ process_message() {
 	fi
 	# Contact
 	CONTACT=( )
-	CONTACT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","first_name"]}")"
-	if [ -n "${CONTACT[FIRST_NAME]}" ]; then
+	if grep -qs -e '\["result",'"${num}"',"message","contact"' <<<"${UPDATE}"; then
+		CONTACT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","first_name"]}")"
 		CONTACT[USER_ID]="$(JsonDecode  "${UPD["result",${num},"message","contact","user_id"]}")"
 		CONTACT[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","last_name"]}")"
 		CONTACT[NUMBER]="${UPD["result",${num},"message","contact","phone_number"]}"
@@ -745,8 +748,8 @@ process_message() {
 
 	# vunue
 	VENUE=( )
-	VENUE[TITLE]="$(JsonDecode "${UPD["result",${num},"message","venue","title"]}")"
-	if [ -n "${VENUE[TITLE]}" ]; then
+	if grep -qs -e '\["result",'"${num}"',"message","contact"' <<<"${UPDATE}"; then
+		VENUE[TITLE]="$(JsonDecode "${UPD["result",${num},"message","venue","title"]}")"
 		VENUE[ADDRESS]="$(JsonDecode "${UPD["result",${num},"message","venue","address"]}")"
 		VENUE[LONGITUDE]="${UPD["result",${num},"message","venue","location","longitude"]}"
 		VENUE[LATITUDE]="${UPD["result",${num},"message","venue","location","latitude"]}"
@@ -762,8 +765,8 @@ process_message() {
 
 	# service messages
 	SERVICE=( ); NEWMEMBER=( )
-	SERVICE[NEWMEMBER]="${UPD["result",${num},"message","new_chat_member","id"]}"
-	if [ -n "${SERVICE[NEWMEMBER]}" ]; then
+	if grep -qs -e '\["result",'"${num}"',"message","new_chat_member' <<<"${UPDATE}"; then
+		SERVICE[NEWMEMBER]="${UPD["result",${num},"message","new_chat_member","id"]}"
 		NEWMEMBER[ID]="${SERVICE[NEWMEMBER]}"
 		NEWMEMBER[FIRST_NAME]="${UPD["result",${num},"message","new_chat_member","first_name"]}"
 		NEWMEMBER[LAST_NAME]="${UPD["result",${num},"message","new_chat_member","last_name"]}"
@@ -771,13 +774,13 @@ process_message() {
 		NEWMEMBER[ISBOT]="${UPD["result",${num},"message","new_chat_member","is_bot"]}"
 		MESSAGE[0]="/new_chat_member ${NEWMEMBER[USERNAME]:=${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]}}"
 	fi
-	SERVICE[LEFTMEMBER]="${UPD["result",${num},"message","left_chat_member","id"]}"
-	if [ -n "${SERVICE[LEFTMEMBER]}" ]; then
-		LEFTMEBER[ID]="${SERVICE[LEFTMEBER]}"
-		LEFTMEBER[FIRST_NAME]="${UPD["result",${num},"message","left_chat_member","first_name"]}"
-		LEFTMEBER[LAST_NAME]="${UPD["result",${num},"message","left_chat_member","last_name"]}"
+	if grep -qs -e '\["result",'"${num}"',"message","left_chat_member' <<<"${UPDATE}"; then
+		SERVICE[LEFTMEMBER]="${UPD["result",${num},"message","left_chat_member","id"]}"
+		LEFTMEMBER[ID]="${SERVICE[LEFTMEBER]}"
+		LEFTMEMBER[FIRST_NAME]="${UPD["result",${num},"message","left_chat_member","first_name"]}"
+		LEFTMEMBER[LAST_NAME]="${UPD["result",${num},"message","left_chat_member","last_name"]}"
 		LEFTMEBER[USERNAME]="${UPD["result",${num},"message","left_chat_member","username"]}"
-		LEFTMEBER[ISBOT]="${UPD["result",${num},"message","left_chat_member","is_bot"]}"
+		LEFTMEMBER[ISBOT]="${UPD["result",${num},"message","left_chat_member","is_bot"]}"
 		MESSAGE[0]="/left_chat_member ${LEFTMEMBER[USERNAME]:=${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]}}"
 	fi
 	SERVICE[NEWTILE]="${UPD["result",${num},"message","new_chat_title"]}"

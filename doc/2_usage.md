@@ -160,11 +160,11 @@ Evertime a Message is received, you can read incoming data using the following v
         * ```${NEWMEMBER[USERNAME]```: New user's username
         * ```${NEWMEMBER[ISBOT]```: New user is a bot
     * ```${SERVICE[LEFTMEMBER]```: Id of user left 
-        * ```${LEFTMEBER[ID]```: New user's id
-        * ```${LEFTMEBER[FIRST_NAME]```: New user's first name
-        * ```${LEFTMEBER[LAST_NAME]```: New user's last name
-        * ```${LEFTMEBER[USERNAME]```: New user's username
-        * ```${LEFTMEBER[ISBOT]```: New user is a bot
+        * ```${LEFTMEMBER[ID]```: New user's id
+        * ```${LEFTMEMBER[FIRST_NAME]```: New user's first name
+        * ```${LEFTMEMBER[LAST_NAME]```: New user's last name
+        * ```${LEFTMEMBER[USERNAME]```: New user's username
+        * ```${LEFTMEMBER[ISBOT]```: New user is a bot
     * ```${SERVICE[NEWTILE]```: Text of new title 
     * ```${SERVICE[NEWPHOTO]```: New Chat Picture array
     * ```${SERVICE[PINNED]```: Pinned Message structure
@@ -261,5 +261,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.98-dev-11-g6563891
+#### $$VERSION$$ v0.98-dev-25-g4b18757
 
