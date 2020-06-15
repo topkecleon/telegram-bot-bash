@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-20-g3e4e904
+#### $$VERSION$$ v0.98-dev-21-g24a7eaa
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -520,8 +520,8 @@ process_client() {
 	[[ -n "${debug}" ]] && printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
 
 	# check for uers / groups to ignore
-	 [[ -n "$(jssh_getKeyDB_async "${USER[ID]}" "${BLOCKEDFILE}")" ||
-		 -n "$(jssh_getKeyDB_async "${CHAT[ID]}" "${BLOCKEDFILE}")" ]] && return
+	jssh_updateArray_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
+	[ -n "${USER[ID]}" ] && [[ -n "${BASHBOTBLOCKED[${USER[ID]}]}" || -n "${BASHBOTBLOCKED[${CHAT[ID]}]}" ]] && return
 
 	# process per message type
 	if [ -z "${iQUERY[ID]}" ]; then
@@ -800,6 +800,7 @@ process_message() {
 
 #########################
 # main get updates loop, should never terminate
+declare -A BASHBOTBLOCKED
 start_bot() {
 	local ADMIN DEBUG OFFSET=0
 	# adaptive sleep deafults
@@ -836,6 +837,7 @@ start_bot() {
         [ -f "${COUNTFILE}.jssh.flock" ] && rm -f "${COUNTFILE}.jssh.flock"
 	jssh_deleteKeyDB "CLEAN_BOT_DATABASE_ON_STARTUP" "${BOTDATABASE}"
         [ -f "${BOTDATABASE}.jssh.flock" ] && rm -f "${BOTDATABASE}.jssh.flock"
+	jssh_readDB_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
 	# inform botadmin about start
 	ADMIN="$(getConfigKey "botadmin")"
 	[ "${ADMIN}" -gt 4 ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") started ..." &
