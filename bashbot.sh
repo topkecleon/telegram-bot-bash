@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-14-gcc69310
+#### $$VERSION$$ v0.98-dev-19-g4e043c5
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -796,7 +796,7 @@ process_message() {
 #########################
 # main get updates loop, should never terminate
 start_bot() {
-	local DEBUG OFFSET=0
+	local ADMIN DEBUG OFFSET=0
 	# adaptive sleep deafults
 	local nextsleep="100" :
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
@@ -831,7 +831,9 @@ start_bot() {
         [ -f "${COUNTFILE}.jssh.flock" ] && rm -f "${COUNTFILE}.jssh.flock"
 	jssh_deleteKeyDB "CLEAN_BOT_DATABASE_ON_STARTUP" "${BOTDATABASE}"
         [ -f "${BOTDATABASE}.jssh.flock" ] && rm -f "${BOTDATABASE}.jssh.flock"
-
+	# inform botadmin about start
+	ADMIN="$(getConfigKey "botadmin")"
+	[ "${ADMIN}" -gt 4 ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") started ..." &
 	##########
 	# bot is ready, start processing updates ...
 	while true; do
