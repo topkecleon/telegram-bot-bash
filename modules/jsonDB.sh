@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-20-g3e4e904
+#### $$VERSION$$ v0.98-dev-22-gc943280
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -60,31 +60,13 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # update/write ARRAY content in file without deleting keys not in ARRAY
   # $1 ARRAY name, must be delared with "declare -A ARRAY" upfront
   # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
+  # complex slow, warpper async
   jssh_updateDB() {
 	# for atomic update we cant use read/writeDB
-	local DB; DB="$(jssh_checkDB "$2")"
-	[ -z "${DB}" ] && return 1
+	[ -z "${2}" ] && return 1
+	local DB="${2}.jssh" # check in async
 	[ ! -f "${DB}" ] && return 2
-	declare -n ARRAY="$1"
-	[ -z "${ARRAY[*]}" ] && return 1
-	declare -A oldARR
-
-	# start atomic update here, exclusive max wait 10s
-	{ flock -e -w 10 200
-	Json2Array "oldARR" <"${DB}"
-	if [ -z "${oldARR[*]}" ]; then
-		# no old content
-		Array2Json "$1" >"${DB}"
-	else
-		# merge arrays
-		local key
-		for key in "${!ARRAY[@]}"
-		do
-		    oldARR["${key}"]="${ARRAY["${key}"]}"
-		done
-		Array2Json  "oldARR" >"${DB}"
-	fi
-	} 200>"${DB}${JSSH_LOCKNAME}"
+	{ flock -e -w 10 200; jssh_updateDB_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
   }
 
   # insert, update, apped key/value to jsshDB
@@ -95,14 +77,13 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # renamed to be more consistent
   jssh_insertKeyDB() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	local key="$1" value="$2"
 	local DB; DB="$(jssh_checkDB "$3")"
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
 	# start atomic update here, exclusive max wait 2, it's append, not overwrite
 	{ flock -e -w 2 200
 	 # it's append, but last one counts, its a simple DB ...
-	  printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${value//\"/\\\"}" >>"${DB}"
+	  printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${2//\"/\\\"}" >>"${DB}"
 	} 200>"${DB}${JSSH_LOCKNAME}"
 	
   }
@@ -110,16 +91,13 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # delete key/value from jsshDB
   # $1 key name, can onyl contain -a-zA-Z0-9,._
   # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
+  # medium complex slow, wrapper async
   jssh_deleteKeyDB() {
+	[ -z "${2}" ] && return 1
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	local DB; DB="$(jssh_checkDB "$2")"
-	declare -A oldARR
+	local DB="${2}.jssh"
 	# start atomic delete here, exclusive max wait 10s 
-	{ flock -e -w 10 200
-	Json2Array "oldARR" <"${DB}"
-	unset oldARR["$1"]
-	Array2Json  "oldARR" >"${DB}"
-	} 200>"${DB}${JSSH_LOCKNAME}"
+	{ flock -e -w 10 200; jssh_deleteKey_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
   }
 
   # get key/value from jsshDB
@@ -141,22 +119,13 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
   # $3 optional count, value added to counter, add 1 if empty 
   # side effect: if $3 is not given, we add to end of file to be as fast as possible
+  # complex, wrapper to async
   jssh_countKeyDB() {
+	[ -z "${2}" ] && return 1
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	local VAL DB; DB="$(jssh_checkDB "$2")"
+	local DB="${2}.jssh"
 	# start atomic delete here, exclusive max wait 5 
-	{ flock -e -w 5 200
-	if [ -n "$3" ]; then
-		declare -A oldARR
-		Json2Array "oldARR" <"${DB}"
-		(( oldARR["$1"]+="$3" ));
-		Array2Json  "oldARR" >"${DB}"
-	elif [ -r "${DB}" ]; then
-		# it's append, but last one counts, its a simple DB ...
-		VAL="$(sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${DB}" | tail -n 1)"
-		printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "$((++VAL))" >>"${DB}"
-	fi
-	} 200>"${DB}${JSSH_LOCKNAME}"
+	{ flock -e -w 5 200; jssh_countKeyDB "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
   }
 
   # update key/value in place to jsshDB
@@ -176,14 +145,24 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   jssh_clearDB() {
 	local DB; DB="$(jssh_checkDB "$1")"
 	[ -z "${DB}" ] && return 1
-	{ flock -e -w 10 200
-	printf '' >"${DB}"
-	} 200>"${DB}${JSSH_LOCKNAME}"
+	{ flock -e -w 10 200; printf '' >"${DB}"; } 200>"${DB}${JSSH_LOCKNAME}"
   } 
+
+  # updates Array if DB file has changed since last call
+  # $1 name of array to update
+  # $2 database
+  # $3 id used to identify caller
+  # medium comlex, wrapper async
+  jssh_updateArray() { 
+	[ -z "${2}" ] && return 1
+	local DB="${2}.jssh" # name check in async
+	[ ! -f "${DB}" ] && return 2
+	{ flock -s -w 1 200; jssh_updateArray_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
+  }
 
 else
   #########
-  # we have no flock, use "old" not atomic functions
+  # we have no flock, use non atomic functions
   alias jssh_readDB=ssh_readDB_async
   alias jssh_writeDB=jssh_writeDB_async
   alias jssh_updateDB=jssh_updateDB_async
@@ -194,6 +173,7 @@ else
   alias jssh_countKeyDB=jssh_countKeyDB_async
   alias jssh_updateKeyDB=jssh_updateKeyDB_async
   alias jssh_clearDB=jssh_clearDB_async
+  alias jssh_updateArray=updateArray_async
 fi
 
 ##############
@@ -228,23 +208,6 @@ jssh_checkDB(){
 		DB="${BASHBOT_VAR:-.}/$1.jssh"
 	fi
 	printf '%s' "${DB}"
-}
-
-# updates Array if DB file has changed since last call
-# $1 name of array to update
-# $2 database
-# $3 id used to identify caller
-jssh_updateArray() { 
-	local DB="${2}.jssh" # name check in async
-	[ -z "${DB}" ] && return 1
-	[ ! -f "${DB}" ] && return 2
-	{ flock -s -w 1 200; jssh_updateArray_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
-}
-function jssh_updateArray_async() {
-	local DB; DB="$(jssh_checkDB "$2")"
-	[ -z "${DB}" ] && return 1
-	[ ! -f "${DB}" ] && return 2
-	[ "${DB}" -nt "${DB}.last${3}" ] && touch "${DB}.last${3}" && jssh_readDB_async "${1}" "${2}"
 }
 
 
@@ -287,12 +250,11 @@ jssh_updateDB_async() {
 jssh_insertDB_async() { jssh_insertKeyDB "$@"; }
 jssh_insertKeyDB_async() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	local key="$1" value="$2"
 	local DB; DB="$(jssh_checkDB "$3")"
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
 	# its append, but last one counts, its a simple DB ...
-	printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${value//\"/\\\"}" >>"${DB}"
+	printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${2//\"/\\\"}" >>"${DB}"
 	
 }
 
@@ -345,6 +307,17 @@ jssh_clearDB_async() {
 	[ -z "${DB}" ] && return 1
 	printf '' >"${DB}"
 } 
+
+function jssh_updateArray_async() {
+	local DB; DB="$(jssh_checkDB "$2")"
+	[ -z "${DB}" ] && return 1
+	[ ! -f "${DB}" ] && return 2
+	[ "${DB}" -nt "${DB}.last${3}" ] && touch "${DB}.last${3}" && jssh_readDB_async "${1}" "${2}"
+}
+
+##############
+# these 2 fuctions does all key/value store "magic"
+# and convert from/to bash array
 
 # read JSON.sh style data and asssign to an ARRAY
 # $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
