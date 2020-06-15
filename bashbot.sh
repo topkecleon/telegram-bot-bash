@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-25-g4b18757
+#### $$VERSION$$ v0.98-dev-26-g8991cc9
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -1055,6 +1055,9 @@ if [ "${SOURCE}" != "yes" ]; then
 		if [ -n "${BOTPID}" ]; then
 			# shellcheck disable=SC2086
 			if kill ${BOTPID}; then
+				# inform botadmin about stop
+				ADMIN="$(getConfigKey "botadmin")"
+				[ "${ADMIN}" -gt 4 ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") stopped ..." &
 				echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
 			else
 				echo -e "${RED}An error occured while stopping bot.${NC}"

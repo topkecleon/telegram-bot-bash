@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-17-gdda5b6d
+#### $$VERSION$$ v0.98-dev-26-g8991cc9
 
 # will be automatically sourced from bashbot
 
@@ -119,7 +119,7 @@ inproc() {
 #	suspendb*
 #	resumeb*
 job_control() {
-	local content proc CHAT job fifo killall=""
+	local ADMIN content proc CHAT job fifo killall=""
 	for FILE in "${DATADIR:-.}/"*-back.cmd; do
 		[ "${FILE}" = "${DATADIR:-.}/*-back.cmd" ] && echo -e "${RED}No background processes.${NC}" && break
 		content="$(< "${FILE}")"
@@ -132,16 +132,25 @@ job_control() {
 		"resumeb"*|"backgr"*)
 			printf "Restart Job: %s %s\n" "${proc}" " ${fifo}"
 			restart_back "${CHAT}" "${proc}" "${job}"
+			# inform botadmin about stop
+			ADMIN="$(getConfigKey "botadmin")"
+			[ "${ADMIN}" -gt 4 ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") restart background jobs ..." &
 			;;
 		"suspendb"*)
 			printf "Suspend Job: %s %s\n" "${proc}" " ${fifo}"
 			kill_proc "${CHAT}" "${job}"
+			# inform botadmin about stop
+			ADMIN="$(getConfigKey "botadmin")"
+			[ "${ADMIN}" -gt 4 ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") suspend background jobs ..." &
 			killall="y"
 			;;
 		"killb"*)
 			printf "Kill Job: %s %s\n" "${proc}" " ${fifo}"
 			kill_proc "${CHAT}" "${job}"
 			rm -f "${FILE}" # remove job
+			# inform botadmin about stop
+			ADMIN="$(getConfigKey "botadmin")"
+			[ "${ADMIN}" -gt 4 ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") kill  background jobs ..." &
 			killall="y"
 			;;
 		esac
