@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-23-g6439d43
+#### $$VERSION$$ v0.98-dev-24-g4990f70
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -466,7 +466,7 @@ title2Json(){
 	[ -n "$1" ] && title=',"title":"'$(JsonEscape "$1")'"'
 	[ -n "$2" ] && caption=',"caption":"'$(JsonEscape "$2")'"'
 	[ -n "$3" ] && desc=',"description":"'$(JsonEscape "$3")'"'
-	[ -n "$4" ] && markup=',"parse_mode":"'$(JsonEscape "$4")'"'
+	[ -n "$4" ] && markup=',"parse_mode":"'"$4"'"'
 	[ -n "$5" ] && keyboard=',"reply_markup":"'$(JsonEscape "$5")'"'
 	printf '%s\n' "${title}${caption}${desc}${markup}${keyboard}"
 }
