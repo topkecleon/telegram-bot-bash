@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-21-g24a7eaa
+#### $$VERSION$$ v0.98-dev-23-g6439d43
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -456,7 +456,7 @@ sendJsonResult(){
 # $1 string
 # output escaped string
 JsonEscape(){
-	sed 's/\([-"`´,§$%&/(){}#@!?*.]\)/\\\1/g' <<< "$1"
+	sed 's/\([-"`´,§$%&/(){}#@!?*.\t]\)/\\\1/g' <<< "$1"
 }
 
 # convert common telegram entities to JSON
