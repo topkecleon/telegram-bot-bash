@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-26-g8991cc9
+#### $$VERSION$$ v0.98-dev-30-g413779d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -516,6 +516,8 @@ process_client() {
 	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
 	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	USER[ID]="${UPD["result",${num},"message","from","id"]}"
+	[ -z "${CHAT[ID]}" ] && CHAT[ID]="${UPD["result",${num},"edited_message","chat","id"]}"
+	[ -z "${USER[ID]}" ] && USER[ID]="${UPD["result",${num},"edited_message","from","id"]}"
 	# log message on debug
 	[[ -n "${debug}" ]] && printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
 
@@ -525,6 +527,12 @@ process_client() {
 
 	# process per message type
 	if [ -z "${iQUERY[ID]}" ]; then
+		if grep -qs -e '\["result",'"${num}"',"edited_message"' <<<"${UPDATE}"; then
+			# edited message
+			UPDATE="${UPDATE//,${num},\"edited_message\",/,${num},\"message\",}"
+			Json2Array 'UPD' <<<"${UPDATE}"
+			MESSAGE[0]="/edited_message "
+		fi
 		process_message "${num}" "${debug}"
 	        printf "%s: update received FROM=%s CHAT=%s CMD=%s\n" "$(date)" "${USER[USERNAME]:0:20} (${USER[ID]})"\
 			"${CHAT[USERNAME]:0:20}${CHAT[TITLE]:0:30} (${CHAT[ID]})"\
@@ -683,7 +691,7 @@ process_inline() {
 process_message() {
 	local num="$1"
 	# Message
-	MESSAGE[0]="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's#\\/#/#g')"
+	MESSAGE[0]+="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's#\\/#/#g')"
 	MESSAGE[ID]="${UPD["result",${num},"message","message_id"]}"
 
 	# Chat ID is now parsed when update isreceived
