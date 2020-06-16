@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-26-g8991cc9
+#### $$VERSION$$ v0.98-dev-27-gb33132e
 
 # will be automatically sourced from bashbot
 
@@ -119,7 +119,9 @@ inproc() {
 #	suspendb*
 #	resumeb*
 job_control() {
-	local ADMIN content proc CHAT job fifo killall=""
+	local BOT ADM content proc CHAT job fifo killall=""
+	BOT="$(getConfigKey "botname")"
+	ADM="$(getConfigKey "botadmin")"
 	for FILE in "${DATADIR:-.}/"*-back.cmd; do
 		[ "${FILE}" = "${DATADIR:-.}/*-back.cmd" ] && echo -e "${RED}No background processes.${NC}" && break
 		content="$(< "${FILE}")"
@@ -133,15 +135,13 @@ job_control() {
 			printf "Restart Job: %s %s\n" "${proc}" " ${fifo}"
 			restart_back "${CHAT}" "${proc}" "${job}"
 			# inform botadmin about stop
-			ADMIN="$(getConfigKey "botadmin")"
-			[ "${ADMIN}" -gt 4 ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") restart background jobs ..." &
+			[ -n "${ADM}" ] && send_normal_message "${ADM}" "Bot ${BOT} restart background jobs ..." &
 			;;
 		"suspendb"*)
 			printf "Suspend Job: %s %s\n" "${proc}" " ${fifo}"
 			kill_proc "${CHAT}" "${job}"
 			# inform botadmin about stop
-			ADMIN="$(getConfigKey "botadmin")"
-			[ "${ADMIN}" -gt 4 ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") suspend background jobs ..." &
+			[ -n "${ADM}" ] && send_normal_message "${ADM}" "Bot ${BOT} suspend background jobs ..." &
 			killall="y"
 			;;
 		"killb"*)
@@ -149,11 +149,12 @@ job_control() {
 			kill_proc "${CHAT}" "${job}"
 			rm -f "${FILE}" # remove job
 			# inform botadmin about stop
-			ADMIN="$(getConfigKey "botadmin")"
-			[ "${ADMIN}" -gt 4 ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") kill  background jobs ..." &
+			[ -n "${ADM}" ] && send_normal_message "${ADM}" "Bot ${BOT} kill  background jobs ..." &
 			killall="y"
 			;;
 		esac
+		# send message only onnfirst job
+		ADM=""
 	done
 	# kill all requestet. kill ALL background jobs, even not listed in data-bot-bash
 	[ "${killall}" = "y" ] && killallproc "back-"
