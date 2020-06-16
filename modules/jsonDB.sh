@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-22-gc943280
+#### $$VERSION$$ v0.98-dev-28-g70e7ee4
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -157,7 +157,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
 	[ -z "${2}" ] && return 1
 	local DB="${2}.jssh" # name check in async
 	[ ! -f "${DB}" ] && return 2
-	{ flock -s -w 1 200; jssh_updateArray_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
+	[ "${DB}" -nt "${DB}.last${3}" ] && touch "${DB}.last${3}" && jssh_readDB "${1}" "${2}"
   }
 
 else
