@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-28-g70e7ee4
+#### $$VERSION$$ v0.98-dev-29-g5dcbccd
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -97,7 +97,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	local DB="${2}.jssh"
 	# start atomic delete here, exclusive max wait 10s 
-	{ flock -e -w 10 200; jssh_deleteKey_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
+	{ flock -e -w 10 200; jssh_deleteKeyDB_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
   }
 
   # get key/value from jsshDB
