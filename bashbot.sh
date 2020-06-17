@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-30-g413779d
+#### $$VERSION$$ v0.98-dev-31-g7694df5
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -851,7 +851,7 @@ start_bot() {
 	jssh_readDB_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
 	# inform botadmin about start
 	ADMIN="$(getConfigKey "botadmin")"
-	[ "${ADMIN}" -gt 4 ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") started ..." &
+	[ -n "${ADMIN}" ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") started ..." &
 	##########
 	# bot is ready, start processing updates ...
 	while true; do
@@ -1065,7 +1065,7 @@ if [ "${SOURCE}" != "yes" ]; then
 			if kill ${BOTPID}; then
 				# inform botadmin about stop
 				ADMIN="$(getConfigKey "botadmin")"
-				[ "${ADMIN}" -gt 4 ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") stopped ..." &
+				[ -n "${ADMIN}" ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") stopped ..." &
 				echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
 			else
 				echo -e "${RED}An error occured while stopping bot.${NC}"
