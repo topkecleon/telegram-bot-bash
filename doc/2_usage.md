@@ -100,10 +100,10 @@ Evertime a Message is received, you can read incoming data using the following v
 
 ### Regular Messages
 
-* ```${MESSAGE}```: Current message
+These Variables are always present in regular messages:
+
+* ```${MESSAGE}```: Current message text
 * ```${MESSAGE[ID]}```: ID of current message
-* ```$CAPTION```: Captions
-* ```$REPLYTO```: Original message wich was replied to
 * ```$USER```: This array contains the First name, last name, username and user id of the sender of the current message.
     * ```${USER[ID]}```: User id
     * ```${USER[FIRST_NAME]}```: User's first name
@@ -117,6 +117,10 @@ Evertime a Message is received, you can read incoming data using the following v
     * ```${CHAT[TITLE]}```: Title
     * ```${CHAT[TYPE]}```: Type
     * ```${CHAT[ALL_MEMBERS_ARE_ADMINISTRATORS]}```: All members are administrators (true if true)
+
+The following variables are set if the message contains optional parts:
+
+* ```$REPLYTO```: Original message wich was replied to
 * ```$REPLYTO```: This array contains the First name, last name, username and user id of the ORIGINAL sender of the message REPLIED to.
     * ```${REPLYTO[ID]}```: ID of message wich was replied to
     * ```${REPLYTO[UID]}```: Original user's id
@@ -129,6 +133,7 @@ Evertime a Message is received, you can read incoming data using the following v
     * ```${FORWARD[FIRST_NAME]}```: Original user's first name
     * ```${FORWARD[LAST_NAME]}```: Original user's' last name
     * ```${FORWARD[USERNAME]}```: Original user's username
+* ```$CAPTION```: Picture, Audio, Video, File Captions
 * ```$URLS```: This array contains documents, audio files, voice recordings and stickers as URL.
     * ```${URLS[AUDIO]}```: Audio files
     * ```${URLS[VIDEO]}```: Videos
@@ -151,30 +156,45 @@ Evertime a Message is received, you can read incoming data using the following v
     * ```${VENUE[LONGITUDE]}```: Longitude
     * ```${VENUE[LATITUDE]}```: Latitude
     * ```${VENUE[FOURSQUARE]}```: Fouresquare ID
+
+
+### Service Messages
+
+Service Messages are regular messages not itended for end users, instead they signal special events to the
+client, e.g. new users.
+
+If a service message is recieved bashbot sets MESSAGE to the service message type as a command,
+e.g. if a new user joins a chat MESSAGE is set to "/new_chat_user". 
+
 * ```$SERVICE```: This array contains info abbout recived service messages.
-    * ```${SERVICE}```: set to "yes" when a service message is recived.
+    * ```${SERVICE}```: "yes" if service message is received
     * ```${SERVICE[NEWMEMBER]```: New user's id
+        * ```${MESSAGE}```: /new_chat_member
         * ```${NEWMEMBER[ID]```: New user's id
         * ```${NEWMEMBER[FIRST_NAME]```: New user's first name
         * ```${NEWMEMBER[LAST_NAME]```: New user's last name
         * ```${NEWMEMBER[USERNAME]```: New user's username
         * ```${NEWMEMBER[ISBOT]```: New user is a bot
     * ```${SERVICE[LEFTMEMBER]```: Id of user left 
-        * ```${LEFTMEMBER[ID]```: New user's id
-        * ```${LEFTMEMBER[FIRST_NAME]```: New user's first name
-        * ```${LEFTMEMBER[LAST_NAME]```: New user's last name
-        * ```${LEFTMEMBER[USERNAME]```: New user's username
-        * ```${LEFTMEMBER[ISBOT]```: New user is a bot
-    * ```${SERVICE[NEWTILE]```: Text of new title 
-    * ```${SERVICE[NEWPHOTO]```: New Chat Picture array
+        * ```${MESSAGE}```: /left_chat_member
+        * ```${LEFTMEMBER[ID]```: Left user's id
+        * ```${LEFTMEMBER[FIRST_NAME]```: Left user's first name
+        * ```${LEFTMEMBER[LAST_NAME]```: Left user's last name
+        * ```${LEFTMEMBER[USERNAME]```: Left user's username
+        * ```${LEFTMEMBER[ISBOT]```: Left user is a bot
+    * ```${SERVICE[NEWTITLE]```: Text of new title 
+        * ```${MESSAGE}```: /new_chat_title
+    * ```${SERVICE[NEWPHOTO]```: New Chat Picture URL
+        * ```${MESSAGE}```: /new_chat_picture
     * ```${SERVICE[PINNED]```: Pinned Message structure
+        * ```${MESSAGE}```: /new_pinned_message
 
 
 
+### Inline query messages
 
-
-### Inline queries
-Evertime a Message is received, you can read incoming data using the following variables:
+Inline query messages are small, non regular messages used for interaction with the user,
+they contain the following varibles only:
 
 * ```${iQUERY}```: Current inline query
 * ```$iQUERY```: This array contains the ID, First name, last name, username and user id of the sender of the current inline query.
@@ -261,5 +281,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.98-dev-25-g4b18757
+#### $$VERSION$$ v0.98-dev-32-g6e3655f
 
