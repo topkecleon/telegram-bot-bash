@@ -51,6 +51,12 @@ see e.g. [Install Bash on Mac](http://macappstore.org/bash/)
 **On BSD and MacOS** I recommend to install gnu coreutils and include them in front of your PATH
 environment variable before running bashbot, e.g. the gnu versions of sed, grep, find ...
 
+I considered to make bashbot BSD sed compatible, but much of the bashbot "magic" relies on
+(gnu) sed features, e.g. alternate (|), nonprintable (\n\t\<) or repeat (?+) pattern, not supported by BSD sed.
+BSD/MacOS sed compatibility will result in a rewrite of all grep/sed commands with an uncertain outcome,
+see [BSD/MacOS vs. GNU sed](https://riptutorial.com/sed/topic/9436/bsd-macos-sed-vs--gnu-sed-vs--the-posix-sed-specification)
+to get an impression how different they are.
+
 In adition you must adjust the shebang line of the scripts ```bashbot.sh``` and ```json.sh``` to point to to the correct bash
 or use the example script: ```examples/bash2env *.sh */*.sh```
 
@@ -101,5 +107,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-34-g91ced1f
 
