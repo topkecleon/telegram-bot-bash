@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-33-g18f0ace
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -98,6 +98,12 @@ else
 			if ! user_is_botadmin "${USER[ID]}" ; then
 			    send_markdown_message "${CHAT[ID]}" "*${NOTBOTADMIN}*"; return 1
 			fi
+			;;
+		# will we process edited messages also?
+		'/edited_message'*)
+			return 1 # no
+			# but if we do, remove /edited_message
+			MESSAGE="${MESSAGE#/* }"
 			;;
 	esac
 

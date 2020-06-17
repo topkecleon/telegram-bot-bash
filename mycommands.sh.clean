@@ -4,7 +4,7 @@
 # files: mycommands.sh.clean
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-33-g18f0ace
 #
 
 ##########
@@ -72,7 +72,6 @@ else
 	# a service Message was received
 	# add your own stuff here
 	if [ -n "${SERVICE}" ]; then
-
 		# example: delete every service message
 		if [ "${SILENCER}" = "yes" ]; then
 			delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
