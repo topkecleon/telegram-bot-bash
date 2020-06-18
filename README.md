@@ -127,8 +127,12 @@ Bash scripts in general are not designed to be bullet proof, so consider this Bo
 
 Whenever you are processing input from from untrusted sources (messages, files, network) you must be as carefull as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everthing. In addition delete unused scripts and examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable all not used commands.
 
-**Note:** Until v0.941 (mai/22/2020) telegram-bot-bash has a remote code execution bug, pls update if you use an older version!
-One of the most powerful features of unix shells like bash is variable and command substitution, this can lead to RCE and information disclosing bugs if you do not escape '$' porperly, see [Issue #125](https://github.com/topkecleon/telegram-bot-bash/issues/125)
+**Note:** Until v0.941 (mai/22/2020) telegram-bot-bash had a remote code execution (RCE) bug, pls update if you use an older version!
+see [Issue #125](https://github.com/topkecleon/telegram-bot-bash/issues/125)
+
+One of the most powerful features of unix shells like bash is variable and command substitution using ```${}``` and ```$()```,
+but as they are expanded in doble quotes, this can lead to RCE and information disclosing bugs in complex scripts like bashbot
+even bash does much to avoid this. So it's more secure to escape or remove '$' in input from user, files or network.
 
 A powerful tool to improve your scripts is ```shellcheck```. You can [use it online](https://www.shellcheck.net/) or [install shellcheck locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used extensive in bashbot development to enshure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests.
 In addition bashbot has a [test suite](doc/7_develop.md) to check if important functionality is working as expected.
@@ -235,4 +239,4 @@ This may happen if to many wrong requests are sent to api.telegram.org, e.g. usi
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.98-dev-10-g74caa49
+#### $$VERSION$$ v0.98-dev-42-geea1de6
