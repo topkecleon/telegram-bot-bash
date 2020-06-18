@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-40-g344167e
+#### $$VERSION$$ v0.98-dev-41-gd221fb6
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -319,7 +319,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
   [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
   # simple curl or wget call, output to stdout
   getJson(){
-	[ -n "${BASHBOTDEBUG}" ] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}"
+	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}"
 	# shellcheck disable=SC2086
 	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
   }
@@ -352,7 +352,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 else
   # simple curl or wget call outputs result to stdout
   getJson(){
-	[ -n "${BASHBOTDEBUG}" ] && printf "%s: getJson (wget) URL=%s\n" "$(date)" "${1##*/}"
+	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && printf "%s: getJson (wget) URL=%s\n" "$(date)" "${1##*/}"
 	# shellcheck disable=SC2086
 	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
   }
@@ -867,7 +867,7 @@ start_bot() {
 		# adaptive sleep in ms rounded to next 0.1 s
 		sleep "$(_round_float "${nextsleep}e-3" "1")"
 		# get next update
-		UPDATE="$(getJson "$UPD_URL$OFFSET" 2>/dev/null | "${JSONSHFILE}" -s -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
+		UPDATE="$(getJson "$UPD_URL$OFFSET" "nolog" 2>/dev/null | "${JSONSHFILE}" -s -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
 		# did we ge an responsn0r
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
