@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-32-g6e3655f
+#### $$VERSION$$ v0.98-dev-37-g3cd8dc9
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -58,11 +58,8 @@ setConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${2//\"/\\\"}" >>"${BOTDATABASE}.jssh"
 }
-declare -A BASHBOTCONFIG
 getConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	# cache if aupdateArray exists, else read from file
-	_exec_if_function jssh_updateArray_async "BASHBOTCONFIG" "${BOTDATABASE}" && printf '%s' "${BASHBOTCONFIG[${1}]}" && return
 	[ -r "${BOTDATABASE}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTDATABASE}.jssh" | tail -n 1
 }
 
