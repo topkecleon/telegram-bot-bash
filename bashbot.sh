@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-43-g8b3e92d
+#### $$VERSION$$ v0.98-dev-45-g30eedcf
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -319,7 +319,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
   [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
   # simple curl or wget call, output to stdout
   getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}"
+	[[ -n "${BASHBOTDEBUG}" && -n "${3}" ]] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}" 1>&2
 	# shellcheck disable=SC2086
 	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
   }
@@ -327,7 +327,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
   sendJson(){
 	local chat="";
 	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
-	[ -n "${BASHBOTDEBUG}" ] && printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2}" "${3##*/}"
+	[ -n "${BASHBOTDEBUG}" ] && printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" 1>&2
 	# shellcheck disable=SC2086
 	res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
 		-d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
@@ -338,7 +338,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
   sendUpload() {
 	[ "$#" -lt 4  ] && return
 	if [ -n "$5" ]; then
-	[ -n "${BASHBOTDEBUG}" ] && printf "%s: sendUpload CHAT=%s WHAT=%s  FILE=%s CAPT=%s\n" "$(date)" "${1}" "${2}" "${3}" "${4}"
+	[ -n "${BASHBOTDEBUG}" ] && printf "%s: sendUpload CHAT=%s WHAT=%s  FILE=%s CAPT=%s\n" "$(date)" "${1}" "${2}" "${3}" "${4}" 1>&2
 	# shellcheck disable=SC2086
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
@@ -352,7 +352,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 else
   # simple curl or wget call outputs result to stdout
   getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && printf "%s: getJson (wget) URL=%s\n" "$(date)" "${1##*/}"
+	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && printf "%s: getJson (wget) URL=%s\n" "$(date)" "${1##*/}" 1>&2
 	# shellcheck disable=SC2086
 	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
   }
@@ -360,7 +360,7 @@ else
   sendJson(){
 	local chat="";
 	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
-	[ -n "${BASHBOTDEBUG}" ] && printf "%s: sendJson (wget) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2}" "${3##*/}"
+	[ -n "${BASHBOTDEBUG}" ] && printf "%s: sendJson (wget) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" 1>&2
 	# shellcheck disable=SC2086
 	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
@@ -399,6 +399,7 @@ sendJsonRetry(){
 # $1 result $2 function $3 .. $n original arguments, $3 is Chat_id
 sendJsonResult(){
 	BOTSENT=( )
+	[ -n "${BASHBOTDEBUG}" ] && printf "\n%s: New Result ==========\n%s\n" "$(date)" "$1" >>"${LOGDIR}/MESSAGE.log"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${1}")"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
 		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${1}")"
