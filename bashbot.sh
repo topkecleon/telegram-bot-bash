@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-39-g35d5e05
+#### $$VERSION$$ v0.98-dev-40-g344167e
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -319,6 +319,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
   [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
   # simple curl or wget call, output to stdout
   getJson(){
+	[ -n "${BASHBOTDEBUG}" ] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}"
 	# shellcheck disable=SC2086
 	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
   }
@@ -326,6 +327,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
   sendJson(){
 	local chat="";
 	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
+	[ -n "${BASHBOTDEBUG}" ] && printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2}" "${3##*/}"
 	# shellcheck disable=SC2086
 	res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
 		-d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
@@ -336,6 +338,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
   sendUpload() {
 	[ "$#" -lt 4  ] && return
 	if [ -n "$5" ]; then
+	[ -n "${BASHBOTDEBUG}" ] && printf "%s: sendUpload CHAT=%s WHAT=%s  FILE=%s CAPT=%s\n" "$(date)" "${1}" "${2}" "${3}" "${4}"
 	# shellcheck disable=SC2086
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
@@ -349,6 +352,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 else
   # simple curl or wget call outputs result to stdout
   getJson(){
+	[ -n "${BASHBOTDEBUG}" ] && printf "%s: getJson (wget) URL=%s\n" "$(date)" "${1##*/}"
 	# shellcheck disable=SC2086
 	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
   }
@@ -356,6 +360,7 @@ else
   sendJson(){
 	local chat="";
 	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
+	[ -n "${BASHBOTDEBUG}" ] && printf "%s: sendJson (wget) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2}" "${3##*/}"
 	# shellcheck disable=SC2086
 	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
@@ -815,33 +820,34 @@ process_message() {
 #########################
 # main get updates loop, should never terminate
 declare -A BASHBOTBLOCKED
+export BASHBOTDEBUG
 start_bot() {
-	local ADMIN DEBUG OFFSET=0
+	local ADMIN OFFSET=0
 	# adaptive sleep deafults
 	local nextsleep="100" :
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
 	local maxsleep="${BASHBOT_SLEEP:-5000}"
 	# startup message
-	DEBUG="$(date): Start BASHBOT updates in Mode \"${1:-normal}\" =========="
-	printf  "%s\n" "${DEBUG}" >>"${UPDATELOG}"
+	BASHBOTDEBUG="$(date): Start BASHBOT updates in Mode \"${1:-normal}\" =========="
+	printf  "%s\n" "${BASHBOTDEBUG}" >>"${UPDATELOG}"
 	# redirect to Debug.log
 	[[ "${1}" == *"debug" ]] && exec &>>"${DEBUGLOG}"
-	printf  "%s\n" "${DEBUG}"; DEBUG="${1}"
-	[[ "${DEBUG}" == "xdebug"* ]] && set -x
+	printf  "%s\n" "${BASHBOTDEBUG}"; BASHBOTDEBUG="${1}"
+	[[ "${BASHBOTDEBUG}" == "xdebug"* ]] && set -x
 	#cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
 	find "${DATADIR}" -size 0 -name "*.log" -delete
 	# load addons on startup
 	for addons in "${ADDONDIR:-.}"/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
-		[ -r "${addons}" ] && source "${addons}" "startbot" "${DEBUG}"
+		[ -r "${addons}" ] && source "${addons}" "startbot" "${BASHBOTDEBUG}"
 	done
 	# shellcheck source=./commands.sh
 	source "${COMMANDS}" "startbot"
 	# start timer events
 	if [ -n "${BASHBOT_START_TIMER}" ] ; then
 		# shellcheck disable=SC2064
-		trap "event_timer $DEBUG" ALRM
+		trap "event_timer $BASHBOTDEBUG" ALRM
 		start_timer &
 		# shellcheck disable=SC2064
 		trap "kill -9 $!; exit" EXIT INT HUP TERM QUIT 
@@ -877,7 +883,7 @@ start_bot() {
 
 			if [ "$OFFSET" != "1" ]; then
 				nextsleep="100"
-				process_updates "${DEBUG}"
+				process_updates "${BASHBOTDEBUG}"
 			fi
 		else
 			# ups, something bad happend, wait maxsleep*10
