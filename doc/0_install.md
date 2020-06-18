@@ -52,7 +52,7 @@ see e.g. [Install Bash on Mac](http://macappstore.org/bash/)
 environment variable before running bashbot, e.g. the gnu versions of sed, grep, find ...
 
 I considered to make bashbot BSD sed compatible, but much of the bashbot "magic" relies on
-(gnu) sed features, e.g. alternation ```|```, non printables ```\n\t\<```) or repeat ```?+``` pattern, not supported by BSD sed.
+(gnu) sed features, e.g. alternation ```|```, non printables ```\n\t\<``` or repeat ```?+``` pattern, not supported by BSD sed.
 BSD/MacOS sed compatibility will result in a rewrite of all grep/sed commands with an uncertain outcome,
 see [BSD/MacOS vs. GNU sed](https://riptutorial.com/sed/topic/9436/bsd-macos-sed-vs--gnu-sed-vs--the-posix-sed-specification)
 to get an impression how different they are.
@@ -107,5 +107,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v0.98-dev-35-gea27513
+#### $$VERSION$$ v0.98-dev-38-g215667b
 

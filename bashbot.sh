@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-37-g3cd8dc9
+#### $$VERSION$$ v0.98-dev-38-g215667b
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -298,8 +298,10 @@ killallproc() {
 }
 
 
+# $ chat $2 mesgid $3 nolog
 declare -xr DELETE_URL=$URL'/deleteMessage'
 delete_message() {
+	[ -z "$3" ] && printf "%s: Delete Message CHAT=%s MSG_ID=%s\n" "$(date)" "${1}" "${2}" >>"${UPDATELOG}"
 	sendJson "${1}" '"message_id": '"${2}"'' "${DELETE_URL}"
 }
 

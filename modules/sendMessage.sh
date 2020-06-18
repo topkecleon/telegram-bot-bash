@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-17-gdda5b6d
+#### $$VERSION$$ v0.98-dev-38-g215667b
 
 # will be automatically sourced from bashbot
 
@@ -75,7 +75,7 @@ old_send_keyboard() {
 ISEMPTY="ThisTextIsEmptyAndWillBeDeleted"
 sendEmpty() {
 	sendJson "${@}"
-	[[ "${2}" = *"${ISEMPTY}"* ]] && delete_message "${1}" "${BOTSENT[ID]}"
+	[[ "${2}" = *"${ISEMPTY}"* ]] && delete_message "${1}" "${BOTSENT[ID]}" "nolog"
 }
 send_keyboard() {
 	if [[ "$3" != *'['* ]]; then old_send_keyboard "${@}"; return; fi
