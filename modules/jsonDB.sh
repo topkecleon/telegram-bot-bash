@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-29-g5dcbccd
+#### $$VERSION$$ v0.98-dev-36-g2dbe63b
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -312,7 +312,7 @@ function jssh_updateArray_async() {
 	local DB; DB="$(jssh_checkDB "$2")"
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
-	[ "${DB}" -nt "${DB}.last${3}" ] && touch "${DB}.last${3}" && jssh_readDB_async "${1}" "${2}"
+	[[ -z "${1[*]}" ||  "${DB}" -nt "${DB}.last${3}" ]] && touch "${DB}.last${3}" && jssh_readDB_async "${1}" "${2}"
 }
 
 ##############
