@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-45-g30eedcf
+#### $$VERSION$$ v0.98-dev-46-g67f2dcd
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -319,7 +319,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
   [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
   # simple curl or wget call, output to stdout
   getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -n "${3}" ]] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}" 1>&2
+	[[ -n "${BASHBOTDEBUG}" && -z "${2}" ]] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}" 1>&2
 	# shellcheck disable=SC2086
 	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
   }
@@ -352,7 +352,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 else
   # simple curl or wget call outputs result to stdout
   getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && printf "%s: getJson (wget) URL=%s\n" "$(date)" "${1##*/}" 1>&2
+	[[ -n "${BASHBOTDEBUG}" && -z "${2}" ]] && printf "%s: getJson (wget) URL=%s\n" "$(date)" "${1##*/}" 1>&2
 	# shellcheck disable=SC2086
 	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
   }
