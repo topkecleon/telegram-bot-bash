@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-41-gd221fb6
+#### $$VERSION$$ v0.98-dev-43-g8b3e92d
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -116,7 +116,7 @@ if [ ! -d "${LOGDIR}" ] || [ ! -w "${LOGDIR}" ]; then
 fi
 DEBUGLOG="${LOGDIR}/DEBUG.log"
 ERRORLOG="${LOGDIR}/ERROR.log"
-UPDATELOG="${LOGDIR}/UPDATE.log"
+UPDATELOG="${LOGDIR}/BASHBOT.log"
 
 # we assume everthing is already set up correctly if we have TOKEN
 if [ -z "${BOTTOKEN}" ]; then
