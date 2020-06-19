@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-50-gfa5be1e
+#### $$VERSION$$ v0.98-dev-51-gcf536c9
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -21,6 +21,7 @@
 # - 4 unkown command
 # - 5 cannot connect to telegram bot
 # - 6 mandatory module not found
+# - 6 can't get bottoken
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091
 
 # are we runnig in a terminal?
@@ -120,7 +121,7 @@ UPDATELOG="${LOGDIR}/BASHBOT.log"
 
 # we assume everthing is already set up correctly if we have TOKEN
 if [ -z "${BOTTOKEN}" ]; then
-  # DATABASE does not exist, create
+  # BOTCONFIG does not exist, create
   [ ! -f "${BOTCONFIG}.jssh" ] &&
 		printf '["bot_config_key"]\t"config_key_value"\n' >"${BOTCONFIG}.jssh"
   # BOTTOKEN empty read ask user
@@ -143,7 +144,7 @@ if [ -z "${BOTTOKEN}" ]; then
 
   # setup botadmin file
   if [ -z "$(getConfigKey "botadmin")" ]; then
-     # convert old token
+     # convert old admin
      if [ -r "${BOTADMIN}" ]; then
 		admin="$(< "${BOTADMIN}")"
      elif [ -z "${CLEAR}" ]; then
@@ -190,11 +191,24 @@ if [ -z "${BOTTOKEN}" ]; then
 fi
 
 # read BOTTOKEN from bot database if not set
-[ -z "${BOTTOKEN}" ] && BOTTOKEN="$(getConfigKey "bottoken")"
+if [ -z "${BOTTOKEN}" ]; then
+    BOTTOKEN="$(getConfigKey "bottoken")"
+    if [[ -z "${BOTTOKEN}" && "${1}" != "help" ]]; then
+   	echo -e "${ORANGE}Warning: can't get bot token, try to recover working config.${NC}"
+	if [ -r "${BOTCONFIG}.jssh.ok" ]; then
+		cp "${BOTCONFIG}.jssh.ok" "${BOTCONFIG}.jssh"
+		BOTTOKEN="$(getConfigKey "bottoken")"
+	else
+   		echo -e "${RED}Error: Missing bot token! remove ${BOTCONFIG}.jssh and run \"bashbot.sh init\" may fix it.${NC}"
+		exit 7
+	fi
+    fi
+fi
+
 
 # BOTTOKEN format checks
 if [[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ ]]; then
-	echo -e "${ORANGE}Warning, your bottoken may incorrect. it should have the following format:${NC}"
+	echo -e "${ORANGE}Warning: your bottoken may incorrect. it should have the following format:${NC}"
 	echo -e "${GREY}123456789${RED}:${GREY}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4${ORANGE} => ${NC}\c"
 	echo -e "${GREY}8-10 digits${RED}:${GREY}35 alnum characters + '_-'${NC}"
 	echo -e "${ORANGE}Your current token is: '${GREY}^$(cat -ve <<<"${BOTTOKEN//:/${RED}:${GREY}}")${ORANGE}'${NC}"
@@ -319,7 +333,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
   [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
   # simple curl or wget call, output to stdout
   getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -z "${2}" ]] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}" 1>&2
+	[[ -n "${BASHBOTDEBUG}" && -n "${3}" ]] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}" 1>&2
 	# shellcheck disable=SC2086
 	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
   }
@@ -352,7 +366,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 else
   # simple curl or wget call outputs result to stdout
   getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -z "${2}" ]] && printf "%s: getJson (wget) URL=%s\n" "$(date)" "${1##*/}" 1>&2
+	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && printf "%s: getJson (wget) URL=%s\n" "$(date)" "${1##*/}" 1>&2
 	# shellcheck disable=SC2086
 	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
   }
@@ -856,7 +870,7 @@ start_bot() {
 	# cleanup countfile on startup
 	jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
         [ -f "${COUNTFILE}.jssh.flock" ] && rm -f "${COUNTFILE}.jssh.flock"
-	jssh_deleteKeyDB "CLEAN_BOT_DATABASE_ON_STARTUP" "${BOTCONFIG}"
+	jssh_deleteKeyDB "CLEAN_BOT_BOTCONFIG_ON_STARTUP" "${BOTCONFIG}"
         [ -f "${BOTCONFIG}.jssh.flock" ] && rm -f "${BOTCONFIG}.jssh.flock"
 	jssh_readDB_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
 	# inform botadmin about start
@@ -932,7 +946,7 @@ bot_init() {
 		chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTADMIN}" "${LOGDIR}/"*.log 2>/dev/null
 	chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
 		# jsshDB must writeable by owner
-		find . -name '*.jssh' -exec chmod u+w \{\} +
+		find . -name '*.jssh*' -exec chmod u+w \{\} +
 	fi
 	# show result
 	ls -l
@@ -962,8 +976,8 @@ if [ "${SOURCE}" != "yes" ]; then
   ##############
   # internal options only for use from bashbot and developers
   case "$1" in
-	# all these commands need the botname and a working connection
-	"botname"|"outproc"|"start"*|"stop"*|"kill"*|"resume"*|"suspend"*|"status")
+	# update botname botname when starting only
+	"botname"|"start"*|"resume"*)
 		ME="$(getBotName)"
 		if [ -n "${ME}" ]; then
 			# ok we have a connection an got botname, save it
@@ -979,14 +993,13 @@ if [ "${SOURCE}" != "yes" ]; then
 			fi
 		fi
 		[ -n "${CLEAR}" ] && printf "Bot Name: %s\n" "${ME}"
-		SESSION="${ME:-_bot}-startbot"
-		BOTPID="$(proclist "${SESSION}")"
 		[ "$1" = "botname" ] && exit
 		;;&
 	# used to send output of backgrond and interactive to chats
 	"outproc") # $2 chat_id $3 identifier of job, internal use only!
 		[ -z "$3" ] && echo "No job identifier" && exit 3
 		[ -z "$2"  ] && echo "No chat to send to" && exit 3
+		ME="$(getConfigKey "botname")"
 		# read until terminated
 		while read -r line ;do
 			[ -n "$line" ] && send_message "$2" "$line"
@@ -1009,6 +1022,7 @@ if [ "${SOURCE}" != "yes" ]; then
 	# print usage sats
 	"count") echo -e "${RED}Command ${GREY}count${RED} is deprecated, use ${GREY}stats{$RED}instead.${NC}";&
 	"stats")
+		ME="$(getConfigKey "botname")"
 		declare -A STATS
 		jssh_readDB_async "STATS" "${COUNTFILE}"
 		for MSG in ${!STATS[*]}
@@ -1025,10 +1039,11 @@ if [ "${SOURCE}" != "yes" ]; then
 		;;
 	# sedn message to all users
 	'broadcast')
+		ME="$(getConfigKey "botname")"
 		declare -A SENDALL
 		shift
 		jssh_readDB_async "SENDALL" "${COUNTFILE}"
-		echo -e "Sending broadcast message to all users \c"
+		echo -e "Sending broadcast message to all users of ${ME} \c"
 		for MSG in ${!SENDALL[*]}
 		do
 			[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
@@ -1044,6 +1059,9 @@ if [ "${SOURCE}" != "yes" ]; then
 		;;
 	# does what is says
 	"status")
+		ME="$(getConfigKey "botname")"
+		SESSION="${ME:-_bot}-startbot"
+		BOTPID="$(proclist "${SESSION}")"
 		if [ -n "${BOTPID}" ]; then
 			echo -e "${GREEN}Bot is running with UID ${RUNUSER}.${NC}"
 			exit
@@ -1055,6 +1073,9 @@ if [ "${SOURCE}" != "yes" ]; then
 		 
 	# start bot as background jod and check if bot is running
 	"start")
+		# shellcheck disable=SC2086
+		SESSION="${ME:-_bot}-startbot"
+		BOTPID="$(proclist "${SESSION}")"
 		# shellcheck disable=SC2086
 		[ -n "${BOTPID}" ] && kill ${BOTPID}
 		nohup "$SCRIPT" "startbot" "$2" "${SESSION}" &>/dev/null &
@@ -1070,12 +1091,15 @@ if [ "${SOURCE}" != "yes" ]; then
 	# does what it says
 	"kill") echo -e "${RED}Command ${GREY}kill${RED} is deprecated, use ${GREY}stop{$RED}instead.${NC}";&
 	"stop")
+		ME="$(getConfigKey "botname")"
+		SESSION="${ME:-_bot}-startbot"
+		BOTPID="$(proclist "${SESSION}")"
 		if [ -n "${BOTPID}" ]; then
 			# shellcheck disable=SC2086
 			if kill ${BOTPID}; then
 				# inform botadmin about stop
 				ADMIN="$(getConfigKey "botadmin")"
-				[ -n "${ADMIN}" ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") stopped ..." &
+				[ -n "${ADMIN}" ] && send_normal_message "${ADMIN}" "Bot $(ME) stopped ..." &
 				echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
 			else
 				echo -e "${RED}An error occured while stopping bot.${NC}"
