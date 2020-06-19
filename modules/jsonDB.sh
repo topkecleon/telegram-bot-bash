@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-44-g02715e4
+#### $$VERSION$$ v0.98-dev-48-g9adc62d
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -106,6 +106,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   alias jssh_getDB=jssh_getKeyDB
   jssh_getKeyDB() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	[ -z "${DB}" ] && return 1
 	local DB; DB="$(jssh_checkDB "$2")"
 	# start atomic delete here, exclusive max wait 1s 
 	{ flock -s -w 1 200
@@ -125,7 +126,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	local DB="${2}.jssh"
 	# start atomic delete here, exclusive max wait 5 
-	{ flock -e -w 5 200; jssh_countKeyDB "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
+	{ flock -e -w 5 200; jssh_countKeyDB_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
   }
 
   # update key/value in place to jsshDB
@@ -135,6 +136,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   #no own locking, so async is the same as updatekeyDB
   jssh_updateKeyDB() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	[ -z "${3}" ] && return 1
 	declare -A updARR
 	# shellcheck disable=SC2034
 	updARR["$1"]="$2"
@@ -230,6 +232,7 @@ jssh_writeDB_async() {
 }
 
 jssh_updateDB_async() {
+	[ -z "${2}" ] && return 1
 	declare -n ARRAY="$1"
 	[ -z "${ARRAY[*]}" ] && return 1
 	declare -A oldARR
@@ -262,6 +265,7 @@ jssh_insertKeyDB_async() {
 jssh_deleteKeyDB_async() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	local DB; DB="$(jssh_checkDB "$2")"
+	[ -z "${DB}" ] && return 1
 	declare -A oldARR
 	Json2Array "oldARR" <"${DB}"
 	unset oldARR["$1"]
@@ -271,12 +275,14 @@ jssh_deleteKeyDB_async() {
 jssh_getKeyDB_async() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	local DB; DB="$(jssh_checkDB "$2")"
+	[ -z "${DB}" ] && return 1
 	[ -r "${DB}" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${DB}" | tail -n 1
 }
 
 jssh_countKeyDB_async() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	local VAL DB; DB="$(jssh_checkDB "$2")"
+	[ -z "${DB}" ] && return 1
 	# start atomic delete here, exclusive max wait 5 
 	if [ -n "$3" ]; then
 		declare -A oldARR
@@ -297,6 +303,7 @@ jssh_countKeyDB_async() {
 #no own locking, so async is the same as updatekeyDB
 jssh_updateKeyDB_async() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	[ -z "${3}" ] && return 1
 	declare -A updARR
 	# shellcheck disable=SC2034
 	updARR["$1"]="$2"
