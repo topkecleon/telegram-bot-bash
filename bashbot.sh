@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-46-g67f2dcd
+#### $$VERSION$$ v0.98-dev-49-g5dcc7ef
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -56,11 +56,11 @@ _round_float() {
 }
 setConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${2//\"/\\\"}" >>"${BOTDATABASE}.jssh"
+	printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${2//\"/\\\"}" >>"${BOTCONFIG}.jssh"
 }
 getConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	[ -r "${BOTDATABASE}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTDATABASE}.jssh" | tail -n 1
+	[ -r "${BOTCONFIG}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTCONFIG}.jssh" | tail -n 1
 }
 
 
@@ -102,7 +102,7 @@ if [ ! -w "." ]; then
 fi
 
 # Setup and check environment if BOTTOKEN is NOT set
-BOTDATABASE="${BASHBOT_ETC:-.}/botconfig"
+BOTCONFIG="${BASHBOT_ETC:-.}/botconfig"
 TOKENFILE="${BASHBOT_ETC:-.}/token"
 BOTADMIN="${BASHBOT_ETC:-.}/botadmin"
 BOTACL="${BASHBOT_ETC:-.}/botacl"
@@ -121,8 +121,8 @@ UPDATELOG="${LOGDIR}/BASHBOT.log"
 # we assume everthing is already set up correctly if we have TOKEN
 if [ -z "${BOTTOKEN}" ]; then
   # DATABASE does not exist, create
-  [ ! -f "${BOTDATABASE}.jssh" ] &&
-		printf '["bot_config_key"]\t"config_key_value"\n' >"${BOTDATABASE}.jssh"
+  [ ! -f "${BOTCONFIG}.jssh" ] &&
+		printf '["bot_config_key"]\t"config_key_value"\n' >"${BOTCONFIG}.jssh"
   # BOTTOKEN empty read ask user
   if [ -z "$(getConfigKey "bottoken")" ]; then
      # convert old token
@@ -138,7 +138,7 @@ if [ -z "${BOTTOKEN}" ]; then
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NC}"
 	read -r token
      fi
-     [ -n "${token}" ] && printf '["bottoken"]\t"%s"\n'  "${token}" >> "${BOTDATABASE}.jssh"
+     [ -n "${token}" ] && printf '["bottoken"]\t"%s"\n'  "${token}" >> "${BOTCONFIG}.jssh"
   fi
 
   # setup botadmin file
@@ -156,7 +156,7 @@ if [ -z "${BOTTOKEN}" ]; then
 	read -r admin
      fi
      [ -z "${admin}" ] && admin='?'
-     printf '["botadmin"]\t"%s"\n'  "${admin}" >> "${BOTDATABASE}.jssh"
+     printf '["botadmin"]\t"%s"\n'  "${admin}" >> "${BOTCONFIG}.jssh"
   fi
   # setup botacl file
   if [ ! -f "${BOTACL}" ]; then
@@ -856,8 +856,8 @@ start_bot() {
 	# cleanup countfile on startup
 	jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
         [ -f "${COUNTFILE}.jssh.flock" ] && rm -f "${COUNTFILE}.jssh.flock"
-	jssh_deleteKeyDB "CLEAN_BOT_DATABASE_ON_STARTUP" "${BOTDATABASE}"
-        [ -f "${BOTDATABASE}.jssh.flock" ] && rm -f "${BOTDATABASE}.jssh.flock"
+	jssh_deleteKeyDB "CLEAN_BOT_DATABASE_ON_STARTUP" "${BOTCONFIG}"
+        [ -f "${BOTCONFIG}.jssh.flock" ] && rm -f "${BOTCONFIG}.jssh.flock"
 	jssh_readDB_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
 	# inform botadmin about start
 	ADMIN="$(getConfigKey "botadmin")"
@@ -968,8 +968,8 @@ if [ "${SOURCE}" != "yes" ]; then
 		if [ -n "${ME}" ]; then
 			# ok we have a connection an got botname, save it
 			[ -n "${CLEAR}" ] && echo -e "${GREY}Bottoken is valid ...${NC}"
-			jssh_updateKeyDB "botname" "${ME}" "${BOTDATABASE}"
-			rm -f "${BOTDATABASE}.jssh.flock"
+			jssh_updateKeyDB "botname" "${ME}" "${BOTCONFIG}"
+			rm -f "${BOTCONFIG}.jssh.flock"
 		else
 			echo -e "${GREY}Info: Can't get Botname from Telegram, try cached one ...${NC}"
 			ME="$(getConfigKey "botname")"
