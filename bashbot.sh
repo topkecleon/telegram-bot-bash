@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-49-g5dcc7ef
+#### $$VERSION$$ v0.98-dev-50-gfa5be1e
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -1092,7 +1092,13 @@ if [ "${SOURCE}" != "yes" ]; then
 		job_control "$1"
 		;;
 	"help")
-		less "README.txt"
+		HELP="README"
+		if [ -n "${CLEAR}" ];then
+			_exists w3m && w3m "$HELP.html" && exit
+			_exists lynx && lynx "$HELP.html" && exit
+			_exists less && less "$HELP.txt" && exit
+		fi
+		cat "$HELP.txt"
 		exit
 		;;
 	*)
