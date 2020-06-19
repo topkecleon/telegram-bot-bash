@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.98-dev-33-g18f0ace
+#### $$VERSION$$ v0.98-dev-60-gfa6ad3e
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -81,6 +81,19 @@ else
 			delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
 		fi
 	fi
+
+	# exmaple for actions based on chat or sender
+	case "${USER[ID]}+${CHAT[ID]}" in
+		'USERID+'*) # do something for all messages from USER
+			printf "%s: U=%s C=%s M=%s\n" "$(date)" "${USER[ID]}" "${CHAT[ID]}" "${MESSAGE}" >>"${DATADIR}/${USER[ID]}.log"
+			;;&
+		*'+CHATID') # do something for all messages from CHAT
+			printf "%s: U=%s C=%s M=%s\n" "$(date)" "${USER[ID]}" "${CHAT[ID]}" "${MESSAGE}" >>"${DATADIR}/${CHAT[ID]}.log"
+			;;&
+		'USERID+CHATID') # do something only for messages form USER in CHAT
+			printf "%s: U=%s C=%s M=%s\n" "$(date)" "${USER[ID]}" "${CHAT[ID]}" "${MESSAGE}" >>"${DATADIR}/${CHAT[ID]}+${USER[ID]}.log"
+			;;&
+	esac
 
 	# pre-check admin only commands  
 	case "${MESSAGE}" in
