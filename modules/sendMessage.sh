@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-57-g4d8c205
+#### $$VERSION$$ v0.98-dev-58-ge4d13fd
 
 # will be automatically sourced from bashbot
 
@@ -27,10 +27,19 @@ ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
 
 send_normal_message() {
-	local text; text="$(JsonEscape "${2}")"
+	local len text; text="$(JsonEscape "${2}")"
+	text="${text//$'\n'/\\n}"
 	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'"' "${MSG_URL}"
-		text="${text:4096}"
+		if [ "${#text}" -le 4096 ]; then\
+			sendJson "${1}" '"text":"'"${text}"'"' "${MSG_URL}"
+			unset text
+		else
+			len=4095
+			[ "${text:4095:2}" != "\n" ] &&\
+				len="${text:0:4096}" && len="${len%\\n*}" && len="${#len}"
+			sendJson "${1}" '"text":"'"${text:0:${len}}"'"' "${MSG_URL}"
+			text="${text:$((len+2))}"
+		fi
 	done
 }
 
