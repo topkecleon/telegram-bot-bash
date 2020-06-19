@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-53-g11b5aab
+#### $$VERSION$$ v0.98-dev-54-gf1d71a0
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -64,6 +64,8 @@ getConfigKey() {
 	[ -r "${BOTCONFIG}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTCONFIG}.jssh" | tail -n 1
 }
 
+BOTCOMMANDS="start, stop, status, help, init, stats, broadcast, suspendback, resumeback, killback"
+[ -z "$1" ] &&  echo -e "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NC}" && exit
 if [ "$1" = "help" ]; then
 		HELP="README"
 		if [ -n "${CLEAR}" ];then
@@ -1128,7 +1130,7 @@ if [ "${SOURCE}" != "yes" ]; then
 		;;
 	*)
 		echo -e "${RED}${REALME##*/}: unknown command${NC}"
-		echo -e "${ORANGE}Available commands: ${GREY}start, stop, status, stats, broadcast, help, suspendback, resumeback, killback${NC}"
+		echo -e "${RED}Available commands: ${GREY}${BOTCOMMANDS}${NC}" && exit
 		exit 4
 		;;
   esac
