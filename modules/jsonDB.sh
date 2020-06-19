@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-48-g9adc62d
+#### $$VERSION$$ v0.98-dev-59-g21f29a4
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -106,8 +106,8 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   alias jssh_getDB=jssh_getKeyDB
   jssh_getKeyDB() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	[ -z "${DB}" ] && return 1
 	local DB; DB="$(jssh_checkDB "$2")"
+	[ -z "${DB}" ] && return 1
 	# start atomic delete here, exclusive max wait 1s 
 	{ flock -s -w 1 200
 	[ -r "${DB}" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${DB}" | tail -n 1

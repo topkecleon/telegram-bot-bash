@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-58-ge4d13fd
+#### $$VERSION$$ v0.98-dev-59-g21f29a4
 
 # will be automatically sourced from bashbot
 
@@ -30,7 +30,7 @@ send_normal_message() {
 	local len text; text="$(JsonEscape "${2}")"
 	text="${text//$'\n'/\\n}"
 	until [ -z "${text}" ]; do
-		if [ "${#text}" -le 4096 ]; then\
+		if [ "${#text}" -le 4096 ]; then
 			sendJson "${1}" '"text":"'"${text}"'"' "${MSG_URL}"
 			unset text
 		else
