@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-55-g1cba3aa
+#### $$VERSION$$ v0.98-dev-56-gf119c44
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -64,20 +64,6 @@ getConfigKey() {
 	[ -r "${BOTCONFIG}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTCONFIG}.jssh" | tail -n 1
 }
 
-BOTCOMMANDS="start, stop, status, help, init, stats, broadcast, suspendback, resumeback, killback"
-[ -z "$1" ] &&  echo -e "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NC}" && exit
-if [ "$1" = "help" ]; then
-		HELP="README"
-		if [ -n "${CLEAR}" ];then
-			_exists w3m && w3m "$HELP.html" && exit
-			_exists lynx && lynx "$HELP.html" && exit
-			_exists less && less "$HELP.txt" && exit
-		fi
-		cat "$HELP.txt"
-		exit
-fi
-
-
 # get location and name of bashbot.sh
 SCRIPT="$0"
 REALME="${BASH_SOURCE[0]}"
@@ -89,6 +75,19 @@ MODULEDIR="${SCRIPTDIR}/modules"
 # adjust locations based on source and real name
 if [ "${SCRIPT}" != "${REALME}" ] || [ "$1" = "source" ]; then
 	SOURCE="yes"
+fi
+
+BOTCOMMANDS="start, stop, status, help, init, stats, broadcast, suspendback, resumeback, killback"
+[[ -z "$1" && -z "${SOURCE}" ]] &&  echo -e "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NC}" && exit
+if [ "$1" = "help" ]; then
+		HELP="README"
+		if [ -n "${CLEAR}" ];then
+			_exists w3m && w3m "$HELP.html" && exit
+			_exists lynx && lynx "$HELP.html" && exit
+			_exists less && less "$HELP.txt" && exit
+		fi
+		cat "$HELP.txt"
+		exit
 fi
 
 if [ -n "$BASHBOT_HOME" ]; then
@@ -103,7 +102,7 @@ ADDONDIR="${BASHBOT_ETC:-.}/addons"
 RUNUSER="${USER}" # USER is overwritten by bashbot array
 
 # OK everthing setup, lest start
-if [ "${SOURCE}" != "yes" ] && [ -z "$BASHBOT_HOME" ] && ! cd "${RUNDIR}" ; then
+if [[ -z "${SOURCE}" && -z "$BASHBOT_HOME" ]] && ! cd "${RUNDIR}" ; then
 	echo -e "${RED}ERROR: Can't change to ${RUNDIR} ...${NC}"
 	exit 1
 else
@@ -256,7 +255,7 @@ export res CAPTION
 ##################
 # read commamds file if we are not sourced
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
-if [ "${SOURCE}" != "yes" ]; then
+if [ -z "${SOURCE}" ]; then
 	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
 		echo -e "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NC}"
 		ls -l "${COMMANDS}"
@@ -396,7 +395,7 @@ else
   sendUpload() {
 	printf "%s: %s\n" "$(date)" "Sorry, wget does not support file upload\n" >>"${ERRORLOG}"
 	BOTSENT[OK]="false"
-	[ "${SOURCE}" != "yes" ] && [ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
+	[[ -z "${SOURCE}" && -n "${BASHBOT_EVENT_SEND[*]}" ]] && event_send "upload" "$@" &
   }
 fi 
 
@@ -984,7 +983,7 @@ fi
 # source the script with source as param to use functions in other scripts
 # do not execute if read from other scripts
 
-if [ "${SOURCE}" != "yes" ]; then
+if [ -z "${SOURCE}" ]; then
 
   ##############
   # internal options only for use from bashbot and developers
