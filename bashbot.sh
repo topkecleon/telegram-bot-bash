@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-52-g75024a1
+#### $$VERSION$$ v0.98-dev-53-g11b5aab
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -63,6 +63,17 @@ getConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	[ -r "${BOTCONFIG}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTCONFIG}.jssh" | tail -n 1
 }
+
+if [ "$1" = "help" ]; then
+		HELP="README"
+		if [ -n "${CLEAR}" ];then
+			_exists w3m && w3m "$HELP.html" && exit
+			_exists lynx && lynx "$HELP.html" && exit
+			_exists less && less "$HELP.txt" && exit
+		fi
+		cat "$HELP.txt"
+		exit
+fi
 
 
 # get location and name of bashbot.sh
@@ -120,7 +131,7 @@ ERRORLOG="${LOGDIR}/ERROR.log"
 UPDATELOG="${LOGDIR}/BASHBOT.log"
 
 # we assume everthing is already set up correctly if we have TOKEN
-if [[ -z "${BOTTOKEN}" && "${1}" != "help" ]]; then
+if [ -z "${BOTTOKEN}" ]; then
   # BOTCONFIG does not exist, create
   [ ! -f "${BOTCONFIG}.jssh" ] &&
 		printf '["bot_config_key"]\t"config_key_value"\n' >"${BOTCONFIG}.jssh"
@@ -193,7 +204,7 @@ fi
 # read BOTTOKEN from bot database if not set
 if [ -z "${BOTTOKEN}" ]; then
     BOTTOKEN="$(getConfigKey "bottoken")"
-    if [[ -z "${BOTTOKEN}" && "${1}" != "help" ]]; then
+    if [ -z "${BOTTOKEN}" ]; then
    	echo -e "${ORANGE}Warning: can't get bot token, try to recover working config.${NC}"
 	if [ -r "${BOTCONFIG}.jssh.ok" ]; then
 		cp "${BOTCONFIG}.jssh.ok" "${BOTCONFIG}.jssh"
@@ -1114,16 +1125,6 @@ if [ "${SOURCE}" != "yes" ]; then
 	"suspendb"*|"resumeb"*|"killb"*)
   		_is_function job_control || { echo -e "${RED}Module background is not availible!${NC}"; exit 3; }
 		job_control "$1"
-		;;
-	"help")
-		HELP="README"
-		if [ -n "${CLEAR}" ];then
-			_exists w3m && w3m "$HELP.html" && exit
-			_exists lynx && lynx "$HELP.html" && exit
-			_exists less && less "$HELP.txt" && exit
-		fi
-		cat "$HELP.txt"
-		exit
 		;;
 	*)
 		echo -e "${RED}${REALME##*/}: unknown command${NC}"
