@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-39-g35d5e05
+#### $$VERSION$$ v0.98-dev-57-g4d8c205
 
 # will be automatically sourced from bashbot
 
@@ -191,8 +191,8 @@ send_message() {
 	[ -z "$2" ] && return
 	local text keyboard btext burl no_keyboard file lat long title address sent
 	text="$(sed <<< "${2}" 's/ mykeyboardend.*//;s/ *my[kfltab][a-z]\{2,13\}startshere.*//')$(sed <<< "${2}" -n '/mytextstartshere/ s/.*mytextstartshere//p')"
-	# shellcheck disable=SC2001
-	text="$(sed <<< "${text}" 's/ *mynewlinestartshere */\r\n/g')"
+	text="${text//*([[:space:]])mynewlinestartshere*([[:space:]])/ \\n}"
+	text="${text//$'\n'/\\n}"
 	[ "$3" != "safe" ] && {
 		no_keyboard="$(sed <<< "${2}" '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
 		keyboard="$(sed <<< "${2}" '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere *//;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
@@ -239,10 +239,10 @@ send_message() {
 
 send_text() {
 	case "$2" in
-		html_parse_mode*)
+		'html_parse_mode'*)
 			send_html_message "$1" "${2//html_parse_mode}"
 			;;
-		markdown_parse_mode*)
+		'markdown_parse_mode'*)
 			send_markdown_message "$1" "${2//markdown_parse_mode}"
 			;;
 		*)
