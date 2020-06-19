@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-54-gf1d71a0
+#### $$VERSION$$ v0.98-dev-55-g1cba3aa
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -418,7 +418,7 @@ sendJsonRetry(){
 			return
 			;;
 	esac
-	[ "${BOTSENT[OK]}" = "true" ] && printf "%s: Retry  OK: %s %s %s\n" "$(date)" "${retry}" "${1}" "${2:0:60}"
+	[ "${BOTSENT[OK]}" = "true" ] && printf "%s: Retry OK: %s %s %s\n" "$(date)" "${retry}" "${1}" "${2:0:60}"
 } >>"${ERRORLOG}"
 
 # process sendJson result
@@ -1112,7 +1112,7 @@ if [ "${SOURCE}" != "yes" ]; then
 			if kill ${BOTPID}; then
 				# inform botadmin about stop
 				ADMIN="$(getConfigKey "botadmin")"
-				[ -n "${ADMIN}" ] && send_normal_message "${ADMIN}" "Bot $(ME) stopped ..." &
+				[ -n "${ADMIN}" ] && send_normal_message "${ADMIN}" "Bot ${ME} stopped ..." &
 				echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
 			else
 				echo -e "${RED}An error occured while stopping bot.${NC}"
