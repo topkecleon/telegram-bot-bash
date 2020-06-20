@@ -5,7 +5,7 @@
 # If you your bot is finished you can use make-standalone.sh to create the
 # the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-63-g0b8c047
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -18,7 +18,7 @@ fi
 
 #DISTNAME="telegram-bot-bash"
 DISTDIR="./STANDALONE/${DISTNAME}" 
-DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh dev/obfuscate.sh modules LICENSE README.txt token count botacl botadmin"
+DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh dev/obfuscate.sh modules LICENSE README.* doc botacl botconfig.jssh"
 
 # run pre_commit on files
 dev/hooks/pre-commit.sh
@@ -38,7 +38,7 @@ echo "    ... create unified commands.sh"
 
 { 
   # first head of commands.sh
-  sed -n '0,/^if / p' commands.sh | head -n -2 | grep -v 'mycommands.sh'
+  sed -n '0,/^if / p' commands.sh | head -n -2 
 
   # then mycommands from first non comment line on
   printf '\n##############################\n# my commands starts here ...\n'
@@ -46,7 +46,7 @@ echo "    ... create unified commands.sh"
 
   # last tail of commands.sh
   printf '\n##############################\n# default commands starts here ...\n'
-  sed -n '/\/mycommands.sh"/,$ p' commands.sh | tail -n +2 
+  sed -n '/source .*\/mycommands.sh"/,$ p' commands.sh | tail -n +2 
 
 } >>$$commands.sh
 
@@ -79,10 +79,15 @@ sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space
 sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e '/^$/d' commands.sh > commands.sh.min
 chmod +x bashbot.sh.min
 
+# make html doc
+echo "Create html doc"
+#shellcheck disable=SC1090
+source "$GIT_DIR/../dev/make-html.sh"
+
 echo "Done!"
 
 cd .. || exit 1
 
 echo -e "\\nStandalone bashbot files are now availible in \"${DISTDIR}\":\\n"
-ls -l "${DISTDIR}"*
+ls -l "${DISTDIR}"
 
