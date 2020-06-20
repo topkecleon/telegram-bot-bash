@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-56-gf119c44
+#### $$VERSION$$ v0.98-dev-65-g25cc9a5
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -57,6 +57,7 @@ _round_float() {
 }
 setConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	[ -z "${BOTCONFIG}" ] && return 1
 	printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${2//\"/\\\"}" >>"${BOTCONFIG}.jssh"
 }
 getConfigKey() {
@@ -135,7 +136,7 @@ UPDATELOG="${LOGDIR}/BASHBOT.log"
 if [ -z "${BOTTOKEN}" ]; then
   # BOTCONFIG does not exist, create
   [ ! -f "${BOTCONFIG}.jssh" ] &&
-		printf '["bot_config_key"]\t"config_key_value"\n' >"${BOTCONFIG}.jssh"
+		printf '["bot_config_key"]\t"config_key_value"\n' >>"${BOTCONFIG}.jssh"
   # BOTTOKEN empty read ask user
   if [ -z "$(getConfigKey "bottoken")" ]; then
      # convert old token
@@ -186,7 +187,7 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
   # setup count file 
   if [ ! -f "${COUNTFILE}.jssh" ]; then
-	printf '["counted_user_chat_id"]\t"num_messages_seen"\n' > "${COUNTFILE}.jssh"
+	printf '["counted_user_chat_id"]\t"num_messages_seen"\n' >> "${COUNTFILE}.jssh"
 	# convert old file on creation
 	if [ -r  "${COUNTFILE}" ];then
 		sed 's/COUNT/\[\"/;s/$/\"\]\t\"1\"/' < "${COUNTFILE}" >> "${COUNTFILE}.jssh"
@@ -198,7 +199,7 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
   # setup blocked file 
   if [ ! -f "${BLOCKEDFILE}.jssh" ]; then
-	printf '["blocked_user_or_chat_id"]\t"name and reason"\n' >"${BLOCKEDFILE}.jssh"
+	printf '["blocked_user_or_chat_id"]\t"name and reason"\n' >>"${BLOCKEDFILE}.jssh"
   fi
 fi
 
@@ -424,6 +425,7 @@ sendJsonRetry(){
 # stdout is written to ERROR.log
 # $1 result $2 function $3 .. $n original arguments, $3 is Chat_id
 sendJsonResult(){
+	local offset=0
 	BOTSENT=( )
 	[ -n "${BASHBOTDEBUG}" ] && printf "\n%s: New Result ==========\n%s\n" "$(date)" "$1" >>"${LOGDIR}/MESSAGE.log"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${1}")"
@@ -439,12 +441,15 @@ sendJsonResult(){
 		BOTSENT[DESCRIPTION]="$(JsonGetString '"description"' <<< "${1}")"
 		BOTSENT[RETRY]="$(JsonGetValue '"parameters","retry_after"' <<< "${1}")"
 	    else
+		BOTSENT[OK]="false"
 		BOTSENT[ERROR]="999"
 		BOTSENT[DESCRIPTION]="Send to telegram not possible, timeout/broken/no connection"
 	    fi
 	    # log error
+	    [[ "${BOTSENT[ERROR]}" = "400" && "${BOTSENT[DESCRIPTION]}" == *"starting at byte offset"* ]] &&\
+			 offset="${BOTSENT[DESCRIPTION]%* }"
 	    printf "%s: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s ACTION=%s\n" "$(date)"\
-			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4:0:60}"
+			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4:${offset}:100}"
 	    # warm path, do not retry on error, also if we use wegt
 	    [ -n "${BASHBOT_RETRY}${BASHBOT_WGET}" ] && return
 

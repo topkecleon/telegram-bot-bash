@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-59-g21f29a4
+#### $$VERSION$$ v0.98-dev-65-g25cc9a5
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -206,11 +206,11 @@ jssh_checkDB(){
 	[ -z "$1" ] && return 1
 	[[ "$1" = *'..'* ]] && return 2
 	if [[ "$1" == "${BASHBOT_VAR:-.}"* ]] || [[ "$1" == "${BASHBOT_DATA:-.}"* ]]; then
-		DB="$1.jssh"
+		DB="${1}.jssh"
 	else
-		DB="${BASHBOT_VAR:-.}/$1.jssh"
+		DB="${BASHBOT_VAR:-.}/${1}.jssh"
 	fi
-	printf '%s' "${DB}"
+	[ "${DB}" != ".jssh" ] && printf '%s' "${DB}"
 }
 
 
