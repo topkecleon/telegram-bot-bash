@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-59-g21f29a4
+#### $$VERSION$$ v0.98-dev-62-g8f03835
 
 # will be automatically sourced from bashbot
 
@@ -32,7 +32,7 @@ send_normal_message() {
 	until [ -z "${text}" ]; do
 		if [ "${#text}" -le 4096 ]; then
 			sendJson "${1}" '"text":"'"${text}"'"' "${MSG_URL}"
-			unset text
+			break
 		else
 			len=4095
 			[ "${text:4095:2}" != "\n" ] &&\
@@ -200,7 +200,8 @@ send_message() {
 	[ -z "$2" ] && return
 	local text keyboard btext burl no_keyboard file lat long title address sent
 	text="$(sed <<< "${2}" 's/ mykeyboardend.*//;s/ *my[kfltab][a-z]\{2,13\}startshere.*//')$(sed <<< "${2}" -n '/mytextstartshere/ s/.*mytextstartshere//p')"
-	text="${text//*([[:space:]])mynewlinestartshere*([[:space:]])/ \\n}"
+	#shellcheck disable=SC2001
+	text="$(sed <<< "${text}" 's/ *mynewlinestartshere */\\n/g')"
 	text="${text//$'\n'/\\n}"
 	[ "$3" != "safe" ] && {
 		no_keyboard="$(sed <<< "${2}" '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
