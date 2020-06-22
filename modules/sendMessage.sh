@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-62-g8f03835
+#### $$VERSION$$ v0.98-dev-68-g80a6dbb
 
 # will be automatically sourced from bashbot
 
@@ -88,9 +88,9 @@ sendEmpty() {
 }
 send_keyboard() {
 	if [[ "$3" != *'['* ]]; then old_send_keyboard "${@}"; return; fi
-	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"${ISEMPTY}"'"'
+	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"Keyboard:"'"'
 	local one_time=', "one_time_keyboard":true' && [ -n "$4" ] && one_time=""
-	sendEmpty "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"'}' "$MSG_URL"
+	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"'}' "$MSG_URL"
 	# '"text":"$2", "reply_markup": {"keyboard": [ ${3} ], "one_time_keyboard": true}'
 }
 
@@ -100,8 +100,8 @@ remove_keyboard() {
 	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
 }
 send_inline_keyboard() {
-	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"${ISEMPTY}"'"'
-	sendEmpty "${1}" "${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]}' "$MSG_URL"
+	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"Keyboard:"'"'
+	sendJson "${1}" "${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]}' "$MSG_URL"
 	# JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
 }
 send_button() {
