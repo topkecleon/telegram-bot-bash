@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-65-g25cc9a5
+#### $$VERSION$$ v0.98-dev-66-gd52ea8c
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -994,7 +994,7 @@ if [ -z "${SOURCE}" ]; then
   # internal options only for use from bashbot and developers
   case "$1" in
 	# update botname botname when starting only
-	"botname"|"start"*|"resume"*)
+	"botname"|"start"*)
 		ME="$(getBotName)"
 		if [ -n "${ME}" ]; then
 			# ok we have a connection an got botname, save it
@@ -1130,6 +1130,7 @@ if [ -z "${SOURCE}" ]; then
 	# suspend, resume or kill backgrund jobs
 	"suspendb"*|"resumeb"*|"killb"*)
   		_is_function job_control || { echo -e "${RED}Module background is not availible!${NC}"; exit 3; }
+		ME="$(getConfigKey "botname")"
 		job_control "$1"
 		;;
 	*)

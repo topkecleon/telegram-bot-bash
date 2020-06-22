@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-61-g30a72eb
+#### $$VERSION$$ v0.98-dev-66-gd52ea8c
 
 # will be automatically sourced from bashbot
 
@@ -50,6 +50,7 @@ restart_back() {
 	printf "%s: Start background job CHAT=%s JOB=%s CMD=%s\n" "$(date)" "${1}" "${fifo##*/}" "${2} ${4} ${5}" >>"${UPDATELOG}"
 	check_back "$1" "$3" && kill_proc "$1" "back-$3-"
 	nohup bash -c "{ $2 \"$4\" \"$5\" \"${fifo}\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"; }" &>>"${fifo}.log" &
+	sleep 0.5 # give bg job some time to init
 }
 
 
