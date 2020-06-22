@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-66-gd52ea8c
+#### $$VERSION$$ v0.98-dev-67-g4fe9697
 #
 # Exit Codes:
 # - 0 sucess (hopefully)
@@ -839,14 +839,7 @@ process_message() {
 	[[ "${SERVICE[*]}" =~  ^[[:blank:]]*$ ]] || SERVICE[0]="yes"
 
 	# split message in command and args
-	CMD=( )
-	if [[ "${MESSAGE[0]}" == "/"* ]]; then
-		set -f; unset IFS
-		# shellcheck disable=SC2206
-		CMD=( ${MESSAGE[0]} )
-		CMD[0]="${CMD[0]%%@*}"
-		set +f
-	fi 
+	[ "${MESSAGE[0]:0:1}" = "/" ] && read -r CMD <<<"${MESSAGE[0]}" &&  CMD[0]="${CMD[0]%%@*}"
 }
 
 #########################
