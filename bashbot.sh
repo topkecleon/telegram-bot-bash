@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-70-g694ee61
+#### $$VERSION$$ v0.98-dev-73-ge7739b8
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -849,7 +849,7 @@ export BASHBOTDEBUG
 start_bot() {
 	local ADMIN OFFSET=0
 	# adaptive sleep defaults
-	local nextsleep="100" :
+	local nextsleep="100"
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
 	local maxsleep="${BASHBOT_SLEEP:-5000}"
 	# startup message
