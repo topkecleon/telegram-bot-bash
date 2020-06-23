@@ -787,7 +787,7 @@ start_bot() {
 	local DEBUG="$1"
 	local OFFSET=0
 	# adaptive sleep deafults
-	local nextsleep="100" :
+	local nextsleep="100"
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
 	local maxsleep="${BASHBOT_SLEEP:-5000}"
 	# redirect to Debug.log
