@@ -243,7 +243,7 @@ data="$(cat file)" -> data="$(<"file")"
 
 DIR="$(dirname $0) -> DIR="${0%/*}"
 
-IAM="($basename $0)" -> IAM="${0##*/}*
+PROG="($basename $0)" -> PROG="${0##*/}*
 
 ADDME="$ADDME something to add" -> ADDME+=" something to add""
 

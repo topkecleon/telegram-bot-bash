@@ -77,7 +77,7 @@ If a command need more than 2-3 lines of code, you should use a function to sepa
 mycommands() {
 
 	case "$MESSAGE" in
-		'/process'*) # logic for /process is done in process_message 
+		'/doit'*) # logic for /doit is done in process_message 
 			result="$(process_message "$MESSAGE")"
 			send_normal_message "${CHAT[ID]}" "$result" 
 			;;

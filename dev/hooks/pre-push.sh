@@ -20,5 +20,15 @@ echo "............................"
 
 unset IFS; set -f
 
+if which codespell &>/dev/null; then
+	echo "Running codespell"
+	echo "............................" 
+	codespell -B 1 --skip="*.log,*.html,*.txt,.git*" -L "ba"
+	echo "if there are (to many) errors shown, consider running:"
+	echo "codespell -i 3 -w --skip=\"*.log,*.html,*.txt,.git*\""
+else
+	echo "consider installing codespell: pip install codespell"
+fi
+echo "............................" 
 # note date of last push for version
 touch "${LASTPUSH}"
