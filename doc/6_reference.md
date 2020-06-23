@@ -171,7 +171,11 @@ send_button "${CHAT[ID]}" "MAKE MONEY FAST!!!" "Visit my Shop" "https://dealz.rr
 ```
 
 ##### send_inline_keyboard
-This allows to place multiple inline buttons in a row. The inline buttons must specified as a JSON array in the following format:
+Even its called keyboard, this function is different from send_keyboard. The main difference is that it's only possible to
+specify URL buttons, no Text Buttons and the Buttons must be an Array of Buttons as specified for
+[Telegram InlineMarkup](https://core.telegram.org/bots/api#inlinekeyboardmarkup).
+
+The inline buttons must be specified as a JSON string in the following format:
 
 ```[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ]```
 
@@ -1035,5 +1039,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.98-dev-70-g694ee61
+#### $$VERSION$$ v0.98-dev-72-gfb61a48
 
