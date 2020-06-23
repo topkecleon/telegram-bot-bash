@@ -283,7 +283,7 @@ For a shell script running as a service it's important to be paranoid about quot
 To run shellcheck for a single script run ```shellcheck -x script.sh```, to check all schripts run ```dev/hooks/pre-commit.sh```.
 
 
-### bashbot tests
+### bashbot test suite
 Starting with version 0.70 bashbot has a test suite. To start testsuite run ```dev/all-tests.sh```. all-tests.sh will return 'SUCCESS' only if all tests pass.
 
 #### enabling / disabling tests
@@ -302,7 +302,7 @@ A temporary test environment is created when 'ALL-tests.sh' starts and deleted a
 
 The file ```ALL-tests.inc.sh``` must be included from all tests and provide the test environment as shell variables:
 ```bash
-# Test Evironment
+# Test Environment
  TESTME="$(basename "$0")"
  DIRME="$(pwd)"
  TESTDIR="$1"
@@ -347,5 +347,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-69-gafa8d87
 

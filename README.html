@@ -91,9 +91,9 @@ Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M (@gnadel
 <p>Released to the public domain wherever applicable. Elsewhere, consider it released under the <a href="http://www.wtfpl.net/txt/copying/">WTFPLv2</a>.</p>
 <h2>Prerequisites</h2>
 <p>Uses <a href="http://github.com/dominictarr/JSON.sh">JSON.sh</a>, but no more TMUX.</p>
-<p>Even bashbot is written in bash, it depends on commands typically availible in a Unix/Linux Environment. More concret on the common commands provided by recent versions of <a href="https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands">coreutils</a>, <a href="https://en.wikipedia.org/wiki/BusyBox#Commands">busybox</a> or <a href="https://landley.net/toybox/help.html">toybox</a>, see <a href="doc/7_develop.md#common-commands">Developer Notes</a></p>
+<p>Even bashbot is written in bash, it depends on commands typically available in a Unix/Linux Environment. More concret on the common commands provided by recent versions of <a href="https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands">coreutils</a>, <a href="https://en.wikipedia.org/wiki/BusyBox#Commands">busybox</a> or <a href="https://landley.net/toybox/help.html">toybox</a>, see <a href="doc/7_develop.md#common-commands">Developer Notes</a></p>
 <p><em>Note for MacOS and BSD Users:</em> As bashbot heavily uses modern bash and (gnu) grep/sed features, bashbot will not run without installing additional software, see <a href="doc/0_install.md">Install Bashbot</a></p>
-<p>Bashbot <a href="https://github.com/topkecleon/telegram-bot-bash">Documentation</a> and <a href="https://github.com/topkecleon/telegram-bot-bash/releases">Downloads</a> are availible on www.github.com</p>
+<p>Bashbot <a href="https://github.com/topkecleon/telegram-bot-bash">Documentation</a> and <a href="https://github.com/topkecleon/telegram-bot-bash/releases">Downloads</a> are available on www.github.com</p>
 <h2>Documentation</h2>
 <ul>
 <li><a href="https://core.telegram.org/bots">Introdution to Telegram Bots</a></li>
@@ -108,7 +108,7 @@ Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M (@gnadel
 <li><a href="doc/2_usage.md">Getting Started</a>
 <ul>
 <li>Managing your Bot</li>
-<li>Recieve data</li>
+<li>Receive data</li>
 <li>Send messages</li>
 <li>Send files, locations, keyboards</li>
 </ul></li>
@@ -124,7 +124,7 @@ Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M (@gnadel
 <ul>
 <li>Handling UTF-8 character sets</li>
 <li>Run as other user or system service</li>
-<li>Scedule bashbot from Cron</li>
+<li>Schedule bashbot from Cron</li>
 <li>Use from CLI and Scripts</li>
 <li>Customize Bashbot Environment</li>
 </ul></li>
@@ -132,7 +132,7 @@ Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M (@gnadel
 <ul>
 <li>Customize mycommands.sh</li>
 <li>Overwrite/disable commands</li>
-<li>Seperate logic from commands</li>
+<li>Separate logic from commands</li>
 <li>Test your Bot with shellcheck</li>
 </ul></li>
 <li><a href="doc/6_reference.md">Function Reference</a>
@@ -143,17 +143,17 @@ Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M (@gnadel
 <li>jsshDB Bashbot key-value storage</li>
 <li>Background and Interactive Jobs</li>
 </ul></li>
-<li><a href="doc/7_develop.md">Deveoper Notes</a>
+<li><a href="doc/7_develop.md">Devloper Notes</a>
 <ul>
 <li>Debug bashbot</li>
 <li>Modules, addons, events</li>
 <li>Setup your environment</li>
-<li>Bashbot testsuite</li>
+<li>Bashbot test suite</li>
 </ul></li>
 <li><a href="examples/README.md">Examples Dir</a></li>
 </ul>
 <h3>Your really first bashbot in a nutshell</h3>
-<p>To install and run bashbot you need acess to a linux/unix command line. If you don't know how to get accces to a linux/unix/bsd like command line you should stop reading here :-(</p>
+<p>To install and run bashbot you need access to a linux/unix command line. If you don't know how to get access to a linux/unix/bsd like command line you should stop reading here :-(</p>
 <p>In addition you need a <a href="https://telegram.org">Telegram client</a> and a mobile phone to <a href="https://telegramguide.com/create-a-telegram-account/">register an account</a>. If you don't want to register for Telegram you should stop reading here ;-)</p>
 <p>After you're registered to Telegram send a message to <a href="https://telegram.me/botfather">@botfather</a>, <a href="doc/1_firstbot.md">create a new Telegram Bot token</a> and write it down. You need the token to install the bot.</p>
 <p>Now open a linux/unix/bsd terminal and check if bash is installed: <code>which bash &amp;&amp; echo "bash installed!"</code>. If you get an error message bash is not installed.</p>
@@ -176,7 +176,7 @@ It features background tasks and interactive chats, and can serve as an interfac
 </code></pre>
 <p>For more Information on how to install, customize and use your new bot, read the <a href="#Documentation">Documentation</a></p>
 <h3>Log files</h3>
-<p>Since version 0.96 bashbot log commands recieved/send and connection errors. If you start bashbot in debug mode bash stdout, stderr and all send/received telegram message are logged also.</p>
+<p>Since version 0.96 bashbot log commands received/send and connection errors. If you start bashbot in debug mode bash stdout, stderr and all send/received telegram message are logged also.</p>
 <p>To enable debug mode start bashbot with debug as third argument: <code>bashbot start debug</code></p>
 <pre><code>├── logs 
 │   ├── BASHBOT.log      # log what your bot is doing ...
@@ -225,7 +225,7 @@ It features background tasks and interactive chats, and can serve as an interfac
 <h3>Why Bash and not the much better xyz?</h3>
 <p>Well, thats a damn good question ... may be because I'm an Unix/Linux admin from stone age. Nevertheless there are more reasons from my side:</p>
 <ul>
-<li>bashbot will run everywhere where bash is availible, from ebedded linux to mainframe</li>
+<li>bashbot will run everywhere where bash is available, from ebedded linux to mainframe</li>
 <li>easy to integrate with other shell script, e.g. for sending system message / health status</li>
 <li>no need to install or learn a new programming language, library or framework</li>
 <li>no database, not event driven, not OO ...</li>
@@ -246,17 +246,17 @@ It features background tasks and interactive chats, and can serve as an interfac
 <a class="sourceLine" id="cb5-8" title="8"><span class="co"># send me output of a system command</span></a>
 <a class="sourceLine" id="cb5-9" title="9"><span class="ex">send_message</span> <span class="st">&quot;</span><span class="op">$(&lt;</span><span class="st">&quot;</span><span class="va">$BOTADMIN</span><span class="st">&quot;</span><span class="op">)</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">df</span> -h<span class="va">)</span><span class="st">&quot;</span></a></code></pre></div>
 <p>For more information see <a href="doc/8_custom.md">Expert Use</a></p>
-<h3>Why do I get "EXPECTED value GOT EOF" on start?</h3>
-<p>May be your IP is blocked by telegram. You can test this by running curl or wget manually:</p>
+<h3>Blocked by telegram?</h3>
+<p>This may happen if to many wrong requests are sent to api.telegram.org, e.g. using a wrong token or not existing API calls. If you have a fixed IP you can ask telegram service to unblock your ip or change your IP. If you are running a tor proxy on your server you may uncomment the <code>BASHBOT_CURL_ARGS</code> line in 'mycommands.sh'</p>
+<p>You can test if younare blockeds by running curl or wget manually:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" title="1"><span class="ex">curl</span> -m 10  https://api.telegram.org/bot</a>
 <a class="sourceLine" id="cb6-2" title="2"><span class="co">#curl: (28) Connection timed out after 10001 milliseconds</span></a>
 <a class="sourceLine" id="cb6-3" title="3"></a>
 <a class="sourceLine" id="cb6-4" title="4"><span class="fu">wget</span> -t 1 -T 10 https://api.telegram.org/bot</a>
 <a class="sourceLine" id="cb6-5" title="5"><span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></a></code></pre></div>
-<p>This may happen if to many wrong requests are sent to api.telegram.org, e.g. using a wrong token or not existing API calls. If you have a fixed IP you can ask telegram service to unblock your ip or change your IP. If you are running a socks or tor proxy on your server look for the <code>BASHBOT_CURL_ARGS</code> lines in 'mycommands.sh' as example.</p>
 <p>@Gnadelwartz</p>
 <h2>That's it!</h2>
 <p>If you feel that there's something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4>$$VERSION$$ v0.98-dev-47-gba614b7</h4>
+<h4>$$VERSION$$ v0.98-dev-69-gafa8d87</h4>
 </body>
 </html>

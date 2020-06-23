@@ -7,7 +7,7 @@ If you are new to Bot development read [Bots: An introduction for developers](ht
 
 In addition you should know about [BotFather, the one bot to rule them all](https://core.telegram.org/bots#3-how-do-i-create-a-bot). It will help you create new bots and change settings for existing ones. [Commands known by Botfather](https://core.telegram.org/bots#generating-an-authorization-token)
 
-If you dont't have a github account, it may time to [sepup a free account now](https://github.com/pricing)
+If you don't have a github account, it may time to [setup a free account now](https://github.com/pricing)
 
 ### Add commands to mycommands.sh only
 To ease updates never change ```bashbot.sh```, instead your commands and functions must go to  ```mycommands.sh``` .  Insert your Bot commands in the ```case ... esac``` block of the 'mycommands()' function:
@@ -67,12 +67,12 @@ In case you want to add some processing to the global bashbot command add ```ret
 ```
 
 
-### Seperate logic from commands
+### Separate logic from commands
 
-If a command need more than 2-3 lines of code, you should use a function to seperate logic from command. Place your functions in ```mycommands.sh``` and call the from your command. Example:
+If a command need more than 2-3 lines of code, you should use a function to separate logic from command. Place your functions in ```mycommands.sh``` and call the from your command. Example:
 ```bash
 # file: mycommands.sh
-# your additional bahsbot commands
+# your additional bashbot commands
 
 mycommands() {
 
@@ -152,5 +152,5 @@ The second warning is about an unused variable, this is true because in our exam
 #### [Prev Best Practice](5_practice.md)
 #### [Next Functions Reference](6_reference.md)
 
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-69-gafa8d87
 

@@ -11,13 +11,13 @@ Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/cop
 ## Prerequisites
 Uses [JSON.sh](http://github.com/dominictarr/JSON.sh), but no more TMUX.
 
-Even bashbot is written in bash, it depends on commands typically availible in a Unix/Linux Environment.
+Even bashbot is written in bash, it depends on commands typically available in a Unix/Linux Environment.
 More concret on the common commands provided by recent versions of [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or [toybox](https://landley.net/toybox/help.html), see [Developer Notes](doc/7_develop.md#common-commands)
 
 *Note for MacOS and BSD Users:* As bashbot heavily uses modern bash and (gnu) grep/sed features, bashbot will not run without installing additional software, see [Install Bashbot](doc/0_install.md)
 
 
-Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Downloads](https://github.com/topkecleon/telegram-bot-bash/releases) are availible on www.github.com
+Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Downloads](https://github.com/topkecleon/telegram-bot-bash/releases) are available on www.github.com
 
 ## Documentation
 * [Introdution to Telegram Bots](https://core.telegram.org/bots)
@@ -29,7 +29,7 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
 * [Get Bottoken from Botfather](doc/1_firstbot.md)
 * [Getting Started](doc/2_usage.md)
     * Managing your Bot
-    * Recieve data
+    * Receive data
     * Send messages
     * Send files, locations, keyboards
 * [Advanced Features](doc/3_advanced.md)
@@ -41,13 +41,13 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
 * [Expert Use](doc/4_expert.md)
     * Handling UTF-8 character sets
     * Run as other user or system service
-    * Scedule bashbot from Cron
+    * Schedule bashbot from Cron
     * Use from CLI and Scripts
     * Customize Bashbot Environment
 * [Best Practices](doc/5_practice.md)
     * Customize mycommands.sh
     * Overwrite/disable commands
-    * Seperate logic from commands
+    * Separate logic from commands
     * Test your Bot with shellcheck
 * [Function Reference](doc/6_reference.md)
     * Sending Messages, Files, Keyboards
@@ -55,16 +55,16 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Inline Queries
     * jsshDB Bashbot key-value storage
     * Background and Interactive Jobs
-* [Deveoper Notes](doc/7_develop.md)
+* [Devloper Notes](doc/7_develop.md)
     * Debug bashbot
     * Modules, addons, events
     * Setup your environment
-    * Bashbot testsuite
+    * Bashbot test suite
 * [Examples Dir](examples/README.md)
 
 ### Your really first bashbot in a nutshell
 
-To install and run bashbot you need acess to a linux/unix command line. If you don't know how to get accces to a linux/unix/bsd like command line you should stop reading here :-(
+To install and run bashbot you need access to a linux/unix command line. If you don't know how to get access to a linux/unix/bsd like command line you should stop reading here :-(
 
 In addition you need a [Telegram client](https://telegram.org) and a mobile phone to [register an account](https://telegramguide.com/create-a-telegram-account/).
 If you don't want to register for Telegram you should stop reading here ;-)
@@ -104,7 +104,7 @@ For more Information on how to install, customize and use your new bot, read the
 
 ### Log files
 
-Since version 0.96 bashbot log commands recieved/send and connection errors. If you start bashbot in debug mode
+Since version 0.96 bashbot log commands received/send and connection errors. If you start bashbot in debug mode
 bash stdout, stderr and all send/received telegram message are logged also.
 
 To enable debug mode start bashbot with debug as third argument: `bashbot start debug`
@@ -190,7 +190,7 @@ Bashbot is not more (in)secure as any other Bot written in any other language, w
 ### Why Bash and not the much better xyz?
 Well, thats a damn good question ... may be because I'm an Unix/Linux admin from stone age. Nevertheless there are more reasons from my side:
 
-- bashbot will run everywhere where bash is availible, from ebedded linux to mainframe
+- bashbot will run everywhere where bash is available, from ebedded linux to mainframe
 - easy to integrate with other shell script, e.g. for sending system message / health status
 - no need to install or learn a new programming language, library or framework
 - no database, not event driven, not OO ...
@@ -221,8 +221,10 @@ send_message "$(<"$BOTADMIN")" "$(df -h)"
 For more information see [Expert Use](doc/8_custom.md)
 
 
-### Why do I get "EXPECTED value GOT EOF" on start?
-May be your IP is blocked by telegram. You can test this by running curl or wget manually:
+### Blocked by telegram?
+This may happen if to many wrong requests are sent to api.telegram.org, e.g. using a wrong token or not existing API calls.  If you have a fixed IP you can ask telegram service to unblock your ip or change your IP. If you are running a tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in 'mycommands.sh' 
+
+You can test if younare blockeds by running curl or wget manually:
 ```bash
 curl -m 10  https://api.telegram.org/bot
 #curl: (28) Connection timed out after 10001 milliseconds
@@ -230,8 +232,6 @@ curl -m 10  https://api.telegram.org/bot
 wget -t 1 -T 10 https://api.telegram.org/bot
 #Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.
 ```
-This may happen if to many wrong requests are sent to api.telegram.org, e.g. using a wrong token or not existing API calls.  If you have a fixed IP you can ask telegram service to unblock your ip or change your IP. If you are running a socks or  tor proxy on your server look for the ```BASHBOT_CURL_ARGS``` lines in 'mycommands.sh' as example.
-
 
 @Gnadelwartz
 
@@ -239,4 +239,4 @@ This may happen if to many wrong requests are sent to api.telegram.org, e.g. usi
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.98-dev-47-gba614b7
+#### $$VERSION$$ v0.98-dev-69-gafa8d87

@@ -41,7 +41,7 @@ In addition you can check individual capabilities of users as you must define in
 987654321:start:98979695
 
 # * are only allowed on the right hand side and not for user!
-# the following exaples are NOT valid!
+# the following examples are NOT valid!
 *:*:*
 *:start:*
 *:*:98979695
@@ -226,7 +226,7 @@ massive aoumnt of messages. By default bashbot detects if a message is not sent 
 e.g. resend on throttling. In addtion every send error is logged in logs/ERROR.log
 
 
-#### Trasmission results
+#### Transmission results
 
 On every message send to telegram (transmission) the results are provided in bash variables, like its done when a new message
 is received.
@@ -289,5 +289,5 @@ Note: If you disable automatic retry, se above, you disable also connection prob
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-69-gafa8d87
 

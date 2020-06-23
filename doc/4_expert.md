@@ -50,7 +50,7 @@ Most complete support for decoding of multibyte characters can only be provided 
 
 
 ### Run as other user or system service
-Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for experiend linux users.
+Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or scheduled from cron. This is onyl recommended for experiend linux users.
 
 Setup the environment for the user you want to run bashbot and enter desired username, e.g. nobody :
 ```bash
@@ -95,7 +95,7 @@ To change back the environment to your user-ID run ```sudo ./bashbot.sh init``` 
 
 To use bashbot as a system servive include a working ```bashbot.rc``` in your init system (systemd, /etc/init.d).
 
-### Scedule bashbot from Cron
+### Schedule bashbot from Cron
 An example crontab is provided in ```examples/bashbot.cron```.
 
 - If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username ```nobody```.
@@ -147,7 +147,7 @@ BOTTOKEN	# default: content of ${TOKENFILE}
 URL		# telegram api URL - default: https://api.telegram.org/bot${BOTTOKEN}"
 ```
 
-#### Interacctive use
+#### Interactive use
 For testing your setup or sending messages yoursel you can use bashbot functions from bash command line:
 ```bash
 # are we running bash?
@@ -206,7 +206,7 @@ This section describe how you can customize bashbot to your needs by setting env
 
 #### Change file locations
 In standard setup bashbot is self containing, this means you can place 'telegram-bot-bash'  any location
-and run it from there. All files - programm, config, data etc - will reside in 'telegram-bot-bash'.
+and run it from there. All files - program, config, data etc - will reside in 'telegram-bot-bash'.
 
 If you want to have other locations for config, data etc,  define and export the following environment variables.
 **Note: all specified directories and files must exist or running 'bashbot.sh' will fail.**
@@ -338,7 +338,7 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
   
 ```
 
-#### Testet configs as of v0.90 release
+#### Tested configs as of v0.90 release
 **Note: Environment variables are not stored, you must setup them before every call to bashbot.sh, e.g. from a script.**
 
 ##### simple Unix like config, for one bot. bashbot is installed in '/usr/local/telegram-bot-bash'
@@ -382,5 +382,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-69-gafa8d87
 
