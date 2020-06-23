@@ -5,7 +5,7 @@
 # If you your bot is finished you can use make-standalone.sh to create the
 # the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v0.98-dev-64-gcac1ea4
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -88,6 +88,6 @@ echo "Done!"
 
 cd .. || exit 1
 
-echo -e "\\nStandalone bashbot files are now availible in \"${DISTDIR}\":\\n"
+echo -e "\\nStandalone bashbot files are now available in \"${DISTDIR}\":\\n"
 ls -l "${DISTDIR}"
 

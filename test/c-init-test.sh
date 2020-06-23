@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -17,7 +17,7 @@ botadmin
 EOF
 echo "${SUCCESS}"
 
-# compare files with refrence files
+# compare files with reference files
 echo "Check new files after init ..."
 export FAIL="0"
 for file in ${TESTFILES}

@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-65-g25cc9a5
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -13,7 +13,7 @@
 # from to file in JSON.sh output format, its a simple key/value storage.
 
 # will be automatically sourced from bashbot
-# but can be used independed from bashbot also
+# but can be used independent from bashbot also
 # e.g. to create scrupts to manage jssh files
 
 # source once magic, function named like file
@@ -21,7 +21,7 @@ eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 
 # new feature: serialize / atomic operations:
 # updates will be done atomic with flock
-# flock should flock should be availible on all system as its part of busybox
+# flock should flock should be available on all system as its part of busybox
 # tinybox
 
 # lockfile filename.flock is persistent and will be testet with flock for active lock (file open)
@@ -35,7 +35,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # use flock for atomic operations
 
   # read content of a file in JSON.sh format into given ARRAY
-  # $1 ARRAY name, must be delared with "declare -A ARRAY" upfront
+  # $1 ARRAY name, must be declared with "declare -A ARRAY" upfront
   # $2 filename, must be relative to BASHBOT_ETC, and not contain '..'
   jssh_readDB() {
 	local DB; DB="$(jssh_checkDB "$2")"
@@ -47,7 +47,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
 
   # write ARRAY content to a file in JSON.sh format
   # Warning: old content is overwritten
-  # $1 ARRAY name, must be delared with "declare -A ARRAY" upfront
+  # $1 ARRAY name, must be declared with "declare -A ARRAY" upfront
   # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
   jssh_writeDB() {
 	local DB; DB="$(jssh_checkDB "$2")"
@@ -58,11 +58,11 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   }
 
   # update/write ARRAY content in file without deleting keys not in ARRAY
-  # $1 ARRAY name, must be delared with "declare -A ARRAY" upfront
+  # $1 ARRAY name, must be declared with "declare -A ARRAY" upfront
   # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
   # complex slow, warpper async
   jssh_updateDB() {
-	# for atomic update we cant use read/writeDB
+	# for atomic update we can't use read/writeDB
 	[ -z "${2}" ] && return 1
 	local DB="${2}.jssh" # check in async
 	[ ! -f "${DB}" ] && return 2
@@ -70,7 +70,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   }
 
   # insert, update, apped key/value to jsshDB
-  # $1 key name, can onyl contain -a-zA-Z0-9,._
+  # $1 key name, can only contain -a-zA-Z0-9,._
   # $2 key value
   # $3 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
   alias jssh_insertDB=jssh_insertKeyDB # backward compatibility
@@ -89,7 +89,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   }
 
   # delete key/value from jsshDB
-  # $1 key name, can onyl contain -a-zA-Z0-9,._
+  # $1 key name, can only contain -a-zA-Z0-9,._
   # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
   # medium complex slow, wrapper async
   jssh_deleteKeyDB() {
@@ -101,7 +101,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   }
 
   # get key/value from jsshDB
-  # $1 key name, can onyl contain -a-zA-Z0-9,._
+  # $1 key name, can only contain -a-zA-Z0-9,._
   # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
   alias jssh_getDB=jssh_getKeyDB
   jssh_getKeyDB() {
@@ -116,7 +116,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
 
 
   # add a value to key, used for conters
-  # $1 key name, can onyl contain -a-zA-Z0-9,._
+  # $1 key name, can only contain -a-zA-Z0-9,._
   # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
   # $3 optional count, value added to counter, add 1 if empty 
   # side effect: if $3 is not given, we add to end of file to be as fast as possible
@@ -130,7 +130,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   }
 
   # update key/value in place to jsshDB
-  # $1 key name, can onyl contain -a-zA-Z0-9,._
+  # $1 key name, can only contain -a-zA-Z0-9,._
   # $2 key value
   # $3 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
   #no own locking, so async is the same as updatekeyDB
@@ -154,7 +154,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # $1 name of array to update
   # $2 database
   # $3 id used to identify caller
-  # medium comlex, wrapper async
+  # medium complex, wrapper async
   jssh_updateArray() { 
 	[ -z "${2}" ] && return 1
 	local DB="${2}.jssh" # name check in async
@@ -183,7 +183,7 @@ fi
 # no need for atomic
 
 # print ARRAY content to stdout instead of file
-# $1 ARRAY name, must be delared with "declare -A ARRAY" upfront
+# $1 ARRAY name, must be declared with "declare -A ARRAY" upfront
 jssh_printDB_async() { jssh_printDB "$@"; }
 jssh_printDB() {
 	Array2Json "$1"
@@ -216,7 +216,7 @@ jssh_checkDB(){
 
 ######################
 # implementations as non atomic functions
-# can be used explictitly or as fallback if flock is not availible
+# can be used explictitly or as fallback if flock is not available
 jssh_readDB_async() {
 	local DB; DB="$(jssh_checkDB "$2")"
 	[ -z "${DB}" ] && return 1
@@ -297,7 +297,7 @@ jssh_countKeyDB_async() {
   }
 
 # updatie key/value in place to jsshDB
-# $1 key name, can onyl contain -a-zA-Z0-9,._
+# $1 key name, can only contain -a-zA-Z0-9,._
 # $2 key value
 # $3 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
 #no own locking, so async is the same as updatekeyDB
@@ -325,7 +325,7 @@ function jssh_updateArray_async() {
 }
 
 ##############
-# these 2 fuctions does all key/value store "magic"
+# these 2 functions does all key/value store "magic"
 # and convert from/to bash array
 
 # read JSON.sh style data and asssign to an ARRAY

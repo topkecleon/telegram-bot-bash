@@ -19,7 +19,7 @@ Have FUN!
 .
 ├── mycommands.sh        # THIS is your bot, place logic and commands here!
 │
-├── mycommands.sh.clean      # copy to "mycommands.sh" if you start devloping your bot
+├── mycommands.sh.clean      # copy to "mycommands.sh" if you start developing your bot
 ├── mycommands.sh.dist       # example bot, also used for testing bashbot internally 
 │
 ├── count.jssh           # count bashbot usage in jssh key-value store
@@ -37,12 +37,12 @@ Have FUN!
 ├── modules              # optional functions, sourced by commands.sh
 │   ├── aliases.sh           # to disable modules rename them xxx.sh.off
 │   ├── answerInline.sh
-│   ├── jsshDB.sh            # read and store JSON.sh stlye JSON, mandatory
+│   ├── jsshDB.sh            # read and store JSON.sh style JSON, mandatory
 │   ├── background.sh        # interactive and background functions
 │   ├── chatMember.sh
 │   └── sendMessage.sh       # main send message functions, mandatory
 │
-├── addons               # optional addons, disbaled by default
+├── addons               # optional addons, disabled by default
 │   ├── example.sh           # to enable addons change their XXX_ENABLE to true
 │   ├── antiFlood.sh         # simple addon taking actions based on # files and text sent to chat
 │   └── xxxxxage.sh
@@ -120,9 +120,9 @@ These Variables are always present in regular messages:
 
 The following variables are set if the message contains optional parts:
 
-* ```$REPLYTO```: Original message wich was replied to
+* ```$REPLYTO```: Original message which was replied to
 * ```$REPLYTO```: This array contains the First name, last name, username and user id of the ORIGINAL sender of the message REPLIED to.
-    * ```${REPLYTO[ID]}```: ID of message wich was replied to
+    * ```${REPLYTO[ID]}```: ID of message which was replied to
     * ```${REPLYTO[UID]}```: Original user's id
     * ```${REPLYTO[FIRST_NAME]}```: Original user's first name
     * ```${REPLYTO[LAST_NAME]}```: Original user's' last name
@@ -166,7 +166,7 @@ client, e.g. new users.
 If a service message is received bashbot sets MESSAGE to the service message type as a command,
 e.g. if a new user joins a chat MESSAGE is set to "/new_chat_user". 
 
-* ```$SERVICE```: This array contains info abbout recived service messages.
+* ```$SERVICE```: This array contains info about received service messages.
     * ```${SERVICE}```: "yes" if service message is received
     * ```${SERVICE[NEWMEMBER]```: New user's id
         * ```${MESSAGE}```: /new_chat_member
@@ -194,7 +194,7 @@ e.g. if a new user joins a chat MESSAGE is set to "/new_chat_user".
 ### Inline query messages
 
 Inline query messages are small, non regular messages used for interaction with the user,
-they contain the following varibles only:
+they contain the following variables only:
 
 * ```${iQUERY}```: Current inline query
 * ```$iQUERY```: This array contains the ID, First name, last name, username and user id of the sender of the current inline query.
@@ -260,8 +260,8 @@ send_file "${CHAT[ID]}" "/home/user/doge.jpg" "Lool"
 ```
 To send custom keyboards use the ```send_keyboard``` function:
 ```bash
-send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" '[ "Yep" , "No" ]' # note the simgle quotes!
-send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" "[ \\"Yep\\" , \\"No\\" ]" # within double quotes you must excape the inside double quots
+send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" '[ "Yep" , "No" ]' # note the single quotes!
+send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" "[ \\"Yep\\" , \\"No\\" ]" # within double quotes you must escape the inside double quots
 ```
 To send locations use the ```send_location``` function:
 ```bash
@@ -281,5 +281,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.98-dev-69-gafa8d87
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 

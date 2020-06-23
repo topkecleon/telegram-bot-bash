@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-68-g80a6dbb
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 
 # will be automatically sourced from bashbot
 
@@ -125,7 +125,7 @@ upload_file(){
 	[[ "$file" = *'..'* ]] && return  # no directory traversal
 	[[ "$file" = '.'* ]] && return	 # no hidden or relative files
 	if [[ "$file" = '/'* ]] ; then
-		[[ ! "$file" =~ $FILE_REGEX ]] && return # absulute must match REGEX
+		[[ ! "$file" =~ $FILE_REGEX ]] && return # absolute must match REGEX
 	else
 		file="${UPLOADDIR:-NOUPLOADDIR}/${file}" # othiers must be in UPLOADDIR
 	fi

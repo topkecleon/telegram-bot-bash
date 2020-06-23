@@ -4,7 +4,7 @@
 # files: mycommands.sh.clean
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.98-dev-33-g18f0ace
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 #
 
 ##########
@@ -22,8 +22,8 @@ export res=""
 export INLINE="0"
 
 # NOTE: this is a regex, not shell globbing! you must use a valid egex,
-# '.' matches any charater and '.*' matches all remaining charatcers!
-# additionally you must escape special charaters with '\', e.g. '\. \? \[ \*" to match them literally  
+# '.' matches any character and '.*' matches all remaining charatcers!
+# additionally you must escape special characters with '\', e.g. '\. \? \[ \*" to match them literally  
 # do NOT set to .* as this allow sending files from all locations!
 export FILE_REGEX="${BASHBOT_ETC}/.*"
 
@@ -35,7 +35,7 @@ unset BASHBOT_RETRY
 # set value for adaptive sleeping while waitingnfor uodates in millisconds
 # max slepp between polling updates 10s (default 5s)
 export BASHBOT_SLEEP="10000"
-# add 0.2s if no update availble, up to BASHBOT_SLEEP (default 0.1s)
+# add 0.2s if no update available, up to BASHBOT_SLEEP (default 0.1s)
 export BASHBOT_SLEEP_STEP="200"
 
 # if you want to use timer functions, set BASHBOT_START_TImer to not empty value
@@ -59,8 +59,8 @@ if [ "$1" = "startbot" ];then
     }
     touch .mystartup
 else
-    # here we call the function above when the mesage arrives
-    # things to do only at soure, eg. after startup
+    # here we call the function above when the message arrives
+    # things to do only at source, eg. after startup
     [ -f .mystartup ] && rm -f .mystartup && _exec_if_function my_startup
 
     #############################

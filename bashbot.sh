@@ -11,20 +11,20 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-67-g4fe9697
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 #
 # Exit Codes:
-# - 0 sucess (hopefully)
+# - 0 success (hopefully)
 # - 1 can't change to dir
 # - 2 can't write to tmp, count or token 
 # - 3 user / command / file not found
-# - 4 unkown command
+# - 4 unknown command
 # - 5 cannot connect to telegram bot
 # - 6 mandatory module not found
 # - 6 can't get bottoken
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091
 
-# are we runnig in a terminal?
+# are we running in a terminal?
 if [ -t 1 ] && [ -n "$TERM" ];  then
     CLEAR='clear'
     RED='\e[31m'
@@ -102,7 +102,7 @@ fi
 ADDONDIR="${BASHBOT_ETC:-.}/addons"
 RUNUSER="${USER}" # USER is overwritten by bashbot array
 
-# OK everthing setup, lest start
+# OK everything setup, lest start
 if [[ -z "${SOURCE}" && -z "$BASHBOT_HOME" ]] && ! cd "${RUNDIR}" ; then
 	echo -e "${RED}ERROR: Can't change to ${RUNDIR} ...${NC}"
 	exit 1
@@ -132,7 +132,7 @@ DEBUGLOG="${LOGDIR}/DEBUG.log"
 ERRORLOG="${LOGDIR}/ERROR.log"
 UPDATELOG="${LOGDIR}/BASHBOT.log"
 
-# we assume everthing is already set up correctly if we have TOKEN
+# we assume everything is already set up correctly if we have TOKEN
 if [ -z "${BOTTOKEN}" ]; then
   # BOTCONFIG does not exist, create
   [ ! -f "${BOTCONFIG}.jssh" ] &&
@@ -142,7 +142,7 @@ if [ -z "${BOTTOKEN}" ]; then
      # convert old token
      if [ -r "${TOKENFILE}" ]; then
 		token="$(< "${TOKENFILE}")"
-     # no old token avalible ask user
+     # no old token available ask user
      elif [ -z "${CLEAR}" ] && [ "$1" != "init" ]; then
 	echo "Running headless, set BOTTOKEN or run ${SCRIPT} init first!"
 	exit 2 
@@ -304,14 +304,14 @@ procname(){
 	printf '%s\n' "$2${ME}_$1"
 }
 
-# $1 sting to search for proramm incl. parameters
-# retruns a list of PIDs of all current bot proceeses matching $1
+# $1 string to search for proramm incl. parameters
+# returns a list of PIDs of all current bot proceeses matching $1
 proclist() {
 	# shellcheck disable=SC2009
 	ps -fu "${UID}" | grep -F "$1" | grep -v ' grep'| grep -F "${ME}" | sed 's/\s\+/\t/g' | cut -f 2
 }
 
-# $1 sting to search for proramm to kill
+# $1 string to search for proramm to kill
 killallproc() {
 	local procid; procid="$(proclist "$1")"
 	if [ -n "${procid}" ] ; then
@@ -338,7 +338,7 @@ get_file() {
 	printf '%s\n' "${URL}"/"$(JsonGetString <<< "${res}" '"result","file_path"')"
 }
 
-# curl is preffered, but may not availible on ebedded systems
+# curl is preferred, but may not available on embedded systems
 TIMEOUT="${BASHBOT_TIMEOUT}"
 [[ "$TIMEOUT" =~ ^[0-9]+$ ]] || TIMEOUT="20"
 
@@ -433,7 +433,7 @@ sendJsonResult(){
 		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${1}")"
 		[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@:3}" 
 		return
-		# hot path everthing OK!
+		# hot path everything OK!
 	else
 	    # oops something went wrong!
 	    if [ "${res}" != "" ]; then
@@ -466,7 +466,7 @@ sendJsonResult(){
 	    if [ "${BOTSENT[ERROR]}" == "999" ];then
 		# check if default curl and args are OK
 		if ! curl -sL -k -m 2 "${URL}" >/dev/null 2>&1 ; then
-		    printf "%s: BASHBOT IP Adress is blocked!\n" "$(date)"
+		    printf "%s: BASHBOT IP Address is blocked!\n" "$(date)"
 		    # user provided function to recover or notify block
 		    if _exec_if_function bashbotBlockRecover; then
 			BASHBOT_RETRY="2"
@@ -488,7 +488,7 @@ sendJsonResult(){
 	fi
 } >>"${ERRORLOG}"
 
-# escape / remove text charaters for json strings, eg. " -> \" 
+# escape / remove text characters for json strings, eg. " -> \" 
 # $1 string
 # output escaped string
 JsonEscape(){
@@ -512,7 +512,7 @@ getBotName() {
 	getJson "$ME_URL"  | "${JSONSHFILE}" -s -b -n 2>/dev/null | JsonGetString '"result","username"'
 }
 
-# pure bash implementaion, done by KayM (@gnadelwartz)
+# pure bash implementation, done by KayM (@gnadelwartz)
 # see https://stackoverflow.com/a/55666449/9381171
 JsonDecode() {
         local out="$1" remain="" U=""
@@ -580,7 +580,7 @@ process_client() {
 	fi
 	#####
 	# process inline and message events
-	# first classic commnad dispatcher
+	# first classic command dispatcher
 	# shellcheck source=./commands.sh
 	source "${COMMANDS}" "${debug}" &
 
@@ -648,7 +648,7 @@ event_message() {
 	# shellcheck disable=SC2153
 	for key in "${!BASHBOT_EVENT_MESSAGE[@]}"
 	do
-		 _exec_if_function "${BASHBOT_EVENT_MESSAGE[${key}]}" "messsage" "${key}" "${debug}"
+		 _exec_if_function "${BASHBOT_EVENT_MESSAGE[${key}]}" "message" "${key}" "${debug}"
 	done
 	
 	# ${TEXT[*]} event_text
@@ -696,7 +696,7 @@ event_message() {
 	fi
 
 	# ${VENUE[*]} event_location
-	# ${LOCALTION[*]} event_location
+	# ${LOCATION[*]} event_location
 	if [ -n "${LOCATION[LONGITUDE]}" ] || [ -n "${VENUE[TITLE]}" ]; then
 		# shellcheck disable=SC2153
 		for key in "${!BASHBOT_EVENT_LOCATION[@]}"
@@ -848,7 +848,7 @@ declare -A BASHBOTBLOCKED
 export BASHBOTDEBUG
 start_bot() {
 	local ADMIN OFFSET=0
-	# adaptive sleep deafults
+	# adaptive sleep defaults
 	local nextsleep="100" :
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
 	local maxsleep="${BASHBOT_SLEEP:-5000}"
@@ -911,7 +911,7 @@ start_bot() {
 				process_updates "${BASHBOTDEBUG}"
 			fi
 		else
-			# ups, something bad happend, wait maxsleep*10
+			# ups, something bad happened, wait maxsleep*10
 			(( nextsleep=nextsleep*2 , nextsleep= nextsleep>maxsleep*10 ?maxsleep*10:nextsleep ))
 			[ "${OFFSET}" = "-999" ] &&\
 				printf "%s: Repeated timeout/broken/no connection on telegram update, sleep %ds\n"\
@@ -963,7 +963,7 @@ bot_init() {
 }
 
 if ! _is_function send_message ; then
-	echo -e "${RED}ERROR: send_message is not availible, did you deactivate ${MODULEDIR}/sendMessage.sh?${NC}"
+	echo -e "${RED}ERROR: send_message is not available, did you deactivate ${MODULEDIR}/sendMessage.sh?${NC}"
 	exit 1
 fi
 
@@ -1005,7 +1005,7 @@ if [ -z "${SOURCE}" ]; then
 		[ -n "${CLEAR}" ] && printf "Bot Name: %s\n" "${ME}"
 		[ "$1" = "botname" ] && exit
 		;;&
-	# used to send output of backgrond and interactive to chats
+	# used to send output of background and interactive to chats
 	"outproc") # $2 chat_id $3 identifier of job, internal use only!
 		[ -z "$3" ] && echo "No job identifier" && exit 3
 		[ -z "$2"  ] && echo "No chat to send to" && exit 3
@@ -1112,7 +1112,7 @@ if [ -z "${SOURCE}" ]; then
 				[ -n "${ADMIN}" ] && send_normal_message "${ADMIN}" "Bot ${ME} stopped ..." &
 				echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
 			else
-				echo -e "${RED}An error occured while stopping bot.${NC}"
+				echo -e "${RED}An error occurred while stopping bot.${NC}"
 				exit 5
 			fi
 		else
@@ -1120,9 +1120,9 @@ if [ -z "${SOURCE}" ]; then
 		fi
 		exit
 		;;
-	# suspend, resume or kill backgrund jobs
+	# suspend, resume or kill background jobs
 	"suspendb"*|"resumeb"*|"killb"*)
-  		_is_function job_control || { echo -e "${RED}Module background is not availible!${NC}"; exit 3; }
+  		_is_function job_control || { echo -e "${RED}Module background is not available!${NC}"; exit 3; }
 		ME="$(getConfigKey "botname")"
 		job_control "$1"
 		;;

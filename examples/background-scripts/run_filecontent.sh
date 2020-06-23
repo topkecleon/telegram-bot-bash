@@ -2,11 +2,11 @@
 # file:  run_filename
 # background job to display content of all new files in WATCHDIR
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 
 ######
 # parameters
-# $1 $2 args as given to starct_proc chat srcipt arg1 arg2
+# $1 $2 args as given to starct_proc chat script arg1 arg2
 # $3 path to named pipe/log
 
 
@@ -22,7 +22,7 @@ unset IFS
 # discard STDIN for background jobs!
 cat >/dev/null & 
 
-# watch for new files created by a trusted programm
+# watch for new files created by a trusted program
 WATCHDIR="/my_trusted/dir_to_watch"
 source "./mycommands.sh"
 

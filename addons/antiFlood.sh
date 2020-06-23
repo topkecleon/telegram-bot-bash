@@ -4,7 +4,7 @@
 # this addon counts how many files, e.g. stickers, are sent to
 # a chat and takes actions if threshold is reached
 #  
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 
 # used events:
 #
@@ -18,7 +18,7 @@
 # $1 event: init, startbot ...
 # $2 debug: use "[[ "$2" = *"debug"* ]]" if you want to output extra diagnostic
 #
-# prameters on events
+# parameters on events
 # $1 event: inline, message, ..., file
 # $2 debug: use "[[ "$2" = *"debug"* ]]" if you want to output extra diagnostic
 #

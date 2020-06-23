@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.98-dev-60-gfa6ad3e
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -23,8 +23,8 @@ export res=""
 export INLINE="0"
 # Set to .* to allow sending files from all locations
 # NOTE: this is a regex, not shell globbing! you must use a valid egex,
-# '.' matches any charater and '.*' matches all remaining charatcers!
-# additionally you must escape special charaters with '\', e.g. '\. \? \[ \*" to match them literally  
+# '.' matches any character and '.*' matches all remaining charatcers!
+# additionally you must escape special characters with '\', e.g. '\. \? \[ \*" to match them literally  
 export FILE_REGEX="${BASHBOT_ETC}/.*"
 # example: run bashbot over TOR
 # export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1:9050"
@@ -37,7 +37,7 @@ unset BASHBOT_RETRY
 # set value for adaptive sleeping while waitingnfor uodates in millisconds
 # max slepp between polling updates 10s (default 5s)
 export BASHBOT_SLEEP="10000"
-# add 0.2s if no update availble, up to BASHBOT_SLEEP (default 0.1s)
+# add 0.2s if no update available, up to BASHBOT_SLEEP (default 0.1s)
 export BASHBOT_SLEEP_STEP="200"
 
 # if you want to use timer functions, set BASHBOT_START_TImer to not empty value
@@ -62,8 +62,8 @@ if [ "$1" = "startbot" ];then
     # reminde bot that it was started
     touch .mystartup
 else
-    # here we call the function above when the mesage arrives
-    # things to do only at soure, eg. after startup
+    # here we call the function above when the message arrives
+    # things to do only at source, eg. after startup
     [ -f .mystartup ] && rm -f .mystartup && _exec_if_function my_startup
 
     #############################
@@ -82,7 +82,7 @@ else
 		fi
 	fi
 
-	# exmaple for actions based on chat or sender
+	# example for actions based on chat or sender
 	case "${USER[ID]}+${CHAT[ID]}" in
 		'USERID+'*) # do something for all messages from USER
 			printf "%s: U=%s C=%s M=%s\n" "$(date)" "${USER[ID]}" "${CHAT[ID]}" "${MESSAGE}" >>"${DATADIR}/${USER[ID]}.log"
@@ -172,7 +172,7 @@ else
 
      myinlines() {
 	#######################
-	# Inline query examples, do not use them in production (exept image search ;-)
+	# Inline query examples, do not use them in production (except image search ;-)
 	# shellcheck disable=SC2128
 	iQUERY="${iQUERY,,}" # all lowercase
 	case "${iQUERY}" in
@@ -214,7 +214,7 @@ else
 		"sticker") # example chaecd telegram sticker
 			answer_inline_query "${iQUERY[ID]}" "cached_sticker" "BQADBAAD_QEAAiSFLwABWSYyiuj-g4AC"
 			;;
-		"gif") # exmaple chaehed gif
+		"gif") # example chaehed gif
 			answer_inline_query "${iQUERY[ID]}" "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
 			;;
 	esac

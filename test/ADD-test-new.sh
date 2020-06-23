@@ -2,7 +2,7 @@
 #
 # ADD a new test skeleton to test dir, but does not activate test
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -27,7 +27,7 @@ read -r PASS
 # pass to lower, default pass d 
 PASS="${PASS,,}" 
 [ "${PASS}" = "" ] && PASS="d"
-[ "${#PASS}" != '1' ] && echo "Sorry, PASS must exactly one charater from a to z, aborting ..." && exit 1
+[ "${#PASS}" != '1' ] && echo "Sorry, PASS must exactly one character from a to z, aborting ..." && exit 1
 
 TEST="${PASS}-${NAME}-test"
 

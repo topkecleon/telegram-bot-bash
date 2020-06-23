@@ -5,7 +5,7 @@
 # to show how you can customize bashbot by only editing mycommands.sh
 # NOTE: this is not tested, simply copied from original source and reworked!
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -19,7 +19,7 @@
 bashbot_info='This bot allows you to request status of your system.
 To begin using the bot, try with the /help command.
 '
-bashbot_help='*Availiable commands*:
+bashbot_help='*Available commands*:
 /se *sensors*
 /smb *smbstatus*
 /free *memory status*

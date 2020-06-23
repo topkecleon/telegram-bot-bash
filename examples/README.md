@@ -17,10 +17,10 @@ Two examples for interactive scripts are provided as **calc.sh** and **question.
 Background jobs are an easy way to provide sceduled messages or alerts if something happens.
 **notify.sh** is a simple example on how to send a message every x seonds, e.g. current time.
 
-**background-scripts** contains a more useful example on how to start and stop different scripts plus some example backgound scripts.
+**background-scripts** contains a more useful example on how to start and stop different scripts plus some example background scripts.
 
 ```
-    mycommands.sh - /run_xxx and /kill-xxx wil start any script named run_xxx.sh
+    mycommands.sh - /run_xxx and /kill-xxx will start any script named run_xxx.sh
 
     run_diskusage.sh - shows disk usage every 100 seconds
     run_filename.sh	- shown the name of new files in a named dir
@@ -40,7 +40,7 @@ convert existing bots.
     mycommands.sh - commands to show system status
     botacl - controls who can show system status
 
-*Availiable commands*:
+*Available commands*:
 	/se *sensors*
 	/smb *smbstatus*
 	/free *memory status*
@@ -55,6 +55,6 @@ convert existing bots.
 
 **external-use** will contain some examples on how to send messages from external scripts to Telegram chats or users.
 
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 
 

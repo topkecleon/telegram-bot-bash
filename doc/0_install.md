@@ -24,7 +24,7 @@ As an alternative to download the zip files, you can clone the github repository
     * /usr/local if you want to run as service
 2. Run ```git clone https://github.com/topkecleon/telegram-bot-bash.git```
 3. Change into the directory ```telegram-bot-bash```
-4. Run ``` test/ALL-tests.sh``` and if everthing finish OK ...
+4. Run ``` test/ALL-tests.sh``` and if everything finish OK ...
 5. Run ```sudo ./bashbot.sh init``` to setup the environment and enter your Bots token given by botfather.
 
 ###  Update bashbot
@@ -67,7 +67,7 @@ Bashbot will stay with /bin/bash shebang, as using a fixed path is more secure t
 
 #### removal of TMUX
 From version 0.80 on TMUX is no longer needed and the bachsbot command 'attach' is deleted. Old function 'inproc'
-is replaced by 'send_interactive'. send_interactive does checks if an interactive job is running internaly.
+is replaced by 'send_interactive'. send_interactive does checks if an interactive job is running internally.
 Pls check if you make use of inproc and remove it including the old checks, e.g.
 ```bash
 if tmux ls | grep -v send | grep -q "$copname"; then inproc; fi
@@ -88,8 +88,8 @@ From version 0.70 on the tmp dir is renamed to 'data-bot-bash' to reflect the fa
 From version 0.50 on the temporary files are no more placed in '/tmp'. instead a dedicated tmp dir is used.
 
 #### Changes to send_keyboard in v0.6
-From Version 0.60 on keybord format for ```send_keyboard``` and ```send_message "mykeyboardstartshere ..."``` was changed.
-Keybords are now defined in JSON Array notation e.g. "[ \\"yes\\" , \\"no\\" ]".
+From Version 0.60 on keyboard format for ```send_keyboard``` and ```send_message "mykeyboardstartshere ..."``` was changed.
+Keyboards are now defined in JSON Array notation e.g. "[ \\"yes\\" , \\"no\\" ]".
 This has the advantage that you can create any type of keyboard supported by Telegram.
 The old format is supported for backward compatibility, but may fail for corner cases.
 
@@ -107,5 +107,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v0.98-dev-39-g35d5e05
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 

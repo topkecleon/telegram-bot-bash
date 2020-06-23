@@ -1,12 +1,12 @@
 #!/bin/bash
 # file: addons/example.sh.dist
 #
-# Addons can register to bashbot events at statup
+# Addons can register to bashbot events at startup
 # by providing their name and a callback per event
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 #
-# If an event occours each registered event function is called.
+# If an event occurs each registered event function is called.
 #
 # Events run in the same context as the main bashbot event loop
 # so variables set here are persistent as long bashbot is running.
@@ -16,7 +16,7 @@
 # e.g. "(long running) &"
 #  
 
-# Availible events:
+# Available events:
 # on events startbot and init, this file is sourced
 #
 # BASHBOT_EVENT_INLINE	inline query received
@@ -30,7 +30,7 @@
 # BASHBOT_EVENT_FILE	file received
 #
 # BAHSBOT_EVENT_TIMER	this event is a bit special as it fires every Minute
-#			and has 3 meanings: oneshot, everytime, every X minutes.
+#			and has 3 meanings: oneshot, every time, every X minutes.
 #
 # all global variables and functions can be used in registered functions.
 #
@@ -38,7 +38,7 @@
 # $1 event: init, startbot ...
 # $2 debug: use "[[ "$2" = *"debug"* ]]" if you want to output extra diagnostic
 #
-# prameters on events
+# parameters on events
 # $1 event: inline, message, ..., file
 # $2 key: key of array BASHBOT_EVENT_xxx 
 # $3 debug: use "[[ "$2" = *"debug"* ]]" if you want to output extra diagnostic

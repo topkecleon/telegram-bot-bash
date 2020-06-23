@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-67-g4fe9697
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 
 # will be automatically sourced from bashbot
 
@@ -35,7 +35,7 @@ killproc() {
 	kill_proc "${CHAT[ID]}" "$1"
 }
 
-# inline and backgound functions
+# inline and background functions
 # $1 chatid
 # $2 program
 # $3 jobname
@@ -117,7 +117,7 @@ inproc() {
 	send_interactive "${CHAT[ID]}" "${MESSAGE}"
 }
 
-# start stopp all jobs
+# start stop all jobs
 # $1 command
 #	killb*
 #	suspendb*
