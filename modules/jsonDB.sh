@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-70-g694ee61
+#### $$VERSION$$ v0.98-dev-74-g3d760b3
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -339,11 +339,13 @@ Json2Array() {
 # $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
 Array2Json() {
 	[ -z "$1" ] && return 1
-	local key
+	local key val
 	declare -n ARRAY="$1"
 	for key in "${!ARRAY[@]}"
        	do
-		printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${ARRAY[${key}]//\"/\\\"}"
+		# in case val contains newline convert to \n
+		val="${ARRAY[${key}]//$'\n'/\\n}"
+		printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${val//\"/\\\"}"
        	done
 }
 
