@@ -5,9 +5,9 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 
-# source from commands.sh to use the inline functions
+# will be automatically sourced from bashbot
 
 # source once magic, function named like file
 eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
@@ -32,7 +32,7 @@ inline_query_compose(){
 								# title2Json title caption description markup inlinekeyboard
 	case "${2}" in
 		# user provided media
-		"article"|"message") # article ID title message (markup decription)
+		"article"|"message") # article ID title message (markup description)
 			JSON='{"type":"article","id":"'$ID'","input_message_content": {"message_text":"'$4'"} '$(title2Json "$3" "" "$5" "$6" "$7")'}'
 		;;
 		"photo") # photo ID photoURL (thumbURL title description caption)
@@ -62,7 +62,7 @@ inline_query_compose(){
 		"location") # location ID lat long title
 			JSON='{"type":"location","id":"'$ID'","latitude":"'$3'","longitude":"'$4'","title":"'$5'"}'
 		;;
-		"venue") # venue ID lat long title (adress forsquare)
+		"venue") # venue ID lat long title (address forsquare)
 			[ -z "$6" ] && addr="$5"
 			[ -n "$7" ] && fours=',"foursquare_id":"'$7'"'
 			JSON='{"type":"venue","id":"'$ID'","latitude":"'$3'","longitude":"'$4'","title":"'$5'","address":"'$6${addr}'"'${fours}'}'

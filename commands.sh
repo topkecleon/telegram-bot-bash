@@ -8,14 +8,14 @@
 # | |__/ / |_| |  | | | | |_| | |__   | |____( (_| | | |__ _ 
 # |_____/ \___/   |_| |_|\___/ \___)  |_______)____|_|\___)_|
 #
-# this file *MUST* not be edited! palce your config and commands in
+# this file *MUST* not be edited! place your config and commands in
 # the file "mycommnds.sh". a clean version is provided as "mycommands.clean"
 #
 
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -83,7 +83,7 @@ if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
     	# forward iinline query to optional dispatcher
 	_exec_if_function myinlines
 
-    # regular (gobal) commands ...
+    # regular (global) commands ...
     # your commands are in mycommands() 
     else
 
@@ -128,7 +128,7 @@ if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
      			unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
      			;;
      			
-		'/'*)	# discard all unkown commands
+		'/'*)	# discard all unknown commands
 			: ;;
 		*)	# forward message to interactive chats 
 			_exec_if_function send_interactive "${CHAT[ID]}" "${MESSAGE}"

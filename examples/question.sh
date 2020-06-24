@@ -5,11 +5,11 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 
 ######
 # parameters
-# $1 $2 args as given to starct_proc chat srcipt arg1 arg2
+# $1 $2 args as given to starct_proc chat script arg1 arg2
 # $3 path to named pipe
 
 INPUT="${3:-/dev/stdin}"

@@ -33,9 +33,9 @@ export 'LC_ALL=en_US.UTF-8'
 export 'LANG=de_en_US.UTF-8'
 export 'LANGUAGE=den_US.UTF-8'
 ```
-3. make shure your bot scripts use the correct  settings, eg. include the lines above at the beginning of your scripts
+3. make sure your bot scripts use the correct  settings, eg. include the lines above at the beginning of your scripts
 
-To display all availible locales on your system run ```locale -a | more```. [Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8)
+To display all available locales on your system run ```locale -a | more```. [Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8)
 
 #### Bashbot UTF-8 Support
 Bashbot handles all messages transparently, regardless of the charset in use. The only exception is when converting from JSON data to strings.
@@ -45,19 +45,18 @@ The Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as: ``` \uD83D\uDE0
 
 **This "mixed" JSON encoding needs special handling and can not decoded from** ```echo -e``` or ```printf '%s\\n'```
 
-Most complete support for decoding of multibyte characters can only be provided if python is installed on your system.
-**Without phyton bashbot falls back to an internal, pure bash implementation which may not work for some corner cases**.
+Bbashbot uses an internal, pure bash implementation which is well tested now, even there may some corner cases*.
 
 
 ### Run as other user or system service
-Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or sceduled from cron. This is onyl recommended for experiend linux users.
+Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or scheduled from cron. This is recommended if you want to bashbot run as a service.
 
 Setup the environment for the user you want to run bashbot and enter desired username, e.g. nobody :
 ```bash
 sudo ./bashbot.sh init
 ```
 
-Edit the file ```bashbot.rc``` and edit the following lines to fit your configuration:
+Edit the file ```bashbot.rc``` and change the following lines to fit your configuration:
 ```bash
 #######################
 # Configuration Section
@@ -82,7 +81,7 @@ sudo ./bashbot.rc start
 ```
 Type ```ps -ef | grep bashbot``` to verify your Bot is running as the desired user.
 
-If your  Bot is started by 'bashbot.rc', you must use 'bashbot.rc' also to manage your Bot! The following commands are availible:
+If your  Bot is started by 'bashbot.rc', you must use 'bashbot.rc' also to manage your Bot! The following commands are available:
 ```bash
 sudo ./bashbot.rc start
 sudo ./bashbot.rc stop
@@ -93,9 +92,9 @@ sudo ./bashbot.rc killback
 ```
 To change back the environment to your user-ID run ```sudo ./bashbot.sh init``` again and enter your user name.
 
-To use bashbot as a system servive include a working ```bashbot.rc``` in your init system (systemd, /etc/init.d).
+To use bashbot as a system service include a working ```bashbot.rc``` in your init system (systemd, /etc/init.d).
 
-### Scedule bashbot from Cron
+### Schedule bashbot from Cron
 An example crontab is provided in ```examples/bashbot.cron```.
 
 - If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username ```nobody```.
@@ -133,7 +132,7 @@ source /path/to/bashbot.sh source
 ```
 
 #### Environment variable exported from bashbot
-If you have sourced 'bashbot.sh' you have the following bashot internal variables availible:
+If you have sourced 'bashbot.sh' you have the following bashot internal variables available:
 ```bash
 COMMANDS	# default: ./commands.sh"
 MODULEDIR	# default: ./modules"
@@ -147,7 +146,7 @@ BOTTOKEN	# default: content of ${TOKENFILE}
 URL		# telegram api URL - default: https://api.telegram.org/bot${BOTTOKEN}"
 ```
 
-#### Interacctive use
+#### Interactive use
 For testing your setup or sending messages yoursel you can use bashbot functions from bash command line:
 ```bash
 # are we running bash?
@@ -206,7 +205,7 @@ This section describe how you can customize bashbot to your needs by setting env
 
 #### Change file locations
 In standard setup bashbot is self containing, this means you can place 'telegram-bot-bash'  any location
-and run it from there. All files - programm, config, data etc - will reside in 'telegram-bot-bash'.
+and run it from there. All files - program, config, data etc - will reside in 'telegram-bot-bash'.
 
 If you want to have other locations for config, data etc,  define and export the following environment variables.
 **Note: all specified directories and files must exist or running 'bashbot.sh' will fail.**
@@ -251,7 +250,7 @@ Full path to JSON.sh script, default: './JSON.sh/JSON.sh', must end with '/JSON.
 Set bashbot home directory, where bashot will look for additional files.
 If BASHBOT_ETC, BASHBOT_VAR or BASHBOT_JSONSH are set the have precedence over BASHBOT_HOME.
 
-This is also usefull if you want to force bashbot to always use full pathnames instead of relative ones.
+This is also useful if you want to force bashbot to always use full pathnames instead of relative ones.
 ```bash
   unset  BASHBOT_HOME     # autodetection (default)
   export BASHBOT_HOME ""  # autodetection
@@ -265,7 +264,7 @@ This is also usefull if you want to force bashbot to always use full pathnames i
 #### Change config values
 
 ##### BASHBOT_URL
-Uses given URL instead of offical telegram API URL, useful if you have your own telegram server or for testing.
+Uses given URL instead of official telegram API URL, useful if you have your own telegram server or for testing.
 
 ```bash
   unset  BASHBOT_URL       # use Telegram URL https://api.telegram.org/bot<token> (default)
@@ -299,8 +298,8 @@ set BASHBOT_CURL to point to it.
 ```
 
 ##### BASHBOT_WGET
-Bashbot uses ```curl``` to communicate with telegram server. if ```curl``` is not availible ```wget``` is used.
-If 'BASHBOT_WGET' is set to any value (not undefined or not empty) wget is used even is curl is availible.  
+Bashbot uses ```curl``` to communicate with telegram server. if ```curl``` is not available ```wget``` is used.
+If 'BASHBOT_WGET' is set to any value (not undefined or not empty) wget is used even is curl is available.  
 ```bash
   unset  BASHBOT_WGET       # use curl (default)
   export BASHBOT_WGET ""    # use curl 
@@ -326,7 +325,7 @@ BASHBOT_TIMEOUT to a numeric value between 1 and 999. Any non numeric or negativ
 
 ##### BASHBOT_SLEEP
 Instead of polling permanently or with a fixed delay, bashbot offers a simple adaptive polling.
-If messages are received bashbot polls with no dealy. If no messages are availible bashbot add 100ms delay
+If messages are received bashbot polls with no dealy. If no messages are available bashbot add 100ms delay
 for every poll until the maximum of BASHBOT_SLEEP ms.
 ```bash
   unset  BASHBOT_SLEEP       # 5000ms (default)
@@ -338,7 +337,7 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
   
 ```
 
-#### Testet configs as of v0.90 release
+#### Tested configs as of v0.90 release
 **Note: Environment variables are not stored, you must setup them before every call to bashbot.sh, e.g. from a script.**
 
 ##### simple Unix like config, for one bot. bashbot is installed in '/usr/local/telegram-bot-bash'
@@ -360,7 +359,7 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
   /usr/local/bin/bashbot.sh start
 ```
 
-##### simple multibot config, everything is keept inside 'telegram-bot-bash' dir
+##### simple multibot config, everything is kept inside 'telegram-bot-bash' dir
 ```bash
   # config for running Bot 1
   # Note: all dirs and files must exist!
@@ -382,5 +381,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-pre-0-g03700cd
 

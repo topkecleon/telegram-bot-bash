@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -25,12 +25,12 @@ UPDATE="$(cat "${INPUTFILE}")"
 declare -A UPD
 source <( printf 'UPD=( %s )' "$(sed <<<"${UPDATE}" -E -e 's/\t/=/g' -e 's/=(true|false)/="\1"/')" )
 
-# run process_message with and without phyton
+# run process_message with and without python
 echo "Check process_inline ..."
 for i in 1 2
 do
 	[ "${i}" = "1" ] && ! command -v python >/dev/null 2>&1 && continue
-	[ "${i}" = "1" ] && echo "  ... with JsonDecode Phyton" && unset BASHBOT_DECODE
+	[ "${i}" = "1" ] && echo "  ... with JsonDecode Python" && unset BASHBOT_DECODE
 	[ "${i}" = "2" ] && echo "  ... with JsonDecode Bash" && export BASHBOT_DECODE="yes"
 	set -x
 	{ process_inline "0";  set +x; } >>"${LOGFILE}" 2>&1;

@@ -70,7 +70,7 @@ output_telegram() {
 	sed <<< "${1}" -e ':a;N;$!ba;s/\n/ mynewlinestartshere /g'
 } # 2>>"$0.log"
 
-# name and localtion of the tml file
+# name and location of the tml file
 
 # $1 string to output
 # $2 file to add file to

@@ -1,5 +1,5 @@
 #
-# this is an exmaple crontab file for telegram-bot-bash
+# this is an example crontab file for telegram-bot-bash
 # copy it to /etc/cron.d/bashbot
 #
 # (c) https://github.com/gnadelwartz
@@ -7,7 +7,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 
 
 SHELL=/bin/sh

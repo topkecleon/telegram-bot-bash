@@ -2,7 +2,11 @@
 /.github/
 /count*
 /token*
-/bocked*
+/blocked*
+/botconf*
+/botacl*
+/botown*
+ˆ.jssh
 *.save
 *.log
 *.swp

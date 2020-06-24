@@ -5,9 +5,9 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 
-# source from commands.sh if you want ro use interactive or background jobs
+# will be automatically sourced from bashbot
 
 # source once magic, function named like file
 eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
@@ -35,20 +35,22 @@ killproc() {
 	kill_proc "${CHAT[ID]}" "$1"
 }
 
-# inline and backgound functions
+# inline and background functions
 # $1 chatid
 # $2 program
 # $3 jobname
 # $4 $5 parameters
 start_back() {
-	#local fifo; fifo="${DATADIR:-.}/$(procname "$1")"
-	printf '%s\n' "$1:$3:$2" >"${DATADIR:-.}/$(procname "$1")$3-back.cmd"
+	local cmdfile; cmdfile="${DATADIR:-.}/$(procname "$1")$3-back.cmd"
+	printf '%s\n' "$1:$3:$2" >"${cmdfile}"
 	restart_back "$@"
 }
 restart_back() {
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1" "back-$3-")"
-	kill_proc "$1" "back-$3-"
+	printf "%s: Start background job CHAT=%s JOB=%s CMD=%s\n" "$(date)" "${1}" "${fifo##*/}" "${2} ${4} ${5}" >>"${UPDATELOG}"
+	check_back "$1" "$3" && kill_proc "$1" "back-$3-"
 	nohup bash -c "{ $2 \"$4\" \"$5\" \"${fifo}\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"; }" &>>"${fifo}.log" &
+	sleep 0.5 # give bg job some time to init
 }
 
 
@@ -59,7 +61,8 @@ start_proc() {
 	[ -z "$2" ] && return
 	[ -x "${2%% *}" ] || return 1
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1")"
-	kill_proc "$1"
+	printf "%s: Start interacitve script CHAT=%s JOB=%s CMD=%s\n" "$(date)" "${1}" "${fifo##*/}" "${2} ${3} ${4}" >>"${UPDATELOG}"
+	check_proc "$1" && kill_proc "$1"
 	mkfifo "${fifo}"
 	nohup bash -c "{ $2 \"$4\" \"$5\" \"$fifo\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"
 		rm \"${fifo}\"; [ -s \"${fifo}.log\" ] || rm -f \"${fifo}.log\"; }" &>>"${fifo}.log" &
@@ -95,6 +98,7 @@ kill_proc() {
 	fifo="$(procname "$1" "$2")"
 	prid="$(proclist "${fifo}")"
 	fifo="${DATADIR:-.}/${fifo}"
+	printf "%s: Stop interacitve / background CHAT=%s JOB=%s\n" "$(date)" "${1}" "${fifo##*/}" >>"${UPDATELOG}"
 	# shellcheck disable=SC2086
 	[ -n "${prid}" ] && kill ${prid}
 	[ -s "${fifo}.log" ] || rm -f "${fifo}.log"
@@ -113,13 +117,15 @@ inproc() {
 	send_interactive "${CHAT[ID]}" "${MESSAGE}"
 }
 
-# start stopp all jobs
+# start stop all jobs
 # $1 command
 #	killb*
 #	suspendb*
 #	resumeb*
 job_control() {
-	local content proc CHAT job fifo killall=""
+	local BOT ADM content proc CHAT job fifo killall=""
+	BOT="$(getConfigKey "botname")"
+	ADM="$(getConfigKey "botadmin")"
 	for FILE in "${DATADIR:-.}/"*-back.cmd; do
 		[ "${FILE}" = "${DATADIR:-.}/*-back.cmd" ] && echo -e "${RED}No background processes.${NC}" && break
 		content="$(< "${FILE}")"
@@ -132,19 +138,27 @@ job_control() {
 		"resumeb"*|"backgr"*)
 			printf "Restart Job: %s %s\n" "${proc}" " ${fifo}"
 			restart_back "${CHAT}" "${proc}" "${job}"
+			# inform botadmin about stop
+			[ -n "${ADM}" ] && send_normal_message "${ADM}" "Bot ${BOT} restart background jobs ..." &
 			;;
 		"suspendb"*)
 			printf "Suspend Job: %s %s\n" "${proc}" " ${fifo}"
 			kill_proc "${CHAT}" "${job}"
+			# inform botadmin about stop
+			[ -n "${ADM}" ] && send_normal_message "${ADM}" "Bot ${BOT} suspend background jobs ..." &
 			killall="y"
 			;;
 		"killb"*)
 			printf "Kill Job: %s %s\n" "${proc}" " ${fifo}"
 			kill_proc "${CHAT}" "${job}"
 			rm -f "${FILE}" # remove job
+			# inform botadmin about stop
+			[ -n "${ADM}" ] && send_normal_message "${ADM}" "Bot ${BOT} kill  background jobs ..." &
 			killall="y"
 			;;
 		esac
+		# send message only onnfirst job
+		ADM=""
 	done
 	# kill all requestet. kill ALL background jobs, even not listed in data-bot-bash
 	[ "${killall}" = "y" ] && killallproc "back-"

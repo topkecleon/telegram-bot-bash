@@ -11,7 +11,7 @@ If you want to get error messages (and more) start bashbot  ```./bashbot.sh star
 you can the change the level of verbosity of the debug argument: 
 
 ```
-	"debug"		all output is redirected to "DEBUG.log", in addtion every incomming message is logged in "MESSAGE.log" and "INLINE.log"
+	"debug"		all output is redirected to "DEBUG.log", in addition every incoming message is logged in "MESSAGE.log" and "INLINE.log"
 	"xdebug"	same as debug plus set bash option '-x' to log any executed command in "DEBUG.log"
 
 	use the command tail to watch your bot live, e.g. "tail -f DEBUG.log", to obtain more information place set -x; set +x in your code.
@@ -28,19 +28,19 @@ you can the change the level of verbosity of the debug argument:
 
 ### Modules and Addons
 **Modules** resides in ```modules/*.sh``` and are colletions of optional bashbot functions grouped by functionality. Main reason for creating modules was
-to keep 'bashbot.sh' small, while extending functionality. In addition not every funtion is needed by all bots, so you can
+to keep 'bashbot.sh' small, while extending functionality. In addition not every function is needed by all bots, so you can
 disable modules, e.g. by rename the respective module file to 'module.sh.off'.
 
-Modules must use only functions provided by 'bahsbot.sh' or the module itself and sould not depend on other modules or addons.
+Modules must use only functions provided by 'bahsbot.sh' or the module itself and should not depend on other modules or addons.
 The only mandatory module is 'module/sendMessage.sh'.
 
 If a not mandatory module is used in 'bashbot.sh' or 'commands.sh', the use of ```_is_function``` or
-```_execute_if_function``` is mandatory to catch absense of the module.
+```_execute_if_function``` is mandatory to catch absence of the module.
 
 **Addons** resides in ```addons/*.sh.dist``` and are not endabled by default. To activate an addon rename it to end with '.sh', e.g. by
 ```cp addons/example.sh.dist addons/example.sh```. 
 
-Addons must register themself to BASHBOT_EVENTS at startup, e.g. to call a function everytime a message is received.
+Addons must register themself to BASHBOT_EVENTS at startup, e.g. to call a function every time a message is received.
 Addons works similar as 'commands.sh' and 'mycommands.sh' but are much more flexible on when functions/commands are triggered.
 
 Another major difference is: While regular command processing is done in a new sub shell for every command,
@@ -53,7 +53,7 @@ This prevents blocking or exiting bashbots event loop.
 #### Bashbot Events
 
 Addons must register functions to bashbot events by providing their name, and internal identifier and a callback function.
-If an event occours each registered function for the event is called.
+If an event occurs each registered function for the event is called.
 
 Registered functions run in the same process as bashbot, not as a sub process, so variables set here are persistent as long bashbot is running.
 
@@ -61,7 +61,7 @@ Note: For the same reason event function MUST return immediately! Time consuming
 
 ##### SEND RECEIVE events
 
-An RECEIVE event is executed when a Message is received, same iQuery / Message variables are avalible as in commands.sh
+An RECEIVE event is executed when a Message is received, same iQuery / Message variables are available as in commands.sh
 
 * BASHBOT_EVENT_INLINE		an inline query is received
 
@@ -89,7 +89,7 @@ BASHBOT_EVENT_TEXT["example_1"]="example_echo"
 # function called if a text is received
 example_echo() {
 	local event="$1" key="$2"
-	# all availible bashbot functions and variables can be used
+	# all available bashbot functions and variables can be used
 	send_normal_message "${CHAT[ID]}" "Event: ${event} Key: ${key} : ${MESSAGE[0]}" & # run in background!
 
 	( MYTEXT="${MESSAGE[0]}"
@@ -100,9 +100,9 @@ example_echo() {
 
 An SEND event is executed when a Message is send to telegram.
 
-* BASHBOT_EVENT_SEND	is exceuted if data is send or uploaded to Telegram server
+* BASHBOT_EVENT_SEND	is executed if data is send or uploaded to Telegram server
 
-In contrast to other events, BASHBOT_EVENT_SEND is excecuted in a sub shell, so there is no need to spawn
+In contrast to other events, BASHBOT_EVENT_SEND is executed in a sub shell, so there is no need to spawn
 a background process for longer running commands and changes to variables are not persistent!
 
 BASHBOT_EVENT_SEND is for logging purposes, you must not send messages while processing this event.
@@ -110,7 +110,7 @@ To avoid wrong use of EVENT_SEND, e.g. fork bomb, event processing is suspended 
 
 *usage*: BASHBOT_EVENT_SEND[ "unique-name" ]="callback"
 
-"callback" is called with paramter "send"  or "upload", followed by the arguments used for 'sendJson' or 'upload' functions.
+"callback" is called with parameter "send"  or "upload", followed by the arguments used for 'sendJson' or 'upload' functions.
 
 *Example:*
 ```bash
@@ -128,12 +128,12 @@ example_log(){
 
 ##### TIMER events
 
-Important: Bashbot timer tick is diabled by default and must be enabled by setting BASHBOT_START_TIMER to any value not zero.
+Important: Bashbot timer tick is disabled by default and must be enabled by setting BASHBOT_START_TIMER to any value not zero.
 
 * BAHSBOT_EVENT_TIMER		executed every minute and can be used in 3 variants: oneshot, once a minute, every X minutes.
 
 Registering to BASHBOT_EVENT_TIMER works similar as for message events, but you must add a timing argument to the name.
-EVENT_TIMER is triggered every 60s and waits until the current running command is finished, so ist not excactly every
+EVENT_TIMER is triggered every 60s and waits until the current running command is finished, so it's not exactly every
 minute, but once a minute.
 
 Every time EVENT_TIMER is triggered the variable "EVENT_TIMER" is increased. each callback is executed if ```EVENT_TIMER % time``` is '0' (true).
@@ -144,7 +144,7 @@ This means if you register an every 5 minutes callback first execution may < 5 M
     * 0	ignored
     * 1	execute once every minute
     * x	execute every x minutes
-    * -x execute once WHITHIN the next x Minutes (next 10 Minutes since start "event")
+    * -x execute once WITHIN the next x Minutes (next 10 Minutes since start "event")
 
 Note: If you want exact "in x minutes" use "EVENT_TIMER plus x" as time: ```-(EVENT_TIMER + x)```
 
@@ -199,25 +199,25 @@ Now have a look at the directory 'standalone', here you find the files 'bashbot.
 A typical bashbot develop loop looks as follow:
 
 1. start developing - *change, copy, edit bashbot files ...*
-2. after changing a bash sript: ```shellcheck -x scipt.sh```
+2. after changing a bash sript: ```shellcheck -x script.sh```
 3. ```dev/all-tests.sh``` - *in case if errors back to 2.*
 4. ```dev/git-add.sh``` - *check for changed files, update version string, run git add*
 5. ```git commit -m "COMMIT MESSAGE"; git push```
 
 
-**If you setup your dev environment with hooks and use the scripts above, versioning, addding and testing is done automatically.**
+**If you setup your dev environment with hooks and use the scripts above, versioning, adding and testing is done automatically.**
 
 #### common commands
 We state bashbot is a bash only bot, but this is not true. bashbot is a bash script using bash features PLUS external commands.
-Usually bash is used in a unix/linux environment where many (GNU) commands are availible, but if commands are missing, bashbot may not work.
+Usually bash is used in a unix/linux environment where many (GNU) commands are available, but if commands are missing, bashbot may not work.
 
-To avoid this and make bashbot working on as many platforms as possible - from embedded linux to mainframe - I recommed to restrict
+To avoid this and make bashbot working on as many platforms as possible - from embedded linux to mainframe - I recommend to restrict
 ourself to the common commands provided by bash and coreutils/busybox/toybox.
 See [Bash Builtins](https://www.gnu.org/software/bash/manual/html_node/Shell-Builtin-Commands.html),
 [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands),
 [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) and [toybox](https://landley.net/toybox/help.html)
 
-Availible commands in bash, coreutils, busybox and toybox. Do you find curl on the list?
+Available commands in bash, coreutils, busybox and toybox. Do you find curl on the list?
 ```bash
 	.*, [*, [[*, basename, break, builtin*, bzcat, caller*, cat, cd*, chattr,
 	chgrp, chmod, chown, clear, command*, continue *, cp, cut, date, declare*,
@@ -230,7 +230,7 @@ Availible commands in bash, coreutils, busybox and toybox. Do you find curl on t
 	time, times*, timeout, touch, tr, trap*, true, umask*, usleep, uudecode,
 	uuencode, wc, wget, which, who, whoami, xargs, yes
 ```
-commands marked with \* are bash builtins, all others are external programms. Calling an external programm is more expensive then using bulitins
+commands marked with \* are bash builtins, all others are external programs. Calling an external program is more expensive then using bulitins
 or using an internal replacement. Here are some tipps for using builtins.:
 ```bash
 HOST="$(hostname)" -> HOST="$HOSTNAME"
@@ -243,7 +243,7 @@ data="$(cat file)" -> data="$(<"file")"
 
 DIR="$(dirname $0) -> DIR="${0%/*}"
 
-IAM="($basename $0)" -> IAM="${0##*/}*
+PROG="($basename $0)" -> PROG="${0##*/}*
 
 ADDME="$ADDME something to add" -> ADDME+=" something to add""
 
@@ -283,7 +283,7 @@ For a shell script running as a service it's important to be paranoid about quot
 To run shellcheck for a single script run ```shellcheck -x script.sh```, to check all schripts run ```dev/hooks/pre-commit.sh```.
 
 
-### bashbot tests
+### bashbot test suite
 Starting with version 0.70 bashbot has a test suite. To start testsuite run ```dev/all-tests.sh```. all-tests.sh will return 'SUCCESS' only if all tests pass.
 
 #### enabling / disabling tests
@@ -302,7 +302,7 @@ A temporary test environment is created when 'ALL-tests.sh' starts and deleted a
 
 The file ```ALL-tests.inc.sh``` must be included from all tests and provide the test environment as shell variables:
 ```bash
-# Test Evironment
+# Test Environment
  TESTME="$(basename "$0")"
  DIRME="$(pwd)"
  TESTDIR="$1"
@@ -347,5 +347,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 

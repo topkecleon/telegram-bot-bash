@@ -5,12 +5,12 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-17-gdda5b6d
+
+# will be automatically sourced from bashbot
 
 # source once magic, function named like file
 eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
-
-# source from commands.sh to use the member functions
 
 LEAVE_URL=$URL'/leaveChat'
 KICK_URL=$URL'/kickChatMember'
@@ -50,11 +50,11 @@ user_is_admin() {
 }
 
 user_is_botadmin() {
-	local admin; admin="$(head -n 1 "${BOTADMIN}")"
+	local admin; admin="$(getConfigKey "botadmin")"
 	[ "${admin}" = "${1}" ] && return 0
 	[ "${admin}" = "${2}" ] && return 0
 	[[ "${admin}" = "@*" ]] && [[ "${admin}" = "${2}" ]] && return 0
-	if [ "${admin}" = "?" ]; then printf '%s\n' "${1:-?}" >"${BOTADMIN}"; return 0; fi
+	if [ "${admin}" = "?" ]; then setConfigKey "${1:-?}"; return 0; fi
 	return 1
 }
 

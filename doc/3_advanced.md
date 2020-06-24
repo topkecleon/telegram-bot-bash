@@ -29,7 +29,7 @@ In addition you can check individual capabilities of users as you must define in
 # a user not listed here, will return false from 'user_is_allowed'
 #
 # Format:
-# user:ressource:chat
+# user:resource:chat
 
 # allow user 123456789 access to all resources in all chats
 123456789:*:*
@@ -41,7 +41,7 @@ In addition you can check individual capabilities of users as you must define in
 987654321:start:98979695
 
 # * are only allowed on the right hand side and not for user!
-# the following exaples are NOT valid!
+# the following examples are NOT valid!
 *:*:*
 *:start:*
 *:*:98979695
@@ -66,7 +66,7 @@ You must use the function ```user_is_allowed``` to check if a user has the capab
 ### Interactive Chats
 Interactive chats are short running scripts, reading user input and echo data to the user.
 
-To create a new interactive chat script copy 'scripts/interactive.sh.clean' to e.g. 'scripts/mynewinteractive.sh', make it executeable
+To create a new interactive chat script copy 'scripts/interactive.sh.clean' to e.g. 'scripts/mynewinteractive.sh', make it executable
 and then use 'start_proc' function from your bot, it's possible to pass two arguments. You find more examples for interactive scripts in 'examples'
 
 *usage*: start_proc chat_id script arg1 arg2
@@ -82,7 +82,7 @@ and then use 'start_proc' function from your bot, it's possible to pass two argu
 
 ######
 # parameters
-# $1 $2 args as given to start_proc chat srcipt arg1 arg2
+# $1 $2 args as given to start_proc chat script arg1 arg2
 # $3 path to named pipe
 
 #######################
@@ -110,7 +110,7 @@ echo "Text that will appear in chat? myfilelocationstartshere /home/user/doge.jp
 ```
 And buttons:
 ```bash
-echo "Text that will appear in chat. mybtextstartshere Klick me myburlstartshere https://dealz.rrr.de"
+echo "Text that will appear in chat. mybtextstartshere Click me myburlstartshere https://dealz.rrr.de"
 ```
 And locations:
 ```bash
@@ -144,7 +144,7 @@ echo "$out"
 A background job is similar to an interactive chat, but can be a long running job and does only output massages, user input is ignored.
 It's possible to run multiple background jobs from the same chat.
 
-To create a new interactive chat script copy 'scripts/interactive.sh.clean' to e.g. 'scripts/mynewbackground.sh', make it executeable
+To create a new interactive chat script copy 'scripts/interactive.sh.clean' to e.g. 'scripts/mynewbackground.sh', make it executable
 and then use 'start_back' function from your bot, it's possible to pass two arguments. You find more examples for background scripts in 'examples'
 
 *usage*: start_back chat_id script jobname arg1 arg2
@@ -166,21 +166,21 @@ You can also suspend and resume currently running background jobs from outside b
 ./bashbot.sh resumeback
 ```
 
-If you want to kill all background jobs permantly run:
+If you want to kill all background jobs permanently run:
 ```bash
 ./bashbot.sh killback
 
 ```
-Note: Background jobs run independent from main bot and continue running until your script exits or you stop it. Backgound jobs will continue running if your Bot is stoped and must be terminated seperatly e.g. by ```bashbot.sh killback``` 
+Note: Background jobs run independent from main bot and continue running until your script exits or you stop it. Background jobs will continue running if your Bot is stopped and must be terminated separately e.g. by ```bashbot.sh killback``` 
 
 ### Inline queries
-**Inline queries** allow users to send commands to your bot from every chat without going to a private chat. An inline query is started if the user type the bots name, e.g. @myBot. Everything after @myBot is immediatly send to the bot.
+**Inline queries** allow users to send commands to your bot from every chat without going to a private chat. An inline query is started if the user type the bots name, e.g. @myBot. Everything after @myBot is immediately send to the bot.
 
 In order to enable **inline mode**, send `/setinline` command to [@BotFather](https://telegram.me/botfather) and provide the placeholder text that the user will see in the input field after typing your bot’s name.
 
 The following commands allows you to send ansers to *inline queries*. To enable bashbot to process inline queries set ```INLINE="1"``` in 'mycommands.sh'.
 
-To send messsages or links through an *inline query*:
+To send messages or links through an *inline query*:
 ```bash
 answer_inline_query "${iQUERY[ID]}" "article" "Title of the result" "Content of the message to be sent"
 ```
@@ -223,10 +223,10 @@ See also [answer_inline_multi, answer_inline_compose](6_reference.md#answer_inli
 
 Our examples usually do not care about errors happening while sending a message, this is OK as long your bot does not send an
 massive aoumnt of messages. By default bashbot detects if a message is not sent and try to recover when possible,
-e.g. resend on throttling. In addtion every send error is logged in logs/ERROR.log
+e.g. resend on throttling. In addition every send error is logged in logs/ERROR.log
 
 
-#### Trasmission results
+#### Transmission results
 
 On every message send to telegram (transmission) the results are provided in bash variables, like its done when a new message
 is received.
@@ -236,7 +236,7 @@ every send action will overwrite them!
 
 * ```$BOTSENT```: This array contains the parsed results from the last transmission to telegram.
     * ```${BOTSENT[OK]}```: contains the string ```true```: after a successful transmission
-    * ```${BOTSENT[ERROR]}```: Error code if an error occured
+    * ```${BOTSENT[ERROR]}```: Error code if an error occurred
     * ```${BOTSENT[DESC]}```: Description text for error
     * ```${BOTSENT[RETRY]}```: Seconds to wait if telegram requests throtteling.
 * ```$res```: temporary variable containing the full transmission result, may be overwritten by any bashbot function.
@@ -279,7 +279,7 @@ Note: If you disable automatic retry, se above, you disable also connection prob
          # may be we removed block, e.g. changed IP address, try again
          return 0
       fi
-      # do not retry if we cant recover
+      # do not retry if we can't recover
       return 1
   }
 
@@ -289,5 +289,5 @@ Note: If you disable automatic retry, se above, you disable also connection prob
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 

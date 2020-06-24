@@ -5,7 +5,9 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
+
+# will be automatically sourced from bashbot
 
 # source once magic, function named like file
 eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
@@ -25,10 +27,19 @@ ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
 
 send_normal_message() {
-	local text; text="$(JsonEscape "${2}")"
+	local len text; text="$(JsonEscape "${2}")"
+	text="${text//$'\n'/\\n}"
 	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'"' "${MSG_URL}"
-		text="${text:4096}"
+		if [ "${#text}" -le 4096 ]; then
+			sendJson "${1}" '"text":"'"${text}"'"' "${MSG_URL}"
+			break
+		else
+			len=4095
+			[ "${text:4095:2}" != "\n" ] &&\
+				len="${text:0:4096}" && len="${len%\\n*}" && len="${#len}"
+			sendJson "${1}" '"text":"'"${text:0:${len}}"'"' "${MSG_URL}"
+			text="${text:$((len+2))}"
+		fi
 	done
 }
 
@@ -73,13 +84,13 @@ old_send_keyboard() {
 ISEMPTY="ThisTextIsEmptyAndWillBeDeleted"
 sendEmpty() {
 	sendJson "${@}"
-	[[ "${2}" = *"${ISEMPTY}"* ]] && delete_message "${1}" "${BOTSENT[ID]}"
+	[[ "${2}" = *"${ISEMPTY}"* ]] && delete_message "${1}" "${BOTSENT[ID]}" "nolog"
 }
 send_keyboard() {
 	if [[ "$3" != *'['* ]]; then old_send_keyboard "${@}"; return; fi
-	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"${ISEMPTY}"'"'
+	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"Keyboard:"'"'
 	local one_time=', "one_time_keyboard":true' && [ -n "$4" ] && one_time=""
-	sendEmpty "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"'}' "$MSG_URL"
+	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"'}' "$MSG_URL"
 	# '"text":"$2", "reply_markup": {"keyboard": [ ${3} ], "one_time_keyboard": true}'
 }
 
@@ -89,8 +100,8 @@ remove_keyboard() {
 	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
 }
 send_inline_keyboard() {
-	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"${ISEMPTY}"'"'
-	sendEmpty "${1}" "${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]}' "$MSG_URL"
+	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"Keyboard:"'"'
+	sendJson "${1}" "${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]}' "$MSG_URL"
 	# JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
 }
 send_button() {
@@ -114,7 +125,7 @@ upload_file(){
 	[[ "$file" = *'..'* ]] && return  # no directory traversal
 	[[ "$file" = '.'* ]] && return	 # no hidden or relative files
 	if [[ "$file" = '/'* ]] ; then
-		[[ ! "$file" =~ $FILE_REGEX ]] && return # absulute must match REGEX
+		[[ ! "$file" =~ $FILE_REGEX ]] && return # absolute must match REGEX
 	else
 		file="${UPLOADDIR:-NOUPLOADDIR}/${file}" # othiers must be in UPLOADDIR
 	fi
@@ -189,8 +200,9 @@ send_message() {
 	[ -z "$2" ] && return
 	local text keyboard btext burl no_keyboard file lat long title address sent
 	text="$(sed <<< "${2}" 's/ mykeyboardend.*//;s/ *my[kfltab][a-z]\{2,13\}startshere.*//')$(sed <<< "${2}" -n '/mytextstartshere/ s/.*mytextstartshere//p')"
-	# shellcheck disable=SC2001
-	text="$(sed <<< "${text}" 's/ *mynewlinestartshere */\r\n/g')"
+	#shellcheck disable=SC2001
+	text="$(sed <<< "${text}" 's/ *mynewlinestartshere */\\n/g')"
+	text="${text//$'\n'/\\n}"
 	[ "$3" != "safe" ] && {
 		no_keyboard="$(sed <<< "${2}" '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
 		keyboard="$(sed <<< "${2}" '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere *//;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
@@ -237,10 +249,10 @@ send_message() {
 
 send_text() {
 	case "$2" in
-		html_parse_mode*)
+		'html_parse_mode'*)
 			send_html_message "$1" "${2//html_parse_mode}"
 			;;
-		markdown_parse_mode*)
+		'markdown_parse_mode'*)
 			send_markdown_message "$1" "${2//markdown_parse_mode}"
 			;;
 		*)

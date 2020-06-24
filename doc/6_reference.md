@@ -61,7 +61,7 @@ send_normal_message "${CHAT[ID]}" "<b>bold</b> <i>italic><i> <em>italic>/em> <a 
 ```
 
 ##### forward_message
-```forward_mesage``` forwards a messsage to the given chat.
+```forward_mesage``` forwards a message to the given chat.
 
 *usage:* forward_message "chat_to" "chat_from" "${MESSAGE[ID]}"
 
@@ -69,7 +69,7 @@ send_normal_message "${CHAT[ID]}" "<b>bold</b> <i>italic><i> <em>italic>/em> <a 
 
 *alias:* _forward "$FROMCHAT" "${MESSAGE[ID]}"
 
-See also [Text formating options](https://core.telegram.org/bots/api#formatting-options)
+See also [Text formatting options](https://core.telegram.org/bots/api#formatting-options)
 
 ----
 
@@ -103,8 +103,8 @@ Starting with version 0.80 send_file implements the following rules:
 
 - file names must not contain ".."
 - file names must not start with "."
-- file names not starting wit "/" are realtive to $TMPDIR, e.g. ./data-bot-bash
-- abolute filenames must match $FILE_REGEX
+- file names not starting with "/" are relative to $TMPDIR, e.g. ./data-bot-bash
+- absolute filenames must match $FILE_REGEX
 - FILE_REGEX is a regular expression, not shell globbing, test you rexexes: http://www.softlion.com/webTools/RegExpTest/
 
 *usage:* send_file "${CHAT[ID]}" "file" "caption"
@@ -126,7 +126,7 @@ send_file "${CHAT[ID]}" "https://www.domain,com/something.gif" "Something"
 ----
 
 ##### send_keyboard
-Note: since version 0.6 send_keyboard was changed to use native "JSON Array" notation as used from Telegram. Example Keybord Array definitions:
+Note: since version 0.6 send_keyboard was changed to use native "JSON Array" notation as used from Telegram. Example Keyboard Array definitions:
 
 - yes no in two rows:
     - OLD format: 'yes' 'no' (two strings)
@@ -134,7 +134,7 @@ Note: since version 0.6 send_keyboard was changed to use native "JSON Array" not
 - new layouts made easy with NEW format:
     - Yes No in one row: '[ "yes" , "no" ]'
     - Yes No plus Maybe in 2.row: '[ "yes" , "no" ] , [ "maybe" ]' 
-    - numpad style keyboard: '[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [ "7" , "8" , "9" ] , [ "0" ]'
+    - number pad style keyboard: '[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [ "7" , "8" , "9" ] , [ "0" ]'
 
 *usage:*  send_keyboard "chat-id" "message" "keyboard"
 
@@ -171,11 +171,15 @@ send_button "${CHAT[ID]}" "MAKE MONEY FAST!!!" "Visit my Shop" "https://dealz.rr
 ```
 
 ##### send_inline_keyboard
-This allows to place multiple inline buttons in a row. The inline buttons must specified as a JSON array in the following format:
+Even its called keyboard, this function is different from send_keyboard. The main difference is that it's only possible to
+specify URL buttons, no Text Buttons and the Buttons must be an Array of Buttons as specified for
+[Telegram InlineMarkup](https://core.telegram.org/bots/api#inlinekeyboardmarkup).
+
+The inline buttons must be specified as a JSON string in the following format:
 
 ```[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ]```
 
-Each button consists of a pair of text and URL values, sourrounded by '{ }', multiple buttons are seperated by '**,**' and everthing is wrapped in '[ ]'.
+Each button consists of a pair of text and URL values, sourrounded by '{ }', multiple buttons are separated by '**,**' and everything is wrapped in '[ ]'.
 
 *usage:*  send_inline_keyboard "chat-id" "message" "[ {"text":"text", "url":"url"} ...]"
 
@@ -204,7 +208,7 @@ If your Bot is a chat admin he can kick and ban a user.
 *alias:* _kick_user "${USER[ID]}"
 
 ##### unban_chat_member
-If your Bot is a chat admine can unban a kicked user.
+If your Bot is a chat admin can unban a kicked user.
 
 *usage:*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
@@ -295,7 +299,7 @@ It send back only one response to an inline query.
 
 
 ##### answer_inline_multi
-anser_inline_multi allows you to send back a list of responses. responses must be seperated by ','.
+anwser_inline_multi allows you to send back a list of responses. Responses must be separated by ','.
 
 *usage:* answer_inline_multi "${iQUERY[ID]}" "res, res, ... res" 
 
@@ -333,7 +337,7 @@ Currently the following types and arguments are implemented (optional arguments 
 	"document"		title document_URL mime_type (caption description parse_mode)
 
 	"location"		latitude longitude title
-	"venue"			latitude longitude title (adress foursquare)
+	"venue"			latitude longitude title (address foursquare)
 	"contact"		phone first (last thumb)
 
 	"cached_photo"		file (title description caption parse_mode keyboard)
@@ -351,7 +355,7 @@ see [InlineQueryResult for more information](https://core.telegram.org/bots/api#
 
 
 ### Background and Interactive jobs
-Background functions and interactive jobs extends the bot functionality to not only react to user input. You can start scripts for interative
+Background functions and interactive jobs extends the bot functionality to not only react to user input. You can start scripts for interactive
 chats and send messages based on time or other external events.
 
 ##### start_proc
@@ -402,7 +406,7 @@ fi
 ----
 
 ##### start_back
-Starts a script as a background job and attaches a jobname to it. All output from a background job is sent to the associated chat.
+Starts a script as a background job and attaches a job name to it. All output from a background job is sent to the associated chat.
 
 In contrast to interactive chats, background jobs do not receive user input and can run forever. In addition you can suspend and restart running jobs, e.g. after reboot.
 
@@ -453,7 +457,7 @@ fi
 
 ##### send_interactive
 Form version 0.80 on forward_message is used to forward messages to interactive job. It replaces the old 'inproc' commands used for TMUX.
-Usually  message is automatically forwarded in 'commands.sh', but you can forward messages wihle processing also or send your own messages.
+Usually a message is automatically forwarded in 'commands.sh', but you can forward messages while processing also or send your own messages.
 
 *usage:* send_interactive "${CHAT[ID]}" "message"
 
@@ -463,17 +467,17 @@ Usually  message is automatically forwarded in 'commands.sh', but you can forwar
 
 ### jsshDB
 Since output generated by JSON.sh is so handy to use in bash, we use the format for a simple keys/value file store.
-The file extions is '.jssh' and for security reasons location of jssh files is restricted to BASHBOT_ETC and BASHBOT_DATA..
+The file extensions is '.jssh' and for security reasons location of jssh files is restricted to BASHBOT_ETC and BASHBOT_DATA..
 
 #### fast and slow operations
 
 jsshDB files are simple text files and if you append a new Key/value pairs to the end of the file it overwrites
-an existing key/value pair. We use this behaivor for "fast" file operations.
+an existing key/value pair. We use this behavior for "fast" file operations.
 
-"fast funtions" add a new key/value pair to the end of the file without deleting an existing one, this is fast but over (long)
-time the file grows infinitly.
+"fast functions" add a new key/value pair to the end of the file without deleting an existing one, this is fast but over (long)
+time the file grows infinity.
 
-"slow funtions" in contrast modify the key/value pairs in place and write the whole file back,
+"slow functions" in contrast modify the key/value pairs in place and write the whole file back,
 this is slower but clean up the file. All previously added key/value pairs are replaced
 and only the last one is written back to the file.
 
@@ -499,7 +503,7 @@ A jssh fileDB consists of  two files which must reside inside BASHBOT_ETC or BAS
 
 Path names containing `..` or not located in BASHBOT_ETC or BASHBOT_DATA are refused by jsshDB functions with an error.
 
-Since version 0.94 jsshDB functions support file locking with flock. write/update operations are serialised with flock to wait until
+Since version 0.94 jsshDB functions support file locking with flock. Write/update operations are serialised with flock to wait until
 previous operations are finished, see "man flock" for information. To avoid deadlocks we use a timeout of 10s for write and 5s for read operations. 
 
 Every jssh_*DB function exist as jssj_*DB_async also.
@@ -515,7 +519,7 @@ In case flock is not availibe or you don't want locking, jssh_*DB_async function
 ```
 
 ##### jssh_newDB
-Creats new empty jsshDB file if not exist.
+Creates new empty jsshDB file if not exist.
 
 *usage:*  jssh_newDB "filename"
 
@@ -556,7 +560,7 @@ Something wrong with data-bot-bash/../../../somevalues
 ```
 
 ##### jssh_writeDB
-Write content of an ARRAY into jsshDB file. ARRAY name must be delared with "declare -A ARRAY" before calling writeDB.
+Write content of an ARRAY into jsshDB file. ARRAY name must be declared with "declare -A ARRAY" before calling writeDB.
 "DB" file MUST exist or nothing is written.
 
 Note: Existing content is overwritten.
@@ -567,7 +571,7 @@ Note: Existing content is overwritten.
 
 *example:* 
 ```bash
-# Prepare array to store vaules
+# Prepare array to store values
 declare -A  WRITEVALUES
 
 WRITEVALUES["value1"]="example"
@@ -582,7 +586,7 @@ jssh_newDB "${DATADIR:-.}/myvalues"
 # write to file data-bot-bash/somevalues.jssh from array MYVALUES
 jssh_writeDB "WRITEVALUES" "${DATADIR:-}/myvalues"
 
-# show whats written
+# show what's written
 cat "${DATADIR:-}/myvalues.jssh"
 ["value1"]	"example"
 ["value2"]	"a value"
@@ -592,13 +596,13 @@ cat "${DATADIR:-}/myvalues.jssh"
 ```
 
 ##### jssh_printDB
-Print content of an ARRAY to STDOUT. ARRAY name must be delared with "declare -A ARRAY" before calling printDB..
+Print content of an ARRAY to STDOUT. ARRAY name must be declared with "declare -A ARRAY" before calling printDB..
 
 *usage:*  jssh_printDB "ARRAY" 
 
 *example:* 
 ```bash
-# Prepare array to store vaules
+# Prepare array to store values
 declare -A  PRINTVALUES
 
 # read file data-bot-bash/myvalues.jssh into array READVALUES
@@ -614,7 +618,7 @@ jssh_printDB READVALUES
 ```
 
 ##### jssh_updateDB
-Update/Add content of an ARRAY into a jsshDB file. ARRAY name must be delared with "declare -A ARRAY" before calling updateDB.
+Update/Add content of an ARRAY into a jsshDB file. ARRAY name must be declared with "declare -A ARRAY" before calling updateDB.
 "DB" file MUST exist or nothing is written.
 
 Note: Existing content not in ARRAY is kept in file.
@@ -632,7 +636,7 @@ MYVALUES["newvalue"]="this is new"
 # update file data-bot-bash/somevalues.jssh from array MYVALUES
 jssh_updateDB "MYVALUES" "${DATADIR:-.}/myvalues"
 
-# show whats written
+# show what's written
 ["value1"]	"value1"
 ["loveit"]	"value2"
 ["whynot"]	"value3"
@@ -642,25 +646,25 @@ jssh_updateDB "MYVALUES" "${DATADIR:-.}/myvalues"
 cat "$DBfile"
 jssh_writeDB "MYVALUES" "${DATADIR:-.}/myvalues"
 
-# show whats written, ups!
+# show what's written, ups!
 cat "$DBfile"
 ["newvalue"]	"this is new"
 
 ```
 
 ##### jssh_readDB
-Read content of a file in JSON.sh format into given ARRAY.  ARRAY name must be delared with "declare -A ARRAY" upfront,
+Read content of a file in JSON.sh format into given ARRAY.  ARRAY name must be declared with "declare -A ARRAY" upfront,
 
 *usage:*  jssh_readDB "ARRAY" "filename"
 
 *usage:*  jssh_readDB_async "ARRAY" "filename"
 
-Note: readDB uses concurrent / shared locking from flock so multiple proceses can read from file, as long no process is writing.
-Maximum timeour for reading is 1s to not block readers.
+Note: readDB uses concurrent / shared locking from flock so multiple processes can read from file, as long no process is writing.
+Maximum timeout for reading is 1s to not block readers.
 
 *example:* 
 ```bash
-# Prepare array to read vaules
+# Prepare array to read values
 declare -A  READVALUES
 
 # read file data-bot-bash/myvalues.jssh into array READVALUES
@@ -679,7 +683,7 @@ jssh_printDB READVALUES
 ["whynot","subindex1"]	"whynot A"
 
 
-# access Arrray
+# access Array
 echo "${READVALUES[vaule2]}"
 a value
 
@@ -710,7 +714,7 @@ Insert, update, append a key=value pair to a jsshDB file, key name is only allow
 
 *usage:*  jssh_insertKeyDB_asnyc "key" "value" "filename"
 
-*deprecated:* jssh_insertDB *was renamed in verion 0.96 to* jssh_insertKeyDB
+*deprecated:* jssh_insertDB *was renamed in version 0.96 to* jssh_insertKeyDB
 
 Note: inserKeytDB uses also excusive write locking, but with a maximum timeout of 2s. insertKeyDB is a "fast" operation, simply adding the value to the end of the file.
 
@@ -720,7 +724,7 @@ jssh_insertKeyDB "newkey" "an other value" "${DATADIR:-.}/myvalues"
 ```
 
 ##### jssh_deleteKeyDB
-Deleted a key=value pair froma jsshDB file, key name is only allowed to contain '-a-zA-Z0-9,._'
+Deleted a key=value pair from a jsshDB file, key name is only allowed to contain '-a-zA-Z0-9,._'
 
 *usage:*  jssh_deleteKeyDB "key" "filename"
 
@@ -735,7 +739,7 @@ jssh_deleteKeyDB "delkey"" "${DATADIR:-.}/myvalues"
 Increase a key=value pair from a jsshDB file by 1, key name is only allowed to contain '-a-zA-Z0-9,._'
 If value is given key is increased by value.
 
-Side effect: if value is given key is updated "in place" (slower) and file is cleand up, if no value is given fast path is used
+Side effect: if value is given key is updated "in place" (slower) and file is cleaned up, if no value is given fast path is used
 and new count is added to the end of file.
 
 *usage:*  jssh_countKeyDB "key" "filename" ["value"]
@@ -754,7 +758,7 @@ https://linuxconfig.org/how-to-use-arrays-in-bash-script
 
 ----
 
-### Aliases - shortcuts for often used funtions 
+### Aliases - shortcuts for often used functions 
 Aliases are handy shortcuts for using in 'mycommands.sh', they avoid error prone typing of  "${CHAT[ID]}" "${USER[ID]}" as much as possible.
 Do not use them in bashbot.sh, modules and addons.
 
@@ -854,8 +858,8 @@ Do not use them in bashbot.sh, modules and addons.
 ### Helper functions
 
 ##### download
-Download the fiven URL ans returns the final filename in TMPDIR. If the given filename exists,the filename is prefixed with a
-random number. filename is not allowed to contain '/' or '..'.
+Download the fiven URL and returns the final filename in TMPDIR. If the given filename exists,the filename is prefixed with a
+random number. Filename is not allowed to contain '/' or '..'.
 
 *usage:* download URL filename
 
@@ -876,7 +880,7 @@ Returns true, even if the given function does not exist. Return false if functio
 ```bash
 _exec_if_function "answer_inline_query" "${iQUERY[ID]}" "Answer params"
 
-# fast replacment for module functions exists check:
+# fast replacement for module functions exists check:
 if _is_function "answer_inline_query"
 then
 	"answer_inline_query" "${iQUERY[ID]}" "Answer params"
@@ -919,7 +923,7 @@ Returns PrefixBotname_Postfix
 ```bash
 # returns botname, if already set
 procname 
-# returns unique identifier for everthing related to chat
+# returns unique identifier for everything related to chat
 procname "${CHAT[ID]}"
 # returns unique identifier for job, regardless of chat
 procname "" "back-jobname-"
@@ -980,13 +984,13 @@ Reads JSON from STDIN and Outputs found String to STDOUT
 *usage:*  JsonGetString `"path","to","string"`
 
 ##### JsonGetValue
-Reads JSON fro STDIN and Outputs found Value to STDOUT
+Reads JSON from STDIN and Outputs found Value to STDOUT
 
 *usage:*  JsonGetValue `"path","to","value"`
 
 
 ##### Json2Array
-Read JSON.sh style data from STDIN and asssign to given ARRAY
+Read JSON.sh style data from STDIN and assign to given ARRAY
 ARRAY name  must be declared with "declare -A ARRAY" before calling
 
 *usage:* Json2Array "ARRAY"
@@ -1005,13 +1009,13 @@ Output ARRAY as JSON.sh style data to STDOUT
 ----
 
 ##### process_client
-Every Message sent to your Bot is processd by this function. It parse the send JSON and assign the found Values to bash variables.
+Every Message sent to your Bot is processed by this function. It parse the send JSON and assign the found Values to bash variables.
 
 ##### process_updates
-If new updates are availible, this functions gets the JSON from Telegram and dispatch it.
+If new updates are available, this functions gets the JSON from Telegram and dispatch it.
 
 ##### process_inline
-Every Inline Message sent to your Bot is processd by this function. It parse the send JSON and assign the found Values to bash variables.
+Every Inline Message sent to your Bot is processed by this function. It parse the send JSON and assign the found Values to bash variables.
 
 ##### start_timer
 Start the the every minute timer ...
@@ -1028,12 +1032,12 @@ Dispatcher for BASHBOT_EVENT_MESSAGE and related
 ----
 
 ##### getBotName
-The name of your bot is availible as bash variable "$ME", there is no need to call this function if Bot is running.
+The name of your bot is available as bash variable "$ME", there is no need to call this function if Bot is running.
 
 *usage:* ME="$(getBotName)"
 
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-72-gfb61a48
 

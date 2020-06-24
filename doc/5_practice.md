@@ -7,7 +7,7 @@ If you are new to Bot development read [Bots: An introduction for developers](ht
 
 In addition you should know about [BotFather, the one bot to rule them all](https://core.telegram.org/bots#3-how-do-i-create-a-bot). It will help you create new bots and change settings for existing ones. [Commands known by Botfather](https://core.telegram.org/bots#generating-an-authorization-token)
 
-If you dont't have a github account, it may time to [sepup a free account now](https://github.com/pricing)
+If you don't have a github account, it may time to [setup a free account now](https://github.com/pricing)
 
 ### Add commands to mycommands.sh only
 To ease updates never change ```bashbot.sh```, instead your commands and functions must go to  ```mycommands.sh``` .  Insert your Bot commands in the ```case ... esac``` block of the 'mycommands()' function:
@@ -67,17 +67,17 @@ In case you want to add some processing to the global bashbot command add ```ret
 ```
 
 
-### Seperate logic from commands
+### Separate logic from commands
 
-If a command need more than 2-3 lines of code, you should use a function to seperate logic from command. Place your functions in ```mycommands.sh``` and call the from your command. Example:
+If a command need more than 2-3 lines of code, you should use a function to separate logic from command. Place your functions in ```mycommands.sh``` and call the from your command. Example:
 ```bash
 # file: mycommands.sh
-# your additional bahsbot commands
+# your additional bashbot commands
 
 mycommands() {
 
 	case "$MESSAGE" in
-		'/process'*) # logic for /process is done in process_message 
+		'/doit'*) # logic for /doit is done in process_message 
 			result="$(process_message "$MESSAGE")"
 			send_normal_message "${CHAT[ID]}" "$result" 
 			;;
@@ -127,7 +127,7 @@ Line 17:
                       ^-- SC2116: Useless echo? Instead of 'cmd $(echo foo)', just use 'cmd foo'.
  
 ```
-As you can see my ```mybotcommands.inc.sh``` contains an useless echo command in 'TEXT=' assigment and can be replaced by ```TEXT="${TEXT}${WORD}"```
+As you can see my ```mybotcommands.inc.sh``` contains an useless echo command in 'TEXT=' assignment and can be replaced by ```TEXT="${TEXT}${WORD}"```
 ```bash
 $ shellcheck -x examples/notify
 OK
@@ -146,11 +146,11 @@ In bashbot.sh line 490:
         CONTACT[USER_ID]="$(sed -n -e '/\["result",'$PROCESS_NUMBER',"message","contact","user_id"\]/  s/.*\][ \t]"\(.*\)"$/\1/p' <"$TMP")"
         ^-- SC2034: CONTACT appears unused. Verify it or export it.
 ```
-The example show two warnings in bashbots scripts. The first is a hint you may use shell substitions instead of sed, this is fixed and much faster as the "echo | sed" solution.
+The example show two warnings in bashbots scripts. The first is a hint you may use shell substitutions instead of sed, this is fixed and much faster as the "echo | sed" solution.
 The second warning is about an unused variable, this is true because in our examples CONTACT is not used but assigned in case you want to use it :-)
 
 #### [Prev Best Practice](5_practice.md)
 #### [Next Functions Reference](6_reference.md)
 
-#### $$VERSION$$ v0.96-0-g3871ca9
+#### $$VERSION$$ v0.98-dev-70-g694ee61
 
