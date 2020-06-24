@@ -45,19 +45,18 @@ The Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as: ``` \uD83D\uDE0
 
 **This "mixed" JSON encoding needs special handling and can not decoded from** ```echo -e``` or ```printf '%s\\n'```
 
-Most complete support for decoding of multibyte characters can only be provided if python is installed on your system.
-**Without python bashbot falls back to an internal, pure bash implementation which may not work for some corner cases**.
+Bbashbot uses an internal, pure bash implementation which is well tested now, even there may some corner cases*.
 
 
 ### Run as other user or system service
-Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or scheduled from cron. This is only recommended for experiend linux users.
+Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or scheduled from cron. This is recommended if you want to bashbot run as a service.
 
 Setup the environment for the user you want to run bashbot and enter desired username, e.g. nobody :
 ```bash
 sudo ./bashbot.sh init
 ```
 
-Edit the file ```bashbot.rc``` and edit the following lines to fit your configuration:
+Edit the file ```bashbot.rc``` and change the following lines to fit your configuration:
 ```bash
 #######################
 # Configuration Section
@@ -382,5 +381,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v0.98-dev-70-g694ee61
+#### $$VERSION$$ v0.98-pre-0-g03700cd
 
