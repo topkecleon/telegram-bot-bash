@@ -43,7 +43,7 @@ else
 fi
 
 REMOTEVER="$(git ls-remote -t --refs 2>/dev/null | tail -1 | sed -e 's/.*\/v//' -e 's/-.*//')"
-VERSION="$(git describe --tags | sed -e 's/-.*//' -e 's/v//')"
+VERSION="$(git describe --tags | sed -e 's/-.*//' -e 's/v//' -e 's/,/./')"
 
 
 # LOCAL version must greater than latest REMOTE release version
