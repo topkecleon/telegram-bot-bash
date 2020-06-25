@@ -926,11 +926,13 @@ bot_init() {
 	[ -n "${BASHBOT_HOME}" ] && cd "${BASHBOT_HOME}" || exit 1
 	local DEBUG="$1"
 	# upgrade from old version
+	echo "Check for Update actions ..."
 	local OLDTMP="${BASHBOT_VAR:-.}/tmp-bot-bash"
 	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${DATADIR}"; rmdir "${OLDTMP}"; }
 	# no more existing modules
 	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
 	# load addons on startup
+	echo "Initialize modules and addons ..."
 	for addons in "${ADDONDIR:-.}"/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
 		[ -r "${addons}" ] && source "${addons}" "init" "${DEBUG}"
@@ -948,7 +950,7 @@ bot_init() {
 		oldbot="$(ps -fu "$TOUSER" | grep startbot | grep -v -e 'grep' -e '\-startbot' )"
 		[ -n "${oldbot}" ] && \
 			echo -e "${ORANGE}Warning: At least one not upgraded TMUX bot is running! You must stop it with kill command:${NC}\\n${oldbot}"
-		echo "Adjusting user \"${TOUSER}\" files and permissions ..."
+		echo "Adjusting files and permissions for user \"${TOUSER}\" ..."
 		[ -w "bashbot.rc" ] && sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' "bashbot.rc"
 		chown -R "$TOUSER" . ./*
 		chmod 711 .
@@ -958,8 +960,20 @@ bot_init() {
 		# jsshDB must writeable by owner
 		find . -name '*.jssh*' -exec chmod u+w \{\} +
 	fi
+	# check if botconf if seems valid
+	echo -e "${GREEN}This is your bot config:${NC}"
+	sed 's/^/\t/' "${BOTCONFIG}.jssh" | grep -vF '["bot_config_key"]'
+	if [[ "$(getConfigKey "bottoken")" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ && "$(getConfigKey "botadmin")" =~ ^[0-9]+$ ]]; then
+		echo -e "Bot config seems to be valid. Should I make a backup copy? (Y/n) Y\b\c"
+		read -r ANSWER
+		if [[ -z "${ANSWER}" || "${ANSWER}" =~ ^[^Nn] ]]; then
+			echo "Copy bot config to ${BOTCONFIG}.jssh.ok ..."
+		fi 
+	else
+		echo -e "${ORANGE}Bot config may not complete, pls check.${NC}"
+	fi
 	# show result
-	ls -l
+	ls -ld "${DATADIR}" "${LOGDIR}" *.jssh* *.sh 
 }
 
 if ! _is_function send_message ; then
