@@ -13,7 +13,8 @@ Elsewhere, consider it released under the
 [WTFPLv2](http://www.wtfpl.net/txt/copying/).
 
 ## Prerequisites
-Uses [JSON.sh](http://github.com/dominictarr/JSON.sh), but no more TMUX.
+Uses [JSON.sh](http://github.com/dominictarr/JSON.sh) and the magic of (gnu) 
+sed.
 
 Even bashbot is written in bash, it depends on commands typically available in 
 a Unix/Linux Environment.
@@ -262,8 +263,8 @@ execution bug, pls update if you use an older version!
 Well, that's a damn good question ... may be because I'm an Unix/Linux admin 
 from stone age. Nevertheless there are more reasons from my side:
 
-- bashbot will run everywhere where bash is available, from embedded linux to 
-mainframe
+- bashbot will run everywhere where bash and (gnu) sed is available, from 
+embedded linux to mainframe
 - easy to integrate with other shell script, e.g. for sending system message / 
 health status
 - no need to install or learn a new programming language, library or framework
@@ -327,4 +328,4 @@ failed: Connection timed out.
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.98-dev-70-g694ee61
+#### $$VERSION$$ v0.98-pre-3-g0f24eb8

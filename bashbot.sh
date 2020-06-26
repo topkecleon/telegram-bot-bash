@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-70-g694ee61
+#### $$VERSION$$ v0.962-84-g86f8fbe
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -973,7 +973,7 @@ bot_init() {
 		echo -e "${ORANGE}Bot config may not complete, pls check.${NC}"
 	fi
 	# show result
-	ls -ld "${DATADIR}" "${LOGDIR}" *.jssh* *.sh 
+	ls -ld "${DATADIR}" "${LOGDIR}" ./*.jssh* ./*.sh 
 }
 
 if ! _is_function send_message ; then
