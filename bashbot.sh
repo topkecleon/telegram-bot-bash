@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.962-86-ge315162
+#### $$VERSION$$ v0.962-87-ga692045
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -415,6 +415,9 @@ sendJsonRetry(){
 			;;
 		'sendUpload'*)
 			sendUpload "$@"	
+			;;
+		'send_album'*)
+			send_album "$@"	
 			;;
 		*)
 			printf "%s: Error: unknown function %s, cannot retry\n" "$(date)" "${retry}"
