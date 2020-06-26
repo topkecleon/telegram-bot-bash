@@ -51,7 +51,7 @@ see e.g. [Install Bash on Mac](http://macappstore.org/bash/)
 **On BSD and MacOS** I recommend to install gnu coreutils and include them in your PATH
 environment variable before running bashbot, e.g. the gnu versions of sed, grep, find ...
 
-On BSDand MacOS you must adjust the shebang line of the scripts ```bashbot.sh``` and ```json.sh``` to point to to the correct bash
+On BSD and MacOS you must adjust the shebang line of the scripts ```bashbot.sh``` and ```json.sh``` to point to to the correct bash
 or use the script: ```examples/bash2env *.sh */*.sh``` to convert them for you.
 
 Bashbot will stay with /bin/bash shebang, as using a fixed path is more secure than the portable /usr/bin/env variant, see
@@ -83,14 +83,14 @@ If you are a sed guru and can convert the following examples to work correct wit
 
 Up to version 0.94 bashbot stores config values as values in ```token```, ```botadmin``` and ```count```. Since version 0.96 bashbot
 uses jsonDB key/value store. Config is stored in ```botconfig.jssh```, counting of users is done in ```count.jssh```.
-The acl file ```botacl``` stay as is. On first run of bashbot.sh after an update bashbot converts bashbot converts
+The acl file ```botacl``` stay as is. On first run of bashbot.sh after an update bashbot converts
 the files to the new config format. Afterwards the files ```token```, ```botadmin``` and ```count``` can be deleted.
 
-You may notice the new file ```blocked.jssh```, every telegram user and chat id stored ihere will be blocked from 
+You may notice the new file ```blocked.jssh```, every telegram user or chat id stored here will be blocked from 
 using your bot.
 
 #### removal of TMUX
-From version 0.80 on TMUX is no longer needed and the bachsbot command 'attach' is deleted. Old function 'inproc'
+From version 0.80 on TMUX is no longer needed and the bashbot command 'attach' is deleted. Old function 'inproc'
 is replaced by 'send_interactive'. send_interactive does checks if an interactive job is running internally.
 Pls check if you make use of inproc and remove it including the old checks, e.g.
 ```bash
@@ -131,5 +131,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v0.962-88-g5afe05a
+#### $$VERSION$$ v0.962-89-g24e9ec6
 
