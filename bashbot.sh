@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.962-84-g86f8fbe
+#### $$VERSION$$ v0.962-86-ge315162
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -360,6 +360,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 		-d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
 		-H "Content-Type: application/json" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
 	sendJsonResult "${res}" "sendJson (curl)" "$@"
+	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" &
   }
   #$1 Chat, $2 what , $3 file, $4 URL, $5 caption
   sendUpload() {
@@ -375,6 +376,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 			-F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
 	fi
 	sendJsonResult "${res}" "sendUpload (curl)" "$@"
+	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
 else
   # simple curl or wget call outputs result to stdout
@@ -392,11 +394,12 @@ else
 	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
 	sendJsonResult "${res}" "sendJson (wget)" "$@"
+	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" & 
   }
   sendUpload() {
 	printf "%s: %s\n" "$(date)" "Sorry, wget does not support file upload\n" >>"${ERRORLOG}"
 	BOTSENT[OK]="false"
-	[[ -z "${SOURCE}" && -n "${BASHBOT_EVENT_SEND[*]}" ]] && event_send "upload" "$@" &
+	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
 fi 
 
@@ -431,7 +434,6 @@ sendJsonResult(){
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${1}")"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
 		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${1}")"
-		[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@:3}" 
 		return
 		# hot path everything OK!
 	else
