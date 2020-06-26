@@ -9,7 +9,7 @@ Released to the public domain wherever applicable.
 Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/copying/).
 
 ## Prerequisites
-Uses [JSON.sh](http://github.com/dominictarr/JSON.sh) and the magic of (gnu) sed.
+Uses [JSON.sh](http://github.com/dominictarr/JSON.sh) and the magic of sed.
 
 Even bashbot is written in bash, it depends on commands typically available in a Unix/Linux Environment.
 More concret on the common commands provided by recent versions of [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or [toybox](https://landley.net/toybox/help.html), see [Developer Notes](doc/7_develop.md#common-commands)
@@ -239,4 +239,4 @@ wget -t 1 -T 10 https://api.telegram.org/bot
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.98-pre-3-g0f24eb8
+#### $$VERSION$$ v0.962-88-g5afe05a

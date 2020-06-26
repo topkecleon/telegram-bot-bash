@@ -13,8 +13,7 @@ Elsewhere, consider it released under the
 [WTFPLv2](http://www.wtfpl.net/txt/copying/).
 
 ## Prerequisites
-Uses [JSON.sh](http://github.com/dominictarr/JSON.sh) and the magic of (gnu) 
-sed.
+Uses [JSON.sh](http://github.com/dominictarr/JSON.sh) and the magic of sed.
 
 Even bashbot is written in bash, it depends on commands typically available in 
 a Unix/Linux Environment.
@@ -328,4 +327,4 @@ failed: Connection timed out.
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.98-pre-3-g0f24eb8
+#### $$VERSION$$ v0.962-88-g5afe05a

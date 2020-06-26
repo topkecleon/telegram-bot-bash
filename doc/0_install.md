@@ -39,7 +39,7 @@ As an alternative to download the zip files, you can clone the github repository
 4. Extract all files to your existing bashbot dir 
 5. Run ```sudo ./bashbot.sh init``` to setup your environment after the update
 
-If you modified ```commands.sh``` move your changes to ```mycommands.sh```, this avoids overwrrite of you changes on updates.
+If you modified ```commands.sh``` move your changes to ```mycommands.sh```, this avoids overwriting your commands on update.
 
 Now you can restart your bashbot instances.
 
@@ -48,8 +48,14 @@ Now you can restart your bashbot instances.
 **On MacOS** you must install a more recent version of bash, as the default bash is way to old,
 see e.g. [Install Bash on Mac](http://macappstore.org/bash/)
 
-**On BSD and MacOS** I recommend to install gnu coreutils and include them in front of your PATH
+**On BSD and MacOS** I recommend to install gnu coreutils and include them in your PATH
 environment variable before running bashbot, e.g. the gnu versions of sed, grep, find ...
+
+On BSDand MacOS you must adjust the shebang line of the scripts ```bashbot.sh``` and ```json.sh``` to point to to the correct bash
+or use the script: ```examples/bash2env *.sh */*.sh``` to convert them for you.
+
+Bashbot will stay with /bin/bash shebang, as using a fixed path is more secure than the portable /usr/bin/env variant, see
+[Security Considerations](../README.md#Security-Considerations)
 
 I considered to make bashbot BSD sed compatible, but much of the bashbot "magic" relies on
 (gnu) sed features, e.g. alternation ```|```, non printables ```\n\t\<``` or repeat ```?+``` pattern, not supported by BSD sed.
@@ -57,13 +63,31 @@ BSD/MacOS sed compatibility will result in a rewrite of all grep/sed commands wi
 see [BSD/MacOS vs. GNU sed](https://riptutorial.com/sed/topic/9436/bsd-macos-sed-vs--gnu-sed-vs--the-posix-sed-specification)
 to get an impression how different they are.
 
-In adition you must adjust the shebang line of the scripts ```bashbot.sh``` and ```json.sh``` to point to to the correct bash
-or use the example script: ```examples/bash2env *.sh */*.sh```
+If you are a sed guru and can convert the following examples to work correct with gnu and BSD sed, contact me.
 
-Bashbot will stay with /bin/bash shebang, as using a fixed path is more secure than the portable /usr/bin/env variant, see
-[Security Considerations](../README.md#Security-Considerations)
+```bash
+  # easy start
+  sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]\([0-9.,]*\).*/\1/p'
+  OUT="$(sed -e ':a;N;$!ba;s/\r\n/ mynewlinestartshere /g' <<<"$1"| iconv -f utf-8 -t utf-8 -c)"
 
-### Notes on Updates
+  # more complex
+  address="$(sed <<< "${2}" '/myaddressstartshere /!d;s/.*myaddressstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
+
+  # for experts?
+  source <( printf "$1"'=( %s )' "$(sed -E -n -e ':x /"text"\]/ { N; s/([^"])\n/\1\\n/g ; tx }' -e '/\["[-0-9a-zA-Z_,."]+"\]\+*\t/ s/\t/=/gp' -e 's/=(true|false)/="\1"/')" )
+```
+
+### Notes per Version
+
+#### Change in storing config values
+
+Up to version 0.94 bashbot stores config values as values in ```token```, ```botadmin``` and ```count```. Since version 0.96 bashbot
+uses jsonDB key/value store. Config is stored in ```botconfig.jssh```, counting of users is done in ```count.jssh```.
+The acl file ```botacl``` stay as is. On first run of bashbot.sh after an update bashbot converts bashbot converts
+the files to the new config format. Afterwards the files ```token```, ```botadmin``` and ```count``` can be deleted.
+
+You may notice the new file ```blocked.jssh```, every telegram user and chat id stored ihere will be blocked from 
+using your bot.
 
 #### removal of TMUX
 From version 0.80 on TMUX is no longer needed and the bachsbot command 'attach' is deleted. Old function 'inproc'
@@ -107,5 +131,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v0.98-dev-70-g694ee61
+#### $$VERSION$$ v0.962-88-g5afe05a
 
