@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.98-pre-0-g03700cd
+#### $$VERSION$$ v0.98-pre2-0-ga597303
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
