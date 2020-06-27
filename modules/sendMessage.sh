@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-pre2-5-gc517129
+#### $$VERSION$$ v0.98-pre2-6-gbee55fe
 
 # will be automatically sourced from bashbot
 
@@ -82,11 +82,6 @@ old_send_keyboard() {
 	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${keyboard}"' ],"one_time_keyboard": true}' "$MSG_URL"
 }
 
-ISEMPTY="ThisTextIsEmptyAndWillBeDeleted"
-sendEmpty() {
-	sendJson "${@}"
-	[[ "${2}" = *"${ISEMPTY}"* ]] && delete_message "${1}" "${BOTSENT[ID]}" "nolog"
-}
 send_keyboard() {
 	if [[ "$3" != *'['* ]]; then old_send_keyboard "${@}"; return; fi
 	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"Keyboard:"'"'
@@ -96,8 +91,9 @@ send_keyboard() {
 }
 
 remove_keyboard() {
-	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"${ISEMPTY}"'"'
-	sendEmpty "${1}" "${text}"', "reply_markup": {"remove_keyboard":true}' "$MSG_URL" &
+	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"remove custom keyboard ..."'"'
+	sendJson "${1}" "${text}"', "reply_markup": {"remove_keyboard":true}' "$MSG_URL"
+	[[ -z "${2}" ]] && delete_message "${1}" "${BOTSENT[ID]}" "nolog"
 	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
 }
 send_inline_keyboard() {
