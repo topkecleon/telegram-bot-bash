@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-pre2-8-ga656533
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -29,6 +29,7 @@ source <( printf 'UPD=( %s )' "$(sed <<<"${UPDATE}" -E -e 's/\t/=/g' -e 's/=(tru
 echo "Check process_message ..."
 set -x
 { process_message "0";  set +x; } >>"${LOGFILE}" 2>&1;
+echo "Compare results"
 
 USER[ID]="123456789"
 CHAT[ID]="123456789"

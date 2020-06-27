@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-pre2-8-ga656533
 
 # common variables
 export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
@@ -12,11 +12,11 @@ export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
 
 # common filenames
 export TOKENFILE ACLFILE COUNTFILE BLOCKEDFILE ADMINFILE DATADIR JSONSHFILE
- TOKENFILE="token"
+ TOKENFILE="botconfig.jssh"
  ACLFILE="botacl"
  COUNTFILE="count.jssh"
  BLOCKEDFILE="blocked.jssh"
- ADMINFILE="botadmin"
+ ADMINFILE="botconfig.jssh"
  DATADIR="data-bot-bash"
  JSONSHFILE="JSON.sh/JSON.sh"
 
