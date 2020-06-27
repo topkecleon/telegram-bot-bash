@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-dev-70-g694ee61
+#### $$VERSION$$ v0.98-pre2-6-gbee55fe
 
 # will be automatically sourced from bashbot
 
@@ -25,6 +25,7 @@ LOCATION_URL=$URL'/sendLocation'
 VENUE_URL=$URL'/sendVenue'
 ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
+ALBUM_URL=$URL'/sendMediaGroup'
 
 send_normal_message() {
 	local len text; text="$(JsonEscape "${2}")"
@@ -81,11 +82,6 @@ old_send_keyboard() {
 	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${keyboard}"' ],"one_time_keyboard": true}' "$MSG_URL"
 }
 
-ISEMPTY="ThisTextIsEmptyAndWillBeDeleted"
-sendEmpty() {
-	sendJson "${@}"
-	[[ "${2}" = *"${ISEMPTY}"* ]] && delete_message "${1}" "${BOTSENT[ID]}" "nolog"
-}
 send_keyboard() {
 	if [[ "$3" != *'['* ]]; then old_send_keyboard "${@}"; return; fi
 	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"Keyboard:"'"'
@@ -95,8 +91,9 @@ send_keyboard() {
 }
 
 remove_keyboard() {
-	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"${ISEMPTY}"'"'
-	sendEmpty "${1}" "${text}"', "reply_markup": {"remove_keyboard":true}' "$MSG_URL"
+	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"remove custom keyboard ..."'"'
+	sendJson "${1}" "${text}"', "reply_markup": {"remove_keyboard":true}' "$MSG_URL"
+	[[ -z "${2}" ]] && delete_message "${1}" "${BOTSENT[ID]}" "nolog"
 	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
 }
 send_inline_keyboard() {
@@ -114,10 +111,34 @@ UPLOADDIR="${BASHBOT_UPLOAD:-${DATADIR}/upload}"
 # for now this can only send local files with curl!
 # extend to allow send files by URL or telegram ID
 send_file() {
-	[ -z "$2" ] && return 
-	[[ "$2" = "http"* ]] && return # currently we do not support URL
 	upload_file "${@}"
 }
+
+if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
+# there are no checks if URL or ID exists
+# $1 chat $3 ... $n URL or ID
+  send_album(){
+	[ -z "${1}" ] && return 1
+	[ -z "${3}" ] && return 2 # minimum 2 files
+	local CHAT JSON IMAGE; CHAT="${1}"; shift 
+	for IMAGE in "$@"
+	do
+		[ -n "${JSON}" ] && JSON+=","
+		JSON+='{"type":"photo","media":"'${IMAGE}'"}'
+	done
+	# shellcheck disable=SC2086
+	res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "${ALBUM_URL}" -F "chat_id=${CHAT}"\
+			-F "media=[${JSON}]" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
+	sendJsonResult "${res}" "send_album (curl)" "${CHAT}" "$@"
+	[[ -z "${SOURCE}" && -n "${BASHBOT_EVENT_SEND[*]}" ]] && event_send "album" "$@" &
+  }
+else
+  send_album(){
+	log_error "Sorry, wget Album upload not yet implemented"
+	BOTSENT[OK]="false"
+	[[ -z "${SOURCE}" && -n "${BASHBOT_EVENT_SEND[*]}" ]] && event_send "album" "$@" &
+  }
+fi
 
 upload_file(){
 	local CUR_URL WHAT STATUS file="$2"

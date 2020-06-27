@@ -9,7 +9,7 @@ Released to the public domain wherever applicable.
 Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/copying/).
 
 ## Prerequisites
-Uses [JSON.sh](http://github.com/dominictarr/JSON.sh), but no more TMUX.
+Uses [JSON.sh](http://github.com/dominictarr/JSON.sh) and the magic of sed.
 
 Even bashbot is written in bash, it depends on commands typically available in a Unix/Linux Environment.
 More concret on the common commands provided by recent versions of [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or [toybox](https://landley.net/toybox/help.html), see [Developer Notes](doc/7_develop.md#common-commands)
@@ -190,7 +190,7 @@ Bashbot is not more (in)secure as any other Bot written in any other language, w
 ### Why Bash and not the much better xyz?
 Well, that's a damn good question ... may be because I'm an Unix/Linux admin from stone age. Nevertheless there are more reasons from my side:
 
-- bashbot will run everywhere where bash is available, from embedded linux to mainframe
+- bashbot will run everywhere where bash and (gnu) sed is available, from embedded linux to mainframe
 - easy to integrate with other shell script, e.g. for sending system message / health status
 - no need to install or learn a new programming language, library or framework
 - no database, not event driven, not OO ...
@@ -239,4 +239,4 @@ wget -t 1 -T 10 https://api.telegram.org/bot
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.98-dev-70-g694ee61
+#### $$VERSION$$ v0.98-pre2-0-ga597303
