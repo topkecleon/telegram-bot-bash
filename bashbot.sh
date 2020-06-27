@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-pre2-3-g423bf35
+#### $$VERSION$$ v0.98-pre2-4-g724f36b
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -245,7 +245,7 @@ fi
 
 
 # BOTTOKEN format checks
-if [[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ ]]; then
+if ! check_token "${BOTTOKEN}"; then
 	echo -e "${ORANGE}Warning: your bottoken may incorrect. it should have the following format:${NC}"
 	echo -e "${GREY}123456789${RED}:${GREY}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4${ORANGE} => ${NC}\c"
 	echo -e "${GREY}8-10 digits${RED}:${GREY}35 alnum characters + '_-'${NC}"
@@ -960,11 +960,13 @@ bot_init() {
 	# no more existing modules
 	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
 	# load addons on startup
+	echo "Done."
 	echo "Initialize modules and addons ..."
 	for addons in "${ADDONDIR:-.}"/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
 		[ -r "${addons}" ] && source "${addons}" "init" "${DEBUG}"
 	done
+	echo "Done."
 	#setup bashbot
 	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
 	echo -n "Enter User to run basbot [$RUNUSER]: "
@@ -987,6 +989,7 @@ bot_init() {
 	chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
 		# jsshDB must writeable by owner
 		find . -name '*.jssh*' -exec chmod u+w \{\} +
+		echo "Done."
 	fi
 	# check if botconf if seems valid
 	echo -e "${GREEN}This is your bot config:${NC}"
@@ -996,6 +999,7 @@ bot_init() {
 		read -r ANSWER
 		if [[ -z "${ANSWER}" || "${ANSWER}" =~ ^[^Nn] ]]; then
 			echo "Copy bot config to ${BOTCONFIG}.jssh.ok ..."
+			cp "${BOTCONFIG}.jssh" "${BOTCONFIG}.jssh.ok"
 		fi 
 	else
 		echo -e "${ORANGE}Bot config may not complete, pls check.${NC}"
