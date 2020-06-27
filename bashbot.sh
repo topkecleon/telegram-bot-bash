@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-pre2-4-g724f36b
+#### $$VERSION$$ v0.98-pre2-8-ga656533
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -846,7 +846,7 @@ process_message() {
 		NEWMEMBER[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","new_chat_member","last_name"]}")"
 		NEWMEMBER[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","new_chat_member","username"]}")"
 		NEWMEMBER[ISBOT]="${UPD["result",${num},"message","new_chat_member","is_bot"]}"
-		MESSAGE[0]="/new_chat_member ${NEWMEMBER[USERNAME]:=${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]}}"
+		[ -z "${MESSAGE[0]}" ] && MESSAGE[0]="/new_chat_member ${NEWMEMBER[USERNAME]:=${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]}}"
 	fi
 	if grep -qs -e '\["result",'"${num}"',"message","left_chat_member' <<<"${UPDATE}"; then
 		SERVICE[LEFTMEMBER]="${UPD["result",${num},"message","left_chat_member","id"]}"
@@ -855,21 +855,28 @@ process_message() {
 		LEFTMEMBER[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","left_chat_member","last_name"]}")"
 		LEFTMEBER[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","left_chat_member","username"]}")"
 		LEFTMEMBER[ISBOT]="${UPD["result",${num},"message","left_chat_member","is_bot"]}"
-		MESSAGE[0]="/left_chat_member ${LEFTMEMBER[USERNAME]:=${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]}}"
+		[ -z "${MESSAGE[0]}" ] && MESSAGE[0]="/left_chat_member ${LEFTMEMBER[USERNAME]:=${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]}}"
 	fi
 	if grep -qs -e '\["result",'"${num}"',"message","\(new_chat_[tp]\)\|\(pinned_message\)' <<<"${UPDATE}"; then
 		SERVICE[NEWTITLE]="$(JsonDecode "${UPD["result",${num},"message","new_chat_title"]}")"
-		[ -n "${SERVICE[NEWTITLE]}" ] && MESSAGE[0]="/new_chat_title ${SERVICE[NEWTITLE]}"
+		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWTITLE]}" ] && MESSAGE[0]="/new_chat_title ${SERVICE[NEWTITLE]}"
 		SERVICE[NEWPHOTO]="$(get_file "${UPD["result",${num},"message","new_chat_photo",0,"file_id"]}")"
-		[ -n "${SERVICE[NEWPHOTO]}" ] && MESSAGE[0]="/new_chat_photo ${SERVICE[NEWPHOTO]}"
+		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWPHOTO]}" ] && MESSAGE[0]="/new_chat_photo ${SERVICE[NEWPHOTO]}"
 		SERVICE[PINNED]="$(JsonDecode "${UPD["result",${num},"message","pinned_message"]}")"
-		[ -n "${SERVICE[PINNED]}" ] && MESSAGE[0]="/new_pinned_message ${SERVICE[PINNED]}"
+		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[PINNED]}" ] && MESSAGE[0]="/new_pinned_message ${SERVICE[PINNED]}"
 	fi
 	# set SSERVICE to yes if a service message was received
 	[[ "${SERVICE[*]}" =~  ^[[:blank:]]*$ ]] || SERVICE[0]="yes"
 
 	# split message in command and args
-	[ "${MESSAGE[0]:0:1}" = "/" ] && read -r CMD <<<"${MESSAGE[0]}" &&  CMD[0]="${CMD[0]%%@*}"
+	#[[ "${MESSAGE[0]}" == "/"* ]] && read -r CMD <<<"${MESSAGE[0]}" &&  CMD[0]="${CMD[0]%%@*}"
+	if [[ "${MESSAGE[0]}" == "/"* ]]; then
+		set -f; unset IFS
+		# shellcheck disable=SC2206
+		CMD=( ${MESSAGE[0]} )
+		CMD[0]="${CMD[0]%%@*}"
+		set +f
+	fi
 }
 
 #########################
