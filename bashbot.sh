@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-pre2-2-g7618b38
+#### $$VERSION$$ v0.98-pre2-3-g423bf35
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -65,7 +65,7 @@ getConfigKey() {
 	[ -r "${BOTCONFIG}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTCONFIG}.jssh" | tail -n 1
 }
 # $1 token
-# retrun true if token seems to be valid
+# return true if token seems to be valid
 check_token(){
 	[[ "${1}" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ ]] && return 0
 	return 1
@@ -422,7 +422,7 @@ else
 	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" & 
   }
   sendUpload() {
-	printf "%s: %s\n" "$(date)" "Sorry, wget does not support file upload\n" >>"${ERRORLOG}"
+	log_error "Sorry, wget does not support file upload"
 	BOTSENT[OK]="false"
 	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
@@ -445,11 +445,11 @@ sendJsonRetry(){
 			send_album "$@"	
 			;;
 		*)
-			printf "%s: Error: unknown function %s, cannot retry\n" "$(date)" "${retry}"
+			log_error "Error: unknown function ${retry}, cannot retry"
 			return
 			;;
 	esac
-	[ "${BOTSENT[OK]}" = "true" ] && printf "%s: Retry OK: %s %s %s\n" "$(date)" "${retry}" "${1}" "${2:0:60}"
+	[ "${BOTSENT[OK]}" = "true" ] && log_error "Retry OK:${retry} ${1} ${2:0:60}"
 } >>"${ERRORLOG}"
 
 # process sendJson result
@@ -927,8 +927,7 @@ start_bot() {
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
 			[ "${OFFSET}" = "-999" ] && [ "${nextsleep}" -gt "$((maxsleep*2))" ] &&\
-				printf "%s: Recovered from timeout/broken/no connection, continue with telegram updates\n"\
-					"$(date)"  >>"${ERRORLOG}"
+				log_error "Recovered from timeout/broken/no connection, continue with telegram updates"
 			# escape bash $ expansion bug
 			((nextsleep+= stepsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
 			UPDATE="${UPDATE//$/\\$}"
@@ -944,8 +943,7 @@ start_bot() {
 			# ups, something bad happened, wait maxsleep*10
 			(( nextsleep=nextsleep*2 , nextsleep= nextsleep>maxsleep*10 ?maxsleep*10:nextsleep ))
 			[ "${OFFSET}" = "-999" ] &&\
-				printf "%s: Repeated timeout/broken/no connection on telegram update, sleep %ds\n"\
-					"$(date)"  "$(_round_float "${nextsleep}e-3")" >>"${ERRORLOG}"
+			log_error "Repeated timeout/broken/no connection on telegram update, sleep $(_round_float "${nextsleep}e-3")s"
 			OFFSET="-999"
 		fi
 	done
