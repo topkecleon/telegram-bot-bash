@@ -4,7 +4,7 @@
 # files: mycommands.sh.clean
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-pre2-7-g3569a76
 #
 
 ##########
@@ -45,6 +45,10 @@ unset BASHBOT_START_TIMER
 # set to "yes" and give your bot admin privilegs to remove service messaes from groups
 export SILENCER="no"
 
+# uncomment if you use keyboards in your commands
+# export REMOVEKEYBOARD="yes"
+# export REMOVEKEYBOARD_PRIVATE="yes"
+
 ########
 # special network setups may require to provide additional ARGS to curl
 #
@@ -77,6 +81,10 @@ else
 			delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
 		fi
 	fi
+
+	# remove keyboard if you use keyboards
+	[ -n "${REMOVEKEYBOARD}" ] && remove_keyboard "${CHAT[ID]}" &
+	[[ -n "${REMOVEKEYBOARD_PRIVATE}" &&  "${CHAT[ID]}" == "${USER[ID]}" ]] && remove_keyboard "${CHAT[ID]}" &
 
 	case "${MESSAGE}" in
 		##################

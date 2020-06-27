@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-pre2-7-g3569a76
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -48,6 +48,10 @@ unset BASHBOT_START_TIMER
 # set to "yes" and give your bot admin privilegs to remove service messaes from groups
 export SILENCER="no"
 
+# uncomment if you use keyboards in your commands
+# export REMOVEKEYBOARD="yes"
+# export REMOVEKEYBOARD_PRIVATE="yes"
+
 # messages for admin only commands
 NOTADMIN="Sorry, this command is allowed for admin or owner only"
 NOTBOTADMIN="Sorry, this command is allowed for bot owner only"
@@ -81,6 +85,10 @@ else
 			delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
 		fi
 	fi
+
+	# remove keyboard if you use keyboards
+	[ -n "${REMOVEKEYBOARD}" ] && remove_keyboard "${CHAT[ID]}" &
+	[[ -n "${REMOVEKEYBOARD_PRIVATE}" &&  "${CHAT[ID]}" == "${USER[ID]}" ]] && remove_keyboard "${CHAT[ID]}" &
 
 	# example for actions based on chat or sender
 	case "${USER[ID]}+${CHAT[ID]}" in
@@ -218,7 +226,6 @@ else
 			answer_inline_query "${iQUERY[ID]}" "cached_gif" "BQADBAADIwYAAmwsDAABlIia56QGP0YC"
 			;;
 	esac
-set +x
      }
 
     # place your processing functions here
