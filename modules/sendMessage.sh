@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-pre2-1-gc79031f
 
 # will be automatically sourced from bashbot
 
@@ -97,7 +97,7 @@ send_keyboard() {
 
 remove_keyboard() {
 	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"${ISEMPTY}"'"'
-	sendEmpty "${1}" "${text}"', "reply_markup": {"remove_keyboard":true}' "$MSG_URL"
+	sendEmpty "${1}" "${text}"', "reply_markup": {"remove_keyboard":true}' "$MSG_URL" &
 	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
 }
 send_inline_keyboard() {
