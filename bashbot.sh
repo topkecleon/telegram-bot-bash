@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-pre2-2-g7618b38
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -64,6 +64,28 @@ getConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	[ -r "${BOTCONFIG}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTCONFIG}.jssh" | tail -n 1
 }
+# $1 token
+# retrun true if token seems to be valid
+check_token(){
+	[[ "${1}" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ ]] && return 0
+	return 1
+}
+# log error to ERRORLOG with date
+log_error(){
+	printf"%s: %s\n" "$(date)" "$*" >>"${ERRORLOG}"
+}
+# additional tests if we run in debug mode
+# $1 where $2 command $3 may debug 
+debug_checks(){
+	[[ "${3}" != *"debug"* ]] && return
+	local DATE WHERE MYTOKEN; DATE="$(date)"; WHERE="${1}"; shift
+	printf "%s: debug_checks: %s: bashbot.sh %s\n" "${DATE}" "${WHERE}" "$*"
+	MYTOKEN="$(getConfigKey "bottoken")"
+	[ -z "${MYTOKEN}" ] && printf "%s: %s\n" "${DATE}" "Bot token is missing!"
+	check_token "${MYTOKEN}" || printf "%s: %s\n" "${DATE}" "Invalid bot token!"
+	[ -z "$(getConfigKey "botadmin")" ] && printf "%s: %s\n" "${DATE}" "Bot admin is missing!"
+	[ -f ".jssh" ] && printf "%s: %s\n" "${DATE}" "Ups, found file \"${PWD:-.}/.jssh\"!"
+} >>"${DEBUGLOG}"
 
 # get location and name of bashbot.sh
 SCRIPT="$0"
@@ -132,6 +154,7 @@ DEBUGLOG="${LOGDIR}/DEBUG.log"
 ERRORLOG="${LOGDIR}/ERROR.log"
 UPDATELOG="${LOGDIR}/BASHBOT.log"
 
+debug_checks "start SOURCE=${SOURCE:-no}" "$@"
 # we assume everything is already set up correctly if we have TOKEN
 if [ -z "${BOTTOKEN}" ]; then
   # BOTCONFIG does not exist, create
@@ -207,8 +230,10 @@ fi
 if [ -z "${BOTTOKEN}" ]; then
     BOTTOKEN="$(getConfigKey "bottoken")"
     if [ -z "${BOTTOKEN}" ]; then
-   	echo -e "${ORANGE}Warning: can't get bot token, try to recover working config.${NC}"
+   	BOTERROR="Warning: can't get bot token, try to recover working config"
+   	echo -e "${ORANGE}${BOTERROR}${NC}"
 	if [ -r "${BOTCONFIG}.jssh.ok" ]; then
+		log_error "${BOTERROR}"
 		cp "${BOTCONFIG}.jssh.ok" "${BOTCONFIG}.jssh"
 		BOTTOKEN="$(getConfigKey "bottoken")"
 	else
@@ -1001,10 +1026,9 @@ fi
 # do not execute if read from other scripts
 
 if [ -z "${SOURCE}" ]; then
-
   ##############
   # internal options only for use from bashbot and developers
-  case "$1" in
+  case "${1}" in
 	# update botname botname when starting only
 	"botname"|"start"*)
 		ME="$(getBotName)"
@@ -1036,16 +1060,19 @@ if [ -z "${SOURCE}" ]; then
 		# cleanup datadir, keep logfile if not empty
 		rm -f -r "${DATADIR:-.}/$3"
 		[ -s "${DATADIR:-.}/$3.log" ] || rm -f "${DATADIR:-.}/$3.log"
+		debug_checks "end outproc" "$@"
 		exit
 		;;
 	# finally starts  the read update loop, internal use only1
 	"startbot" )
 		start_bot "$2"
+		debug_checks "end startbot" "$@"
 		exit
 		;;
 	# run after every update to update files and adjust permissions
 	"init") 
 		bot_init "$2"
+		debug_checks "end init" "$@"
 		exit
 		;;
 	# print usage sats
@@ -1064,6 +1091,7 @@ if [ -z "${SOURCE}" ]; then
 			(( MESSAGES+=MSG ))
 		done
 		echo "A total of ${MESSAGES} messages from ${USERS} users are processed."
+		debug_checks "end $1" "$@"
 		exit
 		;;
 	# sedn message to all users
@@ -1084,6 +1112,7 @@ if [ -z "${SOURCE}" ]; then
 			fi
 		done
 		echo -e "\nMessage \"$*\" sent to ${USERS} users."
+		debug_checks "end $1" "$@"
 		exit
 		;;
 	# does what is says
@@ -1098,6 +1127,7 @@ if [ -z "${SOURCE}" ]; then
 			echo -e "${ORANGE}No Bot running with UID ${RUNUSER}.${NC}"
 			exit 5
 		fi
+		debug_checks "end status" "$@"
 		;;
 		 
 	# start bot as background jod and check if bot is running
@@ -1116,6 +1146,7 @@ if [ -z "${SOURCE}" ]; then
 			echo -e "${RED}An error occurred while starting the bot.${NC}"
 			exit 5
 		fi
+		debug_checks "end start" "$@"
 		;;
 	# does what it says
 	"kill") echo -e "${RED}Command ${GREY}kill${RED} is deprecated, use ${GREY}stop{$RED}instead.${NC}";&
@@ -1137,6 +1168,7 @@ if [ -z "${SOURCE}" ]; then
 		else
 			echo -e "${ORANGE}No Bot running with UID ${RUNUSER}.${NC}"
 		fi
+		debug_checks "end stop" "$@"
 		exit
 		;;
 	# suspend, resume or kill background jobs
@@ -1144,6 +1176,7 @@ if [ -z "${SOURCE}" ]; then
   		_is_function job_control || { echo -e "${RED}Module background is not available!${NC}"; exit 3; }
 		ME="$(getConfigKey "botname")"
 		job_control "$1"
+		debug_checks "end background $1" "$@"
 		;;
 	*)
 		echo -e "${RED}${REALME##*/}: unknown command${NC}"
