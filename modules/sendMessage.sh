@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-pre2-1-gc79031f
+#### $$VERSION$$ v0.98-pre2-5-gc517129
 
 # will be automatically sourced from bashbot
 
@@ -138,7 +138,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
   }
 else
   send_album(){
-	printf "%s: %s\n" "$(date)" "Sorry, wget Album upload not yet implemented\n" >>"${ERRORLOG}"
+	log_error "Sorry, wget Album upload not yet implemented"
 	BOTSENT[OK]="false"
 	[[ -z "${SOURCE}" && -n "${BASHBOT_EVENT_SEND[*]}" ]] && event_send "album" "$@" &
   }
