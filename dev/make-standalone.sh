@@ -5,7 +5,7 @@
 # If you your bot is finished you can use make-standalone.sh to create the
 # the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-pre2-15-g1666cac
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -75,8 +75,10 @@ chmod +x bashbot.sh
 rm -rf modules
 
 echo "Create minimized Version of bashbot.sh and commands.sh"
-sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e '/^$/d' bashbot.sh > bashbot.sh.min
-sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e '/^$/d' commands.sh > commands.sh.min
+sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e '/^$/d' -e 'N;s/\\\n/ /;P;D' bashbot.sh |\
+	sed 'N;s/\\\n/ /;P;D' > bashbot.sh.min
+sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e '/^$/d' commands.sh |\
+	sed 'N;s/\\\n/ /;P;D' > commands.sh.min
 chmod +x bashbot.sh.min
 
 # make html doc

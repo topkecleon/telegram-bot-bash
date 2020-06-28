@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-pre2-13-g0e6712a
+#### $$VERSION$$ v0.98-pre2-15-g1666cac
 
 # will be automatically sourced from bashbot
 
@@ -114,7 +114,7 @@ send_interactive() {
 
 # old style but may not work because of local checks
 inproc() {
-	send_interactive "${CHAT[ID]}" "${MESSAGE}"
+	send_interactive "${CHAT[ID]}" "${MESSAGE[0]}"
 }
 
 # start stop all jobs
