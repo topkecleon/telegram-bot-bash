@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-pre2-13-g0e6712a
 
 # will be automatically sourced from bashbot
 
@@ -134,6 +134,7 @@ job_control() {
 		proc="${job#*:}"
 		job="${job%:*}"
 		fifo="$(procname "${CHAT}" "${job}")" 
+		debug_checks "start job_control" "${1}" "${FILE}"
 		case "$1" in
 		"resumeb"*|"backgr"*)
 			printf "Restart Job: %s %s\n" "${proc}" " ${fifo}"
@@ -160,6 +161,7 @@ job_control() {
 		# send message only onnfirst job
 		ADM=""
 	done
+	debug_checks "end job_control" "${1}"
 	# kill all requestet. kill ALL background jobs, even not listed in data-bot-bash
 	[ "${killall}" = "y" ] && killallproc "back-"
 }

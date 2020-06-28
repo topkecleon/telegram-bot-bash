@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-pre2-11-ge6de382
+#### $$VERSION$$ v0.98-pre2-13-g0e6712a
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -81,10 +81,10 @@ debug_checks(){
 	local DATE WHERE MYTOKEN; DATE="$(date)"; WHERE="${1}"; shift
 	printf "%s: debug_checks: %s: bashbot.sh %s\n" "${DATE}" "${WHERE}" "$*"
 	MYTOKEN="$(getConfigKey "bottoken")"
-	[ -z "${MYTOKEN}" ] && printf "%s: %s\n" "${DATE}" "Bot token is missing!"
-	check_token "${MYTOKEN}" || printf "%s: %s\n" "${DATE}" "Invalid bot token!"
-	[ -z "$(getConfigKey "botadmin")" ] && printf "%s: %s\n" "${DATE}" "Bot admin is missing!"
-	[ -f ".jssh" ] && printf "%s: %s\n" "${DATE}" "Ups, found file \"${PWD:-.}/.jssh\"!"
+	[ -z "${MYTOKEN}" ] && printf "%s: %s\n" "${DATE}" "Bot token is missing! =========="
+	check_token "${MYTOKEN}" || printf "%s: %s\n" "${DATE}" "Invalid bot token! =========="
+	[ -z "$(getConfigKey "botadmin")" ] && printf "%s: %s\n" "${DATE}" "Bot admin is missing! =========="
+	[ -f ".jssh" ] && printf "%s: %s\n" "${DATE}" "Ups, found file \"${PWD:-.}/.jssh\"! =========="
 } >>"${DEBUGLOG}"
 
 # get location and name of bashbot.sh
@@ -347,6 +347,7 @@ killallproc() {
 		# shellcheck disable=SC2046
 		[ -n "${procid}" ] && kill $(proclist -9 "$1")
 	fi
+	debug_checks "end killallproc" "${1}"
 }
 
 
