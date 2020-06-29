@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.98-pre2-18-g3a51b51
+#### $$VERSION$$ v0.962-112-g12b4696
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -24,7 +24,7 @@ export UPDATE
 declare -Ax UPD
 
 # run process_message --------------
-ARRAYS="USER CHAT REPLYTO FORWARD URLS CONTACT CAPTION LOCATION MESSAGE VENUE SERVICE"
+ARRAYS="USER CHAT REPLYTO FORWARD URLS CONTACT CAPTION LOCATION MESSAGE VENUE SERVICE NEWMEMBER LEFTMEMBER PINNED"
 
 echo "Check process_message regular message..."
 

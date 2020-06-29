@@ -60,6 +60,6 @@
 ["result",0,"message","pinned_message","chat","title"]	"Testgruppe bot only test"
 ["result",0,"message","pinned_message","chat","type"]	"supergroup"
 ["result",0,"message","pinned_message","date"]	1593121152
-["result",0,"message","pinned_message","text"]	"Pinned Message"
+["result",0,"message","pinned_message","text"]	"new pinned Message"
 
-["result",0,"message","new_chat_title"]	"Testgruppe bot only"
+["result",0,"message","new_chat_title"]	"new Testgruppe bot only"
