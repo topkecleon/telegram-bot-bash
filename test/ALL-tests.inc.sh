@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.98-pre2-18-g3a51b51
+#### $$VERSION$$ v0.962-108-g9f5f061
 
 # common variables
 export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
@@ -56,8 +56,8 @@ compare_sorted() {
 	sort -d -o "${1}.sort" "${1}"
 	sort -d -o "${2}.sort" "${2}"
 	diff -c "${1}.sort" "${2}.sort" || ret=1
-	[[ "${1}" != "${TESTDIR}"* ]] && rm -f "${1}"
-	[[ "${2}" != "${TESTDIR}"* ]] && rm -f "${2}"
+	[[ "${1}" != "${TESTDIR}"* ]] && rm -f "${1}.sort"
+	[[ "${2}" != "${TESTDIR}"* ]] && rm -f "${2}.sort"
 	return "$ret"
 }
 
