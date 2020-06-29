@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.962-109-g517e600
+#### $$VERSION$$ v0.962-110-g4883c18
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -810,7 +810,7 @@ process_message() {
 	fi
 
 	# get file URL from telegram
-	if grep -qs -e '\["result",'"${num}"',"message",".*,"file_id"\]' <<<"${UPDATE}"; then
+	if grep -qs -e '\["result",'"${num}"',"message","[avpsd].*,"file_id"\]' <<<"${UPDATE}"; then
 	    URLS[AUDIO]="$(get_file "${UPD["result",${num},"message","audio","file_id"]}")"
 	    URLS[DOCUMENT]="$(get_file "${UPD["result",${num},"message","document","file_id"]}")"
 	    URLS[PHOTO]="$(get_file "${UPD["result",${num},"message","photo",0,"file_id"]}")"
