@@ -168,25 +168,25 @@ e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user".
 
 * ```$SERVICE```: This array contains info about received service messages.
     * ```${SERVICE}```: "yes" if service message is received
-    * ```${SERVICE[NEWMEMBER]```: New user's id
+    * ```${SERVICE[NEWMEMBER]}}```: New user's id
         * ```${MESSAGE}```: /_new_chat_member ID NAME
-        * ```${NEWMEMBER[ID]```: New user's id
-        * ```${NEWMEMBER[FIRST_NAME]```: New user's first name
-        * ```${NEWMEMBER[LAST_NAME]```: New user's last name
-        * ```${NEWMEMBER[USERNAME]```: New user's username
-        * ```${NEWMEMBER[ISBOT]```: New user is a bot
-    * ```${SERVICE[LEFTMEMBER]```: Id of user left 
+        * ```${NEWMEMBER[ID]}```: New user's id
+        * ```${NEWMEMBER[FIRST_NAME]}```: New user's first name
+        * ```${NEWMEMBER[LAST_NAME]}```: New user's last name
+        * ```${NEWMEMBER[USERNAME]}```: New user's username
+        * ```${NEWMEMBER[ISBOT]}```: New user is a bot
+    * ```${SERVICE[LEFTMEMBER]}```: Id of user left 
         * ```${MESSAGE}```: /_left_chat_member ID NAME
-        * ```${LEFTMEMBER[ID]```: Left user's id
-        * ```${LEFTMEMBER[FIRST_NAME]```: Left user's first name
-        * ```${LEFTMEMBER[LAST_NAME]```: Left user's last name
-        * ```${LEFTMEMBER[USERNAME]```: Left user's username
-        * ```${LEFTMEMBER[ISBOT]```: Left user is a bot
-    * ```${SERVICE[NEWTITLE]```: Text of new title 
+        * ```${LEFTMEMBER[ID]}```: Left user's id
+        * ```${LEFTMEMBER[FIRST_NAME]}```: Left user's first name
+        * ```${LEFTMEMBER[LAST_NAME]}```: Left user's last name
+        * ```${LEFTMEMBER[USERNAME]}```: Left user's username
+        * ```${LEFTMEMBER[ISBOT]}```: Left user is a bot
+    * ```${SERVICE[NEWTITLE]}```: Text of new title 
         * ```${MESSAGE}```: /_new_chat_title SENDER TEXT
-    * ```${SERVICE[NEWPHOTO]```: New Chat Picture 
+    * ```${SERVICE[NEWPHOTO]}```: New Chat Picture 
         * ```${MESSAGE}```: /_new_chat_picture SENDER URL
-    * ```${SERVICE[PINNED]```: Pinned Message structure
+    * ```${SERVICE[PINNED]}```: Pinned Message structure
         * ```${MESSAGE}```: /_new_pinned_message SENDER ID
         * ```${PINNED[ID]}```: Id of pinned message
         * ```${PINNED[MESSAGE]}```: Message text of pinned message
@@ -283,5 +283,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.962-113-g9e3d301
+#### $$VERSION$$ v0.962-114-g595d21f
 

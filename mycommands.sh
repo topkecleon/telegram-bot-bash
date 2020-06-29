@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.98-pre2-7-g3569a76
+#### $$VERSION$$ v0.962-114-g595d21f
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -121,7 +121,7 @@ else
 			fi
 			;;
 		# will we process edited messages also?
-		'/edited_message'*)
+		'/_edited_message'*)
 			return 1 # no
 			# but if we do, remove /edited_message
 			MESSAGE="${MESSAGE#/* }"
