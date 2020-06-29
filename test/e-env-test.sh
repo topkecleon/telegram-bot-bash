@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-pre2-18-g3a51b51
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -33,7 +33,7 @@ cp ${TESTDIR}/*commands.sh "${BASHBOT_ETC}" || exit 1
 set -f
 cp -r "${TESTDIR}/bashbot.sh" "${TESTDIR}/modules" "${BASHBOT_BIN}" || exit 1
 
-TESTFILES="${TOKENFILE} ${ACLFILE} ${ADMINFILE}"
+TESTFILES="${TOKENFILE} ${ACLFILE}"
 
 
 echo "Check first run in ENVIRONMENT ..."

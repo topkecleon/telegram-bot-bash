@@ -2,7 +2,9 @@ chat:123456	JSON:"text":"\# test for text only output"
 URL:https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/getMe?123456789:BASHBOTTESTSCRIPTbashbottestscript_/sendMessage
 
 chat:123456	JSON:"text":"This is a normal text"
+URL:https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/getMe?123456789:BASHBOTTESTSCRIPTbashbottestscript_/sendMessage
 
+chat:123456	JSON:"text":"This is a normal text\nwith a line break"
 URL:https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/getMe?123456789:BASHBOTTESTSCRIPTbashbottestscript_/sendMessage
 
 chat:123456	JSON:"text":" This is a <b>HTML<\/b> text","parse_mode":"html"
