@@ -74,7 +74,7 @@ Start or Stop your Bot use the following commands:
 ./bashbot.sh start
 ```
 ```bash
-./bashbot.sh kill
+./bashbot.sh stop
 ```
 
 ### User stats
@@ -283,5 +283,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.962-114-g595d21f
+#### $$VERSION$$ v0.962-115-g10f0dea
 
