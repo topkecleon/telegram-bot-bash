@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-pre2-16-gd24ef50
+#### $$VERSION$$ v0.962-109-g517e600
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -577,14 +577,10 @@ process_updates() {
 		process_client "$num" "${debug}"
 	done
 }
+
 process_client() {
 	local num="$1" debug="$2" 
-	CMD=( ); iQUERY=( ); MESSAGE=()
-	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
-	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
-	USER[ID]="${UPD["result",${num},"message","from","id"]}"
-	[ -z "${CHAT[ID]}" ] && CHAT[ID]="${UPD["result",${num},"edited_message","chat","id"]}"
-	[ -z "${USER[ID]}" ] && USER[ID]="${UPD["result",${num},"edited_message","from","id"]}"
+	pre_process_message "${num}"
 	# log message on debug
 	[[ -n "${debug}" ]] && printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
 
@@ -598,7 +594,7 @@ process_client() {
 			# edited message
 			UPDATE="${UPDATE//,${num},\"edited_message\",/,${num},\"message\",}"
 			Json2Array 'UPD' <<<"${UPDATE}"
-			MESSAGE[0]="/edited_message "
+			MESSAGE[0]="/_edited_message "
 		fi
 		process_message "${num}" "${debug}"
 	        printf "%s: update received FROM=%s CHAT=%s CMD=%s\n" "$(date)" "${USER[USERNAME]:0:20} (${USER[ID]})"\
@@ -747,6 +743,19 @@ event_message() {
 	fi
 
 }
+pre_process_message(){
+	local num="${1}"
+	# unset everything to not have old values
+	CMD=( ); iQUERY=( ); MESSAGE=(); CHAT=(); USER=(); CONTACT=(); LOCATION=(); unset CAPTION
+	REPLYTO=( ); FORWARD=( ); URLS=(); VENUE=( ); SERVICE=( ); NEWMEMBER=( ); LEFTMEMBER=( )
+	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
+	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
+	USER[ID]="${UPD["result",${num},"message","from","id"]}"
+	[ -z "${CHAT[ID]}" ] && CHAT[ID]="${UPD["result",${num},"edited_message","chat","id"]}"
+	[ -z "${USER[ID]}" ] && USER[ID]="${UPD["result",${num},"edited_message","from","id"]}"
+	# always true
+	return 0
+}
 process_inline() {
 	local num="${1}"
 	iQUERY[0]="$(JsonDecode "${UPD["result",${num},"inline_query","query"]}")"
@@ -754,6 +763,8 @@ process_inline() {
 	iQUERY[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","first_name"]}")"
 	iQUERY[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","last_name"]}")"
 	iQUERY[USERNAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","username"]}")"
+	# always true
+	return 0
 }
 process_message() {
 	local num="$1"
@@ -762,7 +773,6 @@ process_message() {
 	MESSAGE[ID]="${UPD["result",${num},"message","message_id"]}"
 
 	# Chat ID is now parsed when update isreceived
-	#CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	CHAT[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","chat","last_name"]}")"
 	CHAT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","chat","first_name"]}")"
 	CHAT[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","chat","username"]}")"
@@ -781,7 +791,6 @@ process_message() {
 	[ -z "${USER[USERNAME]}" ] && USER[USERNAME]="${USER[FIRST_NAME]} ${USER[LAST_NAME]}"
 
 	# in reply to message from
-	REPLYTO=( )
 	if grep -qs -e '\["result",'"${num}"',"message","reply_to_message"' <<<"${UPDATE}"; then
 	   REPLYTO[UID]="${UPD["result",${num},"message","reply_to_message","from","id"]}"
 	   REPLYTO[0]="$(JsonDecode "${UPD["result",${num},"message","reply_to_message","text"]}")"
@@ -792,7 +801,6 @@ process_message() {
 	fi
 
 	# forwarded message from
-	FORWARD=( )
 	if grep -qs -e '\["result",'"${num}"',"message","forward_from"' <<<"${UPDATE}"; then
 	   FORWARD[UID]="${UPD["result",${num},"message","forward_from","id"]}"
 	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
@@ -802,7 +810,6 @@ process_message() {
 	fi
 
 	# get file URL from telegram
-	URLS=()
 	if grep -qs -e '\["result",'"${num}"',"message",".*,"file_id"\]' <<<"${UPDATE}"; then
 	    URLS[AUDIO]="$(get_file "${UPD["result",${num},"message","audio","file_id"]}")"
 	    URLS[DOCUMENT]="$(get_file "${UPD["result",${num},"message","document","file_id"]}")"
@@ -812,7 +819,6 @@ process_message() {
 	    URLS[VOICE]="$(get_file "${UPD["result",${num},"message","voice","file_id"]}")"
 	fi
 	# Contact
-	CONTACT=( )
 	if grep -qs -e '\["result",'"${num}"',"message","contact"' <<<"${UPDATE}"; then
 		CONTACT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","first_name"]}")"
 		CONTACT[USER_ID]="$(JsonDecode  "${UPD["result",${num},"message","contact","user_id"]}")"
@@ -822,7 +828,6 @@ process_message() {
 	fi
 
 	# vunue
-	VENUE=( )
 	if grep -qs -e '\["result",'"${num}"',"message","venue"' <<<"${UPDATE}"; then
 		VENUE[TITLE]="$(JsonDecode "${UPD["result",${num},"message","venue","title"]}")"
 		VENUE[ADDRESS]="$(JsonDecode "${UPD["result",${num},"message","venue","address"]}")"
@@ -839,7 +844,6 @@ process_message() {
 	LOCATION[LATITUDE]="${UPD["result",${num},"message","location","latitude"]}"
 
 	# service messages
-	SERVICE=( ); NEWMEMBER=( ); LEFTMEMBER=( )
 	if grep -qs -e '\["result",'"${num}"',"message","new_chat_member' <<<"${UPDATE}"; then
 		SERVICE[NEWMEMBER]="${UPD["result",${num},"message","new_chat_member","id"]}"
 		NEWMEMBER[ID]="${SERVICE[NEWMEMBER]}"
@@ -1013,7 +1017,7 @@ bot_init() {
 		echo -e "${ORANGE}Bot config may not complete, pls check.${NC}"
 	fi
 	# show result
-	ls -ld "${DATADIR}" "${LOGDIR}" ./*.jssh* ./*.sh 
+	ls -ld "${DATADIR}" "${LOGDIR}" ./*.jssh* ./*.sh 2>/dev/null
 }
 
 if ! _is_function send_message ; then
