@@ -54,7 +54,7 @@ Have FUN!
 │   ├── bash2env.sh          # script to convert shebang to /usr/bin/env, see [Security Considerations](../README.md#Security-Considerations)
 │   └── bashbot.cron	     # example crontab
 │
-├── doc		# Documentation and License
+├── doc                  # Documentation and License
 ├── html
 ├── LICENSE
 ├── README.html
@@ -184,10 +184,12 @@ e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user".
         * ```${LEFTMEMBER[ISBOT]```: Left user is a bot
     * ```${SERVICE[NEWTITLE]```: Text of new title 
         * ```${MESSAGE}```: /_new_chat_title SENDER TEXT
-    * ```${SERVICE[NEWPHOTO]```: New Chat Picture URL
+    * ```${SERVICE[NEWPHOTO]```: New Chat Picture 
         * ```${MESSAGE}```: /_new_chat_picture SENDER URL
     * ```${SERVICE[PINNED]```: Pinned Message structure
         * ```${MESSAGE}```: /_new_pinned_message SENDER ID
+        * ```${PINNED[ID]}```: Id of pinned message
+        * ```${PINNED[MESSAGE]}```: Message text of pinned message
 
 
 
@@ -281,5 +283,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.98-pre2-16-gd24ef50
+#### $$VERSION$$ v0.962-113-g9e3d301
 
