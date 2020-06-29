@@ -164,30 +164,30 @@ Service Messages are regular messages not itended for end users, instead they si
 client, e.g. new users.
 
 If a service message is received bashbot sets MESSAGE to the service message type as a command,
-e.g. if a new user joins a chat MESSAGE is set to "/new_chat_user". 
+e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user". 
 
 * ```$SERVICE```: This array contains info about received service messages.
     * ```${SERVICE}```: "yes" if service message is received
     * ```${SERVICE[NEWMEMBER]```: New user's id
-        * ```${MESSAGE}```: /new_chat_member
+        * ```${MESSAGE}```: /_new_chat_member ID NAME
         * ```${NEWMEMBER[ID]```: New user's id
         * ```${NEWMEMBER[FIRST_NAME]```: New user's first name
         * ```${NEWMEMBER[LAST_NAME]```: New user's last name
         * ```${NEWMEMBER[USERNAME]```: New user's username
         * ```${NEWMEMBER[ISBOT]```: New user is a bot
     * ```${SERVICE[LEFTMEMBER]```: Id of user left 
-        * ```${MESSAGE}```: /left_chat_member
+        * ```${MESSAGE}```: /_left_chat_member ID NAME
         * ```${LEFTMEMBER[ID]```: Left user's id
         * ```${LEFTMEMBER[FIRST_NAME]```: Left user's first name
         * ```${LEFTMEMBER[LAST_NAME]```: Left user's last name
         * ```${LEFTMEMBER[USERNAME]```: Left user's username
         * ```${LEFTMEMBER[ISBOT]```: Left user is a bot
     * ```${SERVICE[NEWTITLE]```: Text of new title 
-        * ```${MESSAGE}```: /new_chat_title
+        * ```${MESSAGE}```: /_new_chat_title SENDER TEXT
     * ```${SERVICE[NEWPHOTO]```: New Chat Picture URL
-        * ```${MESSAGE}```: /new_chat_picture
+        * ```${MESSAGE}```: /_new_chat_picture SENDER URL
     * ```${SERVICE[PINNED]```: Pinned Message structure
-        * ```${MESSAGE}```: /new_pinned_message
+        * ```${MESSAGE}```: /_new_pinned_message SENDER ID
 
 
 
@@ -281,5 +281,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-pre2-16-gd24ef50
 
