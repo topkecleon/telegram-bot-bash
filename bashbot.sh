@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.962-112-g12b4696
+#### $$VERSION$$ v0.962-116-g9e89627
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -76,8 +76,10 @@ log_error(){
 }
 # additional tests if we run in debug mode
 # $1 where $2 command $3 may debug 
+export BASHBOTDEBUG
+[[ "${3}" == *"debug"* ]] && BASHBOTDEBUG="yes"
 debug_checks(){
-	[[ "${3}" != *"debug"* ]] && return
+	[  -n "${BASHBOTDEBUG}" ] && return
 	local DATE WHERE MYTOKEN; DATE="$(date)"; WHERE="${1}"; shift
 	printf "%s: debug_checks: %s: bashbot.sh %s\n" "${DATE}" "${WHERE}" "$*"
 	MYTOKEN="$(getConfigKey "bottoken")"
@@ -892,34 +894,33 @@ process_message() {
 #########################
 # main get updates loop, should never terminate
 declare -A BASHBOTBLOCKED
-export BASHBOTDEBUG
 start_bot() {
-	local ADMIN OFFSET=0
+	local DEBUGMSG ADMIN OFFSET=0
 	# adaptive sleep defaults
 	local nextsleep="100"
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
 	local maxsleep="${BASHBOT_SLEEP:-5000}"
 	# startup message
-	BASHBOTDEBUG="$(date): Start BASHBOT updates in Mode \"${1:-normal}\" =========="
-	printf  "%s\n" "${BASHBOTDEBUG}" >>"${UPDATELOG}"
+	DEBUGMSG="$(date): Start BASHBOT updates in Mode \"${1:-normal}\" =========="
+	printf  "%s\n" "${DEBUGMSG}" >>"${UPDATELOG}"
 	# redirect to Debug.log
 	[[ "${1}" == *"debug" ]] && exec &>>"${DEBUGLOG}"
-	printf  "%s\n" "${BASHBOTDEBUG}"; BASHBOTDEBUG="${1}"
-	[[ "${BASHBOTDEBUG}" == "xdebug"* ]] && set -x
+	printf  "%s\n" "${DEBUGMSG}"; DEBUGMSG="${1}"
+	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x
 	#cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
 	find "${DATADIR}" -size 0 -name "*.log" -delete
 	# load addons on startup
 	for addons in "${ADDONDIR:-.}"/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
-		[ -r "${addons}" ] && source "${addons}" "startbot" "${BASHBOTDEBUG}"
+		[ -r "${addons}" ] && source "${addons}" "startbot" "${DEBUGMSG}"
 	done
 	# shellcheck source=./commands.sh
 	source "${COMMANDS}" "startbot"
 	# start timer events
 	if [ -n "${BASHBOT_START_TIMER}" ] ; then
 		# shellcheck disable=SC2064
-		trap "event_timer $BASHBOTDEBUG" ALRM
+		trap "event_timer $DEBUGMSG" ALRM
 		start_timer &
 		# shellcheck disable=SC2064
 		trap "kill -9 $!; exit" EXIT INT HUP TERM QUIT 
@@ -954,7 +955,7 @@ start_bot() {
 
 			if [ "$OFFSET" != "1" ]; then
 				nextsleep="100"
-				process_updates "${BASHBOTDEBUG}"
+				process_updates "${DEBUGMSG}"
 			fi
 		else
 			# ups, something bad happened, wait maxsleep*10
