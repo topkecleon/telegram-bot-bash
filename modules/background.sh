@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-pre2-15-g1666cac
+#### $$VERSION$$ v0.962-117-g358f95a
 
 # will be automatically sourced from bashbot
 
@@ -134,23 +134,23 @@ job_control() {
 		proc="${job#*:}"
 		job="${job%:*}"
 		fifo="$(procname "${CHAT}" "${job}")" 
-		debug_checks "start job_control" "${1}" "${FILE}"
+		debug_checks "Enter job_control" "${1}" "${FILE##*/}"
 		case "$1" in
 		"resumeb"*|"backgr"*)
-			printf "Restart Job: %s %s\n" "${proc}" " ${fifo}"
+			printf "Restart Job: %s %s\n" "${proc}" " ${fifo##*/}"
 			restart_back "${CHAT}" "${proc}" "${job}"
 			# inform botadmin about stop
 			[ -n "${ADM}" ] && send_normal_message "${ADM}" "Bot ${BOT} restart background jobs ..." &
 			;;
 		"suspendb"*)
-			printf "Suspend Job: %s %s\n" "${proc}" " ${fifo}"
+			printf "Suspend Job: %s %s\n" "${proc}" " ${fifo##*/}"
 			kill_proc "${CHAT}" "${job}"
 			# inform botadmin about stop
 			[ -n "${ADM}" ] && send_normal_message "${ADM}" "Bot ${BOT} suspend background jobs ..." &
 			killall="y"
 			;;
 		"killb"*)
-			printf "Kill Job: %s %s\n" "${proc}" " ${fifo}"
+			printf "Kill Job: %s %s\n" "${proc}" " ${fifo##*/}"
 			kill_proc "${CHAT}" "${job}"
 			rm -f "${FILE}" # remove job
 			# inform botadmin about stop
