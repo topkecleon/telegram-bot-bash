@@ -239,4 +239,4 @@ wget -t 1 -T 10 https://api.telegram.org/bot
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-0-g5b5447e

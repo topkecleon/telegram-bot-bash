@@ -93,13 +93,11 @@ The main use case for send_message is to process the output of interactive chats
 
 ----
 
-### File, Location, Venue, Keyboard 
+### File, Album, Location, Venue, Keyboard 
 
 
 ##### send_file
 send_file allows you to send different type's of files, e.g. photos, stickers, audio, media, etc. [see more](https://core.telegram.org/bots/api#sending-files)
-
-Starting with version 0.80 send_file implements the following rules:
 
 - file names must not contain ".."
 - file names must not start with "."
@@ -109,10 +107,19 @@ Starting with version 0.80 send_file implements the following rules:
 
 *usage:* send_file "${CHAT[ID]}" "file" "caption"
 
-*example:* 
+*example:*
 ```bash
 send_file "${CHAT[ID]}" "/home/user/doge.jpg" "Lool"
 send_file "${CHAT[ID]}" "https://www.domain,com/something.gif" "Something"
+```
+
+##### send_album
+
+*usage:* send_album "${CHAT[ID]}" "URL1" "URL2" ... "URLn"
+
+*example:*
+```bash
+send_album "$(getConfigKey "botadmin")" "http://www.rrr.de/slider/main-image1.jpg" "http://www.rrr.de/slider/main-image5.jpg"
 ```
 
 ##### send_location
@@ -1039,5 +1046,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-0-g5b5447e
 

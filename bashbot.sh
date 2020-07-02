@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-pre2-4-g724f36b
+#### $$VERSION$$ v0.98-3-g28de99e
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -76,15 +76,18 @@ log_error(){
 }
 # additional tests if we run in debug mode
 # $1 where $2 command $3 may debug 
+export BASHBOTDEBUG
+[[ "${3}" == *"debug"* ]] && BASHBOTDEBUG="yes"
 debug_checks(){
-	[[ "${3}" != *"debug"* ]] && return
+	[  -n "${BASHBOTDEBUG}" ] && return
 	local DATE WHERE MYTOKEN; DATE="$(date)"; WHERE="${1}"; shift
 	printf "%s: debug_checks: %s: bashbot.sh %s\n" "${DATE}" "${WHERE}" "$*"
 	MYTOKEN="$(getConfigKey "bottoken")"
-	[ -z "${MYTOKEN}" ] && printf "%s: %s\n" "${DATE}" "Bot token is missing!"
-	check_token "${MYTOKEN}" || printf "%s: %s\n" "${DATE}" "Invalid bot token!"
-	[ -z "$(getConfigKey "botadmin")" ] && printf "%s: %s\n" "${DATE}" "Bot admin is missing!"
-	[ -f ".jssh" ] && printf "%s: %s\n" "${DATE}" "Ups, found file \"${PWD:-.}/.jssh\"!"
+	[ -z "${MYTOKEN}" ] && printf "%s: %s\n" "${DATE}" "Bot token is missing! =========="
+	check_token "${MYTOKEN}" || printf "%s: %s\n" "${DATE}" "Invalid bot token! =========="
+	[ -z "$(getConfigKey "botadmin")" ] && printf "%s: %s\n" "${DATE}" "Bot admin is missing! =========="
+	# call user defined debug_checks if exists
+	_exec_if_function my_debug_checks "${DATE}" "${WHERE}" "$*"
 } >>"${DEBUGLOG}"
 
 # get location and name of bashbot.sh
@@ -274,7 +277,8 @@ declare -rx SCRIPT SCRIPTDIR MODULEDIR RUNDIR ADDONDIR TOKENFILE BOTADMIN BOTACL
 declare -rx BOTTOKEN URL ME_URL UPD_URL GETFILE_URL
 
 declare -ax CMD
-declare -Ax UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY SERVICE NEWMEMBER
+declare -Ax UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
+declare -Ax SERVICE NEWMEMBER LEFTMEMBER PINNED
 export res CAPTION
 
 
@@ -347,6 +351,7 @@ killallproc() {
 		# shellcheck disable=SC2046
 		[ -n "${procid}" ] && kill $(proclist -9 "$1")
 	fi
+	debug_checks "end killallproc" "${1}"
 }
 
 
@@ -576,14 +581,10 @@ process_updates() {
 		process_client "$num" "${debug}"
 	done
 }
+
 process_client() {
 	local num="$1" debug="$2" 
-	CMD=( ); iQUERY=( ); MESSAGE=()
-	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
-	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
-	USER[ID]="${UPD["result",${num},"message","from","id"]}"
-	[ -z "${CHAT[ID]}" ] && CHAT[ID]="${UPD["result",${num},"edited_message","chat","id"]}"
-	[ -z "${USER[ID]}" ] && USER[ID]="${UPD["result",${num},"edited_message","from","id"]}"
+	pre_process_message "${num}"
 	# log message on debug
 	[[ -n "${debug}" ]] && printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
 
@@ -597,7 +598,7 @@ process_client() {
 			# edited message
 			UPDATE="${UPDATE//,${num},\"edited_message\",/,${num},\"message\",}"
 			Json2Array 'UPD' <<<"${UPDATE}"
-			MESSAGE[0]="/edited_message "
+			MESSAGE[0]="/_edited_message "
 		fi
 		process_message "${num}" "${debug}"
 	        printf "%s: update received FROM=%s CHAT=%s CMD=%s\n" "$(date)" "${USER[USERNAME]:0:20} (${USER[ID]})"\
@@ -746,6 +747,19 @@ event_message() {
 	fi
 
 }
+pre_process_message(){
+	local num="${1}"
+	# unset everything to not have old values
+	CMD=( ); iQUERY=( ); MESSAGE=(); CHAT=(); USER=(); CONTACT=(); LOCATION=(); unset CAPTION
+	REPLYTO=( ); FORWARD=( ); URLS=(); VENUE=( ); SERVICE=( ); NEWMEMBER=( ); LEFTMEMBER=( ); PINNED=( )
+	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
+	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
+	USER[ID]="${UPD["result",${num},"message","from","id"]}"
+	[ -z "${CHAT[ID]}" ] && CHAT[ID]="${UPD["result",${num},"edited_message","chat","id"]}"
+	[ -z "${USER[ID]}" ] && USER[ID]="${UPD["result",${num},"edited_message","from","id"]}"
+	# always true
+	return 0
+}
 process_inline() {
 	local num="${1}"
 	iQUERY[0]="$(JsonDecode "${UPD["result",${num},"inline_query","query"]}")"
@@ -753,6 +767,8 @@ process_inline() {
 	iQUERY[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","first_name"]}")"
 	iQUERY[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","last_name"]}")"
 	iQUERY[USERNAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","username"]}")"
+	# always true
+	return 0
 }
 process_message() {
 	local num="$1"
@@ -761,7 +777,6 @@ process_message() {
 	MESSAGE[ID]="${UPD["result",${num},"message","message_id"]}"
 
 	# Chat ID is now parsed when update isreceived
-	#CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	CHAT[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","chat","last_name"]}")"
 	CHAT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","chat","first_name"]}")"
 	CHAT[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","chat","username"]}")"
@@ -780,7 +795,6 @@ process_message() {
 	[ -z "${USER[USERNAME]}" ] && USER[USERNAME]="${USER[FIRST_NAME]} ${USER[LAST_NAME]}"
 
 	# in reply to message from
-	REPLYTO=( )
 	if grep -qs -e '\["result",'"${num}"',"message","reply_to_message"' <<<"${UPDATE}"; then
 	   REPLYTO[UID]="${UPD["result",${num},"message","reply_to_message","from","id"]}"
 	   REPLYTO[0]="$(JsonDecode "${UPD["result",${num},"message","reply_to_message","text"]}")"
@@ -791,7 +805,6 @@ process_message() {
 	fi
 
 	# forwarded message from
-	FORWARD=( )
 	if grep -qs -e '\["result",'"${num}"',"message","forward_from"' <<<"${UPDATE}"; then
 	   FORWARD[UID]="${UPD["result",${num},"message","forward_from","id"]}"
 	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
@@ -801,8 +814,7 @@ process_message() {
 	fi
 
 	# get file URL from telegram
-	URLS=()
-	if grep -qs -e '\["result",'"${num}"',"message",".*,"file_id"\]' <<<"${UPDATE}"; then
+	if grep -qs -e '\["result",'"${num}"',"message","[avpsd].*,"file_id"\]' <<<"${UPDATE}"; then
 	    URLS[AUDIO]="$(get_file "${UPD["result",${num},"message","audio","file_id"]}")"
 	    URLS[DOCUMENT]="$(get_file "${UPD["result",${num},"message","document","file_id"]}")"
 	    URLS[PHOTO]="$(get_file "${UPD["result",${num},"message","photo",0,"file_id"]}")"
@@ -811,7 +823,6 @@ process_message() {
 	    URLS[VOICE]="$(get_file "${UPD["result",${num},"message","voice","file_id"]}")"
 	fi
 	# Contact
-	CONTACT=( )
 	if grep -qs -e '\["result",'"${num}"',"message","contact"' <<<"${UPDATE}"; then
 		CONTACT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","first_name"]}")"
 		CONTACT[USER_ID]="$(JsonDecode  "${UPD["result",${num},"message","contact","user_id"]}")"
@@ -821,7 +832,6 @@ process_message() {
 	fi
 
 	# vunue
-	VENUE=( )
 	if grep -qs -e '\["result",'"${num}"',"message","venue"' <<<"${UPDATE}"; then
 		VENUE[TITLE]="$(JsonDecode "${UPD["result",${num},"message","venue","title"]}")"
 		VENUE[ADDRESS]="$(JsonDecode "${UPD["result",${num},"message","venue","address"]}")"
@@ -838,7 +848,6 @@ process_message() {
 	LOCATION[LATITUDE]="${UPD["result",${num},"message","location","latitude"]}"
 
 	# service messages
-	SERVICE=( ); NEWMEMBER=( ); LEFTMEMBER=( )
 	if grep -qs -e '\["result",'"${num}"',"message","new_chat_member' <<<"${UPDATE}"; then
 		SERVICE[NEWMEMBER]="${UPD["result",${num},"message","new_chat_member","id"]}"
 		NEWMEMBER[ID]="${SERVICE[NEWMEMBER]}"
@@ -846,7 +855,8 @@ process_message() {
 		NEWMEMBER[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","new_chat_member","last_name"]}")"
 		NEWMEMBER[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","new_chat_member","username"]}")"
 		NEWMEMBER[ISBOT]="${UPD["result",${num},"message","new_chat_member","is_bot"]}"
-		MESSAGE[0]="/new_chat_member ${NEWMEMBER[USERNAME]:=${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]}}"
+		[ -z "${MESSAGE[0]}" ] &&\
+		MESSAGE[0]="/_new_chat_member ${NEWMEMBER[ID]} ${NEWMEMBER[USERNAME]:=${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]}}"
 	fi
 	if grep -qs -e '\["result",'"${num}"',"message","left_chat_member' <<<"${UPDATE}"; then
 		SERVICE[LEFTMEMBER]="${UPD["result",${num},"message","left_chat_member","id"]}"
@@ -855,54 +865,63 @@ process_message() {
 		LEFTMEMBER[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","left_chat_member","last_name"]}")"
 		LEFTMEBER[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","left_chat_member","username"]}")"
 		LEFTMEMBER[ISBOT]="${UPD["result",${num},"message","left_chat_member","is_bot"]}"
-		MESSAGE[0]="/left_chat_member ${LEFTMEMBER[USERNAME]:=${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]}}"
+		[ -z "${MESSAGE[0]}" ] &&\
+		MESSAGE[0]="/_left_chat_member ${NEWMEMBER[ID]} ${LEFTMEMBER[USERNAME]:=${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]}}"
 	fi
-	if grep -qs -e '\["result",'"${num}"',"message","\(new_chat_[tp]\)\|\(pinned_message\)' <<<"${UPDATE}"; then
+	if grep -qs -e '\["result",'"${num}"',"message","new_chat_[tp]' <<<"${UPDATE}"; then
 		SERVICE[NEWTITLE]="$(JsonDecode "${UPD["result",${num},"message","new_chat_title"]}")"
-		[ -n "${SERVICE[NEWTITLE]}" ] && MESSAGE[0]="/new_chat_title ${SERVICE[NEWTITLE]}"
+		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWTITLE]}" ] &&\
+			MESSAGE[0]="/_new_chat_title ${USER[ID]} ${SERVICE[NEWTITLE]}"
 		SERVICE[NEWPHOTO]="$(get_file "${UPD["result",${num},"message","new_chat_photo",0,"file_id"]}")"
-		[ -n "${SERVICE[NEWPHOTO]}" ] && MESSAGE[0]="/new_chat_photo ${SERVICE[NEWPHOTO]}"
-		SERVICE[PINNED]="$(JsonDecode "${UPD["result",${num},"message","pinned_message"]}")"
-		[ -n "${SERVICE[PINNED]}" ] && MESSAGE[0]="/new_pinned_message ${SERVICE[PINNED]}"
+		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWPHOTO]}" ] &&\
+			 MESSAGE[0]="/_new_chat_photo ${USER[ID]} ${SERVICE[NEWPHOTO]}"
+	fi
+	if  grep -qs -e '\["result",'"${num}"',"message","pinned_message' <<<"${UPDATE}"; then
+		SERVICE[PINNED]="$(JsonDecode "${UPD["result",${num},"message","pinned_message","message_id"]}")"
+		PINNED[ID]="${SERVICE[PINNED]}"
+		PINNED[MESSAGE]="$(JsonDecode "${UPD["result",${num},"message","pinned_message","text"]}")"
+		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[PINNED]}" ] &&\
+			MESSAGE[0]="/_new_pinned_message ${USER[ID]} ${PINNED[ID]} ${PINNED[MESSAGE]}"
 	fi
 	# set SSERVICE to yes if a service message was received
 	[[ "${SERVICE[*]}" =~  ^[[:blank:]]*$ ]] || SERVICE[0]="yes"
 
 	# split message in command and args
-	[ "${MESSAGE[0]:0:1}" = "/" ] && read -r CMD <<<"${MESSAGE[0]}" &&  CMD[0]="${CMD[0]%%@*}"
+	[[ "${MESSAGE[0]}" == "/"* ]] && read -r CMD <<<"${MESSAGE[0]}" &&  CMD[0]="${CMD[0]%%@*}"
+	# everything went well
+	return 0
 }
 
 #########################
 # main get updates loop, should never terminate
 declare -A BASHBOTBLOCKED
-export BASHBOTDEBUG
 start_bot() {
-	local ADMIN OFFSET=0
+	local DEBUGMSG ADMIN OFFSET=0
 	# adaptive sleep defaults
 	local nextsleep="100"
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
 	local maxsleep="${BASHBOT_SLEEP:-5000}"
 	# startup message
-	BASHBOTDEBUG="$(date): Start BASHBOT updates in Mode \"${1:-normal}\" =========="
-	printf  "%s\n" "${BASHBOTDEBUG}" >>"${UPDATELOG}"
+	DEBUGMSG="$(date): Start BASHBOT updates in Mode \"${1:-normal}\" =========="
+	printf  "%s\n" "${DEBUGMSG}" >>"${UPDATELOG}"
 	# redirect to Debug.log
 	[[ "${1}" == *"debug" ]] && exec &>>"${DEBUGLOG}"
-	printf  "%s\n" "${BASHBOTDEBUG}"; BASHBOTDEBUG="${1}"
-	[[ "${BASHBOTDEBUG}" == "xdebug"* ]] && set -x
+	printf  "%s\n" "${DEBUGMSG}"; DEBUGMSG="${1}"
+	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x
 	#cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
 	find "${DATADIR}" -size 0 -name "*.log" -delete
 	# load addons on startup
 	for addons in "${ADDONDIR:-.}"/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
-		[ -r "${addons}" ] && source "${addons}" "startbot" "${BASHBOTDEBUG}"
+		[ -r "${addons}" ] && source "${addons}" "startbot" "${DEBUGMSG}"
 	done
 	# shellcheck source=./commands.sh
 	source "${COMMANDS}" "startbot"
 	# start timer events
 	if [ -n "${BASHBOT_START_TIMER}" ] ; then
 		# shellcheck disable=SC2064
-		trap "event_timer $BASHBOTDEBUG" ALRM
+		trap "event_timer $DEBUGMSG" ALRM
 		start_timer &
 		# shellcheck disable=SC2064
 		trap "kill -9 $!; exit" EXIT INT HUP TERM QUIT 
@@ -937,7 +956,7 @@ start_bot() {
 
 			if [ "$OFFSET" != "1" ]; then
 				nextsleep="100"
-				process_updates "${BASHBOTDEBUG}"
+				process_updates "${DEBUGMSG}"
 			fi
 		else
 			# ups, something bad happened, wait maxsleep*10
@@ -1005,7 +1024,7 @@ bot_init() {
 		echo -e "${ORANGE}Bot config may not complete, pls check.${NC}"
 	fi
 	# show result
-	ls -ld "${DATADIR}" "${LOGDIR}" ./*.jssh* ./*.sh 
+	ls -ld "${DATADIR}" "${LOGDIR}" ./*.jssh* ./*.sh 2>/dev/null
 }
 
 if ! _is_function send_message ; then

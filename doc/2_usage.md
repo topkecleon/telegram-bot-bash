@@ -54,7 +54,7 @@ Have FUN!
 │   ├── bash2env.sh          # script to convert shebang to /usr/bin/env, see [Security Considerations](../README.md#Security-Considerations)
 │   └── bashbot.cron	     # example crontab
 │
-├── doc		# Documentation and License
+├── doc                  # Documentation and License
 ├── html
 ├── LICENSE
 ├── README.html
@@ -74,7 +74,7 @@ Start or Stop your Bot use the following commands:
 ./bashbot.sh start
 ```
 ```bash
-./bashbot.sh kill
+./bashbot.sh stop
 ```
 
 ### User stats
@@ -164,30 +164,32 @@ Service Messages are regular messages not itended for end users, instead they si
 client, e.g. new users.
 
 If a service message is received bashbot sets MESSAGE to the service message type as a command,
-e.g. if a new user joins a chat MESSAGE is set to "/new_chat_user". 
+e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user". 
 
 * ```$SERVICE```: This array contains info about received service messages.
     * ```${SERVICE}```: "yes" if service message is received
-    * ```${SERVICE[NEWMEMBER]```: New user's id
-        * ```${MESSAGE}```: /new_chat_member
-        * ```${NEWMEMBER[ID]```: New user's id
-        * ```${NEWMEMBER[FIRST_NAME]```: New user's first name
-        * ```${NEWMEMBER[LAST_NAME]```: New user's last name
-        * ```${NEWMEMBER[USERNAME]```: New user's username
-        * ```${NEWMEMBER[ISBOT]```: New user is a bot
-    * ```${SERVICE[LEFTMEMBER]```: Id of user left 
-        * ```${MESSAGE}```: /left_chat_member
-        * ```${LEFTMEMBER[ID]```: Left user's id
-        * ```${LEFTMEMBER[FIRST_NAME]```: Left user's first name
-        * ```${LEFTMEMBER[LAST_NAME]```: Left user's last name
-        * ```${LEFTMEMBER[USERNAME]```: Left user's username
-        * ```${LEFTMEMBER[ISBOT]```: Left user is a bot
-    * ```${SERVICE[NEWTITLE]```: Text of new title 
-        * ```${MESSAGE}```: /new_chat_title
-    * ```${SERVICE[NEWPHOTO]```: New Chat Picture URL
-        * ```${MESSAGE}```: /new_chat_picture
-    * ```${SERVICE[PINNED]```: Pinned Message structure
-        * ```${MESSAGE}```: /new_pinned_message
+    * ```${SERVICE[NEWMEMBER]}}```: New user's id
+        * ```${MESSAGE}```: /_new_chat_member ID NAME
+        * ```${NEWMEMBER[ID]}```: New user's id
+        * ```${NEWMEMBER[FIRST_NAME]}```: New user's first name
+        * ```${NEWMEMBER[LAST_NAME]}```: New user's last name
+        * ```${NEWMEMBER[USERNAME]}```: New user's username
+        * ```${NEWMEMBER[ISBOT]}```: New user is a bot
+    * ```${SERVICE[LEFTMEMBER]}```: Id of user left 
+        * ```${MESSAGE}```: /_left_chat_member ID NAME
+        * ```${LEFTMEMBER[ID]}```: Left user's id
+        * ```${LEFTMEMBER[FIRST_NAME]}```: Left user's first name
+        * ```${LEFTMEMBER[LAST_NAME]}```: Left user's last name
+        * ```${LEFTMEMBER[USERNAME]}```: Left user's username
+        * ```${LEFTMEMBER[ISBOT]}```: Left user is a bot
+    * ```${SERVICE[NEWTITLE]}```: Text of new title 
+        * ```${MESSAGE}```: /_new_chat_title SENDER TEXT
+    * ```${SERVICE[NEWPHOTO]}```: New Chat Picture 
+        * ```${MESSAGE}```: /_new_chat_picture SENDER URL
+    * ```${SERVICE[PINNED]}```: Pinned Message structure
+        * ```${MESSAGE}```: /_new_pinned_message SENDER ID
+        * ```${PINNED[ID]}```: Id of pinned message
+        * ```${PINNED[MESSAGE]}```: Message text of pinned message
 
 
 
@@ -281,5 +283,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-0-g5b5447e
 

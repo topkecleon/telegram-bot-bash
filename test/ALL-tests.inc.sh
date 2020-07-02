@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-0-g5b5447e
 
 # common variables
 export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
@@ -12,11 +12,11 @@ export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
 
 # common filenames
 export TOKENFILE ACLFILE COUNTFILE BLOCKEDFILE ADMINFILE DATADIR JSONSHFILE
- TOKENFILE="token"
+ TOKENFILE="botconfig.jssh"
  ACLFILE="botacl"
  COUNTFILE="count.jssh"
  BLOCKEDFILE="blocked.jssh"
- ADMINFILE="botadmin"
+ ADMINFILE="botconfig.jssh"
  DATADIR="data-bot-bash"
  JSONSHFILE="JSON.sh/JSON.sh"
 
@@ -26,10 +26,12 @@ export SUCCESS NOSUCCESS
  NOSUCCESS="   FAILED!"
 
 # default input, reference and output files
-export  INPUTFILE REFFILE OUTPUTFILE
+export  INPUTFILE REFFILE INPUTFILE2 REFFILE2 OUTPUTFILE
+ OUTPUTFILE="${TESTDIR}/${REFDIR}.out"
  INPUTFILE="${DIRME}/${REFDIR}/${REFDIR}.input"
  REFFILE="${DIRME}/${REFDIR}/${REFDIR}.result"
- OUTPUTFILE="${TESTDIR}/${REFDIR}.out"
+ INPUTFILE2="${DIRME}/${REFDIR}/${REFDIR}2.input"
+ REFFILE2="${DIRME}/${REFDIR}/${REFDIR}2.result"
 
 # do not query telegram when testing
 export BASHBOT_URL TESTTOKEN
@@ -54,7 +56,8 @@ compare_sorted() {
 	sort -d -o "${1}.sort" "${1}"
 	sort -d -o "${2}.sort" "${2}"
 	diff -c "${1}.sort" "${2}.sort" || ret=1
-	rm -f "${1}.sort" "${2}.sort"
+	[[ "${1}" != "${TESTDIR}"* ]] && rm -f "${1}.sort"
+	[[ "${2}" != "${TESTDIR}"* ]] && rm -f "${2}.sort"
 	return "$ret"
 }
 

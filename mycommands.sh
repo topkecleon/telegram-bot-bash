@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.98-pre2-7-g3569a76
+#### $$VERSION$$ v0.98-2-g2d48670
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -51,6 +51,10 @@ export SILENCER="no"
 # uncomment if you use keyboards in your commands
 # export REMOVEKEYBOARD="yes"
 # export REMOVEKEYBOARD_PRIVATE="yes"
+
+# uncomment if you want to say welcome to new chat members
+# export WELCOME_NEWMEMBER="yes"
+WELCOME_MSG="Welcome"
 
 # messages for admin only commands
 NOTADMIN="Sorry, this command is allowed for admin or owner only"
@@ -121,10 +125,18 @@ else
 			fi
 			;;
 		# will we process edited messages also?
-		'/edited_message'*)
+		'/_edited_message'*)
 			return 1 # no
 			# but if we do, remove /edited_message
 			MESSAGE="${MESSAGE#/* }"
+			;;
+		'/_new_chat_member'*)
+			if [[ -n "${WELCOME_NEWMEMBER}" && "${NEWMEMBER[ISBOT]}" != "true" ]]; then
+			    send_normal_message "${CHAT[ID]}"\
+				"${WELCOME_MSG} ${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]} (@${NEWMEMBER[USERNAME]})"
+			    MYSENTID="${BOTSENT[ID]}"
+			    { sleep 5; delete_message  "${CHAT[ID]}" "${MYSENTID}"; } &
+			fi
 			;;
 	esac
 
@@ -227,6 +239,14 @@ else
 			;;
 	esac
      }
+
+    # debug function called on start, stop of bot, interactive and  background processes
+    # if your bot was started with debug as second argument
+    # $1 current date, $2 from where the function was called, $3 ... $n optional information
+    my_debug_checks() {
+	# example check because my bot created a wrong file
+	[ -f ".jssh" ] && printf "%s: %s\n" "${1}" "Ups, found file \"${PWD:-.}/.jssh\"! =========="
+    }
 
     # place your processing functions here
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-0-g5b5447e
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -21,13 +21,17 @@ source "${TESTDIR}/commands.sh" source
 # first user asking for botadmin will botadmin
 echo "Check \"user_is_botadmin\" ..."
 
-echo '?' >"${ADMINFILE}" # auto mode
+printf '["botadmin"]	"?"\n' >>"${ADMINFILE}" # auto mode
 
+echo "BOTADMIN ..."
 user_is_botadmin "BOTADMIN" || exit 1 # should never fail
+echo "NOBOTADMIN ..."
 user_is_botadmin "NOBOTADMIN" && exit 1 # should fail
+echo "BOTADMIN ..."
 user_is_botadmin "BOTADMIN" || exit 1 # same name as first one, should work
 
-if [ "$(cat "${ADMINFILE}")" = "BOTADMIN" ]; then
+echo "Check config file ..."
+if [ "$(getConfigKey "botadmin")" = "BOTADMIN" ]; then
 	echo "  ... \"user_is_botadmin\" seems to work as expected."
 else
 	exit 1

@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-pre2-0-ga597303
+#### $$VERSION$$ v0.98-0-g5b5447e
 
 # will be automatically sourced from bashbot
 
@@ -37,24 +37,24 @@ leave_chat() {
 }
 
 user_is_creator() {
-	if [ "${1:--}" = "${2:-+}" ] || [ "$(get_chat_member_status "$1" "$2")" = "creator" ]; then return 0; fi
+	# empty is false ...
+	[[ "${1:--}" == "${2:-+}" || "$(get_chat_member_status "$1" "$2")" == "creator" ]] && return 0
 	return 1 
 }
 
 user_is_admin() {
-	[ "$1" = "$2" ] && return 0
-	local me; me="$(get_chat_member_status "$1" "$2")"
-	if [ "${me}" = "creator" ] || [ "${me}" = "administrator" ]; then return 0; fi
+	[ "${1:--}" == "${2:-+}" ] && return 0
 	user_is_botadmin "$2" && return 0
+	local me; me="$(get_chat_member_status "$1" "$2")"
+	[[ "${me}" =~ ^creator$|^administrator$ ]] && return 0
 	return 1 
 }
 
 user_is_botadmin() {
-	local admin; admin="$(getConfigKey "botadmin")"
-	[ "${admin}" = "${1}" ] && return 0
-	[ "${admin}" = "${2}" ] && return 0
-	[[ "${admin}" = "@*" ]] && [[ "${admin}" = "${2}" ]] && return 0
-	if [ "${admin}" = "?" ]; then setConfigKey "${1:-?}"; return 0; fi
+	local admin; admin="$(getConfigKey "botadmin")"; [ -z "${admin}" ] && return 1
+	[[ "${admin}" == "${1}" || "${admin}" == "${2}" ]] && return 0
+	#[[ "${admin}" = "@*" ]] && [[ "${admin}" = "${2}" ]] && return 0
+	if [ "${admin}" = "?" ]; then setConfigKey "botadmin" "${1:-?}"; return 0; fi
 	return 1
 }
 
