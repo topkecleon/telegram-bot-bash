@@ -242,9 +242,9 @@ else
 
     # debug function called on start, stop of bot, interactive and  background processes
     # if your bot was started with debug as second argument
-    # $1 current date, $2 from where the function wqs called, $3 ... $n optional information
+    # $1 current date, $2 from where the function was called, $3 ... $n optional information
     my_debug_checks() {
-	# example check because my bot creates a wrong file, this was becuase an empty variable
+	# example check because my bot created a wrong file
 	[ -f ".jssh" ] && printf "%s: %s\n" "${1}" "Ups, found file \"${PWD:-.}/.jssh\"! =========="
     }
 
