@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.98-0-g5b5447e
+#### $$VERSION$$ v0.98-1-g550387b
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -239,6 +239,14 @@ else
 			;;
 	esac
      }
+
+    # debug function called on start, stop of bot, interactive and  background processes
+    # if your bot was started with debug as second argument
+    # $1 current date, $2 from where the function wqs called, $3 ... $n optional information
+    my_debug_checks() {
+	# example check because my bot creates a wrong file, this was becuase an empty variable
+	[ -f ".jssh" ] && printf "%s: %s\n" "${1}" "Ups, found file \"${PWD:-.}/.jssh\"! =========="
+    }
 
     # place your processing functions here
 
