@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-0-g5b5447e
+#### $$VERSION$$ v0.98-3-g28de99e
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -86,7 +86,8 @@ debug_checks(){
 	[ -z "${MYTOKEN}" ] && printf "%s: %s\n" "${DATE}" "Bot token is missing! =========="
 	check_token "${MYTOKEN}" || printf "%s: %s\n" "${DATE}" "Invalid bot token! =========="
 	[ -z "$(getConfigKey "botadmin")" ] && printf "%s: %s\n" "${DATE}" "Bot admin is missing! =========="
-	[ -f ".jssh" ] && printf "%s: %s\n" "${DATE}" "Ups, found file \"${PWD:-.}/.jssh\"! =========="
+	# call user defined debug_checks if exists
+	_exec_if_function my_debug_checks "${DATE}" "${WHERE}" "$*"
 } >>"${DEBUGLOG}"
 
 # get location and name of bashbot.sh
