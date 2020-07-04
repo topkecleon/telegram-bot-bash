@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-0-g5b5447e
+#### $$VERSION$$ v0.98-4-g9b1119d
 
 # will be automatically sourced from bashbot
 
@@ -47,7 +47,7 @@ start_back() {
 }
 restart_back() {
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1" "back-$3-")"
-	printf "%s: Start background job CHAT=%s JOB=%s CMD=%s\n" "$(date)" "${1}" "${fifo##*/}" "${2} ${4} ${5}" >>"${UPDATELOG}"
+	printf "%s: Start background job CHAT=%s JOB=%s CMD=%s\n" "$(date)" "${1}" "${fifo##*/}" "${2##*/} ${4} ${5}" >>"${UPDATELOG}"
 	check_back "$1" "$3" && kill_proc "$1" "back-$3-"
 	nohup bash -c "{ $2 \"$4\" \"$5\" \"${fifo}\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"; }" &>>"${fifo}.log" &
 	sleep 0.5 # give bg job some time to init
@@ -126,6 +126,7 @@ job_control() {
 	local BOT ADM content proc CHAT job fifo killall=""
 	BOT="$(getConfigKey "botname")"
 	ADM="$(getConfigKey "botadmin")"
+	debug_checks "Enter job_control" "${1}" "${FILE##*/}"
 	for FILE in "${DATADIR:-.}/"*-back.cmd; do
 		[ "${FILE}" = "${DATADIR:-.}/*-back.cmd" ] && echo -e "${RED}No background processes.${NC}" && break
 		content="$(< "${FILE}")"
@@ -134,7 +135,6 @@ job_control() {
 		proc="${job#*:}"
 		job="${job%:*}"
 		fifo="$(procname "${CHAT}" "${job}")" 
-		debug_checks "Enter job_control" "${1}" "${FILE##*/}"
 		case "$1" in
 		"resumeb"*|"backgr"*)
 			printf "Restart Job: %s %s\n" "${proc}" " ${fifo##*/}"
