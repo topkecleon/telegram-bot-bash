@@ -81,7 +81,7 @@ export BASHBOTDEBUG
 debug_checks(){
 	[  -n "${BASHBOTDEBUG}" ] && return
 	local DATE WHERE MYTOKEN; DATE="$(date)"; WHERE="${1}"; shift
-	printf "%s: debug_checks: %s: bashbot.sh %s\n" "${DATE}" "${WHERE}" "$*"
+	printf "%s: debug_checks: %s: bashbot.sh %s\n" "${DATE}" "${WHERE}" "${@##*/}"
 	MYTOKEN="$(getConfigKey "bottoken")"
 	[ -z "${MYTOKEN}" ] && printf "%s: %s\n" "${DATE}" "Bot token is missing! =========="
 	check_token "${MYTOKEN}" || printf "%s: %s\n" "${DATE}" "Invalid bot token! =========="
