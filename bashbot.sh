@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-1-ga127387
+#### $$VERSION$$ v0.98-0-g487deee
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -79,7 +79,7 @@ log_error(){
 export BASHBOTDEBUG
 [[ "${3}" == *"debug"* ]] && BASHBOTDEBUG="yes"
 debug_checks(){
-	[  -n "${BASHBOTDEBUG}" ] && return
+	[  -z "${BASHBOTDEBUG}" ] && return
 	local DATE WHERE MYTOKEN; DATE="$(date)"; WHERE="${1}"; shift
 	printf "%s: debug_checks: %s: bashbot.sh %s\n" "${DATE}" "${WHERE}" "${@##*/}"
 	MYTOKEN="$(getConfigKey "bottoken")"
@@ -988,7 +988,13 @@ bot_init() {
 	done
 	echo "Done."
 	if [[ ! -d "logs" ]]; then
-		mkdir logs
+		echo "Move Logfiles ..."
+		mkdir logs 2>/dev/null
+		for MVLOG in DEBUG.log MESSAGE.log ERROR.log BASHBOT.log
+		do
+			[ -f  "${MVLOG}" ] && mv "${MVLOG}" logs 2>/dev/null
+		done
+		echo "Done."
 	fi
 	#setup bashbot
 	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
