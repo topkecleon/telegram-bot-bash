@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-0-g487deee
+#### $$VERSION$$ v0.98-1-ga127387
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -154,9 +154,6 @@ LOGDIR="${RUNDIR:-.}/logs"
 debug_checks "start SOURCE=${SOURCE:-no}" "$@"
 # we assume everything is already set up correctly if we have TOKEN
 if [ -z "${BOTTOKEN}" ]; then
-DEBUGLOG="${LOGDIR}/DEBUG.log"
-ERRORLOG="${LOGDIR}/ERROR.log"
-UPDATELOG="${LOGDIR}/BASHBOT.log"
   # BOTCONFIG does not exist, create
   [ ! -f "${BOTCONFIG}.jssh" ] &&
 		printf '["bot_config_key"]\t"config_key_value"\n' >>"${BOTCONFIG}.jssh"
