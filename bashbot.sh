@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-3-g28de99e
+#### $$VERSION$$ v0.98-0-g487deee
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -150,16 +150,13 @@ BLOCKEDFILE="${BASHBOT_VAR:-.}/blocked"
 COUNTFILE="${BASHBOT_VAR:-.}/count"
 
 LOGDIR="${RUNDIR:-.}/logs"
-if [ ! -d "${LOGDIR}" ] || [ ! -w "${LOGDIR}" ]; then
-	LOGDIR="${RUNDIR:-.}"
-fi
-DEBUGLOG="${LOGDIR}/DEBUG.log"
-ERRORLOG="${LOGDIR}/ERROR.log"
-UPDATELOG="${LOGDIR}/BASHBOT.log"
 
 debug_checks "start SOURCE=${SOURCE:-no}" "$@"
 # we assume everything is already set up correctly if we have TOKEN
 if [ -z "${BOTTOKEN}" ]; then
+DEBUGLOG="${LOGDIR}/DEBUG.log"
+ERRORLOG="${LOGDIR}/ERROR.log"
+UPDATELOG="${LOGDIR}/BASHBOT.log"
   # BOTCONFIG does not exist, create
   [ ! -f "${BOTCONFIG}.jssh" ] &&
 		printf '["bot_config_key"]\t"config_key_value"\n' >>"${BOTCONFIG}.jssh"
@@ -228,6 +225,13 @@ if [ -z "${BOTTOKEN}" ]; then
 	printf '["blocked_user_or_chat_id"]\t"name and reason"\n' >>"${BLOCKEDFILE}.jssh"
   fi
 fi
+
+if [ ! -d "${LOGDIR}" ] || [ ! -w "${LOGDIR}" ]; then
+	LOGDIR="${RUNDIR:-.}"
+fi
+DEBUGLOG="${LOGDIR}/DEBUG.log"
+ERRORLOG="${LOGDIR}/ERROR.log"
+UPDATELOG="${LOGDIR}/BASHBOT.log"
 
 # read BOTTOKEN from bot database if not set
 if [ -z "${BOTTOKEN}" ]; then
@@ -986,6 +990,9 @@ bot_init() {
 		[ -r "${addons}" ] && source "${addons}" "init" "${DEBUG}"
 	done
 	echo "Done."
+	if [[ ! -d "logs" ]]; then
+		mkdir logs
+	fi
 	#setup bashbot
 	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
 	echo -n "Enter User to run basbot [$RUNUSER]: "
@@ -1004,7 +1011,7 @@ bot_init() {
 		chown -R "$TOUSER" . ./*
 		chmod 711 .
 		chmod -R o-w ./*
-		chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTADMIN}" "${LOGDIR}/"*.log 2>/dev/null
+		chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTADMIN}" logs "${LOGDIR}/"*.log 2>/dev/null
 	chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
 		# jsshDB must writeable by owner
 		find . -name '*.jssh*' -exec chmod u+w \{\} +
