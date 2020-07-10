@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-0-g487deee
+#### $$VERSION$$ v0.99-dev-1-gd85c779
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -75,9 +75,10 @@ log_error(){
 	printf"%s: %s\n" "$(date)" "$*" >>"${ERRORLOG}"
 }
 # additional tests if we run in debug mode
-# $1 where $2 command $3 may debug 
 export BASHBOTDEBUG
-[[ "${3}" == *"debug"* ]] && BASHBOTDEBUG="yes"
+# debug should always last argument
+[[ "${BASH_ARGV[0]}" == *"debug"* ]] && BASHBOTDEBUG="yes"
+# $1 where $2 command $3 may debug 
 debug_checks(){
 	[  -z "${BASHBOTDEBUG}" ] && return
 	local DATE WHERE MYTOKEN; DATE="$(date)"; WHERE="${1}"; shift
