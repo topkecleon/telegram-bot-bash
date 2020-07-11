@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.98-1-ga127387
+#### $$VERSION$$ v0.981-0-g3552876
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -72,16 +72,20 @@ check_token(){
 }
 # log error to ERRORLOG with date
 log_error(){
-	printf"%s: %s\n" "$(date)" "$*" >>"${ERRORLOG}"
+	printf "%s: %s\n" "$(date)" "$*" >>"${ERRORLOG}"
 }
 # additional tests if we run in debug mode
-# $1 where $2 command $3 may debug 
 export BASHBOTDEBUG
-[[ "${3}" == *"debug"* ]] && BASHBOTDEBUG="yes"
+# debug should always last argument
+[[ "${BASH_ARGV[0]}" == *"debug"* ]] && BASHBOTDEBUG="yes"
+# $1 where $2 command $3 may debug 
+# shellcheck disable=SC2094
 debug_checks(){
-	[  -n "${BASHBOTDEBUG}" ] && return
+	[  -z "${BASHBOTDEBUG}" ] && return
 	local DATE WHERE MYTOKEN; DATE="$(date)"; WHERE="${1}"; shift
 	printf "%s: debug_checks: %s: bashbot.sh %s\n" "${DATE}" "${WHERE}" "${@##*/}"
+	# shellcheck disable=SC2094
+	[ -z "${DEBUGLOG}" ] && printf "%s: %s\n" "${DATE}" "DEBUGLOG not set! =========="
 	MYTOKEN="$(getConfigKey "bottoken")"
 	[ -z "${MYTOKEN}" ] && printf "%s: %s\n" "${DATE}" "Bot token is missing! =========="
 	check_token "${MYTOKEN}" || printf "%s: %s\n" "${DATE}" "Invalid bot token! =========="
@@ -151,7 +155,6 @@ COUNTFILE="${BASHBOT_VAR:-.}/count"
 
 LOGDIR="${RUNDIR:-.}/logs"
 
-debug_checks "start SOURCE=${SOURCE:-no}" "$@"
 # we assume everything is already set up correctly if we have TOKEN
 if [ -z "${BOTTOKEN}" ]; then
   # BOTCONFIG does not exist, create
@@ -230,6 +233,7 @@ DEBUGLOG="${LOGDIR}/DEBUG.log"
 ERRORLOG="${LOGDIR}/ERROR.log"
 UPDATELOG="${LOGDIR}/BASHBOT.log"
 
+debug_checks "start SOURCE=${SOURCE:-no}" "$@"
 # read BOTTOKEN from bot database if not set
 if [ -z "${BOTTOKEN}" ]; then
     BOTTOKEN="$(getConfigKey "bottoken")"
@@ -988,7 +992,13 @@ bot_init() {
 	done
 	echo "Done."
 	if [[ ! -d "logs" ]]; then
-		mkdir logs
+		echo "Move Logfiles ..."
+		mkdir logs 2>/dev/null
+		for MVLOG in DEBUG.log MESSAGE.log ERROR.log BASHBOT.log
+		do
+			[ -f  "${MVLOG}" ] && mv "${MVLOG}" logs 2>/dev/null
+		done
+		echo "Done."
 	fi
 	#setup bashbot
 	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
