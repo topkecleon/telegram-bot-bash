@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.99-dev-1-gd85c779
+#### $$VERSION$$ v0.99-dev-2-g9799db4
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -72,7 +72,7 @@ check_token(){
 }
 # log error to ERRORLOG with date
 log_error(){
-	printf"%s: %s\n" "$(date)" "$*" >>"${ERRORLOG}"
+	printf "%s: %s\n" "$(date)" "$*" >>"${ERRORLOG}"
 }
 # additional tests if we run in debug mode
 export BASHBOTDEBUG
