@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.99-dev-2-g9799db4
+#### $$VERSION$$ v0.99-dev-3-gf4f6c2c
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -79,10 +79,13 @@ export BASHBOTDEBUG
 # debug should always last argument
 [[ "${BASH_ARGV[0]}" == *"debug"* ]] && BASHBOTDEBUG="yes"
 # $1 where $2 command $3 may debug 
+# shellcheck disable=SC2094
 debug_checks(){
 	[  -z "${BASHBOTDEBUG}" ] && return
 	local DATE WHERE MYTOKEN; DATE="$(date)"; WHERE="${1}"; shift
 	printf "%s: debug_checks: %s: bashbot.sh %s\n" "${DATE}" "${WHERE}" "${@##*/}"
+	# shellcheck disable=SC2094
+	[ -z "${DEBUGLOG}" ] && printf "%s: %s\n" "${DATE}" "DEBUGLOG not set! =========="
 	MYTOKEN="$(getConfigKey "bottoken")"
 	[ -z "${MYTOKEN}" ] && printf "%s: %s\n" "${DATE}" "Bot token is missing! =========="
 	check_token "${MYTOKEN}" || printf "%s: %s\n" "${DATE}" "Invalid bot token! =========="
@@ -152,7 +155,6 @@ COUNTFILE="${BASHBOT_VAR:-.}/count"
 
 LOGDIR="${RUNDIR:-.}/logs"
 
-debug_checks "start SOURCE=${SOURCE:-no}" "$@"
 # we assume everything is already set up correctly if we have TOKEN
 if [ -z "${BOTTOKEN}" ]; then
   # BOTCONFIG does not exist, create
@@ -231,6 +233,7 @@ DEBUGLOG="${LOGDIR}/DEBUG.log"
 ERRORLOG="${LOGDIR}/ERROR.log"
 UPDATELOG="${LOGDIR}/BASHBOT.log"
 
+debug_checks "start SOURCE=${SOURCE:-no}" "$@"
 # read BOTTOKEN from bot database if not set
 if [ -z "${BOTTOKEN}" ]; then
     BOTTOKEN="$(getConfigKey "bottoken")"
