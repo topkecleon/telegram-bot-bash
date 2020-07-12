@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.981-0-g3552876
+#### $$VERSION$$ v0.99-dev2-0-g2b10471
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -496,7 +496,7 @@ sendJsonResult(){
 	    # OK, we can retry sendJson, let's see what's failed
 	    # throttled, telegram say we send to much messages
 	    if [ -n "${BOTSENT[RETRY]}" ]; then
-		BASHBOT_RETRY="$(( BOTSENT[RETRY]++ ))"
+		BASHBOT_RETRY="$(( ++BOTSENT[RETRY] ))"
 		printf "Retry %s in %s seconds ...\n" "${2}" "${BASHBOT_RETRY}"
 		sendJsonRetry "${2}" "${BASHBOT_RETRY}" "${@:3}"
 		unset BASHBOT_RETRY
@@ -506,7 +506,7 @@ sendJsonResult(){
 	    if [ "${BOTSENT[ERROR]}" == "999" ];then
 		# check if default curl and args are OK
 		if ! curl -sL -k -m 2 "${URL}" >/dev/null 2>&1 ; then
-		    printf "%s: BASHBOT IP Address is blocked!\n" "$(date)"
+		    printf "%s: BASHBOT IP Address seems blocked!\n" "$(date)"
 		    # user provided function to recover or notify block
 		    if _exec_if_function bashbotBlockRecover; then
 			BASHBOT_RETRY="2"

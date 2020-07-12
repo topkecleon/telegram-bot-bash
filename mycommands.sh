@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.98-2-g2d48670
+#### $$VERSION$$ v0.99-dev2-0-g2b10471
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -246,6 +246,14 @@ else
     my_debug_checks() {
 	# example check because my bot created a wrong file
 	[ -f ".jssh" ] && printf "%s: %s\n" "${1}" "Ups, found file \"${PWD:-.}/.jssh\"! =========="
+    }
+
+    # called when bashbot sedn command failed because we can not connect to telegram
+    # return 0 to retry, return non 0 to give up
+    bashbotBlockRecover() {
+	# place your commnds to unblock here, e.g. change IP or simply wait
+	sleep 60 && return 0 # may be temporary
+	return 1 
     }
 
     # place your processing functions here
