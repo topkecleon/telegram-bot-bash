@@ -247,15 +247,16 @@ It features background tasks and interactive chats, and can serve as an interfac
 <a class="sourceLine" id="cb5-9" title="9"><span class="ex">send_message</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">getConfigKey</span> <span class="st">&quot;botadmin&quot;</span><span class="va">)</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">df</span> -h<span class="va">)</span><span class="st">&quot;</span></a></code></pre></div>
 <p>For more information see <a href="doc/8_custom.md">Expert Use</a></p>
 <h3>Blocked by telegram?</h3>
-<p>This may happen if to many wrong requests are sent to api.telegram.org, e.g. using a wrong token or not existing API calls. If you have a fixed IP you can ask telegram service to unblock your ip or change your IP. If you are running a tor proxy on your server you may uncomment the <code>BASHBOT_CURL_ARGS</code> line in 'mycommands.sh'</p>
-<p>You can test if younare blockeds by running curl or wget manually:</p>
+<p>This may happen if to many or wrong requests are sent to api.telegram.org, e.g. using a invalid token or not existing API calls. If the block stay for longer time you can ask telegram service to unblock your IP-Adress.</p>
+<p>You can check with curl or wget if you are blocked by Telegram:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" title="1"><span class="ex">curl</span> -m 10  https://api.telegram.org/bot</a>
 <a class="sourceLine" id="cb6-2" title="2"><span class="co">#curl: (28) Connection timed out after 10001 milliseconds</span></a>
 <a class="sourceLine" id="cb6-3" title="3"></a>
 <a class="sourceLine" id="cb6-4" title="4"><span class="fu">wget</span> -t 1 -T 10 https://api.telegram.org/bot</a>
 <a class="sourceLine" id="cb6-5" title="5"><span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></a></code></pre></div>
-<p>Since Version 0.98 bashbot can recover from broken connection to Telegram (aka blocked). therefore you must provide the function <code>bashbotBlockRecover()</code> in <code>mycommands.sh</code>. There you can check e.g. if your connection is working, change IP or simply wait some time.</p>
-<p>If everything seems OK return 0 for retry or any non 0 value for abort.</p>
+<p>Since Version 0.96 bashbot offers the option to recover from broken connections (aka blocked). Therefore you can provide a function named <code>bashbotBlockRecover()</code> in <code>mycommands.sh</code>. If the function exists it is called everytime when a broken connection is detected.</p>
+<p>Possible actions are: Check if network is working, change IP or simply wait some time.</p>
+<p>If everything seems OK return 0 for retry or any non 0 value to give up.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" title="1"><span class="co"># called when bashbot sedn command failed because we can not connect to telegram</span></a>
 <a class="sourceLine" id="cb7-2" title="2"><span class="co"># return 0 to retry, return non 0 to give up</span></a>
 <a class="sourceLine" id="cb7-3" title="3"><span class="fu">bashbotBlockRecover()</span> <span class="kw">{</span></a>
@@ -267,6 +268,6 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>@Gnadelwartz</p>
 <h2>That's it!</h2>
 <p>If you feel that there's something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4>$$VERSION$$ v0.99-dev2-1-gef4d21f</h4>
+<h4>$$VERSION$$ v0.99-dev2-5-g4d5b792</h4>
 </body>
 </html>

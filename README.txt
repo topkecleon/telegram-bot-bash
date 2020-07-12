@@ -304,13 +304,12 @@ For more information see [Expert Use](doc/8_custom.md)
 
 
 ### Blocked by telegram?
-This may happen if to many wrong requests are sent to api.telegram.org, e.g. 
-using a wrong token or not existing API calls.  If you have a fixed IP you can 
-ask telegram service to unblock your ip or change your IP. If you are running a 
-tor proxy on your server you may uncomment the ```BASHBOT_CURL_ARGS``` line in 
-'mycommands.sh' 
+This may happen if to many or wrong requests are sent to api.telegram.org, e.g. 
+using a invalid token or not existing API calls.
+If the block stay for longer time you can ask telegram service to unblock your 
+IP-Adress. 
 
-You can test if younare blockeds by running curl or wget manually:
+You can check with curl or wget if you are blocked by Telegram:
 ```bash
 curl -m 10  https://api.telegram.org/bot
 #curl: (28) Connection timed out after 10001 milliseconds
@@ -320,12 +319,15 @@ wget -t 1 -T 10 https://api.telegram.org/bot
 failed: Connection timed out.
 ```
 
-Since Version 0.98 bashbot can recover from broken connection to Telegram (aka 
-blocked). therefore you must provide the function
-`bashbotBlockRecover()` in `mycommands.sh`. There you can check e.g. if your 
-connection is working, change IP or simply wait some time.
+Since Version 0.96 bashbot offers the option to recover from broken connections 
+(aka blocked). Therefore you can provide a function
+named `bashbotBlockRecover()` in `mycommands.sh`. If the function exists it is 
+called everytime when a broken connection is detected.
 
-If everything seems OK return 0 for retry or any non 0 value for abort.
+Possible actions are: Check if network is working, change IP or simply wait 
+some time.
+
+If everything seems OK return 0 for retry or any non 0 value to give up.
 
 ```bash
 # called when bashbot sedn command failed because we can not connect to telegram
@@ -346,4 +348,4 @@ bashbotBlockRecover() {
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.99-dev2-1-gef4d21f
+#### $$VERSION$$ v0.99-dev2-5-g4d5b792
