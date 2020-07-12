@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.99-dev2-2-g78088d6
+#### $$VERSION$$ v0.99-dev2-3-gd181e9d
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -140,7 +140,7 @@ else
 			    MYSENTID="${BOTSENT[ID]}"
 			    { sleep 5; delete_message  "${CHAT[ID]}" "${MYSENTID}"; } &
 			[ -n "${REPORT_NEWMEMBER}" ] && send_normal_message "$(getConfigKey "botadmin")"\
-			    "New member chat ${CHAT[NAME]} (${CHAT[ID]}): ${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]} (@${NEWMEMBER[USERNAME]})"
+			    "New member: ${CHAT[TITLE]} (${CHAT[ID]}): ${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]} (@${NEWMEMBER[USERNAME]})"
 			fi
 			;;
 	esac
