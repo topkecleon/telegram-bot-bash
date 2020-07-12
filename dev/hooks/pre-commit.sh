@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.98-0-g5b5447e
+#### $$VERSION$$ v0.99-dev2-7-ge1084a8
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
@@ -22,9 +22,10 @@ unset IFS; set -f
 
 # check for shellcheck
 if command -v  shellcheck >/dev/null 2>&1; then
-	echo "  Test all scripts with shellcheck ..."
+	echo "Test all scripts with shellcheck ..."
+	echo "............................" 
 else
-	echo "Error: shellcheck is not installed. Install shellcheck or delete $0"
+	echo "Error: shellcheck is not installed. Please install shellcheck"
 	exit 1
 fi
 
@@ -47,6 +48,8 @@ VERSION="$(git describe --tags | sed -e 's/-.*//' -e 's/v//' -e 's/,/./')"
 
 
 # LOCAL version must greater than latest REMOTE release version
+echo "Update Version of modified files" 
+echo "............................" 
 if (( $(echo "${VERSION} >= ${REMOTEVER}" | bc -l) )); then
 	# update version in bashbot files on push
 	set +f
@@ -56,9 +59,21 @@ if (( $(echo "${VERSION} >= ${REMOTEVER}" | bc -l) )); then
 	# shellcheck disable=SC2086
 	dev/version.sh ${LASTFILES} 2>/dev/null || exit 1
 	echo "    OK"
+	echo "............................" 
 else
-	echo "Error: local version ${VERSION} must be greater or equal to release version ${REMOTEVER}."
-        echo "use \"git tag ...\" to create a new local version"
+	echo "Error: local version ${VERSION} must be equal to or greater then release version ${REMOTEVER}."
+        echo "use \"git tag vx.zz\" to create a new local version"
 	exit 1
 fi
+
+if which codespell &>/dev/null; then
+	echo "Running codespell"
+	echo "............................" 
+	codespell -B 1 --skip="*.log,*.html,*.txt,.git*" -L "ba"
+	echo "if there are (to many) typo's shown, consider running:"
+	echo "codespell -i 3 -w --skip=\"*.log,*.html,*.txt,.git*\" -L \"ba\""
+else
+	echo "consider installing codespell: pip install codespell"
+fi
+echo "............................" 
 

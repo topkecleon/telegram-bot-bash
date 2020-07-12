@@ -322,7 +322,7 @@ failed: Connection timed out.
 Since Version 0.96 bashbot offers the option to recover from broken connections 
 (aka blocked). Therefore you can provide a function
 named `bashbotBlockRecover()` in `mycommands.sh`. If the function exists it is 
-called everytime when a broken connection is detected.
+called every time when a broken connection is detected.
 
 Possible actions are: Check if network is working, change IP or simply wait 
 some time.
@@ -348,4 +348,4 @@ bashbotBlockRecover() {
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.99-dev2-5-g4d5b792
+#### $$VERSION$$ v0.99-dev2-6-gb641a18

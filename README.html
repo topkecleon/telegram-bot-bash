@@ -254,7 +254,7 @@ It features background tasks and interactive chats, and can serve as an interfac
 <a class="sourceLine" id="cb6-3" title="3"></a>
 <a class="sourceLine" id="cb6-4" title="4"><span class="fu">wget</span> -t 1 -T 10 https://api.telegram.org/bot</a>
 <a class="sourceLine" id="cb6-5" title="5"><span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></a></code></pre></div>
-<p>Since Version 0.96 bashbot offers the option to recover from broken connections (aka blocked). Therefore you can provide a function named <code>bashbotBlockRecover()</code> in <code>mycommands.sh</code>. If the function exists it is called everytime when a broken connection is detected.</p>
+<p>Since Version 0.96 bashbot offers the option to recover from broken connections (aka blocked). Therefore you can provide a function named <code>bashbotBlockRecover()</code> in <code>mycommands.sh</code>. If the function exists it is called every time when a broken connection is detected.</p>
 <p>Possible actions are: Check if network is working, change IP or simply wait some time.</p>
 <p>If everything seems OK return 0 for retry or any non 0 value to give up.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" title="1"><span class="co"># called when bashbot sedn command failed because we can not connect to telegram</span></a>
@@ -268,6 +268,6 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>@Gnadelwartz</p>
 <h2>That's it!</h2>
 <p>If you feel that there's something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4>$$VERSION$$ v0.99-dev2-5-g4d5b792</h4>
+<h4>$$VERSION$$ v0.99-dev2-6-gb641a18</h4>
 </body>
 </html>
