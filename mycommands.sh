@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.99-dev2-0-g2b10471
+#### $$VERSION$$ v0.99-dev2-1-gef4d21f
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -251,7 +251,7 @@ else
     # called when bashbot sedn command failed because we can not connect to telegram
     # return 0 to retry, return non 0 to give up
     bashbotBlockRecover() {
-	# place your commnds to unblock here, e.g. change IP or simply wait
+	# place your commands to unblock here, e.g. change IP or simply wait
 	sleep 60 && return 0 # may be temporary
 	return 1 
     }

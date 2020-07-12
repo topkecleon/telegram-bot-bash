@@ -295,10 +295,10 @@ export BASHBOT_HOME="$(pwd)"
 source ./bashbot.sh source
 
 # send me a test message
-send_message "$(cat "$BOTADMIN")" "test"
+send_message "$(getConfigKey "botadmin")" "test"
 
 # send me output of a system command
-send_message "$(<"$BOTADMIN")" "$(df -h)"
+send_message "$(getConfigKey "botadmin")" "$(df -h)"
 ```
 For more information see [Expert Use](doc/8_custom.md)
 
@@ -320,6 +320,25 @@ wget -t 1 -T 10 https://api.telegram.org/bot
 failed: Connection timed out.
 ```
 
+Since Version 0.98 bashbot can recover from broken connection to Telegram (aka 
+blocked). therefore you must provide the function
+`bashbotBlockRecover()` in `mycommands.sh`. There you can check e.g. if your 
+connection is working, change IP or simply wait some time.
+
+If everything seems OK return 0 for retry or any non 0 value for abort.
+
+```bash
+# called when bashbot sedn command failed because we can not connect to telegram
+# return 0 to retry, return non 0 to give up
+bashbotBlockRecover() {
+	# place your commands to unblock here, e.g. change IP or simply wait
+	sleep 60 && return 0 # may be temporary
+	return 1 
+    }
+
+```
+ 
+
 @Gnadelwartz
 
 ## That's it!
@@ -327,4 +346,4 @@ failed: Connection timed out.
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.98-0-g5b5447e
+#### $$VERSION$$ v0.99-dev2-1-gef4d21f
