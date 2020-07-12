@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v0.99-dev2-7-ge1084a8
+#### $$VERSION$$ v0.99-dev2-8-g0d3778f
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
@@ -22,8 +22,7 @@ unset IFS; set -f
 
 # check for shellcheck
 if command -v  shellcheck >/dev/null 2>&1; then
-	echo "Test all scripts with shellcheck ..."
-	echo "............................" 
+	echo "Test all scripts with shellcheck"
 else
 	echo "Error: shellcheck is not installed. Please install shellcheck"
 	exit 1
@@ -38,6 +37,7 @@ if [ "$FILES" != "" ]; then
 	# shellcheck disable=SC2086
 	shellcheck -x ${FILES} || exit 1
 	echo "    OK"
+	echo "............................" 
 else
 	# something went wrong
 	exit 1
@@ -49,7 +49,6 @@ VERSION="$(git describe --tags | sed -e 's/-.*//' -e 's/v//' -e 's/,/./')"
 
 # LOCAL version must greater than latest REMOTE release version
 echo "Update Version of modified files" 
-echo "............................" 
 if (( $(echo "${VERSION} >= ${REMOTEVER}" | bc -l) )); then
 	# update version in bashbot files on push
 	set +f
