@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.99-dev2-1-gef4d21f
+#### $$VERSION$$ v0.99-dev2-2-g78088d6
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -55,6 +55,9 @@ export SILENCER="no"
 # uncomment if you want to say welcome to new chat members
 # export WELCOME_NEWMEMBER="yes"
 WELCOME_MSG="Welcome"
+
+# uncomment if you want to be informed about new chat members
+# export REPORT_NEWMEMBER="yes"
 
 # messages for admin only commands
 NOTADMIN="Sorry, this command is allowed for admin or owner only"
@@ -136,6 +139,8 @@ else
 				"${WELCOME_MSG} ${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]} (@${NEWMEMBER[USERNAME]})"
 			    MYSENTID="${BOTSENT[ID]}"
 			    { sleep 5; delete_message  "${CHAT[ID]}" "${MYSENTID}"; } &
+			[ -n "${REPORT_NEWMEMBER}" ] && send_normal_message "$(getConfigKey "botadmin")"\
+			    "New member chat ${CHAT[NAME]} (${CHAT[ID]}): ${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]} (@${NEWMEMBER[USERNAME]})"
 			fi
 			;;
 	esac
