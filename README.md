@@ -235,7 +235,7 @@ wget -t 1 -T 10 https://api.telegram.org/bot
 ```
 
 Since Version 0.96 bashbot offers the option to recover from broken connections (aka blocked). Therefore you can provide a function
-named `bashbotBlockRecover()` in `mycommands.sh`. If the function exists it is called everytime when a broken connection is detected.
+named `bashbotBlockRecover()` in `mycommands.sh`. If the function exists it is called every time when a broken connection is detected.
 
 Possible actions are: Check if network is working, change IP or simply wait some time.
 
