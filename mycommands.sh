@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.99-dev2-4-g80b94f4
+#### $$VERSION$$ v0.99-dev2-10-g3a658ea
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -111,6 +111,8 @@ else
 			;;&
 	esac
 
+	# fix first letter upper case because of smartphone auto correction
+	[[ "${MESSAGE}" =~  ^/[[:upper:]] ]] && MESSAGE="${MESSAGE:0:1}$(tr '[:upper:]' '[:lower:]' <<<"${MESSAGE:1:1}")${MESSAGE:2}"
 	# pre-check admin only commands  
 	case "${MESSAGE}" in
 		# must be private, group admin, or botadmin
