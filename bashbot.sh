@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.99-dev2-0-g2b10471
+#### $$VERSION$$ v0.99-dev2-11-gc5ce29a
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -778,7 +778,7 @@ process_inline() {
 process_message() {
 	local num="$1"
 	# Message
-	MESSAGE[0]+="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's#\\/#/#g')"
+	MESSAGE[0]+="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's|\\/|/|g')"
 	MESSAGE[ID]="${UPD["result",${num},"message","message_id"]}"
 
 	# Chat ID is now parsed when update isreceived
