@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.99-dev2-11-gc5ce29a
+#### $$VERSION$$ v0.99-dev2-12-g2dc1f38
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -1125,7 +1125,22 @@ if [ -z "${SOURCE}" ]; then
 		do
 			(( MESSAGES+=MSG ))
 		done
-		echo "A total of ${MESSAGES} messages from ${USERS} users are processed."
+		if [ "${USERS}" != "" ]; then
+			echo "A total of ${MESSAGES} messages from ${USERS} users are processed."
+		else
+			echo "No one used your bot so far ..."
+		fi
+		jssh_readDB_async "STATS" "${BLOCKEDFILE}"
+		for MSG in ${!STATS[*]}
+		do
+			[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
+			(( BLOCKS++ ))
+		done
+		if [ "${BLOCKS}" != "" ]; then
+			echo -e "Note: ${BLOCKS} users are blocked by your bot:${GREY}"
+			sort -r "${BLOCKEDFILE}.jssh"
+			echo -e "${NC}\c"
+		fi
 		debug_checks "end $1" "$@"
 		exit
 		;;
