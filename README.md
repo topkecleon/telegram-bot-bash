@@ -64,7 +64,7 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
 
 ### Your really first bashbot in a nutshell
 
-To install and run bashbot you need access to a linux/unix command line. If you don't know how to get access to a linux/unixe command line you should stop reading here :-(
+To install and run bashbot you need access to a linux/unix command line. If you don't know how to get access to a linux/unix command line you should stop reading here :-(
 
 In addition you need a [Telegram client](https://telegram.org) and a mobile phone to [register an account](https://telegramguide.com/create-a-telegram-account/).
 If you don't want to register for Telegram you should stop reading here ;-)
@@ -259,4 +259,4 @@ bashbotBlockRecover() {
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v0.99-dev2-14-g6e02423
+#### $$VERSION$$ v0.99-dev2-15-gf3bb5d9
