@@ -3,10 +3,10 @@ src="https://raw.githubusercontent.com/odb/official-bash-logo/master/assets/Logo
 s/Icons/PNG/64x64.png" >
 Bashbot - A Telegram bot written in bash.
 </h2>
-Written by Drew (@topkecleon), Daniil Gentili (@danogentili), and Kay M 
-(@gnadelwartz).
+Written by Drew (@topkecleon) and Kay M (@gnadelwartz).
 
-Contributions by JuanPotato, BigNerd95, TiagoDanin, and iicc1.
+Contributions by Daniil Gentili (@danogentili), JuanPotato, BigNerd95, 
+TiagoDanin, and iicc1.
 
 Released to the public domain wherever applicable.
 Elsewhere, consider it released under the 
@@ -78,8 +78,8 @@ available on www.github.com
 ### Your really first bashbot in a nutshell
 
 To install and run bashbot you need access to a linux/unix command line. If you 
-don't know how to get access to a linux/unix/bsd like command line you should 
-stop reading here :-(
+don't know how to get access to a linux/unixe command line you should stop 
+reading here :-(
 
 In addition you need a [Telegram client](https://telegram.org) and a mobile 
 phone to [register an 
@@ -91,12 +91,12 @@ After you're registered to Telegram send a message to
 [create a new Telegram Bot token](doc/1_firstbot.md) and write it down. You 
 need the token to install the bot.
 
-Now open a linux/unix/bsd terminal and check if bash is installed: ```which 
-bash && echo "bash installed!"```.
+Now open a terminal and check if bash is installed: ```which bash && echo "bash 
+installed!"```.
 If you get an error message bash is not installed.
 
-Create a new directory and change to it:  ```mkdir tbb; cd tbb``` and download 
-the latest '*.tar.gz' file from
+Create a new directory, change to it:  ```mkdir tbb; cd tbb``` and download the 
+latest '*.tar.gz' file from
 [https://github.com/topkecleon/telegram-bot-bash/releases](https://github.com/to
 pkecleon/telegram-bot-bash/releases). This can be done with the commands:
 ```bash
@@ -162,35 +162,35 @@ and globbing, see [Implications of wrong
 quoting](https://unix.stackexchange.com/questions/171346/security-implications-o
 f-forgetting-to-quote-a-variable-in-bash-posix-shells)
 
-Whenever you are processing input from from untrusted sources (messages, files, 
+Whenever you are processing input from untrusted sources (messages, files, 
 network) you must be as careful as possible, e.g. set IFS appropriate, disable 
 globbing (set -f) and quote everything. In addition delete unused scripts and 
 examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable 
 all not used commands.
 
 **Note:** Until v0.941 (mai/22/2020) telegram-bot-bash had a remote code 
-execution (RCE) bug, pls update if you use an older version!
+execution (RCE) bug, please update if you use an older version!
 see [Issue #125](https://github.com/topkecleon/telegram-bot-bash/issues/125)
 
-One of the most powerful features of unix shells like bash is variable and 
-command substitution using ```${}``` and ```$()```,
+One of the most powerful features of unix shells is variable and command 
+substitution using ```${}``` and ```$()```,
 but as they are expanded in double quotes, this can lead to RCE and information 
-disclosing bugs in complex scripts like bashbot
-even bash does much to avoid this. So it's more secure to escape or remove '$' 
-in input from user, files or network.
+disclosing bugs in complex scripts like bashbot.
+So it's more secure to escape or remove '$' in input from user, files or 
+network.
 
 A powerful tool to improve your scripts is ```shellcheck```. You can [use it 
 online](https://www.shellcheck.net/) or [install shellcheck 
 locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used 
-extensive in bashbot development to enshure a high code quality, e.g. it's not 
+extensive in bashbot development to ensure a high code quality, e.g. it's not 
 allowed to push changes without passing all shellcheck tests.
 In addition bashbot has a [test suite](doc/7_develop.md) to check if important 
 functionality is working as expected.
 
-### use printf whenever possible
+### Use printf whenever possible
 
 If you're writing a script and it is taking external input (from the user as 
-arguments, or file names from the file system...),
+arguments or file system...),
 you shouldn't use echo to display it. [Use printf whenever 
 possible](https://unix.stackexchange.com/a/6581)
 
@@ -215,8 +215,8 @@ possible](https://unix.stackexchange.com/a/6581)
 **We stay with /bin/bash shebang, because it's more save from security 
 perspective.**
 
-Using a fixed path to the system provided bash makes it harder for attackers or 
-users to place alternative versions of bash
+Use of a fixed path to the system provided bash makes it harder for attackers 
+or users to place alternative versions of bash
 and avoids using a possibly broken, mangled or compromised bash executable. 
 
 If you are a BSD /  MacOS user or must to use an other bash location, see 
@@ -227,20 +227,20 @@ If you are a BSD /  MacOS user or must to use an other bash location, see
 All files your Bot have write access to are in danger to be overwritten/deleted 
 if your bot is hacked.
 For the same reason every file your Bot can read is in danger to be disclosed. 
-Restict your Bots access rights to the absolute minimum.
+Restrict your Bots access rights to the absolute minimum.
 
 **Never run your Bot as root, this is the most dangerous you can do!** Usually 
-the user 'nobody' has almost no rights on Unix/Linux systems. See [Expert 
+the user 'nobody' has almost no rights on unix/linux systems. See [Expert 
 use](doc/4_expert.md) on how to run your Bot as an other user.
 
 ### Secure your Bot installation
 **Your Bot configuration must no be readable from other users.** Everyone who 
-can read your Bots token can act as your Bot and has access to all chats your 
-Bot is in!
+can read your Bots token is able to act as your Bot and has access to all chats 
+the Bot is in!
 
 Everyone with read access to your Bot files can extract your Bots data. 
 Especially your Bot Token in ```token``` must be protected against other users. 
-No one except you must have write access to the Bot files. The Bot must be 
+No one except you should have write access to the Bot files. The Bot should be 
 restricted to have write access to ```count``` and  ```tmp-bot-bash``` only, 
 all other files must be write protected.
 
@@ -251,23 +251,23 @@ directory.
 ## FAQ
 
 ### Is this Bot insecure?
-Bashbot is not more (in)secure as any other Bot written in any other language, 
-we have done our best to make it as secure as possible. But YOU are responsible 
-for the bot commands you wrote and you should know about the risks ...
+Bashbot is not more (in)secure as any Bot written in an other language, we have 
+done our best to make it as secure as possible. But YOU are responsible for the 
+bot commands you wrote and you should know about the risks ...
 
 **Note:** Until v0.941 (mai/22/2020) telegram-bot-bash has a remote code 
-execution bug, pls update if you use an older version!
+execution bug, please update if you use an older version!
 
 ### Why Bash and not the much better xyz?
-Well, that's a damn good question ... may be because I'm an Unix/Linux admin 
-from stone age. Nevertheless there are more reasons from my side:
+Well, that's a damn good question ... may be because I'm an unix admin from 
+stone age. Nevertheless there are more reasons from my side:
 
 - bashbot will run everywhere where bash and (gnu) sed is available, from 
 embedded linux to mainframe
 - easy to integrate with other shell script, e.g. for sending system message / 
 health status
 - no need to install or learn a new programming language, library or framework
-- no database, not event driven, not OO ...
+- no database, not event driven, not object oriented ...
 
 ### Can I have the single bashbot.sh file back?
 At the beginning bashbot was simply the file ```bashbot.sh``` you can copy 
@@ -324,8 +324,8 @@ Since Version 0.96 bashbot offers the option to recover from broken connections
 named `bashbotBlockRecover()` in `mycommands.sh`. If the function exists it is 
 called every time when a broken connection is detected.
 
-Possible actions are: Check if network is working, change IP or simply wait 
-some time.
+Possible actions are: Check if network is working, change IP-Adress or simply 
+wait some time.
 
 If everything seems OK return 0 for retry or any non 0 value to give up.
 
@@ -333,7 +333,8 @@ If everything seems OK return 0 for retry or any non 0 value to give up.
 # called when bashbot sedn command failed because we can not connect to telegram
 # return 0 to retry, return non 0 to give up
 bashbotBlockRecover() {
-	# place your commands to unblock here, e.g. change IP or simply wait
+	# place your commands to unblock here, e.g. change IP-Adess or simply 
+wait
 	sleep 60 && return 0 # may be temporary
 	return 1 
     }
@@ -348,4 +349,4 @@ bashbotBlockRecover() {
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.99-dev2-6-gb641a18
+#### $$VERSION$$ v0.99-dev2-14-g6e02423
