@@ -1,5 +1,5 @@
 #### [Home](../README.md)
-## Create a Telegram Bot with botfather
+## Create a Telegram Bot with Botfather
 **[BotFather is the one bot to rule them all](https://core.telegram.org/bots#3-how-do-i-create-a-bot). It will help you create new bots and change settings for existing ones.** [Commands known by Botfather](https://core.telegram.org/bots#generating-an-authorization-token)
 
 ### Creating a new Bot
@@ -9,7 +9,7 @@ text: `/newbot`
    If you don't know how to message by username, click the search
 field on your Telegram app and type `@botfather`, you should be able
 to initiate a conversation. Be careful not to send it to the wrong
-contact, because some users has similar usernames to `botfather`.
+contact, because there are users with a similar username.
 
    ![botfather initial conversation](http://i.imgur.com/aI26ixR.png)
 
@@ -65,5 +65,5 @@ group. This step is up to you actually.
 #### [Prev Installation](0_install.md)
 #### [Next Getting started](2_usage.md)
 
-#### $$VERSION$$ v0.98-0-g5b5447e
+#### $$VERSION$$ v0.99-dev2-16-g50e661a
 
