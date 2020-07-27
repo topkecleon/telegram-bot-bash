@@ -12,6 +12,8 @@ Released to the public domain wherever applicable.
 Elsewhere, consider it released under the 
 [WTFPLv2](http://www.wtfpl.net/txt/copying/).
 
+Linted by [#ShellCheck](https://github.com/koalaman/shellcheck)
+
 ## Prerequisites
 Uses [JSON.sh](http://github.com/dominictarr/JSON.sh) and the magic of sed.
 
@@ -349,4 +351,4 @@ wait
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v0.99-dev2-15-gf3bb5d9
+#### $$VERSION$$ v0.99-dev2-17-g38a6198
