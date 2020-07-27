@@ -131,5 +131,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v0.99-dev2-16-g50e661a
+#### $$VERSION$$ 0.99-0-g2775000
 

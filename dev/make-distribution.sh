@@ -2,7 +2,7 @@
 # file: make-distribution.sh
 # creates files and arcchives to dirtribute bashbot
 #
-#### $$VERSION$$ v0.98-0-g5b5447e
+#### $$VERSION$$ 0.99-0-g2775000
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script

@@ -381,5 +381,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v0.98-0-g5b5447e
+#### $$VERSION$$ 0.99-0-g2775000
 
