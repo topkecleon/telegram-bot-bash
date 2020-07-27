@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v0.98-2-g2d48670
+#### $$VERSION$$ 0.99-0-g2775000
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -55,6 +55,10 @@ export SILENCER="no"
 # uncomment if you want to say welcome to new chat members
 # export WELCOME_NEWMEMBER="yes"
 WELCOME_MSG="Welcome"
+
+# uncomment if you want to be informed about new/left chat members
+# export REPORT_NEWMEMBER="yes"
+# export REPORT_LEFTMEMBER="yes"
 
 # messages for admin only commands
 NOTADMIN="Sorry, this command is allowed for admin or owner only"
@@ -107,6 +111,8 @@ else
 			;;&
 	esac
 
+	# fix first letter upper case because of smartphone auto correction
+	[[ "${MESSAGE}" =~  ^/[[:upper:]] ]] && MESSAGE="${MESSAGE:0:1}$(tr '[:upper:]' '[:lower:]' <<<"${MESSAGE:1:1}")${MESSAGE:2}"
 	# pre-check admin only commands  
 	case "${MESSAGE}" in
 		# must be private, group admin, or botadmin
@@ -136,7 +142,13 @@ else
 				"${WELCOME_MSG} ${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]} (@${NEWMEMBER[USERNAME]})"
 			    MYSENTID="${BOTSENT[ID]}"
 			    { sleep 5; delete_message  "${CHAT[ID]}" "${MYSENTID}"; } &
+			[ -n "${REPORT_NEWMEMBER}" ] && send_normal_message "$(getConfigKey "botadmin")"\
+			    "New member: ${CHAT[TITLE]} (${CHAT[ID]}): ${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]} (@${NEWMEMBER[USERNAME]})"
 			fi
+			;;
+		'/_left_chat_member'*)
+			[ -n "${REPORT_LEFTMEMBER}" ] && send_normal_message "$(getConfigKey "botadmin")"\
+			    "Left member: ${CHAT[TITLE]} (${CHAT[ID]}): ${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]} (@${NEWMEMBER[USERNAME]})"
 			;;
 	esac
 
@@ -246,6 +258,14 @@ else
     my_debug_checks() {
 	# example check because my bot created a wrong file
 	[ -f ".jssh" ] && printf "%s: %s\n" "${1}" "Ups, found file \"${PWD:-.}/.jssh\"! =========="
+    }
+
+    # called when bashbot sedn command failed because we can not connect to telegram
+    # return 0 to retry, return non 0 to give up
+    bashbotBlockRecover() {
+	# place your commands to unblock here, e.g. change IP or simply wait
+	sleep 60 && return 0 # may be temporary
+	return 1 
     }
 
     # place your processing functions here

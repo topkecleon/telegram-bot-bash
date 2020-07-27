@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v0.981-0-g3552876
+#### $$VERSION$$ 0.99-0-g2775000
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -381,7 +381,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
   [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
   # simple curl or wget call, output to stdout
   getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -n "${3}" ]] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}" 1>&2
+	[[ -n "${BASHBOTDEBUG}" && -n "${3}" ]] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}" >>"${DEBUGLOG}"
 	# shellcheck disable=SC2086
 	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
   }
@@ -389,7 +389,8 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
   sendJson(){
 	local chat="";
 	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
-	[ -n "${BASHBOTDEBUG}" ] && printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" 1>&2
+	[ -n "${BASHBOTDEBUG}" ] &&\
+		printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${DEBUGLOG}"
 	# shellcheck disable=SC2086
 	res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
 		-d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
@@ -401,7 +402,8 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
   sendUpload() {
 	[ "$#" -lt 4  ] && return
 	if [ -n "$5" ]; then
-	[ -n "${BASHBOTDEBUG}" ] && printf "%s: sendUpload CHAT=%s WHAT=%s  FILE=%s CAPT=%s\n" "$(date)" "${1}" "${2}" "${3}" "${4}" 1>&2
+	[ -n "${BASHBOTDEBUG}" ] &&\
+		printf "%s: sendUpload CHAT=%s WHAT=%s  FILE=%s CAPT=%s\n" "$(date)" "${1}" "${2}" "${3}" "${4}" >>"${DEBUGLOG}"
 	# shellcheck disable=SC2086
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
@@ -416,7 +418,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 else
   # simple curl or wget call outputs result to stdout
   getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && printf "%s: getJson (wget) URL=%s\n" "$(date)" "${1##*/}" 1>&2
+	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && printf "%s: getJson (wget) URL=%s\n" "$(date)" "${1##*/}" >>"${DEBUGLOG}"
 	# shellcheck disable=SC2086
 	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
   }
@@ -424,7 +426,8 @@ else
   sendJson(){
 	local chat="";
 	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
-	[ -n "${BASHBOTDEBUG}" ] && printf "%s: sendJson (wget) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" 1>&2
+	[ -n "${BASHBOTDEBUG}" ] &&\
+		printf "%s: sendJson (wget) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${DEBUGLOG}"
 	# shellcheck disable=SC2086
 	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
@@ -496,7 +499,7 @@ sendJsonResult(){
 	    # OK, we can retry sendJson, let's see what's failed
 	    # throttled, telegram say we send to much messages
 	    if [ -n "${BOTSENT[RETRY]}" ]; then
-		BASHBOT_RETRY="$(( BOTSENT[RETRY]++ ))"
+		BASHBOT_RETRY="$(( ++BOTSENT[RETRY] ))"
 		printf "Retry %s in %s seconds ...\n" "${2}" "${BASHBOT_RETRY}"
 		sendJsonRetry "${2}" "${BASHBOT_RETRY}" "${@:3}"
 		unset BASHBOT_RETRY
@@ -506,7 +509,7 @@ sendJsonResult(){
 	    if [ "${BOTSENT[ERROR]}" == "999" ];then
 		# check if default curl and args are OK
 		if ! curl -sL -k -m 2 "${URL}" >/dev/null 2>&1 ; then
-		    printf "%s: BASHBOT IP Address is blocked!\n" "$(date)"
+		    printf "%s: BASHBOT IP Address seems blocked!\n" "$(date)"
 		    # user provided function to recover or notify block
 		    if _exec_if_function bashbotBlockRecover; then
 			BASHBOT_RETRY="2"
@@ -778,7 +781,7 @@ process_inline() {
 process_message() {
 	local num="$1"
 	# Message
-	MESSAGE[0]+="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's#\\/#/#g')"
+	MESSAGE[0]+="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's|\\/|/|g')"
 	MESSAGE[ID]="${UPD["result",${num},"message","message_id"]}"
 
 	# Chat ID is now parsed when update isreceived
@@ -1125,7 +1128,22 @@ if [ -z "${SOURCE}" ]; then
 		do
 			(( MESSAGES+=MSG ))
 		done
-		echo "A total of ${MESSAGES} messages from ${USERS} users are processed."
+		if [ "${USERS}" != "" ]; then
+			echo "A total of ${MESSAGES} messages from ${USERS} users are processed."
+		else
+			echo "No one used your bot so far ..."
+		fi
+		jssh_readDB_async "STATS" "${BLOCKEDFILE}"
+		for MSG in ${!STATS[*]}
+		do
+			[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
+			(( BLOCKS++ ))
+		done
+		if [ "${BLOCKS}" != "" ]; then
+			echo -e "Note: ${BLOCKS} users are blocked by your bot:${GREY}"
+			sort -r "${BLOCKEDFILE}.jssh"
+			echo -e "${NC}\c"
+		fi
 		debug_checks "end $1" "$@"
 		exit
 		;;

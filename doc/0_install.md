@@ -15,7 +15,7 @@ Now your Bot is ready to start ...
 
 **If you are new to Bot development read [Bots: An introduction for developers](https://core.telegram.org/bots)**
 
-### Install from Github
+### Install from github
 
 As an alternative to download the zip files, you can clone the github repository to get the latest improvements/fixes.
 
@@ -63,7 +63,7 @@ BSD/MacOS sed compatibility will result in a rewrite of all grep/sed commands wi
 see [BSD/MacOS vs. GNU sed](https://riptutorial.com/sed/topic/9436/bsd-macos-sed-vs--gnu-sed-vs--the-posix-sed-specification)
 to get an impression how different they are.
 
-If you are a sed guru and can convert the following examples to work correct with gnu and BSD sed, contact me.
+If you can convert the following examples to work correct with gnu and BSD sed, contact me.
 
 ```bash
   # easy start
@@ -131,5 +131,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v0.98-0-g5b5447e
+#### $$VERSION$$ 0.99-0-g2775000
 

@@ -6,7 +6,6 @@ Bashbot offers functions to check what Telegram capabilities like 'chat admin' o
 
 ```bash
 # return true if user is admin/owner of the bot
-# -> botadmin is stored in file './botadmin'
 user_is_botadmin "user"  
 
 # return true if user is creator or admin of a chat
@@ -289,5 +288,5 @@ Note: If you disable automatic retry, se above, you disable also connection prob
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v0.98-0-g5b5447e
+#### $$VERSION$$ 0.99-0-g2775000
 
