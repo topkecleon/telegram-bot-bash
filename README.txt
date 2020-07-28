@@ -241,9 +241,9 @@ can read your Bots token is able to act as your Bot and has access to all chats
 the Bot is in!
 
 Everyone with read access to your Bot files can extract your Bots data. 
-Especially your Bot config in ```vorconfig.jssh``` must be protected against 
-other users. No one except you should have write access to the Bot files. The 
-Bot should be restricted to have write access to ```count.jssh``` and  
+Especially your Bot config in ```config.jssh``` must be protected against other 
+users. No one except you should have write access to the Bot files. The Bot 
+should be restricted to have write access to ```count.jssh``` and  
 ```data-bot-bash``` only, all other files must be write protected.
 
 To set access rights for your bashbot installation to a reasonable default run 
@@ -351,4 +351,4 @@ wait
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ 0.99-1-g3daf84d
+#### $$VERSION$$ 0.99-2-gacf9d84
