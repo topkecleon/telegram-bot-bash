@@ -10,7 +10,9 @@ In addition you should know about [BotFather, the one bot to rule them all](http
 If you don't have a github account, it may time to [setup a free account now](https://github.com/pricing)
 
 ### Add commands to mycommands.sh only
-To ease updates never change ```bashbot.sh```, instead your commands and functions must go to  ```mycommands.sh``` .  Insert your Bot commands in the ```case ... esac``` block of the 'mycommands()' function:
+Do not change ```bashbot.sh``` and ```commands.sh```, instead place your commands in to  ```mycommands.sh```.
+To start with a clean/minimal bot copy ```mycommands.sh.clean``` to ```mycommands.sh``` and start editing
+the message strings and place commands in the```case ... esac``` block of the function mycommands():
 ```bash
 # file: mycommands.sh
 # your additional bahsbot commands
@@ -35,33 +37,37 @@ mycommands() {
 }
 ```
 
-### Overwrite, extend and disable global commands
+### DIsable, replace and extend global commands
 
-You can overwrite a global bashbot command by placing the same commands in ```mycommands.sh``` and add ```return 1```
-ad the end of your command, see '/kickme' below.
+Global bashbot command processing, e.g. /start, /info etc. is disabled if you return a non zero value from ```mycommands.sh```,
+see /start example below.
 
-To disable a global bashbot command place create a command simply containing 'return 1', see '/leave' below.
+To replace a global bashbot command add the same command to ```mycommands.sh``` and place ```return 1``` at the end of
+the case block, see /kickme example below.
 
-In case you want to add some processing to the global bashbot command add ```return 0```, then both command will be executed.
+If a command is available as a global command and in ```mycommands.sh```, plus you return a zero value (nothing or 0)
+both command sections are processed. Thus you can extend global commands with additional actions, see /info example below
 
 **Learn more about [Bot commands](https://core.telegram.org/bots#commands).**
 
 ```bash
-# file: commands.sh
+# file: mycommands.sh
 
 	case "$MESSAGE" in
 		##########
-		# command overwrite examples
-		'info'*) # output date in front of regular info
-			send_normal_message "${CHAT[ID]}" "$(date)"
-			return 0
+		# disable start command
+		'/start'*) # disable all commands starting with leave
+			return 1
 			;;
+		# replace command with your own actions
 		'/kickme'*) # this will replace the /kickme command
 			send_markdown_mesage "${CHAT[ID]}" "*This bot will not kick you!*"
 			return 1
 			;;
-		'/leave'*) # disable all commands starting with leave
-			return 1
+		# extend global command
+		'/info'*) # output date in front of regular info
+			send_normal_message "${CHAT[ID]}" "$(date)"
+			return 0
 			;;
 	esac
 ```
@@ -152,5 +158,5 @@ The second warning is about an unused variable, this is true because in our exam
 #### [Prev Best Practice](5_practice.md)
 #### [Next Functions Reference](6_reference.md)
 
-#### $$VERSION$$ 0.99-0-g2775000
+#### $$VERSION$$ 0.99-1-g3daf84d
 

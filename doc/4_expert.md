@@ -136,29 +136,27 @@ If you have sourced 'bashbot.sh' you have the following bashot internal variable
 ```bash
 COMMANDS	# default: ./commands.sh"
 MODULEDIR	# default: ./modules"
-TOKENFILE	# default: ./token"
-BOTADMIN	# default: ./botadmin"
 BOTACL		# default: ./botacl"
 TMPDIR		# default: ./data-bot-bash"
-COUNTFILE	# default: ./count"
+COUNTFILE	# default: ./count" (jsonDB file)
 
-BOTTOKEN	# default: content of ${TOKENFILE}
+BOTTOKEN	# your token read from bot config
 URL		# telegram api URL - default: https://api.telegram.org/bot${BOTTOKEN}"
 ```
 
 #### Interactive use
-For testing your setup or sending messages yoursel you can use bashbot functions from bash command line:
+For testing your setup or sending messages yourself its possible to  use bashbot functions from command line:
 ```bash
 # are we running bash?
 echo $SHELL
 /bin/bash
 
 # source bashbot.sh WITHOUT BASHBOT_HOME set
-./bashbot.sh source
+source ./bashbot.sh source
 
 # output bashbot internal variables
-echo $COMMANDS $MODULEDIR $TOKENFILE $BOTADMIN $BOTACL $TMPDIR $COUNTFILE
-./commands.sh ./modules ./token ./botadmin ./botacl ./data-bot-bash ./count
+echo $COMMANDS $MODULEDIR  $BOTACL $TMPDIR $COUNTFILE
+./commands.sh ./modules  ./botacl ./data-bot-bash ./count
 
 
 # source bashbot.sh WITH BASHBOT_HOME set
@@ -166,9 +164,9 @@ export BASHBOT_HOME=/usr/local/telegram-bot-bash
 source ./bashbot.sh source
 
 # output bashbot internal variables
-echo $COMMANDS $MODULEDIR $TOKENFILE $BOTADMIN $BOTACL $TMPDIR $COUNTFILE
-/usr/local/telegram-bot-bash/commands.sh /usr/local/telegram-bot-bash/modules /usr/local/telegram-bot-bash/token
-/usr/local/telegram-bot-bash/botadmin /usr/local/telegram-bot-bash/botacl /usr/local/telegram-bot-bash/data-bot-bash
+echo $COMMANDS $MODULEDIR $BOTACL $TMPDIR $COUNTFILE
+/usr/local/telegram-bot-bash/commands.sh /usr/local/telegram-bot-bash/modules 
+/usr/local/telegram-bot-bash/botacl /usr/local/telegram-bot-bash/data-bot-bash
 /usr/local/telegram-bot-bash/count
 
 ``` 
@@ -178,24 +176,24 @@ User or Chat you are in. See [Send Messages](2_usage.md#sending-messages).
 *Examples:* You can test this by sending messages to yourself:
 ```bash
 # fist Hello World
-send_normal_message "$(< $BOTADMIN)"  "Hello World! This is my first message"
+send_normal_message "$(getConfigKey "botadmin")"  "Hello World! This is my first message"
 
 # now with some markdown and  HTML
-send_markdown_message 	"$(< $BOTADMIN)"  '*Hello World!* _This is my first markdown message_'
-send_html_message	"$(< $BOTADMIN)"  '<b>Hello World!</b> <em>This is my first HTML message</em>'
-send_keyboard "$(< $BOTADMIN)"  'Do you like it?' '[ "Yep" , "No" ]'
+send_markdown_message 	"$(getConfigKey "botadmin")"  '*Hello World!* _This is my first markdown message_'
+send_html_message	"$(getConfigKey "botadmin")"  '<b>Hello World!</b> <em>This is my first HTML message</em>'
+send_keyboard "$(getConfigKey "botadmin")"  'Do you like it?' '[ "Yep" , "No" ]'
 ```
 Now something more useful ...
 ```bash
 # sending output from system commands:
-send_normal_message	"$(< $BOTADMIN)"  "$(date)"
+send_normal_message	"$(getConfigKey "botadmin")"  "$(date)"
 
-send_normal_message	"$(< $BOTADMIN)"  "$(uptime)"
+send_normal_message	"$(getConfigKey "botadmin")"  "$(uptime)"
 
-send_normal_message       "$(< $BOTADMIN)"  '`'$(free)'`'
+send_normal_message       "$(getConfigKey "botadmin")"  '`'$(free)'`'
 
 # same but markdown style 'code' (monospaced)
-send_markdown_message	"$(< $BOTADMIN)"  "\`$(free)\`"
+send_markdown_message	"$(getConfigKey "botadmin")"  "\`$(free)\`"
 ```
 
 
@@ -211,7 +209,7 @@ If you want to have other locations for config, data etc,  define and export the
 **Note: all specified directories and files must exist or running 'bashbot.sh' will fail.**
 
 ##### BASHBOT_ETC
-Location of the files ```commands.sh```, ```mycommands.sh```, ```token```, ```botadmin```, ```botacl``` ...
+Location of the files ```commands.sh```, ```mycommands.sh```, ```botconfig.jssh```, ```botacl``` ...
 ```bash
   unset  BASHBOT_ETC     # keep in telegram-bot-bash (default)
   export BASHBOT_ETC ""  # keep in telegram-bot-bash
@@ -225,7 +223,7 @@ Location of the files ```commands.sh```, ```mycommands.sh```, ```token```, ```bo
  e.g. /etc/bashbot
 
 ##### BASHBOT_VAR
-Location of runtime data ```data-bot-bash```, ```count``` 
+Location of runtime data ```data-bot-bash```, ```count.jssh``` 
 ```bash
   unset  BASHBOT_VAR     # keep in telegram-bot-bash (default)
   export BASHBOT_VAR ""  # keep in telegram-bot-bash
@@ -338,7 +336,6 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 ```
 
 #### Tested configs as of v0.90 release
-**Note: Environment variables are not stored, you must setup them before every call to bashbot.sh, e.g. from a script.**
 
 ##### simple Unix like config, for one bot. bashbot is installed in '/usr/local/telegram-bot-bash'
 ```bash
@@ -381,5 +378,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ 0.99-0-g2775000
+#### $$VERSION$$ 0.99-1-g3daf84d
 

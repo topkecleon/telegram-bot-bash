@@ -129,7 +129,7 @@ Bash scripts in general are not designed to be bullet proof, so consider this Bo
 
 Whenever you are processing input from untrusted sources (messages, files, network) you must be as careful as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everything. In addition delete unused scripts and examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable all not used commands.
 
-**Note:** Until v0.941 (mai/22/2020) telegram-bot-bash had a remote code execution (RCE) bug, please update if you use an older version!
+**Note:** Up to version v0.941 (mai/22/2020) telegram-bot-bash had a remote code execution (RCE) bug, please update if you use an older version!
 see [Issue #125](https://github.com/topkecleon/telegram-bot-bash/issues/125)
 
 One of the most powerful features of unix shells is variable and command substitution using ```${}``` and ```$()```,
@@ -178,7 +178,7 @@ For the same reason every file your Bot can read is in danger to be disclosed. R
 ### Secure your Bot installation
 **Your Bot configuration must no be readable from other users.** Everyone who can read your Bots token is able to act as your Bot and has access to all chats the Bot is in!
 
-Everyone with read access to your Bot files can extract your Bots data. Especially your Bot Token in ```token``` must be protected against other users. No one except you should have write access to the Bot files. The Bot should be restricted to have write access to ```count``` and  ```tmp-bot-bash``` only, all other files must be write protected.
+Everyone with read access to your Bot files can extract your Bots data. Especially your Bot config in ```vorconfig.jssh``` must be protected against other users. No one except you should have write access to the Bot files. The Bot should be restricted to have write access to ```count.jssh``` and  ```data-bot-bash``` only, all other files must be write protected.
 
 To set access rights for your bashbot installation to a reasonable default run ```sudo ./bashbot.sh init``` after every update or change to your installation directory.
 
@@ -187,7 +187,7 @@ To set access rights for your bashbot installation to a reasonable default run `
 ### Is this Bot insecure?
 Bashbot is not more (in)secure as any Bot written in an other language, we have done our best to make it as secure as possible. But YOU are responsible for the bot commands you wrote and you should know about the risks ...
 
-**Note:** Until v0.941 (mai/22/2020) telegram-bot-bash has a remote code execution bug, please update if you use an older version!
+**Note:** Up to version 0.941 (mai/22/2020) telegram-bot-bash had a remote code execution bug, please update if you use an older version!
 
 ### Why Bash and not the much better xyz?
 Well, that's a damn good question ... may be because I'm an unix admin from stone age. Nevertheless there are more reasons from my side:
@@ -205,7 +205,7 @@ Hey no Problem, if you are finished with your cool bot run ```dev/make-standalon
 
 ### Can I send messages from CLI and scripts?
 Of course, you can send messages from CLI and scripts, simply install bashbot as [described here](#Your-really-first-bashbot-in-a-nutshell),
-send the message '/start' to set yourself as botadmin and stop the bot with ```./bashbot.sh kill```.
+send the message '/start' to set yourself as botadmin and stop the bot with ```./bashbot.sh stop```.
 
 Run the following commands in your bash shell or script while you are in the installation directory:
 
@@ -261,4 +261,4 @@ bashbotBlockRecover() {
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ 0.99-0-g2775000
+#### $$VERSION$$ 0.99-1-g3daf84d
