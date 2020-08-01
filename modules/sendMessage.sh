@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.99-0-g2775000
+#### $$VERSION$$ 0.99-3-gc9e5c0f
 
 # will be automatically sourced from bashbot
 
@@ -46,6 +46,7 @@ send_normal_message() {
 
 send_markdown_message() {
 	local text; text="$(JsonEscape "${2}")"
+	[ "${#text}" -le 4096 ] && log_error "Warning: markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	until [ -z "${text}" ]; do
 		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdown"' "${MSG_URL}"
 		text="${text:4096}"
@@ -54,6 +55,7 @@ send_markdown_message() {
 
 send_markdownv2_message() {
 	local text; text="$(JsonEscape "${2}")"
+	[ "${#text}" -le 4096 ] && log_error "Warning: markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	# markdown v2 needs additional double escaping!
 	text="$(sed -E -e 's|([#{}()!.-])|\\\1|g' <<< "$text")"
 	until [ -z "${text}" ]; do
@@ -64,6 +66,7 @@ send_markdownv2_message() {
 
 send_html_message() {
 	local text; text="$(JsonEscape "${2}")"
+	[ "${#text}" -le 4096 ] && log_error "Warning: html message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	until [ -z "${text}" ]; do
 		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"html"' "${MSG_URL}"
 		text="${text:4096}"
