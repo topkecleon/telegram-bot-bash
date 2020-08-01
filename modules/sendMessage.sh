@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.99-3-gc9e5c0f
+#### $$VERSION$$ 0.99-4-g15eb311
 
 # will be automatically sourced from bashbot
 

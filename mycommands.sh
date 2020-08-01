@@ -3,12 +3,12 @@
 #
 # files: mycommands.sh.dist
 #
-# this is an out of the box test and example file to show what you can do in mycommands.sh
+# this is an out of the box test and example file to show what's possible in mycommands.sh
 #
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ 0.99-0-g2775000
+#### $$VERSION$$ 0.99-4-g15eb311
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -24,45 +24,50 @@ export INLINE="0"
 # Set to .* to allow sending files from all locations
 # NOTE: this is a regex, not shell globbing! you must use a valid egex,
 # '.' matches any character and '.*' matches all remaining charatcers!
-# additionally you must escape special characters with '\', e.g. '\. \? \[ \*" to match them literally  
+# additionally you must escape special characters with '\', e.g. '\. \? \[ \*" to match them literally
 export FILE_REGEX="${BASHBOT_ETC}/.*"
-# example: run bashbot over TOR
-# export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1:9050"
 
 # set BASHBOT_RETRY to enable retry in case of recoverable errors, e.g.  throtteling
-# problems with send_,´message etc are looged to  logs/ERROR.log 
+# problems with send_xxx message etc are looged to  logs/ERROR.log
 unset BASHBOT_RETRY
 #export BASHBOT_RETRY="yes"
 
-# set value for adaptive sleeping while waitingnfor uodates in millisconds
+# set value for adaptive sleeping while waiting for uodates in millisconds
 # max slepp between polling updates 10s (default 5s)
 export BASHBOT_SLEEP="10000"
 # add 0.2s if no update available, up to BASHBOT_SLEEP (default 0.1s)
 export BASHBOT_SLEEP_STEP="200"
 
-# if you want to use timer functions, set BASHBOT_START_TImer to not empty value
-# default is to nit start timer
+# if you want to use timer functions, set BASHBOT_START_TIMER to a not empty value
+# default is to not start timer
 unset BASHBOT_START_TIMER
 #export BASHBOT_START_TIMER="yes"
 
-# set to "yes" and give your bot admin privilegs to remove service messaes from groups
+# set to "yes" and give your bot admin privilegs to remove service messages from groups
 export SILENCER="no"
 
-# uncomment if you use keyboards in your commands
+# uncomment to remove keyboards sent from your bot
 # export REMOVEKEYBOARD="yes"
 # export REMOVEKEYBOARD_PRIVATE="yes"
 
-# uncomment if you want to say welcome to new chat members
+# uncomment to say welcome to new chat members
 # export WELCOME_NEWMEMBER="yes"
 WELCOME_MSG="Welcome"
 
-# uncomment if you want to be informed about new/left chat members
+# uncomment to be informed about new/left chat members
 # export REPORT_NEWMEMBER="yes"
 # export REPORT_LEFTMEMBER="yes"
 
 # messages for admin only commands
 NOTADMIN="Sorry, this command is allowed for admin or owner only"
 NOTBOTADMIN="Sorry, this command is allowed for bot owner only"
+
+########
+# special network setup may require additional ARGS to curl
+#
+# example: run bashbot over TOR or SOCKS proxy
+# export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1:9050" # TOR
+# export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1" # regular SOCKS
 
 if [ "$1" = "startbot" ];then
     ###################
@@ -71,17 +76,16 @@ if [ "$1" = "startbot" ];then
 	# send message ito first user on startup
 	send_normal_message "${CHAT[ID]}" "Hi, you was the first one after startup!"
     }
-    # reminde bot that it was started
+    #  remind bot of start, replace by jsonDB ?
     touch .mystartup
 else
-    # here we call the function above when the message arrives
-    # things to do only at source, eg. after startup
+    # call my_startup when first message arrives
     [ -f .mystartup ] && rm -f .mystartup && _exec_if_function my_startup
 
     #############################
     # your own bashbot commands
-    # NOTE: command can have @botname attached, you must add * in case tests... 
-    mycommands() {
+    # NOTE: command can have @botname attached, you must add * to case tests...
+        mycommands() {
 
 	##############
 	# a service Message was received
@@ -113,7 +117,7 @@ else
 
 	# fix first letter upper case because of smartphone auto correction
 	[[ "${MESSAGE}" =~  ^/[[:upper:]] ]] && MESSAGE="${MESSAGE:0:1}$(tr '[:upper:]' '[:lower:]' <<<"${MESSAGE:1:1}")${MESSAGE:2}"
-	# pre-check admin only commands  
+	# pre-check admin only commands
 	case "${MESSAGE}" in
 		# must be private, group admin, or botadmin
 		'/run_'*|'stop_'*)
@@ -233,7 +237,7 @@ else
 			    "
 			;;
 
-		"4") # four photo from array
+		"4") # four photos from array
 			local sep=""
 			local avatar=("https://avatars.githubusercontent.com/u/13046303" "https://avatars.githubusercontent.com/u/4593242" "https://avatars.githubusercontent.com/u/102707" "https://avatars.githubusercontent.com/u/6460407")
 			answer_inline_multi "${iQUERY[ID]}" "
@@ -243,7 +247,7 @@ else
 				"
 			;;
 
-		"sticker") # example chaecd telegram sticker
+		"sticker") # example cached telegram sticker
 			answer_inline_query "${iQUERY[ID]}" "cached_sticker" "BQADBAAD_QEAAiSFLwABWSYyiuj-g4AC"
 			;;
 		"gif") # example cached gif
@@ -260,7 +264,7 @@ else
 	[ -f ".jssh" ] && printf "%s: %s\n" "${1}" "Ups, found file \"${PWD:-.}/.jssh\"! =========="
     }
 
-    # called when bashbot sedn command failed because we can not connect to telegram
+    # called when bashbot send_xxx command failed because we can not connect to telegram
     # return 0 to retry, return non 0 to give up
     bashbotBlockRecover() {
 	# place your commands to unblock here, e.g. change IP or simply wait
