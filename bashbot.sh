@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.99-7-gafbdb1e
+#### $$VERSION$$ 0.99-9-g4ab8ebd
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -109,7 +109,7 @@ fi
 BOTCOMMANDS="start, stop, status, help, init, stats, broadcast, suspendback, resumeback, killback"
 [[ -z "$1" && -z "${SOURCE}" ]] &&  echo -e "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NC}" && exit
 if [ "$1" = "help" ]; then
-		HELP="README"
+		HELP="${BASHBOT_HOME:-.}/README"
 		if [ -n "${CLEAR}" ];then
 			_exists w3m && w3m "$HELP.html" && exit
 			_exists lynx && lynx "$HELP.html" && exit
