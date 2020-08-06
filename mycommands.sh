@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ 0.99-11-g3e10396
+#### $$VERSION$$ 0.99-12-gf53e9ce
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -79,7 +79,7 @@ if [ "$1" = "startbot" ];then
     #  remind bot of start, now uses config store
     setConfigKey "startupaction" "await"
 else
-    # things to do only at source, eg. after startup
+    # call my_startup when first message arrives
    if [[ "$(getConfigKey "startupaction")" != "done"* ]]; then
 	_exec_if_function my_startup
 	setConfigKey "startupaction" "done $(date)"
