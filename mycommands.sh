@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ 0.99-7-gafbdb1e
+#### $$VERSION$$ 0.99-11-g3e10396
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -76,11 +76,14 @@ if [ "$1" = "startbot" ];then
 	# send message ito first user on startup
 	send_normal_message "${CHAT[ID]}" "Hi, you was the first one after startup!"
     }
-    #  remind bot of start, replace by jsonDB ?
-    touch .mystartup
+    #  remind bot of start, now uses config store
+    setConfigKey "startupaction" "await"
 else
-    # call my_startup when first message arrives
-    [ -f .mystartup ] && rm -f .mystartup && _exec_if_function my_startup
+    # things to do only at source, eg. after startup
+   if [[ "$(getConfigKey "startupaction")" != "done"* ]]; then
+	_exec_if_function my_startup
+	setConfigKey "startupaction" "done $(date)"
+    fi
 
     #############################
     # your own bashbot commands
