@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.99-9-g4ab8ebd
+#### $$VERSION$$ 0.99-10-gb9c8dc0
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -936,8 +936,10 @@ start_bot() {
 	# cleanup countfile on startup
 	jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
         [ -f "${COUNTFILE}.jssh.flock" ] && rm -f "${COUNTFILE}.jssh.flock"
-	jssh_deleteKeyDB "CLEAN_BOT_BOTCONFIG_ON_STARTUP" "${BOTCONFIG}"
+	# store start time and cleanup botconfig on startup
+	jssh_updateKeyDB "startup" "$(date)" "${BOTCONFIG}"
         [ -f "${BOTCONFIG}.jssh.flock" ] && rm -f "${BOTCONFIG}.jssh.flock"
+	# read blocked users
 	jssh_readDB_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
 	# inform botadmin about start
 	ADMIN="$(getConfigKey "botadmin")"
