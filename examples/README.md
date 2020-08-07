@@ -51,10 +51,11 @@ convert existing bots.
 	/ifconfig *ifconfig output*
 	/smart *sda* _smart status for sda drive_
 ```
-### External scripts
+### jsonDB and Keyboards
 
-**external-use** will contain some examples on how to send messages from external scripts to Telegram chats or users.
+**jsonDB-keybords** contains a stripped down real world example from my bot showing the usage of jsonDB to store and retrieve values
+plus use of keyboards in private chats. It's an extended version of mycommands.sh.dist. Messages and help are in german.
 
-#### $$VERSION$$ 0.99-0-g2775000
+#### $$VERSION$$ 0.99-13-g6a6410e
 
 
