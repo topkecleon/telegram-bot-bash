@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.99-6-gc4ab7ff
+#### $$VERSION$$ 0.99-17-g9d7f145
 
 # will be automatically sourced from bashbot
 
@@ -83,6 +83,7 @@ old_send_keyboard() {
 	IFS="$OLDIFS"
 	keyboard="${keyboard/init, /}"
 	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${keyboard}"' ],"one_time_keyboard": true}' "$MSG_URL"
+	send_normal_message "$(getConfigKey "botadmin")" "Warning: old 'send_keyboard' format is deprecated since version 0.6 and will be removed after 1.0 release!"
 }
 
 send_keyboard() {
