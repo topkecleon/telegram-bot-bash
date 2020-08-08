@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.99-0-g2775000
+#### $$VERSION$$ 0.99-5-gaec7345
 #
 
 # adjust your language setting here, e.g.when run from other user or cron.
@@ -27,7 +27,7 @@ export 'LANGUAGE=C.UTF-8'
 unset IFS
 # set -f # if you are paranoid use set -f to disable globbing
 
-#                                                            
+#-----------------------------
 # this file *MUST* not edited!
 # copy "mycommands.sh.dist" to "mycommnds.sh" and change the strings there
 bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
@@ -35,7 +35,7 @@ It features background tasks and interactive chats, and can serve as an interfac
 It currently can send, receive and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
 '
 
-#                                                            
+#-----------------------------
 # this file *MUST* not edited!
 # copy "mycommands.sh.dist" to "mycommnds.sh" and change the strings there
 bashbot_help='Place your own commands and messages in mycommands.sh
@@ -52,7 +52,7 @@ Written by Drew (@topkecleon), Daniil Gentili (@danogentili) and KayM(@gnadelwar
 Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
 
-# load modues on startup and always on on debug
+# load modules on startup and always on on debug
 if [ -n "${1}" ]; then
     # load all readable modules
     for modules in "${MODULEDIR:-.}"/*.sh ; do
@@ -63,7 +63,7 @@ if [ -n "${1}" ]; then
     done
 fi
 
-#                                                            
+#----------------------------
 # this file *MUST* not edited!
 # copy "mycommands.sh.dist" to "mycommnds.sh" and change the values there
 # defaults to no inline and nonsense home dir

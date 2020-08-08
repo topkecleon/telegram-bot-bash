@@ -1,19 +1,17 @@
 #!/bin/bash
 # file: interactive.sh
 # template for an interactive chat
-# test it with: start_proc "${CHAT[ID]}" "./scripts/interactive.sh.clean"
+# test: start_proc "${CHAT[ID]}" "./scripts/interactive.sh.clean"
 #
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.99-0-g2775000
+#### $$VERSION$$ 0.99-5-gaec7345
 
 ######
 # parameters
-# $1 $2 args as given to starct_proc chat script arg1 arg2
+# $1 $2 args as given to start_proc chat script arg1 arg2
 # $3 path to named pipe
-
-
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment

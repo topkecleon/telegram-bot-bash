@@ -133,7 +133,10 @@ send_album "$(getConfigKey "botadmin")" "http://www.rrr.de/slider/main-image1.jp
 ----
 
 ##### send_keyboard
-Note: since version 0.6 send_keyboard was changed to use native "JSON Array" notation as used from Telegram. Example Keyboard Array definitions:
+Note: Since version 0.6 send_keyboard was changed to use native "JSON Array" notation as used from Telegram.
+Detection and emulation for old format will be removed after 1.0 release!
+
+Example Keyboard Array definitions:
 
 - yes no in two rows:
     - OLD format: 'yes' 'no' (two strings)
@@ -1046,5 +1049,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ 0.99-0-g2775000
+#### $$VERSION$$ 0.99-17-g9d7f145
 

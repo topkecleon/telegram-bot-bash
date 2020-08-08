@@ -9,8 +9,8 @@ outfile="./bashbot.obf.sh"
 
 {
 echo '#!/bin/bash'
-echo 'b="./bashbot";h="$PWD";cd "$(mktemp -d)"||exit'
-echo 'printf '"'%s\n'"' '"'$(gzip -9 <bashbot.sh | base64)'"'|base64 -d|gunzip >"$b";export BASHBOT_HOME="$h";chmod +x "$b";"$b" "$@";b="$(pwd)";cd ..;rm -rf "$b"'
+echo 'a="$PWD";cd "$(mktemp -d)"||exit'
+echo 'printf '"'%s\n'"' '"'$(gzip -9 <bashbot.sh | base64)'"'|base64 -d|gunzip >a;export BASHBOT_HOME="$a";chmod +x a;./a "$@";a="$PWD";cd ..;rm -rf "$a"'
 } >"${outfile}"
 
 chmod +x "${outfile}"

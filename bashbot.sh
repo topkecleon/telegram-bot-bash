@@ -3,20 +3,20 @@
 # do not edit, this file will be overwritten on update
 
 # bashbot, the Telegram bot written in bash.
-# Written by Drew (@topkecleon) and Daniil Gentili (@danogentili), KayM (@gnadelwartz).
-# Also contributed: JuanPotato, BigNerd95, TiagoDanin, iicc1.
+# Written by Drew (@topkecleon) KayM (@gnadelwartz).
+# Also contributed: Daniil Gentili (@danogentili), JuanPotato, BigNerd95, TiagoDanin, iicc1.
 # https://github.com/topkecleon/telegram-bot-bash
 
 # Depends on JSON.sh (http://github.com/dominictarr/JSON.sh) (MIT/Apache),
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ 0.99-0-g2775000
+#### $$VERSION$$ 0.99-10-gb9c8dc0
 #
 # Exit Codes:
 # - 0 success (hopefully)
 # - 1 can't change to dir
-# - 2 can't write to tmp, count or token 
+# - 2 can't write to tmp, count or token
 # - 3 user / command / file not found
 # - 4 unknown command
 # - 5 cannot connect to telegram bot
@@ -39,7 +39,6 @@ fi
 _exists() {
 	[ "$(LC_ALL=C type -t "${1}")" = "file" ]
 }
-
 # execute function if exists
 _exec_if_function() {
 	[ "$(LC_ALL=C type -t "${1}")" != "function" ] && return 1
@@ -50,7 +49,7 @@ _is_function() {
 	[ "$(LC_ALL=C type -t "${1}")" = "function" ]
 }
 # round $1 in international notation! , returns float with $2 decimal digits
-# if $2 is not fiven or is not a positive number, it's set to zero
+# if $2 is not given or is not a positive number zero is assumed
 _round_float() {
 	local digit="${2}"; [[ "${2}" =~ ^[0-9]+$ ]] || digit="0"
 	LC_ALL=C printf "%.${digit}f" "${1}"
@@ -64,13 +63,13 @@ getConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
 	[ -r "${BOTCONFIG}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTCONFIG}.jssh" | tail -n 1
 }
-# $1 token
+# check if $1 seems a valid token
 # return true if token seems to be valid
 check_token(){
 	[[ "${1}" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ ]] && return 0
 	return 1
 }
-# log error to ERRORLOG with date
+# log $1 to ERRORLOG with date
 log_error(){
 	printf "%s: %s\n" "$(date)" "$*" >>"${ERRORLOG}"
 }
@@ -110,7 +109,7 @@ fi
 BOTCOMMANDS="start, stop, status, help, init, stats, broadcast, suspendback, resumeback, killback"
 [[ -z "$1" && -z "${SOURCE}" ]] &&  echo -e "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NC}" && exit
 if [ "$1" = "help" ]; then
-		HELP="README"
+		HELP="${BASHBOT_HOME:-.}/README"
 		if [ -n "${CLEAR}" ];then
 			_exists w3m && w3m "$HELP.html" && exit
 			_exists lynx && lynx "$HELP.html" && exit
@@ -129,7 +128,7 @@ fi
 [ -z "${BASHBOT_VAR}" ] && BASHBOT_VAR="$BASHBOT_HOME"
 
 ADDONDIR="${BASHBOT_ETC:-.}/addons"
-RUNUSER="${USER}" # USER is overwritten by bashbot array
+RUNUSER="${USER}" # USER is overwritten by bashbot array :-(, save original
 
 # OK everything setup, lest start
 if [[ -z "${SOURCE}" && -z "$BASHBOT_HOME" ]] && ! cd "${RUNDIR}" ; then
@@ -155,12 +154,12 @@ COUNTFILE="${BASHBOT_VAR:-.}/count"
 
 LOGDIR="${RUNDIR:-.}/logs"
 
-# we assume everything is already set up correctly if we have TOKEN
+# assume everything already set up correctly if TOKEN is set
 if [ -z "${BOTTOKEN}" ]; then
   # BOTCONFIG does not exist, create
   [ ! -f "${BOTCONFIG}.jssh" ] &&
 		printf '["bot_config_key"]\t"config_key_value"\n' >>"${BOTCONFIG}.jssh"
-  # BOTTOKEN empty read ask user
+  # do we have already a token?
   if [ -z "$(getConfigKey "bottoken")" ]; then
      # convert old token
      if [ -r "${TOKENFILE}" ]; then
@@ -178,7 +177,7 @@ if [ -z "${BOTTOKEN}" ]; then
      [ -n "${token}" ] && printf '["bottoken"]\t"%s"\n'  "${token}" >> "${BOTCONFIG}.jssh"
   fi
 
-  # setup botadmin file
+  # no boteadmin, setup botadmin
   if [ -z "$(getConfigKey "botadmin")" ]; then
      # convert old admin
      if [ -r "${BOTADMIN}" ]; then
@@ -874,7 +873,7 @@ process_message() {
 		LEFTMEBER[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","left_chat_member","username"]}")"
 		LEFTMEMBER[ISBOT]="${UPD["result",${num},"message","left_chat_member","is_bot"]}"
 		[ -z "${MESSAGE[0]}" ] &&\
-		MESSAGE[0]="/_left_chat_member ${NEWMEMBER[ID]} ${LEFTMEMBER[USERNAME]:=${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]}}"
+		MESSAGE[0]="/_left_chat_member ${LEFTMEMBER[ID]} ${LEFTMEMBER[USERNAME]:=${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]}}"
 	fi
 	if grep -qs -e '\["result",'"${num}"',"message","new_chat_[tp]' <<<"${UPDATE}"; then
 		SERVICE[NEWTITLE]="$(JsonDecode "${UPD["result",${num},"message","new_chat_title"]}")"
@@ -937,8 +936,10 @@ start_bot() {
 	# cleanup countfile on startup
 	jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
         [ -f "${COUNTFILE}.jssh.flock" ] && rm -f "${COUNTFILE}.jssh.flock"
-	jssh_deleteKeyDB "CLEAN_BOT_BOTCONFIG_ON_STARTUP" "${BOTCONFIG}"
+	# store start time and cleanup botconfig on startup
+	jssh_updateKeyDB "startup" "$(date)" "${BOTCONFIG}"
         [ -f "${BOTCONFIG}.jssh.flock" ] && rm -f "${BOTCONFIG}.jssh.flock"
+	# read blocked users
 	jssh_readDB_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
 	# inform botadmin about start
 	ADMIN="$(getConfigKey "botadmin")"
