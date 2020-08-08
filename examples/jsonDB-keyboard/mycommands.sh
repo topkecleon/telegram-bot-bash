@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ 0.99-15-g25578bf
+#### $$VERSION$$ 0.99-16-gd6de66d
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -538,7 +538,12 @@ else
 			    return
 			fi
 			OUT="Produkt Watch nach \"${FINDKEYS}\" ist aktiv."
-			send_normal_message "${CHAT[ID]}" "${OUT}"
+			if [[ "${CHAT[ID]}" != "${USER[ID]}" ]]; then
+			    send_normal_message "${CHAT[ID]}" "${OUT}"
+			else
+			    send_keyboard "${CHAT[ID]}" "${OUT}"\
+			     '["/delwatch 1","/delwatch 2","/delwatch 3"],["/delwatch 4","/delwatch 5","/delwatch 6"],["/delwatch 7","/delwatch 8","/delwatch 9"],["/delwatch","/delwatch ALL","/listwatch"]'
+			fi
 			return
 			;;
 		'/newn'*) # newnotify
