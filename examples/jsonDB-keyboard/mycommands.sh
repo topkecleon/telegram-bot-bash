@@ -2,16 +2,18 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ 0.99-13-g6a6410e
+#### $$VERSION$$ 0.99-14-g2d6468c
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
 
-bashbot_title='*Hallo, ich bin der @Deal_O_Mat_bot . Ich suche und finde Dealz!*'
+# within *xxx* markup we need only one \ to escape a '_', e.g. my\_stupid\_bot (stupid V1 markup)
+bashbot_title='*Hallo, ich bin der @'"${ME//_/\\_}"'. Ich suche und finde Dealz!*'
 
+# outside *xxxx* markup we need two \\ to escape a '_', e.g. -> my\\_stupid\\_bot
 bashbot_shelp="${bashbot_title}"'
 
-Schicke mir hier -> @Deal\\_O\\_Mat\\_bot <- einen Befehl mit *max. 50 Begriffen*. Ein Begriff muss mindesten 4 Zeichen lang sein.
+Schicke mir hier -> @'"${ME//_/\\\\_}"' <- einen Befehl mit *max. 50 Begriffen*. Ein Begriff muss mindesten 4 Zeichen lang sein.
 
 *Befehle zum Suchen / Tracken  von Dealz:*
   /search  /suche _Suche in Deals der letzen 48h,
@@ -43,7 +45,7 @@ Die Suche ignoriert Gross und Klein Schreibung, Satzzeichen, Klammern und "-", e
 
 bashbot_whelp="${bashbot_title}"'
 
-Schicke mir hier -> @Deal\\_O\\_Mat\\_bot <- einen Befehl mit *max. 50 Artikeln (ASIN)* zum Beobachten.
+Schicke mir hier -> @'"${ME//_/\\\\_}"' <- einen Befehl mit *max. 50 Artikeln (ASIN)* zum Beobachten.
 
 *Befehle zum Beobachten von Amzon Artikeln*
 
@@ -103,7 +105,7 @@ https://t.me/joinchat/IvvRtk6ehHS4ZZmtoRFU2g
 https://t.me/joinchat/IvvRthRhMcX6rDQU-pZrWw
 
 *Du willst Dealz suchen oder abbonieren?*
-Klicke hier -> @Deal\\_O\\_Mat\\_bot <- und schicke /start
+Klicke hier -> @'"${ME//_/\\\\_}"' <- und schicke /start
 .
 '
 
@@ -117,7 +119,7 @@ Hier kannst Du dich austauschen und erfährst Neues.
 https://t.me/joinchat/IvvRthRhMcX6rDQU-pZrWw
 
 *Du willst Dealz suchen oder tracken?*
-Klicke hier -> @Deal\\_O\\_Mat\\_bot <- und schicke /start
+Klicke hier -> @'"${ME//_/\\\\_}"' <- und schicke /start
 
 *Meine Befehle*:
   /suche     _- Suchen und Tracken von Dealz_
@@ -125,23 +127,15 @@ Klicke hier -> @Deal\\_O\\_Mat\\_bot <- und schicke /start
   /gruppen  _- Liste aller Dealz Gruppen_
   /hilfe    _- Hilfe zu weiteren Befehlen_
 
-*Dein Deal-O-Mat Bot*
+*Dein '"${ME//_/-}"'*
 https://dealz.rrr.de/amzdealz.html
 '
 
 bashbot_help="${bashbot_title}"'
 
-Schicke mir einen Amazon Product oder Gebraucht Link und ich ermittle für Dich:
-    _Beschreibung | Preis | Bewertung und Produktbild_
-
 Du hast eine eigene Telegram Dealgruppe? Lade mich ein und all in der Guppe können mich nutzen:
 
 *verfügbare Befehle*:
- /amz http://... | ASIN | Text ...
-     _ - für Amazon, eBay, Saturn, Mediamarkt_
- /anref ....
-     _- wie /amz aber ohne Ref tag_
-
  /suche     _- Suchen und Tracken von Dealz_
  /watch     _- Beobachten von Amazon Artikeln_
  /gruppen  _- Liste aller Dealz Gruppen_
@@ -151,7 +145,9 @@ Du hast eine eigene Telegram Dealgruppe? Lade mich ein und all in der Guppe kön
 
 _https://dealz.rrr.de/assets/images/rdealomat.gif_
 '
-SORRYADMIN="Du bist kein Gruppenadmin, diesen Befehl kannst Du nur im privaten Chat ausführen @Deal_O_Mat_bot <<- hier klicken"
+
+# in a regular message is no need to escape '_'
+SORRYADMIN="Du bist kein Gruppenadmin, diesen Befehl kannst Du nur im privaten Chat ausführen @${ME} <<- hier klicken"
 SORRYADMIN2="Dieser Befehl ist dem Botadmin vorbehalten, sorry."
 
 # Set INLINE to 1 in order to receive inline queries.
