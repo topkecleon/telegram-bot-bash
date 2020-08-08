@@ -8,12 +8,15 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ 0.99-12-gf53e9ce
+#### $$VERSION$$ 0.99-15-g25578bf
 #
 
 # uncomment the following lines to overwrite info and help messages
-# export bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
-#'
+# use ${ME} for current bot name in messages
+# Note: you must escape '_' in botname with two \ in markdown messages!
+export bashbot_info='This is @'"${ME//_/\\\\_}"', the Telegram example bot written entirely in bash.
+Edit commands and messages in mycommnds.sh!
+'
 # export bashbot_help='*Available commands*:
 #'
 export res=""
