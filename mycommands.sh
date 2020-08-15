@@ -8,7 +8,7 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ 0.99-15-g25578bf
+#### $$VERSION$$ v1.0-0-g99217c4
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -74,24 +74,25 @@ NOTBOTADMIN="Sorry, this command is allowed for bot owner only"
 
 if [ "$1" = "startbot" ];then
     ###################
-    # this function is run once after startup when the first message is received
-    my_startup(){
-	# send message ito first user on startup
-	send_normal_message "${CHAT[ID]}" "Hi, you was the first one after startup!"
-    }
-    #  remind bot of start, now uses config store
+    # this section is processed on startup
+
+    # mark startup, triggers action on first message
     setConfigKey "startupaction" "await"
 else
-    # call my_startup when first message arrives
-   if [[ "$(getConfigKey "startupaction")" != "done"* ]]; then
-	_exec_if_function my_startup
-	setConfigKey "startupaction" "done $(date)"
-    fi
 
     #############################
     # your own bashbot commands
     # NOTE: command can have @botname attached, you must add * to case tests...
         mycommands() {
+
+	#############
+	# action triggered on first message after startup
+	if [[ "$(getConfigKey "startupaction")" != "done"* ]]; then
+	# send message to first user on startup
+	send_normal_message "${CHAT[ID]}" "Hi, you was the first one after startup!"
+	# mark as done and when
+	setConfigKey "startupaction" "done $(date)"
+	fi
 
 	##############
 	# a service Message was received

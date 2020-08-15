@@ -351,4 +351,4 @@ wait
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ 0.99-2-gacf9d84
+#### $$VERSION$$ v1.0-0-g99217c4
