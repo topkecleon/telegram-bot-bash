@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ 1.0-0-g4ab8ebd
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -389,7 +389,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 	local chat="";
 	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
 	[ -n "${BASHBOTDEBUG}" ] &&\
-		printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${DEBUGLOG}"
+		printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${UPDATELOG}"
 	# shellcheck disable=SC2086
 	res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
 		-d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
@@ -402,7 +402,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 	[ "$#" -lt 4  ] && return
 	if [ -n "$5" ]; then
 	[ -n "${BASHBOTDEBUG}" ] &&\
-		printf "%s: sendUpload CHAT=%s WHAT=%s  FILE=%s CAPT=%s\n" "$(date)" "${1}" "${2}" "${3}" "${4}" >>"${DEBUGLOG}"
+		printf "%s: sendUpload CHAT=%s WHAT=%s  FILE=%s CAPT=%s\n" "$(date)" "${1}" "${2}" "${3}" "${4}" >>"${UPDATELOG}"
 	# shellcheck disable=SC2086
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
@@ -426,7 +426,7 @@ else
 	local chat="";
 	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
 	[ -n "${BASHBOTDEBUG}" ] &&\
-		printf "%s: sendJson (wget) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${DEBUGLOG}"
+		printf "%s: sendJson (wget) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${UPDATELOG}"
 	# shellcheck disable=SC2086
 	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
@@ -1145,6 +1145,8 @@ if [ -z "${SOURCE}" ]; then
 			sort -r "${BLOCKEDFILE}.jssh"
 			echo -e "${NC}\c"
 		fi
+		# show user created bot stats
+		_exec_if_function my_bashbot_stats "$@"
 		debug_checks "end $1" "$@"
 		exit
 		;;
