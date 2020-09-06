@@ -19,7 +19,7 @@ Uses [JSON.sh](http://github.com/dominictarr/JSON.sh) and the magic of sed.
 
 Even bashbot is written in bash, it depends on commands typically available in 
 a Unix/Linux Environment.
-More concret on the common commands provided by recent versions of 
+More concrete on the common commands provided by recent versions of 
 [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), 
 [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or 
 [toybox](https://landley.net/toybox/help.html), see [Developer 
@@ -35,10 +35,10 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and
 available on www.github.com
 
 ## Documentation
-* [Introdution to Telegram Bots](https://core.telegram.org/bots)
+* [Introduction to Telegram Bots](https://core.telegram.org/bots)
 * [Install Bashbot](doc/0_install.md)
     * Install release
-    * Install from githup
+    * Install from github
     * Update Bashbot
     * Notes on Updates
 * [Get Bottoken from Botfather](doc/1_firstbot.md)
@@ -126,7 +126,7 @@ You are Botadmin
 
 /info
 
-his is bashbot, the Telegram bot written entirely in bash.
+This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an 
 interface for CLI programs.
 ```
@@ -184,7 +184,7 @@ network.
 A powerful tool to improve your scripts is ```shellcheck```. You can [use it 
 online](https://www.shellcheck.net/) or [install shellcheck 
 locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used 
-extensive in bashbot development to ensure a high code quality, e.g. it's not 
+extensively in bashbot development to ensure a high code quality, e.g. it's not 
 allowed to push changes without passing all shellcheck tests.
 In addition bashbot has a [test suite](doc/7_develop.md) to check if important 
 functionality is working as expected.
