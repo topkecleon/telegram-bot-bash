@@ -47,7 +47,7 @@ Have FUN!
 │   ├── antiFlood.sh         # simple addon taking actions based on # files and text sent to chat
 │   └── xxxxxage.sh
 │
-├── bashbot.rc           # start/stop script if you run basbot as service
+├── bashbot.rc           # start/stop script if you run bashbot as service
 │
 ├── examples             # example scripts and configs for bashbot
 │   ├── README.md            # description of files and examples
