@@ -7,7 +7,7 @@
     * /usr/local if you want to run as service
 2. [Download latest release zip from github](https://github.com/topkecleon/telegram-bot-bash/releases) and extract all files. 
 3. Change into the directory ```telegram-bot-bash```
-4. Acticate the bot example commands  ``cp mycommands.sh.dist mycommands.sh```
+4. Activate the bot example commands  ``cp mycommands.sh.dist mycommands.sh```
 5. Run ```./bashbot.sh init``` to setup the environment and enter your Bots token given by botfather.
 
 Edit 'mycommands.sh to your needs.
@@ -24,7 +24,7 @@ As an alternative to download the zip files, you can clone the github repository
     * /usr/local if you want to run as service
 2. Run ```git clone https://github.com/topkecleon/telegram-bot-bash.git```
 3. Change into the directory ```telegram-bot-bash```
-4. Run ``` test/ALL-tests.sh``` and if everything finish OK ...
+4. Run ``` dev/all-tests.sh``` and if everything finish OK ...
 5. Run ```sudo ./bashbot.sh init``` to setup the environment and enter your Bots token given by botfather.
 
 ###  Update bashbot
