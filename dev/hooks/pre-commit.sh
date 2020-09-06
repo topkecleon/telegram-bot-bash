@@ -65,7 +65,7 @@ else
 	exit 1
 fi
 
-if which codespell &>/dev/null; then
+if command -v codespell &>/dev/null; then
 	echo "Running codespell"
 	echo "............................" 
 	codespell -B 1 --skip="*.log,*.html,*.txt,.git*,jsonDB-keyboard" -L "ba"
