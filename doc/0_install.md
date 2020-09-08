@@ -44,7 +44,9 @@ overwriting your config and mycommands.sh files.
 2. Run ```git clone https://github.com/topkecleon/telegram-bot-bash.git```
 3. Change into the directory ```telegram-bot-bash```
 4. Run ``` dev/all-tests.sh``` and if everything finish OK ...
+5. Run ``` rm addons/*``` to deactivate the example add on's
 5. Run ```sudo ./bashbot.sh init``` to setup the environment and enter your Bots token given by botfather.
+
 
 ### Get the latest development updates from github
 
@@ -52,8 +54,9 @@ To update an existing installation to the latest development version from github
 
 1. Run ```git clone https://github.com/topkecleon/telegram-bot-bash.git```
 2. Change into the directory ```telegram-bot-bash```
-3. Run ``` dev/make-distribution.sh```
-4. If no errors occcure you will find archive files in DISTRIBUTION
+3. Run ``` git checkout develop```
+4. Run ``` dev/make-distribution.sh```
+5. If no errors occur you will find archive files in DISTRIBUTION
 
 
 ### Note for BSD and MacOS
@@ -144,5 +147,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.0-18-g9b3d689
+#### $$VERSION$$ v1.0-19-gc2a110a
 
