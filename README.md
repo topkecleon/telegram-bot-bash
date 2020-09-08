@@ -261,4 +261,4 @@ bashbotBlockRecover() {
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.0-18-g9b3d689

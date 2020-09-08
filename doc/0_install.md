@@ -15,17 +15,6 @@ Now your Bot is ready to start ...
 
 **If you are new to Bot development read [Bots: An introduction for developers](https://core.telegram.org/bots)**
 
-### Install from github
-
-As an alternative to download the zip files, you can clone the github repository to get the latest improvements/fixes.
-
-1. Go to the directory you want to install bashbot, e.g.
-    * your $HOME directory (install and run with your user-ID)
-    * /usr/local if you want to run as service
-2. Run ```git clone https://github.com/topkecleon/telegram-bot-bash.git```
-3. Change into the directory ```telegram-bot-bash```
-4. Run ``` dev/all-tests.sh``` and if everything finish OK ...
-5. Run ```sudo ./bashbot.sh init``` to setup the environment and enter your Bots token given by botfather.
 
 ###  Update bashbot
 
@@ -42,6 +31,30 @@ As an alternative to download the zip files, you can clone the github repository
 If you modified ```commands.sh``` move your changes to ```mycommands.sh```, this avoids overwriting your commands on update.
 
 Now you can restart your bashbot instances.
+
+
+### Install from github
+
+The first install can also be done from github, updates should always done from the zip or tar archive to avoid
+overwriting your config and mycommands.sh files.
+
+1. Go to the directory you want to install bashbot, e.g.
+    * your $HOME directory (install and run with your user-ID)
+    * /usr/local if you want to run as service
+2. Run ```git clone https://github.com/topkecleon/telegram-bot-bash.git```
+3. Change into the directory ```telegram-bot-bash```
+4. Run ``` dev/all-tests.sh``` and if everything finish OK ...
+5. Run ```sudo ./bashbot.sh init``` to setup the environment and enter your Bots token given by botfather.
+
+### Get the latest development updates from github
+
+To update an existing installation to the latest development version from github you must create the update archives yourself.
+
+1. Run ```git clone https://github.com/topkecleon/telegram-bot-bash.git```
+2. Change into the directory ```telegram-bot-bash```
+3. Run ``` dev/make-distribution.sh```
+4. If no errors occcure you will find archive files in DISTRIBUTION
+
 
 ### Note for BSD and MacOS
 
@@ -131,5 +144,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.0-18-g9b3d689
 
