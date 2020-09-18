@@ -71,7 +71,7 @@ To install and run bashbot you need access to a linux/unix command line. If you 
 In addition you need a [Telegram client](https://telegram.org) and a mobile phone to [register an account](https://telegramguide.com/create-a-telegram-account/).
 If you don't want to register for Telegram you should stop reading here ;-)
 
-After you're registered to Telegram send a message to [@botfather](https://telegram.me/botfather),
+After you're registered to [Telegram](https://groupsgyani.com) send a message to [@botfather](https://telegram.me/botfather),
 [create a new Telegram Bot token](doc/1_firstbot.md) and write it down. You need the token to install the bot.
 
 Now open a terminal and check if bash is installed: ```which bash && echo "bash installed!"```.
