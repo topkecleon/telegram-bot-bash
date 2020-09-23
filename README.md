@@ -16,9 +16,9 @@ Uses [JSON.sh](http://github.com/dominictarr/JSON.sh) and the magic of sed.
 Even bashbot is written in bash, it depends on commands typically available in a Unix/Linux Environment.
 More concrete on the common commands provided by recent versions of [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or [toybox](https://landley.net/toybox/help.html), see [Developer Notes](doc/7_develop.md#common-commands)
 
-*Note for MacOS and BSD Users:* As bashbot heavily uses modern bash and (gnu) grep/sed features, bashbot will not run without installing additional software, see [Install Bashbot](doc/0_install.md)
+**Note for MacOS and BSD Users:** As bashbot heavily uses modern bash and (gnu) grep/sed features, bashbot will not run without installing additional software, see [Install Bashbot](doc/0_install.md)
 
-*Note for emmbedded systems:* busybox or toybox ONLY is not sufficient, you need a to install a "real" bash, see [Install Bashbot](doc/0_install.md)  
+**Note for embedded systems:** busybox or toybox ONLY is not sufficient, you need a to install a "real" bash, see also [Install Bashbot](doc/0_install.md)  
 
 Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Downloads](https://github.com/topkecleon/telegram-bot-bash/releases) are available on www.github.com
 
@@ -265,4 +265,4 @@ bashbotBlockRecover() {
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v1.0-21-g6718d24
+#### $$VERSION$$ v1.0-22-g1153d65

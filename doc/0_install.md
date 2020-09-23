@@ -2,7 +2,7 @@
 
 ## Check bash installation
 
-There may be systems where bash seems to be installed but it is not, e.g. emmbedded systems, or the bash version is to old.
+There may be systems where bash seems to be installed but it is not, e.g. emmbedded systems, or version is to old.
 Run the following commands to see if your bash looks ok ...
 
 ```bash
@@ -12,8 +12,8 @@ which bash && echo "bash seems available..."
 # real bash supports ARRAY
 bash -c 'eval "a=(1)" && echo "Shell supports ARRAY..."'
 
-# check for ok version by feature
-[ "$(echo "\u1111")" == "\u1111" ] && echo "Bash version may to old..."
+# check for version by feature
+bash -c '[ "$(echo -e "\u1111")" == "\u1111" ] || echo "Bash version seems ok ..."'
 ```
 
 ## Install bashbot
@@ -169,5 +169,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.0-21-g6718d24
+#### $$VERSION$$ v1.0-22-g1153d65
 
