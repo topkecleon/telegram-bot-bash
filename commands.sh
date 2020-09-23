@@ -9,16 +9,16 @@
 # |_____/ \___/   |_| |_|\___/ \___)  |_______)____|_|\___)_|
 #
 # this file *MUST* not be edited! place your config and commands in
-# the file "mycommnds.sh". a clean version is provided as "mycommands.clean"
+# the file "mycommands.sh". a clean version is provided as "mycommands.sh.clean"
 #
 
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.1-0-gc0eb399
 #
 
-# adjust your language setting here, e.g.when run from other user or cron.
+# adjust your language setting here, e.g. when run from other user or cron.
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
 export 'LC_ALL=C.UTF-8'
 export 'LANG=C.UTF-8'
@@ -29,7 +29,7 @@ unset IFS
 
 #-----------------------------
 # this file *MUST* not edited!
-# copy "mycommands.sh.dist" to "mycommnds.sh" and change the strings there
+# copy "mycommands.sh.dist" to "mycommands.sh" and change the strings there
 bashbot_info='This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.
 It currently can send, receive and forward messages, custom keyboards, photos, audio, voice, documents, locations and video files.
@@ -37,7 +37,7 @@ It currently can send, receive and forward messages, custom keyboards, photos, a
 
 #-----------------------------
 # this file *MUST* not edited!
-# copy "mycommands.sh.dist" to "mycommnds.sh" and change the strings there
+# copy "mycommands.sh.dist" to "mycommands.sh" and change the strings there
 bashbot_help='Place your own commands and messages in mycommands.sh
 
 *Available commands*:
@@ -65,7 +65,7 @@ fi
 
 #----------------------------
 # this file *MUST* not edited!
-# copy "mycommands.sh.dist" to "mycommnds.sh" and change the values there
+# copy "mycommands.sh.dist" to "mycommands.sh" and change the values there
 # defaults to no inline and nonsense home dir
 export INLINE="0"
 export FILE_REGEX="${BASHBOT_ETC}/.*"
@@ -97,7 +97,7 @@ if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
 	    case "${MESSAGE}" in
 		################################################
 		# this file *MUST* not edited!
-		# copy "mycommands.sh.dist" to "mycommnds.sh" and change the values and add your commands there
+		# copy "mycommands.sh.dist" to "mycommands.sh" and change the values and add your commands there
 		#
 		# GLOBAL commands start here, edit messages only
 		'/info'*)

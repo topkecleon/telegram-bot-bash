@@ -1,40 +1,45 @@
 #### [Home](../README.md)
 
+## Check bash installation
+
+There may be systems where bash seems to be installed but it is not, e.g. embedded systems, or version is to old.
+Run the following commands to see if your bash looks ok ...
+
+```bash
+# system say bash is there?
+if which bash; then echo "bash seems available..."; else echo "NO bash"; fi
+
+# real bash supports ARRAY
+bash -c 'if eval "a=(1)"; then echo "Shell support arrays..."; else echo "Shell has NO arrays"; fi'
+
+# check for version by feature
+bash -c 'if [ "$(echo -e "\u1111")" != "\u1111" ]; then echo "Bash version ok ..."; else echo "Bash Version NOT ok"; fi'
+```
+
 ## Install bashbot
 
 1. Go to the directory you want to install bashbot, e.g.
     * your $HOME directory (install and run with your user-ID)
     * /usr/local if you want to run as service
-2. [Download latest release zip from github](https://github.com/topkecleon/telegram-bot-bash/releases) and extract all files. 
+2. [Download latest release zip / tar archive from github](https://github.com/topkecleon/telegram-bot-bash/releases) and extract all files. 
 3. Change into the directory ```telegram-bot-bash```
-4. Acticate the bot example commands  ``cp mycommands.sh.dist mycommands.sh```
+4. Activate the bot example commands  ```cp mycommands.sh.dist mycommands.sh```
 5. Run ```./bashbot.sh init``` to setup the environment and enter your Bots token given by botfather.
 
-Edit 'mycommands.sh to your needs.
+Edit ```mycommands.sh``` to your needs.
 Now your Bot is ready to start ...
 
 **If you are new to Bot development read [Bots: An introduction for developers](https://core.telegram.org/bots)**
 
-### Install from github
 
-As an alternative to download the zip files, you can clone the github repository to get the latest improvements/fixes.
+### Update bashbot
 
-1. Go to the directory you want to install bashbot, e.g.
-    * your $HOME directory (install and run with your user-ID)
-    * /usr/local if you want to run as service
-2. Run ```git clone https://github.com/topkecleon/telegram-bot-bash.git```
-3. Change into the directory ```telegram-bot-bash```
-4. Run ``` test/ALL-tests.sh``` and if everything finish OK ...
-5. Run ```sudo ./bashbot.sh init``` to setup the environment and enter your Bots token given by botfather.
-
-###  Update bashbot
-
-**Note: all files including 'mycommands.sh' may overwritten, make a backup!**
+**Note: all files including ```mycommands.sh``` may overwritten, make a backup!**
 
 1. Go to the directory where you had installed bashbot, e.g.
     * your $HOME directory
     * /usr/local
-2. [Download latest release zip from github](https://github.com/topkecleon/telegram-bot-bash/releases)
+2. [Download latest release zip / tar archive from github](https://github.com/topkecleon/telegram-bot-bash/releases)
 3. Stop all running instances of bashbot
 4. Extract all files to your existing bashbot dir 
 5. Run ```sudo ./bashbot.sh init``` to setup your environment after the update
@@ -42,6 +47,39 @@ As an alternative to download the zip files, you can clone the github repository
 If you modified ```commands.sh``` move your changes to ```mycommands.sh```, this avoids overwriting your commands on update.
 
 Now you can restart your bashbot instances.
+
+### Get zip / tar archive on command line
+
+```bash
+wget -q https://github.com/$(wget -q https://github.com/topkecleon/telegram-bot-bash/releases/latest -O - | egrep '/.*/.*/.*tar.gz' -o)
+```
+
+
+### Install from github
+
+The first install can also be done from github, updates should always done from the zip or tar archive to avoid
+overwriting your config and ```mycommands.sh``` files.
+
+1. Go to the directory you want to install bashbot, e.g.
+    * your $HOME directory (install and run with your user-ID)
+    * /usr/local if you want to run as service
+2. Run ```git clone https://github.com/topkecleon/telegram-bot-bash.git```
+3. Change into the directory ```telegram-bot-bash```
+4. Run ``` dev/all-tests.sh``` and if everything finish OK ...
+5. Run ``` rm addons/*``` to deactivate the example add on's
+5. Run ```sudo ./bashbot.sh init``` to setup the environment and enter your Bots token given by botfather.
+
+
+### Get the latest development updates from github
+
+To update an existing installation to the latest development version from github you must create the update archives yourself.
+
+1. Run ```git clone https://github.com/topkecleon/telegram-bot-bash.git```
+2. Change into the directory ```telegram-bot-bash```
+3. Run ``` git checkout develop```
+4. Run ``` dev/make-distribution.sh```
+5. If no errors occur you will find archive files in DISTRIBUTION
+
 
 ### Note for BSD and MacOS
 
@@ -101,8 +139,8 @@ if tmux ls | grep -v send | grep -q "$copname"; then inproc; fi
 must be replaced by ```send_interactive "${CHATD[ID]}" "${MESSAGE}"```
 
 ### Do not edit commands.sh
-From version 0.60 on your commands must be placed in 'mycommands.sh'. If you update from a version with your commands
-in 'commands.sh' move all your commands and functions to 'mycommands.sh'.
+From version 0.60 on your commands must be placed in ```mycommands.sh```. If you update from a version with your commands
+in 'commands.sh' move all your commands and functions to ```mycommands.sh```.
 
 From version 0.80 on 'commands.sh' will be overwritten on update!
 
@@ -131,5 +169,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.1-0-gc0eb399
 

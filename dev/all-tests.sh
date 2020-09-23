@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.1-0-gc0eb399
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -26,7 +26,7 @@ passed=0
 #echo PLAN ${#all_tests}
 for test in $(find ./*-test.sh | sort -u) ;
 do
-  [ "${test}" = "test/all-tests.sh" ] && continue
+  [ "${test}" = "dev/all-tests.sh" ] && continue
   [ ! -x "${test}" ] && continue
   tests=$((tests+1))
   echo "TEST: ${test}"
@@ -56,6 +56,6 @@ fi
 echo -e "${passed} / ${tests}\\n"
 [ -d "${TESTENV}" ] && echo "Logfiles from run are in ${TESTENV}"
 
-ls -ld /tmp/bashbot.test* 2>/dev/null && echo "Don not forget to deleted bashbot test files in /tmp!!"
+ls -ld /tmp/bashbot.test* 2>/dev/null && echo "Do not forget to delete bashbot test files in /tmp!!"
 
 exit ${exitcode}

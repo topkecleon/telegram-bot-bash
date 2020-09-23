@@ -14,18 +14,19 @@ Linted by [#ShellCheck](https://github.com/koalaman/shellcheck)
 Uses [JSON.sh](http://github.com/dominictarr/JSON.sh) and the magic of sed.
 
 Even bashbot is written in bash, it depends on commands typically available in a Unix/Linux Environment.
-More concret on the common commands provided by recent versions of [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or [toybox](https://landley.net/toybox/help.html), see [Developer Notes](doc/7_develop.md#common-commands)
+More concrete on the common commands provided by recent versions of [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or [toybox](https://landley.net/toybox/help.html), see [Developer Notes](doc/7_develop.md#common-commands)
 
-*Note for MacOS and BSD Users:* As bashbot heavily uses modern bash and (gnu) grep/sed features, bashbot will not run without installing additional software, see [Install Bashbot](doc/0_install.md)
+**Note for MacOS and BSD Users:** As bashbot heavily uses modern bash and (gnu) grep/sed features, bashbot will not run without installing additional software, see [Install Bashbot](doc/0_install.md)
 
+**Note for embedded systems:** busybox or toybox ONLY is not sufficient, you need a to install a "real" bash, see also [Install Bashbot](doc/0_install.md)  
 
 Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Downloads](https://github.com/topkecleon/telegram-bot-bash/releases) are available on www.github.com
 
 ## Documentation
-* [Introdution to Telegram Bots](https://core.telegram.org/bots)
+* [Introduction to Telegram Bots](https://core.telegram.org/bots)
 * [Install Bashbot](doc/0_install.md)
     * Install release
-    * Install from githup
+    * Install from github
     * Update Bashbot
     * Notes on Updates
 * [Get Bottoken from Botfather](doc/1_firstbot.md)
@@ -74,8 +75,11 @@ If you don't want to register for Telegram you should stop reading here ;-)
 After you're registered to Telegram send a message to [@botfather](https://telegram.me/botfather),
 [create a new Telegram Bot token](doc/1_firstbot.md) and write it down. You need the token to install the bot.
 
-Now open a terminal and check if bash is installed: ```which bash && echo "bash installed!"```.
-If you get an error message bash is not installed.
+Now open a terminal and check if bash is installed:
+ ```
+which bash && echo "bash seems available..."
+```
+
 
 Create a new directory, change to it:  ```mkdir tbb; cd tbb``` and download the latest '*.tar.gz' file from
 [https://github.com/topkecleon/telegram-bot-bash/releases](https://github.com/topkecleon/telegram-bot-bash/releases). This can be done with the commands:
@@ -99,7 +103,7 @@ You are Botadmin
 
 /info
 
-his is bashbot, the Telegram bot written entirely in bash.
+This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.
 ```
 For more Information on how to install, customize and use your new bot, read the [Documentation](#Documentation)
@@ -136,7 +140,7 @@ One of the most powerful features of unix shells is variable and command substit
 but as they are expanded in double quotes, this can lead to RCE and information disclosing bugs in complex scripts like bashbot.
 So it's more secure to escape or remove '$' in input from user, files or network.
 
-A powerful tool to improve your scripts is ```shellcheck```. You can [use it online](https://www.shellcheck.net/) or [install shellcheck locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used extensive in bashbot development to ensure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests.
+A powerful tool to improve your scripts is ```shellcheck```. You can [use it online](https://www.shellcheck.net/) or [install shellcheck locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used extensively in bashbot development to ensure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests.
 In addition bashbot has a [test suite](doc/7_develop.md) to check if important functionality is working as expected.
 
 ### Use printf whenever possible
@@ -261,4 +265,4 @@ bashbotBlockRecover() {
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.1-0-gc0eb399

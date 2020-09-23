@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.1-0-gc0eb399
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -22,7 +22,15 @@
 # - 5 cannot connect to telegram bot
 # - 6 mandatory module not found
 # - 6 can't get bottoken
+# - 10 not bash!
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091
+
+# emmbeded system may claim bash but it is not
+# check for bash like ARRAY handlung
+if ! (unset a; set -A a a; eval "a=(a b)"; eval '[ -n "${a[1]}" ]'; ) > /dev/null 2>&1; then
+	echo "iError: Current shell does not support ARRAY's, may be busbox ash shell. pls install a real bash!";
+	exit 10
+fi
 
 # are we running in a terminal?
 if [ -t 1 ] && [ -n "$TERM" ];  then
@@ -32,6 +40,11 @@ if [ -t 1 ] && [ -n "$TERM" ];  then
     ORANGE='\e[35m'
     GREY='\e[1;30m'
     NC='\e[0m'
+fi
+
+# we need some bash 4+ features, check for old bash by feature
+if [ "$(echo -e "\u1111")" == "\u1111" ]; then
+	echo -e "${ORANGE}Warning: Unicode '\uxxxx' seems not supported, install a more current bash.${NC}"
 fi
 
 # some important helper functions
@@ -389,7 +402,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 	local chat="";
 	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
 	[ -n "${BASHBOTDEBUG}" ] &&\
-		printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${DEBUGLOG}"
+		printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${UPDATELOG}"
 	# shellcheck disable=SC2086
 	res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
 		-d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
@@ -402,7 +415,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 	[ "$#" -lt 4  ] && return
 	if [ -n "$5" ]; then
 	[ -n "${BASHBOTDEBUG}" ] &&\
-		printf "%s: sendUpload CHAT=%s WHAT=%s  FILE=%s CAPT=%s\n" "$(date)" "${1}" "${2}" "${3}" "${4}" >>"${DEBUGLOG}"
+		printf "%s: sendUpload CHAT=%s WHAT=%s  FILE=%s CAPT=%s\n" "$(date)" "${1}" "${2}" "${3}" "${4}" >>"${UPDATELOG}"
 	# shellcheck disable=SC2086
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
@@ -426,7 +439,7 @@ else
 	local chat="";
 	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
 	[ -n "${BASHBOTDEBUG}" ] &&\
-		printf "%s: sendJson (wget) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${DEBUGLOG}"
+		printf "%s: sendJson (wget) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${UPDATELOG}"
 	# shellcheck disable=SC2086
 	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
@@ -633,8 +646,8 @@ process_client() {
 	jssh_countKeyDB_async "${CHAT[ID]}" "${COUNTFILE}"
 }
 
-declare -Ax BASBOT_EVENT_INLINE BASBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASBOT_EVENT_REPLY BASBOT_EVENT_FORWARD BASHBOT_EVENT_SEND
-declare -Ax BASBOT_EVENT_CONTACT BASBOT_EVENT_LOCATION BASBOT_EVENT_FILE BASHBOT_EVENT_TEXT BASHBOT_EVENT_TIMER BASHBOT_BLOCKED
+declare -Ax BASHBOT_EVENT_INLINE BASHBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASHBOT_EVENT_REPLY BASHBOT_EVENT_FORWARD BASHBOT_EVENT_SEND
+declare -Ax BASHBOT_EVENT_CONTACT BASHBOT_EVENT_LOCATION BASHBOT_EVENT_FILE BASHBOT_EVENT_TEXT BASHBOT_EVENT_TIMER BASHBOT_BLOCKED
 
 start_timer(){
 	# send alarm every ~60 s
@@ -1006,7 +1019,7 @@ bot_init() {
 	fi
 	#setup bashbot
 	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
-	echo -n "Enter User to run basbot [$RUNUSER]: "
+	echo -n "Enter User to run bashbot [$RUNUSER]: "
 	read -r TOUSER
 	[ -z "$TOUSER" ] && TOUSER="$RUNUSER"
 	if ! id "$TOUSER" &>/dev/null; then
@@ -1145,6 +1158,8 @@ if [ -z "${SOURCE}" ]; then
 			sort -r "${BLOCKEDFILE}.jssh"
 			echo -e "${NC}\c"
 		fi
+		# show user created bot stats
+		_exec_if_function my_bashbot_stats "$@"
 		debug_checks "end $1" "$@"
 		exit
 		;;

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.1-0-gc0eb399
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
@@ -65,7 +65,7 @@ else
 	exit 1
 fi
 
-if which codespell &>/dev/null; then
+if command -v codespell &>/dev/null; then
 	echo "Running codespell"
 	echo "............................" 
 	codespell -B 1 --skip="*.log,*.html,*.txt,.git*,jsonDB-keyboard" -L "ba"

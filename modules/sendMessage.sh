@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.1-0-gc0eb399
 
 # will be automatically sourced from bashbot
 
@@ -27,6 +27,7 @@ ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
 ALBUM_URL=$URL'/sendMediaGroup'
 
+# $1 CHAT $2 message
 send_normal_message() {
 	local len text; text="$(JsonEscape "${2}")"
 	text="${text//$'\n'/\\n}"
@@ -44,8 +45,10 @@ send_normal_message() {
 	done
 }
 
+# $1 CHAT $2 message
 send_markdown_message() {
 	local text; text="$(JsonEscape "${2}")"
+	text="${text//$'\n'/\\n}"
 	[ "${#text}" -ge 4096 ] && log_error "Warning: markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	until [ -z "${text}" ]; do
 		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdown"' "${MSG_URL}"
@@ -53,8 +56,10 @@ send_markdown_message() {
 	done
 }
 
+# $1 CHAT $2 message
 send_markdownv2_message() {
 	local text; text="$(JsonEscape "${2}")"
+	text="${text//$'\n'/\\n}"
 	[ "${#text}" -ge 4096 ] && log_error "Warning: markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	# markdown v2 needs additional double escaping!
 	text="$(sed -E -e 's|([#{}()!.-])|\\\1|g' <<< "$text")"
@@ -64,8 +69,10 @@ send_markdownv2_message() {
 	done
 }
 
+# $1 CHAT $2 message
 send_html_message() {
 	local text; text="$(JsonEscape "${2}")"
+	text="${text//$'\n'/\\n}"
 	[ "${#text}" -ge 4096 ] && log_error "Warning: html message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	until [ -z "${text}" ]; do
 		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"html"' "${MSG_URL}"
@@ -73,6 +80,8 @@ send_html_message() {
 	done
 }
 
+# obsolote, will be removed after 1.0!!
+# $1 CHAT $2 message $3 keyboard
 old_send_keyboard() {
 	local text; text='"text":"'$(JsonEscape "${2}")'"'
 	shift 2
@@ -86,25 +95,39 @@ old_send_keyboard() {
 	send_normal_message "$(getConfigKey "botadmin")" "Warning: old 'send_keyboard' format is deprecated since version 0.6 and will be removed after 1.0 release!"
 }
 
+# $1 CHAT $2 message $3 keyboard
 send_keyboard() {
 	if [[ "$3" != *'['* ]]; then old_send_keyboard "${@}"; return; fi
-	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"Keyboard:"'"'
+	local text='"text":"'"Keyboard:"'"'
+	if [ -n "${2}" ]; then
+		text="$(JsonEscape "${2}")"
+		text='"text":"'"${text//$'\n'/\\n}"'"'
+	fi
 	local one_time=', "one_time_keyboard":true' && [ -n "$4" ] && one_time=""
 	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"'}' "$MSG_URL"
 	# '"text":"$2", "reply_markup": {"keyboard": [ ${3} ], "one_time_keyboard": true}'
 }
 
+# $1 CHAT $2 message $3 remove
 remove_keyboard() {
-	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"remove custom keyboard ..."'"'
+	local text='"text":"'"remove custom keyboard ..."'"'
+	if [ -n "${2}" ]; then
+		text="$(JsonEscape "${2}")"
+		text='"text":"'"${text//$'\n'/\\n}"'"'
+	fi
 	sendJson "${1}" "${text}"', "reply_markup": {"remove_keyboard":true}' "$MSG_URL"
-	[[ -z "${2}" ]] && delete_message "${1}" "${BOTSENT[ID]}" "nolog"
+	# delete message if no message or $3 not empty
+	[[ -z "${2}" || -n "${3}" ]] && delete_message "${1}" "${BOTSENT[ID]}" "nolog"
 	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
 }
+
+# $1 CHAT $2 message $3 keyboard
 send_inline_keyboard() {
 	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"Keyboard:"'"'
 	sendJson "${1}" "${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]}' "$MSG_URL"
 	# JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
 }
+# $1 CHAT $2 message $3 button text $4 URL
 send_button() {
 	send_inline_keyboard "${1}" "${2}" '[ {"text":"'"$(JsonEscape "${3}")"'", "url":"'"${4}"'"}]' 
 }
@@ -200,11 +223,13 @@ send_action() {
 	sendJson "${1}" '"action": "'"${2}"'"' "$ACTION_URL" &
 }
 
+# $1 CHAT $2 lat $3 long
 send_location() {
 	[ -z "$3" ] && return
 	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"'' "$LOCATION_URL"
 }
 
+# $1 CHAT $2 lat $3 long $4 title $5 address $6 foursquard id
 send_venue() {
 	local add=""
 	[ -z "$5" ] && return
@@ -213,6 +238,7 @@ send_venue() {
 }
 
 
+# $1 CHAT $2 from chat  $3 from msg id
 forward_message() {
 	[ -z "$3" ] && return
 	sendJson "${1}" '"from_chat_id": '"${2}"', "message_id": '"${3}"'' "$FORWARD_URL"
@@ -221,6 +247,7 @@ forward() { # backward compatibility
 	forward_message "$@" || return
 }
 
+# $1 CHAT $2 bashbot formatted message, see manual advanced usage
 send_message() {
 	[ -z "$2" ] && return
 	local text keyboard btext burl no_keyboard file lat long title address sent
@@ -272,6 +299,8 @@ send_message() {
 
 }
 
+# $1 CHAT $2 message starting possibly with html_parse_mode or markdown_parse_mode
+# not working, fix or remove after 1.0!!
 send_text() {
 	case "$2" in
 		'html_parse_mode'*)

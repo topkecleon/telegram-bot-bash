@@ -8,14 +8,14 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.1-0-gc0eb399
 #
 
 # uncomment the following lines to overwrite info and help messages
 # use ${ME} for current bot name in messages
 # Note: you must escape '_' in botname with two \ in markdown messages!
 export bashbot_info='This is @'"${ME//_/\\\\_}"', the Telegram example bot written entirely in bash.
-Edit commands and messages in mycommnds.sh!
+Edit commands and messages in mycommands.sh!
 '
 # export bashbot_help='*Available commands*:
 #'
@@ -89,7 +89,7 @@ else
 	# action triggered on first message after startup
 	if [[ "$(getConfigKey "startupaction")" != "done"* ]]; then
 	# send message to first user on startup
-	send_normal_message "${CHAT[ID]}" "Hi, you was the first one after startup!"
+	send_normal_message "${CHAT[ID]}" "Hi, you are the first user after startup!"
 	# mark as done and when
 	setConfigKey "startupaction" "done $(date)"
 	fi
