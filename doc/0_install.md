@@ -2,7 +2,7 @@
 
 ## Check bash installation
 
-There may be systems where bash seems to be installed but it is not, e.g. emmbedded systems, or version is to old.
+There may be systems where bash seems to be installed but it is not, e.g. embedded systems, or version is to old.
 Run the following commands to see if your bash looks ok ...
 
 ```bash
@@ -169,5 +169,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.0-23-gc479c80
+#### $$VERSION$$ v1.0-24-gc20eef4
 
