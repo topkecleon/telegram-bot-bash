@@ -6,14 +6,14 @@ There may be systems where bash seems to be installed but it is not, e.g. emmbed
 Run the following commands to see if your bash looks ok ...
 
 ```bash
-# does the system say bash is there?
-which bash && echo "bash seems available..."
+# system say bash is there?
+if which bash; then echo "bash seems available..."; else echo "NO bash"; fi
 
 # real bash supports ARRAY
-bash -c 'eval "a=(1)" && echo "Shell supports ARRAY..."'
+bash -c 'if eval "a=(1)"; then echo "Shell support arrays..."; else echo "Shell has NO arrays"; fi'
 
 # check for version by feature
-bash -c '[ "$(echo -e "\u1111")" == "\u1111" ] || echo "Bash version seems ok ..."'
+bash -c 'if [ "$(echo -e "\u1111")" != "\u1111" ]; then echo "Bash version ok ..."; else echo "Bash Version NOT ok"; fi'
 ```
 
 ## Install bashbot
@@ -169,5 +169,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.0-22-g1153d65
+#### $$VERSION$$ v1.0-23-gc479c80
 
