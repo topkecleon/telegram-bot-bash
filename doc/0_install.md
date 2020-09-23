@@ -1,5 +1,21 @@
 #### [Home](../README.md)
 
+## Check bash installation
+
+There may be systems where bash seems to be installed but it is not, e.g. emmbedded systems, or the bash version is to old.
+Run the following commands to see if your bash looks ok ...
+
+```bash
+# does the system say bash is there?
+which bash && echo "bash seems available..."
+
+# real bash supports ARRAY
+bash -c 'eval "a=(1)" && echo "Shell supports ARRAY..."'
+
+# check for ok version by feature
+[ "$(echo "\u1111")" == "\u1111" ] && echo "Bash version may to old..."
+```
+
 ## Install bashbot
 
 1. Go to the directory you want to install bashbot, e.g.
@@ -153,5 +169,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.0-20-gc292292
+#### $$VERSION$$ v1.0-21-g6718d24
 

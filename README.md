@@ -18,6 +18,7 @@ More concrete on the common commands provided by recent versions of [coreutils](
 
 *Note for MacOS and BSD Users:* As bashbot heavily uses modern bash and (gnu) grep/sed features, bashbot will not run without installing additional software, see [Install Bashbot](doc/0_install.md)
 
+*Note for emmbedded systems:* busybox or toybox ONLY is not sufficient, you need a to install a "real" bash, see [Install Bashbot](doc/0_install.md)  
 
 Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Downloads](https://github.com/topkecleon/telegram-bot-bash/releases) are available on www.github.com
 
@@ -74,8 +75,11 @@ If you don't want to register for Telegram you should stop reading here ;-)
 After you're registered to Telegram send a message to [@botfather](https://telegram.me/botfather),
 [create a new Telegram Bot token](doc/1_firstbot.md) and write it down. You need the token to install the bot.
 
-Now open a terminal and check if bash is installed: ```which bash && echo "bash installed!"```.
-If you get an error message bash is not installed.
+Now open a terminal and check if bash is installed:
+ ```
+which bash && echo "bash seems available..."
+```
+
 
 Create a new directory, change to it:  ```mkdir tbb; cd tbb``` and download the latest '*.tar.gz' file from
 [https://github.com/topkecleon/telegram-bot-bash/releases](https://github.com/topkecleon/telegram-bot-bash/releases). This can be done with the commands:
@@ -261,4 +265,4 @@ bashbotBlockRecover() {
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v1.0-18-g9b3d689
+#### $$VERSION$$ v1.0-21-g6718d24

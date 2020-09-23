@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.0-18-g9b3d689
+#### $$VERSION$$ v1.0-21-g6718d24
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -22,7 +22,15 @@
 # - 5 cannot connect to telegram bot
 # - 6 mandatory module not found
 # - 6 can't get bottoken
+# - 10 not bash!
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091
+
+# emmbeded system may claim bash but it is not
+# check for bash like ARRAY handlung
+if ! (unset a; set -A a a; eval "a=(a b)"; eval '[ -n "${a[1]}" ]'; ) > /dev/null 2>&1; then
+	echo "iError: Current shell does not support ARRAY's, may be busbox ash shell. pls install a real bash!";
+	exit 10
+fi
 
 # are we running in a terminal?
 if [ -t 1 ] && [ -n "$TERM" ];  then
@@ -32,6 +40,11 @@ if [ -t 1 ] && [ -n "$TERM" ];  then
     ORANGE='\e[35m'
     GREY='\e[1;30m'
     NC='\e[0m'
+fi
+
+# we need some bash 4+ features, check for old bash by feature
+if [ "$(echo -e "\u1111")" == "\u1111" ]; then
+	echo -e "${ORANGE}Warning: Unicode '\uxxxx' seems not supported, install a more current bash.${NC}"
 fi
 
 # some important helper functions
