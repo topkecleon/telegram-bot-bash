@@ -10,7 +10,7 @@ Run the following commands to see if your bash looks ok ...
 if which bash; then echo "bash seems available..."; else echo "NO bash"; fi
 
 # real bash supports ARRAY
-bash -c 'if eval "a=(1)"; then echo "Shell support arrays..."; else echo "Shell has NO arrays"; fi'
+bash -c 'if eval "a[1]=1"; then echo "Shell support arrays..."; else echo "Shell has NO arrays"; fi'
 
 # check for bash version by feature
 bash -c 'if [ "$(echo -e "\u1111")" != "\u1111" ]; then echo "Bash version ok ..."; else echo "LBash Version may be to old ..."; fi'
@@ -169,5 +169,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.1-0-gc0eb399
+#### $$VERSION$$ v1.1-0-ge835bbc
 
