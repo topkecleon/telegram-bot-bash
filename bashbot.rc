@@ -17,14 +17,13 @@
 
 # save default values
 TERM="" # disable bashbot clear and color output
-runas="nobody"
 runcmd="echo Dry run:" # not activated until you edit lines below
 
 #######################
 # Configuration Section
 
 # edit the next line to fit the user you want to run bashbot, e.g. nobody:
-# runas="nobody" 
+runas="nobody" 
 
 # uncomment one of the following lines to fit your system 
 # runcmd="su $runas -s /bin/bash -c "      # runasuser with *su*
@@ -81,4 +80,3 @@ case "$1" in
 	;;
 esac
 exit $RETVAL
-
