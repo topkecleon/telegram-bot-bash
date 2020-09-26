@@ -915,7 +915,7 @@ start_bot() {
 	[[ "${1}" == *"debug" ]] && exec &>>"${DEBUGLOG}"
 	printf  "%s\n" "${DEBUGMSG}"; DEBUGMSG="${1}"
 	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x
-	#cleaup old pipes and empty logfiles
+	# cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
 	find "${DATADIR}" -size 0 -name "*.log" -delete
 	# load addons on startup
@@ -951,7 +951,7 @@ start_bot() {
 		sleep "$(_round_float "${nextsleep}e-3" "1")"
 		# get next update
 		UPDATE="$(getJson "$UPD_URL$OFFSET" "nolog" 2>/dev/null | "${JSONSHFILE}" -s -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
-		# did we ge an responsn0r
+		# did we get an response?
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
 			[ "${OFFSET}" = "-999" ] && [ "${nextsleep}" -gt "$((maxsleep*2))" ] &&\
