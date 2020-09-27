@@ -206,7 +206,7 @@ else
 	my_startup
     fi
 
-    # your additional bahsbot commands
+    # your additional bashbot commands
     # NOTE: command can have @botname attached, you must add * in case tests... 
     mycommands() {
 	# a service Message was received

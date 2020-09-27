@@ -15,7 +15,7 @@ To start with a clean/minimal bot copy ```mycommands.sh.clean``` to ```mycommand
 the message strings and place commands in the```case ... esac``` block of the function mycommands():
 ```bash
 # file: mycommands.sh
-# your additional bahsbot commands
+# your additional bashbot commands
 
 # uncomment the following lines to overwrite info and help messages
  bashbot_info='This is *MY* variant of _bashbot_, the Telegram bot written entirely in bash.
