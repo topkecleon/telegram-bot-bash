@@ -3,7 +3,7 @@
 ## Notes for bashbot developers
 This section is about help and best practices for new bashbot developers. The main focus on is creating new versions of bashbot, modules and addons, not on develop your individual bot. Nevertheless the information provided here should help your bot development also.
 
-If you want to provide fixes or new features [fork bashbot on githup](https://help.github.com/en/articles/fork-a-repo) and provide changes as [pull request on github](https://help.github.com/en/articles/creating-a-pull-request).
+If you want to provide fixes or new features [fork bashbot on github](https://help.github.com/en/articles/fork-a-repo) and provide changes as [pull request on github](https://help.github.com/en/articles/creating-a-pull-request).
 
 ### Debugging Bashbot
 Usually all bashbot output is discarded.
@@ -37,7 +37,7 @@ The only mandatory module is 'module/sendMessage.sh'.
 If a not mandatory module is used in 'bashbot.sh' or 'commands.sh', the use of ```_is_function``` or
 ```_execute_if_function``` is mandatory to catch absence of the module.
 
-**Addons** resides in ```addons/*.sh.dist``` and are not endabled by default. To activate an addon rename it to end with '.sh', e.g. by
+**Addons** resides in ```addons/*.sh.dist``` and are not enabled by default. To activate an addon rename it to end with '.sh', e.g. by
 ```cp addons/example.sh.dist addons/example.sh```. 
 
 Addons must register themself to BASHBOT_EVENTS at startup, e.g. to call a function every time a message is received.
