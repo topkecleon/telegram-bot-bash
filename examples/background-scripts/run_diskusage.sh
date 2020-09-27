@@ -24,6 +24,7 @@ unset IFS
 # discard STDIN for background jobs!
 cat >/dev/null & 
 
+# shellcheck source=examples/background-scripts/mycommands.sh
 source "./mycommands.sh"
 
 # check if $1 is a number
