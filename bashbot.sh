@@ -21,7 +21,7 @@
 # - 4 unknown command
 # - 5 cannot connect to telegram bot
 # - 6 mandatory module not found
-# - 6 can't get bottoken
+# - 7 can't get bottoken
 # - 10 not bash!
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091
 
