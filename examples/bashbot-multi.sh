@@ -23,8 +23,8 @@ if true; then
 else
   # alternative linux like locations
   BINDIR="/usr/local/bin"
-  ETC="/etc/bahsbot"
-  VAR="/var/bahsbot"
+  ETC="/etc/bashbot"
+  VAR="/var/bashbot"
   export BASHBOT_JSONSH="/usr/local/bin/JSON.sh"
 
 fi

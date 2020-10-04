@@ -3,7 +3,7 @@
 ## Notes for bashbot developers
 This section is about help and best practices for new bashbot developers. The main focus on is creating new versions of bashbot, modules and addons, not on develop your individual bot. Nevertheless the information provided here should help your bot development also.
 
-If you want to provide fixes or new features [fork bashbot on githup](https://help.github.com/en/articles/fork-a-repo) and provide changes as [pull request on github](https://help.github.com/en/articles/creating-a-pull-request).
+If you want to provide fixes or new features [fork bashbot on github](https://help.github.com/en/articles/fork-a-repo) and provide changes as [pull request on github](https://help.github.com/en/articles/creating-a-pull-request).
 
 ### Debugging Bashbot
 Usually all bashbot output is discarded.
@@ -31,13 +31,13 @@ you can the change the level of verbosity of the debug argument:
 to keep 'bashbot.sh' small, while extending functionality. In addition not every function is needed by all bots, so you can
 disable modules, e.g. by rename the respective module file to 'module.sh.off'.
 
-Modules must use only functions provided by 'bahsbot.sh' or the module itself and should not depend on other modules or addons.
+Modules must use only functions provided by 'bashbot.sh' or the module itself and should not depend on other modules or addons.
 The only mandatory module is 'module/sendMessage.sh'.
 
 If a not mandatory module is used in 'bashbot.sh' or 'commands.sh', the use of ```_is_function``` or
 ```_execute_if_function``` is mandatory to catch absence of the module.
 
-**Addons** resides in ```addons/*.sh.dist``` and are not endabled by default. To activate an addon rename it to end with '.sh', e.g. by
+**Addons** resides in ```addons/*.sh.dist``` and are not enabled by default. To activate an addon rename it to end with '.sh', e.g. by
 ```cp addons/example.sh.dist addons/example.sh```. 
 
 Addons must register themself to BASHBOT_EVENTS at startup, e.g. to call a function every time a message is received.
@@ -115,7 +115,7 @@ To avoid wrong use of EVENT_SEND, e.g. fork bomb, event processing is suspended 
 *Example:*
 ```bash
 # register callback:
-BAHSBOT_EVENT_SEND["example_log","1"]="example_log"
+BASHBOT_EVENT_SEND["example_log","1"]="example_log"
 EXAMPLE_LOG="${BASHBOT_ETC:-.}/addons/${EXAMPLE_ME}.log"
 
 # Note: do not call any send message functions from EVENT_SEND!
@@ -130,7 +130,7 @@ example_log(){
 
 Important: Bashbot timer tick is disabled by default and must be enabled by setting BASHBOT_START_TIMER to any value not zero.
 
-* BAHSBOT_EVENT_TIMER		executed every minute and can be used in 3 variants: oneshot, once a minute, every X minutes.
+* BASHBOT_EVENT_TIMER		executed every minute and can be used in 3 variants: oneshot, once a minute, every X minutes.
 
 Registering to BASHBOT_EVENT_TIMER works similar as for message events, but you must add a timing argument to the name.
 EVENT_TIMER is triggered every 60s and waits until the current running command is finished, so it's not exactly every
@@ -139,7 +139,7 @@ minute, but once a minute.
 Every time EVENT_TIMER is triggered the variable "EVENT_TIMER" is increased. each callback is executed if ```EVENT_TIMER % time``` is '0' (true).
 This means if you register an every 5 minutes callback first execution may < 5 Minutes, all subsequent executions are once every 5. Minute.
 
-*usage:* BAHSBOT_EVENT_TIMER[ "name" , "time" ], where time is:
+*usage:* BASHBOT_EVENT_TIMER[ "name" , "time" ], where time is:
 
     * 0	ignored
     * 1	execute once every minute
@@ -151,7 +151,7 @@ Note: If you want exact "in x minutes" use "EVENT_TIMER plus x" as time: ```-(EV
 *Example:*
 ```bash
 # register callback:
-BAHSBOT_EVENT_TIMER["example_every","1"]="example_everymin"
+BASHBOT_EVENT_TIMER["example_every","1"]="example_everymin"
 
 # function called every minute
 example_everymin() {
@@ -160,13 +160,13 @@ example_everymin() {
 }
 
 # register other callback:
-BAHSBOT_EVENT_TIMER["example_every5","5"]="example_every5min"
+BASHBOT_EVENT_TIMER["example_every5","5"]="example_every5min"
 
 # execute once on the next 10 minutes since start "event"
-BAHSBOT_EVENT_TIMER["example_10min","-10"]="example_in10min"
+BASHBOT_EVENT_TIMER["example_10min","-10"]="example_in10min"
 
 # once in exact 10 minutes
-BAHSBOT_EVENT_TIMER["example_10min","$(( (EVENT_TIMER+10) * -1 ))"]="example_in10min"
+BASHBOT_EVENT_TIMER["example_10min","$(( (EVENT_TIMER+10) * -1 ))"]="example_in10min"
 
 ```
 
@@ -297,7 +297,7 @@ To create a new test run ```test/ADD-test-new.sh``` and answer the questions, it
 Each test consists of a script script named after ```p-name-test.sh``` *(where p is test pass 'a-z' and name the name
 of your test)* and an optional dir ```p-name-test/``` *(script name minus '.sh')* for additional files.
 
-Tests with no dependency to other tests will run in pass 'a', tests which need an initialized bahsbot environment must run in pass 'd' or later. 
+Tests with no dependency to other tests will run in pass 'a', tests which need an initialized bashbot environment must run in pass 'd' or later. 
 A temporary test environment is created when 'ALL-tests.sh' starts and deleted after all tests are finished.
 
 The file ```ALL-tests.inc.sh``` must be included from all tests and provide the test environment as shell variables:

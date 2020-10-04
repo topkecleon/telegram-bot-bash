@@ -19,11 +19,13 @@ export 'LANGUAGE=C.UTF-8'
 unset IFS
 # set -f # if you are paranoid use set -f to disable globbing
 
-# discard STDIN for background jobs!
+# shellcheck source=examples/background-scripts/mycommands.sh
 cat >/dev/null & 
 
 # watch for new logfiles
 WATCHDIR="/var/log"
+
+# shellcheck disable=SC1091
 source "./mycommands.sh"
 
 # test your script and the remove ...

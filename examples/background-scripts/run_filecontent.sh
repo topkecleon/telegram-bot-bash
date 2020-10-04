@@ -24,6 +24,8 @@ cat >/dev/null &
 
 # watch for new files created by a trusted program
 WATCHDIR="/my_trusted/dir_to_watch"
+
+# shellcheck source=examples/background-scripts/mycommands.sh
 source "./mycommands.sh"
 
 # test your script and the remove ...
@@ -39,4 +41,3 @@ loop_callback() {
 }
 
 watch_dir_loop "$WATCHDIR"
-

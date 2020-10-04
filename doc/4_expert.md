@@ -107,8 +107,8 @@ by sourcing it:
 
 *usage:* .  bashbot.sh source
 
-Before sourcing 'bahsbot.sh' for interactive and script use, you should export and set BASHBOT_HOME to bashbots installation dir,
-e.g. '/usr/local/telegram-bot-bash'. see [Bashbot Environemt](#Bashbot-environment)
+Before sourcing 'bashbot.sh' for interactive and script use, you should export and set BASHBOT_HOME to bashbots installation dir,
+e.g. '/usr/local/telegram-bot-bash'. see [Bashbot Environment](#Bashbot-environment)
 
 **Note:** *If you don't set BASHBOT_HOME bashbot will use the actual directory as NEW home directory
 which means it will create all needed files and ask for bot token and botadmin if you are not in the real bot home!*

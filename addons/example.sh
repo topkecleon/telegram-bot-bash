@@ -29,7 +29,7 @@
 # BASHBOT_EVENT_LOCATION	location or venue received
 # BASHBOT_EVENT_FILE	file received
 #
-# BAHSBOT_EVENT_TIMER	this event is a bit special as it fires every Minute
+# BASHBOT_EVENT_TIMER	this event is a bit special as it fires every Minute
 #			and has 3 meanings: oneshot, every time, every X minutes.
 #
 # all global variables and functions can be used in registered functions.

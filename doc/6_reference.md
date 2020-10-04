@@ -281,7 +281,7 @@ fi
 *See also [Chat Member](https://core.telegram.org/bots/api/#chatmember)*
 
 ##### user_is_allowed
-Bahsbot supports User Access Control, see [Advanced Usage](3_advanced.md)
+Bashbot supports User Access Control, see [Advanced Usage](3_advanced.md)
 
 *usage:* user_is_allowed "${USER[ID]}" "what" "${CHAT[ID]}"
 
