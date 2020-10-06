@@ -23,7 +23,7 @@ do
     for jsonfile in "${REFDIR}"/*.in
     do
 	set -f
-	[ "${i}" = "1" ] && "${JSON}"  -s -b -n <"${jsonfile}"  >"${jsonfile}.out-${i}"
+	[ "${i}" = "1" ] && "${JSON}" -b -n <"${jsonfile}"  >"${jsonfile}.out-${i}"
 	[ "${i}" = "2" ] && "${JSON}"  <"${jsonfile}"  >"${jsonfile}.out-${i}"
 
 	# output processed input
