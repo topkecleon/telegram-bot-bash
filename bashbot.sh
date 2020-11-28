@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev-22-g1cf1dff
+#### $$VERSION$$ v1.2-dev-23-g6948ecd
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -402,7 +402,9 @@ function detect_curl() {
 			return 0
 		fi
 	done
-	[ -n "${BASHBOTDEBUG}" ] && printf "%s: Warning: Curl not detected, trying wget as fallback!\n" "$(date)" >>"${DEBUGLOG}"
+	local warn="Warning: Curl not detected, trying wget as fallback!"
+	printf "%s: %s\n" "$(date)" "${warn}" >>"${UPDATELOG}"
+	[ -n "${BASHBOTDEBUG}" ] && printf "%s: %s\n" "$(date)" "${warn}" >>"${DEBUGLOG}"
 	return 1
 }
 
@@ -983,7 +985,7 @@ start_bot() {
 		# adaptive sleep in ms rounded to next 0.1 s
 		sleep "$(_round_float "${nextsleep}e-3" "1")"
 		# get next update
-		UPDATE="$(getJson "$UPD_URL$OFFSET" "nolog" 2>/dev/null | "${JSONSHFILE}" -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
+		UPDATE="$(getJson "${UPD_URL}${OFFSET}" "nolog" 2>/dev/null | "${JSONSHFILE}" -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
 		# did we get an response?
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
