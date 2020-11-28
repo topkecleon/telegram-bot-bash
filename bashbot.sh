@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev-13-g2a5d47d
+#### $$VERSION$$ v1.2-dev-22-g1cf1dff
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -386,10 +386,30 @@ get_file() {
 }
 
 # curl is preferred, but may not available on embedded systems
+function detect_curl() {
+	# custom curl command
+	[ -n "${BASHBOT_CURL}" ] && return 0
+	# use wget
+	[ -n "${BASHBOT_WGET}" ] && return 1
+	# default method
+	BASHBOT_CURL="curl"
+	_exists curl && return 0
+	# look in usual locations
+	local file
+	for file in /usr/bin /bin /usr/local/bin; do
+		if [ -x "${file}/curl" ]; then
+			BASHBOT_CURL="${file}/curl"
+			return 0
+		fi
+	done
+	[ -n "${BASHBOTDEBUG}" ] && printf "%s: Warning: Curl not detected, trying wget as fallback!\n" "$(date)" >>"${DEBUGLOG}"
+	return 1
+}
+
 TIMEOUT="${BASHBOT_TIMEOUT}"
 [[ "$TIMEOUT" =~ ^[0-9]+$ ]] || TIMEOUT="20"
 
-if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
+if detect_curl ; then
   [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
   # simple curl or wget call, output to stdout
   getJson(){

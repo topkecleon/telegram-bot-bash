@@ -350,9 +350,9 @@ wait
 
 @Gnadelwartz
 
-## That's it!
+## That's it all guys!
 
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v1.1-0-gc0eb399
+#### $$VERSION$$ v1.1-0-ge835bbc
