@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev-23-g6948ecd
+#### $$VERSION$$ v1.2-dev-24-gde31d77
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -407,6 +407,12 @@ function detect_curl() {
 	[ -n "${BASHBOTDEBUG}" ] && printf "%s: %s\n" "$(date)" "${warn}" >>"${DEBUGLOG}"
 	return 1
 }
+
+# iconv used to filter out broken utf characters, if not installed fake it
+if ! _exists iconv; then
+	printf "%s: %s\n" "$(date)" "Warning: iconv not installed, pls imstall!" >>"${UPDATELOG}"
+	function iconv() { cat; }
+fi
 
 TIMEOUT="${BASHBOT_TIMEOUT}"
 [[ "$TIMEOUT" =~ ^[0-9]+$ ]] || TIMEOUT="20"
