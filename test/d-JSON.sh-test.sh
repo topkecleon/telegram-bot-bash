@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.2-dev-13-g2a5d47d
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -23,7 +23,7 @@ do
     for jsonfile in "${REFDIR}"/*.in
     do
 	set -f
-	[ "${i}" = "1" ] && "${JSON}"  -s -b -n <"${jsonfile}"  >"${jsonfile}.out-${i}"
+	[ "${i}" = "1" ] && "${JSON}" -b -n <"${jsonfile}"  >"${jsonfile}.out-${i}"
 	[ "${i}" = "2" ] && "${JSON}"  <"${jsonfile}"  >"${jsonfile}.out-${i}"
 
 	# output processed input

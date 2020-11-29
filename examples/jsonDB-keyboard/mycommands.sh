@@ -2,7 +2,7 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.2-dev-13-g2a5d47d
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -206,7 +206,7 @@ else
 	my_startup
     fi
 
-    # your additional bahsbot commands
+    # your additional bashbot commands
     # NOTE: command can have @botname attached, you must add * in case tests... 
     mycommands() {
 	# a service Message was received

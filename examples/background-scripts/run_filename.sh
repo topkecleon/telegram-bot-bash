@@ -2,7 +2,7 @@
 # file:  run_filename
 # background job to display all new files in WATCHDIR
 #
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.2-dev-13-g2a5d47d
 
 ######
 # parameters
@@ -19,11 +19,13 @@ export 'LANGUAGE=C.UTF-8'
 unset IFS
 # set -f # if you are paranoid use set -f to disable globbing
 
-# discard STDIN for background jobs!
+# shellcheck source=examples/background-scripts/mycommands.sh
 cat >/dev/null & 
 
 # watch for new logfiles
 WATCHDIR="/var/log"
+
+# shellcheck disable=SC1091
 source "./mycommands.sh"
 
 # test your script and the remove ...

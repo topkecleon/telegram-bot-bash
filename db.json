@@ -14,7 +14,7 @@
   "ok": 
     {
 	"ok":true,
-	"description":"Ttest for ok"
+	"description":"Test for ok"
     } ,
   "getMe": 
     {

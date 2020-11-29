@@ -2,7 +2,7 @@
 # file:  run_filename
 # background job to display content of all new files in WATCHDIR
 #
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.2-dev-13-g2a5d47d
 
 ######
 # parameters
@@ -24,6 +24,8 @@ cat >/dev/null &
 
 # watch for new files created by a trusted program
 WATCHDIR="/my_trusted/dir_to_watch"
+
+# shellcheck source=examples/background-scripts/mycommands.sh
 source "./mycommands.sh"
 
 # test your script and the remove ...
@@ -39,4 +41,3 @@ loop_callback() {
 }
 
 watch_dir_loop "$WATCHDIR"
-

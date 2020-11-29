@@ -4,7 +4,7 @@
 # Addons can register to bashbot events at startup
 # by providing their name and a callback per event
 #
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.2-dev-13-g2a5d47d
 #
 # If an event occurs each registered event function is called.
 #
@@ -29,7 +29,7 @@
 # BASHBOT_EVENT_LOCATION	location or venue received
 # BASHBOT_EVENT_FILE	file received
 #
-# BAHSBOT_EVENT_TIMER	this event is a bit special as it fires every Minute
+# BASHBOT_EVENT_TIMER	this event is a bit special as it fires every Minute
 #			and has 3 meanings: oneshot, every time, every X minutes.
 #
 # all global variables and functions can be used in registered functions.

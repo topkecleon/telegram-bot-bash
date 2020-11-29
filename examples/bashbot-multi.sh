@@ -2,7 +2,7 @@
 # file. multibot.sh
 # description:  run multiple telegram bots from one installation
 #
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.2-dev-13-g2a5d47d
 
 if [ "${2}" = "" ] || [ "${2}" = "-h" ]; then
 	echo "Usage: $0 botname command"
@@ -23,8 +23,8 @@ if true; then
 else
   # alternative linux like locations
   BINDIR="/usr/local/bin"
-  ETC="/etc/bahsbot"
-  VAR="/var/bahsbot"
+  ETC="/etc/bashbot"
+  VAR="/var/bashbot"
   export BASHBOT_JSONSH="/usr/local/bin/JSON.sh"
 
 fi

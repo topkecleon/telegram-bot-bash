@@ -5,7 +5,7 @@
 # to show how you can customize bashbot by only editing mycommands.sh
 # NOTE: this is not tested, simply copied from original source and reworked!
 #
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.2-dev-13-g2a5d47d
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -32,7 +32,7 @@ bashbot_help='*Available commands*:
 '
 
 
-# your additional bahsbot commands
+# your additional bashbot commands
 # NOTE: command can have @botname attached, you must add * in case tests... 
 mycommands() {
     local msg=""

@@ -39,11 +39,20 @@ In addition you can check individual capabilities of users as you must define in
 # allow user 987654321 only to start bot in chat 98979695
 987654321:start:98979695
 
+# special case allow ALL users ONE action in all groups or in one group
+ALL:search:*
+ALL:search:98979695
+
+# not valid, ALL must have an action!
+ALL:*:*
+
 # * are only allowed on the right hand side and not for user!
 # the following examples are NOT valid!
 *:*:*
 *:start:*
 *:*:98979695
+
+
 ```
 You must use the function ```user_is_allowed``` to check if a user has the capability to do something. Example: Check if user has capability to start bot.
 
@@ -288,5 +297,5 @@ Note: If you disable automatic retry, se above, you disable also connection prob
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.2-dev-14-g6ec00d4
 
