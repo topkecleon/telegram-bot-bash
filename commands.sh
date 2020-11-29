@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.1-29-ga1773cc
+#### $$VERSION$$ v1.2-pre2-0-g2824487
 #
 
 # adjust your language setting here, e.g. when run from other user or cron.

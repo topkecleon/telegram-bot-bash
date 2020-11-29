@@ -151,10 +151,9 @@ debug`
 │   ├── BASHBOT.log      # log what your bot is doing ...
 │   ├── ERROR.log        # connection errors from / to telegram API
 │   │
-│   ├── DEBUG.log        # stdout/stderr of you bot (debug mode 
+│   ├── DEBUG.log        # stdout/stderr of you bot (debug mode enabled)
+│   └── MESSAGE.log      # full text of all message send/received (debug mode 
 enabled)
-│   └── MESSAGE.log      # full text of all message send/received 
-(debug mode enabled)
 ```
 
 ----
@@ -356,4 +355,4 @@ wait
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v1.1-29-ga1773cc
+#### $$VERSION$$ v1.2-pre2-0-g2824487

@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-pre2-2-g11c1d55
+#### $$VERSION$$ v1.2-pre2-0-g2824487
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -22,6 +22,7 @@
 # - 5 cannot connect to telegram bot
 # - 6 mandatory module not found
 # - 7 can't get bottoken
+# - 8 curl/wget missing
 # - 10 not bash!
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117
 
@@ -385,6 +386,7 @@ get_file() {
 	printf '%s\n' "${URL}"/"$(JsonGetString <<< "${res}" '"result","file_path"')"
 }
 
+# curl is preferred, try detect curl even not in PATH
 # return TRUE if curl is found or custom curl detected
 # return FALSE if no curl is found or wget is forced by BASHBOT_WGET
 # sets BASHBOT_CURL to point to curl
@@ -421,8 +423,8 @@ TIMEOUT="${BASHBOT_TIMEOUT}"
 [[ "$TIMEOUT" =~ ^[0-9]+$ ]] || TIMEOUT="20"
 
 if detect_curl ; then
+  # here we have curl ----
   [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
-  # simple curl or wget call, output to stdout
   getJson(){
 	[[ -n "${BASHBOTDEBUG}" && -n "${3}" ]] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}" >>"${DEBUGLOG}"
 	# shellcheck disable=SC2086
@@ -459,14 +461,15 @@ if detect_curl ; then
 	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
 else
-  # simple curl or wget call outputs result to stdout
-  getJson(){
+  # NO curl, try wget
+  if _exists wget; then
+    getJson(){
 	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && printf "%s: getJson (wget) URL=%s\n" "$(date)" "${1##*/}" >>"${DEBUGLOG}"
 	# shellcheck disable=SC2086
 	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
-  }
-  # usage: sendJson "chat" "JSON" "URL"
-  sendJson(){
+    }
+    # usage: sendJson "chat" "JSON" "URL"
+    sendJson(){
 	local chat="";
 	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
 	[ -n "${BASHBOTDEBUG}" ] &&\
@@ -476,12 +479,21 @@ else
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -b -n 2>/dev/null )"
 	sendJsonResult "${res}" "sendJson (wget)" "$@"
 	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" & 
-  }
-  sendUpload() {
+    }
+    sendUpload() {
 	log_error "Sorry, wget does not support file upload"
 	BOTSENT[OK]="false"
 	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
-  }
+    }
+  else
+	# ups, no curl AND no wget
+	if [ -n "${BASHBOT_WGET}" ]; then
+		printf "%s: Error: You set BASHBOT_WGET but no wget found!\n" "$(date)"
+	else
+		printf "%s: Error: You must at least install curl or wget\n" "$(date)"
+	fi
+	exit 8
+  fi
 fi 
 
 # retry sendJson
