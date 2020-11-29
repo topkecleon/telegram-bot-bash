@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev-25-g0b64af7
+#### $$VERSION$$ v1.2-pre-0-gb4c83c1
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -946,6 +946,7 @@ process_message() {
 #########################
 # main get updates loop, should never terminate
 declare -A BASHBOTBLOCKED
+export BASHBOT_UPDATELOG="${BASHBOT_UPDATELOG-nolog}" # allow to be ""
 start_bot() {
 	local DEBUGMSG ADMIN OFFSET=0
 	# adaptive sleep defaults
@@ -958,7 +959,7 @@ start_bot() {
 	# redirect to Debug.log
 	[[ "${1}" == *"debug" ]] && exec &>>"${DEBUGLOG}"
 	printf  "%s\n" "${DEBUGMSG}"; DEBUGMSG="${1}"
-	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x
+	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x i && unset BASHBOT_UPDATELOG
 	# cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
 	find "${DATADIR}" -size 0 -name "*.log" -delete
@@ -994,7 +995,7 @@ start_bot() {
 		# adaptive sleep in ms rounded to next 0.1 s
 		sleep "$(_round_float "${nextsleep}e-3" "1")"
 		# get next update
-		UPDATE="$(getJson "${UPD_URL}${OFFSET}" "nolog" 2>/dev/null | "${JSONSHFILE}" -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
+		UPDATE="$(getJson "${UPD_URL}${OFFSET}" "${BASHBOT_UPDATELOG}" 2>/dev/null | "${JSONSHFILE}" -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
 		# did we get an response?
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
