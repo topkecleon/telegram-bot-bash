@@ -2,7 +2,7 @@
 # file: make-distribution.sh
 # creates files and arcchives to dirtribute bashbot
 #
-#### $$VERSION$$ v1.1-0-gc0eb399
+#### $$VERSION$$ v1.2-pre2-2-gef80aa5
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -57,8 +57,8 @@ fi
 
 # make html doc
 echo "Create html doc"
-#shellcheck disable=SC1090
-source "$GIT_DIR/../dev/make-html.sh"
+# shellcheck disable=SC1090,SC1091
+source "../../dev/make-html.sh"
 
 # create archive
 cd .. || exit 1
