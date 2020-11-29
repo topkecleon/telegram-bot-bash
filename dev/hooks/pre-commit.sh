@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.2-pre2-0-ga1773cc
+#### $$VERSION$$ v1.2-pre2-1-gb5caff0
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
@@ -49,7 +49,7 @@ VERSION="$(git describe --tags | sed -e 's/-.*//' -e 's/v//' -e 's/,/./')"
 
 # LOCAL version must greater than latest REMOTE release version
 echo "Update Version of modified files" 
-if (( $(echo "${VERSION} >= ${REMOTEVER}" | bc -l) )); then
+if ! command -v bc &> /dev/null || (( $(echo "${VERSION} >= ${REMOTEVER}" | bc -l) )); then
 	# update version in bashbot files on push
 	set +f
 	[ -f "${LASTPUSH}" ] && LASTFILES="$(find ./* -newer "${LASTPUSH}")"

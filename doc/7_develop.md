@@ -190,7 +190,7 @@ Now have a look at the directory 'standalone', here you find the files 'bashbot.
 
 ### Setup your develop environment
 
-1. install git, install [shellcheck](5_practice.md#Test-your-Bot-with-shellcheck), install pandoc
+1. install the commands git, [shellcheck](5_practice.md#Test-your-Bot-with-shellcheck), bc, pandoc, bc, codespell
 2. setup your [environment for UTF-8](4_expert.md#Setting-up-your-Environment)
 3. clone your bashbot fork to a new directory ```git clone https://github.com/<YOURNAME>/telegram-bot-bash.git```, replace ```<YOURNAME>``` with your username on github
 4. create and change to your develop branch ```git checkout -b <YOURBRANCH>```, replace ```<YOURBRANCH>``` with the name you want to name it, e.g. 'develop'
@@ -349,5 +349,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v1.2-pre2-0-ga1773cc
+#### $$VERSION$$ v1.2-pre2-1-gb5caff0
 
