@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev-24-gde31d77
+#### $$VERSION$$ v1.2-dev-25-g0b64af7
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -385,16 +385,18 @@ get_file() {
 	printf '%s\n' "${URL}"/"$(JsonGetString <<< "${res}" '"result","file_path"')"
 }
 
-# curl is preferred, but may not available on embedded systems
+# return TRUE if curl is found or custom curl detected
+# return FALSE if no curl is found or wget is forced by BASHBOT_WGET
+# sets BASHBOT_CURL to point to curl
 function detect_curl() {
 	# custom curl command
 	[ -n "${BASHBOT_CURL}" ] && return 0
 	# use wget
 	[ -n "${BASHBOT_WGET}" ] && return 1
-	# default method
+	# default use curl in PATH
 	BASHBOT_CURL="curl"
 	_exists curl && return 0
-	# look in usual locations
+	# search in usual locations
 	local file
 	for file in /usr/bin /bin /usr/local/bin; do
 		if [ -x "${file}/curl" ]; then
@@ -402,7 +404,8 @@ function detect_curl() {
 			return 0
 		fi
 	done
-	local warn="Warning: Curl not detected, trying wget as fallback!"
+	# curl not in PATH and not in usual locations
+	local warn="Warning: Curl not detected, try fallback to wget! pls install curl or adjust BASHBOT_CURL/BASHBOT_WGET environment variables."
 	printf "%s: %s\n" "$(date)" "${warn}" >>"${UPDATELOG}"
 	[ -n "${BASHBOTDEBUG}" ] && printf "%s: %s\n" "$(date)" "${warn}" >>"${DEBUGLOG}"
 	return 1
@@ -410,7 +413,7 @@ function detect_curl() {
 
 # iconv used to filter out broken utf characters, if not installed fake it
 if ! _exists iconv; then
-	printf "%s: %s\n" "$(date)" "Warning: iconv not installed, pls imstall!" >>"${UPDATELOG}"
+	printf "%s: %s\n" "$(date)" "Warning: iconv not installed, pls imstall iconv!" >>"${UPDATELOG}"
 	function iconv() { cat; }
 fi
 
