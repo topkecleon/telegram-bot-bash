@@ -25,6 +25,9 @@ you can the change the level of verbosity of the debug argument:
 
 ```
 
+Logging of telegram update poll is disabled by default, also in `debug` mode. To enable it without using verbose `xdebug` mode
+set `BASHBOT_UPDATELOG` to an empty value (not unset) `export BASHBOT_UPDATELOG=""`
+
 
 ### Modules and Addons
 **Modules** resides in ```modules/*.sh``` and are colletions of optional bashbot functions grouped by functionality. Main reason for creating modules was
@@ -347,5 +350,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v1.2-dev-13-g2a5d47d
+#### $$VERSION$$ v1.2-pre-1-gb4dcb52
 
