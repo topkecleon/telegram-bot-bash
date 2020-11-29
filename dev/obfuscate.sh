@@ -1,5 +1,5 @@
 #!/bin/bash
-# shellcheck disable=SC2028,2016
+# shellcheck disable=SC2028,SC2016,SC1117
 # joke hack to obfuscate bashbot.min.sh
 
 infile="bashbot.sh"

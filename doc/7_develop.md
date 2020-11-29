@@ -28,7 +28,6 @@ you can the change the level of verbosity of the debug argument:
 Logging of telegram update poll is disabled by default, also in `debug` mode. To enable it without using verbose `xdebug` mode
 set `BASHBOT_UPDATELOG` to an empty value (not unset) `export BASHBOT_UPDATELOG=""`
 
-
 ### Modules and Addons
 **Modules** resides in ```modules/*.sh``` and are colletions of optional bashbot functions grouped by functionality. Main reason for creating modules was
 to keep 'bashbot.sh' small, while extending functionality. In addition not every function is needed by all bots, so you can
@@ -191,7 +190,7 @@ Now have a look at the directory 'standalone', here you find the files 'bashbot.
 
 ### Setup your develop environment
 
-1. install git, install [shellcheck](5_practice.md#Test-your-Bot-with-shellcheck)
+1. install git, install [shellcheck](5_practice.md#Test-your-Bot-with-shellcheck), install pandoc
 2. setup your [environment for UTF-8](4_expert.md#Setting-up-your-Environment)
 3. clone your bashbot fork to a new directory ```git clone https://github.com/<YOURNAME>/telegram-bot-bash.git```, replace ```<YOURNAME>``` with your username on github
 4. create and change to your develop branch ```git checkout -b <YOURBRANCH>```, replace ```<YOURBRANCH>``` with the name you want to name it, e.g. 'develop'
@@ -350,5 +349,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v1.2-pre-1-gb4dcb52
+#### $$VERSION$$ v1.2-pre2-0-ga1773cc
 

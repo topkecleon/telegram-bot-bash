@@ -8,7 +8,8 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v1.1-0-gc0eb399
+# shellcheck disable=SC1117
+#### $$VERSION$$ v1.2-pre2-0-ga1773cc
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -111,13 +112,13 @@ else
 
 	# example for actions based on chat or sender
 	case "${USER[ID]}+${CHAT[ID]}" in
-		'USERID+'*) # do something for all messages from USER
+		'USERID1+'*) # do something for all messages from USER
 			printf "%s: U=%s C=%s M=%s\n" "$(date)" "${USER[ID]}" "${CHAT[ID]}" "${MESSAGE}" >>"${DATADIR}/${USER[ID]}.log"
 			;;&
-		*'+CHATID') # do something for all messages from CHAT
+		*'+CHATID1') # do something for all messages from CHAT
 			printf "%s: U=%s C=%s M=%s\n" "$(date)" "${USER[ID]}" "${CHAT[ID]}" "${MESSAGE}" >>"${DATADIR}/${CHAT[ID]}.log"
 			;;&
-		'USERID+CHATID') # do something only for messages form USER in CHAT
+		'USERID2+CHATID2') # do something only for messages form USER in CHAT
 			printf "%s: U=%s C=%s M=%s\n" "$(date)" "${USER[ID]}" "${CHAT[ID]}" "${MESSAGE}" >>"${DATADIR}/${CHAT[ID]}+${USER[ID]}.log"
 			;;&
 	esac

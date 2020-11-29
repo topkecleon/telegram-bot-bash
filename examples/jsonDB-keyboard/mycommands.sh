@@ -2,10 +2,9 @@
 # files: mycommands.sh.dist
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v1.2-dev-13-g2a5d47d
+#### $$VERSION$$ v1.2-pre2-0-ga1773cc
 #
-# shellcheck disable=SC2154
-# shellcheck disable=SC2034
+# shellcheck disable=SC2154,SC2034,SC1117,SC2221,SC2222
 
 # within *xxx* markup we need only one \ to escape a '_', e.g. my\_stupid\_bot (stupid V1 markup)
 bashbot_title='*Hallo, ich bin der @'"${ME//_/\\_}"'. Ich suche und finde Dealz!*'

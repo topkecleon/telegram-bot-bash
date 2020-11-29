@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.1-0-gc0eb399
+#### $$VERSION$$ v1.1-29-ga1773cc
 #
 
 # adjust your language setting here, e.g. when run from other user or cron.
@@ -89,7 +89,7 @@ if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
 
 	###################
 	# user defined commands must placed in mycommands
-	_exec_if_function mycommands
+	! _is_function mycommands || mycommands
 
 	# run commands if true (0) is returned or if mycommands dose not exist
 	# shellcheck disable=SC2181

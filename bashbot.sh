@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-pre-0-gb4c83c1
+#### $$VERSION$$ v1.2-pre2-0-ga1773cc
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -23,7 +23,7 @@
 # - 6 mandatory module not found
 # - 7 can't get bottoken
 # - 10 not bash!
-# shellcheck disable=SC2140,SC2031,SC2120,SC1091
+# shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117
 
 # emmbeded system may claim bash but it is not
 # check for bash like ARRAY handlung
@@ -1112,6 +1112,7 @@ fi
 if [ -z "${SOURCE}" ]; then
   ##############
   # internal options only for use from bashbot and developers
+  # shellcheck disable=SC2221,SC2222
   case "${1}" in
 	# update botname when starting only
 	"botname"|"start"*)
