@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-pre2-0-g2824487
+#### $$VERSION$$ v1.2-pre2-1-g95b2b9a
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -488,9 +488,9 @@ else
   else
 	# ups, no curl AND no wget
 	if [ -n "${BASHBOT_WGET}" ]; then
-		printf "%s: Error: You set BASHBOT_WGET but no wget found!\n" "$(date)"
+		echo -e "${RED}Error: You set BASHBOT_WGET but no wget found!${NC}"
 	else
-		printf "%s: Error: You must at least install curl or wget\n" "$(date)"
+		echo -e "${RED}Error: curl and wget not found, install curl!${NC}"
 	fi
 	exit 8
   fi
@@ -1173,7 +1173,7 @@ if [ -z "${SOURCE}" ]; then
 		exit
 		;;
 	# print usage stats
-	"count") echo -e "${RED}Command ${GREY}count${RED} is deprecated, use ${GREY}stats{$RED}instead.${NC}";&
+	"count") echo -e "${RED}Command ${GREY}count${RED} is deprecated, use ${GREY}stats${RED}instead.${NC}";&
 	"stats")
 		ME="$(getConfigKey "botname")"
 		declare -A STATS
