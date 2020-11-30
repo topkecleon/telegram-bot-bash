@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.2-pre2-2-gef80aa5
+#### $$VERSION$$ v1.2-0-gc50499c
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
