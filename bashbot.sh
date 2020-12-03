@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-1-gd30a700
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -607,7 +607,15 @@ title2Json(){
 
 # get bot name
 getBotName() {
-	getJson "$ME_URL"  | "${JSONSHFILE}" -b -n 2>/dev/null | JsonGetString '"result","username"'
+	local response
+	declare -A BOTARRAY
+	response="$(getJson "$ME_URL"  | "${JSONSHFILE}" -b -n 2>/dev/null)"
+	Json2Array 'BOTARRAY' <<<"${response}"
+	[[ -z "${response}" || -z "${BOTARRAY["result","username"]}" ]] && return 1
+	# save botname and id
+	setConfigKey "botname" "${BOTARRAY["result","username"]}"
+	setConfigKey "botid" "${BOTARRAY["result","id"]}"
+	echo "${BOTARRAY["result","username"]}"
 }
 
 # pure bash implementation, done by KayM (@gnadelwartz)

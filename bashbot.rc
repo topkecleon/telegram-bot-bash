@@ -1,12 +1,11 @@
 #!/bin/sh
 # description: Start or stop telegram-bash-bot
 #
-# example service script to run bashbot in background
-# may or may not work on your system
+# example service script to run bashbot in background as specified user
 #
-# tested on: ubuntu, opensuse
+# tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-1-gd30a700
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 

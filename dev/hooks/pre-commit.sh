@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-1-gd30a700
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
@@ -30,7 +30,7 @@ fi
 
 # run shellcheck before commit
 set +f
-FILES="$(find ./* -name '*.sh' | grep -v 'DIST\/' | grep -v 'STANDALONE\/')"
+FILES="$(find ./* -name '*.sh' | grep -v -e 'DIST\/' -e 'STANDALONE\/' -e 'JSON.sh')"
 set -f
 FILES="${FILES} $(sed '/^#/d' <"dev/shellcheck.files")"
 if [ "$FILES" != "" ]; then

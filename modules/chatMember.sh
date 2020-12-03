@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-1-gd30a700
 
 # will be automatically sourced from bashbot
 
@@ -18,6 +18,7 @@ UNBAN_URL=$URL'/unbanChatMember'
 GETMEMBER_URL=$URL'/getChatMember'
 
 # usage: status="$(get_chat_member_status "chat" "user")"
+# $1 chat # $2 user
 get_chat_member_status() {
 	sendJson "$1" '"user_id":'"$2"'' "$GETMEMBER_URL"
 	# shellcheck disable=SC2154
@@ -42,6 +43,13 @@ user_is_creator() {
 	return 1 
 }
 
+# $1 chat
+bot_is_admin() {
+	[ "${2:-+}" ] && return 0
+	user_is_admin "$2" "$(getConfigKey "botid")"
+}
+
+# $1 chat # $2 user
 user_is_admin() {
 	[ "${1:--}" == "${2:-+}" ] && return 0
 	user_is_botadmin "$2" && return 0
@@ -50,6 +58,7 @@ user_is_admin() {
 	return 1 
 }
 
+# $1 user
 user_is_botadmin() {
 	local admin; admin="$(getConfigKey "botadmin")"; [ -z "${admin}" ] && return 1
 	[[ "${admin}" == "${1}" || "${admin}" == "${2}" ]] && return 0
@@ -58,6 +67,7 @@ user_is_botadmin() {
 	return 1
 }
 
+# $1 user # $2 key # $3 chat
 user_is_allowed() {
 	[ -z "$1" ] && return 1
 	# user can do everything

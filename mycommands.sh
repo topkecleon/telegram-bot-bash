@@ -9,7 +9,7 @@
 # #### mycommands.clean
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-1-gd30a700
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -149,7 +149,7 @@ else
 			MESSAGE="${MESSAGE#/* }"
 			;;
 		'/_new_chat_member'*)
-			if [[ -n "${WELCOME_NEWMEMBER}" && "${NEWMEMBER[ISBOT]}" != "true" ]]; then
+			if [[ -n "${WELCOME_NEWMEMBER}" && "${NEWMEMBER[ISBOT]}" != "true" ]] && bot_is_admin "${CHAT[ID]}"; then
 			    send_normal_message "${CHAT[ID]}"\
 				"${WELCOME_MSG} ${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]} (@${NEWMEMBER[USERNAME]})"
 			    MYSENTID="${BOTSENT[ID]}"

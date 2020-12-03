@@ -244,6 +244,19 @@ fi
 
 The following functions are bashbot only and not part of the Telegram API. 
 
+##### bot_is_admin
+Return true (0) if bot is admin or creator of given chat.
+ 
+*usage:* bot_is_admin "${CHAT[ID]}"
+
+
+*example:* 
+```bash
+if bot_is_admin "${CHAT[ID]}"; then 
+  send_markdown_message "${CHAT[ID]}" "*I'm admin...*"
+fi
+```
+
 ##### user_is_botadmin
 Return true (0) if user is admin of bot, user id if botadmin is read from file './botadmin'.
 
@@ -253,7 +266,7 @@ Return true (0) if user is admin of bot, user id if botadmin is read from file '
 
 *example:* 
 ```bash
- _is_botadmin && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
+user_is_botadmin "${CHAT[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
 ```
 
 ##### user_is_creator
@@ -272,7 +285,7 @@ Return true (0) if user is admin or creator of given chat.
 
 *example:* 
 ```bash
-if _is_admin ; then 
+if user_is_admin "${CHAT[ID]}" ; then 
   send_markdown_message "${CHAT[ID]}" "*LEAVING CHAT...*"
   leave_chat "${CHAT[ID]}"
 fi
@@ -1049,5 +1062,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-1-gd30a700
 
