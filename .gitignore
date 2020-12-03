@@ -6,7 +6,7 @@
 /botconf*
 /botacl*
 /botown*
-ˆ.jssh
+*.jssh
 *.save
 *.log
 *.swp
