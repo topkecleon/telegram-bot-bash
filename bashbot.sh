@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-1-gd30a700
+#### $$VERSION$$ v1.2-3-gb0281f1
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -1092,6 +1092,15 @@ bot_init() {
 		# jsshDB must writeable by owner
 		find . -name '*.jssh*' -exec chmod u+w \{\} +
 		echo "Done."
+	fi
+	# ask to check bottoken online
+	if [ -z "$(getConfigKey "botid")" ]; then
+		echo -e "Seems to be your first init. Should I verify your bot token online? (y/N) N\b\c"
+		read -r ANSWER
+		if [[ "${ANSWER}" =~ ^[Yy] ]]; then
+			echo -e "${GREEN}Contacting telegram to verify your bot token ...${NC}"
+			$0 botname
+		fi 
 	fi
 	# check if botconf if seems valid
 	echo -e "${GREEN}This is your bot config:${NC}"
