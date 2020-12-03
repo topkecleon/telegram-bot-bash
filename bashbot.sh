@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-3-gb0281f1
+#### $$VERSION$$ v1.2-6-g59c51af
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -605,13 +605,11 @@ title2Json(){
 	printf '%s\n' "${title}${caption}${desc}${markup}${keyboard}"
 }
 
-# get bot name
+# get bot name and id from telegram
 getBotName() {
-	local response
 	declare -A BOTARRAY
-	response="$(getJson "$ME_URL"  | "${JSONSHFILE}" -b -n 2>/dev/null)"
-	Json2Array 'BOTARRAY' <<<"${response}"
-	[[ -z "${response}" || -z "${BOTARRAY["result","username"]}" ]] && return 1
+	Json2Array 'BOTARRAY' <<<"$(getJson "$ME_URL" | "${JSONSHFILE}" -b -n 2>/dev/null)"
+	[ -z "${BOTARRAY["result","username"]}" ] && return 1
 	# save botname and id
 	setConfigKey "botname" "${BOTARRAY["result","username"]}"
 	setConfigKey "botid" "${BOTARRAY["result","id"]}"
