@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-1-gd30a700
+#### $$VERSION$$ v1.2-2-g1b8a1d4
 
 # will be automatically sourced from bashbot
 
@@ -45,12 +45,12 @@ user_is_creator() {
 
 # $1 chat
 bot_is_admin() {
-	[ "${2:-+}" ] && return 0
-	user_is_admin "$2" "$(getConfigKey "botid")"
+	user_is_admin "$1" "$(getConfigKey "botid")"
 }
 
 # $1 chat # $2 user
 user_is_admin() {
+	[[ -z "$1" || -z "$2" ]] && return 1
 	[ "${1:--}" == "${2:-+}" ] && return 0
 	user_is_botadmin "$2" && return 0
 	local me; me="$(get_chat_member_status "$1" "$2")"
@@ -60,6 +60,7 @@ user_is_admin() {
 
 # $1 user
 user_is_botadmin() {
+	[ -z "$1" ] && return 1
 	local admin; admin="$(getConfigKey "botadmin")"; [ -z "${admin}" ] && return 1
 	[[ "${admin}" == "${1}" || "${admin}" == "${2}" ]] && return 0
 	#[[ "${admin}" = "@*" ]] && [[ "${admin}" = "${2}" ]] && return 0
