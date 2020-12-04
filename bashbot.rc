@@ -5,7 +5,7 @@
 #
 # tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.2-5-g658fac6
+#### $$VERSION$$ v1.2-7-gd6e1c22
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 

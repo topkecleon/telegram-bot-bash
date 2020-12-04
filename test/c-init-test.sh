@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-7-gd6e1c22
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -14,6 +14,7 @@ set -e
 $TESTTOKEN
 nobody
 botadmin
+
 EOF
 echo "${SUCCESS}"
 
