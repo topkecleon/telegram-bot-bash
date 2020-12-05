@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-6-g59c51af
+#### $$VERSION$$ v1.2-8-g04ec4ba
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -264,18 +264,20 @@ if [ -z "${BOTTOKEN}" ]; then
     fi
 fi
 
-
 # BOTTOKEN format checks
 if ! check_token "${BOTTOKEN}"; then
 	echo -e "${ORANGE}Warning: your bottoken may incorrect. it should have the following format:${NC}"
 	echo -e "${GREY}123456789${RED}:${GREY}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4${ORANGE} => ${NC}\c"
 	echo -e "${GREY}8-10 digits${RED}:${GREY}35 alphanumeric characters + '_-'${NC}"
 	echo -e "${ORANGE}Your current token is: '${GREY}^$(cat -ve <<<"${BOTTOKEN//:/${RED}:${GREY}}")${ORANGE}'${NC}"
-	[[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}: ]] &&\
+	if [[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}: ]]; then
 		echo -e "${ORANGE}Possible problem in the digits part, len is $(($(wc -c <<<"${BOTTOKEN%:*}")-1))${NC}"
+		[ -n "$(getConfigKey "botid")" ] && echo -e "${GREY}Did you mean: \"${NC}$(getConfigKey "botid")${GREY}\" ?${NC}"
+	fi
 	[[ ! "${BOTTOKEN}" =~ :[a-zA-Z0-9_-]{35}$ ]] &&\
 		echo -e "${ORANGE}Possible problem in the characters part, len is $(($(wc -c <<<"${BOTTOKEN#*:}")-1))${NC}"
 fi
+
 
 
 ##################
