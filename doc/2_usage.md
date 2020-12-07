@@ -205,6 +205,17 @@ they contain the following variables only:
     * ```${iQUERY[FIRST_NAME]}```: User's first name
     * ```${iQUERY[LAST_NAME]}```: User's last name
 
+
+### Send Message Results
+
+BOTSWEND is set on every send_xxx action and only valid until next send action. For more on message results see.  
+[Advanced Usage](3_advanced.md)
+
+* ```$BOTSENT```: This array contains the parsed results from the last transmission to telegram.
+    * ```${BOTSENT[OK]}```: contains the string ```true```: after a successful transmission
+    * ```${BOTSENT[ID]}```: Message ID of sent message, image, file etc., if OK is true
+
+
 ## Usage of bashbot functions
 
 #### sending messages
@@ -283,5 +294,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-10-g10c104d
 

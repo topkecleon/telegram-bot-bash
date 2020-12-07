@@ -227,7 +227,7 @@ answer_inline_query "${iQUERY[ID]}" "cached_sticker" "identifier for the sticker
 See also [answer_inline_multi, answer_inline_compose](6_reference.md#answer_inline_multi) and [mycommands.sh](../mycommands.sh) for more information.
 
 
-### Handle send message errors
+### Send message results
 
 Our examples usually do not care about errors happening while sending a message, this is OK as long your bot does not send an
 massive aoumnt of messages. By default bashbot detects if a message is not sent and try to recover when possible,
@@ -244,6 +244,7 @@ every send action will overwrite them!
 
 * ```$BOTSENT```: This array contains the parsed results from the last transmission to telegram.
     * ```${BOTSENT[OK]}```: contains the string ```true```: after a successful transmission
+    * ```${BOTSENT[ID]}```: Message ID if OK is true
     * ```${BOTSENT[ERROR]}```: Error code if an error occurred
     * ```${BOTSENT[DESC]}```: Description text for error
     * ```${BOTSENT[RETRY]}```: Seconds to wait if telegram requests throtteling.
@@ -297,5 +298,5 @@ Note: If you disable automatic retry, se above, you disable also connection prob
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-10-g10c104d
 
