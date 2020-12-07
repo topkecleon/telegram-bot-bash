@@ -208,7 +208,7 @@ they contain the following variables only:
 
 ### Send Message Results
 
-BOTSWEND is set on every send_xxx action and only valid until next send action. For more on message results see.  
+BOTSENT is set on every send_xxx action and only valid until next send action. For more on message results see.  
 [Advanced Usage](3_advanced.md)
 
 * ```$BOTSENT```: This array contains the parsed results from the last transmission to telegram.
@@ -294,5 +294,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.2-10-g10c104d
+#### $$VERSION$$ v1.2-11-g5db2ef6
 
