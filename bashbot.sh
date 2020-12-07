@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-8-g04ec4ba
+#### $$VERSION$$ v1.2-9-g62cab32
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -29,7 +29,7 @@
 # emmbeded system may claim bash but it is not
 # check for bash like ARRAY handlung
 if ! (unset a; set -A a a; eval "a=(a b)"; eval '[ -n "${a[1]}" ]'; ) > /dev/null 2>&1; then
-	echo "iError: Current shell does not support ARRAY's, may be busbox ash shell. pls install a real bash!";
+	echo "Error: Current shell does not support ARRAY's, may be busbox ash shell. pls install a real bash!";
 	exit 10
 fi
 
@@ -48,25 +48,26 @@ if [ "$(echo -e "\u1111")" == "\u1111" ]; then
 	echo -e "${ORANGE}Warning: Unicode '\uxxxx' seems not supported, install a more current bash.${NC}"
 fi
 
+
 # some important helper functions
 # returns true if command exist
 _exists() {
-	[ "$(LC_ALL=C type -t "${1}")" = "file" ]
+	[ "$({ LC_ALL=C type -t "${1}"; } 2>/dev/null)" = "file" ]
 }
 # execute function if exists
 _exec_if_function() {
-	[ "$(LC_ALL=C type -t "${1}")" != "function" ] && return 1
+	[ "$({ LC_ALL=C type -t "${1}"; } 2>/dev/null)" != "function" ] && return 1
 	"$@"
 }
 # returns true if function exist
 _is_function() {
-	[ "$(LC_ALL=C type -t "${1}")" = "function" ]
+	[ "$({ LC_ALL=C type -t "${1}"; } 2>/dev/null)" = "function" ]
 }
 # round $1 in international notation! , returns float with $2 decimal digits
 # if $2 is not given or is not a positive number zero is assumed
 _round_float() {
 	local digit="${2}"; [[ "${2}" =~ ^[0-9]+$ ]] || digit="0"
-	LC_ALL=C printf "%.${digit}f" "${1}"
+	{ LC_ALL=C printf "%.${digit}f" "${1}"; } 2>/dev/null
 }
 setConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
@@ -106,6 +107,11 @@ debug_checks(){
 	# call user defined debug_checks if exists
 	_exec_if_function my_debug_checks "${DATE}" "${WHERE}" "$*"
 } >>"${DEBUGLOG}"
+
+# some linux, e.g. manajro seems not to have C locale activated by default
+if _exists locale && [ "$(locale -a | grep -c -e "^C$" -e "^C.utf8$")" -lt 2 ]; then
+	echo -e "${ORANGE}Warning: locale ${NC}${GREY}C${NC}${ORANGE} and/or ${NC}${GREY}C.utf8${NC}${ORANGE} seems missing, use \"${NC}${GREY}locale -a${NC}${ORANGE}\" to show what locales are installed on your system.${NC}"
+fi
 
 # get location and name of bashbot.sh
 SCRIPT="$0"
