@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
-#### $$VERSION$$ v1.2-7-gd6e1c22
+#### $$VERSION$$ v1.2-dev2-11-ga25f876
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -19,7 +19,7 @@ cp -r ./* "${TESTENV}"
 cd "test" || exit 1
 
 # delete possible config
-rm "${TESTENV}/botconfig.jssh" "${TESTENV}/botacl"
+rm -f "${TESTENV}/botconfig.jssh" "${TESTENV}/botacl" 2>/dev/null
 
 #set -e
 fail=0

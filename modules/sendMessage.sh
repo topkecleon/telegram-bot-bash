@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.2-dev2-10-g4f600e2
+#### $$VERSION$$ v1.2-dev2-11-ga25f876
 
 # will be automatically sourced from bashbot
 
@@ -94,7 +94,7 @@ _formated_message_url(){
 	text="${text//$'\n'/\\n}"
 	[ "${#text}" -ge 4096 ] && log_error "Warning: html/markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"''"${3}"'' "${4}"
+		sendJson "${1}" '"text":"'"${text:0:4096}"'"'"${3}"'' "${4}"
 		text="${text:4096}"
 	done
 }
@@ -108,7 +108,7 @@ _markdownv2_message_url() {
 	# markdown v2 needs additional double escaping!
 	text="$(sed -E -e 's|([#{}()!.-])|\\\1|g' <<< "$text")"
 	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"''"${3}"'' "${4}"
+		sendJson "${1}" '"text":"'"${text:0:4096}"'"'"${3}"'' "${4}"
 		text="${text:4096}"
 	done
 }
