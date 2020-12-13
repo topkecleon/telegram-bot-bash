@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-1-gb9cfd4b
+#### $$VERSION$$ v1.2-dev2-2-g401a31a
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -899,8 +899,8 @@ process_message() {
 	    URLS[VIDEO]="$(get_file "${UPD["result",${num},"message","video","file_id"]}")"
 	    URLS[VOICE]="$(get_file "${UPD["result",${num},"message","voice","file_id"]}")"
 	fi
-	# Contact, check for any of them!
-	if grep -qs -e '\["result",'"${num}"',"message","contact"' <<<"${UPDATE}"; then
+	# Contact, must have phone_number
+	if [ -n "${UPD["result",${num},"message","contact","phone_number"]}" ]; then
 		CONTACT[USER_ID]="$(JsonDecode  "${UPD["result",${num},"message","contact","user_id"]}")"
 		CONTACT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","first_name"]}")"
 		CONTACT[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","last_name"]}")"
@@ -908,8 +908,8 @@ process_message() {
 		CONTACT[VCARD]="$(JsonGetString '"result",'"${num}"',"message","contact","vcard"' <<<"${UPDATE}")"
 	fi
 
-	# venue, check for any of them!
-	if grep -qs -e '\["result",'"${num}"',"message","venue"' <<<"${UPDATE}"; then
+	# venue, must have a position
+	if [ -n "${UPD["result",${num},"message","venue","location","longitude"]}" ]; then
 		VENUE[TITLE]="$(JsonDecode "${UPD["result",${num},"message","venue","title"]}")"
 		VENUE[ADDRESS]="$(JsonDecode "${UPD["result",${num},"message","venue","address"]}")"
 		VENUE[LONGITUDE]="${UPD["result",${num},"message","venue","location","longitude"]}"
