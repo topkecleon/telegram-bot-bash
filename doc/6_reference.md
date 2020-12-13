@@ -47,7 +47,7 @@ send_markdownv2_message "${CHAT[ID]}" "*bold* __underlined__ [text](link)"
 
 ##### send_markdown_message
 ```send_markdown_message``` sends markdown style messages to the given chat.
-This is the old, legacy Telegram markdwon style, retained for backward compatibility.
+This is the old, legacy Telegram markdown style, retained for backward compatibility.
 It supports a [reduced set of Markdown](https://core.telegram.org/bots/api#markdown-style) only
 
 *usage:* send_markdown_message "${CHAT[ID]}" "markdown message"
@@ -223,14 +223,14 @@ send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"b 1", url"":"u 1"}, {"text":"b 
 
 ### Edit / Replace Messages
 
-Edit a meassage means replace the conteint of the message in place. The message stay on the same position position in the chat an keeps the same
+Edit a message means replace the content of the message in place. The message stay on the same position in the chat ank keep the same
 message id.
 
-There is no need to replace a message using the same format, e.g. a message sent with `send_normal_messaage` can be replaced with
+There is no need to use the same format when replace a message, e.g. a message sent with `send_normal_message` can be replaced with
 `edit_markdown_message` or `edit_html_message` and vice versa. 
 
-To replace a message you must get the message id of the the orrinal message. The best way to get the id is to save the value of
-`BOTSENT[ID]` when send the original message.
+To replace a message you must know the message id of the the original message. The best way to get the message id is to save the value of
+`BOTSENT[ID]` after sending the original message.
 
 ##### edit_normal_message
 ```edit_normal_message``` replace a message with a text message in the given chat.
@@ -245,8 +245,8 @@ saved-id="${BOTSENT[ID]}"
 edit_normal_message "${CHAT[ID]}" "${saved-id}" "this is another text"
 ```
 
-##### edit_markdwonv2_message
-```edit_markdown_message``` replace a message with a markdown v2 message in the given chat.
+##### edit_markdownv2_message
+```edit_markdownv2_message``` replace a message with a markdown v2 message in the given chat.
 
 *usage:*  edit_markdownv2_message "${CHAT[ID]}" "MESSAGE-ID" "message"
 
@@ -258,7 +258,7 @@ saved-id="${BOTSENT[ID]}"
 edit_markdownv2_message "${CHAT[ID]}" "${saved-id}" "this is __markdown__ *V2* text"
 ```
 
-##### edit_markdwon_message
+##### edit_markdown_message
 ```edit_markdown_message``` replace a message with a markdown message in the given chat.
 
 *usage:*  edit_markdown_message "${CHAT[ID]}" "MESSAGE-ID" "message"
@@ -272,7 +272,7 @@ edit_markdown_message "${CHAT[ID]}" "${saved-id}" "this is *markdown* text"
 ```
 
 ##### edit_html_message
-```edit_markdown_message``` replace a message with a html message in the given chat.
+```edit_html_message``` replace a message with a html message in the given chat.
 
 *usage:*  edit_html_message "${CHAT[ID]}" "MESSAGE-ID" "message"
 
@@ -1143,5 +1143,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.2-dev2-13-gc8f61af
+#### $$VERSION$$ v1.2-dev2-14-g78ddc1f
 
