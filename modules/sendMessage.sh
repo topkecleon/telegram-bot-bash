@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.2-dev2-8-g931598f
+#### $$VERSION$$ v1.2-dev2-9-g898a794
 
 # will be automatically sourced from bashbot
 
@@ -16,7 +16,7 @@ eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 # source from commands.sh to use the sendMessage functions
 
 MSG_URL=$URL'/sendMessage'
-#EDIT_URL=$URL'/editMessageText'
+EDIT_URL=$URL'/editMessageText'
 PHO_URL=$URL'/sendPhoto'
 AUDIO_URL=$URL'/sendAudio'
 DOCUMENT_URL=$URL'/sendDocument'
@@ -35,58 +35,72 @@ ALBUM_URL=$URL'/sendMediaGroup'
 
 # $1 CHAT $2 message
 send_normal_message() {
-	_normal_message_url "$1" "$2" "${MSG_URL}"
-}
-
-# $1 CHAT $2 message
-send_markdown_message() {
-	_formated_message_url "$1" "$2" "html" "${MSG_URL}"
-}
-
-# $1 CHAT $2 message
-send_markdownv2_message() {
-	_markdownv2_message_url "$1" "$2" "${MSG_URL}"
-}
-
-# $1 CHAT $2 message
-send_html_message() {
-	_formated_message_url "$1" "$2" "html" "${MSG_URL}"
-}
-
-
-# internal function, send/edit pure text message with unlimited length and URL
-# $1 CHAT $2 message $3 URL
-_normal_message_url() {
 	local len text; text="$(JsonEscape "${2}")"
 	text="${text//$'\n'/\\n}"
 	until [ -z "${text}" ]; do
 		if [ "${#text}" -le 4096 ]; then
-			sendJson "${1}" '"text":"'"${text}"'"' "${3}"
+			sendJson "${1}" '"text":"'"${text}"'"' "${MSG_URL}"
 			break
 		else
 			len=4095
 			[ "${text:4095:2}" != "\n" ] &&\
 				len="${text:0:4096}" && len="${len%\\n*}" && len="${#len}"
-			sendJson "${1}" '"text":"'"${text:0:${len}}"'"' "${3}"
+			sendJson "${1}" '"text":"'"${text:0:${len}}"'"' "${MSG_URL}"
 			text="${text:$((len+2))}"
 		fi
 	done
 }
 
+# $1 CHAT $2 message
+send_markdown_message() {
+	_formated_message_url "${1}" "${2}" ',"parse_mode":"markdown"' "${MSG_URL}"
+}
+
+# $1 CHAT $2 message
+send_markdownv2_message() {
+	_markdownv2_message_url "${1}" "${2}" ',"parse_mode":"markdownv2"' "${MSG_URL}"
+}
+
+# $1 CHAT $2 message
+send_html_message() {
+	_formated_message_url "${1}" "${2}" ',"parse_mode":"html"' "${MSG_URL}"
+}
+
+# $1 CHAT $2 msg-id $3 message
+edit_normal_message() {
+	_formated_messsage_url "${1}" "${3}" ',"message_id":'"${2}"'' "${EDIT_URL}"
+}
+
+# $1 CHAT $2 message $3 msg-id
+edit_markdown_message() {
+	_formated_message_url "${1}" "${3}" ',"message_id":'"${2}"',"parse_mode":"markdown"' "${EDIT_URL}"
+}
+
+# $1 CHAT $2 message $3 msg-id
+edit_markdownv2_message() {
+	_markdownv2_message_url "${1}" "${3}" ',"message_id":'"${2}"',"parse_mode":"markdownv2"' "${EDIT_URL}"
+}
+
+# $1 CHAT $2 message $3 msg-id
+edit_html_message() {
+	_formated_message_url "${1}" "${3}" ',"message_id":'"${2}"',"parse_mode":"html"' "${EDIT_URL}"
+}
+
+
 # internal function, send/edit formatted message with parse_mode and URL
-# $1 CHAT $2 message $3 parse_mode $4 URL
+# $1 CHAT $2 message $3 action $4 URL
 _formated_message_url(){
 	local text; text="$(JsonEscape "${2}")"
 	text="${text//$'\n'/\\n}"
 	[ "${#text}" -ge 4096 ] && log_error "Warning: html/markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"'"${3}"'"' "${4}"
+		sendJson "${1}" '"text":"'"${text:0:4096}"''"${3}"'' "${4}"
 		text="${text:4096}"
 	done
 }
 
 # internal function, send/edit markdownv2 message with URL
-# $1 CHAT $2 message $3 URL
+# $1 CHAT $2 message $3 action $4 URL
 _markdownv2_message_url() {
 	local text; text="$(JsonEscape "${2}")"
 	text="${text//$'\n'/\\n}"
@@ -94,7 +108,7 @@ _markdownv2_message_url() {
 	# markdown v2 needs additional double escaping!
 	text="$(sed -E -e 's|([#{}()!.-])|\\\1|g' <<< "$text")"
 	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdownv2"' "${}"
+		sendJson "${1}" '"text":"'"${text:0:4096}"''"${3}"'' "${4}"
 		text="${text:4096}"
 	done
 }
