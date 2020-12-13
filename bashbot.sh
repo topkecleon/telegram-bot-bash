@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-3-gcdb63b8
+#### $$VERSION$$ v1.2-dev2-4-g22741d9
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -304,7 +304,7 @@ declare -rx BOTTOKEN URL ME_URL UPD_URL GETFILE_URL
 
 declare -ax CMD
 declare -Ax UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
-declare -Ax SERVICE NEWMEMBER LEFTMEMBER PINNED
+declare -Ax SERVICE NEWMEMBER LEFTMEMBER PINNED MIGRATE
 export res CAPTION
 
 
@@ -828,7 +828,7 @@ pre_process_message(){
 	local num="${1}"
 	# unset everything to not have old values
 	CMD=( ); iQUERY=( ); MESSAGE=(); CHAT=(); USER=(); CONTACT=(); LOCATION=(); unset CAPTION
-	REPLYTO=( ); FORWARD=( ); URLS=(); VENUE=( ); SERVICE=( ); NEWMEMBER=( ); LEFTMEMBER=( ); PINNED=( )
+	REPLYTO=( ); FORWARD=( ); URLS=(); VENUE=( ); SERVICE=( ); NEWMEMBER=( ); LEFTMEMBER=( ); PINNED=( ); MIGRATE=( )
 	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
 	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	USER[ID]="${UPD["result",${num},"message","from","id"]}"
@@ -959,11 +959,19 @@ process_message() {
 	    fi
 	    # pinned message
 	    if [ -n "${UPD["result",${num},"message","pinned_message","message_id"]}" ]; then
-		SERVICE[PINNED]="$(JsonDecode "${UPD["result",${num},"message","pinned_message","message_id"]}")"
+		SERVICE[PINNED]="${UPD["result",${num},"message","pinned_message","message_id"]}"
 		PINNED[ID]="${SERVICE[PINNED]}"
 		PINNED[MESSAGE]="$(JsonDecode "${UPD["result",${num},"message","pinned_message","text"]}")"
-		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[PINNED]}" ] &&\
+		[ -z "${MESSAGE[0]}" ] &&\
 			MESSAGE[0]="/_new_pinned_message ${USER[ID]} ${PINNED[ID]} ${PINNED[MESSAGE]}"
+	    fi
+	    # migrate to super group
+	    if [ -n "${UPD["result",${num},"message","migrate_to_chat_id"]}" ]; then
+		MIGRATE[TO]="${UPD["result",${num},"message","migrate_to_chat_id"]}"
+		MIGRATE[FROM]="${UPD["result",${num},"message","migrate_from_chat_id"]}"
+		SERVICE[MIGRATE]="${MIGRATE[FROM]} ${MIGRATE[TO]}"
+		[ -z "${MESSAGE[0]}" ] &&\
+			MESSAGE[0]="/_migrate_chat ${SERVICE[MIGRATE]}"
 	    fi
 	    # set SERVICE to yes if a service message was received
 	    [[ "${SERVICE[*]}" =~  ^[[:blank:]]*$ ]] || SERVICE[0]="yes"

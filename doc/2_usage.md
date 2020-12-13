@@ -186,10 +186,14 @@ e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user".
         * ```${MESSAGE}```: /_new_chat_title SENDER TEXT
     * ```${SERVICE[NEWPHOTO]}```: New Chat Picture 
         * ```${MESSAGE}```: /_new_chat_picture SENDER URL
-    * ```${SERVICE[PINNED]}```: Pinned Message structure
+    * ```${SERVICE[PINNED]}```: Pinned MESSAGE ID
         * ```${MESSAGE}```: /_new_pinned_message SENDER ID
         * ```${PINNED[ID]}```: Id of pinned message
         * ```${PINNED[MESSAGE]}```: Message text of pinned message
+    * ```${SERVICE[MIGRATE]}```: Old and new group id
+        * ```${MESSAGE}```: /_migrate_chat MIGRATE_FROM MIGRATE_TO
+        * ```${MIGRATE[FROM]}```: Old group id
+        * ```${MIGRATE[TO]}```: New group id
 
 
 
@@ -294,5 +298,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.2-11-g5db2ef6
+#### $$VERSION$$ v1.2-dev2-4-g22741d9
 
