@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-4-g22741d9
+#### $$VERSION$$ v1.2-dev2-5-gda7a3f1
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -971,7 +971,7 @@ process_message() {
 		MIGRATE[FROM]="${UPD["result",${num},"message","migrate_from_chat_id"]}"
 		SERVICE[MIGRATE]="${MIGRATE[FROM]} ${MIGRATE[TO]}"
 		[ -z "${MESSAGE[0]}" ] &&\
-			MESSAGE[0]="/_migrate_chat ${SERVICE[MIGRATE]}"
+			MESSAGE[0]="/_migrate_group ${SERVICE[MIGRATE]}"
 	    fi
 	    # set SERVICE to yes if a service message was received
 	    [[ "${SERVICE[*]}" =~  ^[[:blank:]]*$ ]] || SERVICE[0]="yes"

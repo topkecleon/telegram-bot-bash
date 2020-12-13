@@ -9,7 +9,7 @@
 # #### mycommands.clean
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.2-1-gd30a700
+#### $$VERSION$$ v1.2-dev2-5-gda7a3f1
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -162,6 +162,11 @@ else
 			[ -n "${REPORT_LEFTMEMBER}" ] && send_normal_message "$(getConfigKey "botadmin")"\
 			    "Left member: ${CHAT[TITLE]} (${CHAT[ID]}): ${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]} (@${LEFTMEMBER[USERNAME]})"
 			;;
+		'/_migrate_group'*)
+			# call group migration function if provided
+			_exec_if_function my_migrate_group "${MIGRATE[FROM]}" "${MIGRATE[TO]}"
+			;;
+		
 	esac
 
 	case "${MESSAGE}" in
@@ -173,7 +178,7 @@ else
 		'/question'*) # start interactive questions
 			checkproc 
 			if [ "$res" -gt 0 ] ; then
-				startproc "examples/question.sh" || _message "Can't start question."
+				startproc "examples/question.sh" || send_normal_message "${CHAT[ID]}" "Can't start question."
 			else
 				send_normal_message "${CHAT[ID]}" "$MESSAGE already running ..."
 			fi
@@ -181,12 +186,16 @@ else
 
 		'/cancel'*) # cancel interactive command
 			checkproc
-			if [ "$res" -gt 0 ] ;then killproc && _message "Command canceled.";else _message "No command is currently running.";fi
+			if [ "$res" -gt 0 ] ;then 
+				killproc && send_normal_message "${CHAT[ID]}" "Command canceled."
+			else
+				send_normal_message "${CHAT[ID]}" "No command is currently running."
+			fi
 			;;
 		'/run_notify'*) # start notify background job
 			myback="notify"; checkback "$myback"
 			if [ "$res" -gt 0 ] ; then
-				background "examples/notify.sh 60" "$myback" || _message "Can't start notify."
+				background "examples/notify.sh 60" "$myback" || send_normal_message "${CHAT[ID]}" "Can't start notify."
 			else
 				send_normal_message "${CHAT[ID]}" "Background command $myback already running ..."
 			fi
