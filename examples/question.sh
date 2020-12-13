@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-dev2-7-g975d014
 
 ######
 # parameters
@@ -24,7 +24,7 @@ export 'LANGUAGE=C.UTF-8'
 unset IFS
 # set -f # if you are paranoid use set -f to disable globbing
 
-echo "Why hello there.
+echo "Hi, hello there.
 Would you like some tea (y/n)?"
 read -r answer <"${INPUT}"
 [[ $answer =~ ^([yY][eE][sS]|[yY])$ ]] && echo "OK then, here you go: http://www.rivertea.com/blog/wp-content/uploads/2013/12/Green-Tea.jpg" || echo "OK then."
@@ -34,7 +34,7 @@ until [ "$SUCCESS" = "y" ] ;do
 	case $answer in
 		'Yass!') echo "Goody! mykeyboardendshere";SUCCESS=y;;
 		'No') echo "Well that's weird. mykeyboardendshere";SUCCESS=y;;
-		'') echo "empty answer!" && exit ;;
+		'') echo "empty answer! Try again";; 
 		*) SUCCESS=n;;
 	esac
 done
