@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-2-g401a31a
+#### $$VERSION$$ v1.2-dev2-3-gcdb63b8
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -926,6 +926,7 @@ process_message() {
 
 	# service messages, group or channel only!
 	if [[ "${CHAT[ID]}" == "-"* ]] ; then
+	    # new chat member
 	    if [ -n "${UPD["result",${num},"message","new_chat_member","id"]}" ]; then
 		SERVICE[NEWMEMBER]="${UPD["result",${num},"message","new_chat_member","id"]}"
 		NEWMEMBER[ID]="${SERVICE[NEWMEMBER]}"
@@ -936,6 +937,7 @@ process_message() {
 		[ -z "${MESSAGE[0]}" ] &&\
 		MESSAGE[0]="/_new_chat_member ${NEWMEMBER[ID]} ${NEWMEMBER[USERNAME]:=${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]}}"
 	    fi
+	    # left chat member
 	    if [ -n "${UPD["result",${num},"message","left_chat_member","id"]}" ]; then
 		SERVICE[LEFTMEMBER]="${UPD["result",${num},"message","left_chat_member","id"]}"
 		LEFTMEMBER[ID]="${SERVICE[LEFTMEBER]}"
@@ -946,7 +948,7 @@ process_message() {
 		[ -z "${MESSAGE[0]}" ] &&\
 		MESSAGE[0]="/_left_chat_member ${LEFTMEMBER[ID]} ${LEFTMEMBER[USERNAME]:=${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]}}"
 	    fi
-	    # check for any of them!
+	    # chat title / photo, check for any of them!
 	    if grep -qs -e '\["result",'"${num}"',"message","new_chat_[tp]' <<<"${UPDATE}"; then
 		SERVICE[NEWTITLE]="$(JsonDecode "${UPD["result",${num},"message","new_chat_title"]}")"
 		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWTITLE]}" ] &&\
@@ -955,7 +957,8 @@ process_message() {
 		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWPHOTO]}" ] &&\
 			 MESSAGE[0]="/_new_chat_photo ${USER[ID]} ${SERVICE[NEWPHOTO]}"
 	    fi
-	    if [ -n "$(JsonDecode "${UPD["result",${num},"message","pinned_message","message_id"]}")" ]; then
+	    # pinned message
+	    if [ -n "${UPD["result",${num},"message","pinned_message","message_id"]}" ]; then
 		SERVICE[PINNED]="$(JsonDecode "${UPD["result",${num},"message","pinned_message","message_id"]}")"
 		PINNED[ID]="${SERVICE[PINNED]}"
 		PINNED[MESSAGE]="$(JsonDecode "${UPD["result",${num},"message","pinned_message","text"]}")"
