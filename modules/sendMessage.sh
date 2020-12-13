@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.2-dev2-11-ga25f876
+#### $$VERSION$$ v1.2-dev2-12-gda7b1bc
 
 # will be automatically sourced from bashbot
 
@@ -53,7 +53,7 @@ send_normal_message() {
 
 # $1 CHAT $2 message
 send_markdown_message() {
-	_formated_message_url "${1}" "${2}" ',"parse_mode":"markdown"' "${MSG_URL}"
+	_format_message_url "${1}" "${2}" ',"parse_mode":"markdown"' "${MSG_URL}"
 }
 
 # $1 CHAT $2 message
@@ -63,17 +63,17 @@ send_markdownv2_message() {
 
 # $1 CHAT $2 message
 send_html_message() {
-	_formated_message_url "${1}" "${2}" ',"parse_mode":"html"' "${MSG_URL}"
+	_format_message_url "${1}" "${2}" ',"parse_mode":"html"' "${MSG_URL}"
 }
 
 # $1 CHAT $2 msg-id $3 message
 edit_normal_message() {
-	_formated_messsage_url "${1}" "${3}" ',"message_id":'"${2}"'' "${EDIT_URL}"
+	_format_message_url "${1}" "${3}" ',"message_id":'"${2}"'' "${EDIT_URL}"
 }
 
 # $1 CHAT $2 msg-id $3 message
 edit_markdown_message() {
-	_formated_message_url "${1}" "${3}" ',"message_id":'"${2}"',"parse_mode":"markdown"' "${EDIT_URL}"
+	_format_message_url "${1}" "${3}" ',"message_id":'"${2}"',"parse_mode":"markdown"' "${EDIT_URL}"
 }
 
 # $1 CHAT $2 msg-id $3 message
@@ -83,13 +83,13 @@ edit_markdownv2_message() {
 
 # $1 CHAT $2 msg-id $3 message
 edit_html_message() {
-	_formated_message_url "${1}" "${3}" ',"message_id":'"${2}"',"parse_mode":"html"' "${EDIT_URL}"
+	_format_message_url "${1}" "${3}" ',"message_id":'"${2}"',"parse_mode":"html"' "${EDIT_URL}"
 }
 
 
 # internal function, send/edit formatted message with parse_mode and URL
 # $1 CHAT $2 message $3 action $4 URL
-_formated_message_url(){
+_format_message_url(){
 	local text; text="$(JsonEscape "${2}")"
 	text="${text//$'\n'/\\n}"
 	[ "${#text}" -ge 4096 ] && log_error "Warning: html/markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
