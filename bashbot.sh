@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-0-g336f00b
+#### $$VERSION$$ v1.2-dev2-1-gb9cfd4b
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -872,7 +872,7 @@ process_message() {
 	[ -z "${USER[USERNAME]}" ] && USER[USERNAME]="${USER[FIRST_NAME]} ${USER[LAST_NAME]}"
 
 	# in reply to message from
-	if grep -qs -e '\["result",'"${num}"',"message","reply_to_message"' <<<"${UPDATE}"; then
+	if [ -n "${UPD["result",${num},"message","reply_to_message","from","id"]}" ]; then
 	   REPLYTO[UID]="${UPD["result",${num},"message","reply_to_message","from","id"]}"
 	   REPLYTO[0]="$(JsonDecode "${UPD["result",${num},"message","reply_to_message","text"]}")"
 	   REPLYTO[ID]="${UPD["result",${num},"message","reply_to_message","message_id"]}"
@@ -882,7 +882,7 @@ process_message() {
 	fi
 
 	# forwarded message from
-	if grep -qs -e '\["result",'"${num}"',"message","forward_from"' <<<"${UPDATE}"; then
+	if [ -n "${UPD["result",${num},"message","forward_from","id"]}" ]; then
 	   FORWARD[UID]="${UPD["result",${num},"message","forward_from","id"]}"
 	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
 	   FORWARD[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","forward_from","first_name"]}")"
@@ -890,7 +890,7 @@ process_message() {
 	   FORWARD[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","forward_from","username"]}")"
 	fi
 
-	# get file URL from telegram
+	# get file URL from telegram, check for any of them!
 	if grep -qs -e '\["result",'"${num}"',"message","[avpsd].*,"file_id"\]' <<<"${UPDATE}"; then
 	    URLS[AUDIO]="$(get_file "${UPD["result",${num},"message","audio","file_id"]}")"
 	    URLS[DOCUMENT]="$(get_file "${UPD["result",${num},"message","document","file_id"]}")"
@@ -899,16 +899,16 @@ process_message() {
 	    URLS[VIDEO]="$(get_file "${UPD["result",${num},"message","video","file_id"]}")"
 	    URLS[VOICE]="$(get_file "${UPD["result",${num},"message","voice","file_id"]}")"
 	fi
-	# Contact
+	# Contact, check for any of them!
 	if grep -qs -e '\["result",'"${num}"',"message","contact"' <<<"${UPDATE}"; then
-		CONTACT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","first_name"]}")"
 		CONTACT[USER_ID]="$(JsonDecode  "${UPD["result",${num},"message","contact","user_id"]}")"
+		CONTACT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","first_name"]}")"
 		CONTACT[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","last_name"]}")"
 		CONTACT[NUMBER]="${UPD["result",${num},"message","contact","phone_number"]}"
 		CONTACT[VCARD]="$(JsonGetString '"result",'"${num}"',"message","contact","vcard"' <<<"${UPDATE}")"
 	fi
 
-	# vunue
+	# venue, check for any of them!
 	if grep -qs -e '\["result",'"${num}"',"message","venue"' <<<"${UPDATE}"; then
 		VENUE[TITLE]="$(JsonDecode "${UPD["result",${num},"message","venue","title"]}")"
 		VENUE[ADDRESS]="$(JsonDecode "${UPD["result",${num},"message","venue","address"]}")"
@@ -926,7 +926,7 @@ process_message() {
 
 	# service messages, group or channel only!
 	if [[ "${CHAT[ID]}" == "-"* ]] ; then
-	    if grep -qs -e '\["result",'"${num}"',"message","new_chat_member' <<<"${UPDATE}"; then
+	    if [ -n "${UPD["result",${num},"message","new_chat_member","id"]}" ]; then
 		SERVICE[NEWMEMBER]="${UPD["result",${num},"message","new_chat_member","id"]}"
 		NEWMEMBER[ID]="${SERVICE[NEWMEMBER]}"
 		NEWMEMBER[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","new_chat_member","first_name"]}")"
@@ -936,7 +936,7 @@ process_message() {
 		[ -z "${MESSAGE[0]}" ] &&\
 		MESSAGE[0]="/_new_chat_member ${NEWMEMBER[ID]} ${NEWMEMBER[USERNAME]:=${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]}}"
 	    fi
-	    if grep -qs -e '\["result",'"${num}"',"message","left_chat_member' <<<"${UPDATE}"; then
+	    if [ -n "${UPD["result",${num},"message","left_chat_member","id"]}" ]; then
 		SERVICE[LEFTMEMBER]="${UPD["result",${num},"message","left_chat_member","id"]}"
 		LEFTMEMBER[ID]="${SERVICE[LEFTMEBER]}"
 		LEFTMEMBER[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","left_chat_member","first_name"]}")"
@@ -946,6 +946,7 @@ process_message() {
 		[ -z "${MESSAGE[0]}" ] &&\
 		MESSAGE[0]="/_left_chat_member ${LEFTMEMBER[ID]} ${LEFTMEMBER[USERNAME]:=${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]}}"
 	    fi
+	    # check for any of them!
 	    if grep -qs -e '\["result",'"${num}"',"message","new_chat_[tp]' <<<"${UPDATE}"; then
 		SERVICE[NEWTITLE]="$(JsonDecode "${UPD["result",${num},"message","new_chat_title"]}")"
 		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWTITLE]}" ] &&\
@@ -954,7 +955,7 @@ process_message() {
 		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWPHOTO]}" ] &&\
 			 MESSAGE[0]="/_new_chat_photo ${USER[ID]} ${SERVICE[NEWPHOTO]}"
 	    fi
-	    if  grep -qs -e '\["result",'"${num}"',"message","pinned_message' <<<"${UPDATE}"; then
+	    if [ -n "$(JsonDecode "${UPD["result",${num},"message","pinned_message","message_id"]}")" ]; then
 		SERVICE[PINNED]="$(JsonDecode "${UPD["result",${num},"message","pinned_message","message_id"]}")"
 		PINNED[ID]="${SERVICE[PINNED]}"
 		PINNED[MESSAGE]="$(JsonDecode "${UPD["result",${num},"message","pinned_message","text"]}")"
