@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-dev2-8-g931598f
 
 # will be automatically sourced from bashbot
 
@@ -16,6 +16,7 @@ eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 # source from commands.sh to use the sendMessage functions
 
 MSG_URL=$URL'/sendMessage'
+#EDIT_URL=$URL'/editMessageText'
 PHO_URL=$URL'/sendPhoto'
 AUDIO_URL=$URL'/sendAudio'
 DOCUMENT_URL=$URL'/sendDocument'
@@ -28,73 +29,79 @@ ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
 ALBUM_URL=$URL'/sendMediaGroup'
 
+#
+# send/edit message variants ------------------
+#
+
 # $1 CHAT $2 message
 send_normal_message() {
+	_normal_message_url "$1" "$2" "${MSG_URL}"
+}
+
+# $1 CHAT $2 message
+send_markdown_message() {
+	_formated_message_url "$1" "$2" "html" "${MSG_URL}"
+}
+
+# $1 CHAT $2 message
+send_markdownv2_message() {
+	_markdownv2_message_url "$1" "$2" "${MSG_URL}"
+}
+
+# $1 CHAT $2 message
+send_html_message() {
+	_formated_message_url "$1" "$2" "html" "${MSG_URL}"
+}
+
+
+# internal function, send/edit pure text message with unlimited length and URL
+# $1 CHAT $2 message $3 URL
+_normal_message_url() {
 	local len text; text="$(JsonEscape "${2}")"
 	text="${text//$'\n'/\\n}"
 	until [ -z "${text}" ]; do
 		if [ "${#text}" -le 4096 ]; then
-			sendJson "${1}" '"text":"'"${text}"'"' "${MSG_URL}"
+			sendJson "${1}" '"text":"'"${text}"'"' "${3}"
 			break
 		else
 			len=4095
 			[ "${text:4095:2}" != "\n" ] &&\
 				len="${text:0:4096}" && len="${len%\\n*}" && len="${#len}"
-			sendJson "${1}" '"text":"'"${text:0:${len}}"'"' "${MSG_URL}"
+			sendJson "${1}" '"text":"'"${text:0:${len}}"'"' "${3}"
 			text="${text:$((len+2))}"
 		fi
 	done
 }
 
-# $1 CHAT $2 message
-send_markdown_message() {
+# internal function, send/edit formatted message with parse_mode and URL
+# $1 CHAT $2 message $3 parse_mode $4 URL
+_formated_message_url(){
 	local text; text="$(JsonEscape "${2}")"
 	text="${text//$'\n'/\\n}"
-	[ "${#text}" -ge 4096 ] && log_error "Warning: markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
+	[ "${#text}" -ge 4096 ] && log_error "Warning: html/markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdown"' "${MSG_URL}"
+		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"'"${3}"'"' "${4}"
 		text="${text:4096}"
 	done
 }
 
-# $1 CHAT $2 message
-send_markdownv2_message() {
+# internal function, send/edit markdownv2 message with URL
+# $1 CHAT $2 message $3 URL
+_markdownv2_message_url() {
 	local text; text="$(JsonEscape "${2}")"
 	text="${text//$'\n'/\\n}"
-	[ "${#text}" -ge 4096 ] && log_error "Warning: markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
+	[ "${#text}" -ge 4096 ] && log_error "Warning: markdownv2 message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	# markdown v2 needs additional double escaping!
 	text="$(sed -E -e 's|([#{}()!.-])|\\\1|g' <<< "$text")"
 	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdownv2"' "${MSG_URL}"
+		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdownv2"' "${}"
 		text="${text:4096}"
 	done
 }
 
-# $1 CHAT $2 message
-send_html_message() {
-	local text; text="$(JsonEscape "${2}")"
-	text="${text//$'\n'/\\n}"
-	[ "${#text}" -ge 4096 ] && log_error "Warning: html message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
-	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"html"' "${MSG_URL}"
-		text="${text:4096}"
-	done
-}
-
-# obsolote, will be removed after 1.0!!
-# $1 CHAT $2 message $3 keyboard
-old_send_keyboard() {
-	local text; text='"text":"'$(JsonEscape "${2}")'"'
-	shift 2
-	local keyboard="init"
-	OLDIFS="$IFS"
-	IFS="\""
-	for f in "$@" ;do [ "$f" != " " ] && keyboard="$keyboard, [\"$f\"]";done
-	IFS="$OLDIFS"
-	keyboard="${keyboard/init, /}"
-	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${keyboard}"' ],"one_time_keyboard": true}' "$MSG_URL"
-	send_normal_message "$(getConfigKey "botadmin")" "Warning: old 'send_keyboard' format is deprecated since version 0.6 and will be removed after 1.0 release!"
-}
+#
+# send keyboard, buttons, files ---------------
+#
 
 # $1 CHAT $2 message $3 keyboard
 send_keyboard() {
@@ -238,6 +245,10 @@ send_venue() {
 	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"', "address": "'"${5}"'", "title": "'"${4}"'"'"${add}" "$VENUE_URL"
 }
 
+
+#
+# other send message variants ---------------------------------
+#
 
 # $1 CHAT $2 from chat  $3 from msg id
 forward_message() {
