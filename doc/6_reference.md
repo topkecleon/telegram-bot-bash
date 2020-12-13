@@ -18,7 +18,6 @@ send_action "${CHAT[ID]}" "typing"
 send_action "${CHAT[ID]}" "record_audio"
 ```
 
-
 ##### send_normal_message
 ```send_normal_message``` sends text only messages to the given chat.
 
@@ -32,9 +31,24 @@ send_normal_message "${CHAT[ID]}" "this is a text message"
 ```
 
 
+##### send_markdownv2_message
+```send_markdownv2_message``` sends markdown v2 style messages to the given chat.
+Telegram supports a new [Markdown V2 Style](https://core.telegram.org/bots/api#markdownv2-style) which
+has more formatting codes and is more robust, but incompatible with old telegram markdown style.
+
+*usage:* send_markdownv2_message "${CHAT[ID]}" "markdown message"
+
+*example:* 
+```bash
+send_markdownv2_message "${CHAT[ID]}" "this is a markdown  message, next word is *bold*"
+send_markdownv2_message "${CHAT[ID]}" "*bold* __underlined__ [text](link)"
+```
+
+
 ##### send_markdown_message
 ```send_markdown_message``` sends markdown style messages to the given chat.
-Telegram supports a [reduced set of Markdown](https://core.telegram.org/bots/api#markdown-style) only
+This is the old, legacy Telegram markdwon style, retained for backward compatibility.
+It supports a [reduced set of Markdown](https://core.telegram.org/bots/api#markdown-style) only
 
 *usage:* send_markdown_message "${CHAT[ID]}" "markdown message"
 
@@ -45,6 +59,7 @@ Telegram supports a [reduced set of Markdown](https://core.telegram.org/bots/api
 send_markdown_message "${CHAT[ID]}" "this is a markdown  message, next word is *bold*"
 send_markdown_message "${CHAT[ID]}" "*bold* _italic_ [text](link)"
 ```
+
 
 ##### send_html_message
 ```send_html_message``` sends HTML style messages to the given chat.
@@ -203,6 +218,72 @@ send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"b 1", url"":"u 1"}, {"text":"b 
 ```
 
 *See also [Inline keyboard markup](https://core.telegram.org/bots/api/#inlinekeyboardmarkup)*
+
+----
+
+### Edit / Replace Messages
+
+Edit a meassage means replace the conteint of the message in place. The message stay on the same position position in the chat an keeps the same
+message id.
+
+There is no need to replace a message using the same format, e.g. a message sent with `send_normal_messaage` can be replaced with
+`edit_markdown_message` or `edit_html_message` and vice versa. 
+
+To replace a message you must get the message id of the the orrinal message. The best way to get the id is to save the value of
+`BOTSENT[ID]` when send the original message.
+
+##### edit_normal_message
+```edit_normal_message``` replace a message with a text message in the given chat.
+
+*usage:*  edit_normal_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+
+*example:* 
+```bash
+send_normal_message "${CHAT[ID]}" "this is a text message"
+saved-id="${BOTSENT[ID]}"
+
+edit_normal_message "${CHAT[ID]}" "${saved-id}" "this is another text"
+```
+
+##### edit_markdwonv2_message
+```edit_markdown_message``` replace a message with a markdown v2 message in the given chat.
+
+*usage:*  edit_markdownv2_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+
+*example:* 
+```bash
+send_normal_message "${CHAT[ID]}" "this is a text message"
+saved-id="${BOTSENT[ID]}"
+
+edit_markdownv2_message "${CHAT[ID]}" "${saved-id}" "this is __markdown__ *V2* text"
+```
+
+##### edit_markdwon_message
+```edit_markdown_message``` replace a message with a markdown message in the given chat.
+
+*usage:*  edit_markdown_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+
+*example:* 
+```bash
+send_normal_message "${CHAT[ID]}" "this is a text message"
+saved-id="${BOTSENT[ID]}"
+
+edit_markdown_message "${CHAT[ID]}" "${saved-id}" "this is *markdown* text"
+```
+
+##### edit_html_message
+```edit_markdown_message``` replace a message with a html message in the given chat.
+
+*usage:*  edit_html_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+
+*example:* 
+```bash
+send_normal_message "${CHAT[ID]}" "this is a text message"
+saved-id="${BOTSENT[ID]}"
+
+edit_html_message "${CHAT[ID]}" "${saved-id}" "this is <b>html</b> text"
+```
+
 
 ----
 
@@ -1062,5 +1143,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.2-1-gd30a700
+#### $$VERSION$$ v1.2-dev2-13-gc8f61af
 
