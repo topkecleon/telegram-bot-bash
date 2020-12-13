@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-9-g62cab32
+#### $$VERSION$$ v1.2-dev2-0-g336f00b
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -924,8 +924,9 @@ process_message() {
 	LOCATION[LONGITUDE]="${UPD["result",${num},"message","location","longitude"]}"
 	LOCATION[LATITUDE]="${UPD["result",${num},"message","location","latitude"]}"
 
-	# service messages
-	if grep -qs -e '\["result",'"${num}"',"message","new_chat_member' <<<"${UPDATE}"; then
+	# service messages, group or channel only!
+	if [[ "${CHAT[ID]}" == "-"* ]] ; then
+	    if grep -qs -e '\["result",'"${num}"',"message","new_chat_member' <<<"${UPDATE}"; then
 		SERVICE[NEWMEMBER]="${UPD["result",${num},"message","new_chat_member","id"]}"
 		NEWMEMBER[ID]="${SERVICE[NEWMEMBER]}"
 		NEWMEMBER[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","new_chat_member","first_name"]}")"
@@ -934,8 +935,8 @@ process_message() {
 		NEWMEMBER[ISBOT]="${UPD["result",${num},"message","new_chat_member","is_bot"]}"
 		[ -z "${MESSAGE[0]}" ] &&\
 		MESSAGE[0]="/_new_chat_member ${NEWMEMBER[ID]} ${NEWMEMBER[USERNAME]:=${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]}}"
-	fi
-	if grep -qs -e '\["result",'"${num}"',"message","left_chat_member' <<<"${UPDATE}"; then
+	    fi
+	    if grep -qs -e '\["result",'"${num}"',"message","left_chat_member' <<<"${UPDATE}"; then
 		SERVICE[LEFTMEMBER]="${UPD["result",${num},"message","left_chat_member","id"]}"
 		LEFTMEMBER[ID]="${SERVICE[LEFTMEBER]}"
 		LEFTMEMBER[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","left_chat_member","first_name"]}")"
@@ -944,24 +945,25 @@ process_message() {
 		LEFTMEMBER[ISBOT]="${UPD["result",${num},"message","left_chat_member","is_bot"]}"
 		[ -z "${MESSAGE[0]}" ] &&\
 		MESSAGE[0]="/_left_chat_member ${LEFTMEMBER[ID]} ${LEFTMEMBER[USERNAME]:=${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]}}"
-	fi
-	if grep -qs -e '\["result",'"${num}"',"message","new_chat_[tp]' <<<"${UPDATE}"; then
+	    fi
+	    if grep -qs -e '\["result",'"${num}"',"message","new_chat_[tp]' <<<"${UPDATE}"; then
 		SERVICE[NEWTITLE]="$(JsonDecode "${UPD["result",${num},"message","new_chat_title"]}")"
 		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWTITLE]}" ] &&\
 			MESSAGE[0]="/_new_chat_title ${USER[ID]} ${SERVICE[NEWTITLE]}"
 		SERVICE[NEWPHOTO]="$(get_file "${UPD["result",${num},"message","new_chat_photo",0,"file_id"]}")"
 		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWPHOTO]}" ] &&\
 			 MESSAGE[0]="/_new_chat_photo ${USER[ID]} ${SERVICE[NEWPHOTO]}"
-	fi
-	if  grep -qs -e '\["result",'"${num}"',"message","pinned_message' <<<"${UPDATE}"; then
+	    fi
+	    if  grep -qs -e '\["result",'"${num}"',"message","pinned_message' <<<"${UPDATE}"; then
 		SERVICE[PINNED]="$(JsonDecode "${UPD["result",${num},"message","pinned_message","message_id"]}")"
 		PINNED[ID]="${SERVICE[PINNED]}"
 		PINNED[MESSAGE]="$(JsonDecode "${UPD["result",${num},"message","pinned_message","text"]}")"
 		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[PINNED]}" ] &&\
 			MESSAGE[0]="/_new_pinned_message ${USER[ID]} ${PINNED[ID]} ${PINNED[MESSAGE]}"
+	    fi
+	    # set SERVICE to yes if a service message was received
+	    [[ "${SERVICE[*]}" =~  ^[[:blank:]]*$ ]] || SERVICE[0]="yes"
 	fi
-	# set SERVICE to yes if a service message was received
-	[[ "${SERVICE[*]}" =~  ^[[:blank:]]*$ ]] || SERVICE[0]="yes"
 
 	# split message in command and args
 	[[ "${MESSAGE[0]}" == "/"* ]] && read -r CMD <<<"${MESSAGE[0]}" &&  CMD[0]="${CMD[0]%%@*}"

@@ -6,6 +6,136 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Bashbot README</title>
   <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      word-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     span.underline{text-decoration: underline;}
@@ -74,6 +204,7 @@
     code span.va { color: #19177c; } /* Variable */
     code span.vs { color: #4070a0; } /* VerbatimString */
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
@@ -160,10 +291,9 @@ Written by Drew (@topkecleon) and Kay M (@gnadelwartz).
 <p>In addition you need a <a href="https://telegram.org">Telegram client</a> and a mobile phone to <a href="https://telegramguide.com/create-a-telegram-account/">register an account</a>. If you don't want to register for Telegram you should stop reading here ;-)</p>
 <p>After you're registered to Telegram send a message to <a href="https://telegram.me/botfather">@botfather</a>, <a href="doc/1_firstbot.md">create a new Telegram Bot token</a> and write it down. You need the token to install the bot.</p>
 <p>Now open a terminal and check if bash is installed:</p>
-<pre><code>which bash &amp;&amp; echo &quot;bash seems available...&quot;
-</code></pre>
+<pre><code>which bash &amp;&amp; echo &quot;bash seems available...&quot;</code></pre>
 <p>Create a new directory, change to it: <code>mkdir tbb; cd tbb</code> and download the latest '*.tar.gz' file from <a href="https://github.com/topkecleon/telegram-bot-bash/releases">https://github.com/topkecleon/telegram-bot-bash/releases</a>. This can be done with the commands:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1"></a><span class="fu">wget</span> -q https://github.com/<span class="va">$(</span><span class="fu">wget</span> -q https://github.com/topkecleon/telegram-bot-bash/releases/latest -O - <span class="kw">|</span> <span class="fu">egrep</span> <span class="st">&#39;/.*/.*/.*tar.gz&#39;</span> -o<span class="va">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="at">-q</span> https://github.com/<span class="va">$(</span><span class="fu">wget</span> <span class="at">-q</span> https://github.com/topkecleon/telegram-bot-bash/releases/latest <span class="at">-O</span> <span class="at">-</span> <span class="kw">|</span> <span class="fu">egrep</span> <span class="st">&#39;/.*/.*/.*tar.gz&#39;</span> <span class="at">-o</span><span class="va">)</span></span></code></pre></div>
 <p>Extract the '*.tar.gz' file and change to bashbot directory: <code>tar -xzf *.tar.gz; cd telegram-bot-bash</code>, install bashbot: <code>./bashbot.sh init</code> and enter your bot token when asked. All other questions can be answered by hitting the &lt;Return&gt; key.</p>
 <p>That's all, now you can start your bot with <code>./bashbot.sh start</code> and send him messages:</p>
 <pre><code>/start
@@ -177,8 +307,7 @@ You are Botadmin
 /info
 
 This is bashbot, the Telegram bot written entirely in bash.
-It features background tasks and interactive chats, and can serve as an interface for CLI programs.
-</code></pre>
+It features background tasks and interactive chats, and can serve as an interface for CLI programs.</code></pre>
 <p>For more Information on how to install, customize and use your new bot, read the <a href="#Documentation">Documentation</a></p>
 <h3>Log files</h3>
 <p>Since version 0.96 bashbot log commands received/send and connection errors. If you start bashbot in debug mode bash stdout, stderr and all send/received telegram message are logged also.</p>
@@ -188,8 +317,7 @@ It features background tasks and interactive chats, and can serve as an interfac
 │   ├── ERROR.log        # connection errors from / to telegram API
 │   │
 │   ├── DEBUG.log        # stdout/stderr of you bot (debug mode enabled)
-│   └── MESSAGE.log      # full text of all message send/received (debug mode enabled)
-</code></pre>
+│   └── MESSAGE.log      # full text of all message send/received (debug mode enabled)</code></pre>
 <hr />
 <h2>Security Considerations</h2>
 <p>Running a Telegram Bot means it is connected to the public and you never know what's send to your Bot.</p>
@@ -200,18 +328,18 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>A powerful tool to improve your scripts is <code>shellcheck</code>. You can <a href="https://www.shellcheck.net/">use it online</a> or <a href="https://github.com/koalaman/shellcheck#installing">install shellcheck locally</a>. Shellcheck is used extensively in bashbot development to ensure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests. In addition bashbot has a <a href="doc/7_develop.md">test suite</a> to check if important functionality is working as expected.</p>
 <h3>Use printf whenever possible</h3>
 <p>If you're writing a script and it is taking external input (from the user as arguments or file system...), you shouldn't use echo to display it. <a href="https://unix.stackexchange.com/a/6581">Use printf whenever possible</a></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1"></a>  <span class="co"># very simple</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a>  <span class="bu">echo</span> <span class="st">&quot;text with variables. PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
-<span id="cb5-3"><a href="#cb5-3"></a>  <span class="bu">printf</span> <span class="st">&#39;%s\n&#39;</span> <span class="st">&quot;text with variables. PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
-<span id="cb5-4"><a href="#cb5-4"></a>  <span class="ex">-</span><span class="op">&gt;</span> text with variables. PWD=/home/xxx</span>
-<span id="cb5-5"><a href="#cb5-5"></a></span>
-<span id="cb5-6"><a href="#cb5-6"></a>  <span class="co"># more advanced</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a>  <span class="va">FLOAT=</span><span class="st">&quot;1.2346777892864&quot;</span> <span class="va">INTEGER=</span><span class="st">&quot;12345.123&quot;</span></span>
-<span id="cb5-8"><a href="#cb5-8"></a>  <span class="bu">echo</span> <span class="st">&quot;text with variabeles. float=</span><span class="va">$FLOAT</span><span class="st">, integer=</span><span class="va">$INTEGER</span><span class="st">, PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a>  <span class="ex">-</span><span class="op">&gt;</span>text with variables. float=1.2346777892864, integer=12345.123, PWD=/home/xxx</span>
-<span id="cb5-10"><a href="#cb5-10"></a></span>
-<span id="cb5-11"><a href="#cb5-11"></a>  <span class="bu">printf</span> <span class="st">&quot;text with variables. float=%.2f, integer=%d, PWD=%s\n&quot;</span> <span class="st">&quot;&quot;</span> <span class="st">&quot;</span><span class="va">$INTEGER</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
-<span id="cb5-12"><a href="#cb5-12"></a>  <span class="ex">-</span><span class="op">&gt;</span>text with variables. float=1.23, integer=12345, PWD=/home/xxx</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># very simple</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;text with variables. PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&#39;%s\n&#39;</span> <span class="st">&quot;text with variables. PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-</span><span class="op">&gt;</span> text with variables. PWD=/home/xxx</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># more advanced</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="va">FLOAT=</span><span class="st">&quot;1.2346777892864&quot;</span> <span class="va">INTEGER=</span><span class="st">&quot;12345.123&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;text with variabeles. float=</span><span class="va">$FLOAT</span><span class="st">, integer=</span><span class="va">$INTEGER</span><span class="st">, PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-</span><span class="op">&gt;</span>text with variables. float=1.2346777892864, integer=12345.123, PWD=/home/xxx</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&quot;text with variables. float=%.2f, integer=%d, PWD=%s\n&quot;</span> <span class="st">&quot;&quot;</span> <span class="st">&quot;</span><span class="va">$INTEGER</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-</span><span class="op">&gt;</span>text with variables. float=1.23, integer=12345, PWD=/home/xxx</span></code></pre></div>
 <h3>Do not use #!/usr/bin/env bash</h3>
 <p><strong>We stay with /bin/bash shebang, because it's more save from security perspective.</strong></p>
 <p>Use of a fixed path to the system provided bash makes it harder for attackers or users to place alternative versions of bash and avoids using a possibly broken, mangled or compromised bash executable.</p>
@@ -241,35 +369,34 @@ It features background tasks and interactive chats, and can serve as an interfac
 <h3>Can I send messages from CLI and scripts?</h3>
 <p>Of course, you can send messages from CLI and scripts, simply install bashbot as <a href="#Your-really-first-bashbot-in-a-nutshell">described here</a>, send the message '/start' to set yourself as botadmin and stop the bot with <code>./bashbot.sh stop</code>.</p>
 <p>Run the following commands in your bash shell or script while you are in the installation directory:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># prepare bash / script to send commands</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="bu">export</span> <span class="va">BASHBOT_HOME=</span><span class="st">&quot;</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st">&quot;</span></span>
-<span id="cb6-3"><a href="#cb6-3"></a><span class="bu">source</span> ./bashbot.sh source</span>
-<span id="cb6-4"><a href="#cb6-4"></a></span>
-<span id="cb6-5"><a href="#cb6-5"></a><span class="co"># send me a test message</span></span>
-<span id="cb6-6"><a href="#cb6-6"></a><span class="ex">send_message</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">getConfigKey</span> <span class="st">&quot;botadmin&quot;</span><span class="va">)</span><span class="st">&quot;</span> <span class="st">&quot;test&quot;</span></span>
-<span id="cb6-7"><a href="#cb6-7"></a></span>
-<span id="cb6-8"><a href="#cb6-8"></a><span class="co"># send me output of a system command</span></span>
-<span id="cb6-9"><a href="#cb6-9"></a><span class="ex">send_message</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">getConfigKey</span> <span class="st">&quot;botadmin&quot;</span><span class="va">)</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">df</span> -h<span class="va">)</span><span class="st">&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prepare bash / script to send commands</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">BASHBOT_HOME=</span><span class="st">&quot;</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ./bashbot.sh source</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># send me a test message</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="ex">send_message</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">getConfigKey</span> <span class="st">&quot;botadmin&quot;</span><span class="va">)</span><span class="st">&quot;</span> <span class="st">&quot;test&quot;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># send me output of a system command</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="ex">send_message</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">getConfigKey</span> <span class="st">&quot;botadmin&quot;</span><span class="va">)</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">df</span> <span class="at">-h</span><span class="va">)</span><span class="st">&quot;</span></span></code></pre></div>
 <p>For more information see <a href="doc/8_custom.md">Expert Use</a></p>
 <h3>Blocked by telegram?</h3>
 <p>This may happen if to many or wrong requests are sent to api.telegram.org, e.g. using a invalid token or not existing API calls. If the block stay for longer time you can ask telegram service to unblock your IP-Adress.</p>
 <p>You can check with curl or wget if you are blocked by Telegram:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1"></a><span class="ex">curl</span> -m 10  https://api.telegram.org/bot</span>
-<span id="cb7-2"><a href="#cb7-2"></a><span class="co">#curl: (28) Connection timed out after 10001 milliseconds</span></span>
-<span id="cb7-3"><a href="#cb7-3"></a></span>
-<span id="cb7-4"><a href="#cb7-4"></a><span class="fu">wget</span> -t 1 -T 10 https://api.telegram.org/bot</span>
-<span id="cb7-5"><a href="#cb7-5"></a><span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-m</span> 10  https://api.telegram.org/bot</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#curl: (28) Connection timed out after 10001 milliseconds</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="at">-t</span> 1 <span class="at">-T</span> 10 https://api.telegram.org/bot</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></span></code></pre></div>
 <p>Since Version 0.96 bashbot offers the option to recover from broken connections (aka blocked). Therefore you can provide a function named <code>bashbotBlockRecover()</code> in <code>mycommands.sh</code>. If the function exists it is called every time when a broken connection is detected.</p>
 <p>Possible actions are: Check if network is working, change IP-Adress or simply wait some time.</p>
 <p>If everything seems OK return 0 for retry or any non 0 value to give up.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># called when bashbot sedn command failed because we can not connect to telegram</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="co"># return 0 to retry, return non 0 to give up</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="fu">bashbotBlockRecover()</span> <span class="kw">{</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a>    <span class="co"># place your commands to unblock here, e.g. change IP-Adess or simply wait</span></span>
-<span id="cb8-5"><a href="#cb8-5"></a>    <span class="fu">sleep</span> 60 <span class="kw">&amp;&amp;</span> <span class="bu">return</span> 0 <span class="co"># may be temporary</span></span>
-<span id="cb8-6"><a href="#cb8-6"></a>    <span class="bu">return</span> 1 </span>
-<span id="cb8-7"><a href="#cb8-7"></a>    <span class="kw">}</span></span>
-<span id="cb8-8"><a href="#cb8-8"></a></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># called when bashbot sedn command failed because we can not connect to telegram</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># return 0 to retry, return non 0 to give up</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bashbotBlockRecover()</span> <span class="kw">{</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># place your commands to unblock here, e.g. change IP-Adess or simply wait</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sleep</span> 60 <span class="kw">&amp;&amp;</span> <span class="cf">return</span> <span class="dv">0</span> <span class="co"># may be temporary</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span> </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="er">}</span></span></code></pre></div>
 <p>@Gnadelwartz</p>
 <h2>That's it all guys!</h2>
 <p>If you feel that there's something missing or if you found a bug, feel free to submit a pull request!</p>
