@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-5-gda7a3f1
+#### $$VERSION$$ v1.2-dev2-15-g3496a21
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -1055,8 +1055,15 @@ start_bot() {
 		else
 			# oops, something bad happened, wait maxsleep*10
 			(( nextsleep=nextsleep*2 , nextsleep= nextsleep>maxsleep*10 ?maxsleep*10:nextsleep ))
-			[ "${OFFSET}" = "-999" ] &&\
-			log_error "Repeated timeout/broken/no connection on telegram update, sleep $(_round_float "${nextsleep}e-3")s"
+			# second time, report problem
+			if [ "${OFFSET}" = "-999" ]; then
+			    log_error "Repeated timeout/broken/no connection on telegram update, sleep $(_round_float "${nextsleep}e-3")s"
+			    # try to recover
+			    if _is_function bashbotBlockRecover && [ -z "$(getJson "${ME_URL}")" ]; then
+				log_error "Try to recover, calling bashbotBlockRecover ..."
+				bashbotBlockRecover
+			    fi
+			fi
 			OFFSET="-999"
 		fi
 	done

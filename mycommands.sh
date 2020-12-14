@@ -9,7 +9,7 @@
 # #### mycommands.clean
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.2-dev2-5-gda7a3f1
+#### $$VERSION$$ v1.2-dev2-15-g3496a21
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -285,7 +285,9 @@ else
     # return 0 to retry, return non 0 to give up
     bashbotBlockRecover() {
 	# place your commands to unblock here, e.g. change IP or simply wait
-	sleep 60 && return 0 # may be temporary
+	sleep 60 # may be temporary
+	# check connection working
+	[ -n "$(getJson "${ME_URL}")" ] && return 0
 	return 1 
     }
 

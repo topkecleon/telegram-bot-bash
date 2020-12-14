@@ -223,7 +223,7 @@ send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"b 1", url"":"u 1"}, {"text":"b 
 
 ### Edit / Replace Messages
 
-Edit a message means replace the content of the message in place. The message stay on the same position in the chat ank keep the same
+Edit a message means replace the content of the message in place. The message stay on the same position in the chat and keep the same
 message id.
 
 There is no need to use the same format when replace a message, e.g. a message sent with `send_normal_message` can be replaced with
@@ -1143,5 +1143,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.2-dev2-14-g78ddc1f
+#### $$VERSION$$ v1.2-dev2-15-g3496a21
 

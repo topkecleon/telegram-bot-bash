@@ -331,15 +331,16 @@ It features background tasks and interactive chats, and can serve as an interfac
 <div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># very simple</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;text with variables. PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&#39;%s\n&#39;</span> <span class="st">&quot;text with variables. PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-</span><span class="op">&gt;</span> text with variables. PWD=/home/xxx</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># more advanced</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="va">FLOAT=</span><span class="st">&quot;1.2346777892864&quot;</span> <span class="va">INTEGER=</span><span class="st">&quot;12345.123&quot;</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;text with variabeles. float=</span><span class="va">$FLOAT</span><span class="st">, integer=</span><span class="va">$INTEGER</span><span class="st">, PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-</span><span class="op">&gt;</span>text with variables. float=1.2346777892864, integer=12345.123, PWD=/home/xxx</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&quot;text with variables. float=%.2f, integer=%d, PWD=%s\n&quot;</span> <span class="st">&quot;&quot;</span> <span class="st">&quot;</span><span class="va">$INTEGER</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-</span><span class="op">&gt;</span>text with variables. float=1.23, integer=12345, PWD=/home/xxx</span></code></pre></div>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&#39;text with variables. PWD=%s\n&#39;</span> <span class="st">&quot;</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-</span><span class="op">&gt;</span> text with variables. PWD=/home/xxx</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># more advanced</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="va">FLOAT=</span><span class="st">&quot;1.2346777892864&quot;</span> <span class="va">INTEGER=</span><span class="st">&quot;12345.123&quot;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;float=</span><span class="va">$FLOAT</span><span class="st">, integer=</span><span class="va">$INTEGER</span><span class="st">, PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-</span><span class="op">&gt;</span> float=1.2346777892864, integer=12345.123, PWD=/home/xxx</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&quot;text with variables. float=%.2f, integer=%d, PWD=%s\n&quot;</span> <span class="st">&quot;</span><span class="va">$FLOAT</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$INTEGER</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-</span><span class="op">&gt;</span> float=1.23, integer=12345, PWD=/home/xxx</span></code></pre></div>
 <h3>Do not use #!/usr/bin/env bash</h3>
 <p><strong>We stay with /bin/bash shebang, because it's more save from security perspective.</strong></p>
 <p>Use of a fixed path to the system provided bash makes it harder for attackers or users to place alternative versions of bash and avoids using a possibly broken, mangled or compromised bash executable.</p>
@@ -386,7 +387,10 @@ It features background tasks and interactive chats, and can serve as an interfac
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#curl: (28) Connection timed out after 10001 milliseconds</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="at">-t</span> 1 <span class="at">-T</span> 10 https://api.telegram.org/bot</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></span></code></pre></div>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-w</span> 2 api.telegram.org 443 <span class="kw">||</span> <span class="bu">echo</span> <span class="st">&quot;your IP seems blocked by telegram&quot;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#your IP seems blocked by telegram</span></span></code></pre></div>
 <p>Since Version 0.96 bashbot offers the option to recover from broken connections (aka blocked). Therefore you can provide a function named <code>bashbotBlockRecover()</code> in <code>mycommands.sh</code>. If the function exists it is called every time when a broken connection is detected.</p>
 <p>Possible actions are: Check if network is working, change IP-Adress or simply wait some time.</p>
 <p>If everything seems OK return 0 for retry or any non 0 value to give up.</p>
@@ -400,6 +404,6 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>@Gnadelwartz</p>
 <h2>That's it all guys!</h2>
 <p>If you feel that there's something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4>$$VERSION$$ v1.2-0-gc50499c</h4>
+<h4>$$VERSION$$ v1.2-dev2-15-g3496a21</h4>
 </body>
 </html>
