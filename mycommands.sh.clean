@@ -4,7 +4,7 @@
 # files: mycommands.sh.clean
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-dev2-18-g84b893c
 #
 
 ##########
@@ -102,7 +102,7 @@ else
 			return 0
 			;;
 		'/kickme'*) # this will replace the /kickme command
-			send_markdown_mesage "${CHAT[ID]}" "*This bot will not kick you!*"
+			send_markdownv2_mesage "${CHAT[ID]}" "This bot will *not* kick you!"
 			return 1
 			;;
 	esac

@@ -9,7 +9,7 @@
 # #### mycommands.clean
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.2-dev2-16-g3c1ea93
+#### $$VERSION$$ v1.2-dev2-18-g84b893c
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -139,7 +139,7 @@ else
 		'/echo'*) 
 			send_action "${CHAT[ID]}" "typing"
 			if ! user_is_botadmin "${USER[ID]}" ; then
-			    send_markdown_message "${CHAT[ID]}" "*${NOTBOTADMIN}*"; return 1
+			    send_markdownv2_message "${CHAT[ID]}" "*${NOTBOTADMIN}*"; return 1
 			fi
 			;;
 		# will we process edited messages also?
@@ -217,7 +217,7 @@ else
 			return 0
 			;;
 		'/kickme'*) # this will replace the /kickme command
-			send_markdown_mesage "${CHAT[ID]}" "*This bot will not kick you!*"
+			send_markdownv2_mesage "${CHAT[ID]}" "This bot will *not* kick you!"
 			return 1
 			;;
 	esac
