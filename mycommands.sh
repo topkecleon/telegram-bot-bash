@@ -9,7 +9,7 @@
 # #### mycommands.clean
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.2-dev2-15-g3496a21
+#### $$VERSION$$ v1.2-dev2-16-g3c1ea93
 #
 
 # uncomment the following lines to overwrite info and help messages
