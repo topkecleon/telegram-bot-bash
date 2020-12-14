@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-dev2-17-gdfe9c7e
 #
 
 # adjust your language setting here, e.g. when run from other user or cron.
@@ -38,17 +38,16 @@ It currently can send, receive and forward messages, custom keyboards, photos, a
 #-----------------------------
 # this file *MUST* not edited!
 # copy "mycommands.sh.dist" to "mycommands.sh" and change the strings there
-bashbot_help='Place your own commands and messages in mycommands.sh
-
+bashbot_help='
 *Available commands*:
 *• /start*: _Start bot and get this message_.
 *• /help*: _Get this message_.
 *• /info*: _Get shorter info message about this bot_.
-*• /question*: _Start interactive chat_.
-*• /cancel*: _Cancel any currently running interactive chats_.
-*• /kickme*: _You will be autokicked from the chat_.
+*• /question*: _Start interactive chat (mycommands.dist)_.
+*• /cancel*: _Cancel any currently running interactive chat_.
+*• /kickme*: _You will be autokicked from the group_.
 *• /leavechat*: _The bot will leave the group with this command _.
-Written by Drew (@topkecleon), Daniil Gentili (@danogentili) and KayM(@gnadelwartz).
+Written by Drew (@topkecleon) and KayM (@gnadelwartz).
 Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
 
@@ -105,7 +104,10 @@ if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
 			;;
 		'/start'*)
 			send_action "${CHAT[ID]}" "typing"
-			user_is_botadmin "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
+			MYCOMMANDS="*Note*: No _mycommands.sh_ detected, copy _mycommands.dist_ or _mycommands.clean_."
+			[ -r "${BASHBOT_ETC:-.}/mycommands.sh" ] && MYCOMMANDS="Place your commands and messages in _mycommands.sh_"
+			user_is_botadmin "${USER[ID]}" &&\
+				send_markdownv2_message "${CHAT[ID]}" "You are *BOTADMIN*.\n${MYCOMMANDS}"
 			if user_is_admin "${CHAT[ID]}" "${USER[ID]}" || user_is_allowed  "${USER[ID]}" "start" ; then
 				send_markdown_message "${CHAT[ID]}" "${bashbot_help}"
 			else
