@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-17-gdfe9c7e
+#### $$VERSION$$ v1.2-dev2-20-gd1f2bc8
 #
 
 # adjust your language setting here, e.g. when run from other user or cron.
@@ -65,8 +65,9 @@ fi
 #----------------------------
 # this file *MUST* not edited!
 # copy "mycommands.sh.dist" to "mycommands.sh" and change the values there
-# defaults to no inline and nonsense home dir
+# defaults to no inline, all commands  and nonsense home dir
 export INLINE="0"
+export MEONLY="0"
 export FILE_REGEX="${BASHBOT_ETC}/.*"
 
 
@@ -85,6 +86,15 @@ if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
     # regular (global) commands ...
     # your commands are in mycommands() 
     else
+	
+	###################
+	# if is bashbot is group admin it get commands sent to other bots
+	# set MEONLY=1 to ignore commands for other bots
+	if [[ "${MEONLY}" != "0" && "${MESSAGE}" == "/"* && "${MESSAGE%% *}" == *"@"* ]]; then
+		# here we have a command with @xyz_bot added, check if it's our bot
+		MYCHECK="${MESSAGE%% *}"
+		[ "${MYCHECK}" != "${MYCHECK%%@${ME}}" ] && return
+	fi 
 
 	###################
 	# user defined commands must placed in mycommands

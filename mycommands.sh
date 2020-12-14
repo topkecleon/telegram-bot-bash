@@ -9,7 +9,7 @@
 # #### mycommands.clean
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.2-dev2-18-g84b893c
+#### $$VERSION$$ v1.2-dev2-20-gd1f2bc8
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -25,6 +25,11 @@ export res=""
 # Set INLINE to 1 in order to receive inline queries.
 # To enable this option in your bot, send the /setinline command to @BotFather.
 export INLINE="0"
+
+# if your bot is group admin it get commands sent to other bots
+# Set MEONLY to 1 to ignore commands sent to other bots
+export MEONLY="0"
+
 # Set to .* to allow sending files from all locations
 # NOTE: this is a regex, not shell globbing! you must use a valid egex,
 # '.' matches any character and '.*' matches all remaining charatcers!

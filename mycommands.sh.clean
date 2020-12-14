@@ -4,7 +4,7 @@
 # files: mycommands.sh.clean
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v1.2-dev2-18-g84b893c
+#### $$VERSION$$ v1.2-dev2-20-gd1f2bc8
 #
 
 ##########
@@ -20,6 +20,10 @@ export res=""
 # Set INLINE to 1 in order to receive inline queries.
 # To enable this option in your bot must also send the /setinline command to @BotFather.
 export INLINE="0"
+
+# if your bot is group admin it get commands sent to other bots
+# Set MEONLY to 1 to ignore commands sent to other bots
+export MEONLY="0"
 
 # NOTE: this is a regex, not shell globbing! you must use a valid egex,
 # '.' matches any character and '.*' matches all remaining charatcers!

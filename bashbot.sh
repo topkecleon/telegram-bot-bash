@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-15-g3496a21
+#### $$VERSION$$ v1.2-dev2-20-gd1f2bc8
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -305,7 +305,7 @@ declare -rx BOTTOKEN URL ME_URL UPD_URL GETFILE_URL
 declare -ax CMD
 declare -Ax UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
 declare -Ax SERVICE NEWMEMBER LEFTMEMBER PINNED MIGRATE
-export res CAPTION
+export res CAPTION ME
 
 
 ##################
