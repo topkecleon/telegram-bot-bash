@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-23-g8379a62
+#### $$VERSION$$ v1.2-dev2-24-gd7d61a4
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -1165,6 +1165,7 @@ if ! _is_function send_message ; then
 	exit 1
 fi
 
+# get location of JSON.sh, download if not exist
 JSONSHFILE="${BASHBOT_JSONSH:-${SCRIPTDIR}/JSON.sh/JSON.sh}"
 [[ "${JSONSHFILE}" != *"/JSON.sh" ]] && echo -e "${RED}ERROR: \"${JSONSHFILE}\" ends not with \"JSONS.sh\".${NC}" && exit 3
 
@@ -1174,6 +1175,12 @@ if [ ! -f "${JSONSHFILE}" ]; then
 		 mkdir "${SCRIPTDIR}/JSON.sh" 2>/dev/null && chmod +w "${SCRIPTDIR}/JSON.sh"
 	getJson "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh" >"${JSONSHFILE}"
 	chmod +x "${JSONSHFILE}" 
+fi
+
+# check if JSON.awk exist and has x flag
+JSONAWKFILE="${JSONSHFILE%.sh}.awk"
+if [ -x "${JSONAWKFILE}" ] && _exists awk ; then
+	JSONSHFILE="JsonAwk"; JsonAwk() { "${JSONAWKFILE}" -v "BRIEF=8" -v "STRICT=0" -; }
 fi
 
 # source the script with source as param to use functions in other scripts
