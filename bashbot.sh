@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-26-g9d39fe1
+#### $$VERSION$$ v1.2-dev2-27-g32a6ef2
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -85,9 +85,10 @@ check_token(){
 	return 1
 }
 # log $1 to ERRORLOG with date
-log_error(){
-	printf "%s: %s\n" "$(date)" "$*" >>"${ERRORLOG}"
-}
+log_error(){ printf "%s: %s\n" "$(date)" "$*" >>"${ERRORLOG}"; }
+log_debug(){ printf "%s: %s\n" "$(date)" "$*" >>"${DEBUGLOG}"; }
+log_message(){ printf "%s: %s\n" "$(date)" "$*" >>"${MESSAGELOG}"; }
+log_update(){ printf "%s: %s\n" "$(date)" "$*" >>"${UPDATELOG}"; }
 # additional tests if we run in debug mode
 export BASHBOTDEBUG
 # debug should always last argument
@@ -386,7 +387,7 @@ killallproc() {
 # $ chat $2 msg_id $3 nolog
 declare -xr DELETE_URL=$URL'/deleteMessage'
 delete_message() {
-	[ -z "$3" ] && printf "%s: Delete Message CHAT=%s MSG_ID=%s\n" "$(date)" "${1}" "${2}" >>"${UPDATELOG}"
+	[ -z "$3" ] && log_update "Delete Message CHAT=${1} MSG_ID=${2}"
 	sendJson "${1}" '"message_id": '"${2}"'' "${DELETE_URL}"
 }
 
@@ -418,14 +419,13 @@ function detect_curl() {
 	done
 	# curl not in PATH and not in usual locations
 	local warn="Warning: Curl not detected, try fallback to wget! pls install curl or adjust BASHBOT_CURL/BASHBOT_WGET environment variables."
-	printf "%s: %s\n" "$(date)" "${warn}" >>"${UPDATELOG}"
-	[ -n "${BASHBOTDEBUG}" ] && printf "%s: %s\n" "$(date)" "${warn}" >>"${DEBUGLOG}"
+	log_update "${warn}"; [ -n "${BASHBOTDEBUG}" ] && log_debug "${warn}"
 	return 1
 }
 
 # iconv used to filter out broken utf characters, if not installed fake it
 if ! _exists iconv; then
-	printf "%s: %s\n" "$(date)" "Warning: iconv not installed, pls imstall iconv!" >>"${UPDATELOG}"
+	log_update "Warning: iconv not installed, pls imstall iconv!"
 	function iconv() { cat; }
 fi
 
@@ -441,8 +441,8 @@ sendJson(){
 	fi
 	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
 	if [ -n "${BASHBOTDEBUG}" ] ; then
-		printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${chat#*:}" "${2:0:100}" "${3##*/}" >>"${UPDATELOG}"
-		printf "\n%s: DEBUG sendJson ==========\n%s\n" "$(date)" "$("${JSONSHFILE}" -b -n <<<"${json}" 2>&1)" >>"${MESSAGELOG}"
+		log_update "sendJson (curl) CHAT=${chat#*:} JSON=${2:0:100} URL=${3##*/}"
+		log_message "DEBUG sendJson ==========\n$("${JSONSHFILE}" -b -n <<<"${json}" 2>&1)"
 	fi
 	[[ "${chat}" == *"NAN" ]] && return # not a number
 	# OK here we go ...
@@ -460,7 +460,7 @@ if detect_curl ; then
   # here we have curl ----
   [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
   getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -n "${3}" ]] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}" >>"${DEBUGLOG}"
+	[[ -n "${BASHBOTDEBUG}" && -n "${3}" ]] && log_debug "getJson (curl) URL=${1##*/}"
 	# shellcheck disable=SC2086
 	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
   }
@@ -476,7 +476,7 @@ if detect_curl ; then
 	[ "$#" -lt 4  ] && return
 	if [ -n "$5" ]; then
 	[ -n "${BASHBOTDEBUG}" ] &&\
-		printf "%s: sendUpload CHAT=%s WHAT=%s  FILE=%s CAPT=%s\n" "$(date)" "${1}" "${2}" "${3}" "${4}" >>"${UPDATELOG}"
+		log_update "sendUpload CHAT=${1} WHAT=${2}  FILE=${3} CAPT=${4}"
 	# shellcheck disable=SC2086
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -b -n 2>/dev/null )"
@@ -492,7 +492,7 @@ else
   # NO curl, try wget
   if _exists wget; then
     getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && printf "%s: getJson (wget) URL=%s\n" "$(date)" "${1##*/}" >>"${DEBUGLOG}"
+	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && log_debug "getJson (wget) URL=${1##*/}"
 	# shellcheck disable=SC2086
 	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
     }
@@ -549,7 +549,7 @@ sendJsonRetry(){
 sendJsonResult(){
 	local offset=0
 	BOTSENT=( )
-	[ -n "${BASHBOTDEBUG}" ] && printf "\n%s: New Result ==========\n%s\n" "$(date)" "$1" >>"${MESSAGELOG}"
+	[ -n "${BASHBOTDEBUG}" ] && log_message "New Result ==========\n$1"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${1}")"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
 		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${1}")"
@@ -678,7 +678,7 @@ process_client() {
 	local num="$1" debug="$2" 
 	pre_process_message "${num}"
 	# log message on debug
-	[[ -n "${debug}" ]] && printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${MESSAGELOG}"
+	[[ -n "${debug}" ]] && log_message "New Message ==========\n${UPDATE}"
 
 	# check for users / groups to ignore
 	jssh_updateArray_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
@@ -1009,11 +1009,11 @@ start_bot() {
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
 	local maxsleep="${BASHBOT_SLEEP:-5000}"
 	# startup message
-	DEBUGMSG="$(date): Start BASHBOT updates in Mode \"${1:-normal}\" =========="
-	printf  "%s\n" "${DEBUGMSG}" >>"${UPDATELOG}"
+	DEBUGMSG="Start BASHBOT updates in Mode \"${1:-normal}\" =========="
+	log_update "${DEBUGMSG}"
 	# redirect to Debug.log
 	[[ "${1}" == *"debug" ]] && exec &>>"${DEBUGLOG}"
-	printf  "%s\n" "${DEBUGMSG}"; DEBUGMSG="${1}"
+	log_debug "${DEBUGMSG}"; DEBUGMSG="${1}"
 	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x && unset BASHBOT_UPDATELOG
 	# cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
@@ -1076,7 +1076,7 @@ start_bot() {
 			    # try to recover
 			    if _is_function bashbotBlockRecover && [ -z "$(getJson "${ME_URL}")" ]; then
 				log_error "Try to recover, calling bashbotBlockRecover ..."
-				bashbotBlockRecover
+				bashbotBlockRecover >>"${ERRORLOG}"
 			    fi
 			fi
 			OFFSET="-999"
