@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-27-g32a6ef2
+#### $$VERSION$$ v1.2-dev2-28-g5b94265
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -85,10 +85,10 @@ check_token(){
 	return 1
 }
 # log $1 to ERRORLOG with date
-log_error(){ printf "%s: %s\n" "$(date)" "$*" >>"${ERRORLOG}"; }
-log_debug(){ printf "%s: %s\n" "$(date)" "$*" >>"${DEBUGLOG}"; }
-log_message(){ printf "%s: %s\n" "$(date)" "$*" >>"${MESSAGELOG}"; }
-log_update(){ printf "%s: %s\n" "$(date)" "$*" >>"${UPDATELOG}"; }
+log_error(){ printf "%s: %b\n" "$(date)" "$*" >>"${ERRORLOG}"; }
+log_debug(){ printf "%s: %b\n" "$(date)" "$*" >>"${DEBUGLOG}"; }
+log_message(){ printf "\n%s: %b\n" "$(date)" "$*" >>"${MESSAGELOG}"; }
+log_update(){ printf "%s: %b\n" "$(date)" "$*" >>"${UPDATELOG}"; }
 # additional tests if we run in debug mode
 export BASHBOTDEBUG
 # debug should always last argument
@@ -667,7 +667,9 @@ JsonGetValue() {
 # processing of updates starts here
 process_updates() {
 	local max num debug="$1"
-	max="$(sed <<< "${UPDATE}" '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')"
+set -x
+	max="$(grep -F ',"update_id"]'  <<< "${UPDATE}" | tail -1 | cut -d , -f 2 )"
+set +x
 	Json2Array 'UPD' <<<"${UPDATE}"
 	for ((num=0; num<=max; num++)); do
 		process_client "$num" "${debug}"
@@ -678,7 +680,7 @@ process_client() {
 	local num="$1" debug="$2" 
 	pre_process_message "${num}"
 	# log message on debug
-	[[ -n "${debug}" ]] && log_message "New Message ==========\n${UPDATE}"
+	[[ -n "${debug}" ]] && log_message "New Message ==========\n$(grep -F '["result",'"${num}" <<<"${UPDATE}")"
 
 	# check for users / groups to ignore
 	jssh_updateArray_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
