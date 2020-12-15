@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-21-g4442382
+#### $$VERSION$$ v1.2-dev2-22-g2e24918
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -251,6 +251,7 @@ fi
 DEBUGLOG="${LOGDIR}/DEBUG.log"
 ERRORLOG="${LOGDIR}/ERROR.log"
 UPDATELOG="${LOGDIR}/BASHBOT.log"
+MESSAGELOG="${LOGDIR}/MESSAGE.log"
 
 debug_checks "start SOURCE=${SOURCE:-no}" "$@"
 # read BOTTOKEN from bot database if not set
@@ -441,12 +442,16 @@ if detect_curl ; then
   # usage: sendJson "chat" "JSON" "URL"
   sendJson(){
 	local json chat=""
-	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
+	if [ -n "${1}" ]; then
+		 chat='"chat_id":'"${1}"','
+		 [[ "${1}" == *[!0-9-]* ]] && chat="${chat} NAN" # chat id not a number!
+	fi
 	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
 	if [ -n "${BASHBOTDEBUG}" ] ; then
-		printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${UPDATELOG}"
-		printf "=========== DEBUG sendJson ==========\n%s\n" "$("${JSONSHFILE}" -b -n <<<"${json}")" >>"${DEBUGLOG}"
+		printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${chat#*:}" "${2:0:100}" "${3##*/}" >>"${UPDATELOG}"
+		printf "=========== DEBUG sendJson ==========\n%s\n" "$("${JSONSHFILE}" -b -n <<<"${json}" 2>&1)" >>"${MESSAGELOG}"
 	fi
+	[[ "${chat}" == *"NAN" ]] && return
 	# shellcheck disable=SC2086
 	res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
 		-d "${json}" -X POST "${3}" -H "Content-Type: application/json" | "${JSONSHFILE}" -b -n 2>/dev/null )"
@@ -539,7 +544,7 @@ sendJsonRetry(){
 sendJsonResult(){
 	local offset=0
 	BOTSENT=( )
-	[ -n "${BASHBOTDEBUG}" ] && printf "\n%s: New Result ==========\n%s\n" "$(date)" "$1" >>"${LOGDIR}/MESSAGE.log"
+	[ -n "${BASHBOTDEBUG}" ] && printf "\n%s: New Result ==========\n%s\n" "$(date)" "$1" >>"${MESSAGELOG}"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${1}")"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
 		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${1}")"
@@ -668,7 +673,7 @@ process_client() {
 	local num="$1" debug="$2" 
 	pre_process_message "${num}"
 	# log message on debug
-	[[ -n "${debug}" ]] && printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
+	[[ -n "${debug}" ]] && printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${MESSAGELOG}"
 
 	# check for users / groups to ignore
 	jssh_updateArray_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
