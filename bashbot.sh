@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-20-gd1f2bc8
+#### $$VERSION$$ v1.2-dev2-21-g4442382
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -440,14 +440,16 @@ if detect_curl ; then
   }
   # usage: sendJson "chat" "JSON" "URL"
   sendJson(){
-	local chat="";
+	local json chat=""
 	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
-	[ -n "${BASHBOTDEBUG}" ] &&\
+	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
+	if [ -n "${BASHBOTDEBUG}" ] ; then
 		printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${UPDATELOG}"
+		printf "=========== DEBUG sendJson ==========\n%s\n" "$("${JSONSHFILE}" -b -n <<<"${json}")" >>"${DEBUGLOG}"
+	fi
 	# shellcheck disable=SC2086
 	res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
-		-d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
-		-H "Content-Type: application/json" | "${JSONSHFILE}" -b -n 2>/dev/null )"
+		-d "${json}" -X POST "${3}" -H "Content-Type: application/json" | "${JSONSHFILE}" -b -n 2>/dev/null )"
 	sendJsonResult "${res}" "sendJson (curl)" "$@"
 	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" &
   }
@@ -478,12 +480,15 @@ else
     }
     # usage: sendJson "chat" "JSON" "URL"
     sendJson(){
-	local chat="";
+	local json chat=""
 	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
-	[ -n "${BASHBOTDEBUG}" ] &&\
-		printf "%s: sendJson (wget) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${UPDATELOG}"
+	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
+	if [ -n "${BASHBOTDEBUG}" ] ; then
+		printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${UPDATELOG}"
+		printf "=========== DEBUG sendJson ==========\n%s\n" "$("${JSONSHFILE}" -b -n <<<"${json}")" >>"${DEBUGLOG}"
+	fi
 	# shellcheck disable=SC2086
-	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
+	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data="${json}" \
 		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -b -n 2>/dev/null )"
 	sendJsonResult "${res}" "sendJson (wget)" "$@"
 	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" & 
