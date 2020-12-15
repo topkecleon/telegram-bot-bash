@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-24-gd7d61a4
+#### $$VERSION$$ v1.2-dev2-26-g9d39fe1
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -94,7 +94,7 @@ export BASHBOTDEBUG
 [[ "${BASH_ARGV[0]}" == *"debug"* ]] && BASHBOTDEBUG="yes"
 # $1 where $2 command $3 may debug 
 # shellcheck disable=SC2094
-debug_checks(){
+debug_checks(){ {
 	[  -z "${BASHBOTDEBUG}" ] && return
 	local DATE WHERE MYTOKEN; DATE="$(date)"; WHERE="${1}"; shift
 	printf "%s: debug_checks: %s: bashbot.sh %s\n" "${DATE}" "${WHERE}" "${@##*/}"
@@ -106,7 +106,8 @@ debug_checks(){
 	[ -z "$(getConfigKey "botadmin")" ] && printf "%s: %s\n" "${DATE}" "Bot admin is missing! =========="
 	# call user defined debug_checks if exists
 	_exec_if_function my_debug_checks "${DATE}" "${WHERE}" "$*"
-} >>"${DEBUGLOG}"
+	} >>"${DEBUGLOG}"
+}
 
 # some linux, e.g. manajro seems not to have C locale activated by default
 if _exists locale && [ "$(locale -a | grep -c -e "^C$" -e "^C.utf8$")" -lt 2 ]; then
@@ -245,7 +246,7 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
 fi
 
-if [ ! -d "${LOGDIR}" ] || [ ! -w "${LOGDIR}" ]; then
+if [[ ! -d "${LOGDIR}" || ! -w "${LOGDIR}" ]]; then
 	LOGDIR="${RUNDIR:-.}"
 fi
 DEBUGLOG="${LOGDIR}/DEBUG.log"
