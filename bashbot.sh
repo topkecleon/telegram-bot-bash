@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-22-g2e24918
+#### $$VERSION$$ v1.2-dev2-23-g8379a62
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -431,16 +431,8 @@ fi
 TIMEOUT="${BASHBOT_TIMEOUT}"
 [[ "$TIMEOUT" =~ ^[0-9]+$ ]] || TIMEOUT="20"
 
-if detect_curl ; then
-  # here we have curl ----
-  [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
-  getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -n "${3}" ]] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}" >>"${DEBUGLOG}"
-	# shellcheck disable=SC2086
-	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
-  }
-  # usage: sendJson "chat" "JSON" "URL"
-  sendJson(){
+# usage: sendJson "chat" "JSON" "URL"
+sendJson(){
 	local json chat=""
 	if [ -n "${1}" ]; then
 		 chat='"chat_id":'"${1}"','
@@ -449,14 +441,34 @@ if detect_curl ; then
 	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
 	if [ -n "${BASHBOTDEBUG}" ] ; then
 		printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${chat#*:}" "${2:0:100}" "${3##*/}" >>"${UPDATELOG}"
-		printf "=========== DEBUG sendJson ==========\n%s\n" "$("${JSONSHFILE}" -b -n <<<"${json}" 2>&1)" >>"${MESSAGELOG}"
+		printf "\n%s: DEBUG sendJson ==========\n%s\n" "$(date)" "$("${JSONSHFILE}" -b -n <<<"${json}" 2>&1)" >>"${MESSAGELOG}"
 	fi
-	[[ "${chat}" == *"NAN" ]] && return
-	# shellcheck disable=SC2086
-	res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
-		-d "${json}" -X POST "${3}" -H "Content-Type: application/json" | "${JSONSHFILE}" -b -n 2>/dev/null )"
+	[[ "${chat}" == *"NAN" ]] && return # not a number
+	# OK here we go ...
+	# route to curl/wget specific function
+	res="$(sendJson_do "${json}" "${3}")"
+	# check telegram response
 	sendJsonResult "${res}" "sendJson (curl)" "$@"
 	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" &
+}
+
+#
+# curl / wget specific functions
+#
+if detect_curl ; then
+  # here we have curl ----
+  [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
+  getJson(){
+	[[ -n "${BASHBOTDEBUG}" && -n "${3}" ]] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}" >>"${DEBUGLOG}"
+	# shellcheck disable=SC2086
+	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
+  }
+  # curl variant for sendJson
+  # usage: "JSON" "URL"
+  sendJson_do(){
+	# shellcheck disable=SC2086
+	"${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
+		-d "${1}" -X POST "${2}" -H "Content-Type: application/json" | "${JSONSHFILE}" -b -n 2>/dev/null
   }
   #$1 Chat, $2 what, $3 file, $4 URL, $5 caption
   sendUpload() {
@@ -483,20 +495,12 @@ else
 	# shellcheck disable=SC2086
 	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
     }
-    # usage: sendJson "chat" "JSON" "URL"
-    sendJson(){
-	local json chat=""
-	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
-	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
-	if [ -n "${BASHBOTDEBUG}" ] ; then
-		printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${UPDATELOG}"
-		printf "=========== DEBUG sendJson ==========\n%s\n" "$("${JSONSHFILE}" -b -n <<<"${json}")" >>"${DEBUGLOG}"
-	fi
+    # curl variant for sendJson
+    # usage: "JSON" "URL"
+    sendJson_do(){
 	# shellcheck disable=SC2086
-	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data="${json}" \
-		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -b -n 2>/dev/null )"
-	sendJsonResult "${res}" "sendJson (wget)" "$@"
-	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" & 
+	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data="${1}" \
+		--header='Content-Type:application/json' "${2}" | "${JSONSHFILE}" -b -n 2>/dev/null
     }
     sendUpload() {
 	log_error "Sorry, wget does not support file upload"

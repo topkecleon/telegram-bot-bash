@@ -3,7 +3,7 @@
 #
 # works together with git pre-push.sh and ADD all changed files since last push
 
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-dev2-23-g8379a62
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -16,7 +16,10 @@ fi
 
 [ ! -f .git/.lastpush ] && echo "No push or hooks not installed, use \"git add\" instead ... Abort" && exit
 
-FILES="$(find ./* -newer .git/.lastpush)"
+set +f
+FILES="$(find ./*  -newer .git/.lastpush| grep -v -e 'DIST\/' -e 'STANDALONE\/' -e 'JSON.sh')"
+set -f
+# FILES="$(find ./* -newer .git/.lastpush)"
 [ "${FILES}" = "" ] && echo "Noting changed since last push ... Abort" && exit
 
 # run pre_commit on files
