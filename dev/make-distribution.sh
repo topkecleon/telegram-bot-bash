@@ -2,7 +2,7 @@
 # file: make-distribution.sh
 # creates files and arcchives to dirtribute bashbot
 #
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-dev2-32-gf762d22
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -17,7 +17,7 @@ VERSION="$(git describe --tags | sed -e 's/-[0-9].*//' -e 's/v//')"
 
 DISTNAME="telegram-bot-bash"
 DISTDIR="./DIST/${DISTNAME}" 
-DISTFILES="bashbot.rc bashbot.sh commands.sh mycommands.sh mycommands.sh.clean doc examples scripts modules addons LICENSE README.md README.txt README.html"
+DISTFILES="bashbot.rc bashbot.sh commands.sh mycommands.sh mycommands.sh.clean bin doc examples scripts modules addons LICENSE README.md README.txt README.html"
 
 # run tests first!
 
