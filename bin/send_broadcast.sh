@@ -23,7 +23,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 16:14:57
 #
-#### $$VERSION$$ v1.2-dev2-33-g1dd546b
+#### $$VERSION$$ v1.2-dev2-34-gc356143
 #===============================================================================
 
 # set where your bashbot lives

@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-29-g85ee757
+#### $$VERSION$$ v1.2-dev2-34-gc356143
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -128,7 +128,7 @@ if [ "${SCRIPT}" != "${REALME}" ] || [ "$1" = "source" ]; then
 	SOURCE="yes"
 fi
 
-BOTCOMMANDS="start, stop, status, help, init, stats, broadcast, suspendback, resumeback, killback"
+BOTCOMMANDS="start, stop, status, help, init, stats, suspendback, resumeback, killback"
 [[ -z "$1" && -z "${SOURCE}" ]] &&  echo -e "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NC}" && exit
 if [ "$1" = "help" ]; then
 		HELP="${BASHBOT_HOME:-.}/README"
@@ -1279,23 +1279,8 @@ if [ -z "${SOURCE}" ]; then
 		;;
 	# send message to all users
 	'broadcast')
-		ME="$(getConfigKey "botname")"
-		declare -A SENDALL
-		shift
-		jssh_readDB_async "SENDALL" "${COUNTFILE}"
-		echo -e "Sending broadcast message to all users of ${ME} \c"
-		for MSG in ${!SENDALL[*]}
-		do
-			[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
-			(( USERS++ ))
-			if [ -n "$*" ]; then
-				send_message "${MSG}" "$*"
-				echo -e ".\c"
-				sleep 0.1
-			fi
-		done
-		echo -e "\nMessage \"$*\" sent to ${USERS} users."
-		debug_checks "end $1" "$@"
+		echo -e "${ORANGE}Output of  ${BASHBOT_HOME:-.}/bin/send_broadcast.sh --help${NC}"
+		"${BASHBOT_HOME:-.}"/bin/send_broadcast.sh --help
 		exit
 		;;
 	# does what it says
