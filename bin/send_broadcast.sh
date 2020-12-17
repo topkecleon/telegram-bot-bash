@@ -23,12 +23,11 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 16:14:57
 #
-#### $$VERSION$$ v1.2-dev2-30-ge6223b6
+#### $$VERSION$$ v1.2-dev2-33-g1dd546b
 #===============================================================================
 
 # set where your bashbot lives
-# shellcheck disable=SC1090
-BASHBOT_HOME="${BASHBOTHOME:-../}"
+BASHBOT_HOME="$(cd "${BASH_SOURCE[0]%/*}" >/dev/null 2>&1 && pwd)/../"
 
 # check for botconfig.jssh
 if [ ! -r "${BASHBOT_HOME}/botconfig.jssh" ]; then
@@ -82,6 +81,7 @@ case "$1" in
 esac
 
 # source bashbot
+# shellcheck disable=SC1090
 source "${BASHBOT_HOME}/bashbot.sh" source "$3"
 
 # read in users 

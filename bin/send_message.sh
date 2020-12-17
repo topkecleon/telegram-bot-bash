@@ -21,12 +21,11 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 11:34:27
 #
-#### $$VERSION$$ v1.2-dev2-29-g85ee757
+#### $$VERSION$$ v1.2-dev2-33-g1dd546b
 #===============================================================================
 
 # set where your bashbot lives
-# shellcheck disable=SC1090
-BASHBOT_HOME="${BASHBOTHOME:-../}"
+BASHBOT_HOME="$(cd "${BASH_SOURCE[0]%/*}" >/dev/null 2>&1 && pwd)/../"
 
 # check for botconfig.jssh
 if [ ! -r "${BASHBOT_HOME}/botconfig.jssh" ]; then
@@ -68,6 +67,7 @@ if [[ "$1" == *[!0-9-]* ]]; then
 fi
 
 # source bashbot and send message
+# shellcheck disable=SC1090
 source "${BASHBOT_HOME}/bashbot.sh" source "$3"
 "${SEND}" "$1" "$2"
 
