@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-34-gc356143
+#### $$VERSION$$ v1.2-dev2-35-g16a2299
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -668,9 +668,7 @@ JsonGetValue() {
 # processing of updates starts here
 process_updates() {
 	local max num debug="$1"
-set -x
 	max="$(grep -F ',"update_id"]'  <<< "${UPDATE}" | tail -1 | cut -d , -f 2 )"
-set +x
 	Json2Array 'UPD' <<<"${UPDATE}"
 	for ((num=0; num<=max; num++)); do
 		process_client "$num" "${debug}"
