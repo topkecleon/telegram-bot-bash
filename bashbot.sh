@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-35-g16a2299
+#### $$VERSION$$ v1.2-dev2-36-g8b9cb1a
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -401,11 +401,15 @@ get_file() {
 # return TRUE if curl is found or custom curl detected
 # return FALSE if no curl is found or wget is forced by BASHBOT_WGET
 # sets BASHBOT_CURL to point to curl
+DETECTED_CURL="curl"
 function detect_curl() {
 	# custom curl command
 	[ -n "${BASHBOT_CURL}" ] && return 0
 	# use wget
-	[ -n "${BASHBOT_WGET}" ] && return 1
+	if [ -n "${BASHBOT_WGET}" ]; then
+		DETECTED_CURL="wget"
+		return 1
+	fi
 	# default use curl in PATH
 	BASHBOT_CURL="curl"
 	_exists curl && return 0
@@ -418,6 +422,7 @@ function detect_curl() {
 		fi
 	done
 	# curl not in PATH and not in usual locations
+	DETECTED_CURL="wget"
 	local warn="Warning: Curl not detected, try fallback to wget! pls install curl or adjust BASHBOT_CURL/BASHBOT_WGET environment variables."
 	log_update "${warn}"; [ -n "${BASHBOTDEBUG}" ] && log_debug "${warn}"
 	return 1
@@ -439,17 +444,22 @@ sendJson(){
 		 chat='"chat_id":'"${1}"','
 		 [[ "${1}" == *[!0-9-]* ]] && chat="${chat} NAN" # chat id not a number!
 	fi
+	# compose final json
 	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
 	if [ -n "${BASHBOTDEBUG}" ] ; then
 		log_update "sendJson (curl) CHAT=${chat#*:} JSON=${2:0:100} URL=${3##*/}"
 		log_message "DEBUG sendJson ==========\n$("${JSONSHFILE}" -b -n <<<"${json}" 2>&1)"
 	fi
-	[[ "${chat}" == *"NAN" ]] && return # not a number
+	# not a number
+	if [[ "${chat}" == *"NAN" ]]; then
+		sendJsonResult "$(printf '["ok"]\tfalse\n["error_code"]\t400\n["description"]\t"Bad Request: chat id not a number"\n')"\
+			"sendJson (NAN)" "$@"
+	fi
 	# OK here we go ...
 	# route to curl/wget specific function
 	res="$(sendJson_do "${json}" "${3}")"
 	# check telegram response
-	sendJsonResult "${res}" "sendJson (curl)" "$@"
+	sendJsonResult "${res}" "sendJson (${DETECTED_CURL})" "$@"
 	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" &
 }
 

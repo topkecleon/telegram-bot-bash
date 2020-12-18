@@ -54,7 +54,7 @@ Now you can restart your bashbot instances.
 wget -q https://github.com/$(wget -q https://github.com/topkecleon/telegram-bot-bash/releases/latest -O - | egrep '/.*/.*/.*tar.gz' -o)
 ```
 
-### use JSON.awk
+### use JSON.awk (beta)
 
 [JSON.awk](https://github.com/step-/JSON.awk) is an awk port of `JSON.sh`, it provides the same functionality but is 5 times faster.
 Systems with `gnu awk` and `posix awk` as system default can use `JSON.awk` as drop in replacement.
@@ -183,5 +183,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.2-dev2-25-gc084005
+#### $$VERSION$$ v1.2-dev2-36-g8b9cb1a
 
