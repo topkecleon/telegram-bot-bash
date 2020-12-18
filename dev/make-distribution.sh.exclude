@@ -1,0 +1,7 @@
+data-bot-bash/*
+*.jssh
+botacl
+*.flock
+*.log
+*.last
+*.ok
