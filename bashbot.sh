@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-40-g3324ecd
+#### $$VERSION$$ v1.2-dev2-41-gc88f767
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -256,14 +256,14 @@ debug_checks "start SOURCE=${SOURCE:-no}" "$@"
 if [ -z "${BOTTOKEN}" ]; then
     BOTTOKEN="$(getConfigKey "bottoken")"
     if [ -z "${BOTTOKEN}" ]; then
-		BOTERROR="Warning: can't get bot token, try to recover working config"
-		echo -e "${ORANGE}${BOTERROR}${NC}"
+		BOTERROR="Warning: can't get bot token, try to recover working config..."
+		echo -e "${ORANGE}${BOTERROR}${NC} \c"
 		if [ -r "${BOTCONFIG}.jssh.ok" ]; then
 			log_error "${BOTERROR}"
-			cp "${BOTCONFIG}.jssh.ok" "${BOTCONFIG}.jssh"
+			cp "${BOTCONFIG}.jssh.ok" "${BOTCONFIG}.jssh"; echo "OK"
 			BOTTOKEN="$(getConfigKey "bottoken")"
 		else
-			echo -e "${RED}Error: Missing bot token! remove ${BOTCONFIG}.jssh and run \"bashbot.sh init\" may fix it.${NC}"
+			echo -e "\n${RED}Error: Missing bot token! remove ${BOTCONFIG}.jssh and run \"bashbot.sh init\" may fix it.${NC}"
 			exit 7
 		fi
     fi
