@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-39-gbd155f8
+#### $$VERSION$$ v1.2-dev2-40-g3324ecd
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -177,27 +177,23 @@ COUNTFILE="${BASHBOT_VAR:-.}/count"
 LOGDIR="${RUNDIR:-.}/logs"
 
 # assume everything already set up correctly if TOKEN is set
-if [ -z "${BOTTOKEN}" ]; then
+if [[ -z "${BOTTOKEN}"  && ! -f "${BOTCONFIG}.jssh" ]]; then
   # BOTCONFIG does not exist, create
-  [ ! -f "${BOTCONFIG}.jssh" ] &&
-		printf '["bot_config_key"]\t"config_key_value"\n' >>"${BOTCONFIG}.jssh"
-  # do we have already a token?
-  if [ -z "$(getConfigKey "bottoken")" ]; then
-     # convert old token
-     if [ -r "${TOKENFILE}" ]; then
-		token="$(< "${TOKENFILE}")"
-     # no old token available ask user
-     elif [ -z "${CLEAR}" ] && [ "$1" != "init" ]; then
+  printf '["bot_config_key"]\t"config_key_value"\n' >>"${BOTCONFIG}.jssh"
+  # convert old token
+  if [ -r "${TOKENFILE}" ]; then
+	token="$(< "${TOKENFILE}")"
+  # no old token, ask user
+  elif [ -z "${CLEAR}" ] && [ "$1" != "init" ]; then
 	echo "Running headless, set BOTTOKEN or run ${SCRIPT} init first!"
 	exit 2 
-     else
+  else
 	${CLEAR}
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NC}"
 	read -r token
-     fi
-     [ -n "${token}" ] && printf '["bottoken"]\t"%s"\n'  "${token}" >> "${BOTCONFIG}.jssh"
   fi
+  [ -n "${token}" ] && printf '["bottoken"]\t"%s"\n'  "${token}" >> "${BOTCONFIG}.jssh"
 
   # no botadmin, setup botadmin
   if [ -z "$(getConfigKey "botadmin")" ]; then
