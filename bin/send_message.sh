@@ -1,4 +1,4 @@
-#!/bin/bash - 
+#!/bin/bash
 #===============================================================================
 #
 #          FILE: send_message.sh
@@ -19,20 +19,16 @@
 #
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
-#       CREATED: 16.12.2020 11:34:27
+#       CREATED: 16.12.2020 11:34
 #
-#### $$VERSION$$ v1.2-dev2-34-gc356143
+#### $$VERSION$$ v1.2-dev2-38-g0db0215
 #===============================================================================
 
-# set where your bashbot lives
-BASHBOT_HOME="$(cd "${BASH_SOURCE[0]%/*}" >/dev/null 2>&1 && pwd)/../"
+# set bashbot environment
+# shellcheck disable=SC1090
+source "${0%/*}/bashbot_env.inc.sh"
 
-# check for botconfig.jssh
-if [ ! -r "${BASHBOT_HOME}/botconfig.jssh" ]; then
-	echo "No bashbot config file in ${BASHBOT_HOME}"
-	exit 3
-fi
-
+####
 # parse args
 SEND="send_message"
 case "$1" in
@@ -61,16 +57,16 @@ case "$1" in
 		;;
 esac
 
-if [[ "$1" == *[!0-9-]* ]]; then
-	echo "CHAT[ID] is not a number! use: $0 -h for help"
-	exit 2
-fi
-
 # source bashbot and send message
 # shellcheck disable=SC1090
 source "${BASHBOT_HOME}/bashbot.sh" source "$3"
+
+####
+# ready, do stuff here -----
+
+# send message in selected format
 "${SEND}" "$1" "$2"
 
-# output result
+# output send message result
 jssh_printDB "BOTSENT" | sort -r
 

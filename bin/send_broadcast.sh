@@ -1,4 +1,4 @@
-#!/bin/bash - 
+#!/bin/bash
 #===============================================================================
 #
 #          FILE: broadcast_message.sh
@@ -21,37 +21,30 @@
 #
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
-#       CREATED: 16.12.2020 16:14:57
+#       CREATED: 16.12.2020 16:14
 #
-#### $$VERSION$$ v1.2-dev2-34-gc356143
+#### $$VERSION$$ v1.2-dev2-38-g0db0215
 #===============================================================================
 
-# set where your bashbot lives
-BASHBOT_HOME="$(cd "${BASH_SOURCE[0]%/*}" >/dev/null 2>&1 && pwd)/../"
+# set bashbot environment
+# shellcheck disable=SC1090
+source "${0%/*}/bashbot_env.inc.sh"
 
-# check for botconfig.jssh
-if [ ! -r "${BASHBOT_HOME}/botconfig.jssh" ]; then
-	echo "No bashbot config file in ${BASHBOT_HOME}"
-	exit 3
-fi
-# check for count.jssh
-if [ ! -r "${BASHBOT_HOME}/count.jssh" ]; then
-	echo "No bashbot count file in ${BASHBOT_HOME}"
-	exit 3
-fi
-
+####
 # broadcast is dangerous, without --doit we do a dry run ...
 if [ "$1" == "--doit" ]; then
 	DOIT="yes"
 	shift
 fi
 
+####
 # send to users by default, --group sends to groups also
 if [ "$1" == "--groups" ]; then
 	GROUPSALSO=" and groups"
 	shift
 fi
 
+####
 # parse args -----------------
 SEND="send_message"
 case "$1" in
