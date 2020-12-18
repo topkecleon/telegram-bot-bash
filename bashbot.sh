@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-36-g8b9cb1a
+#### $$VERSION$$ v1.2-dev2-37-g53c7879
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -442,7 +442,7 @@ sendJson(){
 	local json chat=""
 	if [ -n "${1}" ]; then
 		 chat='"chat_id":'"${1}"','
-		 [[ "${1}" == *[!0-9-]* ]] && chat="${chat} NAN" # chat id not a number!
+		 [[ "${1}" == *[!0-9-]* ]] && chat='"chat_id":"'"${1}"' NAN",' # chat id not a number!
 	fi
 	# compose final json
 	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
@@ -450,10 +450,11 @@ sendJson(){
 		log_update "sendJson (curl) CHAT=${chat#*:} JSON=${2:0:100} URL=${3##*/}"
 		log_message "DEBUG sendJson ==========\n$("${JSONSHFILE}" -b -n <<<"${json}" 2>&1)"
 	fi
-	# not a number
-	if [[ "${chat}" == *"NAN" ]]; then
+	# chat id not a number
+	if [[ "${chat}" == *"NAN\"," ]]; then
 		sendJsonResult "$(printf '["ok"]\tfalse\n["error_code"]\t400\n["description"]\t"Bad Request: chat id not a number"\n')"\
 			"sendJson (NAN)" "$@"
+		return
 	fi
 	# OK here we go ...
 	# route to curl/wget specific function
@@ -567,7 +568,7 @@ sendJsonResult(){
 		# hot path everything OK!
 	else
 	    # oops something went wrong!
-	    if [ "${res}" != "" ]; then
+	    if [ "${1}" != "" ]; then
 			BOTSENT[ERROR]="$(JsonGetValue '"error_code"' <<< "${1}")"
 			BOTSENT[DESCRIPTION]="$(JsonGetString '"description"' <<< "${1}")"
 			grep -qs -F '"parameters","retry_after"' <<< "${1}" &&\
