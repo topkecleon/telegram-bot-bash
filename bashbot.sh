@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-41-gc88f767
+#### $$VERSION$$ v1.2-dev2-43-gf43fb72
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -443,7 +443,7 @@ sendJson(){
 	# compose final json
 	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
 	if [ -n "${BASHBOTDEBUG}" ] ; then
-		log_update "sendJson (DETECTED_CURL) CHAT=${chat#*:} JSON=${2:0:100} URL=${3##*/}"
+		log_update "sendJson (${DETECTED_CURL}) CHAT=${chat#*:} JSON=${2:0:100} URL=${3##*/}"
 		log_message "DEBUG sendJson ==========\n$("${JSONSHFILE}" -b -n <<<"${json}" 2>&1)"
 	fi
 	# chat id not a number
