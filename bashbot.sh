@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-43-gf43fb72
+#### $$VERSION$$ v1.2-dev2-45-g873169b
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -1247,7 +1247,6 @@ if [ -z "${SOURCE}" ]; then
 		exit
 		;;
 	# print usage stats
-	"count") echo -e "${RED}Command ${GREY}count${RED} is deprecated, use ${GREY}stats${RED}instead.${NC}";&
 	"stats")
 		ME="$(getConfigKey "botname")"
 		declare -A STATS
@@ -1322,7 +1321,6 @@ if [ -z "${SOURCE}" ]; then
 		debug_checks "end start" "$@"
 		;;
 	# does what it says
-	"kill") echo -e "${RED}Command ${GREY}kill${RED} is deprecated, use ${GREY}stop{$RED}instead.${NC}";&
 	"stop")
 		ME="$(getConfigKey "botname")"
 		SESSION="${ME:-_bot}-startbot"
