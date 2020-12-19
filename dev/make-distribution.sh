@@ -2,12 +2,13 @@
 # file: make-distribution.sh
 # creates files and arcchives to dirtribute bashbot
 #
-#### $$VERSION$$ v1.2-dev2-42-g62f2a0d
+#### $$VERSION$$ v1.2-dev2-44-gf548b0e
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
 GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
 if [ "$GIT_DIR" != "" ] ; then
+	[[ "$GIT_DIR" != "/"* ]] && GIT_DIR="${PWD}/${GIT_DIR}"
 	cd "$GIT_DIR/.." || exit 1
 else
 	echo "Sorry, no git repository $(pwd)" && exit 1
@@ -64,7 +65,7 @@ source "../../dev/make-html.sh"
 cd .. || exit 1
 echo "Create dist archives"
 # shellcheck disable=SC2046
-zip -rq - "${DISTNAME}" --exclude $(cat "$GIT_DIR/../dev/${0##*/}.exclude") >"${DISTNAME}-${VERSION}.zip"
+zip -rq - "${DISTNAME}" --exclude $(cat  "$GIT_DIR/../dev/${0##*/}.exclude") >"${DISTNAME}-${VERSION}.zip"
 tar --exclude-ignore="$GIT_DIR/../dev/${0##*/}.exclude" -czf "${DISTNAME}-${VERSION}.tar.gz" "${DISTNAME}"
 
 echo "Done!"

@@ -5,12 +5,13 @@
 # If you your bot is finished you can use make-standalone.sh to create the
 # the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-dev2-44-gf548b0e
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
 GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
 if [ "$GIT_DIR" != "" ] ; then
+	[[ "$GIT_DIR" != "/"* ]] && GIT_DIR="${PWD}/${GIT_DIR}"
 	cd "$GIT_DIR/.." || exit 1
 else
 	[ ! -f "bashbot.sh" ] && echo "bashbot.sh not found in $(pwd)" && exit 1
