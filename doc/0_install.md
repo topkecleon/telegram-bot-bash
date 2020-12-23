@@ -66,8 +66,9 @@ To install 'JSON.awk' download the file from githup and save it in the same fold
 
 	wget https://raw.githubusercontent.com/step-/JSON.awk/master/JSON.awk 
 	wget https://raw.githubusercontent.com/step-/JSON.awk/master/tool/patch-for-busybox-awk.sh
+	bash patch-for-busybox-awk.sh
 
-After you have checked that 'JSON.awk' is working correct on your system make the script executable and (re)start bashbot.
+After you have checked that 'JSON.awk' is working correct on your system make `JSON.awk` executable and (re)start bashbot.
 
 
 ### Install from github
@@ -184,5 +185,5 @@ The old format is supported for backward compatibility, but may fail for corner 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.2-dev2-47-g9c319f8
+#### $$VERSION$$ v1.2-dev2-48-g0d50c8d
 
