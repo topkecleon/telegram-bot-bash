@@ -16,7 +16,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 20:34
 #
-#### $$VERSION$$ v1.2-dev2-54-gfffa436
+#### $$VERSION$$ v1.2-dev2-57-g928ab05
 #===============================================================================
 
 # set bashbot environment
@@ -27,7 +27,7 @@ source "${0%/*}/bashbot_env.inc.sh"
 # parse args
 case "$1" in
 	"-h"*)
-		echo "usage: send_message [-h|--help] [format] "CHAT[ID]" "message ...." [debug]"
+		echo "usage: send_message [-h|--help] [debug]"
 		exit 1
 		;;
 	'--h'*)
@@ -38,7 +38,7 @@ esac
 
 # source bashbot and send message
 # shellcheck disable=SC1090
-source "${BASHBOT_HOME}/bashbot.sh" source "$3"
+source "${BASHBOT_HOME}/bashbot.sh" source "$1"
 
 ####
 # ready, do stuff here -----

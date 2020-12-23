@@ -22,7 +22,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 16:52
 #
-#### $$VERSION$$ v1.2-dev2-56-g9f3d39d
+#### $$VERSION$$ v1.2-dev2-57-g928ab05
 #===============================================================================
 
 # set bashbot environment
