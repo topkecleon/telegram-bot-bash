@@ -2,7 +2,7 @@
 # file: make-distribution.sh
 # creates files and arcchives to dirtribute bashbot
 #
-#### $$VERSION$$ v1.2-dev2-44-gf548b0e
+#### $$VERSION$$ v1.2-dev2-49-gf56b7ae
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -50,11 +50,19 @@ done
 # dwonload JSON.sh
 echo "Inject JSON.sh"
 JSONSHFILE="JSON.sh/JSON.sh"
-if [ ! -f "${JSONSHFILE}" ]; then
+if [ ! -r "${JSONSHFILE}" ]; then
 	mkdir "JSON.sh" 2>/dev/null
 	curl -sL -o "${JSONSHFILE}" "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh"
 	chmod +x "${JSONSHFILE}" 
 fi
+echo "Inject JSON.awk"
+JSONSHFILE="JSON.sh/JSON.awk"
+if [ ! -r "${JSONSHFILE}" ]; then
+	curl -sL -o "${JSONSHFILE}" "https://cdn.jsdelivr.net/gh/step-/JSON.awk/JSON.awk" 
+	curl -sL -o "${JSONSHFILE%/*}/awk-patch.sh" "https://cdn.jsdelivr.net/gh/step-/JSON.awk/tool/patch-for-busybox-awk.sh"
+	bash "${JSONSHFILE%/*}/awk-patch.sh" "${JSONSHFILE%/*}/JSON.awk"
+fi
+rm -f "${JSONSHFILE%/*}"/*.bak
 
 # make html doc
 echo "Create html doc"
