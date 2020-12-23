@@ -22,7 +22,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 16:52
 #
-#### $$VERSION$$ v1.2-dev2-53-gac877c2
+#### $$VERSION$$ v1.2-dev2-56-g9f3d39d
 #===============================================================================
 
 # set bashbot environment
@@ -60,7 +60,7 @@ esac
 
 # source bashbot and send message
 # shellcheck disable=SC1090
-source "${BASHBOT_HOME}/bashbot.sh" source "$3"
+source "${BASHBOT_HOME}/bashbot.sh" source "$4"
 
 ####
 # ready, do stuff here -----
