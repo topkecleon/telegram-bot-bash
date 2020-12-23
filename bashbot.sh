@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-45-g873169b
+#### $$VERSION$$ v1.2-dev2-55-g4a4f73b
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -1248,6 +1248,7 @@ if [ -z "${SOURCE}" ]; then
 		;;
 	# print usage stats
 	"stats")
+		echo -e "${ORANGE}stats deprecated, see bin/bashbot_stats --help${NC}"
 		ME="$(getConfigKey "botname")"
 		declare -A STATS
 		jssh_readDB_async "STATS" "${COUNTFILE}"
