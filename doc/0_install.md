@@ -64,8 +64,8 @@ BSD and MacOS users must install `gnu awk` and adjust the shebang, see below
 
 To install 'JSON.awk' download the file from githup and save it in the same folder as JSON.sh file:
 
-	wget https://raw.githubusercontent.com/step-/JSON.awk/master/JSON.awk 
-	wget https://raw.githubusercontent.com/step-/JSON.awk/master/tool/patch-for-busybox-awk.sh
+	wget https://cdn.jsdelivr.net/gh/step-/JSON.awk/JSON.awk 
+	wget https://cdn.jsdelivr.net/gh/step-/JSON.awk/tool/patch-for-busybox-awk.sh
 	bash patch-for-busybox-awk.sh
 
 After you have checked that 'JSON.awk' is working correct on your system make `JSON.awk` executable and (re)start bashbot.
