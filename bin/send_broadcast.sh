@@ -23,7 +23,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 16:14
 #
-#### $$VERSION$$ v1.2-dev2-38-g0db0215
+#### $$VERSION$$ v1.2-dev2-53-gac877c2
 #===============================================================================
 
 # set bashbot environment
@@ -64,7 +64,7 @@ case "$1" in
 		echo "missing missing arguments"
 		;&
 	"-h"*)
-		echo "usage: send_message [-h|--help] [format] "message ...." [debug]"
+		echo 'usage: send_message [-h|--help] [format] "message ...." [debug]'
 		exit 1
 		;;
 	'--h'*)

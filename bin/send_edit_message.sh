@@ -22,7 +22,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 16:52
 #
-#### $$VERSION$$ v1.2-dev2-52-g20bfef1
+#### $$VERSION$$ v1.2-dev2-53-gac877c2
 #===============================================================================
 
 # set bashbot environment
@@ -46,7 +46,7 @@ case "$1" in
 		shift
 		;;
 	'')
-		echo "missing missing arguments"
+		echo "missing arguments"
 		;&
 	"-h"*)
 		echo 'usage: send_edit_message [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "message ..."  [debug]'

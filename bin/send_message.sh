@@ -21,7 +21,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 11:34
 #
-#### $$VERSION$$ v1.2-dev2-38-g0db0215
+#### $$VERSION$$ v1.2-dev2-53-gac877c2
 #===============================================================================
 
 # set bashbot environment
@@ -45,10 +45,10 @@ case "$1" in
 		shift
 		;;
 	'')
-		echo "missing missing arguments"
+		echo "missing arguments"
 		;&
 	"-h"*)
-		echo "usage: send_message [-h|--help] [format] "CHAT[ID]" "message ...." [debug]"
+		echo 'usage: send_message [-h|--help] [format] "CHAT[ID]" "message ...." [debug]'
 		exit 1
 		;;
 	'--h'*)
