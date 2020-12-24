@@ -29,7 +29,13 @@ Have FUN!
 ├── commands.sh          # command dispatcher - DO NOT EDIT!
 ├── JSON.sh              # bashbots JSON parser, see https://github.com/dominictarr/JSON.sh
 │
-├── bin                  # some ready to use scripts, e.g. to send a message 
+├── bin                  # ready to use scripts, use `scriptname --help` for help
+│   ├── send_message.sh          # send message to given chat
+│   ├── edit_message.sh          # replace given message id in given chat
+│   ├── send_broadcast.sh        # send message to all known chats
+│   ├── bashbot_stats.sh         # does what it says ...
+│   │
+│   └── bashbot_env.inc.sh       # bashbot location included from scripts, adapt if needed
 │
 ├── scripts              # place your bashbot interactive and background scripts here
 │   └── interactive.sh.clean     # interactive script template for new scripts
@@ -300,5 +306,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.2-dev2-32-gf762d22
+#### $$VERSION$$ v1.2-dev2-65-ga9852ef
 
