@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-60-g450d94d
+#### $$VERSION$$ v1.2-dev2-62-gfa24673
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -1289,7 +1289,7 @@ if [ -z "${SOURCE}" ]; then
 		;;
 	# send message to all users
 	'broadcast')
-		echo -e "${ORANGE}Output of  ${BASHBOT_HOME:-.}/bin/send_broadcast.sh --help${NC}"
+		echo -e "${ORANGE}Broadcast is a separate command now, see ${BASHBOT_HOME:-.}/bin/send_broadcast.sh --help${NC}"
 		"${BASHBOT_HOME:-.}"/bin/send_broadcast.sh --help
 		exit
 		;;
