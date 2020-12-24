@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-58-g4d1c237
+#### $$VERSION$$ v1.2-dev2-59-g824cf13
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -43,9 +43,14 @@ if [ -t 1 ] && [ -n "$TERM" ];  then
     NC='\e[0m'
 fi
 
+# telegram uses utf-8 characters, check if we have an utf-8 charset
+if [ "${LANG}" = "${LANG%[Uu][Tt][Ff]*}" ]; then
+	echo -e "${ORANGE}Warning: Telegram uses utf-8, but looks like you are using non utf-8 locale:${NC} ${LANG}"
+fi
+
 # we need some bash 4+ features, check for old bash by feature
-if [ "$({ LC_ALL=C.utf-8 echo -e "\u1111"; } 2>/dev/null)" == "\u1111" ]; then
-	echo -e "${ORANGE}Warning: Missing unicode '\uxxxx' support, no unicode locale set or to old bash version.${NC}"
+if [ "$({ LC_ALL=C.utf-8 echo -e "\u1111"; } 2>/dev/null)" = "\u1111" ]; then
+	echo -e "${ORANGE}Warning: Missing unicode '\uxxxx' support, missing C.utf-8 locale or to old bash version.${NC}"
 fi
 
 
