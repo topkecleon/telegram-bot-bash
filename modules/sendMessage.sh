@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.2-dev2-67-g6173d77
+#### $$VERSION$$ v1.2-dev2-68-gc39c1ca
 
 # will be automatically sourced from bashbot
 
@@ -236,7 +236,7 @@ upload_file(){
 			;;
 	esac
 	send_action "${1}" "$STATUS"
-	sendUpload "$1" "${WHAT}" "${file}" "${CUR_URL}" "${text}"
+	sendUpload "$1" "${WHAT}" "${file}" "${CUR_URL}" "${text//\\n/$'\n'}"
 }
 
 # typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
