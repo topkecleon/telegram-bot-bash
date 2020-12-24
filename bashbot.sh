@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-62-gfa24673
+#### $$VERSION$$ v1.2-dev2-66-gc93c9ae
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -57,22 +57,22 @@ fi
 # some important helper functions
 # returns true if command exist
 _exists() {
-	[ "$({ LC_ALL=C type -t "${1}"; } 2>/dev/null)" = "file" ]
+	[ "$(type -t "${1}")" = "file" ]
 }
 # execute function if exists
 _exec_if_function() {
-	[ "$({ LC_ALL=C type -t "${1}"; } 2>/dev/null)" != "function" ] && return 1
+	[ "$(type -t "${1}")" != "function" ] && return 1
 	"$@"
 }
 # returns true if function exist
 _is_function() {
-	[ "$({ LC_ALL=C type -t "${1}"; } 2>/dev/null)" = "function" ]
+	[ "$(type -t "${1}")" = "function" ]
 }
 # round $1 in international notation! , returns float with $2 decimal digits
 # if $2 is not given or is not a positive number zero is assumed
 _round_float() {
 	local digit="${2}"; [[ "${2}" =~ ^[0-9]+$ ]] || digit="0"
-	{ LC_ALL=C printf "%.${digit}f" "${1}"; } 2>/dev/null
+	{ LC_ALL=C.utf-8 printf "%.${digit}f" "${1}"; } 2>/dev/null
 }
 setConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
