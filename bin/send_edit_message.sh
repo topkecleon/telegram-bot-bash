@@ -1,7 +1,7 @@
 #!/bin/bash
 #===============================================================================
 #
-#          FILE: send_message.sh
+#          FILE: bin/send_message.sh
 # 
 #         USAGE: send_edit_message.sh [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "message ...." [debug]
 # 
@@ -22,7 +22,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 16:52
 #
-#### $$VERSION$$ v1.2-dev2-57-g928ab05
+#### $$VERSION$$ v1.2-dev2-61-geba9216
 #===============================================================================
 
 # set bashbot environment

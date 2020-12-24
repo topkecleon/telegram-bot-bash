@@ -1,7 +1,7 @@
 #!/bin/bash
 #===============================================================================
 #
-#          FILE: broadcast_message.sh
+#          FILE: bin/broadcast_message.sh
 # 
 #         USAGE: broadcast_message.sh [-h|--help] [--doit] [--groups] [format] "message ...." [debug]
 # 
@@ -23,7 +23,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 16:14
 #
-#### $$VERSION$$ v1.2-dev2-53-gac877c2
+#### $$VERSION$$ v1.2-dev2-61-geba9216
 #===============================================================================
 
 # set bashbot environment

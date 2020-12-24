@@ -1,7 +1,7 @@
 #!/bin/bash
 #===============================================================================
 #
-#          FILE: bashbot_stats.sh
+#          FILE: bin/bashbot_stats.sh
 # 
 #         USAGE: bashbot_stats.sh [-h|--help]
 # 
@@ -16,7 +16,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 20:34
 #
-#### $$VERSION$$ v1.2-dev2-57-g928ab05
+#### $$VERSION$$ v1.2-dev2-61-geba9216
 #===============================================================================
 
 # set bashbot environment
