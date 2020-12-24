@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.2-dev2-63-g69ca15a
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -15,7 +15,7 @@ fi
 HOOKDIR="dev/hooks"
 
 echo -n "Installing hooks..."
-for hook in pre-commit pre-push
+for hook in pre-commit post-commit pre-push
 do
    rm -f "${GIT_DIR}/hooks/${hook}"
    if [ -f "${HOOKDIR}/${hook}.sh" ]; then
