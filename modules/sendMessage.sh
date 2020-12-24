@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.2-dev2-19-g5ca6afc
+#### $$VERSION$$ v1.2-dev2-67-g6173d77
 
 # will be automatically sourced from bashbot
 
@@ -190,7 +190,7 @@ else
 fi
 
 upload_file(){
-	local CUR_URL WHAT STATUS file="$2"
+	local CUR_URL WHAT STATUS text=$3 file="$2"
 	# file access checks ...
 	[[ "$file" = *'..'* ]] && return  # no directory traversal
 	[[ "$file" = '.'* ]] && return	 # no hidden or relative files
@@ -236,7 +236,7 @@ upload_file(){
 			;;
 	esac
 	send_action "${1}" "$STATUS"
-	sendUpload "$1" "${WHAT}" "${file}" "${CUR_URL}" "$3"
+	sendUpload "$1" "${WHAT}" "${file}" "${CUR_URL}" "${text}"
 }
 
 # typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
@@ -279,8 +279,7 @@ send_message() {
 	local text keyboard btext burl no_keyboard file lat long title address sent
 	text="$(sed <<< "${2}" 's/ mykeyboardend.*//;s/ *my[kfltab][a-z]\{2,13\}startshere.*//')$(sed <<< "${2}" -n '/mytextstartshere/ s/.*mytextstartshere//p')"
 	#shellcheck disable=SC2001
-	text="$(sed <<< "${text}" 's/ *mynewlinestartshere */\\n/g')"
-	text="${text//$'\n'/\\n}"
+	text="$(sed <<< "${text}" 's/ *mynewlinestartshere */\n/g')"
 	[ "$3" != "safe" ] && {
 		no_keyboard="$(sed <<< "${2}" '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
 		keyboard="$(sed <<< "${2}" '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere *//;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
@@ -308,7 +307,7 @@ send_message() {
 		sent=y
 	fi
 	if [ -n "$file" ]; then
-		send_file "$1" "$file" "$text"
+		upload_file "$1" "$file" "$text"
 		sent=y
 	fi
 	if [ -n "$lat" ] && [ -n "$long" ]; then

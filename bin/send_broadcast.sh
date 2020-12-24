@@ -3,12 +3,13 @@
 #
 #          FILE: bin/broadcast_message.sh
 # 
-#         USAGE: broadcast_message.sh [-h|--help] [--doit] [--groups] [format] "message ...." [debug]
+#         USAGE: broadcast_message.sh [-h|--help] [--doit] [--groups|--both] [format] "message ...." [debug]
 # 
-#   DESCRIPTION: send a message to all user the bot have seen (listet in count.jssh)
+#   DESCRIPTION: send a message to all users the bot have seen (listet in count.jssh)
 # 
 #       OPTIONS: --doit - broadcast is dangerous, simulate run without --doit
-#                --groups - send to groups also, by default we send only to users
+#                --groups - send to groups instead of users
+#                --both - send to users and groups
 #
 #                format - normal, markdown, html (optional)
 #                message - message to send in specified format
@@ -23,7 +24,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 16:14
 #
-#### $$VERSION$$ v1.2-dev2-62-gfa24673
+#### $$VERSION$$ v1.2-dev2-67-g6173d77
 #===============================================================================
 
 # set bashbot environment
@@ -32,15 +33,20 @@ source "${0%/*}/bashbot_env.inc.sh"
 
 ####
 # broadcast is dangerous, without --doit we do a dry run ...
-if [ "$1" == "--doit" ]; then
+if [ "$1" = "--doit" ]; then
 	DOIT="yes"
 	shift
 fi
 
 ####
-# send to users by default, --group sends to groups also
-if [ "$1" == "--groups" ]; then
+# send to users by default, --group sends groups, --both to both
+SENDTO="users"
+if [ "$1" = "--both" ]; then
 	GROUPSALSO=" and groups"
+	shift
+elif [ "$1" = "--groups" ]; then
+	SENDTO="groups"
+	GROUPSALSO=" only"
 	shift
 fi
 
@@ -64,7 +70,7 @@ case "$1" in
 		echo "missing missing arguments"
 		;&
 	"-h"*)
-		echo 'usage: send_message [-h|--help] [format] "message ...." [debug]'
+		echo 'usage: send_message [-h|--help] [--groups|--both] [format] "message ...." [debug]'
 		exit 1
 		;;
 	'--h'*)
@@ -92,8 +98,10 @@ fi
 
 	for USER in ${!SENDALL[*]}
 	do
-		# ignore everything not a user or group
+		# send to users, groups or both ...
 		[[ -z "${GROUPSALSO}" && "${USER}" == *"-"* ]] && continue
+		[[ "${SENDTO}" != "users" && "${USER}" != *"-"* ]] && continue
+		# ignore everything not a user or group
 		[[ ! "${USER}" =~ ^[0-9-]*$ ]] && continue
 		(( COUNT++ ))
 		if [ -z "${DOIT}" ]; then
@@ -104,5 +112,5 @@ fi
 			sleep 0.1
 		fi
 	done
-	echo -e "${NC}\nMessage \"$1\" sent to ${COUNT} users${GROUPSALSO}."
+	echo -e "${NC}\nMessage \"$1\" sent to ${COUNT} ${SENDTO}${GROUPSALSO}."
 } | more
