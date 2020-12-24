@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-55-g4a4f73b
+#### $$VERSION$$ v1.2-dev2-58-g4d1c237
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -44,8 +44,8 @@ if [ -t 1 ] && [ -n "$TERM" ];  then
 fi
 
 # we need some bash 4+ features, check for old bash by feature
-if [ "$(echo -e "\u1111")" == "\u1111" ]; then
-	echo -e "${ORANGE}Warning: Unicode '\uxxxx' seems not supported, install a more current bash.${NC}"
+if [ "$({ LC_ALL=C.utf-8 echo -e "\u1111"; } 2>/dev/null)" == "\u1111" ]; then
+	echo -e "${ORANGE}Warning: Missing unicode '\uxxxx' support, no unicode locale set or to old bash version.${NC}"
 fi
 
 
