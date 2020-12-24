@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-59-g824cf13
+#### $$VERSION$$ v1.2-dev2-60-g450d94d
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -133,7 +133,7 @@ if [ "${SCRIPT}" != "${REALME}" ] || [ "$1" = "source" ]; then
 	SOURCE="yes"
 fi
 
-BOTCOMMANDS="start, stop, status, help, init, stats, suspendback, resumeback, killback"
+BOTCOMMANDS="start, stop, status, help, init, suspendback, resumeback, killback"
 [[ -z "$1" && -z "${SOURCE}" ]] &&  echo -e "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NC}" && exit
 if [ "$1" = "help" ]; then
 		HELP="${BASHBOT_HOME:-.}/README"
