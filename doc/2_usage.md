@@ -85,21 +85,44 @@ Start or Stop your Bot use the following commands:
 ./bashbot.sh stop
 ```
 
-### User stats
+### Scripts in bin/
 
 To count the total number of users and messages run the following command:
 
+```bash
+bin/bashbot_stats.sh
 ```
-./bashbot.sh stats
-```
-
-### Sending broadcasts to all users
 
 To send a broadcast to all of users that ever used the bot run the following command:
 
+```bash
+bin/send_broadcast.sh "Hey, I just wanted to let you know that the bot's been updated!"
+
+Sending broadcast message to all users of Deal_O_Mat_bot
+DRY RUN! use --doit as first argument to execute broadcast...
+...
+Message "Hey, ..." sent to xxx users.
 ```
-./bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
+
+To send a message to one user or chat run the following command:
+
+```bash
+bin/send_message.sh "CHAT[ID]" "Hey, I just wanted to let you know that the bot's been updated!"
+
+["OK"]  "true"
+["ID"]  "12345"
 ```
+
+To replace a message already sent to one user or chat run the following command:
+
+```bash
+bin/send_edit_message.sh "CHAT[ID]" "12345" "Done!"
+
+["OK"]  "true"
+["ID"]  "12345"
+```
+
+Note: to get help about a script in bin/ run `scriptname.sh --help`
 
 ----
 
