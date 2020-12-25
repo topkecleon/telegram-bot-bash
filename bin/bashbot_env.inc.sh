@@ -13,11 +13,13 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.12.2020 12:27
 #
-#### $$VERSION$$ v1.2-dev2-74-g0b7cd8a
+#### $$VERSION$$ v1.2-dev2-75-gf016598
 #===============================================================================
 
 ############
 # set where your bashbot lives
+export BASHBOT_HOME BASHBOT_ETC BASHBOT_VAR
+
 # default: one dir up 
 BASHBOT_HOME="$(cd "${BASH_SOURCE[0]%/*}" >/dev/null 2>&1 && pwd)/../"
 [ "${BASHBOT_HOME}" = "/../" ] && BASHBOT_HOME="../"
