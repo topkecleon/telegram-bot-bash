@@ -13,12 +13,12 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.12.2020 12:27
 #
-#### $$VERSION$$ v1.2-dev2-75-gf016598
+#### $$VERSION$$ v1.2-dev2-77-g88d1de2
 #===============================================================================
 
 ############
 # set where your bashbot lives
-export BASHBOT_HOME BASHBOT_ETC BASHBOT_VAR
+export BASHBOT_HOME BASHBOT_ETC BASHBOT_VAR FILE_REGEX
 
 # default: one dir up 
 BASHBOT_HOME="$(cd "${BASH_SOURCE[0]%/*}" >/dev/null 2>&1 && pwd)/../"
@@ -26,8 +26,8 @@ BASHBOT_HOME="$(cd "${BASH_SOURCE[0]%/*}" >/dev/null 2>&1 && pwd)/../"
 
 # set you own BASHBOT_HOME if different, e.g.
 # BASHBOT_HOME="/usr/local/telegram-bot-bash"
-BASHBOT_ETC="${BASHBOT_HOME}"
 BASHBOT_VAR="${BASHBOT_HOME}"
+BASHBOT_ETC="${BASHBOT_HOME}"
 
 #####
 # if files are not readable, eviroment is wrong or bashbot is not initialized
@@ -40,6 +40,10 @@ else
 	# shellcheck disable=SC1090
 	source "${BASHBOT_HOME}/bashbot.sh" source "$1"
 fi
+
+# overwrite bot FILE regex to BASHBOT_ETC
+# change this to the location you want to allow file uploads from
+FILE_REGEX="${BASHBOT_ETC%/bin*}/.*"
 
 # check for botconfig.jssh readable
 if [ ! -r "${BASHBOT_ETC}/botconfig.jssh" ]; then

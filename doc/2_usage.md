@@ -33,6 +33,7 @@ Have FUN!
 │   ├── send_message.sh          # send message to given chat
 │   ├── edit_message.sh          # replace given message id in given chat
 │   ├── send_broadcast.sh        # send message to all known chats
+│   ├── send_file.sh             # send file to given chat
 │   ├── bashbot_stats.sh         # does what it says ...
 │   │
 │   └── bashbot_env.inc.sh       # bashbot location included from scripts, adapt if needed
@@ -120,6 +121,15 @@ bin/send_edit_message.sh "CHAT[ID]" "12345" "Done!"
 
 ["OK"]  "true"
 ["ID"]  "12345"
+```
+
+To send a file to one user or chat run the following command:
+
+```bash
+bin/send_file.sh "CHAT[ID]" "funny-pic.jpg" "enjoy this picture"
+
+["OK"]  "true"
+["ID"]  "12346"
 ```
 
 Note: to get help about a script in bin/ run `scriptname.sh --help`
@@ -330,5 +340,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.2-dev2-71-gdca7a6d
+#### $$VERSION$$ v1.2-dev2-77-g88d1de2
 

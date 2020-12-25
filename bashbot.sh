@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-74-g0b7cd8a
+#### $$VERSION$$ v1.2-dev2-77-g88d1de2
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -488,7 +488,7 @@ if detect_curl ; then
 	[ "$#" -lt 4  ] && return
 	if [ -n "$5" ]; then
 	[ -n "${BASHBOTDEBUG}" ] &&\
-		log_update "sendUpload CHAT=${1} WHAT=${2}  FILE=${3} CAPT=${4}"
+		log_update "sendUpload CHAT=${1} WHAT=${2}  FILE=${3} CAPT=${5}"
 	# shellcheck disable=SC2086
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -b -n 2>/dev/null )"
