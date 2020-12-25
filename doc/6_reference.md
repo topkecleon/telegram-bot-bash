@@ -3,6 +3,8 @@
 
 ### Send, forward, delete messages
 
+To insert line brakes in a message or caption you can place `\n` in the text. 
+
 ##### send_action
 ```send_action``` shows users what your bot is currently doing.
 
@@ -1143,5 +1145,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.2-dev2-15-g3496a21
+#### $$VERSION$$ v1.2-dev2-70-g1dd9441
 
