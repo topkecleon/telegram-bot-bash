@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.2-7-gd6e1c22
+#### $$VERSION$$ v1.2-dev2-76-gffc1ecf
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -45,7 +45,3 @@ trap '' EXIT
 cd "${DIRME}" || exit 1
 echo "${SUCCESS}"
 
-echo "Test bashbot.sh stat"
-cp "${REFDIR}/count.test" "${TESTDIR}/count.jssh"
-"${TESTDIR}/bashbot.sh" stats >"${TESTDIR}/stats.out"
-diff -q "${TESTDIR}/stats.out" "${REFDIR}/stats.out" >>"${LOGFILE}" || { echo "${NOSUCCESS} Fail diff stats output!"; FAIL="1"; }

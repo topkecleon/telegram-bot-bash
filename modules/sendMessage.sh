@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.2-dev2-68-gc39c1ca
+#### $$VERSION$$ v1.2-dev2-76-gffc1ecf
 
 # will be automatically sourced from bashbot
 
@@ -280,6 +280,7 @@ send_message() {
 	text="$(sed <<< "${2}" 's/ mykeyboardend.*//;s/ *my[kfltab][a-z]\{2,13\}startshere.*//')$(sed <<< "${2}" -n '/mytextstartshere/ s/.*mytextstartshere//p')"
 	#shellcheck disable=SC2001
 	text="$(sed <<< "${text}" 's/ *mynewlinestartshere */\n/g')"
+	text="${text//$'\n'/\\n}"
 	[ "$3" != "safe" ] && {
 		no_keyboard="$(sed <<< "${2}" '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
 		keyboard="$(sed <<< "${2}" '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere *//;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
