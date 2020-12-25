@@ -3,6 +3,8 @@
 
 ### Send, forward, delete messages
 
+To insert line brakes in a message or caption you can place `\n` in the text. 
+
 ##### send_action
 ```send_action``` shows users what your bot is currently doing.
 
@@ -18,7 +20,6 @@ send_action "${CHAT[ID]}" "typing"
 send_action "${CHAT[ID]}" "record_audio"
 ```
 
-
 ##### send_normal_message
 ```send_normal_message``` sends text only messages to the given chat.
 
@@ -32,9 +33,24 @@ send_normal_message "${CHAT[ID]}" "this is a text message"
 ```
 
 
+##### send_markdownv2_message
+```send_markdownv2_message``` sends markdown v2 style messages to the given chat.
+Telegram supports a new [Markdown V2 Style](https://core.telegram.org/bots/api#markdownv2-style) which
+has more formatting codes and is more robust, but incompatible with old telegram markdown style.
+
+*usage:* send_markdownv2_message "${CHAT[ID]}" "markdown message"
+
+*example:* 
+```bash
+send_markdownv2_message "${CHAT[ID]}" "this is a markdown  message, next word is *bold*"
+send_markdownv2_message "${CHAT[ID]}" "*bold* __underlined__ [text](link)"
+```
+
+
 ##### send_markdown_message
 ```send_markdown_message``` sends markdown style messages to the given chat.
-Telegram supports a [reduced set of Markdown](https://core.telegram.org/bots/api#markdown-style) only
+This is the old, legacy Telegram markdown style, retained for backward compatibility.
+It supports a [reduced set of Markdown](https://core.telegram.org/bots/api#markdown-style) only
 
 *usage:* send_markdown_message "${CHAT[ID]}" "markdown message"
 
@@ -45,6 +61,7 @@ Telegram supports a [reduced set of Markdown](https://core.telegram.org/bots/api
 send_markdown_message "${CHAT[ID]}" "this is a markdown  message, next word is *bold*"
 send_markdown_message "${CHAT[ID]}" "*bold* _italic_ [text](link)"
 ```
+
 
 ##### send_html_message
 ```send_html_message``` sends HTML style messages to the given chat.
@@ -206,6 +223,72 @@ send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"b 1", url"":"u 1"}, {"text":"b 
 
 ----
 
+### Edit / Replace Messages
+
+Edit a message means replace the content of the message in place. The message stay on the same position in the chat and keep the same
+message id.
+
+There is no need to use the same format when replace a message, e.g. a message sent with `send_normal_message` can be replaced with
+`edit_markdown_message` or `edit_html_message` and vice versa. 
+
+To replace a message you must know the message id of the the original message. The best way to get the message id is to save the value of
+`BOTSENT[ID]` after sending the original message.
+
+##### edit_normal_message
+```edit_normal_message``` replace a message with a text message in the given chat.
+
+*usage:*  edit_normal_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+
+*example:* 
+```bash
+send_normal_message "${CHAT[ID]}" "this is a text message"
+saved-id="${BOTSENT[ID]}"
+
+edit_normal_message "${CHAT[ID]}" "${saved-id}" "this is another text"
+```
+
+##### edit_markdownv2_message
+```edit_markdownv2_message``` replace a message with a markdown v2 message in the given chat.
+
+*usage:*  edit_markdownv2_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+
+*example:* 
+```bash
+send_normal_message "${CHAT[ID]}" "this is a text message"
+saved-id="${BOTSENT[ID]}"
+
+edit_markdownv2_message "${CHAT[ID]}" "${saved-id}" "this is __markdown__ *V2* text"
+```
+
+##### edit_markdown_message
+```edit_markdown_message``` replace a message with a markdown message in the given chat.
+
+*usage:*  edit_markdown_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+
+*example:* 
+```bash
+send_normal_message "${CHAT[ID]}" "this is a text message"
+saved-id="${BOTSENT[ID]}"
+
+edit_markdown_message "${CHAT[ID]}" "${saved-id}" "this is *markdown* text"
+```
+
+##### edit_html_message
+```edit_html_message``` replace a message with a html message in the given chat.
+
+*usage:*  edit_html_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+
+*example:* 
+```bash
+send_normal_message "${CHAT[ID]}" "this is a text message"
+saved-id="${BOTSENT[ID]}"
+
+edit_html_message "${CHAT[ID]}" "${saved-id}" "this is <b>html</b> text"
+```
+
+
+----
+
 ### User Access Control
 The following basic user control functions are part of the Telegram API.
 More advanced API functions are currently not implemented in bashbot.
@@ -244,6 +327,19 @@ fi
 
 The following functions are bashbot only and not part of the Telegram API. 
 
+##### bot_is_admin
+Return true (0) if bot is admin or creator of given chat.
+ 
+*usage:* bot_is_admin "${CHAT[ID]}"
+
+
+*example:* 
+```bash
+if bot_is_admin "${CHAT[ID]}"; then 
+  send_markdown_message "${CHAT[ID]}" "*I'm admin...*"
+fi
+```
+
 ##### user_is_botadmin
 Return true (0) if user is admin of bot, user id if botadmin is read from file './botadmin'.
 
@@ -253,7 +349,7 @@ Return true (0) if user is admin of bot, user id if botadmin is read from file '
 
 *example:* 
 ```bash
- _is_botadmin && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
+user_is_botadmin "${CHAT[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
 ```
 
 ##### user_is_creator
@@ -272,7 +368,7 @@ Return true (0) if user is admin or creator of given chat.
 
 *example:* 
 ```bash
-if _is_admin ; then 
+if user_is_admin "${CHAT[ID]}" ; then 
   send_markdown_message "${CHAT[ID]}" "*LEAVING CHAT...*"
   leave_chat "${CHAT[ID]}"
 fi
@@ -1049,5 +1145,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.2-dev-13-g2a5d47d
+#### $$VERSION$$ v1.20-0-g2ab00a2
 

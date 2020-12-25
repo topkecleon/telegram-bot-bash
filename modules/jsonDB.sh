@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.20-0-g2ab00a2
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -204,7 +204,7 @@ jssh_checkDB_async() { jssh_checkDB "$@"; }
 jssh_checkDB(){
 	local DB
 	[ -z "$1" ] && return 1
-	[[ "$1" = *'..'* ]] && return 2
+	[[ "$1" = *'../.'* ]] && return 2
 	if [[ "$1" == "${BASHBOT_VAR:-.}"* ]] || [[ "$1" == "${BASHBOT_DATA:-.}"* ]]; then
 		DB="${1}.jssh"
 	else
@@ -296,7 +296,7 @@ jssh_countKeyDB_async() {
 	fi
   }
 
-# updatie key/value in place to jsshDB
+# update key/value in place to jsshDB
 # $1 key name, can only contain -a-zA-Z0-9,._
 # $2 key value
 # $3 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'

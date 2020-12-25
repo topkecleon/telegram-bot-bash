@@ -29,6 +29,15 @@ Have FUN!
 ├── commands.sh          # command dispatcher - DO NOT EDIT!
 ├── JSON.sh              # bashbots JSON parser, see https://github.com/dominictarr/JSON.sh
 │
+├── bin                  # ready to use scripts, use `scriptname --help` for help
+│   ├── send_message.sh          # send message to given chat
+│   ├── edit_message.sh          # replace given message id in given chat
+│   ├── send_broadcast.sh        # send message to all known chats
+│   ├── send_file.sh             # send file to given chat
+│   ├── bashbot_stats.sh         # does what it says ...
+│   │
+│   └── bashbot_env.inc.sh       # bashbot location included from scripts, adapt if needed
+│
 ├── scripts              # place your bashbot interactive and background scripts here
 │   └── interactive.sh.clean     # interactive script template for new scripts
 │
@@ -77,21 +86,53 @@ Start or Stop your Bot use the following commands:
 ./bashbot.sh stop
 ```
 
-### User stats
+### Scripts in bin/
 
 To count the total number of users and messages run the following command:
 
+```bash
+bin/bashbot_stats.sh
 ```
-./bashbot.sh stats
-```
-
-### Sending broadcasts to all users
 
 To send a broadcast to all of users that ever used the bot run the following command:
 
+```bash
+bin/send_broadcast.sh "Hey, I just wanted to let you know that the bot's been updated!"
+
+Sending broadcast message to all users of Deal_O_Mat_bot
+DRY RUN! use --doit as first argument to execute broadcast...
+...
+Message "Hey, ..." sent to xxx users.
 ```
-./bashbot.sh broadcast "Hey! I just wanted to let you know that the bot's been updated!"
+
+To send a message to one user or chat run the following command:
+
+```bash
+bin/send_message.sh "CHAT[ID]" "Hey, I just wanted to let you know that the bot's been updated!"
+
+["OK"]  "true"
+["ID"]  "12345"
 ```
+
+To replace a message already sent to one user or chat run the following command:
+
+```bash
+bin/send_edit_message.sh "CHAT[ID]" "12345" "Done!"
+
+["OK"]  "true"
+["ID"]  "12345"
+```
+
+To send a file to one user or chat run the following command:
+
+```bash
+bin/send_file.sh "CHAT[ID]" "funny-pic.jpg" "enjoy this picture"
+
+["OK"]  "true"
+["ID"]  "12346"
+```
+
+Note: to get help about a script in bin/ run `scriptname.sh --help`
 
 ----
 
@@ -186,10 +227,14 @@ e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user".
         * ```${MESSAGE}```: /_new_chat_title SENDER TEXT
     * ```${SERVICE[NEWPHOTO]}```: New Chat Picture 
         * ```${MESSAGE}```: /_new_chat_picture SENDER URL
-    * ```${SERVICE[PINNED]}```: Pinned Message structure
+    * ```${SERVICE[PINNED]}```: Pinned MESSAGE ID
         * ```${MESSAGE}```: /_new_pinned_message SENDER ID
         * ```${PINNED[ID]}```: Id of pinned message
         * ```${PINNED[MESSAGE]}```: Message text of pinned message
+    * ```${SERVICE[MIGRATE]}```: Old and new group id
+        * ```${MESSAGE}```: /_migrate_group MIGRATE_FROM MIGRATE_TO
+        * ```${MIGRATE[FROM]}```: Old group id
+        * ```${MIGRATE[TO]}```: New group id
 
 
 
@@ -205,14 +250,26 @@ they contain the following variables only:
     * ```${iQUERY[FIRST_NAME]}```: User's first name
     * ```${iQUERY[LAST_NAME]}```: User's last name
 
+
+### Send Message Results
+
+BOTSENT is set on every send_xxx action and only valid until next send action. For more on message results see.  
+[Advanced Usage](3_advanced.md)
+
+* ```$BOTSENT```: This array contains the parsed results from the last transmission to telegram.
+    * ```${BOTSENT[OK]}```: contains the string ```true```: after a successful transmission
+    * ```${BOTSENT[ID]}```: Message ID of sent message, image, file etc., if OK is true
+
+
 ## Usage of bashbot functions
 
 #### sending messages
 To send messages use the ```send_xxx_message``` functions.
+To insert line brakes in a message place `\n` in the text. 
 
 To send regular text without any markdown use:
 ```bash
-send_text_message "${CHAT[ID]}" "lol"
+send_normal_message "${CHAT[ID]}" "lol"
 ```
 To send text with markdown:
 ```bash
@@ -283,5 +340,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.1-0-gc0eb399
+#### $$VERSION$$ v1.20-0-g2ab00a2
 

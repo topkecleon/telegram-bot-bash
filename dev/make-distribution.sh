@@ -2,12 +2,13 @@
 # file: make-distribution.sh
 # creates files and arcchives to dirtribute bashbot
 #
-#### $$VERSION$$ v1.1-0-gc0eb399
+#### $$VERSION$$ v1.20-0-g2ab00a2
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
 GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
 if [ "$GIT_DIR" != "" ] ; then
+	[[ "$GIT_DIR" != "/"* ]] && GIT_DIR="${PWD}/${GIT_DIR}"
 	cd "$GIT_DIR/.." || exit 1
 else
 	echo "Sorry, no git repository $(pwd)" && exit 1
@@ -17,7 +18,7 @@ VERSION="$(git describe --tags | sed -e 's/-[0-9].*//' -e 's/v//')"
 
 DISTNAME="telegram-bot-bash"
 DISTDIR="./DIST/${DISTNAME}" 
-DISTFILES="bashbot.rc bashbot.sh commands.sh mycommands.sh mycommands.sh.clean doc examples scripts modules addons LICENSE README.md README.txt README.html"
+DISTFILES="bashbot.rc bashbot.sh commands.sh mycommands.sh mycommands.sh.clean bin doc examples scripts modules addons LICENSE README.md README.txt README.html"
 
 # run tests first!
 
@@ -49,22 +50,31 @@ done
 # dwonload JSON.sh
 echo "Inject JSON.sh"
 JSONSHFILE="JSON.sh/JSON.sh"
-if [ ! -f "${JSONSHFILE}" ]; then
+if [ ! -r "${JSONSHFILE}" ]; then
 	mkdir "JSON.sh" 2>/dev/null
 	curl -sL -o "${JSONSHFILE}" "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh"
 	chmod +x "${JSONSHFILE}" 
 fi
+echo "Inject JSON.awk"
+JSONSHFILE="JSON.sh/JSON.awk"
+if [ ! -r "${JSONSHFILE}" ]; then
+	curl -sL -o "${JSONSHFILE}" "https://cdn.jsdelivr.net/gh/step-/JSON.awk/JSON.awk" 
+	curl -sL -o "${JSONSHFILE%/*}/awk-patch.sh" "https://cdn.jsdelivr.net/gh/step-/JSON.awk/tool/patch-for-busybox-awk.sh"
+	bash "${JSONSHFILE%/*}/awk-patch.sh" "${JSONSHFILE%/*}/JSON.awk"
+fi
+rm -f "${JSONSHFILE%/*}"/*.bak
 
 # make html doc
 echo "Create html doc"
-#shellcheck disable=SC1090
-source "$GIT_DIR/../dev/make-html.sh"
+# shellcheck disable=SC1090,SC1091
+source "../../dev/make-html.sh"
 
 # create archive
 cd .. || exit 1
 echo "Create dist archives"
-zip -rq "${DISTNAME}-${VERSION}.zip" "${DISTNAME}"
-tar -czf "${DISTNAME}-${VERSION}.tar.gz" "${DISTNAME}"
+# shellcheck disable=SC2046
+zip -rq - "${DISTNAME}" --exclude $(cat  "$GIT_DIR/../dev/${0##*/}.exclude") >"${DISTNAME}-${VERSION}.zip"
+tar --exclude-ignore="$GIT_DIR/../dev/${0##*/}.exclude" -czf "${DISTNAME}-${VERSION}.tar.gz" "${DISTNAME}"
 
 echo "Done!"
 

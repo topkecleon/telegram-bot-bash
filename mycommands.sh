@@ -8,7 +8,8 @@
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
-#### $$VERSION$$ v1.1-0-gc0eb399
+# shellcheck disable=SC1117
+#### $$VERSION$$ v1.20-0-g2ab00a2
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -24,6 +25,11 @@ export res=""
 # Set INLINE to 1 in order to receive inline queries.
 # To enable this option in your bot, send the /setinline command to @BotFather.
 export INLINE="0"
+
+# if your bot is group admin it get commands sent to other bots
+# Set MEONLY to 1 to ignore commands sent to other bots
+export MEONLY="0"
+
 # Set to .* to allow sending files from all locations
 # NOTE: this is a regex, not shell globbing! you must use a valid egex,
 # '.' matches any character and '.*' matches all remaining charatcers!
@@ -111,13 +117,13 @@ else
 
 	# example for actions based on chat or sender
 	case "${USER[ID]}+${CHAT[ID]}" in
-		'USERID+'*) # do something for all messages from USER
+		'USERID1+'*) # do something for all messages from USER
 			printf "%s: U=%s C=%s M=%s\n" "$(date)" "${USER[ID]}" "${CHAT[ID]}" "${MESSAGE}" >>"${DATADIR}/${USER[ID]}.log"
 			;;&
-		*'+CHATID') # do something for all messages from CHAT
+		*'+CHATID1') # do something for all messages from CHAT
 			printf "%s: U=%s C=%s M=%s\n" "$(date)" "${USER[ID]}" "${CHAT[ID]}" "${MESSAGE}" >>"${DATADIR}/${CHAT[ID]}.log"
 			;;&
-		'USERID+CHATID') # do something only for messages form USER in CHAT
+		'USERID2+CHATID2') # do something only for messages form USER in CHAT
 			printf "%s: U=%s C=%s M=%s\n" "$(date)" "${USER[ID]}" "${CHAT[ID]}" "${MESSAGE}" >>"${DATADIR}/${CHAT[ID]}+${USER[ID]}.log"
 			;;&
 	esac
@@ -138,7 +144,7 @@ else
 		'/echo'*) 
 			send_action "${CHAT[ID]}" "typing"
 			if ! user_is_botadmin "${USER[ID]}" ; then
-			    send_markdown_message "${CHAT[ID]}" "*${NOTBOTADMIN}*"; return 1
+			    send_markdownv2_message "${CHAT[ID]}" "*${NOTBOTADMIN}*"; return 1
 			fi
 			;;
 		# will we process edited messages also?
@@ -148,7 +154,7 @@ else
 			MESSAGE="${MESSAGE#/* }"
 			;;
 		'/_new_chat_member'*)
-			if [[ -n "${WELCOME_NEWMEMBER}" && "${NEWMEMBER[ISBOT]}" != "true" ]]; then
+			if [[ -n "${WELCOME_NEWMEMBER}" && "${NEWMEMBER[ISBOT]}" != "true" ]] && bot_is_admin "${CHAT[ID]}"; then
 			    send_normal_message "${CHAT[ID]}"\
 				"${WELCOME_MSG} ${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]} (@${NEWMEMBER[USERNAME]})"
 			    MYSENTID="${BOTSENT[ID]}"
@@ -161,6 +167,11 @@ else
 			[ -n "${REPORT_LEFTMEMBER}" ] && send_normal_message "$(getConfigKey "botadmin")"\
 			    "Left member: ${CHAT[TITLE]} (${CHAT[ID]}): ${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]} (@${LEFTMEMBER[USERNAME]})"
 			;;
+		'/_migrate_group'*)
+			# call group migration function if provided
+			_exec_if_function my_migrate_group "${MIGRATE[FROM]}" "${MIGRATE[TO]}"
+			;;
+		
 	esac
 
 	case "${MESSAGE}" in
@@ -172,7 +183,7 @@ else
 		'/question'*) # start interactive questions
 			checkproc 
 			if [ "$res" -gt 0 ] ; then
-				startproc "examples/question.sh" || _message "Can't start question."
+				startproc "examples/question.sh" || send_normal_message "${CHAT[ID]}" "Can't start question."
 			else
 				send_normal_message "${CHAT[ID]}" "$MESSAGE already running ..."
 			fi
@@ -180,12 +191,16 @@ else
 
 		'/cancel'*) # cancel interactive command
 			checkproc
-			if [ "$res" -gt 0 ] ;then killproc && _message "Command canceled.";else _message "No command is currently running.";fi
+			if [ "$res" -gt 0 ] ;then 
+				killproc && send_normal_message "${CHAT[ID]}" "Command canceled."
+			else
+				send_normal_message "${CHAT[ID]}" "No command is currently running."
+			fi
 			;;
 		'/run_notify'*) # start notify background job
 			myback="notify"; checkback "$myback"
 			if [ "$res" -gt 0 ] ; then
-				background "examples/notify.sh 60" "$myback" || _message "Can't start notify."
+				background "examples/notify.sh 60" "$myback" || send_normal_message "${CHAT[ID]}" "Can't start notify."
 			else
 				send_normal_message "${CHAT[ID]}" "Background command $myback already running ..."
 			fi
@@ -207,7 +222,7 @@ else
 			return 0
 			;;
 		'/kickme'*) # this will replace the /kickme command
-			send_markdown_mesage "${CHAT[ID]}" "*This bot will not kick you!*"
+			send_markdownv2_mesage "${CHAT[ID]}" "This bot will *not* kick you!"
 			return 1
 			;;
 	esac
@@ -275,7 +290,9 @@ else
     # return 0 to retry, return non 0 to give up
     bashbotBlockRecover() {
 	# place your commands to unblock here, e.g. change IP or simply wait
-	sleep 60 && return 0 # may be temporary
+	sleep 60 # may be temporary
+	# check connection working
+	[ -n "$(getJson "${ME_URL}")" ] && return 0
 	return 1 
     }
 

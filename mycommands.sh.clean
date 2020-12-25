@@ -4,7 +4,7 @@
 # files: mycommands.sh.clean
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v1.1-0-gc0eb399
+#### $$VERSION$$ v1.20-0-g2ab00a2
 #
 
 ##########
@@ -20,6 +20,10 @@ export res=""
 # Set INLINE to 1 in order to receive inline queries.
 # To enable this option in your bot must also send the /setinline command to @BotFather.
 export INLINE="0"
+
+# if your bot is group admin it get commands sent to other bots
+# Set MEONLY to 1 to ignore commands sent to other bots
+export MEONLY="0"
 
 # NOTE: this is a regex, not shell globbing! you must use a valid egex,
 # '.' matches any character and '.*' matches all remaining charatcers!
@@ -102,7 +106,7 @@ else
 			return 0
 			;;
 		'/kickme'*) # this will replace the /kickme command
-			send_markdown_mesage "${CHAT[ID]}" "*This bot will not kick you!*"
+			send_markdownv2_mesage "${CHAT[ID]}" "This bot will *not* kick you!"
 			return 1
 			;;
 	esac

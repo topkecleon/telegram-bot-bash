@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev-25-g0b64af7
+#### $$VERSION$$ v1.20-0-g2ab00a2
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -22,13 +22,14 @@
 # - 5 cannot connect to telegram bot
 # - 6 mandatory module not found
 # - 7 can't get bottoken
+# - 8 curl/wget missing
 # - 10 not bash!
-# shellcheck disable=SC2140,SC2031,SC2120,SC1091
+# shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117
 
 # emmbeded system may claim bash but it is not
 # check for bash like ARRAY handlung
 if ! (unset a; set -A a a; eval "a=(a b)"; eval '[ -n "${a[1]}" ]'; ) > /dev/null 2>&1; then
-	echo "iError: Current shell does not support ARRAY's, may be busbox ash shell. pls install a real bash!";
+	echo "Error: Current shell does not support ARRAY's, may be busbox ash shell. pls install a real bash!";
 	exit 10
 fi
 
@@ -42,30 +43,36 @@ if [ -t 1 ] && [ -n "$TERM" ];  then
     NC='\e[0m'
 fi
 
-# we need some bash 4+ features, check for old bash by feature
-if [ "$(echo -e "\u1111")" == "\u1111" ]; then
-	echo -e "${ORANGE}Warning: Unicode '\uxxxx' seems not supported, install a more current bash.${NC}"
+# telegram uses utf-8 characters, check if we have an utf-8 charset
+if [ "${LANG}" = "${LANG%[Uu][Tt][Ff]*}" ]; then
+	echo -e "${ORANGE}Warning: Telegram uses utf-8, but looks like you are using non utf-8 locale:${NC} ${LANG}"
 fi
+
+# we need some bash 4+ features, check for old bash by feature
+if [ "$({ LC_ALL=C.utf-8 echo -e "\u1111"; } 2>/dev/null)" = "\u1111" ]; then
+	echo -e "${ORANGE}Warning: Missing unicode '\uxxxx' support, missing C.utf-8 locale or to old bash version.${NC}"
+fi
+
 
 # some important helper functions
 # returns true if command exist
 _exists() {
-	[ "$(LC_ALL=C type -t "${1}")" = "file" ]
+	[ "$(type -t "${1}")" = "file" ]
 }
 # execute function if exists
 _exec_if_function() {
-	[ "$(LC_ALL=C type -t "${1}")" != "function" ] && return 1
+	[ "$(type -t "${1}")" != "function" ] && return 1
 	"$@"
 }
 # returns true if function exist
 _is_function() {
-	[ "$(LC_ALL=C type -t "${1}")" = "function" ]
+	[ "$(type -t "${1}")" = "function" ]
 }
 # round $1 in international notation! , returns float with $2 decimal digits
 # if $2 is not given or is not a positive number zero is assumed
 _round_float() {
 	local digit="${2}"; [[ "${2}" =~ ^[0-9]+$ ]] || digit="0"
-	LC_ALL=C printf "%.${digit}f" "${1}"
+	{ LC_ALL=C.utf-8 printf "%.${digit}f" "${1}"; } 2>/dev/null
 }
 setConfigKey() {
 	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
@@ -83,16 +90,17 @@ check_token(){
 	return 1
 }
 # log $1 to ERRORLOG with date
-log_error(){
-	printf "%s: %s\n" "$(date)" "$*" >>"${ERRORLOG}"
-}
+log_error(){ printf "%s: %b\n" "$(date)" "$*" >>"${ERRORLOG}"; }
+log_debug(){ printf "%s: %b\n" "$(date)" "$*" >>"${DEBUGLOG}"; }
+log_message(){ printf "\n%s: %b\n" "$(date)" "$*" >>"${MESSAGELOG}"; }
+log_update(){ printf "%s: %b\n" "$(date)" "$*" >>"${UPDATELOG}"; }
 # additional tests if we run in debug mode
 export BASHBOTDEBUG
 # debug should always last argument
 [[ "${BASH_ARGV[0]}" == *"debug"* ]] && BASHBOTDEBUG="yes"
 # $1 where $2 command $3 may debug 
 # shellcheck disable=SC2094
-debug_checks(){
+debug_checks(){ {
 	[  -z "${BASHBOTDEBUG}" ] && return
 	local DATE WHERE MYTOKEN; DATE="$(date)"; WHERE="${1}"; shift
 	printf "%s: debug_checks: %s: bashbot.sh %s\n" "${DATE}" "${WHERE}" "${@##*/}"
@@ -104,7 +112,13 @@ debug_checks(){
 	[ -z "$(getConfigKey "botadmin")" ] && printf "%s: %s\n" "${DATE}" "Bot admin is missing! =========="
 	# call user defined debug_checks if exists
 	_exec_if_function my_debug_checks "${DATE}" "${WHERE}" "$*"
-} >>"${DEBUGLOG}"
+	} >>"${DEBUGLOG}"
+}
+
+# some linux, e.g. manajro seems not to have C locale activated by default
+if _exists locale && [ "$(locale -a | grep -c -e "^C$" -e "^C.utf8$")" -lt 2 ]; then
+	echo -e "${ORANGE}Warning: locale ${NC}${GREY}C${NC}${ORANGE} and/or ${NC}${GREY}C.utf8${NC}${ORANGE} seems missing, use \"${NC}${GREY}locale -a${NC}${ORANGE}\" to show what locales are installed on your system.${NC}"
+fi
 
 # get location and name of bashbot.sh
 SCRIPT="$0"
@@ -119,7 +133,7 @@ if [ "${SCRIPT}" != "${REALME}" ] || [ "$1" = "source" ]; then
 	SOURCE="yes"
 fi
 
-BOTCOMMANDS="start, stop, status, help, init, stats, broadcast, suspendback, resumeback, killback"
+BOTCOMMANDS="start, stop, status, help, init, suspendback, resumeback, killback"
 [[ -z "$1" && -z "${SOURCE}" ]] &&  echo -e "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NC}" && exit
 if [ "$1" = "help" ]; then
 		HELP="${BASHBOT_HOME:-.}/README"
@@ -168,27 +182,23 @@ COUNTFILE="${BASHBOT_VAR:-.}/count"
 LOGDIR="${RUNDIR:-.}/logs"
 
 # assume everything already set up correctly if TOKEN is set
-if [ -z "${BOTTOKEN}" ]; then
+if [[ -z "${BOTTOKEN}"  && ! -f "${BOTCONFIG}.jssh" ]]; then
   # BOTCONFIG does not exist, create
-  [ ! -f "${BOTCONFIG}.jssh" ] &&
-		printf '["bot_config_key"]\t"config_key_value"\n' >>"${BOTCONFIG}.jssh"
-  # do we have already a token?
-  if [ -z "$(getConfigKey "bottoken")" ]; then
-     # convert old token
-     if [ -r "${TOKENFILE}" ]; then
-		token="$(< "${TOKENFILE}")"
-     # no old token available ask user
-     elif [ -z "${CLEAR}" ] && [ "$1" != "init" ]; then
+  printf '["bot_config_key"]\t"config_key_value"\n' >>"${BOTCONFIG}.jssh"
+  # convert old token
+  if [ -r "${TOKENFILE}" ]; then
+	token="$(< "${TOKENFILE}")"
+  # no old token, ask user
+  elif [ -z "${CLEAR}" ] && [ "$1" != "init" ]; then
 	echo "Running headless, set BOTTOKEN or run ${SCRIPT} init first!"
 	exit 2 
-     else
+  else
 	${CLEAR}
 	echo -e "${RED}TOKEN MISSING.${NC}"
 	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NC}"
 	read -r token
-     fi
-     [ -n "${token}" ] && printf '["bottoken"]\t"%s"\n'  "${token}" >> "${BOTCONFIG}.jssh"
   fi
+  [ -n "${token}" ] && printf '["bottoken"]\t"%s"\n'  "${token}" >> "${BOTCONFIG}.jssh"
 
   # no botadmin, setup botadmin
   if [ -z "$(getConfigKey "botadmin")" ]; then
@@ -238,31 +248,31 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
 fi
 
-if [ ! -d "${LOGDIR}" ] || [ ! -w "${LOGDIR}" ]; then
+if [[ ! -d "${LOGDIR}" || ! -w "${LOGDIR}" ]]; then
 	LOGDIR="${RUNDIR:-.}"
 fi
 DEBUGLOG="${LOGDIR}/DEBUG.log"
 ERRORLOG="${LOGDIR}/ERROR.log"
 UPDATELOG="${LOGDIR}/BASHBOT.log"
+MESSAGELOG="${LOGDIR}/MESSAGE.log"
 
 debug_checks "start SOURCE=${SOURCE:-no}" "$@"
 # read BOTTOKEN from bot database if not set
 if [ -z "${BOTTOKEN}" ]; then
     BOTTOKEN="$(getConfigKey "bottoken")"
     if [ -z "${BOTTOKEN}" ]; then
-		BOTERROR="Warning: can't get bot token, try to recover working config"
-		echo -e "${ORANGE}${BOTERROR}${NC}"
+		BOTERROR="Warning: can't get bot token, try to recover working config..."
+		echo -e "${ORANGE}${BOTERROR}${NC} \c"
 		if [ -r "${BOTCONFIG}.jssh.ok" ]; then
 			log_error "${BOTERROR}"
-			cp "${BOTCONFIG}.jssh.ok" "${BOTCONFIG}.jssh"
+			cp "${BOTCONFIG}.jssh.ok" "${BOTCONFIG}.jssh"; echo "OK"
 			BOTTOKEN="$(getConfigKey "bottoken")"
 		else
-			echo -e "${RED}Error: Missing bot token! remove ${BOTCONFIG}.jssh and run \"bashbot.sh init\" may fix it.${NC}"
+			echo -e "\n${RED}Error: Missing bot token! remove ${BOTCONFIG}.jssh and run \"bashbot.sh init\" may fix it.${NC}"
 			exit 7
 		fi
     fi
 fi
-
 
 # BOTTOKEN format checks
 if ! check_token "${BOTTOKEN}"; then
@@ -270,11 +280,14 @@ if ! check_token "${BOTTOKEN}"; then
 	echo -e "${GREY}123456789${RED}:${GREY}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4${ORANGE} => ${NC}\c"
 	echo -e "${GREY}8-10 digits${RED}:${GREY}35 alphanumeric characters + '_-'${NC}"
 	echo -e "${ORANGE}Your current token is: '${GREY}^$(cat -ve <<<"${BOTTOKEN//:/${RED}:${GREY}}")${ORANGE}'${NC}"
-	[[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}: ]] &&\
+	if [[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}: ]]; then
 		echo -e "${ORANGE}Possible problem in the digits part, len is $(($(wc -c <<<"${BOTTOKEN%:*}")-1))${NC}"
+		[ -n "$(getConfigKey "botid")" ] && echo -e "${GREY}Did you mean: \"${NC}$(getConfigKey "botid")${GREY}\" ?${NC}"
+	fi
 	[[ ! "${BOTTOKEN}" =~ :[a-zA-Z0-9_-]{35}$ ]] &&\
 		echo -e "${ORANGE}Possible problem in the characters part, len is $(($(wc -c <<<"${BOTTOKEN#*:}")-1))${NC}"
 fi
+
 
 
 ##################
@@ -295,8 +308,8 @@ declare -rx BOTTOKEN URL ME_URL UPD_URL GETFILE_URL
 
 declare -ax CMD
 declare -Ax UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
-declare -Ax SERVICE NEWMEMBER LEFTMEMBER PINNED
-export res CAPTION
+declare -Ax SERVICE NEWMEMBER LEFTMEMBER PINNED MIGRATE
+export res CAPTION ME
 
 
 ##################
@@ -375,7 +388,7 @@ killallproc() {
 # $ chat $2 msg_id $3 nolog
 declare -xr DELETE_URL=$URL'/deleteMessage'
 delete_message() {
-	[ -z "$3" ] && printf "%s: Delete Message CHAT=%s MSG_ID=%s\n" "$(date)" "${1}" "${2}" >>"${UPDATELOG}"
+	[ -z "$3" ] && log_update "Delete Message CHAT=${1} MSG_ID=${2}"
 	sendJson "${1}" '"message_id": '"${2}"'' "${DELETE_URL}"
 }
 
@@ -385,14 +398,19 @@ get_file() {
 	printf '%s\n' "${URL}"/"$(JsonGetString <<< "${res}" '"result","file_path"')"
 }
 
+# curl is preferred, try detect curl even not in PATH
 # return TRUE if curl is found or custom curl detected
 # return FALSE if no curl is found or wget is forced by BASHBOT_WGET
 # sets BASHBOT_CURL to point to curl
+DETECTED_CURL="curl"
 function detect_curl() {
 	# custom curl command
 	[ -n "${BASHBOT_CURL}" ] && return 0
 	# use wget
-	[ -n "${BASHBOT_WGET}" ] && return 1
+	if [ -n "${BASHBOT_WGET}" ]; then
+		DETECTED_CURL="wget"
+		return 1
+	fi
 	# default use curl in PATH
 	BASHBOT_CURL="curl"
 	_exists curl && return 0
@@ -405,48 +423,72 @@ function detect_curl() {
 		fi
 	done
 	# curl not in PATH and not in usual locations
+	DETECTED_CURL="wget"
 	local warn="Warning: Curl not detected, try fallback to wget! pls install curl or adjust BASHBOT_CURL/BASHBOT_WGET environment variables."
-	printf "%s: %s\n" "$(date)" "${warn}" >>"${UPDATELOG}"
-	[ -n "${BASHBOTDEBUG}" ] && printf "%s: %s\n" "$(date)" "${warn}" >>"${DEBUGLOG}"
+	log_update "${warn}"; [ -n "${BASHBOTDEBUG}" ] && log_debug "${warn}"
 	return 1
 }
 
 # iconv used to filter out broken utf characters, if not installed fake it
 if ! _exists iconv; then
-	printf "%s: %s\n" "$(date)" "Warning: iconv not installed, pls imstall iconv!" >>"${UPDATELOG}"
+	log_update "Warning: iconv not installed, pls imstall iconv!"
 	function iconv() { cat; }
 fi
 
 TIMEOUT="${BASHBOT_TIMEOUT}"
 [[ "$TIMEOUT" =~ ^[0-9]+$ ]] || TIMEOUT="20"
 
+# usage: sendJson "chat" "JSON" "URL"
+sendJson(){
+	local json chat=""
+	if [ -n "${1}" ]; then
+		 chat='"chat_id":'"${1}"','
+		 [[ "${1}" == *[!0-9-]* ]] && chat='"chat_id":"'"${1}"' NAN",' # chat id not a number!
+	fi
+	# compose final json
+	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
+	if [ -n "${BASHBOTDEBUG}" ] ; then
+		log_update "sendJson (${DETECTED_CURL}) CHAT=${chat#*:} JSON=${2:0:100} URL=${3##*/}"
+		log_message "DEBUG sendJson ==========\n$("${JSONSHFILE}" -b -n <<<"${json}" 2>&1)"
+	fi
+	# chat id not a number
+	if [[ "${chat}" == *"NAN\"," ]]; then
+		sendJsonResult "$(printf '["ok"]\tfalse\n["error_code"]\t400\n["description"]\t"Bad Request: chat id not a number"\n')"\
+			"sendJson (NAN)" "$@"
+		return
+	fi
+	# OK here we go ...
+	# route to curl/wget specific function
+	res="$(sendJson_do "${json}" "${3}")"
+	# check telegram response
+	sendJsonResult "${res}" "sendJson (${DETECTED_CURL})" "$@"
+	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" &
+}
+
+#
+# curl / wget specific functions
+#
 if detect_curl ; then
+  # here we have curl ----
   [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
-  # simple curl or wget call, output to stdout
   getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -n "${3}" ]] && printf "%s: getJson (curl) URL=%s\n" "$(date)" "${1##*/}" >>"${DEBUGLOG}"
+	[[ -n "${BASHBOTDEBUG}" && -n "${3}" ]] && log_debug "getJson (curl) URL=${1##*/}"
 	# shellcheck disable=SC2086
 	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
   }
-  # usage: sendJson "chat" "JSON" "URL"
-  sendJson(){
-	local chat="";
-	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
-	[ -n "${BASHBOTDEBUG}" ] &&\
-		printf "%s: sendJson (curl) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${UPDATELOG}"
+  # curl variant for sendJson
+  # usage: "JSON" "URL"
+  sendJson_do(){
 	# shellcheck disable=SC2086
-	res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
-		-d '{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' -X POST "${3}" \
-		-H "Content-Type: application/json" | "${JSONSHFILE}" -b -n 2>/dev/null )"
-	sendJsonResult "${res}" "sendJson (curl)" "$@"
-	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" &
+	"${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
+		-d "${1}" -X POST "${2}" -H "Content-Type: application/json" | "${JSONSHFILE}" -b -n 2>/dev/null
   }
   #$1 Chat, $2 what, $3 file, $4 URL, $5 caption
   sendUpload() {
 	[ "$#" -lt 4  ] && return
 	if [ -n "$5" ]; then
 	[ -n "${BASHBOTDEBUG}" ] &&\
-		printf "%s: sendUpload CHAT=%s WHAT=%s  FILE=%s CAPT=%s\n" "$(date)" "${1}" "${2}" "${3}" "${4}" >>"${UPDATELOG}"
+		log_update "sendUpload CHAT=${1} WHAT=${2}  FILE=${3} CAPT=${5}"
 	# shellcheck disable=SC2086
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -b -n 2>/dev/null )"
@@ -459,29 +501,34 @@ if detect_curl ; then
 	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
   }
 else
-  # simple curl or wget call outputs result to stdout
-  getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && printf "%s: getJson (wget) URL=%s\n" "$(date)" "${1##*/}" >>"${DEBUGLOG}"
+  # NO curl, try wget
+  if _exists wget; then
+    getJson(){
+	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && log_debug "getJson (wget) URL=${1##*/}"
 	# shellcheck disable=SC2086
 	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
-  }
-  # usage: sendJson "chat" "JSON" "URL"
-  sendJson(){
-	local chat="";
-	[ -n "${1}" ] && chat='"chat_id":'"${1}"','
-	[ -n "${BASHBOTDEBUG}" ] &&\
-		printf "%s: sendJson (wget) CHAT=%s JSON=%s URL=%s\n" "$(date)" "${1}" "${2:0:100}" "${3##*/}" >>"${UPDATELOG}"
+    }
+    # curl variant for sendJson
+    # usage: "JSON" "URL"
+    sendJson_do(){
 	# shellcheck disable=SC2086
-	res="$(wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<$2)"'}' \
-		--header='Content-Type:application/json' "${3}" | "${JSONSHFILE}" -b -n 2>/dev/null )"
-	sendJsonResult "${res}" "sendJson (wget)" "$@"
-	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" & 
-  }
-  sendUpload() {
+	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data="${1}" \
+		--header='Content-Type:application/json' "${2}" | "${JSONSHFILE}" -b -n 2>/dev/null
+    }
+    sendUpload() {
 	log_error "Sorry, wget does not support file upload"
 	BOTSENT[OK]="false"
 	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "upload" "$@" &
-  }
+    }
+  else
+	# ups, no curl AND no wget
+	if [ -n "${BASHBOT_WGET}" ]; then
+		echo -e "${RED}Error: You set BASHBOT_WGET but no wget found!${NC}"
+	else
+		echo -e "${RED}Error: curl and wget not found, install curl!${NC}"
+	fi
+	exit 8
+  fi
 fi 
 
 # retry sendJson
@@ -514,7 +561,7 @@ sendJsonRetry(){
 sendJsonResult(){
 	local offset=0
 	BOTSENT=( )
-	[ -n "${BASHBOTDEBUG}" ] && printf "\n%s: New Result ==========\n%s\n" "$(date)" "$1" >>"${LOGDIR}/MESSAGE.log"
+	[ -n "${BASHBOTDEBUG}" ] && log_message "New Result ==========\n$1"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${1}")"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
 		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${1}")"
@@ -522,10 +569,11 @@ sendJsonResult(){
 		# hot path everything OK!
 	else
 	    # oops something went wrong!
-	    if [ "${res}" != "" ]; then
+	    if [ "${1}" != "" ]; then
 			BOTSENT[ERROR]="$(JsonGetValue '"error_code"' <<< "${1}")"
 			BOTSENT[DESCRIPTION]="$(JsonGetString '"description"' <<< "${1}")"
-			BOTSENT[RETRY]="$(JsonGetValue '"parameters","retry_after"' <<< "${1}")"
+			grep -qs -F '"parameters","retry_after"' <<< "${1}" &&\
+				BOTSENT[RETRY]="$(JsonGetValue '"parameters","retry_after"' <<< "${1}")"
 	    else
 			BOTSENT[OK]="false"
 			BOTSENT[ERROR]="999"
@@ -593,9 +641,15 @@ title2Json(){
 	printf '%s\n' "${title}${caption}${desc}${markup}${keyboard}"
 }
 
-# get bot name
+# get bot name and id from telegram
 getBotName() {
-	getJson "$ME_URL"  | "${JSONSHFILE}" -b -n 2>/dev/null | JsonGetString '"result","username"'
+	declare -A BOTARRAY
+	Json2Array 'BOTARRAY' <<<"$(getJson "$ME_URL" | "${JSONSHFILE}" -b -n 2>/dev/null)"
+	[ -z "${BOTARRAY["result","username"]}" ] && return 1
+	# save botname and id
+	setConfigKey "botname" "${BOTARRAY["result","username"]}"
+	setConfigKey "botid" "${BOTARRAY["result","id"]}"
+	echo "${BOTARRAY["result","username"]}"
 }
 
 # pure bash implementation, done by KayM (@gnadelwartz)
@@ -626,7 +680,7 @@ JsonGetValue() {
 # processing of updates starts here
 process_updates() {
 	local max num debug="$1"
-	max="$(sed <<< "${UPDATE}" '/\["result",[0-9]*\]/!d' | tail -1 | sed 's/\["result",//g;s/\].*//g')"
+	max="$(grep -F ',"update_id"]'  <<< "${UPDATE}" | tail -1 | cut -d , -f 2 )"
 	Json2Array 'UPD' <<<"${UPDATE}"
 	for ((num=0; num<=max; num++)); do
 		process_client "$num" "${debug}"
@@ -637,7 +691,7 @@ process_client() {
 	local num="$1" debug="$2" 
 	pre_process_message "${num}"
 	# log message on debug
-	[[ -n "${debug}" ]] && printf "\n%s: New Message ==========\n%s\n" "$(date)" "$UPDATE" >>"${LOGDIR}/MESSAGE.log"
+	[[ -n "${debug}" ]] && log_message "New Message ==========\n$(grep -F '["result",'"${num}" <<<"${UPDATE}")"
 
 	# check for users / groups to ignore
 	jssh_updateArray_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
@@ -802,7 +856,7 @@ pre_process_message(){
 	local num="${1}"
 	# unset everything to not have old values
 	CMD=( ); iQUERY=( ); MESSAGE=(); CHAT=(); USER=(); CONTACT=(); LOCATION=(); unset CAPTION
-	REPLYTO=( ); FORWARD=( ); URLS=(); VENUE=( ); SERVICE=( ); NEWMEMBER=( ); LEFTMEMBER=( ); PINNED=( )
+	REPLYTO=( ); FORWARD=( ); URLS=(); VENUE=( ); SERVICE=( ); NEWMEMBER=( ); LEFTMEMBER=( ); PINNED=( ); MIGRATE=( )
 	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
 	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
 	USER[ID]="${UPD["result",${num},"message","from","id"]}"
@@ -846,7 +900,7 @@ process_message() {
 	[ -z "${USER[USERNAME]}" ] && USER[USERNAME]="${USER[FIRST_NAME]} ${USER[LAST_NAME]}"
 
 	# in reply to message from
-	if grep -qs -e '\["result",'"${num}"',"message","reply_to_message"' <<<"${UPDATE}"; then
+	if [ -n "${UPD["result",${num},"message","reply_to_message","from","id"]}" ]; then
 	   REPLYTO[UID]="${UPD["result",${num},"message","reply_to_message","from","id"]}"
 	   REPLYTO[0]="$(JsonDecode "${UPD["result",${num},"message","reply_to_message","text"]}")"
 	   REPLYTO[ID]="${UPD["result",${num},"message","reply_to_message","message_id"]}"
@@ -856,7 +910,7 @@ process_message() {
 	fi
 
 	# forwarded message from
-	if grep -qs -e '\["result",'"${num}"',"message","forward_from"' <<<"${UPDATE}"; then
+	if [ -n "${UPD["result",${num},"message","forward_from","id"]}" ]; then
 	   FORWARD[UID]="${UPD["result",${num},"message","forward_from","id"]}"
 	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
 	   FORWARD[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","forward_from","first_name"]}")"
@@ -864,7 +918,7 @@ process_message() {
 	   FORWARD[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","forward_from","username"]}")"
 	fi
 
-	# get file URL from telegram
+	# get file URL from telegram, check for any of them!
 	if grep -qs -e '\["result",'"${num}"',"message","[avpsd].*,"file_id"\]' <<<"${UPDATE}"; then
 	    URLS[AUDIO]="$(get_file "${UPD["result",${num},"message","audio","file_id"]}")"
 	    URLS[DOCUMENT]="$(get_file "${UPD["result",${num},"message","document","file_id"]}")"
@@ -873,17 +927,17 @@ process_message() {
 	    URLS[VIDEO]="$(get_file "${UPD["result",${num},"message","video","file_id"]}")"
 	    URLS[VOICE]="$(get_file "${UPD["result",${num},"message","voice","file_id"]}")"
 	fi
-	# Contact
-	if grep -qs -e '\["result",'"${num}"',"message","contact"' <<<"${UPDATE}"; then
-		CONTACT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","first_name"]}")"
+	# Contact, must have phone_number
+	if [ -n "${UPD["result",${num},"message","contact","phone_number"]}" ]; then
 		CONTACT[USER_ID]="$(JsonDecode  "${UPD["result",${num},"message","contact","user_id"]}")"
+		CONTACT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","first_name"]}")"
 		CONTACT[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","last_name"]}")"
 		CONTACT[NUMBER]="${UPD["result",${num},"message","contact","phone_number"]}"
 		CONTACT[VCARD]="$(JsonGetString '"result",'"${num}"',"message","contact","vcard"' <<<"${UPDATE}")"
 	fi
 
-	# vunue
-	if grep -qs -e '\["result",'"${num}"',"message","venue"' <<<"${UPDATE}"; then
+	# venue, must have a position
+	if [ -n "${UPD["result",${num},"message","venue","location","longitude"]}" ]; then
 		VENUE[TITLE]="$(JsonDecode "${UPD["result",${num},"message","venue","title"]}")"
 		VENUE[ADDRESS]="$(JsonDecode "${UPD["result",${num},"message","venue","address"]}")"
 		VENUE[LONGITUDE]="${UPD["result",${num},"message","venue","location","longitude"]}"
@@ -898,8 +952,10 @@ process_message() {
 	LOCATION[LONGITUDE]="${UPD["result",${num},"message","location","longitude"]}"
 	LOCATION[LATITUDE]="${UPD["result",${num},"message","location","latitude"]}"
 
-	# service messages
-	if grep -qs -e '\["result",'"${num}"',"message","new_chat_member' <<<"${UPDATE}"; then
+	# service messages, group or channel only!
+	if [[ "${CHAT[ID]}" == "-"* ]] ; then
+	    # new chat member
+	    if [ -n "${UPD["result",${num},"message","new_chat_member","id"]}" ]; then
 		SERVICE[NEWMEMBER]="${UPD["result",${num},"message","new_chat_member","id"]}"
 		NEWMEMBER[ID]="${SERVICE[NEWMEMBER]}"
 		NEWMEMBER[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","new_chat_member","first_name"]}")"
@@ -908,8 +964,9 @@ process_message() {
 		NEWMEMBER[ISBOT]="${UPD["result",${num},"message","new_chat_member","is_bot"]}"
 		[ -z "${MESSAGE[0]}" ] &&\
 		MESSAGE[0]="/_new_chat_member ${NEWMEMBER[ID]} ${NEWMEMBER[USERNAME]:=${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]}}"
-	fi
-	if grep -qs -e '\["result",'"${num}"',"message","left_chat_member' <<<"${UPDATE}"; then
+	    fi
+	    # left chat member
+	    if [ -n "${UPD["result",${num},"message","left_chat_member","id"]}" ]; then
 		SERVICE[LEFTMEMBER]="${UPD["result",${num},"message","left_chat_member","id"]}"
 		LEFTMEMBER[ID]="${SERVICE[LEFTMEBER]}"
 		LEFTMEMBER[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","left_chat_member","first_name"]}")"
@@ -918,24 +975,35 @@ process_message() {
 		LEFTMEMBER[ISBOT]="${UPD["result",${num},"message","left_chat_member","is_bot"]}"
 		[ -z "${MESSAGE[0]}" ] &&\
 		MESSAGE[0]="/_left_chat_member ${LEFTMEMBER[ID]} ${LEFTMEMBER[USERNAME]:=${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]}}"
-	fi
-	if grep -qs -e '\["result",'"${num}"',"message","new_chat_[tp]' <<<"${UPDATE}"; then
+	    fi
+	    # chat title / photo, check for any of them!
+	    if grep -qs -e '\["result",'"${num}"',"message","new_chat_[tp]' <<<"${UPDATE}"; then
 		SERVICE[NEWTITLE]="$(JsonDecode "${UPD["result",${num},"message","new_chat_title"]}")"
 		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWTITLE]}" ] &&\
 			MESSAGE[0]="/_new_chat_title ${USER[ID]} ${SERVICE[NEWTITLE]}"
 		SERVICE[NEWPHOTO]="$(get_file "${UPD["result",${num},"message","new_chat_photo",0,"file_id"]}")"
 		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWPHOTO]}" ] &&\
 			 MESSAGE[0]="/_new_chat_photo ${USER[ID]} ${SERVICE[NEWPHOTO]}"
-	fi
-	if  grep -qs -e '\["result",'"${num}"',"message","pinned_message' <<<"${UPDATE}"; then
-		SERVICE[PINNED]="$(JsonDecode "${UPD["result",${num},"message","pinned_message","message_id"]}")"
+	    fi
+	    # pinned message
+	    if [ -n "${UPD["result",${num},"message","pinned_message","message_id"]}" ]; then
+		SERVICE[PINNED]="${UPD["result",${num},"message","pinned_message","message_id"]}"
 		PINNED[ID]="${SERVICE[PINNED]}"
 		PINNED[MESSAGE]="$(JsonDecode "${UPD["result",${num},"message","pinned_message","text"]}")"
-		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[PINNED]}" ] &&\
+		[ -z "${MESSAGE[0]}" ] &&\
 			MESSAGE[0]="/_new_pinned_message ${USER[ID]} ${PINNED[ID]} ${PINNED[MESSAGE]}"
+	    fi
+	    # migrate to super group
+	    if [ -n "${UPD["result",${num},"message","migrate_to_chat_id"]}" ]; then
+		MIGRATE[TO]="${UPD["result",${num},"message","migrate_to_chat_id"]}"
+		MIGRATE[FROM]="${UPD["result",${num},"message","migrate_from_chat_id"]}"
+		SERVICE[MIGRATE]="${MIGRATE[FROM]} ${MIGRATE[TO]}"
+		[ -z "${MESSAGE[0]}" ] &&\
+			MESSAGE[0]="/_migrate_group ${SERVICE[MIGRATE]}"
+	    fi
+	    # set SERVICE to yes if a service message was received
+	    [[ "${SERVICE[*]}" =~  ^[[:blank:]]*$ ]] || SERVICE[0]="yes"
 	fi
-	# set SERVICE to yes if a service message was received
-	[[ "${SERVICE[*]}" =~  ^[[:blank:]]*$ ]] || SERVICE[0]="yes"
 
 	# split message in command and args
 	[[ "${MESSAGE[0]}" == "/"* ]] && read -r CMD <<<"${MESSAGE[0]}" &&  CMD[0]="${CMD[0]%%@*}"
@@ -946,6 +1014,7 @@ process_message() {
 #########################
 # main get updates loop, should never terminate
 declare -A BASHBOTBLOCKED
+export BASHBOT_UPDATELOG="${BASHBOT_UPDATELOG-nolog}" # allow to be ""
 start_bot() {
 	local DEBUGMSG ADMIN OFFSET=0
 	# adaptive sleep defaults
@@ -953,12 +1022,12 @@ start_bot() {
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
 	local maxsleep="${BASHBOT_SLEEP:-5000}"
 	# startup message
-	DEBUGMSG="$(date): Start BASHBOT updates in Mode \"${1:-normal}\" =========="
-	printf  "%s\n" "${DEBUGMSG}" >>"${UPDATELOG}"
+	DEBUGMSG="Start BASHBOT updates in Mode \"${1:-normal}\" =========="
+	log_update "${DEBUGMSG}"
 	# redirect to Debug.log
 	[[ "${1}" == *"debug" ]] && exec &>>"${DEBUGLOG}"
-	printf  "%s\n" "${DEBUGMSG}"; DEBUGMSG="${1}"
-	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x
+	log_debug "${DEBUGMSG}"; DEBUGMSG="${1}"
+	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x && unset BASHBOT_UPDATELOG
 	# cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
 	find "${DATADIR}" -size 0 -name "*.log" -delete
@@ -994,7 +1063,7 @@ start_bot() {
 		# adaptive sleep in ms rounded to next 0.1 s
 		sleep "$(_round_float "${nextsleep}e-3" "1")"
 		# get next update
-		UPDATE="$(getJson "${UPD_URL}${OFFSET}" "nolog" 2>/dev/null | "${JSONSHFILE}" -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
+		UPDATE="$(getJson "${UPD_URL}${OFFSET}" "${BASHBOT_UPDATELOG}" 2>/dev/null | "${JSONSHFILE}" -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
 		# did we get an response?
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
@@ -1014,8 +1083,15 @@ start_bot() {
 		else
 			# oops, something bad happened, wait maxsleep*10
 			(( nextsleep=nextsleep*2 , nextsleep= nextsleep>maxsleep*10 ?maxsleep*10:nextsleep ))
-			[ "${OFFSET}" = "-999" ] &&\
-			log_error "Repeated timeout/broken/no connection on telegram update, sleep $(_round_float "${nextsleep}e-3")s"
+			# second time, report problem
+			if [ "${OFFSET}" = "-999" ]; then
+			    log_error "Repeated timeout/broken/no connection on telegram update, sleep $(_round_float "${nextsleep}e-3")s"
+			    # try to recover
+			    if _is_function bashbotBlockRecover && [ -z "$(getJson "${ME_URL}")" ]; then
+				log_error "Try to recover, calling bashbotBlockRecover ..."
+				bashbotBlockRecover >>"${ERRORLOG}"
+			    fi
+			fi
 			OFFSET="-999"
 		fi
 	done
@@ -1072,6 +1148,15 @@ bot_init() {
 		find . -name '*.jssh*' -exec chmod u+w \{\} +
 		echo "Done."
 	fi
+	# ask to check bottoken online
+	if [ -z "$(getConfigKey "botid")" ]; then
+		echo -e "Seems to be your first init. Should I verify your bot token online? (y/N) N\b\c"
+		read -r ANSWER
+		if [[ "${ANSWER}" =~ ^[Yy] ]]; then
+			echo -e "${GREEN}Contacting telegram to verify your bot token ...${NC}"
+			$0 botname
+		fi 
+	fi
 	# check if botconf if seems valid
 	echo -e "${GREEN}This is your bot config:${NC}"
 	sed 's/^/\t/' "${BOTCONFIG}.jssh" | grep -vF '["bot_config_key"]'
@@ -1094,6 +1179,7 @@ if ! _is_function send_message ; then
 	exit 1
 fi
 
+# get location of JSON.sh, download if not exist
 JSONSHFILE="${BASHBOT_JSONSH:-${SCRIPTDIR}/JSON.sh/JSON.sh}"
 [[ "${JSONSHFILE}" != *"/JSON.sh" ]] && echo -e "${RED}ERROR: \"${JSONSHFILE}\" ends not with \"JSONS.sh\".${NC}" && exit 3
 
@@ -1105,12 +1191,19 @@ if [ ! -f "${JSONSHFILE}" ]; then
 	chmod +x "${JSONSHFILE}" 
 fi
 
+# check if JSON.awk exist and has x flag
+JSONAWKFILE="${JSONSHFILE%.sh}.awk"
+if [ -x "${JSONAWKFILE}" ] && _exists awk ; then
+	JSONSHFILE="JsonAwk"; JsonAwk() { "${JSONAWKFILE}" -v "BRIEF=8" -v "STRICT=0" -; }
+fi
+
 # source the script with source as param to use functions in other scripts
 # do not execute if read from other scripts
 
 if [ -z "${SOURCE}" ]; then
   ##############
   # internal options only for use from bashbot and developers
+  # shellcheck disable=SC2221,SC2222
   case "${1}" in
 	# update botname when starting only
 	"botname"|"start"*)
@@ -1159,8 +1252,8 @@ if [ -z "${SOURCE}" ]; then
 		exit
 		;;
 	# print usage stats
-	"count") echo -e "${RED}Command ${GREY}count${RED} is deprecated, use ${GREY}stats{$RED}instead.${NC}";&
 	"stats")
+		echo -e "${ORANGE}stats deprecated, see bin/bashbot_stats --help${NC}"
 		ME="$(getConfigKey "botname")"
 		declare -A STATS
 		jssh_readDB_async "STATS" "${COUNTFILE}"
@@ -1196,23 +1289,8 @@ if [ -z "${SOURCE}" ]; then
 		;;
 	# send message to all users
 	'broadcast')
-		ME="$(getConfigKey "botname")"
-		declare -A SENDALL
-		shift
-		jssh_readDB_async "SENDALL" "${COUNTFILE}"
-		echo -e "Sending broadcast message to all users of ${ME} \c"
-		for MSG in ${!SENDALL[*]}
-		do
-			[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
-			(( USERS++ ))
-			if [ -n "$*" ]; then
-				send_message "${MSG}" "$*"
-				echo -e ".\c"
-				sleep 0.1
-			fi
-		done
-		echo -e "\nMessage \"$*\" sent to ${USERS} users."
-		debug_checks "end $1" "$@"
+		echo -e "${ORANGE}Broadcast is a separate command now, see ${BASHBOT_HOME:-.}/bin/send_broadcast.sh --help${NC}"
+		"${BASHBOT_HOME:-.}"/bin/send_broadcast.sh --help
 		exit
 		;;
 	# does what it says
@@ -1249,7 +1327,6 @@ if [ -z "${SOURCE}" ]; then
 		debug_checks "end start" "$@"
 		;;
 	# does what it says
-	"kill") echo -e "${RED}Command ${GREY}kill${RED} is deprecated, use ${GREY}stop{$RED}instead.${NC}";&
 	"stop")
 		ME="$(getConfigKey "botname")"
 		SESSION="${ME:-_bot}-startbot"

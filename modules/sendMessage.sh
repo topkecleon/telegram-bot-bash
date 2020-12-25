@@ -5,7 +5,8 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.1-0-gc0eb399
+# shellcheck disable=SC1117
+#### $$VERSION$$ v1.20-0-g2ab00a2
 
 # will be automatically sourced from bashbot
 
@@ -15,6 +16,7 @@ eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 # source from commands.sh to use the sendMessage functions
 
 MSG_URL=$URL'/sendMessage'
+EDIT_URL=$URL'/editMessageText'
 PHO_URL=$URL'/sendPhoto'
 AUDIO_URL=$URL'/sendAudio'
 DOCUMENT_URL=$URL'/sendDocument'
@@ -26,6 +28,10 @@ VENUE_URL=$URL'/sendVenue'
 ACTION_URL=$URL'/sendChatAction'
 FORWARD_URL=$URL'/forwardMessage'
 ALBUM_URL=$URL'/sendMediaGroup'
+
+#
+# send/edit message variants ------------------
+#
 
 # $1 CHAT $2 message
 send_normal_message() {
@@ -47,53 +53,69 @@ send_normal_message() {
 
 # $1 CHAT $2 message
 send_markdown_message() {
-	local text; text="$(JsonEscape "${2}")"
-	text="${text//$'\n'/\\n}"
-	[ "${#text}" -ge 4096 ] && log_error "Warning: markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
-	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdown"' "${MSG_URL}"
-		text="${text:4096}"
-	done
+	_format_message_url "${1}" "${2}" ',"parse_mode":"markdown"' "${MSG_URL}"
 }
 
 # $1 CHAT $2 message
 send_markdownv2_message() {
-	local text; text="$(JsonEscape "${2}")"
-	text="${text//$'\n'/\\n}"
-	[ "${#text}" -ge 4096 ] && log_error "Warning: markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
-	# markdown v2 needs additional double escaping!
-	text="$(sed -E -e 's|([#{}()!.-])|\\\1|g' <<< "$text")"
-	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"markdownv2"' "${MSG_URL}"
-		text="${text:4096}"
-	done
+	_markdownv2_message_url "${1}" "${2}" ',"parse_mode":"markdownv2"' "${MSG_URL}"
 }
 
 # $1 CHAT $2 message
 send_html_message() {
+	_format_message_url "${1}" "${2}" ',"parse_mode":"html"' "${MSG_URL}"
+}
+
+# $1 CHAT $2 msg-id $3 message
+edit_normal_message() {
+	_format_message_url "${1}" "${3}" ',"message_id":'"${2}"'' "${EDIT_URL}"
+}
+
+# $1 CHAT $2 msg-id $3 message
+edit_markdown_message() {
+	_format_message_url "${1}" "${3}" ',"message_id":'"${2}"',"parse_mode":"markdown"' "${EDIT_URL}"
+}
+
+# $1 CHAT $2 msg-id $3 message
+edit_markdownv2_message() {
+	_markdownv2_message_url "${1}" "${3}" ',"message_id":'"${2}"',"parse_mode":"markdownv2"' "${EDIT_URL}"
+}
+
+# $1 CHAT $2 msg-id $3 message
+edit_html_message() {
+	_format_message_url "${1}" "${3}" ',"message_id":'"${2}"',"parse_mode":"html"' "${EDIT_URL}"
+}
+
+
+# internal function, send/edit formatted message with parse_mode and URL
+# $1 CHAT $2 message $3 action $4 URL
+_format_message_url(){
 	local text; text="$(JsonEscape "${2}")"
 	text="${text//$'\n'/\\n}"
-	[ "${#text}" -ge 4096 ] && log_error "Warning: html message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
+	[ "${#text}" -ge 4096 ] && log_error "Warning: html/markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'","parse_mode":"html"' "${MSG_URL}"
+		sendJson "${1}" '"text":"'"${text:0:4096}"'"'"${3}"'' "${4}"
 		text="${text:4096}"
 	done
 }
 
-# obsolote, will be removed after 1.0!!
-# $1 CHAT $2 message $3 keyboard
-old_send_keyboard() {
-	local text; text='"text":"'$(JsonEscape "${2}")'"'
-	shift 2
-	local keyboard="init"
-	OLDIFS="$IFS"
-	IFS="\""
-	for f in "$@" ;do [ "$f" != " " ] && keyboard="$keyboard, [\"$f\"]";done
-	IFS="$OLDIFS"
-	keyboard="${keyboard/init, /}"
-	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${keyboard}"' ],"one_time_keyboard": true}' "$MSG_URL"
-	send_normal_message "$(getConfigKey "botadmin")" "Warning: old 'send_keyboard' format is deprecated since version 0.6 and will be removed after 1.0 release!"
+# internal function, send/edit markdownv2 message with URL
+# $1 CHAT $2 message $3 action $4 URL
+_markdownv2_message_url() {
+	local text; text="$(JsonEscape "${2}")"
+	text="${text//$'\n'/\\n}"
+	[ "${#text}" -ge 4096 ] && log_error "Warning: markdownv2 message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
+	# markdown v2 needs additional double escaping!
+	text="$(sed -E -e 's|([_|~`>+=#{}()!.-])|\\\1|g' <<< "$text")"
+	until [ -z "${text}" ]; do
+		sendJson "${1}" '"text":"'"${text:0:4096}"'"'"${3}"'' "${4}"
+		text="${text:4096}"
+	done
 }
+
+#
+# send keyboard, buttons, files ---------------
+#
 
 # $1 CHAT $2 message $3 keyboard
 send_keyboard() {
@@ -168,7 +190,7 @@ else
 fi
 
 upload_file(){
-	local CUR_URL WHAT STATUS file="$2"
+	local CUR_URL WHAT STATUS text=$3 file="$2"
 	# file access checks ...
 	[[ "$file" = *'..'* ]] && return  # no directory traversal
 	[[ "$file" = '.'* ]] && return	 # no hidden or relative files
@@ -214,7 +236,7 @@ upload_file(){
 			;;
 	esac
 	send_action "${1}" "$STATUS"
-	sendUpload "$1" "${WHAT}" "${file}" "${CUR_URL}" "$3"
+	sendUpload "$1" "${WHAT}" "${file}" "${CUR_URL}" "${text//\\n/$'\n'}"
 }
 
 # typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
@@ -238,6 +260,10 @@ send_venue() {
 }
 
 
+#
+# other send message variants ---------------------------------
+#
+
 # $1 CHAT $2 from chat  $3 from msg id
 forward_message() {
 	[ -z "$3" ] && return
@@ -253,7 +279,7 @@ send_message() {
 	local text keyboard btext burl no_keyboard file lat long title address sent
 	text="$(sed <<< "${2}" 's/ mykeyboardend.*//;s/ *my[kfltab][a-z]\{2,13\}startshere.*//')$(sed <<< "${2}" -n '/mytextstartshere/ s/.*mytextstartshere//p')"
 	#shellcheck disable=SC2001
-	text="$(sed <<< "${text}" 's/ *mynewlinestartshere */\\n/g')"
+	text="$(sed <<< "${text}" 's/ *mynewlinestartshere */\n/g')"
 	text="${text//$'\n'/\\n}"
 	[ "$3" != "safe" ] && {
 		no_keyboard="$(sed <<< "${2}" '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
@@ -282,7 +308,7 @@ send_message() {
 		sent=y
 	fi
 	if [ -n "$file" ]; then
-		send_file "$1" "$file" "$text"
+		upload_file "$1" "$file" "$text"
 		sent=y
 	fi
 	if [ -n "$lat" ] && [ -n "$long" ]; then

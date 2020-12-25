@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.1-0-gc0eb399
+#### $$VERSION$$ v1.20-0-g2ab00a2
 #
 
 # adjust your language setting here, e.g. when run from other user or cron.
@@ -38,17 +38,16 @@ It currently can send, receive and forward messages, custom keyboards, photos, a
 #-----------------------------
 # this file *MUST* not edited!
 # copy "mycommands.sh.dist" to "mycommands.sh" and change the strings there
-bashbot_help='Place your own commands and messages in mycommands.sh
-
+bashbot_help='
 *Available commands*:
 *• /start*: _Start bot and get this message_.
 *• /help*: _Get this message_.
 *• /info*: _Get shorter info message about this bot_.
-*• /question*: _Start interactive chat_.
-*• /cancel*: _Cancel any currently running interactive chats_.
-*• /kickme*: _You will be autokicked from the chat_.
+*• /question*: _Start interactive chat (mycommands.dist)_.
+*• /cancel*: _Cancel any currently running interactive chat_.
+*• /kickme*: _You will be autokicked from the group_.
 *• /leavechat*: _The bot will leave the group with this command _.
-Written by Drew (@topkecleon), Daniil Gentili (@danogentili) and KayM(@gnadelwartz).
+Written by Drew (@topkecleon) and KayM (@gnadelwartz).
 Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
 
@@ -66,8 +65,9 @@ fi
 #----------------------------
 # this file *MUST* not edited!
 # copy "mycommands.sh.dist" to "mycommands.sh" and change the values there
-# defaults to no inline and nonsense home dir
+# defaults to no inline, all commands  and nonsense home dir
 export INLINE="0"
+export MEONLY="0"
 export FILE_REGEX="${BASHBOT_ETC}/.*"
 
 
@@ -86,10 +86,19 @@ if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
     # regular (global) commands ...
     # your commands are in mycommands() 
     else
+	
+	###################
+	# if is bashbot is group admin it get commands sent to other bots
+	# set MEONLY=1 to ignore commands for other bots
+	if [[ "${MEONLY}" != "0" && "${MESSAGE}" == "/"* && "${MESSAGE%% *}" == *"@"* ]]; then
+		# here we have a command with @xyz_bot added, check if it's our bot
+		MYCHECK="${MESSAGE%% *}"
+		[ "${MYCHECK}" != "${MYCHECK%%@${ME}}" ] && return
+	fi 
 
 	###################
 	# user defined commands must placed in mycommands
-	_exec_if_function mycommands
+	! _is_function mycommands || mycommands
 
 	# run commands if true (0) is returned or if mycommands dose not exist
 	# shellcheck disable=SC2181
@@ -105,7 +114,10 @@ if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
 			;;
 		'/start'*)
 			send_action "${CHAT[ID]}" "typing"
-			user_is_botadmin "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
+			MYCOMMANDS="*Note*: No _mycommands.sh_ detected, copy _mycommands.dist_ or _mycommands.clean_."
+			[ -r "${BASHBOT_ETC:-.}/mycommands.sh" ] && MYCOMMANDS="Place your commands and messages in _mycommands.sh_"
+			user_is_botadmin "${USER[ID]}" &&\
+				send_markdownv2_message "${CHAT[ID]}" "You are *BOTADMIN*.\n${MYCOMMANDS}"
 			if user_is_admin "${CHAT[ID]}" "${USER[ID]}" || user_is_allowed  "${USER[ID]}" "start" ; then
 				send_markdown_message "${CHAT[ID]}" "${bashbot_help}"
 			else

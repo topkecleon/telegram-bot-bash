@@ -10,13 +10,13 @@ GIT_DIR=$(git rev-parse --git-dir)
 cd "$GIT_DIR/.." || exit 1
 
 export HOOKDIR="dev/hooks"
-LASTPUSH='.git/.lastpush'
+LASTPUSH='.git/.lastcommit'
 
 # if any command inside script returns error, exit and return that error 
 set -e
 
-echo "Running pre-push hook"
-echo "............................" 
+#echo "Running post-commit hook"
+#echo "............................" 
 
 unset IFS; set -f
 

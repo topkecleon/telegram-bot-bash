@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.0-0-g99217c4
+#### $$VERSION$$ v1.20-0-g2ab00a2
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -14,6 +14,7 @@ set -e
 $TESTTOKEN
 nobody
 botadmin
+
 EOF
 echo "${SUCCESS}"
 
@@ -44,7 +45,3 @@ trap '' EXIT
 cd "${DIRME}" || exit 1
 echo "${SUCCESS}"
 
-echo "Test bashbot.sh stat"
-cp "${REFDIR}/count.test" "${TESTDIR}/count.jssh"
-"${TESTDIR}/bashbot.sh" stats >"${TESTDIR}/stats.out"
-diff -q "${TESTDIR}/stats.out" "${REFDIR}/stats.out" >>"${LOGFILE}" || { echo "${NOSUCCESS} Fail diff stats output!"; FAIL="1"; }

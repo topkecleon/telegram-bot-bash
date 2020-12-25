@@ -106,7 +106,7 @@ echo -e "Your Message: ${test}\nbye!"
 #### message formatting and keyboards
 
 The output of the script will be processed by 'send_messages', so you can not only send text, but also keyboards, files, locations and more.
-Each newline in the output will start an new message to the user, to insert line breaks in your message you must insert ' mynewlinestartshere ' instead of a newline..
+Each newline in the output will start an new message to the userr. To have line breaks in your message you must insert ' mynewlinestartshere ' or '\n' instead.
 
 To open up a keyboard in an interactive script, print out the keyboard layout in the following way:
 ```bash
@@ -134,9 +134,10 @@ echo "Text that will appear in chat? mykeyboardstartshere [ \"Yep, sure\" , \"No
 ```
 Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.
 
-New in v0.6: To insert a linebreak in your message you can insert ```mynewlinestartshere``` in your echo command:
+To insert a line break in your message you can insert ` mynewlinestartshere ` or `\n` in your echo command:
 ```bash
 echo "Text that will appear in one message  mynewlinestartshere  with this text on a new line"
+echo "Other text message\nwith a newline" # \n instead of mynewlinestartshere
 ```
 
 New in v0.7: In case you must extend a message already containing a location, a file, a keyboard etc.,
@@ -227,7 +228,7 @@ answer_inline_query "${iQUERY[ID]}" "cached_sticker" "identifier for the sticker
 See also [answer_inline_multi, answer_inline_compose](6_reference.md#answer_inline_multi) and [mycommands.sh](../mycommands.sh) for more information.
 
 
-### Handle send message errors
+### Send message results
 
 Our examples usually do not care about errors happening while sending a message, this is OK as long your bot does not send an
 massive aoumnt of messages. By default bashbot detects if a message is not sent and try to recover when possible,
@@ -244,6 +245,7 @@ every send action will overwrite them!
 
 * ```$BOTSENT```: This array contains the parsed results from the last transmission to telegram.
     * ```${BOTSENT[OK]}```: contains the string ```true```: after a successful transmission
+    * ```${BOTSENT[ID]}```: Message ID if OK is true
     * ```${BOTSENT[ERROR]}```: Error code if an error occurred
     * ```${BOTSENT[DESC]}```: Description text for error
     * ```${BOTSENT[RETRY]}```: Seconds to wait if telegram requests throtteling.
@@ -297,5 +299,5 @@ Note: If you disable automatic retry, se above, you disable also connection prob
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v1.2-dev-14-g6ec00d4
+#### $$VERSION$$ v1.20-0-g2ab00a2
 

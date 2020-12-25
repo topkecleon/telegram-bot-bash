@@ -5,12 +5,13 @@
 # If you your bot is finished you can use make-standalone.sh to create the
 # the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.1-0-gc0eb399
+#### $$VERSION$$ v1.20-0-g2ab00a2
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
 GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
 if [ "$GIT_DIR" != "" ] ; then
+	[[ "$GIT_DIR" != "/"* ]] && GIT_DIR="${PWD}/${GIT_DIR}"
 	cd "$GIT_DIR/.." || exit 1
 else
 	[ ! -f "bashbot.sh" ] && echo "bashbot.sh not found in $(pwd)" && exit 1
@@ -38,7 +39,7 @@ echo "    ... create unified commands.sh"
 
 { 
   # first head of commands.sh
-  sed -n '0,/^if / p' commands.sh | head -n -2 
+  sed -n '0,/^if / p' commands.sh | grep -v -F -e "___" -e "*MUST*" -e "mycommands.sh.dist" -e "mycommands.sh.clean"| head -n -2 
 
   # then mycommands from first non comment line on
   printf '\n##############################\n# my commands starts here ...\n'
@@ -77,7 +78,7 @@ rm -rf modules
 echo "Create minimized Version of bashbot.sh and commands.sh"
 sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e '/^$/d' -e 'N;s/\\\n/ /;P;D' bashbot.sh |\
 	sed 'N;s/\\\n/ /;P;D' > bashbot.sh.min
-sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e '/^$/d' commands.sh |\
+sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e 's/\)[[:space:]]+#.*/)/' -e '/^$/d' commands.sh |\
 	sed 'N;s/\\\n/ /;P;D' > commands.sh.min
 chmod +x bashbot.sh.min
 

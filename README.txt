@@ -204,16 +204,17 @@ possible](https://unix.stackexchange.com/a/6581)
   # very simple
   echo "text with variables. PWD=$PWD"
   printf '%s\n' "text with variables. PWD=$PWD"
+  printf 'text with variables. PWD=%s\n' "$PWD"
   -> text with variables. PWD=/home/xxx
 
   # more advanced
   FLOAT="1.2346777892864" INTEGER="12345.123"
-  echo "text with variabeles. float=$FLOAT, integer=$INTEGER, PWD=$PWD"
-  ->text with variables. float=1.2346777892864, integer=12345.123, PWD=/home/xxx
+  echo "float=$FLOAT, integer=$INTEGER, PWD=$PWD"
+  -> float=1.2346777892864, integer=12345.123, PWD=/home/xxx
 
-  printf "text with variables. float=%.2f, integer=%d, PWD=%s\n" "" "$INTEGER" 
-"$PWD"
-  ->text with variables. float=1.23, integer=12345, PWD=/home/xxx
+  printf "text with variables. float=%.2f, integer=%d, PWD=%s\n" "$FLOAT" 
+"$INTEGER" "$PWD"
+  -> float=1.23, integer=12345, PWD=/home/xxx
 ```
 
 ### Do not use #!/usr/bin/env bash
@@ -323,6 +324,9 @@ curl -m 10  https://api.telegram.org/bot
 wget -t 1 -T 10 https://api.telegram.org/bot
 #Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... 
 failed: Connection timed out.
+
+nc -w 2 api.telegram.org 443 || echo "your IP seems blocked by telegram"
+#your IP seems blocked by telegram
 ```
 
 Since Version 0.96 bashbot offers the option to recover from broken connections 
@@ -355,4 +359,4 @@ wait
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v1.1-0-ge835bbc
+#### $$VERSION$$ v1.20-0-g2ab00a2
