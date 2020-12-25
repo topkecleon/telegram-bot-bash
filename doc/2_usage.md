@@ -255,10 +255,11 @@ BOTSENT is set on every send_xxx action and only valid until next send action. F
 
 #### sending messages
 To send messages use the ```send_xxx_message``` functions.
+To insert line brakes in a message place `\n` in the text. 
 
 To send regular text without any markdown use:
 ```bash
-send_text_message "${CHAT[ID]}" "lol"
+send_normal_message "${CHAT[ID]}" "lol"
 ```
 To send text with markdown:
 ```bash
@@ -329,5 +330,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.2-dev2-70-g1dd9441
+#### $$VERSION$$ v1.2-dev2-71-gdca7a6d
 
