@@ -24,7 +24,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 16:14
 #
-#### $$VERSION$$ v1.2-dev2-73-gf281ae0
+#### $$VERSION$$ v1.2-dev2-74-g0b7cd8a
 #===============================================================================
 
 ####
@@ -88,7 +88,7 @@ if [ -z "${SENDALL[*]}" ]; then
 fi
 
 	# loop over users
-	echo -e "${GREEN}Sending broadcast message to all users of $(getConfigKey "botname")${NC}${GREY}\c"
+	echo -e "${GREEN}Sending broadcast message to all users of ${BOT_NAME}${NC}${GREY}\c"
 
 { 	# dry run
 	[ -z "${DOIT}" ] && echo -e "${NC}\n${ORANGE}DRY RUN! use --doit as first argument to execute broadcast...${NC}"

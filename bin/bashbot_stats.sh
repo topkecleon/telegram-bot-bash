@@ -16,7 +16,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 20:34
 #
-#### $$VERSION$$ v1.2-dev2-73-gf281ae0
+#### $$VERSION$$ v1.2-dev2-74-g0b7cd8a
 #===============================================================================
 
 ####
@@ -39,8 +39,7 @@ source "${0%/*}/bashbot_env.inc.sh" "$1"
 ####
 # ready, do stuff here -----
 
-ME="$(getConfigKey "botname")"
-echo -e "${GREEN}Hi I'm ${ME}.${NC}"
+echo -e "${GREEN}Hi I'm ${BOT_NAME}.${NC}"
 declare -A STATS
 jssh_readDB_async "STATS" "${COUNTFILE}"
 for MSG in ${!STATS[*]}

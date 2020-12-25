@@ -22,7 +22,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 16:52
 #
-#### $$VERSION$$ v1.2-dev2-73-gf281ae0
+#### $$VERSION$$ v1.2-dev2-74-g0b7cd8a
 #===============================================================================
 
 ####
@@ -63,7 +63,7 @@ source "${0%/*}/bashbot_env.inc.sh" "$4" # $4 debug
 ####
 # ready, do stuff here -----
 if [ "$1" == "BOTADMIN" ]; then
-	CHAT="${ADMIN}"
+	CHAT="${BOT_ADMIN}"
 else
 	CHAT="$1"
 fi
