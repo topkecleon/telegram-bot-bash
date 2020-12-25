@@ -1,16 +1,19 @@
 #!/bin/bash
 #===============================================================================
 #
-#          FILE: bashbor_env.inc.sh
+#          FILE: bashbot_env.inc.sh
 # 
+#         USAGE: source bashbot_env.inc.sh [debug]
+#
 #   DESCRIPTION: set bashbot environment for all scripts in this directory
 # 
+#       OPTIONS: $1 - will be forwarded ro bashbot, e.g. debug
 #
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.12.2020 12:27
 #
-#### $$VERSION$$ v1.2-dev2-38-g0db0215
+#### $$VERSION$$ v1.2-dev2-73-gf281ae0
 #===============================================================================
 
 # set where your bashbot lives
@@ -30,4 +33,11 @@ if [ ! -r "${BASHBOT_HOME}/count.jssh" ]; then
 	echo "Bashbot count file in \"${BASHBOT_HOME}\" does not exist or is not readable"
 	exit 3
 fi
+
+# source bashbot and check for ADMIN
+# shellcheck disable=SC1090
+source "${BASHBOT_HOME}/bashbot.sh" source "$1"
+
+ADMIN="$(getConfigKey "botadmin")"
+[ "${ADMIN}" = "?" ] && echo -e "${ORANGE}Warning: Botadmin not set, did you forget to sent command${NC} /start?"
 

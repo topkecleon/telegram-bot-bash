@@ -3,7 +3,7 @@
 #
 #          FILE: bin/bashbot_stats.sh
 # 
-#         USAGE: bashbot_stats.sh [-h|--help]
+#         USAGE: bashbot_stats.sh [-h|--help] [debug]
 # 
 #   DESCRIPTION: output bashbot user stats
 # 
@@ -16,12 +16,8 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 20:34
 #
-#### $$VERSION$$ v1.2-dev2-62-gfa24673
+#### $$VERSION$$ v1.2-dev2-73-gf281ae0
 #===============================================================================
-
-# set bashbot environment
-# shellcheck disable=SC1090
-source "${0%/*}/bashbot_env.inc.sh"
 
 ####
 # parse args
@@ -36,9 +32,9 @@ case "$1" in
 		;;
 esac
 
-# source bashbot and send message
+# set bashbot environment
 # shellcheck disable=SC1090
-source "${BASHBOT_HOME}/bashbot.sh" source "$1"
+source "${0%/*}/bashbot_env.inc.sh" "$1"
 
 ####
 # ready, do stuff here -----

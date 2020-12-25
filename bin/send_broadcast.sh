@@ -24,12 +24,8 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 16:14
 #
-#### $$VERSION$$ v1.2-dev2-67-g6173d77
+#### $$VERSION$$ v1.2-dev2-73-gf281ae0
 #===============================================================================
-
-# set bashbot environment
-# shellcheck disable=SC1090
-source "${0%/*}/bashbot_env.inc.sh"
 
 ####
 # broadcast is dangerous, without --doit we do a dry run ...
@@ -79,9 +75,10 @@ case "$1" in
 		;;
 esac
 
-# source bashbot
+# set bashbot environment
 # shellcheck disable=SC1090
-source "${BASHBOT_HOME}/bashbot.sh" source "$3"
+source "${0%/*}/bashbot_env.inc.sh" "$2" # $3 debug
+
 
 # read in users 
 declare -A SENDALL

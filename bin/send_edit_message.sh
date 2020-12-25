@@ -22,7 +22,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 16:52
 #
-#### $$VERSION$$ v1.2-dev2-72-g269cbfb
+#### $$VERSION$$ v1.2-dev2-73-gf281ae0
 #===============================================================================
 
 ####
@@ -57,14 +57,7 @@ esac
 
 # set bashbot environment
 # shellcheck disable=SC1090
-source "${0%/*}/bashbot_env.inc.sh"
-
-# source bashbot and send message
-# shellcheck disable=SC1090
-source "${BASHBOT_HOME}/bashbot.sh" source "$3"
-
-ADMIN="$(getConfigKey "botadmin")"
-[ "${ADMIN}" = "?" ] && echo -e "${ORANGE}Warning: Botadmin not set, did you forget to sent command${NC} /start?"
+source "${0%/*}/bashbot_env.inc.sh" "$4" # $4 debug
 
 ####
 ####
