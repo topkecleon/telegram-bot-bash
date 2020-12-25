@@ -4,7 +4,7 @@
 # this addon counts how many files, e.g. stickers, are sent to
 # a chat and takes actions if threshold is reached
 #  
-#### $$VERSION$$ v1.2-0-gc50499c
+#### $$VERSION$$ v1.20-0-g2ab00a2
 
 # used events:
 #

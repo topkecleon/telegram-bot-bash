@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.2-dev2-31-g16448a9
+#### $$VERSION$$ v1.20-0-g2ab00a2
 #
 # source from commands.sh to use jsonDB functions
 #
