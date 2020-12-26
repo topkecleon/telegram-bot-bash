@@ -4,7 +4,7 @@
 # Addons can register to bashbot events at startup
 # by providing their name and a callback per event
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-1-g03bdecb
 #
 # If an event occurs each registered event function is called.
 #
@@ -109,6 +109,6 @@ if [[ "$1" = "start"* ]]; then
     # Note: do not call any send message functions from EVENT_SEND!
     example_log(){
 	local send="$1"; shift
-	echo "$(date): Type: ${send} Args: $*" >>"${EXAMPLE_LOG}"
+	printf "%s: Type: %s Args: %s\n" "$(date)" "${send}" "$*" >>"${EXAMPLE_LOG}"
     }
 fi

@@ -5,8 +5,8 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-# shellcheck disable=SC1117
-#### $$VERSION$$ v1.20-0-g2ab00a2
+# shellcheck disable=SC1117,SC2059
+#### $$VERSION$$ v1.21-dev-1-g03bdecb
 
 # will be automatically sourced from bashbot
 
@@ -129,7 +129,7 @@ job_control() {
 	ADM="$(getConfigKey "botadmin")"
 	debug_checks "Enter job_control" "${1}"
 	for FILE in "${DATADIR:-.}/"*-back.cmd; do
-		[ "${FILE}" = "${DATADIR:-.}/*-back.cmd" ] && echo -e "${RED}No background processes.${NC}" && break
+		[ "${FILE}" = "${DATADIR:-.}/*-back.cmd" ] && printf "${RED}No background processes.${NN}" && break
 		content="$(< "${FILE}")"
 		CHAT="${content%%:*}"
 		job="${content#*:}"
