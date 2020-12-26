@@ -180,22 +180,24 @@ You don't need all these files after you're finished with your cool new bot.
 
 Let's create a stripped down version:
 
-- delete all modules you do not need from 'modules', e.g. 'modules/inline.sh' if you don't use inline queries
-- delete not needed standard commands and messages from 'commands.sh'
-- delete not needed commands and functions from 'mycommands.sh'
-- run ```dev/make-standalone.sh``` to create a a stripped down version of your bo
+- delete all modules you do not need from `modules`, e.g. `modules/inline.sh` if you don't use inline queries
+- delete not needed standard commands and messages from `commands.sh`
+- delete not needed commands and functions from `mycommands.sh`
+- run `dev/make-standalone.sh` to create a a stripped down version of your bot
 
 Now have a look at the directory 'standalone', here you find the files 'bashbot.sh' and 'commands.sh' containing everything to run your bot.
 [Download make-standalone.sh](https://github.com/topkecleon/telegram-bot-bash/blob/master/dev/make-standalone.sh) from github.
 
 ### Setup your develop environment
 
-1. install the commands git, [shellcheck](5_practice.md#Test-your-Bot-with-shellcheck), bc, pandoc, bc, codespell
+1. install the commands git [shellcheck](5_practice.md#Test-your-Bot-with-shellcheck) bc pandoc zip codespell
 2. setup your [environment for UTF-8](4_expert.md#Setting-up-your-Environment)
-3. clone your bashbot fork to a new directory ```git clone https://github.com/<YOURNAME>/telegram-bot-bash.git```, replace ```<YOURNAME>``` with your username on github
-4. create and change to your develop branch ```git checkout -b <YOURBRANCH>```, replace ```<YOURBRANCH>``` with the name you want to name it, e.g. 'develop'
-5. give your (dev) fork a new version tag: ```git tag vx.xx```(optional) 
-6. setup github hooks by running ```dev/install-hooks.sh``` (optional)
+3. clone your bashbot fork to a new directory `git clone https://github.com/<YOURNAME>/telegram-bot-bash.git`, replace `<YOURNAME>` with your username on github
+4. create and change to your develop branch `git checkout -b develop`
+5. give your (dev) fork a new version tag: `git tag v1.xx`
+6. setup github hooks by running `dev/install-hooks.sh`
+
+Note for Debian: Debian Buster has an old shellcheck version, pls update from [buster-backports](https://backports.debian.org/Instructions/)
 
 #### Test, Add, Push changes
 A typical bashbot develop loop looks as follow:
@@ -349,5 +351,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.20-1-g239dd76
 
