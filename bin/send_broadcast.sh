@@ -24,8 +24,13 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 16:14
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.20-3-g232a16b
 #===============================================================================
+# shellcheck disable=SC2059
+
+####
+# minimum messages seen in a chat before send a broadcast to it
+MINCOUNT=2
 
 ####
 # broadcast is dangerous, without --doit we do a dry run ...
@@ -63,10 +68,10 @@ case "$1" in
 		shift
 		;;
 	'')
-		echo "missing missing arguments"
+		printf "missing missing arguments\n"
 		;&
 	"-h"*)
-		echo 'usage: send_message [-h|--help] [--groups|--both] [format] "message ...." [debug]'
+		printf 'usage: send_message [-h|--help] [--groups|--both] [format] "message ...." [debug]\n'
 		exit 1
 		;;
 	'--h'*)
@@ -84,14 +89,14 @@ source "${0%/*}/bashbot_env.inc.sh" "$2" # $3 debug
 declare -A SENDALL
 jssh_readDB_async "SENDALL" "${COUNTFILE}"
 if [ -z "${SENDALL[*]}" ]; then
-	echo -e "${ORANGE}Countfile not found or empty,${NC} "
+	printf "${ORANGE}Countfile not found or empty,${NC}\n"
 fi
 
 	# loop over users
-	echo -e "${GREEN}Sending broadcast message to all users of ${BOT_NAME}${NC}${GREY}\c"
+	printf "${GREEN}Sending broadcast message to all users of ${BOT_NAME}${NC}${GREY}"
 
 { 	# dry run
-	[ -z "${DOIT}" ] && echo -e "${NC}\n${ORANGE}DRY RUN! use --doit as first argument to execute broadcast...${NC}"
+	[ -z "${DOIT}" ] && printf "${NC}\n${ORANGE}DRY RUN! use --doit as first argument to execute broadcast...${NC}\n"
 
 	for USER in ${!SENDALL[*]}
 	do
@@ -100,14 +105,25 @@ fi
 		[[ "${SENDTO}" != "users" && "${USER}" != *"-"* ]] && continue
 		# ignore everything not a user or group
 		[[ ! "${USER}" =~ ^[0-9-]*$ ]] && continue
+		# ignore chats with no count or lower MINCOUNT
+		[[ ! "${SENDALL[${USER}]}" =~ ^[0-9]*$ || "${SENDALL[${USER}]}" -lt "${MINCOUNT}" ]] && continue 
 		(( COUNT++ ))
 		if [ -z "${DOIT}" ]; then
-			echo  "${SEND}" "${USER}" "$1" "$2" 
+			printf  "${SEND} ${USER} $1 $2\n" 
 		else
 			"${SEND}" "${USER}" "$1" "$2"
-			echo -e ".\c" 1>&2
+			printf  "." 1>&2
+			# ups, kicked or banned ...
+			if [ "${BOTSENT[ERROR]}" = "403" ]; then
+				# remove chat from future broadcasts
+				jssh_insertKeyDB "${USER}" "${SENDALL[${USER}]} banned" "${COUNTFILE}"
+				printf "${ORANGE}Warning: bot banned from chat${NC} %s ${ORANGE}after${NC} %s ${ORANGE}commands${NC}\n"\
+						"${USER}" "${SENDALL[${USER}]}"
+			fi
 			sleep 0.1
 		fi
 	done
-	echo -e "${NC}\nMessage \"$1\" sent to ${COUNT} ${SENDTO}${GROUPSALSO}."
+	# printout final stats message
+	printf "${NC}\n${GREEN}Message${NC} $1 ${GREEN}sent to${NC} ${COUNT} ${GREEN}${SENDTO}${GROUPSALSO}.${NC}\n"
 } | more
+
