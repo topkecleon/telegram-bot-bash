@@ -21,9 +21,8 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 11:34
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.20-4-g1bd1727
 #===============================================================================
-
 
 ####
 # parse args
@@ -42,10 +41,10 @@ case "$1" in
 		shift
 		;;
 	'')
-		echo "missing arguments"
+		printf "missing arguments\n"
 		;&
 	"-h"*)
-		echo 'usage: send_message [-h|--help] [format] "CHAT[ID]" "message ...." [debug]'
+		printf 'usage: send_message [-h|--help] [format] "CHAT[ID]" "message ...." [debug]\n'
 		exit 1
 		;;
 	'--h'*)

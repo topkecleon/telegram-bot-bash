@@ -21,19 +21,18 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 25.12.2020 20:24
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.20-4-g1bd1727
 #===============================================================================
-
 
 ####
 # parse args
 SEND="upload_file"
 case "$1" in
 	'')
-		echo "missing arguments"
+		printf "missing arguments\n"
 		;&
 	"-h"*)
-		echo 'usage: send_file [-h|--help] "CHAT[ID]" "file" "caption ...." [debug]'
+		printf 'usage: send_file [-h|--help] "CHAT[ID]" "file" "caption ...." [debug]\n'
 		exit 1
 		;;
 	'--h'*)
