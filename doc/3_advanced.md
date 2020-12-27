@@ -106,7 +106,7 @@ echo -e "Your Message: ${test}\nbye!"
 #### message formatting and keyboards
 
 The output of the script will be processed by 'send_messages', so you can not only send text, but also keyboards, files, locations and more.
-Each newline in the output will start an new message to the userr. To have line breaks in your message you must insert ' mynewlinestartshere ' or '\n' instead.
+Each newline in the output will start an new message to the user. To have line breaks in your message you must insert ' mynewlinestartshere ' or '\n' instead.
 
 To open up a keyboard in an interactive script, print out the keyboard layout in the following way:
 ```bash
@@ -114,8 +114,11 @@ echo "Text that will appear in chat? mykeyboardstartshere [ \"Yep, sure\" , \"No
 ```
 Same goes for files:
 ```bash
-echo "Text that will appear in chat? myfilelocationstartshere /home/user/doge.jpg"
+echo "Text that will appear in chat? myfilelocationstartshere /home/user/dog.jpg"
 ```
+*Note*: Use an _absolute path name_ (starting with `/`), a relative path name is relative to `data-bot-bash/upload`!
+See [send_file documentation](6_reference.md#send_file) for more information.
+	
 And buttons:
 ```bash
 echo "Text that will appear in chat. mybtextstartshere Click me myburlstartshere https://dealz.rrr.de"
@@ -299,5 +302,5 @@ Note: If you disable automatic retry, se above, you disable also connection prob
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-2-gde31231
 
