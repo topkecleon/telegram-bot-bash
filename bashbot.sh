@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-dev-4-g0bda9d9
+#### $$VERSION$$ v1.21-dev-5-g874e37e
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -36,7 +36,7 @@ fi
 # are we running in a terminal?
 NN="\n"
 if [ -t 1 ] && [ -n "$TERM" ];  then
-    CLEAR='clear'
+    INTERACTIVE='yes'
     RED='\e[31m'
     GREEN='\e[32m'
     ORANGE='\e[35m'
@@ -139,7 +139,7 @@ BOTCOMMANDS="start, stop, status, help, init, suspendback, resumeback, killback"
 [[ -z "$1" && -z "${SOURCE}" ]] &&  printf "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NN}" && exit
 if [ "$1" = "help" ]; then
 		HELP="${BASHBOT_HOME:-.}/README"
-		if [ -n "${CLEAR}" ];then
+		if [ -n "${INTERACTIVE}" ];then
 			_exists w3m && w3m "$HELP.html" && exit
 			_exists lynx && lynx "$HELP.html" && exit
 			_exists less && less "$HELP.txt" && exit
@@ -191,11 +191,10 @@ if [[ -z "${BOTTOKEN}"  && ! -f "${BOTCONFIG}.jssh" ]]; then
   if [ -r "${TOKENFILE}" ]; then
 	token="$(< "${TOKENFILE}")"
   # no old token, ask user
-  elif [ -z "${CLEAR}" ] && [ "$1" != "init" ]; then
+  elif [ -z "${INTERACTIVE}" ] && [ "$1" != "init" ]; then
 	printf "Running headless, set BOTTOKEN or run ${SCRIPT} init first!\n"
 	exit 2 
   else
-	${CLEAR}
 	printf "${RED}TOKEN MISSING.${NN}"
 	printf "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NN}"
 	read -r token
@@ -207,10 +206,9 @@ if [[ -z "${BOTTOKEN}"  && ! -f "${BOTCONFIG}.jssh" ]]; then
      # convert old admin
      if [ -r "${BOTADMIN}" ]; then
 		admin="$(< "${BOTADMIN}")"
-     elif [ -z "${CLEAR}" ]; then
+     elif [ -z "${INTERACTIVE}" ]; then
 	printf "Running headless, set botadmin to AUTO MODE!\n"
      else
-	${CLEAR}
 	printf "${RED}BOTADMIN MISSING.${NN}"
 	printf "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR ENTER '?'${NN}"
 	printf "${ORANGE}TO MAKE FIRST USER TYPING '/start' TO BOTADMIN${NN}"
@@ -1212,7 +1210,7 @@ if [ -z "${SOURCE}" ]; then
 		ME="$(getBotName)"
 		if [ -n "${ME}" ]; then
 			# ok we have a connection and got botname, save it
-			[ -n "${CLEAR}" ] && printf "${GREY}Bottoken is valid ...${NN}"
+			[ -n "${INTERACTIVE}" ] && printf "${GREY}Bottoken is valid ...${NN}"
 			jssh_updateKeyDB "botname" "${ME}" "${BOTCONFIG}"
 			rm -f "${BOTCONFIG}.jssh.flock"
 		else
@@ -1223,7 +1221,7 @@ if [ -z "${SOURCE}" ]; then
 			    exit 1
 			fi
 		fi
-		[ -n "${CLEAR}" ] && printf "Bot Name: %s\n" "${ME}"
+		[ -n "${INTERACTIVE}" ] && printf "Bot Name: %s\n" "${ME}"
 		[ "$1" = "botname" ] && exit
 		;;&
 	# used to send output of background and interactive to chats
