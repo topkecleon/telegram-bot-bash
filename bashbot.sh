@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-dev-8-gc0bce91
+#### $$VERSION$$ v1.21-dev-9-g90c5d87
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -266,10 +266,11 @@ if [ -z "${BOTTOKEN}" ]; then
 		printf "${ORANGE}${BOTERROR}${NC} "
 		if [ -r "${BOTCONFIG}.jssh.ok" ]; then
 			log_error "${BOTERROR}"
+			mv "${BOTCONFIG}.jssh" "${BOTCONFIG}.jssh.bad"
 			cp "${BOTCONFIG}.jssh.ok" "${BOTCONFIG}.jssh"; printf "OK\n"
 			BOTTOKEN="$(getConfigKey "bottoken")"
 		else
-			printf "\n${RED}Error: Missing bot token! remove ${BOTCONFIG}.jssh and run \"bashbot.sh init\" may fix it.${NN}"
+			printf "\n${RED}Error: Can't recover from missing bot token! Remove ${BOTCONFIG}.jssh and run${NC} bashbot.sh init\n"
 			exit 7
 		fi
     fi
