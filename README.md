@@ -67,31 +67,39 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
 
 ### Your really first bashbot in a nutshell
 
-To install and run bashbot you need access to a linux/unix command line. If you don't know how to get access to a linux/unix command line you should stop reading here :-(
+To install and run bashbot you need access to a linux/unix command line with bash, a [Telegram client](https://telegram.org) and a mobile phone [with a Telegram account](https://telegramguide.com/create-a-telegram-account/).
 
-In addition you need a [Telegram client](https://telegram.org) and a mobile phone to [register an account](https://telegramguide.com/create-a-telegram-account/).
-If you don't want to register for Telegram you should stop reading here ;-)
+First you need to [create a new Telegram Bot token](doc/1_firstbot.md) for your bot and write it down.
 
-After you're registered to Telegram send a message to [@botfather](https://telegram.me/botfather),
-[create a new Telegram Bot token](doc/1_firstbot.md) and write it down. You need the token to install the bot.
+Now open a linux/unix terminal with bash, create a new directory, change to it and install telegram-bot-bash:
 
-Now open a terminal and check if bash is installed:
- ```
-which bash && echo "bash seems available..."
-```
-
-
-Create a new directory, change to it:  ```mkdir tbb; cd tbb``` and download the latest '*.tar.gz' file from
-[https://github.com/topkecleon/telegram-bot-bash/releases](https://github.com/topkecleon/telegram-bot-bash/releases). This can be done with the commands:
 ```bash
-wget -q https://github.com/$(wget -q https://github.com/topkecleon/telegram-bot-bash/releases/latest -O - | egrep '/.*/.*/.*tar.gz' -o)
+# create bot dir
+mkdir mybot
+cd mybot
+
+# download latest release with wget or from https://github.com/topkecleon/telegram-bot-bash/releases/latest
+wget "https://github.com/$(wget -q "https://github.com/topkecleon/telegram-bot-bash/releases/latest" -O - | egrep '/.*/download/.*/.*tar.gz' -o)"
+
+# Extract the tar archive
+tar -xzf *.tar.gz
+cd telegram-bot-bash
+
+# initialize your bot
+# Enter your bot token when asked, all other questions can be answered by hitting the \<Return\> key.
+./bashbot.sh init
+
+# Now start your bot
+./bashbot.sh start
+
+Bottoken is valid ...
+Bot Name: yourbotname_bot
+Session Name: yourbotname_bot-startbot
+Bot started successfully.
 ```
 
-Extract the '*.tar.gz' file and change to bashbot directory: ```tar -xzf *.tar.gz; cd telegram-bot-bash```,
-install bashbot: ```./bashbot.sh init``` and enter your bot token when asked. All other questions can be answered
-by hitting the \<Return\> key.
+Now open the Telegram App on your mobile phone and start a chatting with your bot (_your bot's username is shown after 'Bot Name:'_):
 
-That's all, now you can start your bot with ```./bashbot.sh start``` and send him messages:
 ```
 /start
 
@@ -269,4 +277,4 @@ bashbotBlockRecover() {
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-14-g3f8841b
