@@ -26,7 +26,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-dev-11-ge817328
+#### $$VERSION$$ v1.21-dev-12-g21afd4e
 ##################################################################
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117,SC2059
 
@@ -203,11 +203,8 @@ LOGDIR="${RUNDIR:-.}/logs"
 if [[ -z "${BOTTOKEN}"  && ! -f "${BOTCONFIG}.jssh" ]]; then
   # BOTCONFIG does not exist, create
   printf '["bot_config_key"]\t"config_key_value"\n' >>"${BOTCONFIG}.jssh"
-  # convert old token
-  if [ -r "${TOKENFILE}" ]; then
-	token="$(< "${TOKENFILE}")"
-  # no old token, ask user
-  elif [ -z "${INTERACTIVE}" ] && [ "$1" != "init" ]; then
+  # ask user for bot token
+  if [ -z "${INTERACTIVE}" ] && [ "$1" != "init" ]; then
 	printf "Running headless, set BOTTOKEN or run ${SCRIPT} init first!\n"
 	exit 2 
   else
@@ -220,10 +217,8 @@ if [[ -z "${BOTTOKEN}"  && ! -f "${BOTCONFIG}.jssh" ]]; then
 
   # no botadmin, setup botadmin
   if [ -z "$(getConfigKey "botadmin")" ]; then
-     # convert old admin
-     if [ -r "${BOTADMIN}" ]; then
-		admin="$(< "${BOTADMIN}")"
-     elif [ -z "${INTERACTIVE}" ]; then
+     # ask user for bot admin
+     if [ -z "${INTERACTIVE}" ]; then
 	printf "Running headless, set botadmin to AUTO MODE!\n"
      else
 	printf "${RED}ENTER BOT ADMIN...${NN}"
@@ -250,10 +245,6 @@ if [[ -z "${BOTTOKEN}"  && ! -f "${BOTCONFIG}.jssh" ]]; then
   # setup count file 
   if [ ! -f "${COUNTFILE}.jssh" ]; then
 	printf '["counted_user_chat_id"]\t"num_messages_seen"\n' >> "${COUNTFILE}.jssh"
-	# convert old file on creation
-	if [ -r  "${COUNTFILE}" ];then
-		sed 's/COUNT/\[\"/;s/$/\"\]\t\"1\"/' < "${COUNTFILE}" >> "${COUNTFILE}.jssh"
-	fi
   elif [ ! -w "${COUNTFILE}.jssh" ]; then
 	printf "${RED}ERROR: Can't write to ${COUNTFILE}!.${NN}"
 	ls -l "${COUNTFILE}.jssh"
