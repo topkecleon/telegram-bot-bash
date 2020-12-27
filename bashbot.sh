@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-dev-6-gcae6288
+#### $$VERSION$$ v1.21-dev-7-gb123c3d
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -42,7 +42,7 @@ if [ -t 1 ] && [ -n "$TERM" ];  then
     ORANGE='\e[35m'
     GREY='\e[1;30m'
     NC='\e[0m'
-    NN="${NN}"
+    NN="${NC}\n"
 fi
 
 # telegram uses utf-8 characters, check if we have an utf-8 charset
