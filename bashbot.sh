@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-dev-0-g2e878fd
+#### $$VERSION$$ v1.21-dev-4-g0bda9d9
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -1253,45 +1253,15 @@ if [ -z "${SOURCE}" ]; then
 		debug_checks "end init" "$@"
 		exit
 		;;
-	# print usage stats
-	"stats")
-		echo -e "${ORANGE}stats deprecated, see bin/bashbot_stats --help${NC}"
-		ME="$(getConfigKey "botname")"
-		declare -A STATS
-		jssh_readDB_async "STATS" "${COUNTFILE}"
-		for MSG in ${!STATS[*]}
-		do
-			[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
-			(( USERS++ ))
-		done
-		for MSG in ${STATS[*]}
-		do
-			(( MESSAGES+=MSG ))
-		done
-		if [ "${USERS}" != "" ]; then
-			echo "A total of ${MESSAGES} messages from ${USERS} users are processed."
-		else
-			echo "No one used your bot so far ..."
-		fi
-		jssh_readDB_async "STATS" "${BLOCKEDFILE}"
-		for MSG in ${!STATS[*]}
-		do
-			[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
-			(( BLOCKS++ ))
-		done
-		if [ "${BLOCKS}" != "" ]; then
-			echo -e "Note: ${BLOCKS} users are blocked by your bot:${GREY}"
-			sort -r "${BLOCKEDFILE}.jssh"
-			echo -e "${NC}\c"
-		fi
-		# show user created bot stats
-		_exec_if_function my_bashbot_stats "$@"
-		debug_checks "end $1" "$@"
+	# stats deprecated
+	"stats"|"count")
+		printf "${ORANGE}Stats is a separate command now, see bin/bashbot_stats.sh --help${NN}"
+		"${BASHBOT_HOME:-.}"/bin/bashbot_stats.sh --help
 		exit
 		;;
-	# send message to all users
+	# broadcast deprecated
 	'broadcast')
-		printf "${ORANGE}Broadcast is a separate command now, see ${BASHBOT_HOME:-.}/bin/send_broadcast.sh --help${NN}"
+		printf "${ORANGE}Broadcast is a separate command now, see bin/send_broadcast.sh --help${NN}"
 		"${BASHBOT_HOME:-.}"/bin/send_broadcast.sh --help
 		exit
 		;;
