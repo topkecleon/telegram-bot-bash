@@ -26,7 +26,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-dev-13-g0d7fee3
+#### $$VERSION$$ v1.21-dev-15-ga1f7215
 ##################################################################
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117,SC2059
 
@@ -184,7 +184,7 @@ JSONSHFILE="${BASHBOT_JSONSH:-${SCRIPTDIR}/JSON.sh/JSON.sh}"
 	 exit 3
 [ ! -x "${JSONSHFILE}" ] &&\
 	 printf "${RED}ERROR:${NC} ${JSONSHFILE} ${RED}seems not to exist, are we in dev environment?${NN}${GREY}%s${NN}"\
-			"JSONSHFILE environment variable points to wrong file or bashbot is not installed correct, see doc/2_install.md\n" &&\
+			"JSONSHFILE environment variable points to wrong file or bashbot is not installed correct, see doc/0_install.md\n" &&\
 	 exit 3
 
 # file locations based on ENVIRONMENT

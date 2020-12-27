@@ -81,7 +81,7 @@ cd mybot
 # download latest release with wget or from https://github.com/topkecleon/telegram-bot-bash/releases/latest
 wget "https://github.com/$(wget -q "https://github.com/topkecleon/telegram-bot-bash/releases/latest" -O - | egrep '/.*/download/.*/.*tar.gz' -o)"
 
-# Extract the tar archive
+# Extract the tar archive and go into bot dir
 tar -xzf *.tar.gz
 cd telegram-bot-bash
 
@@ -277,4 +277,4 @@ bashbotBlockRecover() {
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v1.21-dev-14-g3f8841b
+#### $$VERSION$$ v1.21-dev-15-ga1f7215

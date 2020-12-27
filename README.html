@@ -297,7 +297,7 @@ Written by Drew (@topkecleon) and Kay M (@gnadelwartz).
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># download latest release with wget or from https://github.com/topkecleon/telegram-bot-bash/releases/latest</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="st">&quot;https://github.com/</span><span class="va">$(</span><span class="fu">wget</span> <span class="at">-q</span> <span class="st">&quot;https://github.com/topkecleon/telegram-bot-bash/releases/latest&quot;</span> <span class="at">-O</span> <span class="at">-</span> <span class="kw">|</span> <span class="fu">egrep</span> <span class="st">&#39;/.*/download/.*/.*tar.gz&#39;</span> <span class="at">-o</span><span class="va">)</span><span class="st">&quot;</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the tar archive</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the tar archive and go into bot dir</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> <span class="at">-xzf</span> <span class="pp">*</span>.tar.gz</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> telegram-bot-bash</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
@@ -421,6 +421,6 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>@Gnadelwartz</p>
 <h2>That's it all guys!</h2>
 <p>If you feel that there's something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4>$$VERSION$$ v1.21-dev-14-g3f8841b</h4>
+<h4>$$VERSION$$ v1.21-dev-15-ga1f7215</h4>
 </body>
 </html>
