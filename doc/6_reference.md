@@ -114,28 +114,29 @@ The main use case for send_message is to process the output of interactive chats
 
 
 ##### send_file
-send_file allows you to send different type's of files, e.g. photos, stickers, audio, media, etc. [see more](https://core.telegram.org/bots/api#sending-files).
-It's recommended to use the _absolute path name_ (starting with `/`). A relative path is threated as relative to `data-bot-bash/upload` as default UPLOADDIR.
+send_file allows can send different type's of files, e.g. photos, stickers, audio, media, etc.
+[see Telegram API documentation](https://core.telegram.org/bots/api#sending-files).
+
+It's recommended to use __absolute path names__ (_starting with `/`_), as relative path names are threated as __relative to UPLOADDIR__ `data-bot-bash/upload`!
 
 For security reasons the following restrictions apply:
 
-- absolute path name must match the shell _regex_ FILE_REGEX (not file glob!)
-- path must not start with "." and not contain ".."
+- absolute path name must match the __shell regex__ `FILE_REGEX` (_not file glob_)
+- path must not start with `./` and not contain `../`
 
 *usage:* send_file "${CHAT[ID]}" "file" "caption"
 
 *example:*
 ```bash
-# recommended absolute path
+# recommended: absolute path
 send_file "${CHAT[ID]}" "/home/user/dog.jpg" "My Dog"
 
-# relative to default dir: data-bot-bash/upload/dog.jpg
+# relative to UPLOADDIR: data-bot-bash/upload/dog.jpg
 send_file "${CHAT[ID]}" "dog.jpg" "My Dog"
 
-# change to personal dir
+# change to personal upload dir
 UPLOADDIR="/home/user/myuploaddir"
-
-# relative to changed dir: /home/user/myuploaddir/dog.jpg
+# relative to personal upload dir: /home/user/myuploaddir/dog.jpg
 send_file "${CHAT[ID]}" "dog.jpg" "My Dog"
 ```
 
@@ -1154,5 +1155,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.21-dev-2-gde31231
+#### $$VERSION$$ v1.21-dev-3-g79402ec
 
