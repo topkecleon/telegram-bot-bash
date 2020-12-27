@@ -17,7 +17,7 @@ bash -c 'if eval "a[1]=1"; then echo "Shell support arrays..."; else echo "Shell
 # check for bash version by feature
 bash -c 'if [ "$(echo -e "\u1111")" != "\u1111" ]; then echo "Bash version ok ..."; else echo "Bash version may to old ..."; fi'
 
-# display bash version, must be greater thane 4.3
+# display bash version, must be greater than 4.3
 bash --version | grep "bash"
 ```
 
@@ -75,22 +75,23 @@ Note: If you are not using the zip / tar archive, you must install `JSON.awk` ma
 ### Install bashbot from git repo
 
 Installation and Updates should be done using the zip / tar archives provided on github to avoid
-problems and overwriting your bot config and `mycommands.sh`.
+problems and not overwriting your bot config and `mycommands.sh`.
 
 Nevertheless you can install or update bashbot from a git repo, see next chapter ...
 
 
 ### Create Installation / Update archives yourself
 
-To install or update bashbot from a git repo  you must create the archives yourself.
+To install or update bashbot from a git repo you must create the archives yourself.
 
 1. Run `git clone https://github.com/topkecleon/telegram-bot-bash.git`
 2. Change into the directory `telegram-bot-bash`
 3. Run ` git checkout develop` (_otional, for latest dev version_)
-4. Run ` dev/make-distribution.sh`
-5. If no errors occur you'll find archives and a bashbot installation in directory DIST
+4. Run ` dev/make-distribution.sh` (_add option --notest to skip tests_)
+5. You'll find archives and a bashbot installation in directory DIST
+6. install or update abshbot using one of the archives (optional)
 
-*Note*: You can update the basbot installation in `DIST/telegram-bot-bash` with `git pull; dev/make-distrubition.sh` to get the latest updates.
+*Note*: You can update the basbot installation in `DIST/telegram-bot-bash` with `git pull; dev/make-distrubition.sh --notest` to get the latest updates.
 
 
 ### Note for BSD and MacOS
@@ -126,5 +127,5 @@ You must update to [Version 1.20](https://github.com/topkecleon/telegram-bot-bas
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.21-dev-15-ga1f7215
+#### $$VERSION$$ v1.21-dev-16-geedd0b3
 

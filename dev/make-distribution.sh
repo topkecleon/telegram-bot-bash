@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
-# file: make-distribution.sh
-# creates files and arcchives to dirtribute bashbot
+##############################################################
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+# File: make-distribution.sh
+#
+# Description: creates files and arcchives to distribute bashbot
+#
+# Options: --notest - skip tests
+#
+#### $$VERSION$$ v1.21-dev-16-geedd0b3
+##############################################################
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -21,9 +27,9 @@ DISTDIR="./DIST/${DISTNAME}"
 DISTFILES="bashbot.rc bashbot.sh commands.sh mycommands.sh mycommands.sh.clean bin doc examples scripts modules addons LICENSE README.md README.txt README.html"
 
 # run tests first!
-
-for test in dev/all-test*.sh
+for test in $1 dev/all-test*.sh
 do
+   [[ "${test}" == "--notest"* ]] && break
    [ ! -x "${test}" ] && continue
    if ! "${test}" ; then
 	echo "Test ${test} failed, can't create dist!"
