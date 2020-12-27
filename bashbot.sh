@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-dev-5-g874e37e
+#### $$VERSION$$ v1.21-dev-6-gcae6288
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -276,18 +276,18 @@ fi
 
 # BOTTOKEN format checks
 if ! check_token "${BOTTOKEN}"; then
-	printf "${ORANGE}Warning: your bottoken may incorrect. it should have the following format:${NN}"
-	printf "${GREY}123456789${RED}:${GREY}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4${ORANGE} => ${NC}"
-	printf "${GREY}8-10 digits${RED}:${GREY}35 alphanumeric characters + '_-'${NN}"
-	printf "${ORANGE}Your current token is: '${GREY}^$(cat -ve <<<"${BOTTOKEN//:/${RED}:${GREY}}")${ORANGE}'${NN}"
+	printf "${ORANGE}Warning: Your bot token is incorrect, it should have the following format:${NC}\n"
+	printf "<your_bot_id>${RED}:${NC}<35_alphanumeric_characters-hash> ${RED}e.g. =>${NC} 123456789${RED}:${NC}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4\n\n"
+	printf "${GREY}Your bot token: '${NC}${BOTTOKEN//:/${RED}:${NC}}'\n"
+
 	if [[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}: ]]; then
-		printf "${ORANGE}Possible problem in the digits part, len is $(($(wc -c <<<"${BOTTOKEN%:*}")-1))${NN}"
-		[ -n "$(getConfigKey "botid")" ] && printf "${GREY}Did you mean: \"${NC}$(getConfigKey "botid")${GREY}\" ?${NN}"
+		printf "${GREY}\tHint: Bot id len: ${NC}$(($(wc -c <<<"${BOTTOKEN%:*}")-1)) ${GREY}but should be${NC} 8-10\n"
+		[ -n "$(getConfigKey "botid")" ] && printf "\t${GREEN}Did you mean: \"${NC}$(getConfigKey "botid")${GREEN}\" ?${NN}"
 	fi
 	[[ ! "${BOTTOKEN}" =~ :[a-zA-Z0-9_-]{35}$ ]] &&\
-		printf "${ORANGE}Possible problem in the characters part, len is $(($(wc -c <<<"${BOTTOKEN#*:}")-1))${NN}"
+		printf "${GREY}\tHint: Hash token: invalid character or not${NC} 35 ${GREY}characters long, len is ${NC}$(($(wc -c <<<"${BOTTOKEN#*:}")-1))\n"
+	printf "\n"
 fi
-
 
 
 ##################
