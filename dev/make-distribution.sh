@@ -7,7 +7,7 @@
 #
 # Options: --notest - skip tests
 #
-#### $$VERSION$$ v1.21-dev-16-geedd0b3
+#### $$VERSION$$ v1.21-dev-17-g8c9298d
 ##############################################################
 
 # magic to ensure that we're always inside the root of our application,
@@ -53,22 +53,9 @@ do
 	mv "${file}" "${file}.dist"
 done
 
-# dwonload JSON.sh
-echo "Inject JSON.sh"
-JSONSHFILE="JSON.sh/JSON.sh"
-if [ ! -r "${JSONSHFILE}" ]; then
-	mkdir "JSON.sh" 2>/dev/null
-	curl -sL -o "${JSONSHFILE}" "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh"
-	chmod +x "${JSONSHFILE}" 
-fi
-echo "Inject JSON.awk"
-JSONSHFILE="JSON.sh/JSON.awk"
-if [ ! -r "${JSONSHFILE}" ]; then
-	curl -sL -o "${JSONSHFILE}" "https://cdn.jsdelivr.net/gh/step-/JSON.awk/JSON.awk" 
-	curl -sL -o "${JSONSHFILE%/*}/awk-patch.sh" "https://cdn.jsdelivr.net/gh/step-/JSON.awk/tool/patch-for-busybox-awk.sh"
-	bash "${JSONSHFILE%/*}/awk-patch.sh" "${JSONSHFILE%/*}/JSON.awk"
-fi
-rm -f "${JSONSHFILE%/*}"/*.bak
+# inject JSON.sh into distribution
+# shellcheck disable=SC1090
+source "$GIT_DIR/../dev/inject-json.sh"
 
 # make html doc
 echo "Create html doc"

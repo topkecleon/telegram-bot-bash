@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
-# file: make-standalone.sh
-# even after make-distribution.sh bashbot is not self contained as it was in the past.
+###################################################################
 #
-# If you your bot is finished you can use make-standalone.sh to create the
-# the old all-in-one bashbot:  bashbot.sh and commands.sh only!
+# File: make-standalone.sh
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+# Description:
+#    even after make-distribution.sh bashbot is not self contained as it was in the past.
+#
+#   If you your bot is finished you can use make-standalone.sh to create the
+#    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
+#
+#### $$VERSION$$ v1.21-dev-17-g8c9298d
+###################################################################
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -29,6 +34,10 @@ mkdir -p "${DISTDIR}" 2>/dev/null
 # shellcheck disable=SC2086
 cp -r ${DISTFILES} "${DISTDIR}" 2>/dev/null
 cd "${DISTDIR}" || exit 1
+
+# inject JSON.sh into distribution
+# shellcheck disable=SC1090
+source "$GIT_DIR/../dev/inject-json.sh"
 
 #######################
 # here the magic starts

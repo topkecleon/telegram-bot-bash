@@ -1,7 +1,14 @@
 data-bot-bash/*
-*.jssh
+*.jssh*
 botacl
 *.flock
 *.log
 *.last
 *.ok
+*.bad
+*.bak
+*.jpg
+*.jpeg
+*.png
+*.zip
+*.gz
