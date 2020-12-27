@@ -1,29 +1,33 @@
 #!/bin/bash
-# file: bashbot.sh 
-# do not edit, this file will be overwritten on update
-
-# bashbot, the Telegram bot written in bash.
-# Written by Drew (@topkecleon) KayM (@gnadelwartz).
-# Also contributed: Daniil Gentili (@danogentili), JuanPotato, BigNerd95, TiagoDanin, iicc1.
-# https://github.com/topkecleon/telegram-bot-bash
-
-# Depends on JSON.sh (http://github.com/dominictarr/JSON.sh) (MIT/Apache),
-# This file is public domain in the USA and all free countries.
-# Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
+##################################################################
 #
-#### $$VERSION$$ v1.21-dev-9-g90c5d87
+# File: bashbot.sh 
+# Note: DO NOT EDIT! this file will be overwritten on update
+#
+# Description:
+#     bashbot, the Telegram bot written in bash.
+#     Written by Drew (@topkecleon) KayM (@gnadelwartz).
+#     Also contributed: Daniil Gentili (@danogentili), JuanPotato,
+#                       BigNerd95, TiagoDanin, iicc1.
+#     https://github.com/topkecleon/telegram-bot-bash
+#
+#     This file is public domain in the USA and all free countries.
+#     Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # Exit Codes:
-# - 0 success (hopefully)
-# - 1 can't change to dir
-# - 2 can't write to tmp, count or token
-# - 3 user / command / file not found
-# - 4 unknown command
-# - 5 cannot connect to telegram bot
-# - 6 mandatory module not found
-# - 7 can't get bottoken
-# - 8 curl/wget missing
-# - 10 not bash!
+#     0 - success (hopefully)
+#     1 - can't change to dir
+#     2 - can't write to tmp, count or token
+#     3 - user / command / file not found
+#     4 - unknown command
+#     5 - cannot connect to telegram bot
+#     6 - mandatory module not found
+#     7 - can't get bottoken
+#     8 - curl/wget missing
+#     10 - not bash!
+#
+#### $$VERSION$$ v1.21-dev-11-ge817328
+##################################################################
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117,SC2059
 
 # emmbeded system may claim bash but it is not
@@ -96,10 +100,11 @@ log_error(){ printf "%s: %b\n" "$(date)" "$*" >>"${ERRORLOG}"; }
 log_debug(){ printf "%s: %b\n" "$(date)" "$*" >>"${DEBUGLOG}"; }
 log_message(){ printf "\n%s: %b\n" "$(date)" "$*" >>"${MESSAGELOG}"; }
 log_update(){ printf "%s: %b\n" "$(date)" "$*" >>"${UPDATELOG}"; }
+
 # additional tests if we run in debug mode
 export BASHBOTDEBUG
-# debug should always last argument
 [[ "${BASH_ARGV[0]}" == *"debug"* ]] && BASHBOTDEBUG="yes"
+
 # $1 where $2 command $3 may debug 
 # shellcheck disable=SC2094
 debug_checks(){ {
@@ -159,7 +164,7 @@ fi
 ADDONDIR="${BASHBOT_ETC:-.}/addons"
 RUNUSER="${USER}" # USER is overwritten by bashbot array :-(, save original
 
-# OK everything setup, lets start
+# OK, ENVIRONMENT is set up, let's do some additional tests
 if [[ -z "${SOURCE}" && -z "$BASHBOT_HOME" ]] && ! cd "${RUNDIR}" ; then
 	printf "${RED}ERROR: Can't change to ${RUNDIR} ...${NN}"
 	exit 1
@@ -172,7 +177,17 @@ if [ ! -w "." ]; then
 	ls -ld .
 fi
 
-# Setup and check environment if BOTTOKEN is NOT set
+# check if JSON.sh is available
+JSONSHFILE="${BASHBOT_JSONSH:-${SCRIPTDIR}/JSON.sh/JSON.sh}"
+[[ "${JSONSHFILE}" != *"/JSON.sh" ]] &&\
+	 printf "${RED}ERROR:${NC} ${JSONSHFILE} ${RED}does not end with${NC} JSONS.sh\n" &&\
+	 exit 3
+[ ! -x "${JSONSHFILE}" ] &&\
+	 printf "${RED}ERROR:${NC} ${JSONSHFILE} ${RED}seems not to exist, are we in dev environment?${NN}${GREY}%s${NN}"\
+			"JSONSHFILE environment variable points to wrong file or bashbot is not installed correct, see doc/2_install.md\n" &&\
+	 exit 3
+
+# file locations based on ENVIRONMENT
 BOTCONFIG="${BASHBOT_ETC:-.}/botconfig"
 TOKENFILE="${BASHBOT_ETC:-.}/token"
 BOTADMIN="${BASHBOT_ETC:-.}/botadmin"
@@ -183,6 +198,7 @@ COUNTFILE="${BASHBOT_VAR:-.}/count"
 
 LOGDIR="${RUNDIR:-.}/logs"
 
+# CREATE botconfig if not exist
 # assume everything already set up correctly if TOKEN is set
 if [[ -z "${BOTTOKEN}"  && ! -f "${BOTCONFIG}.jssh" ]]; then
   # BOTCONFIG does not exist, create
@@ -1179,18 +1195,6 @@ bot_init() {
 if ! _is_function send_message ; then
 	printf "${RED}ERROR: send_message is not available, did you deactivate ${MODULEDIR}/sendMessage.sh?${NN}"
 	exit 1
-fi
-
-# get location of JSON.sh, download if not exist
-JSONSHFILE="${BASHBOT_JSONSH:-${SCRIPTDIR}/JSON.sh/JSON.sh}"
-[[ "${JSONSHFILE}" != *"/JSON.sh" ]] && printf "${RED}ERROR: \"${JSONSHFILE}\" ends not with \"JSONS.sh\".${NN}" && exit 3
-
-if [ ! -f "${JSONSHFILE}" ]; then
-	printf "Seems to be first run, Downloading ${JSONSHFILE}...\n"
-	[ "${SCRIPTDIR}/JSON.sh/JSON.sh" = "${JSONSHFILE}" ] &&\
-		 mkdir "${SCRIPTDIR}/JSON.sh" 2>/dev/null && chmod +w "${SCRIPTDIR}/JSON.sh"
-	getJson "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh" >"${JSONSHFILE}"
-	chmod +x "${JSONSHFILE}" 
 fi
 
 # check if JSON.awk exist and has x flag
