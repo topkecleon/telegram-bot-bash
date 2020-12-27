@@ -13,7 +13,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.12.2020 12:27
 #
-#### $$VERSION$$ v1.20-3-g232a16b
+#### $$VERSION$$ v1.21-dev-2-gde31231
 #===============================================================================
 
 ############
@@ -52,9 +52,10 @@ fi
 # shellcheck disable=SC1090
 source "${BASHBOT_HOME}/bashbot.sh" source "$1"
 
-# overwrite bot FILE regex to BASHBOT_ETC
+# overwrite bot FILE regex to BASHBOT_VAR
 # change this to the location you want to allow file uploads from
-FILE_REGEX="${BASHBOT_ETC%/bin*}/.*"
+UPLOADDIR="${BASHBOT_VAR%/bin*}"
+FILE_REGEX="${UPLOADDIR}/.*"
 
 # get and check ADMIN and NAME
 BOT_ADMIN="$(getConfigKey "botadmin")"
