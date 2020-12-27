@@ -26,7 +26,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-dev-12-g21afd4e
+#### $$VERSION$$ v1.21-dev-13-g0d7fee3
 ##################################################################
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117,SC2059
 
@@ -1111,13 +1111,10 @@ bot_init() {
 	[ -n "${BASHBOT_HOME}" ] && cd "${BASHBOT_HOME}" || exit 1
 	local DEBUG="$1"
 	# upgrade from old version
+	# currently no action
 	printf "Check for Update actions ...\n"
-	local OLDTMP="${BASHBOT_VAR:-.}/tmp-bot-bash"
-	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${DATADIR}"; rmdir "${OLDTMP}"; }
-	# no more existing modules
-	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
-	# load addons on startup
 	printf "Done.\n"
+	# load addons on startup
 	printf "Initialize modules and addons ...\n"
 	for addons in "${ADDONDIR:-.}"/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
@@ -1142,19 +1139,15 @@ bot_init() {
 		printf "${RED}User \"$TOUSER\" not found!${NN}"
 		exit 3
 	else
-		# shellcheck disable=SC2009
-		oldbot="$(ps -fu "$TOUSER" | grep startbot | grep -v -e 'grep' -e '\-startbot' )"
-		[ -n "${oldbot}" ] && \
-			printf "${ORANGE}Warning: At least one not upgraded TMUX bot is running! You must stop it with kill command:${NN}${oldbot}\n"
 		printf "Adjusting files and permissions for user \"${TOUSER}\" ...\n"
 		[ -w "bashbot.rc" ] && sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' "bashbot.rc"
-		chown -R "$TOUSER" . ./*
 		chmod 711 .
 		chmod -R o-w ./*
 		chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTADMIN}" logs "${LOGDIR}/"*.log 2>/dev/null
-	chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
+		chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
 		# jsshDB must writeable by owner
 		find . -name '*.jssh*' -exec chmod u+w \{\} +
+		chown -R "$TOUSER" . ./*
 		printf "Done.\n"
 	fi
 	# ask to check bottoken online
@@ -1166,10 +1159,10 @@ bot_init() {
 			$0 botname
 		fi 
 	fi
-	# check if botconf if seems valid
+	# check if botconf seems valid
 	printf "${GREEN}This is your bot config:${NN}"
 	sed 's/^/\t/' "${BOTCONFIG}.jssh" | grep -vF '["bot_config_key"]'
-	if [[ "$(getConfigKey "bottoken")" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ && "$(getConfigKey "botadmin")" =~ ^[0-9]+$ ]]; then
+	if check_token "$(getConfigKey "bottoken")" && [[ "$(getConfigKey "botadmin")" =~ ^[0-9]+$ ]]; then
 		printf "Bot config seems to be valid. Should I make a backup copy? (Y/n) Y\b"
 		read -r ANSWER
 		if [[ -z "${ANSWER}" || "${ANSWER}" =~ ^[^Nn] ]]; then
@@ -1177,7 +1170,7 @@ bot_init() {
 			cp "${BOTCONFIG}.jssh" "${BOTCONFIG}.jssh.ok"
 		fi 
 	else
-		printf "${ORANGE}Bot config may not complete, pls check.${NN}"
+		printf "${ORANGE}Bot config may incomplete, pls check.${NN}"
 	fi
 	# show result
 	ls -ld "${DATADIR}" "${LOGDIR}" ./*.jssh* ./*.sh 2>/dev/null
