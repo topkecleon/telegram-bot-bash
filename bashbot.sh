@@ -11,7 +11,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-dev-7-gb123c3d
+#### $$VERSION$$ v1.21-dev-8-gc0bce91
 #
 # Exit Codes:
 # - 0 success (hopefully)
@@ -195,9 +195,10 @@ if [[ -z "${BOTTOKEN}"  && ! -f "${BOTCONFIG}.jssh" ]]; then
 	printf "Running headless, set BOTTOKEN or run ${SCRIPT} init first!\n"
 	exit 2 
   else
-	printf "${RED}TOKEN MISSING.${NN}"
+	printf "${RED}ENTER BOT TOKEN...${NN}"
 	printf "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NN}"
 	read -r token
+	printf "\n"
   fi
   [ -n "${token}" ] && printf '["bottoken"]\t"%s"\n'  "${token}" >> "${BOTCONFIG}.jssh"
 
@@ -209,10 +210,10 @@ if [[ -z "${BOTTOKEN}"  && ! -f "${BOTCONFIG}.jssh" ]]; then
      elif [ -z "${INTERACTIVE}" ]; then
 	printf "Running headless, set botadmin to AUTO MODE!\n"
      else
-	printf "${RED}BOTADMIN MISSING.${NN}"
-	printf "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR ENTER '?'${NN}"
-	printf "${ORANGE}TO MAKE FIRST USER TYPING '/start' TO BOTADMIN${NN}"
+	printf "${RED}ENTER BOT ADMIN...${NN}"
+	printf "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR PRESS ENTER\nTO MAKE FIRST USER TYPING '/start' BOT ADMIN${NN}"
 	read -r admin
+	printf "\n"
      fi
      [ -z "${admin}" ] && admin='?'
      printf '["botadmin"]\t"%s"\n'  "${admin}" >> "${BOTCONFIG}.jssh"
@@ -285,7 +286,7 @@ if ! check_token "${BOTTOKEN}"; then
 		[ -n "$(getConfigKey "botid")" ] && printf "\t${GREEN}Did you mean: \"${NC}$(getConfigKey "botid")${GREEN}\" ?${NN}"
 	fi
 	[[ ! "${BOTTOKEN}" =~ :[a-zA-Z0-9_-]{35}$ ]] &&\
-		printf "${GREY}\tHint: Hash token: invalid character or not${NC} 35 ${GREY}characters long, len is ${NC}$(($(wc -c <<<"${BOTTOKEN#*:}")-1))\n"
+		printf "${GREY}\tHint: Hash contains invalid character or is not${NC} 35 ${GREY}characters long, hash len is ${NC}$(($(wc -c <<<"${BOTTOKEN#*:}")-1))\n"
 	printf "\n"
 fi
 
