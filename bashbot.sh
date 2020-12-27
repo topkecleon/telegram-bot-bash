@@ -26,7 +26,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-dev-15-ga1f7215
+#### $$VERSION$$ v1.21-dev-17-g8c9298d
 ##################################################################
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117,SC2059
 
@@ -222,16 +222,15 @@ if [[ -z "${BOTTOKEN}"  && ! -f "${BOTCONFIG}.jssh" ]]; then
 	printf "Running headless, set botadmin to AUTO MODE!\n"
      else
 	printf "${RED}ENTER BOT ADMIN...${NN}"
-	printf "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR PRESS ENTER\nTO MAKE FIRST USER TYPING '/start' BOT ADMIN${NN}"
+	printf "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR PRESS ENTER\nTO MAKE FIRST USER TYPING '/start' BOT ADMIN${NN}?\b"
 	read -r admin
-	printf "\n"
      fi
      [ -z "${admin}" ] && admin='?'
      printf '["botadmin"]\t"%s"\n'  "${admin}" >> "${BOTCONFIG}.jssh"
   fi
   # setup botacl file
   if [ ! -f "${BOTACL}" ]; then
-	printf "${ORANGE}Create empty ${BOTACL} file.${NC}"
+	printf "${GREY}Create initial ${BOTACL} file.${NN}"
 	printf '\n' >"${BOTACL}"
   fi
   # setup data dir file
@@ -285,7 +284,7 @@ fi
 
 # BOTTOKEN format checks
 if ! check_token "${BOTTOKEN}"; then
-	printf "${ORANGE}Warning: Your bot token is incorrect, it should have the following format:${NC}\n"
+	printf "\n${ORANGE}Warning: Your bot token is incorrect, it should have the following format:${NC}\n"
 	printf "<your_bot_id>${RED}:${NC}<35_alphanumeric_characters-hash> ${RED}e.g. =>${NC} 123456789${RED}:${NC}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4\n\n"
 	printf "${GREY}Your bot token: '${NC}${BOTTOKEN//:/${RED}:${NC}}'\n"
 

@@ -114,7 +114,7 @@ The main use case for send_message is to process the output of interactive chats
 
 
 ##### send_file
-send_file allows can send different type's of files, e.g. photos, stickers, audio, media, etc.
+send_file can send different type's of files, e.g. photos, stickers, audio, media, etc.
 [see Telegram API documentation](https://core.telegram.org/bots/api#sending-files).
 
 It's recommended to use __absolute path names__ (_starting with `/`_), as relative path names are threated as __relative to UPLOADDIR__ `data-bot-bash/upload`!
@@ -1155,5 +1155,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.21-dev-3-g79402ec
+#### $$VERSION$$ v1.21-dev-17-g8c9298d
 

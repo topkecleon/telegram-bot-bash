@@ -197,7 +197,10 @@ Now have a look at the directory 'standalone', here you find the files 'bashbot.
 5. give your (dev) fork a new version tag: `git tag v1.xx`
 6. setup github hooks by running `dev/install-hooks.sh`
 
-Note for Debian: Debian Buster has an old shellcheck version, pls update from [buster-backports](https://backports.debian.org/Instructions/)
+Note for Debian: Debian Buster ships older versions of many utilities, pls try to install from [buster-backports](https://backports.debian.org/Instructions/)
+```bash
+sudo apt-get -t buster-backports install git shellcheck pandoc codespell curl
+```
 
 #### Test, Add, Push changes
 A typical bashbot develop loop looks as follow:
@@ -351,5 +354,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v1.20-3-g232a16b
+#### $$VERSION$$ v1.21-dev-17-g8c9298d
 
