@@ -11,7 +11,7 @@
 *.log
 *.swp
 *.swo
-/log/*
+/logs/
 /JSON.sh/
 /data-bot-bash/
 /DIST/
