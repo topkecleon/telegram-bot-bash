@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.21-dev-19-gb5e4f53
+#### $$VERSION$$ v1.21-dev-20-ga4dce7b
 
 # will be automatically sourced from bashbot
 
@@ -155,14 +155,6 @@ send_button() {
 }
 
 
-UPLOADDIR="${BASHBOT_UPLOAD:-${DATADIR}/upload}"
-
-# for now this can only send local files with curl!
-# extend to allow send files by URL or telegram ID
-send_file() {
-	upload_file "${@}"
-}
-
 if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 # there are no checks if URL or ID exists
 # $1 chat $3 ... $n URL or ID
@@ -189,17 +181,41 @@ else
   }
 fi
 
+UPLOADDIR="${BASHBOT_UPLOAD:-${DATADIR}/upload}"
+
+# for now this can only send local files with curl!
+# extend to allow send files by URL or telegram ID
+send_file() {
+	local err
+	upload_file "${@}"; err="$?"
+	# fake Telegram response to provide error
+	if [ "${err}" != "0" ]; then
+		BOTSENT=()
+		BOTSENT[OK]="false"
+		case "$err" in
+		    1)	BOTSENT[ERROR]="Path to file $2 contains to much '../' or starts with '.'";;
+		    2)	BOTSENT[ERROR]="Path to file $2 does not match regex: ${FILE_REGEX} ";;
+		    3)	if [[ "$2" == "/"* ]];then
+				BOTSENT[ERROR]="File not found: $2"
+			else
+				BOTSENT[ERROR]="File not found: ${UPLOADDIR}/$2"
+			fi;;
+		esac
+		[ -n "${BASHBOTDEBUG}" ] && log_message "Error in upload_file: ${BOTSENT[ERROR]}"
+	fi
+}
+
 upload_file(){
 	local CUR_URL WHAT STATUS text=$3 file="$2"
 	# file access checks ...
-	[[ "$file" = *'..'* ]] && return  # no directory traversal
-	[[ "$file" = '.'* ]] && return	 # no hidden or relative files
+	[[ "$file" = *'..'* ]] && return 1  # no directory traversal
+	[[ "$file" = '.'* ]] && return 1	 # no hidden or relative files
 	if [[ "$file" = '/'* ]] ; then
-		[[ ! "$file" =~ $FILE_REGEX ]] && return # absolute must match REGEX
+		[[ ! "$file" =~ ${FILE_REGEX} ]] && return 2 # absolute must match REGEX
 	else
 		file="${UPLOADDIR:-NOUPLOADDIR}/${file}" # othiers must be in UPLOADDIR
 	fi
-	[ ! -r "$file" ] && return # and file must exits of course
+	[ ! -r "$file" ] && return 3 # and file must exits of course
  
 	local ext="${file##*.}"
 	case $ext in
@@ -308,7 +324,7 @@ send_message() {
 		sent=y
 	fi
 	if [ -n "$file" ]; then
-		upload_file "$1" "$file" "$text"
+		send_file "$1" "$file" "$text"
 		sent=y
 	fi
 	if [ -n "$lat" ] && [ -n "$long" ]; then
