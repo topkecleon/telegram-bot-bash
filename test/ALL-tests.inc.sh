@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-26-gbe87ba3
 
 # common variables
 export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
@@ -34,7 +34,8 @@ export  INPUTFILE REFFILE INPUTFILE2 REFFILE2 OUTPUTFILE
  REFFILE2="${DIRME}/${REFDIR}/${REFDIR}2.result"
 
 # do not query telegram when testing
-export BASHBOT_URL TESTTOKEN
+export BASHBOT_URL TESTTOKEN BOTTOKEN
+BOTTOKEN=""
 BASHBOT_URL="https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/getMe?"
 TESTTOKEN="123456789:BASHBOTTESTSCRIPTbashbottestscript_"
 
