@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-25-gd496639
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -10,6 +10,7 @@ TESTFILES="${TOKENFILE} ${ACLFILE} ${COUNTFILE} ${BLOCKEDFILE} ${ADMINFILE}"
 set -e
 
 # run bashbot first time with init
+export BOTTOKEN=""
 "${TESTDIR}/bashbot.sh" init >"${LOGFILE}"  <<EOF
 $TESTTOKEN
 nobody
