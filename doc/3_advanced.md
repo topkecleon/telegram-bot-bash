@@ -114,7 +114,7 @@ echo "Text that will appear in chat? mykeyboardstartshere [ \"Yep, sure\" , \"No
 ```
 Same goes for files:
 ```bash
-echo "Text that will appear in chat? myfilelocationstartshere /home/user/dog.jpg"
+echo "Text that will appear in chat? myfilestartshere /home/user/dog.jpg"
 ```
 *Note*: Use an _absolute path name_ (starting with `/`), a relative path name is relative to `data-bot-bash/upload`!
 See [send_file documentation](6_reference.md#send_file) for more information.
@@ -133,7 +133,7 @@ echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45 myti
 ```
 You can combine them:
 ```bash
-echo "Text that will appear in chat? mykeyboardstartshere [ \"Yep, sure\" , \"No, highly unlikely\" ] myfilelocationstartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
+echo "Text that will appear in chat? mykeyboardstartshere [ \"Yep, sure\" , \"No, highly unlikely\" ] myfilestartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
 ```
 Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.
 
@@ -302,5 +302,5 @@ Note: If you disable automatic retry, se above, you disable also connection prob
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v1.21-dev-2-gde31231
+#### $$VERSION$$ v1.21-dev-19-gb5e4f53
 
