@@ -63,7 +63,7 @@ Most systems with awk can use `JSON.awk` as drop in replacement
 
 BSD and MacOS users must install `gnu awk` and adjust the shebang, see below
 
-After you have checked that 'JSON.awk' is working correct on your system make `JSON.awk` executable and (re)start bashbot.
+After you have checked that 'JSON.awk.dist' is working correct on your system copy it to `JSON.awk` and (re)start bashbot.
 
 Note: If you are not using the zip / tar archive, you must install `JSON.awk` manually into the same directory as 'JSON.sh`:
 
@@ -127,5 +127,5 @@ You must update to [Version 1.20](https://github.com/topkecleon/telegram-bot-bas
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.21-dev-16-geedd0b3
+#### $$VERSION$$ v1.21-dev-21-g8c67bb7
 

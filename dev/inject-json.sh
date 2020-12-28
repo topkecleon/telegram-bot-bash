@@ -7,7 +7,7 @@
 #
 # Usage: source inject-json.sh
 #
-#### $$VERSION$$ v1.21-dev-17-g8c9298d
+#### $$VERSION$$ v1.21-dev-21-g8c67bb7
 ##############################################################
 
 # download JSON.sh
@@ -21,13 +21,14 @@ if [ ! -r "${JSONSHFILE}" ]; then
 fi
 
 # download JSON.awk
-JSONSHFILE="JSON.sh/JSON.awk"
+JSONSHFILE="JSON.sh/JSON.awk.dist"
 if [ ! -r "${JSONSHFILE}" ]; then
 	printf "Inject JSON.awk ... "
 	curl -sL -o "${JSONSHFILE}" "https://cdn.jsdelivr.net/gh/step-/JSON.awk/JSON.awk" 
 	curl -sL -o "${JSONSHFILE%/*}/awk-patch.sh" "https://cdn.jsdelivr.net/gh/step-/JSON.awk/tool/patch-for-busybox-awk.sh"
+	chmod +x "${JSONSHFILE}"
 	printf "Done!\n"
-	bash "${JSONSHFILE%/*}/awk-patch.sh" "${JSONSHFILE%/*}/JSON.awk"
+	bash "${JSONSHFILE%/*}/awk-patch.sh" "${JSONSHFILE}"
 fi
 # delete backup files
 rm -f "${JSONSHFILE%/*}"/*.bak
