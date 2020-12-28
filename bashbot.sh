@@ -26,7 +26,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-dev-25-gd496639
+#### $$VERSION$$ v1.21-dev-27-gd0f8716
 ##################################################################
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117,SC2059
 
@@ -98,7 +98,7 @@ check_token(){
 # log $1 to ERRORLOG with date
 log_error(){ printf "%s: %b\n" "$(date)" "$*" >>"${ERRORLOG}"; }
 log_debug(){ printf "%s: %b\n" "$(date)" "$*" >>"${DEBUGLOG}"; }
-log_message(){ printf "\n%s: %b\n" "$(date)" "$*" >>"${MESSAGELOG}"; }
+log_message(){ printf "\n%s: %s\n" "$(date)" "$*" >>"${MESSAGELOG}"; }
 log_update(){ printf "%s: %b\n" "$(date)" "$*" >>"${UPDATELOG}"; }
 
 # additional tests if we run in debug mode
