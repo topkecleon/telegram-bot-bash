@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-22-ga3efcd2
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -45,10 +45,10 @@ touch "$ALLOW/this_is_my.gif" "$ALLOW/this_is_my.doc"
 touch "$DATADIR/this_is_my.gif" "$DATADIR/this_is_my.doc"
 
 while read -r line ; do
-	echo -n "."
-	set -x
+	set -x; set +e
 	send_message "123456" "$line" >>"${OUTPUTFILE}"
-	set +x
+	set +x; set -e
+	echo -n "."
 done < "${INPUTFILE}" 2>>"${LOGFILE}"
 [ -d "$ALLOW" ] && rm -rf "$ALLOW"
 

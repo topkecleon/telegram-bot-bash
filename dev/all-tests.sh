@@ -5,7 +5,7 @@
 #
 # Description: run all tests, exit after failed test
 #
-#### $$VERSION$$ v1.21-dev-10-g9bfc27a
+#### $$VERSION$$ v1.21-dev-22-ga3efcd2
 #############################################################
 
 # magic to ensure that we're always inside the root of our application,
