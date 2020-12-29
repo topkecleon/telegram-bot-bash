@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.21-dev-20-ga4dce7b
+#### $$VERSION$$ v1.21-dev-29-g13d15f4
 
 # will be automatically sourced from bashbot
 
@@ -336,14 +336,14 @@ send_message() {
 		sent=y
 	fi
 	if [ "$sent" != "y" ];then
-		send_text "$1" "$text"
+		send_text_mode "$1" "$text"
 	fi
 
 }
 
 # $1 CHAT $2 message starting possibly with html_parse_mode or markdown_parse_mode
 # not working, fix or remove after 1.0!!
-send_text() {
+send_text_mode() {
 	case "$2" in
 		'html_parse_mode'*)
 			send_html_message "$1" "${2//html_parse_mode}"

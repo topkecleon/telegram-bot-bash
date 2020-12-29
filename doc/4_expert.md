@@ -5,8 +5,8 @@
 UTF-8 is a variable length encoding of Unicode. UTF-8 is recommended as the default encoding in JSON, XML and HTML, also Telegram make use of it.
 
 The first 128 characters are regular ASCII, so it's a superset of and compatible with ASCII environments. The next 1,920 characters need
-two bytes for encoding and covers almost all `Latin` alphabets, also `Greek```, `Cyrillic```,
-```Hebrew```, `Arabic` and more. See [Wikipedia](https://en.wikipedia.org/wiki/UTF-8) for more details.
+two bytes for encoding and covers almost all `Latin` alphabets, also `Greek`, `Cyrillic`,
+`Hebrew`, `Arabic` and more. See [Wikipedia](https://en.wikipedia.org/wiki/UTF-8) for more details.
 
 #### Setting up your Environment
 In general `bash` and `GNU` utitities are UTF-8 aware if you to setup your environment
@@ -209,7 +209,7 @@ If you want to have other locations for config, data etc,  define and export the
 **Note: all specified directories and files must exist or running 'bashbot.sh' will fail.**
 
 ##### BASHBOT_ETC
-Location of the files `commands.sh```, `mycommands.sh```, `botconfig.jssh```, `botacl` ...
+Location of the files `commands.sh`, `mycommands.sh`, `botconfig.jssh`, `botacl` ...
 ```bash
   unset  BASHBOT_ETC     # keep in telegram-bot-bash (default)
   export BASHBOT_ETC ""  # keep in telegram-bot-bash
@@ -223,7 +223,7 @@ Location of the files `commands.sh```, `mycommands.sh```, `botconfig.jssh```, `b
  e.g. /etc/bashbot
 
 ##### BASHBOT_VAR
-Location of runtime data `data-bot-bash```, `count.jssh` 
+Location of runtime data `data-bot-bash`, `count.jssh` 
 ```bash
   unset  BASHBOT_VAR     # keep in telegram-bot-bash (default)
   export BASHBOT_VAR ""  # keep in telegram-bot-bash
@@ -378,5 +378,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v1.21-dev-28-g43f5536
+#### $$VERSION$$ v1.21-dev-29-g13d15f4
 

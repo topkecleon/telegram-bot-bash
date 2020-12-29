@@ -10,9 +10,9 @@ In addition you should know about [BotFather, the one bot to rule them all](http
 If you don't have a github account, it may time to [setup a free account now](https://github.com/pricing)
 
 ### Add commands to mycommands.sh only
-Do not change `bashbot.sh` and `commands.sh```, instead place your commands in to  `mycommands.sh```.
+Do not change `bashbot.sh` and `commands.sh`, instead place your commands in to  `mycommands.sh`.
 To start with a clean/minimal bot copy `mycommands.sh.clean` to `mycommands.sh` and start editing
-the message strings and place commands in the```case ... esac` block of the function mycommands():
+the message strings and place commands in the`case ... esac` block of the function mycommands():
 ```bash
 # file: mycommands.sh
 # your additional bashbot commands
@@ -39,13 +39,13 @@ mycommands() {
 
 ### DIsable, replace and extend global commands
 
-Global bashbot command processing, e.g. /start, /info etc. is disabled if you return a non zero value from `mycommands.sh```,
+Global bashbot command processing, e.g. /start, /info etc. is disabled if you return a non zero value from `mycommands.sh`,
 see /start example below.
 
 To replace a global bashbot command add the same command to `mycommands.sh` and place `return 1` at the end of
 the case block, see /kickme example below.
 
-If a command is available as a global command and in `mycommands.sh```, plus you return a zero value (nothing or 0)
+If a command is available as a global command and in `mycommands.sh`, plus you return a zero value (nothing or 0)
 both command sections are processed. Thus you can extend global commands with additional actions, see /info example below
 
 **Learn more about [Bot commands](https://core.telegram.org/bots#commands).**
@@ -160,5 +160,5 @@ The second warning is about an unused variable, this is true because in our exam
 #### [Prev Best Practice](5_practice.md)
 #### [Next Functions Reference](6_reference.md)
 
-#### $$VERSION$$ v1.21-dev-28-g43f5536
+#### $$VERSION$$ v1.21-dev-29-g13d15f4
 

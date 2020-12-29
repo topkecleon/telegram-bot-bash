@@ -325,13 +325,13 @@ Your Bot will leave the chat.
 *alias:* _leave 
 
 ```bash
-if _is_admin ; then 
+if bot_is_admin ; then 
  send_markdown_message "${CHAT[ID]}" "*LEAVING CHAT...*"
  leave_chat "${CHAT[ID]}"
 fi
 ```
 
-'See also [kick Chat Member](https://core.telegram.org/bots/api/#kickchatmember)*
+See also [kick Chat Member](https://core.telegram.org/bots/api/#kickchatmember)*
 
 ----
 
@@ -572,12 +572,10 @@ fi
 ----
 
 ##### send_interactive
-Form version 0.80 on forward_message is used to forward messages to interactive job. It replaces the old 'inproc' commands used for TMUX.
-Usually a message is automatically forwarded in 'commands.sh', but you can forward messages while processing also or send your own messages.
+`send_interactive` is used to forward messages to interactive jobs.
+Usually a message is automatically forwarded from within `commands.sh`, but you can send messages yourself.
 
 *usage:* send_interactive "${CHAT[ID]}" "message"
-
-*replaces:* incproc
 
 ----
 
@@ -612,18 +610,17 @@ slow functions:
 
 #### File naming and locking
 
-A jssh fileDB consists of  two files which must reside inside BASHBOT_ETC or BASHBOT_DATA.
+A jssh fileDB consists of two files which must reside inside `BASHBOT_ETC` or `BASHBOT_DATA`.
 
 - `filename.jssh` is a text file containing the key/value data in json.sh format.
 - `filename.jssh.flock` is used for read/write locking with flock
 
-Path names containing `..` or not located in BASHBOT_ETC or BASHBOT_DATA are refused by jsshDB functions with an error.
+Path names containing `..` or not located in `BASHBOT_ETC` or `BASHBOT_DATA` are refused by jsshDB functions with an error.
 
-Since version 0.94 jsshDB functions support file locking with flock. Write/update operations are serialised with flock to wait until
-previous operations are finished, see "man flock" for information. To avoid deadlocks we use a timeout of 10s for write and 5s for read operations. 
+jsshDB functions use file locking with flock, if flock is availible. Write/update operations are serialised to wait until
+previous operations are finished, see "man flock". To avoid deadlocks bashbot use a timeout of 10s for write and 5s for read operations. 
 
-Every jssh_*DB function exist as jssj_*DB_async also.
-In case flock is not availibe or you don't want locking, jssh_*DB_async functions without file locking will be used.
+For every `jssh_...DB` function a `jsshj_...DB_async` function exsist also.  In case don't want locking, use `jssh_...DB_async` functions.
 
 *Example:* for allowed file names:
 ```bash
@@ -676,7 +673,7 @@ Something wrong with data-bot-bash/../../../somevalues
 ```
 
 ##### jssh_writeDB
-Write content of an ARRAY into jsshDB file. ARRAY name must be declared with "declare -A ARRAY" before calling writeDB.
+Write content of an ARRAY into jsshDB file. ARRAY name must be declared with `declare -A ARRAY` before calling writeDB.
 "DB" file MUST exist or nothing is written.
 
 Note: Existing content is overwritten.
@@ -712,7 +709,7 @@ cat "${DATADIR:-}/myvalues.jssh"
 ```
 
 ##### jssh_printDB
-Print content of an ARRAY to STDOUT. ARRAY name must be declared with "declare -A ARRAY" before calling printDB..
+Print content of an ARRAY to STDOUT. ARRAY name must be declared with `declare -A ARRAY` before calling printDB..
 
 *usage:*  jssh_printDB "ARRAY" 
 
@@ -734,7 +731,7 @@ jssh_printDB READVALUES
 ```
 
 ##### jssh_updateDB
-Update/Add content of an ARRAY into a jsshDB file. ARRAY name must be declared with "declare -A ARRAY" before calling updateDB.
+Update/Add content of an ARRAY into a jsshDB file. ARRAY name must be declared with `declare -A ARRAY` before calling updateDB.
 "DB" file MUST exist or nothing is written.
 
 Note: Existing content not in ARRAY is kept in file.
@@ -769,7 +766,7 @@ cat "$DBfile"
 ```
 
 ##### jssh_readDB
-Read content of a file in JSON.sh format into given ARRAY.  ARRAY name must be declared with "declare -A ARRAY" upfront,
+Read content of a file in JSON.sh format into given ARRAY.  ARRAY name must be declared with `declare -A ARRAY` upfront,
 
 *usage:*  jssh_readDB "ARRAY" "filename"
 
@@ -875,8 +872,8 @@ https://linuxconfig.org/how-to-use-arrays-in-bash-script
 ----
 
 ### Aliases - shortcuts for often used functions 
-Aliases are handy shortcuts for using in 'mycommands.sh', they avoid error prone typing of  "${CHAT[ID]}" "${USER[ID]}" as much as possible.
-Do not use them in bashbot.sh, modules and addons.
+Aliases are handy shortcuts for use in `mycommands.sh` *only*, they avoid error prone typing of  "${CHAT[ID]}" "${USER[ID]}" as much as possible.
+Do not use them in other files e.g. `bashbot.sh`, modules, addons etc.
 
 ##### _is_botadmin
 
@@ -974,7 +971,7 @@ Do not use them in bashbot.sh, modules and addons.
 ### Helper functions
 
 ##### download
-Download the fiven URL and returns the final filename in TMPDIR. If the given filename exists,the filename is prefixed with a
+Download the given URL and returns the final filename in TMPDIR. If the given filename exists,the filename is prefixed with a
 random number. Filename is not allowed to contain '/' or '..'.
 
 *usage:* download URL filename
@@ -1084,9 +1081,6 @@ killallproc
 ##### get_file
 *usage:* url="$(get_file "${CHAT[ID]}" "message")"
 
-##### send_text
-*usage:* send_text "${CHAT[ID]}" "message"
-
 ----
 
 ##### JsonDecode
@@ -1107,7 +1101,7 @@ Reads JSON from STDIN and Outputs found Value to STDOUT
 
 ##### Json2Array
 Read JSON.sh style data from STDIN and assign to given ARRAY
-ARRAY name  must be declared with "declare -A ARRAY" before calling
+ARRAY name  must be declared with `declare -A ARRAY` before calling
 
 *usage:* Json2Array "ARRAY"
 
@@ -1155,5 +1149,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.21-dev-28-g43f5536
+#### $$VERSION$$ v1.21-dev-29-g13d15f4
 

@@ -54,7 +54,7 @@ ALL:*:*
 
 
 ```
-You must use the function `user_is_allowed`to check if a user has the capability to do something. Example: Check if user has capability to start bot.
+You must use the function `user_is_allowed` to check if a user has the capability to do something. Example: Check if user has capability to start bot.
 
 ```bash
 	case "$MESSAGE" in
@@ -74,8 +74,8 @@ You must use the function `user_is_allowed`to check if a user has the capability
 ### Interactive Chats
 Interactive chats are short running scripts, reading user input and echo data to the user.
 
-To create a new interactive chat script copy 'scripts/interactive.sh.clean' to e.g. 'scripts/mynewinteractive.sh', make it executable
-and then use 'start_proc' function from your bot, it's possible to pass two arguments. You find more examples for interactive scripts in 'examples'
+To create a new interactive chat script copy `scripts/interactive.sh.clean` to e.g. `scripts/mynewinteractive.sh`, make it executable
+and then use `start_proc` function from your bot, it's possible to pass two arguments. You find more examples for interactive scripts in 'examples'
 
 *usage*: start_proc chat_id script arg1 arg2
 
@@ -83,7 +83,7 @@ and then use 'start_proc' function from your bot, it's possible to pass two argu
 
 *usage*: check_prog chat_id
 
-**Note:** From Version 0.96 on scripts must read user input from '$3' instead of stdin!
+**IMPORTANT:** Scripts must read user input from '$3' instead of stdin!
 
 ```bash
 #!/bin/bash
@@ -105,8 +105,8 @@ echo -e "Your Message: ${test}\nbye!"
 
 #### message formatting and keyboards
 
-The output of the script will be processed by 'send_messages', so you can not only send text, but also keyboards, files, locations and more.
-Each newline in the output will start an new message to the user. To have line breaks in your message you must insert ' mynewlinestartshere ' or '\n' instead.
+The output of the script will be processed by `send_messages`, so you can not only send text, but also keyboards, files, locations and more.
+Each newline in the output will start an new message to the user. To have line breaks in your message you must insert `\n` instead.
 
 To open up a keyboard in an interactive script, print out the keyboard layout in the following way:
 ```bash
@@ -137,10 +137,9 @@ echo "Text that will appear in chat? mykeyboardstartshere [ \"Yep, sure\" , \"No
 ```
 Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.
 
-To insert a line break in your message you can insert ` mynewlinestartshere ` or `\n` in your echo command:
+To insert a line break in your message you can insert `\n` in your echo command:
 ```bash
-echo "Text that will appear in one message  mynewlinestartshere  with this text on a new line"
-echo "Other text message\nwith a newline" # \n instead of mynewlinestartshere
+echo "Text that will appear in one message \nwith this text on a new line"
 ```
 
 In case you want extend a message already containing a location, a file, a keyboard etc.,
@@ -302,5 +301,5 @@ Note: If you disable automatic retry, se above, you disable also connection prob
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v1.21-dev-28-g43f5536
+#### $$VERSION$$ v1.21-dev-29-g13d15f4
 

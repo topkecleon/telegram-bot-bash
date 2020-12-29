@@ -118,7 +118,7 @@ For more Information on how to install, customize and use your new bot, read the
 
 ### Log files
 
-Bashbot actions are logged in BASHBOT.log, Telegram send/receive errors are logged to ERROR.log.
+Bashbot actions are logged to `BASHBOT.log`, Telegram send/receive errors are logged to `ERROR.log`.
 Start bashbot in debug mode to get all messages send to / received from Telegram and error messages of bash commands also.
 
 To enable debug mode start bashbot with debug as third argument: `bashbot start debug`
@@ -141,11 +141,11 @@ Bash scripts in general are not designed to be bullet proof, so consider this Bo
 
 Whenever you are processing input from untrusted sources (messages, files, network) you must be as careful as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everything. In addition delete unused scripts and examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable all not used commands.
 
-One of the most powerful features of unix shells is variable and command substitution using ```${}``` and ```$()```,
+One of the most powerful features of unix shells is variable and command substitution using`${}` and`$()```,
 but as they are expanded in double quotes, this can lead to RCE and information disclosing bugs in complex scripts like bashbot.
 So it's more secure to escape or remove '$' in input from user, files or network.
 
-A powerful tool to improve your scripts is ```shellcheck```. You can [use it online](https://www.shellcheck.net/) or [install shellcheck locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used extensively in bashbot development to ensure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests.
+A powerful tool to improve your scripts is`shellcheck`. You can [use it online](https://www.shellcheck.net/) or [install shellcheck locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used extensively in bashbot development to ensure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests.
 In addition bashbot has a [test suite](doc/7_develop.md) to check if important functionality is working as expected.
 
 ### Use printf whenever possible
@@ -163,9 +163,9 @@ For the same reason every file your Bot can read is in danger to be disclosed. R
 ### Secure your Bot installation
 **Your Bot configuration must no be readable from other users.** Everyone who can read your Bots token is able to act as your Bot and has access to all chats the Bot is in!
 
-Everyone with read access to your Bot files can extract your Bots data. Especially your Bot config in ```config.jssh``` must be protected against other users. No one except you should have write access to the Bot files. The Bot should be restricted to have write access to ```count.jssh``` and  ```data-bot-bash``` only, all other files must be write protected.
+Everyone with read access to your Bot files can extract your Bots data. Especially your Bot config in`config.jssh` must be protected against other users. No one except you should have write access to the Bot files. The Bot should be restricted to have write access to`count.jssh` and `data-bot-bash` only, all other files must be write protected.
 
-To set access rights for your bashbot installation to a reasonable default run ```sudo ./bashbot.sh init``` after every update or change to your installation directory.
+To set access rights for your bashbot installation to a reasonable default run`sudo ./bashbot.sh init` after every update or change to your installation directory.
 
 ## FAQ
 
@@ -183,16 +183,16 @@ Well, that's a damn good question ... may be because I'm an unix admin from ston
 - no database, not event driven, not object oriented ...
 
 ### Can I have the single bashbot.sh file back?
-At the beginning bashbot was simply the file ```bashbot.sh``` you can copy everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 'modules/*.sh' and much more.
+At the beginning bashbot was simply the file`bashbot.sh` you can copy everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 'modules/*.sh' and much more.
 
-Hey no Problem, if you are finished with your cool bot run ```dev/make-standalone.sh``` to create a stripped down Version of your bot containing only
+Hey no Problem, if you are finished with your cool bot run`dev/make-standalone.sh` to create a stripped down Version of your bot containing only
 'bashbot.sh' and 'commands.sh'! For more information see [Create a stripped down Version of your Bot](doc/7_develop.md)
 
 ### Can I send messages from CLI and scripts?
-Of course, you can send messages from CLI and scripts, simply install bashbot as [described here](#Your-really-first-bashbot-in-a-nutshell),
-send the message '/start' to set yourself as botadmin and stop the bot with ```./bashbot.sh stop```.
+Of course, you can send messages from command line and scripts, simply install bashbot as [described here](#Your-really-first-bashbot-in-a-nutshell),
+send the message '/start' to set yourself as botadmin and then stop the bot with `./bashbot.sh stop`.
 
-Bashbot provides some ready to use scripts ro send messages from command line in `bin/` dir, e.g. `send_message.sh`.
+Bashbot provides some ready to use scripts for sending messages from command line in `bin/` dir, e.g. `send_message.sh`.
 
 ```bash
 bin/send_message.sh BOTADMIN "This is my first message send from CLI"
@@ -233,4 +233,4 @@ See `mycommnds.sh.dist` for an example.
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v1.21-dev-28-g43f5536
+#### $$VERSION$$ v1.21-dev-29-g13d15f4
