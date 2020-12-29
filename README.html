@@ -327,7 +327,7 @@ This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.</code></pre>
 <p>For more Information on how to install, customize and use your new bot, read the <a href="#Documentation">Documentation</a></p>
 <h3>Log files</h3>
-<p>Bashbot actions are logged in BASHBOT.log, Telegram send/receive errors are logged to ERROR.log. Start bashbot in debug mode to get all messages send to / received from Telegram and error messages of bash commands also.</p>
+<p>Bashbot actions are logged to <code>BASHBOT.log</code>, Telegram send/receive errors are logged to <code>ERROR.log</code>. Start bashbot in debug mode to get all messages send to / received from Telegram and error messages of bash commands also.</p>
 <p>To enable debug mode start bashbot with debug as third argument: <code>bashbot start debug</code></p>
 <pre><code>├── logs 
 │   ├── BASHBOT.log      # log what your bot is doing ...
@@ -339,8 +339,8 @@ It features background tasks and interactive chats, and can serve as an interfac
 <h2>Security Considerations</h2>
 <p>Running a Telegram Bot means it is connected to the public and you never know what's send to your Bot.</p>
 <p>Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. Bash programmers often struggle with 'quoting hell' and globbing, see <a href="https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells">Implications of wrong quoting</a></p>
-<p>Whenever you are processing input from untrusted sources (messages, files, network) you must be as careful as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everything. In addition delete unused scripts and examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable all not used commands.</p>
-<p>One of the most powerful features of unix shells is variable and command substitution using <code>${}</code> and <code>$()</code>, but as they are expanded in double quotes, this can lead to RCE and information disclosing bugs in complex scripts like bashbot. So it's more secure to escape or remove '$' in input from user, files or network.</p>
+<p>Whenever you are processing input from untrusted sources (messages, files, network) you must be as careful as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everything. In addition remove unused scripts and examples from your Bot, e.g. everything in <code>example/</code> and disable/remove all not needed bot commands.</p>
+<p>It's important to escape or remove <code>$</code> in input from user, files or network (<em>as bashbot does</em>) One of the powerful features of unix shells are variable and command substitution using <code>${}</code> and<code>$()</code>, this can lead to remove code execution (RCE) or information disclosing bugs if unescaped <code>$</code> is included in untrusted input, e.g. <code>$$</code> or <code>$(rm -rf /*)</code></p>
 <p>A powerful tool to improve your scripts is <code>shellcheck</code>. You can <a href="https://www.shellcheck.net/">use it online</a> or <a href="https://github.com/koalaman/shellcheck#installing">install shellcheck locally</a>. Shellcheck is used extensively in bashbot development to ensure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests. In addition bashbot has a <a href="doc/7_develop.md">test suite</a> to check if important functionality is working as expected.</p>
 <h3>Use printf whenever possible</h3>
 <p>If you're writing a script and it is taking external input (from the user as arguments or file system...), you shouldn't use echo to display it. <a href="https://unix.stackexchange.com/a/6581">Use printf whenever possible</a></p>
@@ -349,8 +349,8 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p><strong>Never run your Bot as root, this is the most dangerous you can do!</strong> Usually the user 'nobody' has almost no rights on unix/linux systems. See <a href="doc/4_expert.md">Expert use</a> on how to run your Bot as an other user.</p>
 <h3>Secure your Bot installation</h3>
 <p><strong>Your Bot configuration must no be readable from other users.</strong> Everyone who can read your Bots token is able to act as your Bot and has access to all chats the Bot is in!</p>
-<p>Everyone with read access to your Bot files can extract your Bots data. Especially your Bot config in <code>config.jssh</code> must be protected against other users. No one except you should have write access to the Bot files. The Bot should be restricted to have write access to <code>count.jssh</code> and <code>data-bot-bash</code> only, all other files must be write protected.</p>
-<p>To set access rights for your bashbot installation to a reasonable default run <code>sudo ./bashbot.sh init</code> after every update or change to your installation directory.</p>
+<p>Everyone with read access to your Bot files can extract your Bots data. Especially your Bot config in<code>config.jssh</code> must be protected against other users. No one except you should have write access to the Bot files. The Bot should be restricted to have write access to<code>count.jssh</code> and <code>data-bot-bash</code> only, all other files must be write protected.</p>
+<p>To set access rights for your bashbot installation to a reasonable default run<code>sudo ./bashbot.sh init</code> after every update or change to your installation directory.</p>
 <h2>FAQ</h2>
 <h3>Is this Bot insecure?</h3>
 <p>Bashbot is not more (in)secure as any Bot written in an other language, we have done our best to make it as secure as possible. But YOU are responsible for the bot commands you wrote and you should know about the risks ...</p>
@@ -364,11 +364,11 @@ It features background tasks and interactive chats, and can serve as an interfac
 <li>no database, not event driven, not object oriented ...</li>
 </ul>
 <h3>Can I have the single bashbot.sh file back?</h3>
-<p>At the beginning bashbot was simply the file <code>bashbot.sh</code> you can copy everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 'modules/*.sh' and much more.</p>
-<p>Hey no Problem, if you are finished with your cool bot run <code>dev/make-standalone.sh</code> to create a stripped down Version of your bot containing only 'bashbot.sh' and 'commands.sh'! For more information see <a href="doc/7_develop.md">Create a stripped down Version of your Bot</a></p>
+<p>At the beginning bashbot was simply the file<code>bashbot.sh</code> you can copy everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 'modules/*.sh' and much more.</p>
+<p>Hey no Problem, if you are finished with your cool bot run<code>dev/make-standalone.sh</code> to create a stripped down Version of your bot containing only 'bashbot.sh' and 'commands.sh'! For more information see <a href="doc/7_develop.md">Create a stripped down Version of your Bot</a></p>
 <h3>Can I send messages from CLI and scripts?</h3>
-<p>Of course, you can send messages from CLI and scripts, simply install bashbot as <a href="#Your-really-first-bashbot-in-a-nutshell">described here</a>, send the message '/start' to set yourself as botadmin and stop the bot with <code>./bashbot.sh stop</code>.</p>
-<p>Bashbot provides some ready to use scripts ro send messages from command line in <code>bin/</code> dir, e.g. <code>send_message.sh</code>.</p>
+<p>Of course, you can send messages from command line and scripts, simply install bashbot as <a href="#Your-really-first-bashbot-in-a-nutshell">described here</a>, send the message '/start' to set yourself as botadmin and then stop the bot with <code>./bashbot.sh stop</code>.</p>
+<p>Bashbot provides some ready to use scripts for sending messages from command line in <code>bin/</code> dir, e.g. <code>send_message.sh</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">bin/send_message.sh</span> BOTADMIN <span class="st">&quot;This is my first message send from CLI&quot;</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">bin/send_message.sh</span> <span class="at">--help</span></span></code></pre></div>
@@ -390,6 +390,6 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>@Gnadelwartz</p>
 <h2>That's it all guys!</h2>
 <p>If you feel that there's something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4>$$VERSION$$ v1.21-dev-28-g43f5536</h4>
+<h4>$$VERSION$$ v1.21-dev-33-gd083390</h4>
 </body>
 </html>

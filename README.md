@@ -137,15 +137,21 @@ To enable debug mode start bashbot with debug as third argument: `bashbot start 
 ## Security Considerations
 Running a Telegram Bot means it is connected to the public and you never know what's send to your Bot.
 
-Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. Bash programmers often struggle with 'quoting hell' and globbing, see [Implications of wrong quoting](https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells)
+Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept.
+Bash programmers often struggle with 'quoting hell' and globbing,
+see [Implications of wrong quoting](https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells)
 
-Whenever you are processing input from untrusted sources (messages, files, network) you must be as careful as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everything. In addition delete unused scripts and examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable all not used commands.
+Whenever you are processing input from untrusted sources (messages, files, network) you must be as careful as possible,
+e.g. set IFS appropriate, disable globbing (set -f) and quote everything. In addition remove unused scripts and examples
+from your Bot, e.g. everything in `example/` and disable/remove all not needed bot commands.
 
-One of the most powerful features of unix shells is variable and command substitution using`${}` and`$()```,
-but as they are expanded in double quotes, this can lead to RCE and information disclosing bugs in complex scripts like bashbot.
-So it's more secure to escape or remove '$' in input from user, files or network.
+It's important to escape or remove `$` in input from user, files or network (_as bashbot does_)
+One of the powerful features of unix shells are variable and command substitution using `${}` and`$()`,
+this can lead to remove code execution (RCE) or information disclosing bugs if unescaped `$` is included in untrusted input, e.g. `$$` or `$(rm -rf /*)`
 
-A powerful tool to improve your scripts is`shellcheck`. You can [use it online](https://www.shellcheck.net/) or [install shellcheck locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used extensively in bashbot development to ensure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests.
+A powerful tool to improve your scripts is `shellcheck`. You can [use it online](https://www.shellcheck.net/) or
+[install shellcheck locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used extensively in bashbot development
+to ensure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests.
 In addition bashbot has a [test suite](doc/7_develop.md) to check if important functionality is working as expected.
 
 ### Use printf whenever possible
@@ -233,4 +239,4 @@ See `mycommnds.sh.dist` for an example.
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v1.21-dev-29-g13d15f4
+#### $$VERSION$$ v1.21-dev-33-gd083390
