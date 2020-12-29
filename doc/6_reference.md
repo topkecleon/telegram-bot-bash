@@ -6,11 +6,11 @@
 To insert line brakes in a message or caption you can place `\n` in the text. 
 
 ##### send_action
-```send_action``` shows users what your bot is currently doing.
+`send_action` shows users what your bot is currently doing.
 
 *usage:* send_action "${CHAT[ID]}" "action"
 
-*"action":* ```typing```, ```upload_photo```, ```record_video```, ```upload_video```, ```record_audio```, ```upload_audio```, ```upload_document```, ```find_location```.
+*"action":* `typing`, `upload_photo`, `record_video`, `upload_video`, `record_audio`, `upload_audio`, `upload_document`, `find_location`.
 
 *alias:* _action "action"
 
@@ -21,7 +21,7 @@ send_action "${CHAT[ID]}" "record_audio"
 ```
 
 ##### send_normal_message
-```send_normal_message``` sends text only messages to the given chat.
+`send_normal_message` sends text only messages to the given chat.
 
 *usage:*  send_normal_message "${CHAT[ID]}" "message"
 
@@ -34,7 +34,7 @@ send_normal_message "${CHAT[ID]}" "this is a text message"
 
 
 ##### send_markdownv2_message
-```send_markdownv2_message``` sends markdown v2 style messages to the given chat.
+`send_markdownv2_message` sends markdown v2 style messages to the given chat.
 Telegram supports a new [Markdown V2 Style](https://core.telegram.org/bots/api#markdownv2-style) which
 has more formatting codes and is more robust, but incompatible with old telegram markdown style.
 
@@ -48,7 +48,7 @@ send_markdownv2_message "${CHAT[ID]}" "*bold* __underlined__ [text](link)"
 
 
 ##### send_markdown_message
-```send_markdown_message``` sends markdown style messages to the given chat.
+`send_markdown_message` sends markdown style messages to the given chat.
 This is the old, legacy Telegram markdown style, retained for backward compatibility.
 It supports a [reduced set of Markdown](https://core.telegram.org/bots/api#markdown-style) only
 
@@ -64,7 +64,7 @@ send_markdown_message "${CHAT[ID]}" "*bold* _italic_ [text](link)"
 
 
 ##### send_html_message
-```send_html_message``` sends HTML style messages to the given chat.
+`send_html_message` sends HTML style messages to the given chat.
 Telegram supports a [reduced set of HTML](https://core.telegram.org/bots/api#html-style) only
 
 *usage:* send_html_message "${CHAT[ID]}" "html message" 
@@ -78,7 +78,7 @@ send_normal_message "${CHAT[ID]}" "<b>bold</b> <i>italic><i> <em>italic>/em> <a 
 ```
 
 ##### forward_message
-```forward_mesage``` forwards a message to the given chat.
+`forward_mesage` forwards a message to the given chat.
 
 *usage:* forward_message "chat_to" "chat_from" "${MESSAGE[ID]}"
 
@@ -100,7 +100,7 @@ See also [deleteMessage limitations](https://core.telegram.org/bots/api#deleteme
 ----
 
 ##### send_message
-```send_message``` sends any type of message to the given chat. Type of output is steered by keywords within the message. 
+`send_message` sends any type of message to the given chat. Type of output is steered by keywords within the message. 
 
 The main use case for send_message is to process the output of interactive chats and background jobs. **For regular Bot commands I recommend using of the dedicated send_xxx_message() functions from above.**
 
@@ -214,7 +214,7 @@ specify URL buttons, no Text Buttons and the Buttons must be an Array of Buttons
 
 The inline buttons must be specified as a JSON string in the following format:
 
-```[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ]```
+`[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ]```
 
 Each button consists of a pair of text and URL values, sourrounded by '{ }', multiple buttons are separated by '**,**' and everything is wrapped in '[ ]'.
 
@@ -245,7 +245,7 @@ To replace a message you must know the message id of the the original message. T
 `BOTSENT[ID]` after sending the original message.
 
 ##### edit_normal_message
-```edit_normal_message``` replace a message with a text message in the given chat.
+`edit_normal_message` replace a message with a text message in the given chat.
 
 *usage:*  edit_normal_message "${CHAT[ID]}" "MESSAGE-ID" "message"
 
@@ -258,7 +258,7 @@ edit_normal_message "${CHAT[ID]}" "${saved-id}" "this is another text"
 ```
 
 ##### edit_markdownv2_message
-```edit_markdownv2_message``` replace a message with a markdown v2 message in the given chat.
+`edit_markdownv2_message` replace a message with a markdown v2 message in the given chat.
 
 *usage:*  edit_markdownv2_message "${CHAT[ID]}" "MESSAGE-ID" "message"
 
@@ -271,7 +271,7 @@ edit_markdownv2_message "${CHAT[ID]}" "${saved-id}" "this is __markdown__ *V2* t
 ```
 
 ##### edit_markdown_message
-```edit_markdown_message``` replace a message with a markdown message in the given chat.
+`edit_markdown_message` replace a message with a markdown message in the given chat.
 
 *usage:*  edit_markdown_message "${CHAT[ID]}" "MESSAGE-ID" "message"
 
@@ -284,7 +284,7 @@ edit_markdown_message "${CHAT[ID]}" "${saved-id}" "this is *markdown* text"
 ```
 
 ##### edit_html_message
-```edit_html_message``` replace a message with a html message in the given chat.
+`edit_html_message` replace a message with a html message in the given chat.
 
 *usage:*  edit_html_message "${CHAT[ID]}" "MESSAGE-ID" "message"
 
@@ -475,7 +475,7 @@ Background functions and interactive jobs extends the bot functionality to not o
 chats and send messages based on time or other external events.
 
 ##### start_proc
-```startproc``` starts a script, the output of the script is sent to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
+`startproc` starts a script, the output of the script is sent to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
 
 *usage:* start_proc "${CHAT[ID]}" "script"
 
@@ -1155,5 +1155,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.21-dev-17-g8c9298d
+#### $$VERSION$$ v1.21-dev-28-g43f5536
 

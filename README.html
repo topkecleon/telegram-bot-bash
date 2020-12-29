@@ -327,7 +327,7 @@ This is bashbot, the Telegram bot written entirely in bash.
 It features background tasks and interactive chats, and can serve as an interface for CLI programs.</code></pre>
 <p>For more Information on how to install, customize and use your new bot, read the <a href="#Documentation">Documentation</a></p>
 <h3>Log files</h3>
-<p>Since version 0.96 bashbot log commands received/send and connection errors. If you start bashbot in debug mode bash stdout, stderr and all send/received telegram message are logged also.</p>
+<p>Bashbot actions are logged in BASHBOT.log, Telegram send/receive errors are logged to ERROR.log. Start bashbot in debug mode to get all messages send to / received from Telegram and error messages of bash commands also.</p>
 <p>To enable debug mode start bashbot with debug as third argument: <code>bashbot start debug</code></p>
 <pre><code>├── logs 
 │   ├── BASHBOT.log      # log what your bot is doing ...
@@ -340,28 +340,10 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>Running a Telegram Bot means it is connected to the public and you never know what's send to your Bot.</p>
 <p>Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. Bash programmers often struggle with 'quoting hell' and globbing, see <a href="https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells">Implications of wrong quoting</a></p>
 <p>Whenever you are processing input from untrusted sources (messages, files, network) you must be as careful as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everything. In addition delete unused scripts and examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable all not used commands.</p>
-<p><strong>Note:</strong> Up to version v0.941 (mai/22/2020) telegram-bot-bash had a remote code execution (RCE) bug, please update if you use an older version! see <a href="https://github.com/topkecleon/telegram-bot-bash/issues/125">Issue #125</a></p>
 <p>One of the most powerful features of unix shells is variable and command substitution using <code>${}</code> and <code>$()</code>, but as they are expanded in double quotes, this can lead to RCE and information disclosing bugs in complex scripts like bashbot. So it's more secure to escape or remove '$' in input from user, files or network.</p>
 <p>A powerful tool to improve your scripts is <code>shellcheck</code>. You can <a href="https://www.shellcheck.net/">use it online</a> or <a href="https://github.com/koalaman/shellcheck#installing">install shellcheck locally</a>. Shellcheck is used extensively in bashbot development to ensure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests. In addition bashbot has a <a href="doc/7_develop.md">test suite</a> to check if important functionality is working as expected.</p>
 <h3>Use printf whenever possible</h3>
 <p>If you're writing a script and it is taking external input (from the user as arguments or file system...), you shouldn't use echo to display it. <a href="https://unix.stackexchange.com/a/6581">Use printf whenever possible</a></p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># very simple</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;text with variables. PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&#39;%s\n&#39;</span> <span class="st">&quot;text with variables. PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&#39;text with variables. PWD=%s\n&#39;</span> <span class="st">&quot;</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-</span><span class="op">&gt;</span> text with variables. PWD=/home/xxx</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># more advanced</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="va">FLOAT=</span><span class="st">&quot;1.2346777892864&quot;</span> <span class="va">INTEGER=</span><span class="st">&quot;12345.123&quot;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;float=</span><span class="va">$FLOAT</span><span class="st">, integer=</span><span class="va">$INTEGER</span><span class="st">, PWD=</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-</span><span class="op">&gt;</span> float=1.2346777892864, integer=12345.123, PWD=/home/xxx</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&quot;text with variables. float=%.2f, integer=%d, PWD=%s\n&quot;</span> <span class="st">&quot;</span><span class="va">$FLOAT</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$INTEGER</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$PWD</span><span class="st">&quot;</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-</span><span class="op">&gt;</span> float=1.23, integer=12345, PWD=/home/xxx</span></code></pre></div>
-<h3>Do not use #!/usr/bin/env bash</h3>
-<p><strong>We stay with /bin/bash shebang, because it's more save from security perspective.</strong></p>
-<p>Use of a fixed path to the system provided bash makes it harder for attackers or users to place alternative versions of bash and avoids using a possibly broken, mangled or compromised bash executable.</p>
-<p>If you are a BSD / MacOS user or must to use an other bash location, see <a href="doc/0_install.md">Install Bashbot</a></p>
 <h3>Run your Bot as a restricted user</h3>
 <p><strong>I recommend to run your bot as a user, with almost no access rights.</strong> All files your Bot have write access to are in danger to be overwritten/deleted if your bot is hacked. For the same reason every file your Bot can read is in danger to be disclosed. Restrict your Bots access rights to the absolute minimum.</p>
 <p><strong>Never run your Bot as root, this is the most dangerous you can do!</strong> Usually the user 'nobody' has almost no rights on unix/linux systems. See <a href="doc/4_expert.md">Expert use</a> on how to run your Bot as an other user.</p>
@@ -386,41 +368,28 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>Hey no Problem, if you are finished with your cool bot run <code>dev/make-standalone.sh</code> to create a stripped down Version of your bot containing only 'bashbot.sh' and 'commands.sh'! For more information see <a href="doc/7_develop.md">Create a stripped down Version of your Bot</a></p>
 <h3>Can I send messages from CLI and scripts?</h3>
 <p>Of course, you can send messages from CLI and scripts, simply install bashbot as <a href="#Your-really-first-bashbot-in-a-nutshell">described here</a>, send the message '/start' to set yourself as botadmin and stop the bot with <code>./bashbot.sh stop</code>.</p>
-<p>Run the following commands in your bash shell or script while you are in the installation directory:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prepare bash / script to send commands</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">BASHBOT_HOME=</span><span class="st">&quot;</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st">&quot;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ./bashbot.sh source</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># send me a test message</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ex">send_message</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">getConfigKey</span> <span class="st">&quot;botadmin&quot;</span><span class="va">)</span><span class="st">&quot;</span> <span class="st">&quot;test&quot;</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># send me output of a system command</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="ex">send_message</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">getConfigKey</span> <span class="st">&quot;botadmin&quot;</span><span class="va">)</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">df</span> <span class="at">-h</span><span class="va">)</span><span class="st">&quot;</span></span></code></pre></div>
-<p>For more information see <a href="doc/8_custom.md">Expert Use</a></p>
+<p>Bashbot provides some ready to use scripts ro send messages from command line in <code>bin/</code> dir, e.g. <code>send_message.sh</code>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">bin/send_message.sh</span> BOTADMIN <span class="st">&quot;This is my first message send from CLI&quot;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">bin/send_message.sh</span> <span class="at">--help</span></span></code></pre></div>
+<p>You can also source bashbot for use in your scripts, for more information see <a href="doc/8_custom.md">Expert Use</a></p>
 <h3>Blocked by telegram?</h3>
 <p>This may happen if to many or wrong requests are sent to api.telegram.org, e.g. using a invalid token or not existing API calls. If the block stay for longer time you can ask telegram service to unblock your IP-Adress.</p>
 <p>You can check with curl or wget if you are blocked by Telegram:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-m</span> 10  https://api.telegram.org/bot</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#curl: (28) Connection timed out after 10001 milliseconds</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="at">-t</span> 1 <span class="at">-T</span> 10 https://api.telegram.org/bot</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-w</span> 2 api.telegram.org 443 <span class="kw">||</span> <span class="bu">echo</span> <span class="st">&quot;your IP seems blocked by telegram&quot;</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#your IP seems blocked by telegram</span></span></code></pre></div>
-<p>Since Version 0.96 bashbot offers the option to recover from broken connections (aka blocked). Therefore you can provide a function named <code>bashbotBlockRecover()</code> in <code>mycommands.sh</code>. If the function exists it is called every time when a broken connection is detected.</p>
-<p>Possible actions are: Check if network is working, change IP-Adress or simply wait some time.</p>
-<p>If everything seems OK return 0 for retry or any non 0 value to give up.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># called when bashbot sedn command failed because we can not connect to telegram</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># return 0 to retry, return non 0 to give up</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bashbotBlockRecover()</span> <span class="kw">{</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># place your commands to unblock here, e.g. change IP-Adess or simply wait</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sleep</span> 60 <span class="kw">&amp;&amp;</span> <span class="cf">return</span> <span class="dv">0</span> <span class="co"># may be temporary</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span> </span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="er">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-m</span> 10  https://api.telegram.org/bot</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#curl: (28) Connection timed out after 10001 milliseconds</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="at">-t</span> 1 <span class="at">-T</span> 10 https://api.telegram.org/bot</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-w</span> 2 api.telegram.org 443 <span class="kw">||</span> <span class="bu">echo</span> <span class="st">&quot;your IP seems blocked by telegram&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#your IP seems blocked by telegram</span></span></code></pre></div>
+<p>Bashbot offers the option to recover from broken connections (blocked). Therefore you can provide a function named <code>bashbotBlockRecover()</code> in <code>mycommands.sh</code>, the function is called every time when a broken connection is detected.</p>
+<p>Possible actions are: Check if network is working, change IP-Adress or simply wait some time. See <code>mycommnds.sh.dist</code> for an example.</p>
+<hr />
 <p>@Gnadelwartz</p>
 <h2>That's it all guys!</h2>
 <p>If you feel that there's something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4>$$VERSION$$ v1.21-dev-15-ga1f7215</h4>
+<h4>$$VERSION$$ v1.21-dev-28-g43f5536</h4>
 </body>
 </html>

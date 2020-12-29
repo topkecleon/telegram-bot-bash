@@ -143,9 +143,10 @@ the [Documentation](#Documentation)
 
 ### Log files
 
-Since version 0.96 bashbot log commands received/send and connection errors. If 
-you start bashbot in debug mode
-bash stdout, stderr and all send/received telegram message are logged also.
+Bashbot actions are logged in BASHBOT.log, Telegram send/receive errors are 
+logged to ERROR.log.
+Start bashbot in debug mode to get all messages send to / received from 
+Telegram and error messages of bash commands also.
 
 To enable debug mode start bashbot with debug as third argument: `bashbot start 
 debug`
@@ -178,10 +179,6 @@ globbing (set -f) and quote everything. In addition delete unused scripts and
 examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable 
 all not used commands.
 
-**Note:** Up to version v0.941 (mai/22/2020) telegram-bot-bash had a remote 
-code execution (RCE) bug, please update if you use an older version!
-see [Issue #125](https://github.com/topkecleon/telegram-bot-bash/issues/125)
-
 One of the most powerful features of unix shells is variable and command 
 substitution using ```${}``` and ```$()```,
 but as they are expanded in double quotes, this can lead to RCE and information 
@@ -203,35 +200,6 @@ If you're writing a script and it is taking external input (from the user as
 arguments or file system...),
 you shouldn't use echo to display it. [Use printf whenever 
 possible](https://unix.stackexchange.com/a/6581)
-
-```bash
-  # very simple
-  echo "text with variables. PWD=$PWD"
-  printf '%s\n' "text with variables. PWD=$PWD"
-  printf 'text with variables. PWD=%s\n' "$PWD"
-  -> text with variables. PWD=/home/xxx
-
-  # more advanced
-  FLOAT="1.2346777892864" INTEGER="12345.123"
-  echo "float=$FLOAT, integer=$INTEGER, PWD=$PWD"
-  -> float=1.2346777892864, integer=12345.123, PWD=/home/xxx
-
-  printf "text with variables. float=%.2f, integer=%d, PWD=%s\n" "$FLOAT" 
-"$INTEGER" "$PWD"
-  -> float=1.23, integer=12345, PWD=/home/xxx
-```
-
-### Do not use #!/usr/bin/env bash
-
-**We stay with /bin/bash shebang, because it's more save from security 
-perspective.**
-
-Use of a fixed path to the system provided bash makes it harder for attackers 
-or users to place alternative versions of bash
-and avoids using a possibly broken, mangled or compromised bash executable. 
-
-If you are a BSD /  MacOS user or must to use an other bash location, see 
-[Install Bashbot](doc/0_install.md)
 
 ### Run your Bot as a restricted user
 **I recommend to run your bot as a user, with almost no access rights.** 
@@ -297,21 +265,17 @@ as [described here](#Your-really-first-bashbot-in-a-nutshell),
 send the message '/start' to set yourself as botadmin and stop the bot with 
 ```./bashbot.sh stop```.
 
-Run the following commands in your bash shell or script while you are in the 
-installation directory:
+Bashbot provides some ready to use scripts ro send messages from command line 
+in `bin/` dir, e.g. `send_message.sh`.
 
 ```bash
-# prepare bash / script to send commands
-export BASHBOT_HOME="$(pwd)"
-source ./bashbot.sh source
+bin/send_message.sh BOTADMIN "This is my first message send from CLI"
 
-# send me a test message
-send_message "$(getConfigKey "botadmin")" "test"
-
-# send me output of a system command
-send_message "$(getConfigKey "botadmin")" "$(df -h)"
+bin/send_message.sh --help
 ```
-For more information see [Expert Use](doc/8_custom.md)
+
+You can also source bashbot for use in your scripts, for more information see 
+[Expert Use](doc/8_custom.md)
 
 
 ### Blocked by telegram?
@@ -333,28 +297,16 @@ nc -w 2 api.telegram.org 443 || echo "your IP seems blocked by telegram"
 #your IP seems blocked by telegram
 ```
 
-Since Version 0.96 bashbot offers the option to recover from broken connections 
-(aka blocked). Therefore you can provide a function
-named `bashbotBlockRecover()` in `mycommands.sh`. If the function exists it is 
-called every time when a broken connection is detected.
+Bashbot offers the option to recover from broken connections (blocked). 
+Therefore you can provide a function
+named `bashbotBlockRecover()` in `mycommands.sh`, the function is called every 
+time when a broken connection is detected.
 
 Possible actions are: Check if network is working, change IP-Adress or simply 
 wait some time.
+See `mycommnds.sh.dist` for an example.
 
-If everything seems OK return 0 for retry or any non 0 value to give up.
-
-```bash
-# called when bashbot sedn command failed because we can not connect to telegram
-# return 0 to retry, return non 0 to give up
-bashbotBlockRecover() {
-	# place your commands to unblock here, e.g. change IP-Adess or simply 
-wait
-	sleep 60 && return 0 # may be temporary
-	return 1 
-    }
-
-```
- 
+--- 
 
 @Gnadelwartz
 
@@ -363,4 +315,4 @@ wait
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v1.21-dev-15-ga1f7215
+#### $$VERSION$$ v1.21-dev-28-g43f5536
