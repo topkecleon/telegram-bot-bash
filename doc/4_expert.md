@@ -169,7 +169,7 @@ echo $COMMANDS $MODULEDIR $BOTACL $TMPDIR $COUNTFILE
 /usr/local/telegram-bot-bash/botacl /usr/local/telegram-bot-bash/data-bot-bash
 /usr/local/telegram-bot-bash/count
 
-` 
+``` 
 After sourcing you can use bashbot functions to send Messages, Locations, Pictures etc. to any Telegram
 User or Chat you are in. See [Send Messages](2_usage.md#sending-messages).
 
@@ -378,5 +378,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v1.21-dev-29-g13d15f4
+#### $$VERSION$$ v1.21-dev-34-ga5307e3
 
