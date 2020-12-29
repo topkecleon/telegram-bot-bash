@@ -185,8 +185,9 @@ It's important to escape or remove `$` in input from user, files or network
 (_as bashbot does_)
 One of the powerful features of unix shells are variable and command 
 substitution using `${}` and`$()`,
-this can lead to remove code execution (RCE) or information disclosing bugs if 
-unescaped `$` is included in untrusted input, e.g. `$$` or `$(rm -rf /*)`
+this can lead to remote code execution (RCE) or remote information disclosure 
+(RID) bugs if unescaped `$` is included in untrusted input, e.g. `$$` or `$(rm 
+-rf /*)`
 
 A powerful tool to improve your scripts is `shellcheck`. You can [use it 
 online](https://www.shellcheck.net/) or
@@ -319,4 +320,4 @@ See `mycommnds.sh.dist` for an example.
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v1.21-dev-33-gd083390
+#### $$VERSION$$ v1.21-dev-34-ga5307e3

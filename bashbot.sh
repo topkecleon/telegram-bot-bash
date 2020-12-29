@@ -26,7 +26,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-dev-27-gd0f8716
+#### $$VERSION$$ v1.21-dev-36-gc6001c2
 ##################################################################
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117,SC2059
 
@@ -1120,15 +1120,6 @@ bot_init() {
 		[ -r "${addons}" ] && source "${addons}" "init" "${DEBUG}"
 	done
 	printf "Done.\n"
-	if [[ ! -d "logs" ]]; then
-		printf "Move Logfiles ...\n"
-		mkdir logs 2>/dev/null
-		for MVLOG in DEBUG.log MESSAGE.log ERROR.log BASHBOT.log
-		do
-			[ -f  "${MVLOG}" ] && mv "${MVLOG}" logs 2>/dev/null
-		done
-		printf "Done.\n"
-	fi
 	# setup bashbot
 	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
 	printf "Enter User to run bashbot [$RUNUSER]: "
