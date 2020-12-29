@@ -609,12 +609,12 @@ Slow functions:
 
 A jssh fileDB consists of two files and must reside inside `BASHBOT_ETC` or `BASHBOT_DATA`.
 
-- `filename.jssh` is the file containing the key/value pairs in json.sh format.
+- `filename.jssh` is the file containing the key/value pairs in JSON.sh format.
 - `filename.jssh.flock` is used to provide read/write locking with flock
 
 Path names containing `..` or not located in `BASHBOT_ETC` or `BASHBOT_DATA` are refused by jsshDB functions with an error.
 
-jsshDB functions use file locking with flock if flock is available. Write/update operations are serialised to wait until
+jsshDB functions use file locking if `flock is available, read/write operations are serialised to wait until
 previous operations are finished, see "man flock". To avoid deadlocks bashbot use a timeout of 10s for write and 5s for read operations. 
 
 For every `jssh_...DB` function a `jsshj_...DB_async` function exists also.  In case don't want locking, use `jssh_...DB_async` functions.
@@ -1146,5 +1146,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.21-dev-31-gfee0615
+#### $$VERSION$$ v1.21-dev-32-g2aa5c75
 
