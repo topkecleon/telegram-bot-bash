@@ -7,7 +7,7 @@
 #
 # Options: --notest - skip tests
 #
-#### $$VERSION$$ v1.21-dev-17-g8c9298d
+#### $$VERSION$$ v1.21-dev-35-g7ecb836
 ##############################################################
 
 # magic to ensure that we're always inside the root of our application,
@@ -25,6 +25,7 @@ VERSION="$(git describe --tags | sed -e 's/-[0-9].*//' -e 's/v//')"
 DISTNAME="telegram-bot-bash"
 DISTDIR="./DIST/${DISTNAME}" 
 DISTFILES="bashbot.rc bashbot.sh commands.sh mycommands.sh mycommands.sh.clean bin doc examples scripts modules addons LICENSE README.md README.txt README.html"
+DISTMKDIR="data-bot-bash logs"
 
 # run tests first!
 for test in $1 dev/all-test*.sh
@@ -39,11 +40,17 @@ done
 
 # create dir for distribution and copy files
 mkdir -p "${DISTDIR}" 2>/dev/null
-# shellcheck disable=SC2086
+
 echo "Copy files"
 # shellcheck disable=SC2086
 cp -r ${DISTFILES} "${DISTDIR}"
 cd "${DISTDIR}" || exit 1
+
+echo "Create directories"
+for dir in $DISTMKDIR
+do
+	[ ! -d "${dir}" ] && mkdir "${dir}"
+done
 
 # do not overwrite on update
 echo "Create .dist files"
