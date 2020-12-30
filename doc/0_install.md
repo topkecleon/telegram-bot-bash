@@ -80,18 +80,22 @@ problems and not overwriting your bot config and `mycommands.sh`.
 Nevertheless you can install or update bashbot from a git repo, see next chapter ...
 
 
-### Create Installation / Update archives yourself
+### Create Installation / Update archives
 
-To install or update bashbot from a git repo you must create the archives yourself.
+To install or update bashbot from git repo execute `dev/make-distribution.sh`, this creates the archives and set up bashbot to run in `DIST/telegram.bot-bash`.
+
+*Note:* You should be familiar with `git`.
 
 1. Run `git clone https://github.com/topkecleon/telegram-bot-bash.git`
 2. Change into the directory `telegram-bot-bash`
-3. Run ` git checkout develop` (_otional, for latest dev version_)
-4. Run ` dev/make-distribution.sh` (_add option --notest to skip tests_)
-5. You'll find archives and a bashbot installation in directory DIST
-6. install or update abshbot using one of the archives (optional)
+3. Optional: Run ` git checkout develop` for latest develop version
+4. Run ` dev/make-distribution.sh` (_add --notest to skip tests_)
+5. Change to dir `DIST/`
 
-*Note*: You can update the basbot installation in `DIST/telegram-bot-bash` with `git pull; dev/make-distrubition.sh --notest` to get the latest updates.
+Use the archives created in `DIST/` to install or update bashbot as described above.
+
+To run a test bot, e.g. while development or testing latest changes, you can use the bashbot installation provided in `dist/telegram-bot-bash`.
+To update the test installation, e.g. after git pull, local changes or switch master/develop, run `dev/make-distrubition.sh` again.
 
 
 ### Note for BSD and MacOS
@@ -127,5 +131,5 @@ You must update to [Version 1.20](https://github.com/topkecleon/telegram-bot-bas
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.21-dev-22-ga3efcd2
+#### $$VERSION$$ v1.21-dev-39-gbddd528
 
