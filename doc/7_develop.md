@@ -198,6 +198,9 @@ Now have a look at the directory `standalone`, here you find the files `bashbot.
 5. give your (dev) fork a new version tag: `git tag v1.xx`
 6. setup github hooks by running `dev/install-hooks.sh`
 
+Run `dev/make-distrubition.sh` to create installation archives and a test installation in `DIST/`.
+To update the test installation, e.g. after git pull, local changes or switch master/develop, run `dev/make-distrubition.sh` again.
+
 Note for Debian: Debian Buster ships older versions of many utilities, pls try to install from [buster-backports](https://backports.debian.org/Instructions/)
 ```bash
 sudo apt-get -t buster-backports install git shellcheck pandoc codespell curl
@@ -355,5 +358,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v1.21-dev-28-g43f5536
+#### $$VERSION$$ v1.21-dev-40-g889fe8e
 
