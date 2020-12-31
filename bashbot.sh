@@ -26,7 +26,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-dev-42-g3407b05
+#### $$VERSION$$ v1.21-dev-43-g79f58cd
 ##################################################################
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117,SC2059
 
@@ -1023,7 +1023,7 @@ process_message() {
 declare -A BASHBOTBLOCKED
 export BASHBOT_UPDATELOG="${BASHBOT_UPDATELOG-nolog}" # allow to be ""
 start_bot() {
-	local DEBUGMSG ADMIN OFFSET=0
+	local DEBUGMSG OFFSET=0
 	# adaptive sleep defaults
 	local nextsleep="100"
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
@@ -1062,8 +1062,7 @@ start_bot() {
 	# read blocked users
 	jssh_readDB_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
 	# inform botadmin about start
-	ADMIN="$(getConfigKey "botadmin")"
-	[ -n "${ADMIN}" ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") started ..." &
+	send_normal_message "$(getConfigKey "botadmin")" "Bot $(getConfigKey "botname") started ..." &
 	##########
 	# bot is ready, start processing updates ...
 	while true; do
@@ -1284,8 +1283,7 @@ if [ -z "${SOURCE}" ]; then
 			# shellcheck disable=SC2086
 			if kill ${BOTPID}; then
 				# inform botadmin about stop
-				ADMIN="$(getConfigKey "botadmin")"
-				[ -n "${ADMIN}" ] && send_normal_message "${ADMIN}" "Bot ${ME} stopped ..." &
+				send_normal_message "$(getConfigKey "botadmin")" "Bot ${ME} stopped ..." &
 				printf "${GREEN}OK. Bot stopped successfully.${NN}"
 			else
 				printf "${RED}An error occurred while stopping bot.${NN}"
