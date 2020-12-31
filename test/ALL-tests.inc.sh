@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.21-dev-26-gbe87ba3
+#### $$VERSION$$ v1.21-dev-45-gddb2785
 
 # common variables
 export TESTME DIRME TESTDIR LOGFILE REFDIR TESTNAME
@@ -33,9 +33,13 @@ export  INPUTFILE REFFILE INPUTFILE2 REFFILE2 OUTPUTFILE
  INPUTFILE2="${DIRME}/${REFDIR}/${REFDIR}2.input"
  REFFILE2="${DIRME}/${REFDIR}/${REFDIR}2.result"
 
-# do not query telegram when testing
-export BASHBOT_URL TESTTOKEN BOTTOKEN
+# reset ENVIRONMENT
+export BASHBOT_URL TESTTOKEN BOTTOKEN BASHBOT_HOME BASHBOT_VAR BASHBOT_ETC
 BOTTOKEN=""
+BASHBOT_HOME=""
+BASHBOT_VAR=""
+BASHBOT_ETC=""
+# do not query telegram when testing
 BASHBOT_URL="https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/getMe?"
 TESTTOKEN="123456789:BASHBOTTESTSCRIPTbashbottestscript_"
 
