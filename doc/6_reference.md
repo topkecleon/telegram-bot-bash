@@ -6,11 +6,11 @@
 To insert line brakes in a message or caption you can place `\n` in the text. 
 
 ##### send_action
-```send_action``` shows users what your bot is currently doing.
+`send_action` shows users what your bot is currently doing.
 
 *usage:* send_action "${CHAT[ID]}" "action"
 
-*"action":* ```typing```, ```upload_photo```, ```record_video```, ```upload_video```, ```record_audio```, ```upload_audio```, ```upload_document```, ```find_location```.
+*"action":* `typing`, `upload_photo`, `record_video`, `upload_video`, `record_audio`, `upload_audio`, `upload_document`, `find_location`.
 
 *alias:* _action "action"
 
@@ -21,7 +21,7 @@ send_action "${CHAT[ID]}" "record_audio"
 ```
 
 ##### send_normal_message
-```send_normal_message``` sends text only messages to the given chat.
+`send_normal_message` sends text only messages to the given chat.
 
 *usage:*  send_normal_message "${CHAT[ID]}" "message"
 
@@ -34,7 +34,7 @@ send_normal_message "${CHAT[ID]}" "this is a text message"
 
 
 ##### send_markdownv2_message
-```send_markdownv2_message``` sends markdown v2 style messages to the given chat.
+`send_markdownv2_message` sends markdown v2 style messages to the given chat.
 Telegram supports a new [Markdown V2 Style](https://core.telegram.org/bots/api#markdownv2-style) which
 has more formatting codes and is more robust, but incompatible with old telegram markdown style.
 
@@ -48,7 +48,7 @@ send_markdownv2_message "${CHAT[ID]}" "*bold* __underlined__ [text](link)"
 
 
 ##### send_markdown_message
-```send_markdown_message``` sends markdown style messages to the given chat.
+`send_markdown_message` sends markdown style messages to the given chat.
 This is the old, legacy Telegram markdown style, retained for backward compatibility.
 It supports a [reduced set of Markdown](https://core.telegram.org/bots/api#markdown-style) only
 
@@ -64,7 +64,7 @@ send_markdown_message "${CHAT[ID]}" "*bold* _italic_ [text](link)"
 
 
 ##### send_html_message
-```send_html_message``` sends HTML style messages to the given chat.
+`send_html_message` sends HTML style messages to the given chat.
 Telegram supports a [reduced set of HTML](https://core.telegram.org/bots/api#html-style) only
 
 *usage:* send_html_message "${CHAT[ID]}" "html message" 
@@ -78,7 +78,7 @@ send_normal_message "${CHAT[ID]}" "<b>bold</b> <i>italic><i> <em>italic>/em> <a 
 ```
 
 ##### forward_message
-```forward_mesage``` forwards a message to the given chat.
+`forward_mesage` forwards a message to the given chat.
 
 *usage:* forward_message "chat_to" "chat_from" "${MESSAGE[ID]}"
 
@@ -100,7 +100,7 @@ See also [deleteMessage limitations](https://core.telegram.org/bots/api#deleteme
 ----
 
 ##### send_message
-```send_message``` sends any type of message to the given chat. Type of output is steered by keywords within the message. 
+`send_message` sends any type of message to the given chat. Type of output is steered by keywords within the message. 
 
 The main use case for send_message is to process the output of interactive chats and background jobs. **For regular Bot commands I recommend using of the dedicated send_xxx_message() functions from above.**
 
@@ -114,7 +114,7 @@ The main use case for send_message is to process the output of interactive chats
 
 
 ##### send_file
-send_file allows can send different type's of files, e.g. photos, stickers, audio, media, etc.
+send_file can send different type's of files, e.g. photos, stickers, audio, media, etc.
 [see Telegram API documentation](https://core.telegram.org/bots/api#sending-files).
 
 It's recommended to use __absolute path names__ (_starting with `/`_), as relative path names are threated as __relative to UPLOADDIR__ `data-bot-bash/upload`!
@@ -214,7 +214,7 @@ specify URL buttons, no Text Buttons and the Buttons must be an Array of Buttons
 
 The inline buttons must be specified as a JSON string in the following format:
 
-```[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ]```
+`[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ]```
 
 Each button consists of a pair of text and URL values, sourrounded by '{ }', multiple buttons are separated by '**,**' and everything is wrapped in '[ ]'.
 
@@ -245,7 +245,7 @@ To replace a message you must know the message id of the the original message. T
 `BOTSENT[ID]` after sending the original message.
 
 ##### edit_normal_message
-```edit_normal_message``` replace a message with a text message in the given chat.
+`edit_normal_message` replace a message with a text message in the given chat.
 
 *usage:*  edit_normal_message "${CHAT[ID]}" "MESSAGE-ID" "message"
 
@@ -258,7 +258,7 @@ edit_normal_message "${CHAT[ID]}" "${saved-id}" "this is another text"
 ```
 
 ##### edit_markdownv2_message
-```edit_markdownv2_message``` replace a message with a markdown v2 message in the given chat.
+`edit_markdownv2_message` replace a message with a markdown v2 message in the given chat.
 
 *usage:*  edit_markdownv2_message "${CHAT[ID]}" "MESSAGE-ID" "message"
 
@@ -271,7 +271,7 @@ edit_markdownv2_message "${CHAT[ID]}" "${saved-id}" "this is __markdown__ *V2* t
 ```
 
 ##### edit_markdown_message
-```edit_markdown_message``` replace a message with a markdown message in the given chat.
+`edit_markdown_message` replace a message with a markdown message in the given chat.
 
 *usage:*  edit_markdown_message "${CHAT[ID]}" "MESSAGE-ID" "message"
 
@@ -284,7 +284,7 @@ edit_markdown_message "${CHAT[ID]}" "${saved-id}" "this is *markdown* text"
 ```
 
 ##### edit_html_message
-```edit_html_message``` replace a message with a html message in the given chat.
+`edit_html_message` replace a message with a html message in the given chat.
 
 *usage:*  edit_html_message "${CHAT[ID]}" "MESSAGE-ID" "message"
 
@@ -325,13 +325,13 @@ Your Bot will leave the chat.
 *alias:* _leave 
 
 ```bash
-if _is_admin ; then 
+if bot_is_admin ; then 
  send_markdown_message "${CHAT[ID]}" "*LEAVING CHAT...*"
  leave_chat "${CHAT[ID]}"
 fi
 ```
 
-'See also [kick Chat Member](https://core.telegram.org/bots/api/#kickchatmember)*
+See also [kick Chat Member](https://core.telegram.org/bots/api/#kickchatmember)*
 
 ----
 
@@ -475,7 +475,7 @@ Background functions and interactive jobs extends the bot functionality to not o
 chats and send messages based on time or other external events.
 
 ##### start_proc
-```startproc``` starts a script, the output of the script is sent to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
+`startproc` starts a script, the output of the script is sent to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
 
 *usage:* start_proc "${CHAT[ID]}" "script"
 
@@ -572,38 +572,33 @@ fi
 ----
 
 ##### send_interactive
-Form version 0.80 on forward_message is used to forward messages to interactive job. It replaces the old 'inproc' commands used for TMUX.
-Usually a message is automatically forwarded in 'commands.sh', but you can forward messages while processing also or send your own messages.
+`send_interactive` is used to forward messages to interactive jobs.
+Usually a message is automatically forwarded from within `commands.sh`, but you can send messages yourself.
 
 *usage:* send_interactive "${CHAT[ID]}" "message"
-
-*replaces:* incproc
 
 ----
 
 ### jsshDB
-Since output generated by JSON.sh is so handy to use in bash, we use the format for a simple keys/value file store.
-The file extensions is '.jssh' and for security reasons location of jssh files is restricted to BASHBOT_ETC and BASHBOT_DATA..
+
+Since output generated by `JSON.sh` is so easy to use in bash, bashbot uses the format for a simple keys/value file store also.
 
 #### fast and slow operations
 
-jsshDB files are simple text files and if you append a new Key/value pairs to the end of the file it overwrites
-an existing key/value pair. We use this behavior for "fast" file operations.
+jsshDB files are flat text files containing key/value pairs in the `JSON.sh` format.
+Key/value pairs appearing later in the file overwrites earlier key/value pairs, Bashbot use this behavior to implement "fast replace" file operations.
 
-"fast functions" add a new key/value pair to the end of the file without deleting an existing one, this is fast but over (long)
-time the file grows infinity.
+"fast functions" add a new key/value pair to the end of a file without deleting an existing one, this is fast but over time the file grows to infinity.
 
-"slow functions" in contrast modify the key/value pairs in place and write the whole file back,
-this is slower but clean up the file. All previously added key/value pairs are replaced
-and only the last one is written back to the file.
+"slow functions" read the file, modify the key/value pairs in memory and write the whole file back, this is slower but removes duplicate keys from the file.
 
-fast functions:
+Fast functions:
 
 ```
    jssh_insertKeyDB , jssh_addKeyDB , jssh_countKeyDB
 ```
 
-slow functions:
+Slow functions:
 
 ```
    jssh_writeDB, jssh_updateDB , jssh_deleteKeyDB, jssh_clearDB
@@ -612,18 +607,17 @@ slow functions:
 
 #### File naming and locking
 
-A jssh fileDB consists of  two files which must reside inside BASHBOT_ETC or BASHBOT_DATA.
+A jssh fileDB consists of two files and must reside inside `BASHBOT_ETC` or `BASHBOT_DATA`.
 
-- `filename.jssh` is a text file containing the key/value data in json.sh format.
-- `filename.jssh.flock` is used for read/write locking with flock
+- `filename.jssh` is the file containing the key/value pairs in JSON.sh format.
+- `filename.jssh.flock` is used to provide read/write locking with flock
 
-Path names containing `..` or not located in BASHBOT_ETC or BASHBOT_DATA are refused by jsshDB functions with an error.
+Path names containing `..` or not located in `BASHBOT_ETC` or `BASHBOT_DATA` are refused by jsshDB functions with an error.
 
-Since version 0.94 jsshDB functions support file locking with flock. Write/update operations are serialised with flock to wait until
-previous operations are finished, see "man flock" for information. To avoid deadlocks we use a timeout of 10s for write and 5s for read operations. 
+jsshDB functions use file locking if `flock is available, read/write operations are serialised to wait until
+previous operations are finished, see "man flock". To avoid deadlocks bashbot use a timeout of 10s for write and 5s for read operations. 
 
-Every jssh_*DB function exist as jssj_*DB_async also.
-In case flock is not availibe or you don't want locking, jssh_*DB_async functions without file locking will be used.
+For every `jssh_...DB` function a `jsshj_...DB_async` function exists also.  In case don't want locking, use `jssh_...DB_async` functions.
 
 *Example:* for allowed file names:
 ```bash
@@ -676,7 +670,7 @@ Something wrong with data-bot-bash/../../../somevalues
 ```
 
 ##### jssh_writeDB
-Write content of an ARRAY into jsshDB file. ARRAY name must be declared with "declare -A ARRAY" before calling writeDB.
+Write content of an ARRAY into jsshDB file. ARRAY name must be declared with `declare -A ARRAY` before calling writeDB.
 "DB" file MUST exist or nothing is written.
 
 Note: Existing content is overwritten.
@@ -712,7 +706,7 @@ cat "${DATADIR:-}/myvalues.jssh"
 ```
 
 ##### jssh_printDB
-Print content of an ARRAY to STDOUT. ARRAY name must be declared with "declare -A ARRAY" before calling printDB..
+Print content of an ARRAY to STDOUT. ARRAY name must be declared with `declare -A ARRAY` before calling printDB..
 
 *usage:*  jssh_printDB "ARRAY" 
 
@@ -734,7 +728,7 @@ jssh_printDB READVALUES
 ```
 
 ##### jssh_updateDB
-Update/Add content of an ARRAY into a jsshDB file. ARRAY name must be declared with "declare -A ARRAY" before calling updateDB.
+Update/Add content of an ARRAY into a jsshDB file. ARRAY name must be declared with `declare -A ARRAY` before calling updateDB.
 "DB" file MUST exist or nothing is written.
 
 Note: Existing content not in ARRAY is kept in file.
@@ -769,7 +763,7 @@ cat "$DBfile"
 ```
 
 ##### jssh_readDB
-Read content of a file in JSON.sh format into given ARRAY.  ARRAY name must be declared with "declare -A ARRAY" upfront,
+Read content of a file in JSON.sh format into given ARRAY.  ARRAY name must be declared with `declare -A ARRAY` upfront,
 
 *usage:*  jssh_readDB "ARRAY" "filename"
 
@@ -875,8 +869,8 @@ https://linuxconfig.org/how-to-use-arrays-in-bash-script
 ----
 
 ### Aliases - shortcuts for often used functions 
-Aliases are handy shortcuts for using in 'mycommands.sh', they avoid error prone typing of  "${CHAT[ID]}" "${USER[ID]}" as much as possible.
-Do not use them in bashbot.sh, modules and addons.
+Aliases are handy shortcuts for use in `mycommands.sh` *only*, they avoid error prone typing of  "${CHAT[ID]}" "${USER[ID]}" as much as possible.
+Do not use them in other files e.g. `bashbot.sh`, modules, addons etc.
 
 ##### _is_botadmin
 
@@ -974,7 +968,7 @@ Do not use them in bashbot.sh, modules and addons.
 ### Helper functions
 
 ##### download
-Download the fiven URL and returns the final filename in TMPDIR. If the given filename exists,the filename is prefixed with a
+Download the given URL and returns the final filename in TMPDIR. If the given filename exists,the filename is prefixed with a
 random number. Filename is not allowed to contain '/' or '..'.
 
 *usage:* download URL filename
@@ -1084,9 +1078,6 @@ killallproc
 ##### get_file
 *usage:* url="$(get_file "${CHAT[ID]}" "message")"
 
-##### send_text
-*usage:* send_text "${CHAT[ID]}" "message"
-
 ----
 
 ##### JsonDecode
@@ -1107,7 +1098,7 @@ Reads JSON from STDIN and Outputs found Value to STDOUT
 
 ##### Json2Array
 Read JSON.sh style data from STDIN and assign to given ARRAY
-ARRAY name  must be declared with "declare -A ARRAY" before calling
+ARRAY name  must be declared with `declare -A ARRAY` before calling
 
 *usage:* Json2Array "ARRAY"
 
@@ -1155,5 +1146,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.21-dev-3-g79402ec
+#### $$VERSION$$ v1.21-dev-32-g2aa5c75
 

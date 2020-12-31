@@ -10,9 +10,9 @@ In addition you should know about [BotFather, the one bot to rule them all](http
 If you don't have a github account, it may time to [setup a free account now](https://github.com/pricing)
 
 ### Add commands to mycommands.sh only
-Do not change ```bashbot.sh``` and ```commands.sh```, instead place your commands in to  ```mycommands.sh```.
-To start with a clean/minimal bot copy ```mycommands.sh.clean``` to ```mycommands.sh``` and start editing
-the message strings and place commands in the```case ... esac``` block of the function mycommands():
+Do not change `bashbot.sh` and `commands.sh`, instead place your commands in to  `mycommands.sh`.
+To start with a clean/minimal bot copy `mycommands.sh.clean` to `mycommands.sh` and start editing
+the message strings and place commands in the`case ... esac` block of the function mycommands():
 ```bash
 # file: mycommands.sh
 # your additional bashbot commands
@@ -39,13 +39,13 @@ mycommands() {
 
 ### DIsable, replace and extend global commands
 
-Global bashbot command processing, e.g. /start, /info etc. is disabled if you return a non zero value from ```mycommands.sh```,
+Global bashbot command processing, e.g. /start, /info etc. is disabled if you return a non zero value from `mycommands.sh`,
 see /start example below.
 
-To replace a global bashbot command add the same command to ```mycommands.sh``` and place ```return 1``` at the end of
+To replace a global bashbot command add the same command to `mycommands.sh` and place `return 1` at the end of
 the case block, see /kickme example below.
 
-If a command is available as a global command and in ```mycommands.sh```, plus you return a zero value (nothing or 0)
+If a command is available as a global command and in `mycommands.sh`, plus you return a zero value (nothing or 0)
 both command sections are processed. Thus you can extend global commands with additional actions, see /info example below
 
 **Learn more about [Bot commands](https://core.telegram.org/bots#commands).**
@@ -75,7 +75,7 @@ both command sections are processed. Thus you can extend global commands with ad
 
 ### Separate logic from commands
 
-If a command need more than 2-3 lines of code, you should use a function to separate logic from command. Place your functions in ```mycommands.sh``` and call the from your command. Example:
+If a command need more than 2-3 lines of code, you should use a function to separate logic from command. Place your functions in `mycommands.sh` and call the from your command. Example:
 ```bash
 # file: mycommands.sh
 # your additional bashbot commands
@@ -133,7 +133,9 @@ Line 17:
                       ^-- SC2116: Useless echo? Instead of 'cmd $(echo foo)', just use 'cmd foo'.
  
 ```
-As you can see my ```mybotcommands.inc.sh``` contains an useless echo command in 'TEXT=' assignment and can be replaced by ```TEXT="${TEXT}${WORD}"```
+
+As you can see my `mybotcommands.inc.sh` contains an useless echo command in 'TEXT=' assignment and can be replaced by `TEXT="${TEXT}${WORD}"`
+
 ```bash
 $ shellcheck -x examples/notify
 OK
@@ -158,5 +160,5 @@ The second warning is about an unused variable, this is true because in our exam
 #### [Prev Best Practice](5_practice.md)
 #### [Next Functions Reference](6_reference.md)
 
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-29-g13d15f4
 

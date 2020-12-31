@@ -81,44 +81,48 @@ available on www.github.com
 
 ### Your really first bashbot in a nutshell
 
-To install and run bashbot you need access to a linux/unix command line. If you 
-don't know how to get access to a linux/unix command line you should stop 
-reading here :-(
+To install and run bashbot you need access to a linux/unix command line with 
+bash, a [Telegram client](https://telegram.org) and a mobile phone [with a 
+Telegram account](https://telegramguide.com/create-a-telegram-account/).
 
-In addition you need a [Telegram client](https://telegram.org) and a mobile 
-phone to [register an 
-account](https://telegramguide.com/create-a-telegram-account/).
-If you don't want to register for Telegram you should stop reading here ;-)
+First you need to [create a new Telegram Bot token](doc/1_firstbot.md) for your 
+bot and write it down.
 
-After you're registered to Telegram send a message to 
-[@botfather](https://telegram.me/botfather),
-[create a new Telegram Bot token](doc/1_firstbot.md) and write it down. You 
-need the token to install the bot.
+Now open a linux/unix terminal with bash, create a new directory, change to it 
+and install telegram-bot-bash:
 
-Now open a terminal and check if bash is installed:
- ```
-which bash && echo "bash seems available..."
-```
-
-
-Create a new directory, change to it:  ```mkdir tbb; cd tbb``` and download the 
-latest '*.tar.gz' file from
-[https://github.com/topkecleon/telegram-bot-bash/releases](https://github.com/to
-pkecleon/telegram-bot-bash/releases). This can be done with the commands:
 ```bash
-wget -q https://github.com/$(wget -q 
-https://github.com/topkecleon/telegram-bot-bash/releases/latest -O - | egrep 
-'/.*/.*/.*tar.gz' -o)
+# create bot dir
+mkdir mybot
+cd mybot
+
+# download latest release with wget or from 
+https://github.com/topkecleon/telegram-bot-bash/releases/latest
+wget "https://github.com/$(wget -q 
+"https://github.com/topkecleon/telegram-bot-bash/releases/latest" -O - | egrep 
+'/.*/download/.*/.*tar.gz' -o)"
+
+# Extract the tar archive and go into bot dir
+tar -xzf *.tar.gz
+cd telegram-bot-bash
+
+# initialize your bot
+# Enter your bot token when asked, all other questions can be answered by 
+hitting the \<Return\> key.
+./bashbot.sh init
+
+# Now start your bot
+./bashbot.sh start
+
+Bottoken is valid ...
+Bot Name: yourbotname_bot
+Session Name: yourbotname_bot-startbot
+Bot started successfully.
 ```
 
-Extract the '*.tar.gz' file and change to bashbot directory: ```tar -xzf 
-*.tar.gz; cd telegram-bot-bash```,
-install bashbot: ```./bashbot.sh init``` and enter your bot token when asked. 
-All other questions can be answered
-by hitting the \<Return\> key.
+Now open the Telegram App on your mobile phone and start a chatting with your 
+bot (_your bot's username is shown after 'Bot Name:'_):
 
-That's all, now you can start your bot with ```./bashbot.sh start``` and send 
-him messages:
 ```
 /start
 
@@ -139,9 +143,10 @@ the [Documentation](#Documentation)
 
 ### Log files
 
-Since version 0.96 bashbot log commands received/send and connection errors. If 
-you start bashbot in debug mode
-bash stdout, stderr and all send/received telegram message are logged also.
+Bashbot actions are logged to `BASHBOT.log`, Telegram send/receive errors are 
+logged to `ERROR.log`.
+Start bashbot in debug mode to get all messages send to / received from 
+Telegram and error messages of bash commands also.
 
 To enable debug mode start bashbot with debug as third argument: `bashbot start 
 debug`
@@ -163,33 +168,34 @@ Running a Telegram Bot means it is connected to the public and you never know
 what's send to your Bot.
 
 Bash scripts in general are not designed to be bullet proof, so consider this 
-Bot as a proof of concept. Bash programmers often struggle with 'quoting hell' 
-and globbing, see [Implications of wrong 
+Bot as a proof of concept.
+Bash programmers often struggle with 'quoting hell' and globbing,
+see [Implications of wrong 
 quoting](https://unix.stackexchange.com/questions/171346/security-implications-o
 f-forgetting-to-quote-a-variable-in-bash-posix-shells)
 
 Whenever you are processing input from untrusted sources (messages, files, 
-network) you must be as careful as possible, e.g. set IFS appropriate, disable 
-globbing (set -f) and quote everything. In addition delete unused scripts and 
-examples from your Bot, e.g. scripts 'notify', 'calc', 'question', and disable 
-all not used commands.
+network) you must be as careful as possible,
+e.g. set IFS appropriate, disable globbing (set -f) and quote everything. In 
+addition remove unused scripts and examples
+from your Bot, e.g. everything in `example/` and disable/remove all not needed 
+bot commands.
 
-**Note:** Up to version v0.941 (mai/22/2020) telegram-bot-bash had a remote 
-code execution (RCE) bug, please update if you use an older version!
-see [Issue #125](https://github.com/topkecleon/telegram-bot-bash/issues/125)
+It's important to escape or remove `$` in input from user, files or network 
+(_as bashbot does_)
+One of the powerful features of unix shells are variable and command 
+substitution using `${}` and`$()`,
+this can lead to remote code execution (RCE) or remote information disclosure 
+(RID) bugs if unescaped `$` is included in untrusted input, e.g. `$$` or `$(rm 
+-rf /*)`
 
-One of the most powerful features of unix shells is variable and command 
-substitution using ```${}``` and ```$()```,
-but as they are expanded in double quotes, this can lead to RCE and information 
-disclosing bugs in complex scripts like bashbot.
-So it's more secure to escape or remove '$' in input from user, files or 
-network.
-
-A powerful tool to improve your scripts is ```shellcheck```. You can [use it 
-online](https://www.shellcheck.net/) or [install shellcheck 
+A powerful tool to improve your scripts is `shellcheck`. You can [use it 
+online](https://www.shellcheck.net/) or
+[install shellcheck 
 locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used 
-extensively in bashbot development to ensure a high code quality, e.g. it's not 
-allowed to push changes without passing all shellcheck tests.
+extensively in bashbot development
+to ensure a high code quality, e.g. it's not allowed to push changes without 
+passing all shellcheck tests.
 In addition bashbot has a [test suite](doc/7_develop.md) to check if important 
 functionality is working as expected.
 
@@ -199,35 +205,6 @@ If you're writing a script and it is taking external input (from the user as
 arguments or file system...),
 you shouldn't use echo to display it. [Use printf whenever 
 possible](https://unix.stackexchange.com/a/6581)
-
-```bash
-  # very simple
-  echo "text with variables. PWD=$PWD"
-  printf '%s\n' "text with variables. PWD=$PWD"
-  printf 'text with variables. PWD=%s\n' "$PWD"
-  -> text with variables. PWD=/home/xxx
-
-  # more advanced
-  FLOAT="1.2346777892864" INTEGER="12345.123"
-  echo "float=$FLOAT, integer=$INTEGER, PWD=$PWD"
-  -> float=1.2346777892864, integer=12345.123, PWD=/home/xxx
-
-  printf "text with variables. float=%.2f, integer=%d, PWD=%s\n" "$FLOAT" 
-"$INTEGER" "$PWD"
-  -> float=1.23, integer=12345, PWD=/home/xxx
-```
-
-### Do not use #!/usr/bin/env bash
-
-**We stay with /bin/bash shebang, because it's more save from security 
-perspective.**
-
-Use of a fixed path to the system provided bash makes it harder for attackers 
-or users to place alternative versions of bash
-and avoids using a possibly broken, mangled or compromised bash executable. 
-
-If you are a BSD /  MacOS user or must to use an other bash location, see 
-[Install Bashbot](doc/0_install.md)
 
 ### Run your Bot as a restricted user
 **I recommend to run your bot as a user, with almost no access rights.** 
@@ -246,13 +223,13 @@ can read your Bots token is able to act as your Bot and has access to all chats
 the Bot is in!
 
 Everyone with read access to your Bot files can extract your Bots data. 
-Especially your Bot config in ```config.jssh``` must be protected against other 
+Especially your Bot config in`config.jssh` must be protected against other 
 users. No one except you should have write access to the Bot files. The Bot 
-should be restricted to have write access to ```count.jssh``` and  
-```data-bot-bash``` only, all other files must be write protected.
+should be restricted to have write access to`count.jssh` and `data-bot-bash` 
+only, all other files must be write protected.
 
-To set access rights for your bashbot installation to a reasonable default run 
-```sudo ./bashbot.sh init``` after every update or change to your installation 
+To set access rights for your bashbot installation to a reasonable default 
+run`sudo ./bashbot.sh init` after every update or change to your installation 
 directory.
 
 ## FAQ
@@ -277,37 +254,33 @@ health status
 - no database, not event driven, not object oriented ...
 
 ### Can I have the single bashbot.sh file back?
-At the beginning bashbot was simply the file ```bashbot.sh``` you can copy 
+At the beginning bashbot was simply the file`bashbot.sh` you can copy 
 everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 
 'modules/*.sh' and much more.
 
-Hey no Problem, if you are finished with your cool bot run 
-```dev/make-standalone.sh``` to create a stripped down Version of your bot 
+Hey no Problem, if you are finished with your cool bot 
+run`dev/make-standalone.sh` to create a stripped down Version of your bot 
 containing only
 'bashbot.sh' and 'commands.sh'! For more information see [Create a stripped 
 down Version of your Bot](doc/7_develop.md)
 
 ### Can I send messages from CLI and scripts?
-Of course, you can send messages from CLI and scripts, simply install bashbot 
-as [described here](#Your-really-first-bashbot-in-a-nutshell),
-send the message '/start' to set yourself as botadmin and stop the bot with 
-```./bashbot.sh stop```.
+Of course, you can send messages from command line and scripts, simply install 
+bashbot as [described here](#Your-really-first-bashbot-in-a-nutshell),
+send the message '/start' to set yourself as botadmin and then stop the bot 
+with `./bashbot.sh stop`.
 
-Run the following commands in your bash shell or script while you are in the 
-installation directory:
+Bashbot provides some ready to use scripts for sending messages from command 
+line in `bin/` dir, e.g. `send_message.sh`.
 
 ```bash
-# prepare bash / script to send commands
-export BASHBOT_HOME="$(pwd)"
-source ./bashbot.sh source
+bin/send_message.sh BOTADMIN "This is my first message send from CLI"
 
-# send me a test message
-send_message "$(getConfigKey "botadmin")" "test"
-
-# send me output of a system command
-send_message "$(getConfigKey "botadmin")" "$(df -h)"
+bin/send_message.sh --help
 ```
-For more information see [Expert Use](doc/8_custom.md)
+
+You can also source bashbot for use in your scripts, for more information see 
+[Expert Use](doc/8_custom.md)
 
 
 ### Blocked by telegram?
@@ -329,28 +302,16 @@ nc -w 2 api.telegram.org 443 || echo "your IP seems blocked by telegram"
 #your IP seems blocked by telegram
 ```
 
-Since Version 0.96 bashbot offers the option to recover from broken connections 
-(aka blocked). Therefore you can provide a function
-named `bashbotBlockRecover()` in `mycommands.sh`. If the function exists it is 
-called every time when a broken connection is detected.
+Bashbot offers the option to recover from broken connections (blocked). 
+Therefore you can provide a function
+named `bashbotBlockRecover()` in `mycommands.sh`, the function is called every 
+time when a broken connection is detected.
 
 Possible actions are: Check if network is working, change IP-Adress or simply 
 wait some time.
+See `mycommnds.sh.dist` for an example.
 
-If everything seems OK return 0 for retry or any non 0 value to give up.
-
-```bash
-# called when bashbot sedn command failed because we can not connect to telegram
-# return 0 to retry, return non 0 to give up
-bashbotBlockRecover() {
-	# place your commands to unblock here, e.g. change IP-Adess or simply 
-wait
-	sleep 60 && return 0 # may be temporary
-	return 1 
-    }
-
-```
- 
+--- 
 
 @Gnadelwartz
 
@@ -359,4 +320,4 @@ wait
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-34-ga5307e3

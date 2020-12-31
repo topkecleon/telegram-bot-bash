@@ -3,6 +3,8 @@
 ## Check bash installation
 
 There may systems where bash seems to be installed but it is not, e.g. embedded systems, or where bash is to old.
+Bashbot has some builtin checks but it may better to check before installing bashbot.
+
 Run the following commands to see if your bash looks ok ...
 
 ```bash
@@ -13,7 +15,10 @@ if which bash; then echo "bash seems available..."; else echo "NO bash"; fi
 bash -c 'if eval "a[1]=1"; then echo "Shell support arrays..."; else echo "Shell has NO arrays"; fi'
 
 # check for bash version by feature
-bash -c 'if [ "$(echo -e "\u1111")" != "\u1111" ]; then echo "Bash version ok ..."; else echo "LBash Version may be to old ..."; fi'
+bash -c 'if [ "$(echo -e "\u1111")" != "\u1111" ]; then echo "Bash version ok ..."; else echo "Bash version may to old ..."; fi'
+
+# display bash version, must be greater than 4.3
+bash --version | grep "bash"
 ```
 
 ## Install bashbot
@@ -21,12 +26,12 @@ bash -c 'if [ "$(echo -e "\u1111")" != "\u1111" ]; then echo "Bash version ok ..
 1. Go to the directory you want to install bashbot, e.g.
     * your $HOME directory (install and run with your user-ID)
     * /usr/local if you want to run as service
-2. [Download latest release zip / tar archive from github](https://github.com/topkecleon/telegram-bot-bash/releases) and extract all files. 
-3. Change into the directory ```telegram-bot-bash```
-4. Activate the bot example commands  ```cp mycommands.sh.dist mycommands.sh```
-5. Run ```./bashbot.sh init``` to setup the environment and enter your Bots token given by botfather.
+2. [Download latest release zip / tar archive from github](https://github.com/topkecleon/telegram-bot-bash/releases/latest) and extract all files. 
+3. Change into the directory `telegram-bot-bash`
+4. Copy `mycommands.sh.dist` or `mycommands.sh.clean` to `mycommands.sh`
+5. Run `./bashbot.sh init` to setup the environment and enter your Bots token given by botfather.
 
-Edit ```mycommands.sh``` to your needs.
+Edit `mycommands.sh` to fit your needs.
 Now your Bot is ready to start ...
 
 **If you are new to Bot development read [Bots: An introduction for developers](https://core.telegram.org/bots)**
@@ -34,25 +39,21 @@ Now your Bot is ready to start ...
 
 ### Update bashbot
 
-**Note: all files including ```mycommands.sh``` may overwritten, make a backup!**
+**Important: all files including `mycommands.sh` may overwritten, make a backup!**
 
-1. Go to the directory where you had installed bashbot, e.g.
+1. Go to the directory where you have installed bashbot, e.g.
     * your $HOME directory
     * /usr/local
-2. [Download latest release zip / tar archive from github](https://github.com/topkecleon/telegram-bot-bash/releases)
-3. Stop all running instances of bashbot
+2. [Download latest release zip / tar archive from github](https://github.com/topkecleon/telegram-bot-bash/releases/latest)
+3. Stop all running instances of bashbot `./bashbot.sh stop`
 4. Extract all files to your existing bashbot dir 
-5. Run ```sudo ./bashbot.sh init``` to setup your environment after the update
+5. Run `sudo ./bashbot.sh init` to setup your environment after the update
 
-If you modified ```commands.sh``` move your changes to ```mycommands.sh```, this avoids overwriting your commands on update.
+If you modified `commands.sh` move your changes to `mycommands.sh`, this avoids overwriting your commands on every update.
 
 Now you can restart your bashbot instances.
 
-### Get zip / tar archive on command line
-
-```bash
-wget -q https://github.com/$(wget -q https://github.com/topkecleon/telegram-bot-bash/releases/latest -O - | egrep '/.*/.*/.*tar.gz' -o)
-```
+*Note*: If you are updating from a pre-1.0 version, update to [Version 1.20](https://github.com/topkecleon/telegram-bot-bash/releases/tags/v1.20) first!
 
 ### Use JSON.awk (beta)
 
@@ -62,7 +63,7 @@ Most systems with awk can use `JSON.awk` as drop in replacement
 
 BSD and MacOS users must install `gnu awk` and adjust the shebang, see below
 
-After you have checked that 'JSON.awk' is working correct on your system make `JSON.awk` executable and (re)start bashbot.
+After you have checked that 'JSON.awk.dist' is working correct on your system copy it to `JSON.awk` and (re)start bashbot.
 
 Note: If you are not using the zip / tar archive, you must install `JSON.awk` manually into the same directory as 'JSON.sh`:
 
@@ -71,30 +72,30 @@ Note: If you are not using the zip / tar archive, you must install `JSON.awk` ma
 	bash patch-for-busybox-awk.sh
 
 
-### Install bashbot from github
+### Install bashbot from git repo
 
-The first install can also be done from github, updates should always done from the zip or tar archive to avoid
-overwriting your config and ```mycommands.sh``` files.
+Installation and Updates should be done using the zip / tar archives provided on github to avoid
+problems and not overwriting your bot config and `mycommands.sh`.
 
-1. Go to the directory you want to install bashbot, e.g.
-    * your $HOME directory (install and run with your user-ID)
-    * /usr/local if you want to run as service
-2. Run ```git clone https://github.com/topkecleon/telegram-bot-bash.git```
-3. Change into the directory ```telegram-bot-bash```
-4. Run ``` dev/all-tests.sh``` and if everything finish OK ...
-5. Run ``` rm addons/*``` to deactivate the example add on's
-5. Run ```sudo ./bashbot.sh init``` to setup the environment and enter your Bots token given by botfather.
+Nevertheless you can install or update bashbot from a git repo, see next chapter ...
 
 
-### Get the latest development updates from github
+### Create Installation / Update archives
 
-To update an existing installation to the latest development version from github you must create the update archives yourself.
+To install or update bashbot from git repo execute `dev/make-distribution.sh`, this creates the archives and set up bashbot to run in `DIST/telegram.bot-bash`.
 
-1. Run ```git clone https://github.com/topkecleon/telegram-bot-bash.git```
-2. Change into the directory ```telegram-bot-bash```
-3. Run ``` git checkout develop```
-4. Run ``` dev/make-distribution.sh```
-5. If no errors occur you will find archive files in DISTRIBUTION
+*Note:* You should be familiar with `git`.
+
+1. Run `git clone https://github.com/topkecleon/telegram-bot-bash.git`
+2. Change into the directory `telegram-bot-bash`
+3. Optional: Run ` git checkout develop` for latest develop version
+4. Run ` dev/make-distribution.sh` (_add --notest to skip tests_)
+5. Change to dir `DIST/`
+
+Use the archives created in `DIST/` to install or update bashbot as described above.
+
+To run a test bot, e.g. while development or testing latest changes, you can use the bashbot installation provided in `DIST/telegram-bot-bash`.
+To update the test installation, e.g. after git pull, local changes or switch master/develop, run `dev/make-distrubition.sh` again.
 
 
 ### Note for BSD and MacOS
@@ -113,77 +114,22 @@ Bashbot will stay with /bin/bash shebang, as using a fixed path is more secure t
 
 I considered to make bashbot BSD sed compatible, but much of the bashbot "magic" relies on
 (gnu) sed features, e.g. alternation ```|```, non printables ```\n\t\<``` or repeat ```?+``` pattern, not supported by BSD sed.
+
 BSD/MacOS sed compatibility will result in a rewrite of all grep/sed commands with an uncertain outcome,
 see [BSD/MacOS vs. GNU sed](https://riptutorial.com/sed/topic/9436/bsd-macos-sed-vs--gnu-sed-vs--the-posix-sed-specification)
 to get an impression how different they are.
 
-If you can convert the following examples to work correct with gnu and BSD sed, contact me.
 
-```bash
-  # easy start
-  sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]\([0-9.,]*\).*/\1/p'
-  OUT="$(sed -e ':a;N;$!ba;s/\r\n/ mynewlinestartshere /g' <<<"$1"| iconv -f utf-8 -t utf-8 -c)"
+### Notes on Changes
 
-  # more complex
-  address="$(sed <<< "${2}" '/myaddressstartshere /!d;s/.*myaddressstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
+#### Support for update from pre-1.0 removed
 
-  # for experts?
-  source <( printf "$1"'=( %s )' "$(sed -E -n -e ':x /"text"\]/ { N; s/([^"])\n/\1\\n/g ; tx }' -e '/\["[-0-9a-zA-Z_,."]+"\]\+*\t/ s/\t/=/gp' -e 's/=(true|false)/="\1"/')" )
-```
-
-### Notes per Version
-
-#### Change in storing config values
-
-Up to version 0.94 bashbot stores config values as values in ```token```, ```botadmin``` and ```count```. Since version 0.96 bashbot
-uses jsonDB key/value store. Config is stored in ```botconfig.jssh```, counting of users is done in ```count.jssh```.
-The acl file ```botacl``` stay as is. On first run of bashbot.sh after an update bashbot converts
-the files to the new config format. Afterwards the files ```token```, ```botadmin``` and ```count``` can be deleted.
-
-You may notice the new file ```blocked.jssh```, every telegram user or chat id stored here will be blocked from 
-using your bot.
-
-#### removal of TMUX
-From version 0.80 on TMUX is no longer needed and the bashbot command 'attach' is deleted. Old function 'inproc'
-is replaced by 'send_interactive'. send_interactive does checks if an interactive job is running internally.
-Pls check if you make use of inproc and remove it including the old checks, e.g.
-```bash
-if tmux ls | grep -v send | grep -q "$copname"; then inproc; fi
-# or
-[ checkprog ] && inproc
-```
-must be replaced by ```send_interactive "${CHATD[ID]}" "${MESSAGE}"```
-
-### Do not edit commands.sh
-From version 0.60 on your commands must be placed in ```mycommands.sh```. If you update from a version with your commands
-in 'commands.sh' move all your commands and functions to ```mycommands.sh```.
-
-From version 0.80 on 'commands.sh' will be overwritten on update!
-
-#### Location of var / tmp / data dirs
-From version 0.70 on the tmp dir is renamed to 'data-bot-bash' to reflect the fact that not only temporary files are stored. an existing 'tmp-bot-bash' will be automatically renamed after update.
-
-From version 0.50 on the temporary files are no more placed in '/tmp'. instead a dedicated tmp dir is used.
-
-#### Changes to send_keyboard in v0.6
-From Version 0.60 on keyboard format for ```send_keyboard``` and ```send_message "mykeyboardstartshere ..."``` was changed.
-Keyboards are now defined in JSON Array notation e.g. "[ \\"yes\\" , \\"no\\" ]".
-This has the advantage that you can create any type of keyboard supported by Telegram.
-The old format is supported for backward compatibility, but may fail for corner cases.
-
-*Example Keyboards*:
-
-- yes no in two rows:
-    - OLD format: 'yes' 'no' *(two strings)*
-    - NEW format: '[ "yes" ] , [ "no" ]' *(two arrays with a string)*
-- new layouts made easy with NEW format:
-    - Yes No in one row: '[ "yes" , "no" ]'
-    - Yes No plus Maybe in 2.row: '[ "yes" , "no" ] , [ "maybe" ]' 
-    - numpad style keyboard: '[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [ "7" , "8" , "9" ] , [ "0" ]'
+From Version 1.21 on updating from a pre-1.0 version is no more supported!
+You must update to [Version 1.20](https://github.com/topkecleon/telegram-bot-bash/releases/tags/v1.20) first!
 
 
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-41-g41378f8
 

@@ -13,7 +13,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.12.2020 12:27
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-2-gde31231
 #===============================================================================
 
 ############
@@ -36,14 +36,7 @@ BASHBOT_ETC="${BASHBOT_HOME}"
 if [ ! -r "${BASHBOT_HOME}/bashbot.sh" ]; then
 	echo "Bashbot.sh not found in \"${BASHBOT_HOME}\""
 	exit 4
-else
-	# shellcheck disable=SC1090
-	source "${BASHBOT_HOME}/bashbot.sh" source "$1"
 fi
-
-# overwrite bot FILE regex to BASHBOT_ETC
-# change this to the location you want to allow file uploads from
-FILE_REGEX="${BASHBOT_ETC%/bin*}/.*"
 
 # check for botconfig.jssh readable
 if [ ! -r "${BASHBOT_ETC}/botconfig.jssh" ]; then
@@ -55,6 +48,14 @@ if [ ! -r "${BASHBOT_VAR}/count.jssh" ]; then
 	echo "Bashbot count file in \"${BASHBOT_VAR}\" does not exist or is not readable. Did you run bashbot init?"
 	exit 3
 fi
+
+# shellcheck disable=SC1090
+source "${BASHBOT_HOME}/bashbot.sh" source "$1"
+
+# overwrite bot FILE regex to BASHBOT_VAR
+# change this to the location you want to allow file uploads from
+UPLOADDIR="${BASHBOT_VAR%/bin*}"
+FILE_REGEX="${UPLOADDIR}/.*"
 
 # get and check ADMIN and NAME
 BOT_ADMIN="$(getConfigKey "botadmin")"

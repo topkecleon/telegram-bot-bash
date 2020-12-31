@@ -2,7 +2,7 @@
 ## Advanced Features
 
 ### Access control
-Bashbot offers functions to check what Telegram capabilities like 'chat admin' or 'chat creator' the given user has:
+Bashbot offers functions to check what Telegram capabilities like `chat admin` or `chat creator` the given user has:
 
 ```bash
 # return true if user is admin/owner of the bot
@@ -21,7 +21,7 @@ user_is_admin "${CHAT[ID]}" "${USER[ID]}" && send_markdown_message "${CHAT[ID]}"
 
 ```
 
-In addition you can check individual capabilities of users as you must define in the file ```./botacl```:
+In addition you can check individual capabilities of users as you must define in the file `./botacl`:
 
 ```bash
 # file: botacl
@@ -54,7 +54,7 @@ ALL:*:*
 
 
 ```
-You must use the function ```user_is_allowed``` to check if a user has the capability to do something. Example: Check if user has capability to start bot.
+You must use the function `user_is_allowed` to check if a user has the capability to do something. Example: Check if user has capability to start bot.
 
 ```bash
 	case "$MESSAGE" in
@@ -74,8 +74,8 @@ You must use the function ```user_is_allowed``` to check if a user has the capab
 ### Interactive Chats
 Interactive chats are short running scripts, reading user input and echo data to the user.
 
-To create a new interactive chat script copy 'scripts/interactive.sh.clean' to e.g. 'scripts/mynewinteractive.sh', make it executable
-and then use 'start_proc' function from your bot, it's possible to pass two arguments. You find more examples for interactive scripts in 'examples'
+To create a new interactive chat script copy `scripts/interactive.sh.clean` to e.g. `scripts/mynewinteractive.sh`, make it executable
+and then use `start_proc` function from your bot, it's possible to pass two arguments. You find more examples for interactive scripts in 'examples'
 
 *usage*: start_proc chat_id script arg1 arg2
 
@@ -83,7 +83,7 @@ and then use 'start_proc' function from your bot, it's possible to pass two argu
 
 *usage*: check_prog chat_id
 
-**Note:** From Version 0.96 on scripts must read user input from '$3' instead of stdin!
+**IMPORTANT:** Scripts must read user input from '$3' instead of stdin!
 
 ```bash
 #!/bin/bash
@@ -105,8 +105,8 @@ echo -e "Your Message: ${test}\nbye!"
 
 #### message formatting and keyboards
 
-The output of the script will be processed by 'send_messages', so you can not only send text, but also keyboards, files, locations and more.
-Each newline in the output will start an new message to the user. To have line breaks in your message you must insert ' mynewlinestartshere ' or '\n' instead.
+The output of the script will be processed by `send_messages`, so you can not only send text, but also keyboards, files, locations and more.
+Each newline in the output will start an new message to the user. To have line breaks in your message you must insert `\n` instead.
 
 To open up a keyboard in an interactive script, print out the keyboard layout in the following way:
 ```bash
@@ -114,7 +114,7 @@ echo "Text that will appear in chat? mykeyboardstartshere [ \"Yep, sure\" , \"No
 ```
 Same goes for files:
 ```bash
-echo "Text that will appear in chat? myfilelocationstartshere /home/user/dog.jpg"
+echo "Text that will appear in chat? myfilestartshere /home/user/dog.jpg"
 ```
 *Note*: Use an _absolute path name_ (starting with `/`), a relative path name is relative to `data-bot-bash/upload`!
 See [send_file documentation](6_reference.md#send_file) for more information.
@@ -133,18 +133,17 @@ echo "Text that will appear in chat. mylatstartshere 45 mylongstartshere 45 myti
 ```
 You can combine them:
 ```bash
-echo "Text that will appear in chat? mykeyboardstartshere [ \"Yep, sure\" , \"No, highly unlikely\" ] myfilelocationstartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
+echo "Text that will appear in chat? mykeyboardstartshere [ \"Yep, sure\" , \"No, highly unlikely\" ] myfilestartshere /home/user/doge.jpg mylatstartshere 45 mylongstartshere 45"
 ```
 Please note that you can either send a location or a venue, not both. To send a venue add the mytitlestartshere and the myaddressstartshere keywords.
 
-To insert a line break in your message you can insert ` mynewlinestartshere ` or `\n` in your echo command:
+To insert a line break in your message you can insert `\n` in your echo command:
 ```bash
-echo "Text that will appear in one message  mynewlinestartshere  with this text on a new line"
-echo "Other text message\nwith a newline" # \n instead of mynewlinestartshere
+echo "Text that will appear in one message \nwith this text on a new line"
 ```
 
-New in v0.7: In case you must extend a message already containing a location, a file, a keyboard etc.,
-with additionial text simply add ``` mytextstartshere additional text``` at the end of the string:
+In case you want extend a message already containing a location, a file, a keyboard etc.,
+with an additionial text simply add ` mytextstartshere additional text`at the end of the string:
 ```bash
 out="Text that will appear mylatstartshere 45 mylongstartshere 45"
 [[ "$out" != *'in chat'* ]] &&  out="$out mytextstartshere in chat."
@@ -183,14 +182,14 @@ If you want to kill all background jobs permanently run:
 ./bashbot.sh killback
 
 ```
-Note: Background jobs run independent from main bot and continue running until your script exits or you stop it. Background jobs will continue running if your Bot is stopped and must be terminated separately e.g. by ```bashbot.sh killback``` 
+Note: Background jobs run independent from main bot and continue running until your script exits or you stop it. Background jobs will continue running if your Bot is stopped and must be terminated separately e.g. by `bashbot.sh killback`
 
 ### Inline queries
 **Inline queries** allow users to send commands to your bot from every chat without going to a private chat. An inline query is started if the user type the bots name, e.g. @myBot. Everything after @myBot is immediately send to the bot.
 
 In order to enable **inline mode**, send `/setinline` command to [@BotFather](https://telegram.me/botfather) and provide the placeholder text that the user will see in the input field after typing your bot’s name.
 
-The following commands allows you to send ansers to *inline queries*. To enable bashbot to process inline queries set ```INLINE="1"``` in 'mycommands.sh'.
+The following commands allows you to send ansers to *inline queries*. To enable bashbot to process inline queries set `INLINE="1"`in 'mycommands.sh'.
 
 To send messages or links through an *inline query*:
 ```bash
@@ -246,19 +245,19 @@ is received.
 **Note**: the values of the variables contains always the result of the LAST transmission to telegram,
 every send action will overwrite them!
 
-* ```$BOTSENT```: This array contains the parsed results from the last transmission to telegram.
-    * ```${BOTSENT[OK]}```: contains the string ```true```: after a successful transmission
-    * ```${BOTSENT[ID]}```: Message ID if OK is true
-    * ```${BOTSENT[ERROR]}```: Error code if an error occurred
-    * ```${BOTSENT[DESC]}```: Description text for error
-    * ```${BOTSENT[RETRY]}```: Seconds to wait if telegram requests throtteling.
-* ```$res```: temporary variable containing the full transmission result, may be overwritten by any bashbot function.
+* `$BOTSENT`: This array contains the parsed results from the last transmission to telegram.
+    * `${BOTSENT[OK]}`: contains the string `true`: after a successful transmission
+    * `${BOTSENT[ID]}`: Message ID if OK is true
+    * `${BOTSENT[ERROR]}`: Error code if an error occurred
+    * `${BOTSENT[DESC]}`: Description text for error
+    * `${BOTSENT[RETRY]}`: Seconds to wait if telegram requests throtteling.
+* `$res`: temporary variable containing the full transmission result, may be overwritten by any bashbot function.
 
 By default you don't have to care about retry, as bashbot resend the message after the requested time automatically.
 Only if the retry fails also an error is returned. The downside is that send_message functions will wait until resend is done.
 
 If you want to disable automatic error processing  and handle all errors manually (or don't care)
-set ```BASHBOT_RETRY``` to any no zero value.
+set `BASHBOT_RETRY`to any no zero value.
 
 [Telegram Bot API error codes](https://github.com/TelegramBotAPI/errors)
 
@@ -266,9 +265,9 @@ set ```BASHBOT_RETRY``` to any no zero value.
 #### Detect bot blocked
 
 If the we can't connect to telegram, e.g. blocked from telegram server but also any other reason,
-bashbot set ```BOTSENT[ERROR]``` to ```999```.
+bashbot set `BOTSENT[ERROR]`to `999`.
 
-To get a notification on every connection problem create a function named ```bashbotBlockRecover``` and handle blocks there.
+To get a notification on every connection problem create a function named `bashbotBlockRecover`and handle blocks there.
 If the function returns true (0 or no value) bashbot will retry once and then return to the calling function.
 In case you return any non 0 value bashbot will return to the calling function without retry.
 
@@ -302,5 +301,5 @@ Note: If you disable automatic retry, se above, you disable also connection prob
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v1.21-dev-2-gde31231
+#### $$VERSION$$ v1.21-dev-29-g13d15f4
 

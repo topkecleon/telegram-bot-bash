@@ -4,7 +4,7 @@
 # this addon counts how many files, e.g. stickers, are sent to
 # a chat and takes actions if threshold is reached
 #  
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-44-gb04ee84
 
 # used events:
 #
@@ -44,7 +44,7 @@ fi
 
 # register on startbot
 if [[ "$1" = "start"* ]]; then 
-    ANTIFL_ADMIN="$(< "${BOTADMIN}")"
+    ANTIFL_ADMIN="$(getConfigKey "botadmin")"
     #load existing chat settings on start
     jssh_readDB "ANTIFL_CHATS" "addons/$ANTIFL_ME"
 

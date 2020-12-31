@@ -5,17 +5,17 @@
 UTF-8 is a variable length encoding of Unicode. UTF-8 is recommended as the default encoding in JSON, XML and HTML, also Telegram make use of it.
 
 The first 128 characters are regular ASCII, so it's a superset of and compatible with ASCII environments. The next 1,920 characters need
-two bytes for encoding and covers almost all ```Latin``` alphabets, also ```Greek```, ```Cyrillic```,
-```Hebrew```, ```Arabic``` and more. See [Wikipedia](https://en.wikipedia.org/wiki/UTF-8) for more details.
+two bytes for encoding and covers almost all `Latin` alphabets, also `Greek`, `Cyrillic`,
+`Hebrew`, `Arabic` and more. See [Wikipedia](https://en.wikipedia.org/wiki/UTF-8) for more details.
 
 #### Setting up your Environment
-In general ```bash``` and ```GNU``` utitities are UTF-8 aware if you to setup your environment
+In general `bash` and `GNU` utitities are UTF-8 aware if you to setup your environment
 and your scripts accordingly:
 
 1. Your Terminal and Editor must support UTF-8:
-   Set Terminal and Editor locale to UTF-8, eg. in ```Settings/Configuration``` select UTF-8 (Unicode) as Charset.
+   Set Terminal and Editor locale to UTF-8, eg. in `Settings/Configuration` select UTF-8 (Unicode) as Charset.
 
-2. Set ```Shell``` environment to UTF-8 in your  ```.profile``` and your scripts. The usual settings are:
+2. Set `Shell` environment to UTF-8 in your  `.profile` and your scripts. The usual settings are:
 
 ```bash
 export 'LC_ALL=C.UTF-8'
@@ -35,15 +35,15 @@ export 'LANGUAGE=den_US.UTF-8'
 ```
 3. make sure your bot scripts use the correct  settings, eg. include the lines above at the beginning of your scripts
 
-To display all available locales on your system run ```locale -a | more```. [Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8)
+To display all available locales on your system run `locale -a | more`. [Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8)
 
 #### Bashbot UTF-8 Support
 Bashbot handles all messages transparently, regardless of the charset in use. The only exception is when converting from JSON data to strings.
 
-Telegram use JSON to send / receive data. JSON encodes strings as follow: Characters not ASCII *(>127)* are escaped as sequences of ```\uxxxx``` to be regular ASCII. In addition multibyte characters, *e.g. Emoticons or Arabic characters*, are send in double byte UTF-16 notation.
-The Emoticons ``` 😁 😘 ❤️ 😊 👍 ``` are encoded as: ``` \uD83D\uDE01 \uD83D\uDE18 \u2764\uFE0F \uD83D\uDE0A \uD83D\uDC4D ```
+Telegram use JSON to send / receive data. JSON encodes strings as follow: Characters not ASCII *(>127)* are escaped as sequences of `\uxxxx` to be regular ASCII. In addition multibyte characters, *e.g. Emoticons or Arabic characters*, are send in double byte UTF-16 notation.
+The Emoticons ` 😁 😘 ❤️ 😊 👍 ` are encoded as: ` \uD83D\uDE01 \uD83D\uDE18 \u2764\uFE0F \uD83D\uDE0A \uD83D\uDC4D `
 
-**This "mixed" JSON encoding needs special handling and can not decoded from** ```echo -e``` or ```printf '%s\\n'```
+**This "mixed" JSON encoding needs special handling and can not decoded from** `echo -e` or `printf '%s\\n'`
 
 Bbashbot uses an internal, pure bash implementation which is well tested now, even there may some corner cases*.
 
@@ -56,7 +56,7 @@ Setup the environment for the user you want to run bashbot and enter desired use
 sudo ./bashbot.sh init
 ```
 
-Edit the file ```bashbot.rc``` and change the following lines to fit your configuration:
+Edit the file `bashbot.rc` and change the following lines to fit your configuration:
 ```bash
 #######################
 # Configuration Section
@@ -79,7 +79,7 @@ From now on use 'bashbot.rc' to manage your bot:
 ```bash
 sudo ./bashbot.rc start
 ```
-Type ```ps -ef | grep bashbot``` to verify your Bot is running as the desired user.
+Type `ps -ef | grep bashbot` to verify your Bot is running as the desired user.
 
 If your  Bot is started by 'bashbot.rc', you must use 'bashbot.rc' also to manage your Bot! The following commands are available:
 ```bash
@@ -90,15 +90,15 @@ sudo ./bashbot.rc suspendback
 sudo ./bashbot.rc resumeback
 sudo ./bashbot.rc killback
 ```
-To change back the environment to your user-ID run ```sudo ./bashbot.sh init``` again and enter your user name.
+To change back the environment to your user-ID run `sudo ./bashbot.sh init` again and enter your user name.
 
-To use bashbot as a system service include a working ```bashbot.rc``` in your init system (systemd, /etc/init.d).
+To use bashbot as a system service include a working `bashbot.rc` in your init system (systemd, /etc/init.d).
 
 ### Schedule bashbot from Cron
-An example crontab is provided in ```examples/bashbot.cron```.
+An example crontab is provided in `examples/bashbot.cron`.
 
-- If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username ```nobody```.
-- if you run bashbot as an other user or a system service edit ```examples/bashbot.cron``` to fit your needs and replace username```nobody``` with the username you want to run bashbot. copy the modified file to ```/etc/cron.d/bashbot```
+- If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username `nobody`.
+- if you run bashbot as an other user or a system service edit `examples/bashbot.cron` to fit your needs and replace username `nobody` with the username you want to run bashbot. copy the modified file to `/etc/cron.d/bashbot`
 
 
 ### Use bashbot from CLI and scripts
@@ -209,7 +209,7 @@ If you want to have other locations for config, data etc,  define and export the
 **Note: all specified directories and files must exist or running 'bashbot.sh' will fail.**
 
 ##### BASHBOT_ETC
-Location of the files ```commands.sh```, ```mycommands.sh```, ```botconfig.jssh```, ```botacl``` ...
+Location of the files `commands.sh`, `mycommands.sh`, `botconfig.jssh`, `botacl` ...
 ```bash
   unset  BASHBOT_ETC     # keep in telegram-bot-bash (default)
   export BASHBOT_ETC ""  # keep in telegram-bot-bash
@@ -223,7 +223,7 @@ Location of the files ```commands.sh```, ```mycommands.sh```, ```botconfig.jssh`
  e.g. /etc/bashbot
 
 ##### BASHBOT_VAR
-Location of runtime data ```data-bot-bash```, ```count.jssh``` 
+Location of runtime data `data-bot-bash`, `count.jssh` 
 ```bash
   unset  BASHBOT_VAR     # keep in telegram-bot-bash (default)
   export BASHBOT_VAR ""  # keep in telegram-bot-bash
@@ -296,7 +296,7 @@ set BASHBOT_CURL to point to it.
 ```
 
 ##### BASHBOT_WGET
-Bashbot uses ```curl``` to communicate with telegram server. if ```curl``` is not available ```wget``` is used.
+Bashbot uses `curl` to communicate with telegram server. if `curl` is not available `wget` is used.
 If 'BASHBOT_WGET' is set to any value (not undefined or not empty) wget is used even is curl is available.  
 ```bash
   unset  BASHBOT_WGET       # use curl (default)
@@ -378,5 +378,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-34-ga5307e3
 

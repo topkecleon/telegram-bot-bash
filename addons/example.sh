@@ -4,7 +4,7 @@
 # Addons can register to bashbot events at startup
 # by providing their name and a callback per event
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-44-gb04ee84
 #
 # If an event occurs each registered event function is called.
 #
@@ -60,6 +60,7 @@ fi
 if [[ "$1" = "start"* ]]; then 
     # register to reply
     BASHBOT_EVENT_REPLY["${EXAMPLE_ME}"]="${EXAMPLE_ME}_reply"
+    EXAMPLE_ADMIN="$(getConfigKey "botadmin")"
 
     # any function defined by addons MUST be prefixed by addon name
     # function local variables can have any name, but must be LOCAL
@@ -87,7 +88,7 @@ if [[ "$1" = "start"* ]]; then
     # any function defined by addons MUST be prefixed by addon name
     # function local variables can have any name, but must be LOCAL
     example_after5min(){
-	send_markdown_message "$(< "${BOTADMIN}")" "This is a one time event after 5 Minutes!" &
+	send_markdown_message "${EXAMPLE_ADMIN}" "This is a one time event after 5 Minutes!" &
     }
 
     BASHBOT_EVENT_TIMER["${EXAMPLE_ME}every2min","2"]="${EXAMPLE_ME}_every2min"
@@ -95,7 +96,7 @@ if [[ "$1" = "start"* ]]; then
     # any function defined by addons MUST be prefixed by addon name
     # function local variables can have any name, but must be LOCAL
     example_every2min(){
-	send_markdown_message "$(< "${BOTADMIN}")" "This a a every 2 minute event ..." &
+	send_markdown_message "${EXAMPLE_ADMIN}" "This a a every 2 minute event ..." &
     }
 
     # register to send
@@ -109,6 +110,6 @@ if [[ "$1" = "start"* ]]; then
     # Note: do not call any send message functions from EVENT_SEND!
     example_log(){
 	local send="$1"; shift
-	echo "$(date): Type: ${send} Args: $*" >>"${EXAMPLE_LOG}"
+	printf "%s: Type: %s Args: %s\n" "$(date)" "${send}" "$*" >>"${EXAMPLE_LOG}"
     }
 fi

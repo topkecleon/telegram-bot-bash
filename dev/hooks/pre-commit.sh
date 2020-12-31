@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-10-g9bfc27a
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
@@ -68,7 +68,7 @@ fi
 if command -v codespell &>/dev/null; then
 	echo "Running codespell"
 	echo "............................" 
-	codespell --skip="*.zip,*gz,*.log,*.html,*.txt,.git*,jsonDB-keyboard" -L "ba"
+	codespell -q 3 --skip="*.zip,*gz,*.log,*.html,*.txt,.git*,jsonDB-keyboard" -L "ba"
 	echo "if there are (to many) typo's shown, consider running:"
 	echo "codespell -i 3 -w --skip=\"*.log,*.html,*.txt,.git*,examples\" -L \"ba\""
 else

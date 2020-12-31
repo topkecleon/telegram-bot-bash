@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
-# this has to run once atfer git clone
-# and every time we create new hooks
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#############################################################
+#
+# File: dev/all-tests.sh
+#
+# Description: run all tests, exit after failed test
+#
+#### $$VERSION$$ v1.21-dev-46-gd13e95a
+#############################################################
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -12,6 +17,7 @@ else
 	echo "Sorry, no git repository $(pwd)" && exit 1
 fi
 
+##########################
 # create test environment
 TESTENV="/tmp/bashbot.test$$"
 mkdir "${TESTENV}"
@@ -21,6 +27,13 @@ cd "test" || exit 1
 # delete possible config
 rm -f "${TESTENV}/botconfig.jssh" "${TESTENV}/botacl" 2>/dev/null
 
+# inject JSON.sh
+mkdir "${TESTENV}/JSON.sh"
+curl -sL "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh" >"${TESTENV}/JSON.sh/JSON.sh"
+chmod +x "${TESTENV}/JSON.sh/JSON.sh"
+
+########################
+#prepare and run tests
 #set -e
 fail=0
 tests=0
@@ -45,6 +58,8 @@ do
   fi
 done
 
+###########################
+# cleanup depending on test state
 if [ "$fail" -eq 0 ]; then
   /bin/echo -n 'SUCCESS '
   exitcode=0
@@ -56,6 +71,8 @@ else
   find "${TESTENV}/"* ! -name '[a-z]-*' -delete
 fi
 
+#########################
+# show test result and test logs
 echo -e "${passed} / ${tests}\\n"
 [ -d "${TESTENV}" ] && echo "Logfiles from run are in ${TESTENV}"
 

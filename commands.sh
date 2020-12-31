@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-23-g1a0b51d
 #
 
 # adjust your language setting here, e.g. when run from other user or cron.
@@ -114,7 +114,7 @@ if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
 			;;
 		'/start'*)
 			send_action "${CHAT[ID]}" "typing"
-			MYCOMMANDS="*Note*: No _mycommands.sh_ detected, copy _mycommands.dist_ or _mycommands.clean_."
+			MYCOMMANDS="*Note*: MISSING mycommands.sh:  copy _mycommands.dist_ or _mycommands.clean_."
 			[ -r "${BASHBOT_ETC:-.}/mycommands.sh" ] && MYCOMMANDS="Place your commands and messages in _mycommands.sh_"
 			user_is_botadmin "${USER[ID]}" &&\
 				send_markdownv2_message "${CHAT[ID]}" "You are *BOTADMIN*.\n${MYCOMMANDS}"

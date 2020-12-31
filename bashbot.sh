@@ -1,56 +1,62 @@
 #!/bin/bash
-# file: bashbot.sh 
-# do not edit, this file will be overwritten on update
-
-# bashbot, the Telegram bot written in bash.
-# Written by Drew (@topkecleon) KayM (@gnadelwartz).
-# Also contributed: Daniil Gentili (@danogentili), JuanPotato, BigNerd95, TiagoDanin, iicc1.
-# https://github.com/topkecleon/telegram-bot-bash
-
-# Depends on JSON.sh (http://github.com/dominictarr/JSON.sh) (MIT/Apache),
-# This file is public domain in the USA and all free countries.
-# Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
+##################################################################
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+# File: bashbot.sh 
+# Note: DO NOT EDIT! this file will be overwritten on update
+#
+# Description:
+#     bashbot, the Telegram bot written in bash.
+#     Written by Drew (@topkecleon) KayM (@gnadelwartz).
+#     Also contributed: Daniil Gentili (@danogentili), JuanPotato,
+#                       BigNerd95, TiagoDanin, iicc1.
+#     https://github.com/topkecleon/telegram-bot-bash
+#
+#     This file is public domain in the USA and all free countries.
+#     Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # Exit Codes:
-# - 0 success (hopefully)
-# - 1 can't change to dir
-# - 2 can't write to tmp, count or token
-# - 3 user / command / file not found
-# - 4 unknown command
-# - 5 cannot connect to telegram bot
-# - 6 mandatory module not found
-# - 7 can't get bottoken
-# - 8 curl/wget missing
-# - 10 not bash!
-# shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117
+#     0 - success (hopefully)
+#     1 - can't change to dir
+#     2 - can't write to tmp, count or token
+#     3 - user / command / file not found
+#     4 - unknown command
+#     5 - cannot connect to telegram bot
+#     6 - mandatory module not found
+#     7 - can't get bottoken
+#     8 - curl/wget missing
+#     10 - not bash!
+#
+#### $$VERSION$$ v1.21-dev-43-g79f58cd
+##################################################################
+# shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117,SC2059
 
 # emmbeded system may claim bash but it is not
 # check for bash like ARRAY handlung
 if ! (unset a; set -A a a; eval "a=(a b)"; eval '[ -n "${a[1]}" ]'; ) > /dev/null 2>&1; then
-	echo "Error: Current shell does not support ARRAY's, may be busbox ash shell. pls install a real bash!";
+	printf "Error: Current shell does not support ARRAY's, may be busbox ash shell. pls install a real bash!\n"
 	exit 10
 fi
 
 # are we running in a terminal?
+NN="\n"
 if [ -t 1 ] && [ -n "$TERM" ];  then
-    CLEAR='clear'
+    INTERACTIVE='yes'
     RED='\e[31m'
     GREEN='\e[32m'
     ORANGE='\e[35m'
     GREY='\e[1;30m'
     NC='\e[0m'
+    NN="${NC}\n"
 fi
 
 # telegram uses utf-8 characters, check if we have an utf-8 charset
 if [ "${LANG}" = "${LANG%[Uu][Tt][Ff]*}" ]; then
-	echo -e "${ORANGE}Warning: Telegram uses utf-8, but looks like you are using non utf-8 locale:${NC} ${LANG}"
+	printf "${ORANGE}Warning: Telegram uses utf-8, but looks like you are using non utf-8 locale:${NC} ${LANG}\n"
 fi
 
 # we need some bash 4+ features, check for old bash by feature
 if [ "$({ LC_ALL=C.utf-8 echo -e "\u1111"; } 2>/dev/null)" = "\u1111" ]; then
-	echo -e "${ORANGE}Warning: Missing unicode '\uxxxx' support, missing C.utf-8 locale or to old bash version.${NC}"
+	printf "${ORANGE}Warning: Missing unicode '\uxxxx' support, missing C.utf-8 locale or to old bash version.${NN}"
 fi
 
 
@@ -89,15 +95,17 @@ check_token(){
 	[[ "${1}" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ ]] && return 0
 	return 1
 }
-# log $1 to ERRORLOG with date
-log_error(){ printf "%s: %b\n" "$(date)" "$*" >>"${ERRORLOG}"; }
-log_debug(){ printf "%s: %b\n" "$(date)" "$*" >>"${DEBUGLOG}"; }
-log_message(){ printf "\n%s: %b\n" "$(date)" "$*" >>"${MESSAGELOG}"; }
-log_update(){ printf "%s: %b\n" "$(date)" "$*" >>"${UPDATELOG}"; }
+# log $1 with date
+log_error(){ printf "%s: %s\n" "$(date)" "$*" >>"${ERRORLOG}"; }
+log_debug(){ printf "%s: %s\n" "$(date)" "$*" >>"${DEBUGLOG}"; }
+log_update(){ printf "%s: %s\n" "$(date)" "$*" >>"${UPDATELOG}"; }
+# log $1 with date, special first \n
+log_message(){ printf "\n%s: %s\n" "$(date)" "$*" >>"${MESSAGELOG/\\n/$'\n'}"; }
+
 # additional tests if we run in debug mode
 export BASHBOTDEBUG
-# debug should always last argument
 [[ "${BASH_ARGV[0]}" == *"debug"* ]] && BASHBOTDEBUG="yes"
+
 # $1 where $2 command $3 may debug 
 # shellcheck disable=SC2094
 debug_checks(){ {
@@ -117,7 +125,7 @@ debug_checks(){ {
 
 # some linux, e.g. manajro seems not to have C locale activated by default
 if _exists locale && [ "$(locale -a | grep -c -e "^C$" -e "^C.utf8$")" -lt 2 ]; then
-	echo -e "${ORANGE}Warning: locale ${NC}${GREY}C${NC}${ORANGE} and/or ${NC}${GREY}C.utf8${NC}${ORANGE} seems missing, use \"${NC}${GREY}locale -a${NC}${ORANGE}\" to show what locales are installed on your system.${NC}"
+	printf "${ORANGE}Warning: locale ${NC}${GREY}C${NC}${ORANGE} and/or ${NC}${GREY}C.utf8${NC}${ORANGE} seems missing, use \"${NC}${GREY}locale -a${NC}${ORANGE}\" to show what locales are installed on your system.${NN}"
 fi
 
 # get location and name of bashbot.sh
@@ -134,10 +142,10 @@ if [ "${SCRIPT}" != "${REALME}" ] || [ "$1" = "source" ]; then
 fi
 
 BOTCOMMANDS="start, stop, status, help, init, suspendback, resumeback, killback"
-[[ -z "$1" && -z "${SOURCE}" ]] &&  echo -e "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NC}" && exit
+[[ -z "$1" && -z "${SOURCE}" ]] &&  printf "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NN}" && exit
 if [ "$1" = "help" ]; then
 		HELP="${BASHBOT_HOME:-.}/README"
-		if [ -n "${CLEAR}" ];then
+		if [ -n "${INTERACTIVE}" ];then
 			_exists w3m && w3m "$HELP.html" && exit
 			_exists lynx && lynx "$HELP.html" && exit
 			_exists less && less "$HELP.txt" && exit
@@ -157,23 +165,31 @@ fi
 ADDONDIR="${BASHBOT_ETC:-.}/addons"
 RUNUSER="${USER}" # USER is overwritten by bashbot array :-(, save original
 
-# OK everything setup, lets start
+# OK, ENVIRONMENT is set up, let's do some additional tests
 if [[ -z "${SOURCE}" && -z "$BASHBOT_HOME" ]] && ! cd "${RUNDIR}" ; then
-	echo -e "${RED}ERROR: Can't change to ${RUNDIR} ...${NC}"
+	printf "${RED}ERROR: Can't change to ${RUNDIR} ...${NN}"
 	exit 1
 else
 	RUNDIR="."
 fi
 
 if [ ! -w "." ]; then
-	echo -e "${ORANGE}WARNING: ${RUNDIR} is not writeable!${NC}"
+	printf "${ORANGE}WARNING: ${RUNDIR} is not writeable!${NN}"
 	ls -ld .
 fi
 
-# Setup and check environment if BOTTOKEN is NOT set
+# check if JSON.sh is available
+JSONSHFILE="${BASHBOT_JSONSH:-${SCRIPTDIR}/JSON.sh/JSON.sh}"
+[[ "${JSONSHFILE}" != *"/JSON.sh" ]] &&\
+	 printf "${RED}ERROR:${NC} ${JSONSHFILE} ${RED}does not end with${NC} JSONS.sh\n" &&\
+	 exit 3
+[ ! -x "${JSONSHFILE}" ] &&\
+	 printf "${RED}ERROR:${NC} ${JSONSHFILE} ${RED}seems not to exist, are we in dev environment?${NN}${GREY}%s${NN}"\
+			"JSONSHFILE environment variable points to wrong file or bashbot is not installed correct, see doc/0_install.md\n" &&\
+	 exit 3
+
+# file locations based on ENVIRONMENT
 BOTCONFIG="${BASHBOT_ETC:-.}/botconfig"
-TOKENFILE="${BASHBOT_ETC:-.}/token"
-BOTADMIN="${BASHBOT_ETC:-.}/botadmin"
 BOTACL="${BASHBOT_ETC:-.}/botacl"
 DATADIR="${BASHBOT_VAR:-.}/data-bot-bash"
 BLOCKEDFILE="${BASHBOT_VAR:-.}/blocked"
@@ -181,37 +197,31 @@ COUNTFILE="${BASHBOT_VAR:-.}/count"
 
 LOGDIR="${RUNDIR:-.}/logs"
 
+# CREATE botconfig if not exist
 # assume everything already set up correctly if TOKEN is set
 if [[ -z "${BOTTOKEN}"  && ! -f "${BOTCONFIG}.jssh" ]]; then
   # BOTCONFIG does not exist, create
   printf '["bot_config_key"]\t"config_key_value"\n' >>"${BOTCONFIG}.jssh"
-  # convert old token
-  if [ -r "${TOKENFILE}" ]; then
-	token="$(< "${TOKENFILE}")"
-  # no old token, ask user
-  elif [ -z "${CLEAR}" ] && [ "$1" != "init" ]; then
-	echo "Running headless, set BOTTOKEN or run ${SCRIPT} init first!"
+  # ask user for bot token
+  if [ -z "${INTERACTIVE}" ] && [ "$1" != "init" ]; then
+	printf "Running headless, set BOTTOKEN or run ${SCRIPT} init first!\n"
 	exit 2 
   else
-	${CLEAR}
-	echo -e "${RED}TOKEN MISSING.${NC}"
-	echo -e "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NC}"
+	printf "${RED}ENTER BOT TOKEN...${NN}"
+	printf "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NN}"
 	read -r token
+	printf "\n"
   fi
   [ -n "${token}" ] && printf '["bottoken"]\t"%s"\n'  "${token}" >> "${BOTCONFIG}.jssh"
 
   # no botadmin, setup botadmin
   if [ -z "$(getConfigKey "botadmin")" ]; then
-     # convert old admin
-     if [ -r "${BOTADMIN}" ]; then
-		admin="$(< "${BOTADMIN}")"
-     elif [ -z "${CLEAR}" ]; then
-	echo "Running headless, set botadmin to AUTO MODE!"
+     # ask user for bot admin
+     if [ -z "${INTERACTIVE}" ]; then
+	printf "Running headless, set botadmin to AUTO MODE!\n"
      else
-	${CLEAR}
-	echo -e "${RED}BOTADMIN MISSING.${NC}"
-	echo -e "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR ENTER '?'${NC}"
-	echo -e "${ORANGE}TO MAKE FIRST USER TYPING '/start' TO BOTADMIN${NC}"
+	printf "${RED}ENTER BOT ADMIN...${NN}"
+	printf "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR PRESS ENTER\nTO MAKE FIRST USER TYPING '/start' BOT ADMIN${NN}?\b"
 	read -r admin
      fi
      [ -z "${admin}" ] && admin='?'
@@ -219,26 +229,22 @@ if [[ -z "${BOTTOKEN}"  && ! -f "${BOTCONFIG}.jssh" ]]; then
   fi
   # setup botacl file
   if [ ! -f "${BOTACL}" ]; then
-	echo -e "${ORANGE}Create empty ${BOTACL} file.${NC}"
+	printf "${GREY}Create initial ${BOTACL} file.${NN}"
 	printf '\n' >"${BOTACL}"
   fi
   # setup data dir file
   if [ ! -d "${DATADIR}" ]; then
 	mkdir "${DATADIR}"
   elif [ ! -w "${DATADIR}" ]; then
-	echo -e "${RED}ERROR: Can't write to ${DATADIR}!.${NC}"
+	printf "${RED}ERROR: Can't write to ${DATADIR}!.${NN}"
 	ls -ld "${DATADIR}"
 	exit 2
   fi
   # setup count file 
   if [ ! -f "${COUNTFILE}.jssh" ]; then
 	printf '["counted_user_chat_id"]\t"num_messages_seen"\n' >> "${COUNTFILE}.jssh"
-	# convert old file on creation
-	if [ -r  "${COUNTFILE}" ];then
-		sed 's/COUNT/\[\"/;s/$/\"\]\t\"1\"/' < "${COUNTFILE}" >> "${COUNTFILE}.jssh"
-	fi
   elif [ ! -w "${COUNTFILE}.jssh" ]; then
-	echo -e "${RED}ERROR: Can't write to ${COUNTFILE}!.${NC}"
+	printf "${RED}ERROR: Can't write to ${COUNTFILE}!.${NN}"
 	ls -l "${COUNTFILE}.jssh"
 	exit 2
   fi
@@ -262,13 +268,14 @@ if [ -z "${BOTTOKEN}" ]; then
     BOTTOKEN="$(getConfigKey "bottoken")"
     if [ -z "${BOTTOKEN}" ]; then
 		BOTERROR="Warning: can't get bot token, try to recover working config..."
-		echo -e "${ORANGE}${BOTERROR}${NC} \c"
+		printf "${ORANGE}${BOTERROR}${NC} "
 		if [ -r "${BOTCONFIG}.jssh.ok" ]; then
 			log_error "${BOTERROR}"
-			cp "${BOTCONFIG}.jssh.ok" "${BOTCONFIG}.jssh"; echo "OK"
+			mv "${BOTCONFIG}.jssh" "${BOTCONFIG}.jssh.bad"
+			cp "${BOTCONFIG}.jssh.ok" "${BOTCONFIG}.jssh"; printf "OK\n"
 			BOTTOKEN="$(getConfigKey "bottoken")"
 		else
-			echo -e "\n${RED}Error: Missing bot token! remove ${BOTCONFIG}.jssh and run \"bashbot.sh init\" may fix it.${NC}"
+			printf "\n${RED}Error: Can't recover from missing bot token! Remove ${BOTCONFIG}.jssh and run${NC} bashbot.sh init\n"
 			exit 7
 		fi
     fi
@@ -276,18 +283,18 @@ fi
 
 # BOTTOKEN format checks
 if ! check_token "${BOTTOKEN}"; then
-	echo -e "${ORANGE}Warning: your bottoken may incorrect. it should have the following format:${NC}"
-	echo -e "${GREY}123456789${RED}:${GREY}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4${ORANGE} => ${NC}\c"
-	echo -e "${GREY}8-10 digits${RED}:${GREY}35 alphanumeric characters + '_-'${NC}"
-	echo -e "${ORANGE}Your current token is: '${GREY}^$(cat -ve <<<"${BOTTOKEN//:/${RED}:${GREY}}")${ORANGE}'${NC}"
+	printf "\n${ORANGE}Warning: Your bot token is incorrect, it should have the following format:${NC}\n"
+	printf "<your_bot_id>${RED}:${NC}<35_alphanumeric_characters-hash> ${RED}e.g. =>${NC} 123456789${RED}:${NC}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4\n\n"
+	printf "${GREY}Your bot token: '${NC}${BOTTOKEN//:/${RED}:${NC}}'\n"
+
 	if [[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}: ]]; then
-		echo -e "${ORANGE}Possible problem in the digits part, len is $(($(wc -c <<<"${BOTTOKEN%:*}")-1))${NC}"
-		[ -n "$(getConfigKey "botid")" ] && echo -e "${GREY}Did you mean: \"${NC}$(getConfigKey "botid")${GREY}\" ?${NC}"
+		printf "${GREY}\tHint: Bot id len: ${NC}$(($(wc -c <<<"${BOTTOKEN%:*}")-1)) ${GREY}but should be${NC} 8-10\n"
+		[ -n "$(getConfigKey "botid")" ] && printf "\t${GREEN}Did you mean: \"${NC}$(getConfigKey "botid")${GREEN}\" ?${NN}"
 	fi
 	[[ ! "${BOTTOKEN}" =~ :[a-zA-Z0-9_-]{35}$ ]] &&\
-		echo -e "${ORANGE}Possible problem in the characters part, len is $(($(wc -c <<<"${BOTTOKEN#*:}")-1))${NC}"
+		printf "${GREY}\tHint: Hash contains invalid character or is not${NC} 35 ${GREY}characters long, hash len is ${NC}$(($(wc -c <<<"${BOTTOKEN#*:}")-1))\n"
+	printf "\n"
 fi
-
 
 
 ##################
@@ -303,7 +310,7 @@ GETFILE_URL=$URL'/getFile'
 #################
 # BASHBOT COMMON functions
 
-declare -rx SCRIPT SCRIPTDIR MODULEDIR RUNDIR ADDONDIR TOKENFILE BOTADMIN BOTACL DATADIR COUNTFILE
+declare -rx SCRIPT SCRIPTDIR MODULEDIR RUNDIR ADDONDIR BOTACL DATADIR COUNTFILE
 declare -rx BOTTOKEN URL ME_URL UPD_URL GETFILE_URL
 
 declare -ax CMD
@@ -317,7 +324,7 @@ export res CAPTION ME
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
 if [ -z "${SOURCE}" ]; then
 	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
-		echo -e "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NC}"
+		printf "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NN}"
 		ls -l "${COMMANDS}"
 		exit 3
 	fi
@@ -338,11 +345,11 @@ done
 
 # do we have BSD sed
 if ! sed '1ia' </dev/null 2>/dev/null; then
-	echo -e "${ORANGE}Warning: You may run on a BSD style system without gnu utils ...${NC}"
+	printf "${ORANGE}Warning: You may run on a BSD style system without gnu utils ...${NN}"
 fi
 #jsonDB is now mandatory
 if ! _is_function jssh_newDB ; then
-	echo -e "${RED}ERROR: Mandatory module jsonDB is missing or not readable!"
+	printf "${RED}ERROR: Mandatory module jsonDB is missing or not readable!${NN}"
 	exit 6
 fi
 
@@ -523,9 +530,9 @@ else
   else
 	# ups, no curl AND no wget
 	if [ -n "${BASHBOT_WGET}" ]; then
-		echo -e "${RED}Error: You set BASHBOT_WGET but no wget found!${NC}"
+		printf "${RED}Error: You set BASHBOT_WGET but no wget found!${NN}"
 	else
-		echo -e "${RED}Error: curl and wget not found, install curl!${NC}"
+		printf "${RED}Error: curl and wget not found, install curl!${NN}"
 	fi
 	exit 8
   fi
@@ -649,7 +656,7 @@ getBotName() {
 	# save botname and id
 	setConfigKey "botname" "${BOTARRAY["result","username"]}"
 	setConfigKey "botid" "${BOTARRAY["result","id"]}"
-	echo "${BOTARRAY["result","username"]}"
+	printf "${BOTARRAY["result","username"]}\n"
 }
 
 # pure bash implementation, done by KayM (@gnadelwartz)
@@ -1016,7 +1023,7 @@ process_message() {
 declare -A BASHBOTBLOCKED
 export BASHBOT_UPDATELOG="${BASHBOT_UPDATELOG-nolog}" # allow to be ""
 start_bot() {
-	local DEBUGMSG ADMIN OFFSET=0
+	local DEBUGMSG OFFSET=0
 	# adaptive sleep defaults
 	local nextsleep="100"
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
@@ -1055,8 +1062,7 @@ start_bot() {
 	# read blocked users
 	jssh_readDB_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
 	# inform botadmin about start
-	ADMIN="$(getConfigKey "botadmin")"
-	[ -n "${ADMIN}" ] && send_normal_message "${ADMIN}" "Bot $(getConfigKey "botname") started ..." &
+	send_normal_message "$(getConfigKey "botadmin")" "Bot $(getConfigKey "botname") started ..." &
 	##########
 	# bot is ready, start processing updates ...
 	while true; do
@@ -1102,93 +1108,65 @@ bot_init() {
 	[ -n "${BASHBOT_HOME}" ] && cd "${BASHBOT_HOME}" || exit 1
 	local DEBUG="$1"
 	# upgrade from old version
-	echo "Check for Update actions ..."
-	local OLDTMP="${BASHBOT_VAR:-.}/tmp-bot-bash"
-	[ -d "${OLDTMP}" ] && { mv -n "${OLDTMP}/"* "${DATADIR}"; rmdir "${OLDTMP}"; }
-	# no more existing modules
-	[ -f "modules/inline.sh" ] && rm -f "modules/inline.sh"
+	# currently no action
+	printf "Check for Update actions ...\n"
+	printf "Done.\n"
 	# load addons on startup
-	echo "Done."
-	echo "Initialize modules and addons ..."
+	printf "Initialize modules and addons ...\n"
 	for addons in "${ADDONDIR:-.}"/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
 		[ -r "${addons}" ] && source "${addons}" "init" "${DEBUG}"
 	done
-	echo "Done."
-	if [[ ! -d "logs" ]]; then
-		echo "Move Logfiles ..."
-		mkdir logs 2>/dev/null
-		for MVLOG in DEBUG.log MESSAGE.log ERROR.log BASHBOT.log
-		do
-			[ -f  "${MVLOG}" ] && mv "${MVLOG}" logs 2>/dev/null
-		done
-		echo "Done."
-	fi
+	printf "Done.\n"
 	# setup bashbot
 	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
-	echo -n "Enter User to run bashbot [$RUNUSER]: "
+	printf "Enter User to run bashbot [$RUNUSER]: "
 	read -r TOUSER
 	[ -z "$TOUSER" ] && TOUSER="$RUNUSER"
 	if ! id "$TOUSER" &>/dev/null; then
-		echo -e "${RED}User \"$TOUSER\" not found!${NC}"
+		printf "${RED}User \"$TOUSER\" not found!${NN}"
 		exit 3
 	else
-		# shellcheck disable=SC2009
-		oldbot="$(ps -fu "$TOUSER" | grep startbot | grep -v -e 'grep' -e '\-startbot' )"
-		[ -n "${oldbot}" ] && \
-			echo -e "${ORANGE}Warning: At least one not upgraded TMUX bot is running! You must stop it with kill command:${NC}\\n${oldbot}"
-		echo "Adjusting files and permissions for user \"${TOUSER}\" ..."
+		printf "Adjusting files and permissions for user \"${TOUSER}\" ...\n"
 		[ -w "bashbot.rc" ] && sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' "bashbot.rc"
-		chown -R "$TOUSER" . ./*
 		chmod 711 .
 		chmod -R o-w ./*
-		chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTADMIN}" logs "${LOGDIR}/"*.log 2>/dev/null
-	chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${TOKENFILE}" "${BOTADMIN}" "${BOTACL}" 2>/dev/null
+		chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" logs "${LOGDIR}/"*.log 2>/dev/null
+		chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTACL}" 2>/dev/null
 		# jsshDB must writeable by owner
 		find . -name '*.jssh*' -exec chmod u+w \{\} +
-		echo "Done."
+		chown -R "$TOUSER" . ./*
+		printf "Done.\n"
 	fi
 	# ask to check bottoken online
 	if [ -z "$(getConfigKey "botid")" ]; then
-		echo -e "Seems to be your first init. Should I verify your bot token online? (y/N) N\b\c"
+		printf "Seems to be your first init. Should I verify your bot token online? (y/N) N\b"
 		read -r ANSWER
 		if [[ "${ANSWER}" =~ ^[Yy] ]]; then
-			echo -e "${GREEN}Contacting telegram to verify your bot token ...${NC}"
+			printf "${GREEN}Contacting telegram to verify your bot token ...${NN}"
 			$0 botname
 		fi 
 	fi
-	# check if botconf if seems valid
-	echo -e "${GREEN}This is your bot config:${NC}"
+	# check if botconf seems valid
+	printf "${GREEN}This is your bot config:${NN}"
 	sed 's/^/\t/' "${BOTCONFIG}.jssh" | grep -vF '["bot_config_key"]'
-	if [[ "$(getConfigKey "bottoken")" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ && "$(getConfigKey "botadmin")" =~ ^[0-9]+$ ]]; then
-		echo -e "Bot config seems to be valid. Should I make a backup copy? (Y/n) Y\b\c"
+	if check_token "$(getConfigKey "bottoken")" && [[ "$(getConfigKey "botadmin")" =~ ^[0-9]+$ ]]; then
+		printf "Bot config seems to be valid. Should I make a backup copy? (Y/n) Y\b"
 		read -r ANSWER
 		if [[ -z "${ANSWER}" || "${ANSWER}" =~ ^[^Nn] ]]; then
-			echo "Copy bot config to ${BOTCONFIG}.jssh.ok ..."
+			printf "Copy bot config to ${BOTCONFIG}.jssh.ok ...\n"
 			cp "${BOTCONFIG}.jssh" "${BOTCONFIG}.jssh.ok"
 		fi 
 	else
-		echo -e "${ORANGE}Bot config may not complete, pls check.${NC}"
+		printf "${ORANGE}Bot config may incomplete, pls check.${NN}"
 	fi
 	# show result
 	ls -ld "${DATADIR}" "${LOGDIR}" ./*.jssh* ./*.sh 2>/dev/null
 }
 
 if ! _is_function send_message ; then
-	echo -e "${RED}ERROR: send_message is not available, did you deactivate ${MODULEDIR}/sendMessage.sh?${NC}"
+	printf "${RED}ERROR: send_message is not available, did you deactivate ${MODULEDIR}/sendMessage.sh?${NN}"
 	exit 1
-fi
-
-# get location of JSON.sh, download if not exist
-JSONSHFILE="${BASHBOT_JSONSH:-${SCRIPTDIR}/JSON.sh/JSON.sh}"
-[[ "${JSONSHFILE}" != *"/JSON.sh" ]] && echo -e "${RED}ERROR: \"${JSONSHFILE}\" ends not with \"JSONS.sh\".${NC}" && exit 3
-
-if [ ! -f "${JSONSHFILE}" ]; then
-	echo "Seems to be first run, Downloading ${JSONSHFILE}..."
-	[ "${SCRIPTDIR}/JSON.sh/JSON.sh" = "${JSONSHFILE}" ] &&\
-		 mkdir "${SCRIPTDIR}/JSON.sh" 2>/dev/null && chmod +w "${SCRIPTDIR}/JSON.sh"
-	getJson "https://cdn.jsdelivr.net/gh/dominictarr/JSON.sh/JSON.sh" >"${JSONSHFILE}"
-	chmod +x "${JSONSHFILE}" 
 fi
 
 # check if JSON.awk exist and has x flag
@@ -1210,24 +1188,24 @@ if [ -z "${SOURCE}" ]; then
 		ME="$(getBotName)"
 		if [ -n "${ME}" ]; then
 			# ok we have a connection and got botname, save it
-			[ -n "${CLEAR}" ] && echo -e "${GREY}Bottoken is valid ...${NC}"
+			[ -n "${INTERACTIVE}" ] && printf "${GREY}Bottoken is valid ...${NN}"
 			jssh_updateKeyDB "botname" "${ME}" "${BOTCONFIG}"
 			rm -f "${BOTCONFIG}.jssh.flock"
 		else
-			echo -e "${GREY}Info: Can't get Botname from Telegram, try cached one ...${NC}"
+			printf "${GREY}Info: Can't get Botname from Telegram, try cached one ...${NN}"
 			ME="$(getConfigKey "botname")"
 			if [ -z "$ME" ]; then
-			    echo -e "${RED}ERROR: No cached botname, can't continue! ...${NC}"
+			    printf "${RED}ERROR: No cached botname, can't continue! ...${NN}"
 			    exit 1
 			fi
 		fi
-		[ -n "${CLEAR}" ] && printf "Bot Name: %s\n" "${ME}"
+		[ -n "${INTERACTIVE}" ] && printf "Bot Name: %s\n" "${ME}"
 		[ "$1" = "botname" ] && exit
 		;;&
 	# used to send output of background and interactive to chats
 	"outproc") # $2 chat_id $3 identifier of job, internal use only!
-		[ -z "$3" ] && echo "No job identifier" && exit 3
-		[ -z "$2"  ] && echo "No chat to send to" && exit 3
+		[ -z "$3" ] && printf "No job identifier\n" && exit 3
+		[ -z "$2"  ] && printf "No chat to send to\n" && exit 3
 		ME="$(getConfigKey "botname")"
 		# read until terminated
 		while read -r line ;do
@@ -1251,45 +1229,15 @@ if [ -z "${SOURCE}" ]; then
 		debug_checks "end init" "$@"
 		exit
 		;;
-	# print usage stats
-	"stats")
-		echo -e "${ORANGE}stats deprecated, see bin/bashbot_stats --help${NC}"
-		ME="$(getConfigKey "botname")"
-		declare -A STATS
-		jssh_readDB_async "STATS" "${COUNTFILE}"
-		for MSG in ${!STATS[*]}
-		do
-			[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
-			(( USERS++ ))
-		done
-		for MSG in ${STATS[*]}
-		do
-			(( MESSAGES+=MSG ))
-		done
-		if [ "${USERS}" != "" ]; then
-			echo "A total of ${MESSAGES} messages from ${USERS} users are processed."
-		else
-			echo "No one used your bot so far ..."
-		fi
-		jssh_readDB_async "STATS" "${BLOCKEDFILE}"
-		for MSG in ${!STATS[*]}
-		do
-			[[ ! "${MSG}" =~ ^[0-9-]*$ ]] && continue
-			(( BLOCKS++ ))
-		done
-		if [ "${BLOCKS}" != "" ]; then
-			echo -e "Note: ${BLOCKS} users are blocked by your bot:${GREY}"
-			sort -r "${BLOCKEDFILE}.jssh"
-			echo -e "${NC}\c"
-		fi
-		# show user created bot stats
-		_exec_if_function my_bashbot_stats "$@"
-		debug_checks "end $1" "$@"
+	# stats deprecated
+	"stats"|"count")
+		printf "${ORANGE}Stats is a separate command now, see bin/bashbot_stats.sh --help${NN}"
+		"${BASHBOT_HOME:-.}"/bin/bashbot_stats.sh --help
 		exit
 		;;
-	# send message to all users
+	# broadcast deprecated
 	'broadcast')
-		echo -e "${ORANGE}Broadcast is a separate command now, see ${BASHBOT_HOME:-.}/bin/send_broadcast.sh --help${NC}"
+		printf "${ORANGE}Broadcast is a separate command now, see bin/send_broadcast.sh --help${NN}"
 		"${BASHBOT_HOME:-.}"/bin/send_broadcast.sh --help
 		exit
 		;;
@@ -1299,10 +1247,10 @@ if [ -z "${SOURCE}" ]; then
 		SESSION="${ME:-_bot}-startbot"
 		BOTPID="$(proclist "${SESSION}")"
 		if [ -n "${BOTPID}" ]; then
-			echo -e "${GREEN}Bot is running with UID ${RUNUSER}.${NC}"
+			printf "${GREEN}Bot is running with UID ${RUNUSER}.${NN}"
 			exit
 		else
-			echo -e "${ORANGE}No Bot running with UID ${RUNUSER}.${NC}"
+			printf "${ORANGE}No Bot running with UID ${RUNUSER}.${NN}"
 			exit 5
 		fi
 		debug_checks "end status" "$@"
@@ -1319,9 +1267,9 @@ if [ -z "${SOURCE}" ]; then
 		printf "Session Name: %s\n" "${SESSION}"
 		sleep 1
 		if [ -n "$(proclist "${SESSION}")" ]; then
-		 	echo -e "${GREEN}Bot started successfully.${NC}"
+		 	printf "${GREEN}Bot started successfully.${NN}"
 		else
-			echo -e "${RED}An error occurred while starting the bot.${NC}"
+			printf "${RED}An error occurred while starting the bot.${NN}"
 			exit 5
 		fi
 		debug_checks "end start" "$@"
@@ -1335,36 +1283,35 @@ if [ -z "${SOURCE}" ]; then
 			# shellcheck disable=SC2086
 			if kill ${BOTPID}; then
 				# inform botadmin about stop
-				ADMIN="$(getConfigKey "botadmin")"
-				[ -n "${ADMIN}" ] && send_normal_message "${ADMIN}" "Bot ${ME} stopped ..." &
-				echo -e "${GREEN}OK. Bot stopped successfully.${NC}"
+				send_normal_message "$(getConfigKey "botadmin")" "Bot ${ME} stopped ..." &
+				printf "${GREEN}OK. Bot stopped successfully.${NN}"
 			else
-				echo -e "${RED}An error occurred while stopping bot.${NC}"
+				printf "${RED}An error occurred while stopping bot.${NN}"
 				exit 5
 			fi
 		else
-			echo -e "${ORANGE}No Bot running with UID ${RUNUSER}.${NC}"
+			printf "${ORANGE}No Bot running with UID ${RUNUSER}.${NN}"
 		fi
 		debug_checks "end stop" "$@"
 		exit
 		;;
 	# suspend, resume or kill background jobs
 	"suspendb"*|"resumeb"*|"killb"*)
-  		_is_function job_control || { echo -e "${RED}Module background is not available!${NC}"; exit 3; }
+  		_is_function job_control || { printf "${RED}Module background is not available!${NN}"; exit 3; }
 		ME="$(getConfigKey "botname")"
 		job_control "$1"
 		debug_checks "end background $1" "$@"
 		;;
 	*)
-		echo -e "${RED}${REALME##*/}: unknown command${NC}"
-		echo -e "${RED}Available commands: ${GREY}${BOTCOMMANDS}${NC}" && exit
+		printf "${RED}${REALME##*/}: unknown command${NN}"
+		printf "${RED}Available commands: ${GREY}${BOTCOMMANDS}${NN}" && exit
 		exit 4
 		;;
   esac
 
   # warn if root
   if [[ "${UID}" -eq "0" ]] ; then
-	echo -e "\\n${ORANGE}WARNING: ${SCRIPT} was started as ROOT (UID 0)!${NC}"
-	echo -e "${ORANGE}You are at HIGH RISK when running a Telegram BOT with root privileges!${NC}"
+	printf "\\n${ORANGE}WARNING: ${SCRIPT} was started as ROOT (UID 0)!${NN}"
+	printf "${ORANGE}You are at HIGH RISK when running a Telegram BOT with root privileges!${NN}"
   fi
 fi # end source

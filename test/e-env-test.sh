@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-10-g9bfc27a
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -31,7 +31,7 @@ set +f
 # shellcheck disable=SC2086
 cp ${TESTDIR}/*commands.sh "${BASHBOT_ETC}" || exit 1
 set -f
-cp -r "${TESTDIR}/bashbot.sh" "${TESTDIR}/modules" "${BASHBOT_BIN}" || exit 1
+cp -r "${TESTDIR}/bashbot.sh" "${TESTDIR}/modules" "${TESTDIR}/JSON.sh/JSON.sh" "${BASHBOT_BIN}" || exit 1
 
 TESTFILES="${TOKENFILE} ${ACLFILE}"
 

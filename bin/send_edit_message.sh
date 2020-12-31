@@ -22,7 +22,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 16:52
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-dev-0-g2e878fd
 #===============================================================================
 
 ####
@@ -42,10 +42,10 @@ case "$1" in
 		shift
 		;;
 	'')
-		echo "missing arguments"
+		printf "missing arguments\n"
 		;&
 	"-h"*)
-		echo 'usage: send_edit_message [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "message ..."  [debug]'
+		printf 'usage: send_edit_message [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "message ..."  [debug]\n'
 		exit 1
 		;;
 	'--h'*)
