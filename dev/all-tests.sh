@@ -5,7 +5,7 @@
 #
 # Description: run all tests, exit after failed test
 #
-#### $$VERSION$$ v1.21-dev-45-gddb2785
+#### $$VERSION$$ v1.21-dev-46-gd13e95a
 #############################################################
 
 # magic to ensure that we're always inside the root of our application,
@@ -67,8 +67,8 @@ if [ "$fail" -eq 0 ]; then
 else
   /bin/echo -n 'FAILURE '
   exitcode=1
-  #rm -rf "${TESTENV}/test"
-  #find "${TESTENV}/"* ! -name '[a-z]-*' -delete
+  rm -rf "${TESTENV}/test"
+  find "${TESTENV}/"* ! -name '[a-z]-*' -delete
 fi
 
 #########################
