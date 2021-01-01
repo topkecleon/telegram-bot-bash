@@ -1,4 +1,6 @@
 data-bot-bash/*
+JSON.awk
+awk-patch.sh
 *.jssh*
 botacl
 *.flock
