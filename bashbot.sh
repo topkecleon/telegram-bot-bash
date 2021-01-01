@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-pre-10-g726357a
+#### $$VERSION$$ v1.21-pre-11-g03c8c9d
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -140,9 +140,7 @@ RUNDIR="$(dirname "$0")"
 MODULEDIR="${SCRIPTDIR}/modules"
 
 # adjust locations based on source and real name
-if [ "${SCRIPT}" != "${REALME}" ] || [ "$1" = "source" ]; then
-	SOURCE="yes"
-fi
+[[ "${SCRIPT}" != "${REALME}" || "$1" == "source" ]] && SOURCE="yes"
 
 if [ -n "$BASHBOT_HOME" ]; then
 	SCRIPTDIR="$BASHBOT_HOME"
@@ -210,8 +208,7 @@ if [ -z "${BOTTOKEN}" ]; then
 	printf "Running headless, set BOTTOKEN or run ${SCRIPT} init first!\n"
 	exit 2 
     else
-	printf "${RED}ENTER BOT TOKEN...${NN}"
-	printf "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NN}"
+	printf "${RED}ENTER BOT TOKEN...${NN}${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NN}"
 	read -r token
 	printf "\n"
     fi
@@ -223,8 +220,7 @@ if [ -z "${BOTTOKEN}" ]; then
      if [ -z "${INTERACTIVE}" ]; then
 	printf "Running headless, set botadmin to AUTO MODE!\n"
      else
-	printf "${RED}ENTER BOT ADMIN...${NN}"
-	printf "${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR PRESS ENTER\nTO MAKE FIRST USER TYPING '/start' BOT ADMIN${NN}?\b"
+	printf "${RED}ENTER BOT ADMIN...${NN}${ORANGE}PLEASE WRITE YOUR TELEGRAM ID HERE OR PRESS ENTER\nTO MAKE FIRST USER TYPING '/start' BOT ADMIN${NN}?\b"
 	read -r admin
      fi
      [ -z "${admin}" ] && admin='?'
