@@ -2,7 +2,7 @@
 # file. multibot.sh
 # description:  run multiple telegram bots from one installation
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-pre-14-ga93dc56
 
 if [ "${2}" = "" ] || [ "${2}" = "-h" ]; then
 	echo "Usage: $0 botname command"

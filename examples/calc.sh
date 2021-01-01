@@ -1,11 +1,18 @@
 #!/bin/bash
-# file: calc.sh
-# example for an interactive chat, run with startproc calc.sh
+########################################################################
+#
+# File: calc.sh
+#
+# Description: example for an background job, see mycommands.sh.dist
+#
+# Usage: runback calc  example/calc.sh  - or run in terminal
+#        killback calc - to stop background job
 #
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-pre-14-ga93dc56
+########################################################################
 
 ######
 # parameters
@@ -23,22 +30,21 @@ export 'LANGUAGE=C.UTF-8'
 unset IFS
 # set -f # if you are paranoid use set -f to disable globbing
 
-echo 'Starting Calculator ...'
-echo 'Enter first number.'
+printf 'Starting Calculator ...\n'
+printf 'Enter first number.\n'
 read -r A <"${INPUT}"
-echo 'Enter second number.'
+printf 'Enter second number.\n'
 read -r B <"${INPUT}"
-echo 'Select Operation: mykeyboardstartshere [ "Addition" , "Subtraction" , "Multiplication" , "Division" ,  "Cancel" ]'
+printf 'Select Operation: mykeyboardstartshere [ "Addition" , "Subtraction" , "Multiplication" , "Division" ,  "Cancel" ]\n'
 read -r opt <"${INPUT}"
-echo -n 'Result: '
-case $opt in
-	'add'* | 'Add'* ) res="$(( A + B ))" ;;
-	'sub'* | 'Sub'* ) res="$(( A - B ))" ;;
-	'mul'* | 'Mul'* ) res="$(( A * B ))" ;;
-	'div'* | 'Div'* ) res="$(( A / B ))" ;;
-	'can'* | 'Can'* ) res="abort!" ;;
-		* ) echo "unknown operator!";;
+printf 'Result: '
+case ${opt,,} in
+	'a'*) res="$(( A + B ))" ;;
+	's'*) res="$(( A - B ))" ;;
+	'm'*) res="$(( A * B ))" ;;
+	'd'*) res="$(( A / B ))" ;;
+	'c'*) res="abort!" ;;
+	* ) printf "unknown operator!\n";;
 esac
-echo "$res"
-echo "Bye .."
+printf "%s\nBye ...\n" "${res}"
 

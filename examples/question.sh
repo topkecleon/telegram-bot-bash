@@ -1,11 +1,17 @@
 #!/bin/bash
-# file: question.sh
-# example for an interactive chat, run with startproc question.sh
+########################################################################
+#
+# File: question.sh
+#
+# Usage: runproc example/question.sh - or run in terminal
+#
+# Description: example for an interactive chat, see mycommands.sh.dist
 #
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-pre-14-ga93dc56
+########################################################################
 
 ######
 # parameters
@@ -13,7 +19,6 @@
 # $3 path to named pipe
 
 INPUT="${3:-/dev/stdin}"
-
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
@@ -24,18 +29,25 @@ export 'LANGUAGE=C.UTF-8'
 unset IFS
 # set -f # if you are paranoid use set -f to disable globbing
 
-echo "Hi, hello there.
-Would you like some tea (y/n)?"
+# simple yes/no question, defaults to no
+printf "Hi, hello there\nWould you like some tea (y/n)?\n"
 read -r answer <"${INPUT}"
-[[ $answer =~ ^([yY][eE][sS]|[yY])$ ]] && echo "OK then, here you go: http://www.rivertea.com/blog/wp-content/uploads/2013/12/Green-Tea.jpg" || echo "OK then."
+if [[ ${answer,,} == "y"* ]]; then
+	printf "OK then, here you go: http://www.rivertea.com/blog/wp-content/uploads/2013/12/Green-Tea.jpg\n"
+else
+	printf "OK then, no tea ...\n"
+fi
+
+# question with Keyboard, repeating until correct answer given
 until [ "$SUCCESS" = "y" ] ;do
-	echo 'Do you like Music? mykeyboardstartshere "Yass!" , "No"'
+	printf 'Do you like Music? mykeyboardstartshere "Yass!" , "No"\n'
 	read -r answer <"${INPUT}"
-	case $answer in
-		'Yass!') echo "Goody! mykeyboardendshere";SUCCESS=y;;
-		'No') echo "Well that's weird. mykeyboardendshere";SUCCESS=y;;
-		'') echo "empty answer! Try again";; 
+	case ${answer,,} in
+		'') printf "empty answer! Try again\n";; 
+		'yass'*) printf "Goody! mykeyboardendshere\n";SUCCESS=y;;
+		'no'*) printf "Well that's weird. mykeyboardendshere\n";SUCCESS=y;;
 		*) SUCCESS=n;;
 	esac
 done
+printf "OK, Done!\n"
 
