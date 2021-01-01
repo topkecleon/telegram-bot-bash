@@ -26,7 +26,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-pre-5-gc296899
+#### $$VERSION$$ v1.21-pre-6-g23e04a9
 ##################################################################
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117,SC2059
 
@@ -199,21 +199,22 @@ LOGDIR="${RUNDIR:-.}/logs"
 
 # CREATE botconfig if not exist
 # assume everything already set up correctly if TOKEN is set
-if [[ -z "${BOTTOKEN}"  && ! -f "${BOTCONFIG}.jssh" ]]; then
+if [ -z "${BOTTOKEN}" ]; then
   # BOTCONFIG does not exist, create
-  printf '["bot_config_key"]\t"config_key_value"\n' >>"${BOTCONFIG}.jssh"
-  # ask user for bot token
-  if [ -z "${INTERACTIVE}" ] && [ "$1" != "init" ]; then
+  [ ! -f "${BOTCONFIG}.jssh" ] && printf '["bot_config_key"]\t"config_key_value"\n' >>"${BOTCONFIG}.jssh"
+  if [ -z "$(getConfigKey "bottoken")" ]; then
+    # ask user for bot token
+    if [ -z "${INTERACTIVE}" ] && [ "$1" != "init" ]; then
 	printf "Running headless, set BOTTOKEN or run ${SCRIPT} init first!\n"
 	exit 2 
-  else
+    else
 	printf "${RED}ENTER BOT TOKEN...${NN}"
 	printf "${ORANGE}PLEASE WRITE YOUR TOKEN HERE OR PRESS CTRL+C TO ABORT${NN}"
 	read -r token
 	printf "\n"
+    fi
+    [ -n "${token}" ] && printf '["bottoken"]\t"%s"\n'  "${token}" >> "${BOTCONFIG}.jssh"
   fi
-  [ -n "${token}" ] && printf '["bottoken"]\t"%s"\n'  "${token}" >> "${BOTCONFIG}.jssh"
-
   # no botadmin, setup botadmin
   if [ -z "$(getConfigKey "botadmin")" ]; then
      # ask user for bot admin
@@ -232,10 +233,8 @@ if [[ -z "${BOTTOKEN}"  && ! -f "${BOTCONFIG}.jssh" ]]; then
 	printf "${GREY}Create initial ${BOTACL} file.${NN}"
 	printf '\n' >"${BOTACL}"
   fi
-  # setup data dir file
-  if [ ! -d "${DATADIR}" ]; then
-	mkdir "${DATADIR}"
-  elif [ ! -w "${DATADIR}" ]; then
+  # check data dir file
+  if [ ! -w "${DATADIR}" ]; then
 	printf "${RED}ERROR: Can't write to ${DATADIR}!.${NN}"
 	ls -ld "${DATADIR}"
 	exit 2
