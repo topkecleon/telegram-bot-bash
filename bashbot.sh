@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-pre-11-g03c8c9d
+#### $$VERSION$$ v1.21-pre-12-ged1cc4a
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -279,16 +279,16 @@ fi
 
 # BOTTOKEN format checks
 if ! check_token "${BOTTOKEN}"; then
-	printf "\n${ORANGE}Warning: Your bot token is incorrect, it should have the following format:${NC}\n"
-	printf "<your_bot_id>${RED}:${NC}<35_alphanumeric_characters-hash> ${RED}e.g. =>${NC} 123456789${RED}:${NC}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4\n\n"
-	printf "${GREY}Your bot token: '${NC}${BOTTOKEN//:/${RED}:${NC}}'\n"
+	printf "\n${ORANGE}Warning: Your bot token is incorrect, it should have the following format:${NC}\n%b%b"\
+		"<your_bot_id>${RED}:${NC}<35_alphanumeric_characters-hash> ${RED}e.g. =>${NC} 123456789${RED}:${NC}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4\n\n"\
+		"${GREY}Your bot token: '${NC}${BOTTOKEN//:/${RED}:${NC}}'\n"
 
 	if [[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}: ]]; then
-		printf "${GREY}\tHint: Bot id len: ${NC}$(($(wc -c <<<"${BOTTOKEN%:*}")-1)) ${GREY}but should be${NC} 8-10\n"
+		printf "${GREY}\tHint: Bot id not a number or wrong len: ${NC}$(($(wc -c <<<"${BOTTOKEN%:*}")-1)) ${GREY}but should be${NC} 8-10\n"
 		[ -n "$(getConfigKey "botid")" ] && printf "\t${GREEN}Did you mean: \"${NC}$(getConfigKey "botid")${GREEN}\" ?${NN}"
 	fi
 	[[ ! "${BOTTOKEN}" =~ :[a-zA-Z0-9_-]{35}$ ]] &&\
-		printf "${GREY}\tHint: Hash contains invalid character or is not${NC} 35 ${GREY}characters long, hash len is ${NC}$(($(wc -c <<<"${BOTTOKEN#*:}")-1))\n"
+		printf "${GREY}\tHint: Hash contains invalid character or has not len${NC} 35 ${GREY}, hash len is ${NC}$(($(wc -c <<<"${BOTTOKEN#*:}")-1))\n"
 	printf "\n"
 fi
 
