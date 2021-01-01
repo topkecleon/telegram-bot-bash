@@ -20,13 +20,13 @@
 #     2 - can't write to tmp, count or token
 #     3 - user / command / file not found
 #     4 - unknown command
-#     5 - cannot connect to telegram bot
+#     5 - cannot start, stop or get status
 #     6 - mandatory module not found
 #     7 - can't get bottoken
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-pre-7-g74dfdd7
+#### $$VERSION$$ v1.21-pre-8-g7b6a6ca
 ##################################################################
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117,SC2059
 
