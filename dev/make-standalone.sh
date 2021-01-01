@@ -9,7 +9,7 @@
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.21-dev-17-g8c9298d
+#### $$VERSION$$ v1.21-pre-3-gbbbf57c
 ###################################################################
 
 # magic to ensure that we're always inside the root of our application,
@@ -19,7 +19,7 @@ if [ "$GIT_DIR" != "" ] ; then
 	[[ "$GIT_DIR" != "/"* ]] && GIT_DIR="${PWD}/${GIT_DIR}"
 	cd "$GIT_DIR/.." || exit 1
 else
-	[ ! -f "bashbot.sh" ] && echo "bashbot.sh not found in $(pwd)" && exit 1
+	[ ! -f "bashbot.sh" ] && printf "bashbot.sh not found in %s\n" " $(pwd)" && exit 1
 fi
 
 #DISTNAME="telegram-bot-bash"
@@ -43,8 +43,7 @@ source "$GIT_DIR/../dev/inject-json.sh"
 # here the magic starts
 # create all in one bashbot.sh file
 
-echo "OK, now lets do the magic ..."
-echo "    ... create unified commands.sh"
+printf "OK, now lets do the magic ...\n... create unified commands.sh\n"
 
 { 
   # first head of commands.sh
@@ -63,7 +62,7 @@ echo "    ... create unified commands.sh"
 mv $$commands.sh commands.sh
 rm -f mycommands.sh
 
-echo "    ... create unified bashbot.sh"
+printf "    ... create unified bashbot.sh\n"
 
 { 
   # first head of bashbot.sh
@@ -84,7 +83,7 @@ chmod +x bashbot.sh
 
 rm -rf modules
 
-echo "Create minimized Version of bashbot.sh and commands.sh"
+printf "Create minimized Version of bashbot.sh and commands.sh\n"
 sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e '/^$/d' -e 'N;s/\\\n/ /;P;D' bashbot.sh |\
 	sed 'N;s/\\\n/ /;P;D' > bashbot.sh.min
 sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e 's/\)[[:space:]]+#.*/)/' -e '/^$/d' commands.sh |\
@@ -92,14 +91,14 @@ sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space
 chmod +x bashbot.sh.min
 
 # make html doc
-echo "Create html doc"
+printf "Create html doc\n"
 #shellcheck disable=SC1090
 source "$GIT_DIR/../dev/make-html.sh"
 
-echo "Done!"
+printf "%s Done!\n" "$0"
 
 cd .. || exit 1
 
-echo -e "\\nStandalone bashbot files are now available in \"${DISTDIR}\":\\n"
+printf "\nStandalone bashbot files are now available in %s:\n\n" "${DISTDIR}"
 ls -l "${DISTDIR}"
 

@@ -1,18 +1,23 @@
 #!/bin/bash
-# shellcheck disable=SC2028,SC2016,SC1117
+#
 # joke hack to obfuscate bashbot.min.sh
+#
+# shellcheck disable=SC2028,SC2016,SC1117
 
 infile="bashbot.sh"
 outfile="./bashbot.obf.sh"
 
-[ ! -f "${infile}" ] && echo "Hey, this is a joke hack to obfuscate ${infile}, copy me to STANDANLONE first" && exit
-
+if [ ! -f "${infile}" ]; then
+	printf "This is a hack to obfuscate %s, run me in STANDALONE after running make-standalone.sh\n" "${infile}"
+	exit 1
+fi
+# create gzipped base64 encoded file plus commands to decode
 {
-echo '#!/bin/bash'
-echo 'a="$PWD";cd "$(mktemp -d)"||exit'
-echo 'printf '"'%s\n'"' '"'$(gzip -9 <bashbot.sh | base64)'"'|base64 -d|gunzip >a;export BASHBOT_HOME="$a";chmod +x a;./a "$@";a="$PWD";cd ..;rm -rf "$a"'
+# shellcheck disable=SC2183
+printf '#!/bin/bash\na="$PWD";cd "$(mktemp -d)"||exit;%s'\
+	'printf '"'$(gzip -9 <bashbot.sh | base64)'"'|base64 -d|gunzip >a;export BASHBOT_HOME="$a";chmod +x a;./a "$@";a="$PWD";cd ..;rm -rf "$a"'
 } >"${outfile}"
 
 chmod +x "${outfile}"
 ls -l "${outfile}"
-echo "Try to run ${outfile} init ;-)"
+printf "Try to run %s init ;-)\n" "${outfile}"

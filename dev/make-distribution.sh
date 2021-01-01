@@ -7,7 +7,7 @@
 #
 # Options: --notest - skip tests
 #
-#### $$VERSION$$ v1.21-dev-36-gc6001c2
+#### $$VERSION$$ v1.21-pre-3-gbbbf57c
 ##############################################################
 
 # magic to ensure that we're always inside the root of our application,
@@ -17,7 +17,7 @@ if [ "$GIT_DIR" != "" ] ; then
 	[[ "$GIT_DIR" != "/"* ]] && GIT_DIR="${PWD}/${GIT_DIR}"
 	cd "$GIT_DIR/.." || exit 1
 else
-	echo "Sorry, no git repository $(pwd)" && exit 1
+	printf "Sorry, no git repository %s\n" "$(pwd)" && exit 1
 fi
 
 VERSION="$(git describe --tags | sed -e 's/-[0-9].*//' -e 's/v//')"
@@ -33,7 +33,7 @@ do
    [[ "${test}" == "--notest"* ]] && break
    [ ! -x "${test}" ] && continue
    if ! "${test}" ; then
-	echo "Test ${test} failed, can't create dist!"
+	printf "Test %s failed, can't create dist!\n" "${test}"
 	exit 1
   fi
 done
@@ -41,19 +41,19 @@ done
 # create dir for distribution and copy files
 mkdir -p "${DISTDIR}" 2>/dev/null
 
-echo "Copy files"
+printf "Copy files\n"
 # shellcheck disable=SC2086
 cp -r ${DISTFILES} "${DISTDIR}"
 cd "${DISTDIR}" || exit 1
 
-echo "Create directories"
+printf "Create directories\n"
 for dir in $DISTMKDIR
 do
 	[ ! -d "${dir}" ] && mkdir "${dir}"
 done
 
 # do not overwrite on update
-echo "Create .dist files"
+printf "Create .dist files\n"
 for file in mycommands.sh bashbot.rc addons/*.sh
 do
 	[ "${file}" = "addons/*.sh" ] && continue
@@ -65,18 +65,18 @@ done
 source "$GIT_DIR/../dev/inject-json.sh"
 
 # make html doc
-echo "Create html doc"
+printf "Create html doc\n"
 # shellcheck disable=SC1090,SC1091
 source "../../dev/make-html.sh"
 
 # create archive
 cd .. || exit 1
-echo "Create dist archives"
+printf "Create dist archives\n"
 # shellcheck disable=SC2046
 zip -rq - "${DISTNAME}" --exclude $(cat  "$GIT_DIR/../dev/${0##*/}.exclude") >"${DISTNAME}-${VERSION}.zip"
 tar --exclude-ignore="$GIT_DIR/../dev/${0##*/}.exclude" -czf "${DISTNAME}-${VERSION}.tar.gz" "${DISTNAME}"
 
-echo "Done!"
+printf "%s Done!\n" "$0"
 
 # shellcheck disable=SC2086
 ls -ld ${DISTNAME}-${VERSION}.*

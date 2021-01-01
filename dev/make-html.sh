@@ -7,17 +7,17 @@
 #
 # Usage: source make-hmtl
 #
-#### $$VERSION$$ v1.21-pre-2-ge22fcbf
+#### $$VERSION$$ v1.21-pre-3-gbbbf57c
 ##############################################################
 
 # check for correct dir
 if [[ ! ( -f README.html && -f README.md )  ]]; then
-    echo "Error: Can't create html, script must run where README.md and README.html is!" 
+    printf "Error: Can't create html, script must run where README.md and README.html is!\n"
 
 else
     # check if pandoc installed
     if [ "$(type -t pandoc)" != "file" ]; then
-	echo "pandoc not found, skipping html generation ..."
+	printf "pandoc not found, skipping html generation ...\n"
 
     else
 	########
