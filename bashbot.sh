@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-pre-18-g05b81ff
+#### $$VERSION$$ v1.21-pre-19-g5d9df7b
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -155,8 +155,8 @@ RUNUSER="${USER}" # USER is overwritten by bashbot array :-(, save original
 
 # provide help
 case "$1" in
-	""|"-h"*) printf "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NN}"
-		exit;;
+	""|"-h"*) [ -z "${SOURCE}" ] && printf "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NN}" && exit
+		;;
 	"--h"*)	sed -nE -e '/(NOT EDIT)|(shellcheck)/d' -e '3,/###/p' <"$0"
 		exit;;
 	"help") HELP="${BASHBOT_HOME:-.}/README"
