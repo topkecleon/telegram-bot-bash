@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-pre-9-g647492c
+#### $$VERSION$$ v1.21-pre-10-g726357a
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -186,13 +186,9 @@ fi
 
 # check if JSON.sh is available
 JSONSHFILE="${BASHBOT_JSONSH:-${SCRIPTDIR}/JSON.sh/JSON.sh}"
-[[ "${JSONSHFILE}" != *"/JSON.sh" ]] &&\
-	 printf "${RED}ERROR:${NC} ${JSONSHFILE} ${RED}does not end with${NC} JSONS.sh\n" &&\
-	 exit 3
 [ ! -x "${JSONSHFILE}" ] &&\
-	 printf "${RED}ERROR:${NC} ${JSONSHFILE} ${RED}seems not to exist, are we in dev environment?${NN}${GREY}%s${NN}"\
-			"JSONSHFILE environment variable points to wrong file or bashbot is not installed correct, see doc/0_install.md\n" &&\
-	 exit 3
+	 printf "${RED}ERROR:${NC} ${JSONSHFILE} ${RED}does not exist, are we in dev environment?${NN}${GREY}%s${NN}\n"\
+			"\$JSONSHFILE is set wrong or bashbot is not installed correctly, see doc/0_install.md" && exit 3
 
 # file locations based on ENVIRONMENT
 BOTCONFIG="${BASHBOT_ETC:-.}/botconfig"
