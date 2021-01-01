@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-pre-17-g652398e
+#### $$VERSION$$ v1.21-pre-18-g05b81ff
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -334,8 +334,10 @@ done
 # do we have BSD sed
 sed '1ia' </dev/null 2>/dev/null || printf "${ORANGE}Warning: You may run on a BSD style system without gnu utils ...${NN}"
 #jsonDB is now mandatory
-_is_function jssh_newDB || printf "${RED}ERROR: Mandatory module jsonDB is missing or not readable!${NN}" &&  exit 6
-
+if ! _is_function jssh_newDB; then
+	printf "${RED}ERROR: Mandatory module jsonDB is missing or not readable!${NN}"
+	exit 6
+fi
 
 # $1 URL, $2 filename in DATADIR
 # outputs final filename

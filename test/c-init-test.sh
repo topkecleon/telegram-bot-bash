@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.21-dev-26-gbe87ba3
+#### $$VERSION$$ v1.21-pre-18-g05b81ff
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -7,7 +7,7 @@ source "./ALL-tests.inc.sh"
 
 TESTFILES="${TOKENFILE} ${ACLFILE} ${COUNTFILE} ${BLOCKEDFILE} ${ADMINFILE}"
 
-set -e
+#set -e
 
 # run bashbot first time with init
 "${TESTDIR}/bashbot.sh" init >"${LOGFILE}"  <<EOF
