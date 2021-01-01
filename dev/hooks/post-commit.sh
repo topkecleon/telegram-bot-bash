@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-pre-4-g3193169
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
@@ -15,8 +15,7 @@ LASTPUSH='.git/.lastcommit'
 # if any command inside script returns error, exit and return that error 
 set -e
 
-#echo "Running post-commit hook"
-#echo "............................" 
+#printf "Running post-commit hook\n............................\n"
 
 unset IFS; set -f
 

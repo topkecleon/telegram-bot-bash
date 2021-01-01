@@ -9,7 +9,7 @@
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.21-pre-3-gbbbf57c
+#### $$VERSION$$ v1.21-pre-4-g3193169
 ###################################################################
 
 # magic to ensure that we're always inside the root of our application,
@@ -43,7 +43,7 @@ source "$GIT_DIR/../dev/inject-json.sh"
 # here the magic starts
 # create all in one bashbot.sh file
 
-printf "OK, now lets do the magic ...\n... create unified commands.sh\n"
+printf "OK, now lets do the magic ...\n\t... create unified commands.sh\n"
 
 { 
   # first head of commands.sh
@@ -62,7 +62,7 @@ printf "OK, now lets do the magic ...\n... create unified commands.sh\n"
 mv $$commands.sh commands.sh
 rm -f mycommands.sh
 
-printf "    ... create unified bashbot.sh\n"
+printf "\n... create unified bashbot.sh\n"
 
 { 
   # first head of bashbot.sh

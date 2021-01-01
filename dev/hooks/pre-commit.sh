@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.21-dev-10-g9bfc27a
+#### $$VERSION$$ v1.21-pre-4-g3193169
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
@@ -15,16 +15,15 @@ LASTPUSH='.git/.lastpush'
 # if any command inside script returns error, exit and return that error 
 set -e
 
-echo "Running pre-commit hook"
-echo "............................" 
+printf "Running pre-commit hook\n............................\n" 
 
 unset IFS; set -f
 
 # check for shellcheck
 if command -v  shellcheck >/dev/null 2>&1; then
-	echo "Test all scripts with shellcheck"
+	printf "Test all scripts with shellcheck\n"
 else
-	echo "Error: shellcheck is not installed. Please install shellcheck"
+	printf "Error: shellcheck is not installed. Please install shellcheck\n"
 	exit 1
 fi
 
@@ -36,8 +35,7 @@ FILES="${FILES} $(sed '/^#/d' <"dev/shellcheck.files")"
 if [ "$FILES" != "" ]; then
 	# shellcheck disable=SC2086
 	shellcheck -x ${FILES} || exit 1
-	echo "    OK"
-	echo "............................" 
+	printf "    OK\n............................\n"
 else
 	# something went wrong
 	exit 1
@@ -48,31 +46,28 @@ VERSION="$(git describe --tags | sed -e 's/-.*//' -e 's/v//' -e 's/,/./')"
 
 
 # LOCAL version must greater than latest REMOTE release version
-echo "Update Version of modified files" 
-if ! command -v bc &> /dev/null || (( $(echo "${VERSION} >= ${REMOTEVER}" | bc -l) )); then
+printf "Update Version of modified files\n"
+if ! command -v bc &> /dev/null || (( $(printf "%s\n" "${VERSION} >= ${REMOTEVER}" | bc -l) )); then
 	# update version in bashbot files on push
 	set +f
 	[ -f "${LASTPUSH}" ] && LASTFILES="$(find ./* -newer "${LASTPUSH}")"
 	[ "${LASTFILES}" = "" ] && exit
-	echo -n " "
+	printf " "
 	# shellcheck disable=SC2086
 	dev/version.sh ${LASTFILES} 2>/dev/null || exit 1
-	echo "    OK"
-	echo "............................" 
+	printf "    OK\n............................\n"
 else
-	echo "Error: local version ${VERSION} must be equal to or greater then release version ${REMOTEVER}."
-        echo "use \"git tag vx.zz\" to create a new local version"
+	printf "Error: local version %s must be equal to or greater then release version%s\n" "${VERSION}" "${REMOTEVER}."
+        printf "use \"git tag vx.zz\" to create a new local version\n"
 	exit 1
 fi
 
 if command -v codespell &>/dev/null; then
-	echo "Running codespell"
-	echo "............................" 
+	printf "Running codespell\n............................\n"
 	codespell -q 3 --skip="*.zip,*gz,*.log,*.html,*.txt,.git*,jsonDB-keyboard" -L "ba"
-	echo "if there are (to many) typo's shown, consider running:"
-	echo "codespell -i 3 -w --skip=\"*.log,*.html,*.txt,.git*,examples\" -L \"ba\""
+	printf "if there are (to many) typo's shown, consider running:\ncodespell -i 3 -w --skip=\"*.log,*.html,*.txt,.git*,examples\" -L \"ba\"\n"
 else
-	echo "consider installing codespell: pip install codespell"
+	printf "consider installing codespell: pip install codespell\n"
 fi
-echo "............................" 
+printf "............................\n" 
 
