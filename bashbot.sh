@@ -3,9 +3,10 @@
 #
 # File: bashbot.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
+# shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117,SC2059
 #
-# Description:
-#     bashbot, the Telegram bot written in bash.
+# Description: bashbot, the Telegram bot written in bash.
+#
 #     Written by Drew (@topkecleon) KayM (@gnadelwartz).
 #     Also contributed: Daniil Gentili (@danogentili), JuanPotato,
 #                       BigNerd95, TiagoDanin, iicc1.
@@ -13,6 +14,9 @@
 #
 #     This file is public domain in the USA and all free countries.
 #     Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
+#
+# Usage: bashbot.sh [-h|--help|BOTCOMMANDS]
+         BOTCOMMANDS="start, stop, status, help, init, suspendback, resumeback, killback"
 #
 # Exit Codes:
 #     0 - success (hopefully)
@@ -26,9 +30,8 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-pre-8-g7b6a6ca
+#### $$VERSION$$ v1.21-pre-9-g647492c
 ##################################################################
-# shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117,SC2059
 
 # emmbeded system may claim bash but it is not
 # check for bash like ARRAY handlung
@@ -141,19 +144,6 @@ if [ "${SCRIPT}" != "${REALME}" ] || [ "$1" = "source" ]; then
 	SOURCE="yes"
 fi
 
-BOTCOMMANDS="start, stop, status, help, init, suspendback, resumeback, killback"
-[[ -z "$1" && -z "${SOURCE}" ]] &&  printf "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NN}" && exit
-if [ "$1" = "help" ]; then
-		HELP="${BASHBOT_HOME:-.}/README"
-		if [ -n "${INTERACTIVE}" ];then
-			_exists w3m && w3m "$HELP.html" && exit
-			_exists lynx && lynx "$HELP.html" && exit
-			_exists less && less "$HELP.txt" && exit
-		fi
-		cat "$HELP.txt"
-		exit
-fi
-
 if [ -n "$BASHBOT_HOME" ]; then
 	SCRIPTDIR="$BASHBOT_HOME"
  else
@@ -164,6 +154,22 @@ fi
 
 ADDONDIR="${BASHBOT_ETC:-.}/addons"
 RUNUSER="${USER}" # USER is overwritten by bashbot array :-(, save original
+
+# provide help
+case "$1" in
+	""|"-h"*) printf "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NN}"
+		exit;;
+	"--h"*)	sed -nE -e '/(NOT EDIT)|(shellcheck)/d' -e '3,/###/p' <"$0"
+		exit;;
+	"help") HELP="${BASHBOT_HOME:-.}/README"
+		if [ -n "${INTERACTIVE}" ];then
+			_exists w3m && w3m "$HELP.html" && exit
+			_exists lynx && lynx "$HELP.html" && exit
+			_exists less && less "$HELP.txt" && exit
+		fi
+		cat "$HELP.txt"
+		exit;;
+esac
 
 # OK, ENVIRONMENT is set up, let's do some additional tests
 if [[ -z "${SOURCE}" && -z "$BASHBOT_HOME" ]] && ! cd "${RUNDIR}" ; then
