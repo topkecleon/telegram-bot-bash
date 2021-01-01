@@ -30,13 +30,13 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-pre-12-ged1cc4a
+#### $$VERSION$$ v1.21-pre-13-g9cca55b
 ##################################################################
 
 # emmbeded system may claim bash but it is not
 # check for bash like ARRAY handlung
 if ! (unset a; set -A a a; eval "a=(a b)"; eval '[ -n "${a[1]}" ]'; ) > /dev/null 2>&1; then
-	printf "Error: Current shell does not support ARRAY's, may be busbox ash shell. pls install a real bash!\n"
+	printf "Error: Current shell does not support ARRAY's, may be busybox ash shell. pls install a real bash!\n"
 	exit 10
 fi
 

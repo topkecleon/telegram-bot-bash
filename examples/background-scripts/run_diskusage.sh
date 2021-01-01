@@ -1,10 +1,10 @@
 #!/bin/bash
-# file: run_diskcusage.sh
+# file: run_diskusage.sh
 # example for an background job display a system value
 #
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-pre-13-g9cca55b
 
 ######
 # parameters
@@ -37,7 +37,7 @@ fi
 
 NEWLINE=$'\n'
 
-# output disk usgae every $1 seconds
+# output disk usage every $1 seconds
 WAIT=0
 while sleep $WAIT
 do
