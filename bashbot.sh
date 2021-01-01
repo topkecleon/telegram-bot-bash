@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-pre-13-g9cca55b
+#### $$VERSION$$ v1.21-pre-17-g652398e
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -173,20 +173,15 @@ esac
 if [[ -z "${SOURCE}" && -z "$BASHBOT_HOME" ]] && ! cd "${RUNDIR}" ; then
 	printf "${RED}ERROR: Can't change to ${RUNDIR} ...${NN}"
 	exit 1
-else
-	RUNDIR="."
 fi
-
-if [ ! -w "." ]; then
-	printf "${ORANGE}WARNING: ${RUNDIR} is not writeable!${NN}"
-	ls -ld .
-fi
+RUNDIR="."
+[ ! -w "." ] && printf "${ORANGE}WARNING: ${RUNDIR} is not writeable!${NN}"
 
 # check if JSON.sh is available
 JSONSHFILE="${BASHBOT_JSONSH:-${SCRIPTDIR}/JSON.sh/JSON.sh}"
 [ ! -x "${JSONSHFILE}" ] &&\
 	 printf "${RED}ERROR:${NC} ${JSONSHFILE} ${RED}does not exist, are we in dev environment?${NN}${GREY}%s${NN}\n"\
-			"\$JSONSHFILE is set wrong or bashbot is not installed correctly, see doc/0_install.md" && exit 3
+		"\$JSONSHFILE is set wrong or bashbot is not installed correctly, see doc/0_install.md" && exit 3
 
 # file locations based on ENVIRONMENT
 BOTCONFIG="${BASHBOT_ETC:-.}/botconfig"
@@ -318,21 +313,18 @@ export res CAPTION ME
 ##################
 # read commands file if we are not sourced
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
-if [ -z "${SOURCE}" ]; then
-	if [ ! -f "${COMMANDS}" ] || [ ! -r "${COMMANDS}" ]; then
-		printf "${RED}ERROR: ${COMMANDS} does not exist or is not readable!.${NN}"
-		ls -l "${COMMANDS}"
-		exit 3
-	fi
+if [  -r "${COMMANDS}" ]; then
+	# shellcheck source=./commands.sh
+	 source "${COMMANDS}" "source"
+else
+	[ -z "${SOURCE}" ] && printf "${RED}Warning: ${COMMANDS} does not exist or is not readable!.${NN}"
 fi
-# shellcheck source=./commands.sh
-[  -r "${COMMANDS}" ] && source "${COMMANDS}" "source"
 
 ###############
 # load modules
-for modules in "${MODULEDIR:-.}"/*.sh ; do
+for module in "${MODULEDIR:-.}"/*.sh ; do
 	# shellcheck source=./modules/aliases.sh
-	if ! _is_function "$(basename "${modules}")" && [ -r "${modules}" ]; then source "${modules}" "source"; fi
+	if ! _is_function "$(basename "${module}")" && [ -r "${module}" ]; then source "${module}" "source"; fi
 done
 
 #####################
@@ -340,14 +332,9 @@ done
 #
 
 # do we have BSD sed
-if ! sed '1ia' </dev/null 2>/dev/null; then
-	printf "${ORANGE}Warning: You may run on a BSD style system without gnu utils ...${NN}"
-fi
+sed '1ia' </dev/null 2>/dev/null || printf "${ORANGE}Warning: You may run on a BSD style system without gnu utils ...${NN}"
 #jsonDB is now mandatory
-if ! _is_function jssh_newDB ; then
-	printf "${RED}ERROR: Mandatory module jsonDB is missing or not readable!${NN}"
-	exit 6
-fi
+_is_function jssh_newDB || printf "${RED}ERROR: Mandatory module jsonDB is missing or not readable!${NN}" &&  exit 6
 
 
 # $1 URL, $2 filename in DATADIR
