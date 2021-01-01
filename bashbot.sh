@@ -26,7 +26,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-dev-43-g79f58cd
+#### $$VERSION$$ v1.21-pre-5-gc296899
 ##################################################################
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117,SC2059
 
@@ -55,7 +55,7 @@ if [ "${LANG}" = "${LANG%[Uu][Tt][Ff]*}" ]; then
 fi
 
 # we need some bash 4+ features, check for old bash by feature
-if [ "$({ LC_ALL=C.utf-8 echo -e "\u1111"; } 2>/dev/null)" = "\u1111" ]; then
+if [ "$({ LC_ALL=C.utf-8 printf "%b" "\u1111"; } 2>/dev/null)" = "\u1111" ]; then
 	printf "${ORANGE}Warning: Missing unicode '\uxxxx' support, missing C.utf-8 locale or to old bash version.${NN}"
 fi
 
@@ -669,7 +669,7 @@ JsonDecode() {
 			remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
 			out="${BASH_REMATCH[1]}"
 	done
-	# this echo must stay for correct decoding!
+	#printf "%b\n" "${out}${remain}" # seems to work ... dealyed to next dev
 	echo -e "${out}${remain}"
 }
 
