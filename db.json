@@ -2,8 +2,8 @@
   "usage": 
      {
 	"ok":true,
-	"url":"https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/",
-	"description":"Testing of JSON responses for github.com/topkecleon/telegram-bot-bash"
+	"url":"https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/usage?",
+	"description":"Testing of JSON responses for github.com/topkecleon/telegram-bot-bash, replace usage with the dataset you want to query"
     } ,
   "false": 
      {
@@ -11,7 +11,7 @@
 	"error_code":404,
 	"description":"Not Found"
     } ,
-  "ok": 
+  "true": 
     {
 	"ok":true,
 	"description":"Test for ok"
@@ -27,5 +27,4 @@
 		"username":"TestBotBash"
 	}
     }
-  
 }
