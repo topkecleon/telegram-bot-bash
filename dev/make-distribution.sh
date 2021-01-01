@@ -7,7 +7,7 @@
 #
 # Options: --notest - skip tests
 #
-#### $$VERSION$$ v1.21-pre-3-gbbbf57c
+#### $$VERSION$$ v1.21-pre-7-g74dfdd7
 ##############################################################
 
 # magic to ensure that we're always inside the root of our application,
@@ -25,7 +25,7 @@ VERSION="$(git describe --tags | sed -e 's/-[0-9].*//' -e 's/v//')"
 DISTNAME="telegram-bot-bash"
 DISTDIR="./DIST/${DISTNAME}" 
 DISTFILES="bashbot.rc bashbot.sh commands.sh mycommands.sh mycommands.sh.clean bin doc examples scripts modules addons LICENSE README.md README.txt README.html"
-DISTMKDIR="data-bot-bash logs"
+DISTMKDIR="data-bot-bash logs bin bin/logs"
 
 # run tests first!
 for test in $1 dev/all-test*.sh
@@ -33,7 +33,7 @@ do
    [[ "${test}" == "--notest"* ]] && break
    [ ! -x "${test}" ] && continue
    if ! "${test}" ; then
-	printf "Test %s failed, can't create dist!\n" "${test}"
+	printf "ERROR: Test %s failed, can't create dist!\n" "${test}"
 	exit 1
   fi
 done

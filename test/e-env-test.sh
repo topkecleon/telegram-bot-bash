@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.21-dev-10-g9bfc27a
+#### $$VERSION$$ v1.21-pre-7-g74dfdd7
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -37,6 +37,7 @@ TESTFILES="${TOKENFILE} ${ACLFILE}"
 
 
 echo "Check first run in ENVIRONMENT ..."
+mkdir "${BASHBOT_VAR}/${DATADIR}"
 
 # run bashbot first time with init
 "${BASHBOT_BIN}/bashbot.sh" init >"${LOGFILE}"  <<EOF

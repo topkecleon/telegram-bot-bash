@@ -5,7 +5,7 @@
 #
 # Description: run all tests, exit after failed test
 #
-#### $$VERSION$$ v1.21-pre-3-gbbbf57c
+#### $$VERSION$$ v1.21-pre-7-g74dfdd7
 #############################################################
 
 # magic to ensure that we're always inside the root of our application,
@@ -26,6 +26,9 @@ cd "test" || exit 1
 
 # delete possible config
 rm -f "${TESTENV}/botconfig.jssh" "${TESTENV}/botacl" 2>/dev/null
+
+# mkdir needed dirs
+mkdir "${TESTENV}/data-bot-bash"
 
 # inject JSON.sh
 mkdir "${TESTENV}/JSON.sh"

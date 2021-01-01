@@ -26,7 +26,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-pre-6-g23e04a9
+#### $$VERSION$$ v1.21-pre-7-g74dfdd7
 ##################################################################
 # shellcheck disable=SC2140,SC2031,SC2120,SC1091,SC1117,SC2059
 
@@ -235,8 +235,7 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
   # check data dir file
   if [ ! -w "${DATADIR}" ]; then
-	printf "${RED}ERROR: Can't write to ${DATADIR}!.${NN}"
-	ls -ld "${DATADIR}"
+	printf "${RED}ERROR: ${DATADIR} does not exist or is not writeable!.${NN}"
 	exit 2
   fi
   # setup count file 
