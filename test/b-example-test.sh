@@ -1,16 +1,35 @@
 #!/usr/bin/env bash
-# file: b-example-test.sh
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#===============================================================================
+#
+#          FILE: b-example-test.sh
+# 
+#         USAGE: must run only from dev/all-tests.sh
+#
+#   DESCRIPTION: minimal test file as template
+# 
+#	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
+#        AUTHOR: KayM (gnadelwartz), kay@rrr.de
+#
+#### $$VERSION$$ v1.21-pre-34-g9492f98
+#===============================================================================
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
 source "./ALL-tests.inc.sh"
 
+###
+# place your tests here ....
+
+# example: test if TESTDIR contains file bashbot.sh
+printf "Check if bashbot.sh exists in %s ...\n" " ${TESTDIR}"
 if [ -f "${TESTDIR}/bashbot.sh" ]; then
-	echo "${SUCCESS} bashbot.sh exist!"
-	exit 0
+	printf "bashbot.sh found!\n"
 else
-	echo "${NOSUCCESS} ${TESTDIR}/bashbot.sh missing!"
+	# stop test script if test failed
+	printf "%s\n" "${NOSUCCESS} ${TESTDIR}/bashbot.sh missing!"
 	exit 1
 fi
+
+# only if all tests was successful
+printf "%s\n" "${SUCCESS}"
 
