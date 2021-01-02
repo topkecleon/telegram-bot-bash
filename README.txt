@@ -281,7 +281,7 @@ bin/send_message.sh --help
 ```
 
 You can also source bashbot for use in your scripts, for more information see 
-[Expert Use](doc/8_custom.md).
+[Expert Use](doc/4_expert.md).
 
 
 ### Blocked by telegram?

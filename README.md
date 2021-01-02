@@ -205,7 +205,7 @@ bin/send_message.sh BOTADMIN "This is my first message send from CLI"
 bin/send_message.sh --help
 ```
 
-You can also source bashbot for use in your scripts, for more information see [Expert Use](doc/8_custom.md).
+You can also source bashbot for use in your scripts, for more information see [Expert Use](doc/4_expert.md).
 
 
 ### Blocked by telegram?
