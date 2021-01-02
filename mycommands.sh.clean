@@ -4,7 +4,7 @@
 # files: mycommands.sh.clean
 # copy to mycommands.sh and add all your commands and functions here ...
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-pre-40-gf95e214
 #
 
 ##########
@@ -141,7 +141,7 @@ else
 		[ "$count" -gt "20" ] && break
 		image="${image#* src=\'}"; image="${image%%&pid=*}"
 		[[ "${image}" = *"src="* ]] && continue
-		echo "${sep}"; inline_query_compose "$RANDOM" "photo" "${image}"; sep=","
+		printf "%s\n" "${sep}"; inline_query_compose "$RANDOM" "photo" "${image}"; sep=","
 		count=$(( count + 1 ))
 	done <<<"${result}"
     }

@@ -9,7 +9,7 @@
 # #### mycommands.clean
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-pre-40-gf95e214
 #
 
 # uncomment the following lines to overwrite info and help messages
@@ -264,7 +264,7 @@ else
 			local avatar=("https://avatars.githubusercontent.com/u/13046303" "https://avatars.githubusercontent.com/u/4593242" "https://avatars.githubusercontent.com/u/102707" "https://avatars.githubusercontent.com/u/6460407")
 			answer_inline_multi "${iQUERY[ID]}" "
 				$(for photo in  ${avatar[*]} ; do
-					echo "${sep}"; inline_query_compose "$RANDOM" "photo" "${photo}" "${photo}"; sep=","
+					printf "%s\n" "${sep}"; inline_query_compose "$RANDOM" "photo" "${photo}" "${photo}"; sep=","
 				done)
 				"
 			;;
@@ -306,7 +306,7 @@ else
 		[ "$count" -gt "20" ] && break
 		image="${image#* src=\'}"; image="${image%%&pid=*}"
 		[[ "${image}" = *"src="* ]] && continue
-		echo "${sep}"; inline_query_compose "$RANDOM" "photo" "${image}"; sep=","
+		printf "%s\n" "${sep}"; inline_query_compose "$RANDOM" "photo" "${image}"; sep=","
 		count=$(( count + 1 ))
 	done <<<"${result}"
     }
