@@ -13,7 +13,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.12.2020 12:27
 #
-#### $$VERSION$$ v1.21-dev-2-gde31231
+#### $$VERSION$$ v1.21-pre-43-gbbdeb8b
 #===============================================================================
 
 ############
@@ -34,18 +34,18 @@ BASHBOT_ETC="${BASHBOT_HOME}"
 
 # source bashbot
 if [ ! -r "${BASHBOT_HOME}/bashbot.sh" ]; then
-	echo "Bashbot.sh not found in \"${BASHBOT_HOME}\""
+	printf "%s\n" "Bashbot.sh not found in \"${BASHBOT_HOME}\""
 	exit 4
 fi
 
 # check for botconfig.jssh readable
 if [ ! -r "${BASHBOT_ETC}/botconfig.jssh" ]; then
-	echo "Bashbot config file in \"${BASHBOT_ETC}\" does not exist or is not readable."
+	printf "%s\n" "Bashbot config file in \"${BASHBOT_ETC}\" does not exist or is not readable."
 	exit 3
 fi
 # check for count.jssh readable
 if [ ! -r "${BASHBOT_VAR}/count.jssh" ]; then
-	echo "Bashbot count file in \"${BASHBOT_VAR}\" does not exist or is not readable. Did you run bashbot init?"
+	printf "%s\n" "Bashbot count file in \"${BASHBOT_VAR}\" does not exist or is not readable. Did you run bashbot init?"
 	exit 3
 fi
 
@@ -60,6 +60,6 @@ FILE_REGEX="${UPLOADDIR}/.*"
 # get and check ADMIN and NAME
 BOT_ADMIN="$(getConfigKey "botadmin")"
 BOT_NAME="$(getConfigKey "botname")"
-[[ -z "${BOT_ADMIN}" || "${BOT_ADMIN}" == "?" ]] && echo -e "${ORANGE}Warning: Botadmin not set, did you forget to sent command${NC} /start"
-[[ -z "${BOT_NAME}"  ]] && echo -e "${ORANGE}Warning: Botname not set, did you ever run bashbot?"
+[[ -z "${BOT_ADMIN}" || "${BOT_ADMIN}" == "?" ]] && printf "%s\n" "${ORANGE}Warning: Botadmin not set, did you forget to sent command${NC} /start"
+[[ -z "${BOT_NAME}"  ]] && printf "%s\n" "${ORANGE}Warning: Botname not set, did you ever run bashbot?"
 
