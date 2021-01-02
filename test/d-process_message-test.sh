@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#===============================================================================
+#
+#          FILE: d-process_message-test.sh
+# 
+#         USAGE: must run only from dev/all-tests.sh
+#
+#   DESCRIPTION: test sending messages
+# 
+#	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
+#        AUTHOR: KayM (gnadelwartz), kay@rrr.de
+#
+#### $$VERSION$$ v1.21-pre-36-g0dfbf7b
+#===============================================================================
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -16,7 +28,7 @@ source "${TESTDIR}/commands.sh" source
 
 # overwrite get_file for test
 get_file() {
-	echo "$1"
+	printf "%s\n" "$1"
 }
 
 # get telegram input from file
@@ -26,7 +38,7 @@ declare -Ax UPD
 # run process_message --------------
 ARRAYS="USER CHAT REPLYTO FORWARD URLS CONTACT CAPTION LOCATION MESSAGE VENUE SERVICE NEWMEMBER LEFTMEMBER PINNED"
 
-echo "Check process_message regular message..."
+printf "Check process_message regular message...\n"
 
 UPDATE="$(< "${INPUTFILE}")"
 Json2Array 'UPD' <"${INPUTFILE}"
@@ -40,7 +52,7 @@ print_array ${ARRAYS}  >"${OUTPUTFILE}"
 compare_sorted "${REFFILE}" "${OUTPUTFILE}" || exit 1
 
 # run process_message ------------
-echo "Check process_message service message..."
+printf "Check process_message service message...\n"
 
 UPDATE="$(cat "${INPUTFILE2}")"
 Json2Array 'UPD' <"${INPUTFILE2}"
@@ -54,6 +66,6 @@ print_array ${ARRAYS}  >"${OUTPUTFILE}"
 compare_sorted "${REFFILE2}" "${OUTPUTFILE}" || exit 1
 
 
-echo "${SUCCESS}"
+printf "%s\n" "${SUCCESS}"
 
 cd "${DIRME}" || exit 1

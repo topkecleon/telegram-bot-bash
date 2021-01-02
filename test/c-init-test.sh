@@ -10,7 +10,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.21-pre-35-g32b99dc
+#### $$VERSION$$ v1.21-pre-36-g0dfbf7b
 #===============================================================================
 
 # include common functions and definitions
@@ -48,7 +48,7 @@ cd "${TESTDIR}" || exit
 printf "%s\n" "Test if ${JSONSHFILE} exists ..."
 [ ! -x "$JSONSHFILE" ] && { printf "%s\n" "${NOSUCCESS} json.sh not found"; exit 1; }
 
-printf "Test Sourcing of bashbot.sh ..."
+printf "Test Sourcing of bashbot.sh ...\n"
 # shellcheck source=./bashbot.sh
 source "${TESTDIR}/bashbot.sh" source
 

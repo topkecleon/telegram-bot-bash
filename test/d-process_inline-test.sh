@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#===============================================================================
+#
+#          FILE: d-process_inline-test.sh
+# 
+#         USAGE: must run only from dev/all-tests.sh
+#
+#   DESCRIPTION: test response to inline messages
+# 
+#	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
+#        AUTHOR: KayM (gnadelwartz), kay@rrr.de
+#
+#### $$VERSION$$ v1.21-pre-36-g0dfbf7b
+#===============================================================================
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -16,7 +28,7 @@ source "${TESTDIR}/modules/answerInline.sh" source
 
 # overwrite get_file for test
 get_file() {
-	echo "$1"
+	printf "%s\n" "$1"
 }
 
 # get telegram input from file
@@ -26,19 +38,15 @@ declare -A UPD
 source <( printf 'UPD=( %s )' "$(sed <<<"${UPDATE}" -E -e 's/\t/=/g' -e 's/=(true|false)/="\1"/')" )
 
 # run process_message with and without python
-echo "Check process_inline ..."
-for i in 1 2
-do
-	[ "${i}" = "1" ] && ! command -v python >/dev/null 2>&1 && continue
-	[ "${i}" = "1" ] && echo "  ... with JsonDecode Python" && unset BASHBOT_DECODE
-	[ "${i}" = "2" ] && echo "  ... with JsonDecode Bash" && export BASHBOT_DECODE="yes"
-	set -x
-	{ process_inline "0";  set +x; } >>"${LOGFILE}" 2>&1;
+printf "Check process_inline ...\n"
+printf "  ... with JsonDecode Bash\n"
+set -x
+{ process_inline "0";  set +x; } >>"${LOGFILE}" 2>&1;
 
-	# output processed input
-	print_array "iQUERY" >"${OUTPUTFILE}"
-	compare_sorted "${REFFILE}" "${OUTPUTFILE}" || exit 1
-	echo "${SUCCESS}"
-done
+# output processed input
+print_array "iQUERY" >"${OUTPUTFILE}"
+compare_sorted "${REFFILE}" "${OUTPUTFILE}" || exit 1
+
+printf "%s\n" "${SUCCESS}"
 
 cd "${DIRME}" || exit 1
