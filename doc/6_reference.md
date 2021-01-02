@@ -38,6 +38,9 @@ send_normal_message "${CHAT[ID]}" "this is a text message"
 Telegram supports a new [Markdown V2 Style](https://core.telegram.org/bots/api#markdownv2-style) which
 has more formatting codes and is more robust, but incompatible with old telegram markdown style.
 
+To send Characters reserved for markdown v2 formatting, you must prefix them with `\` ( e.g. `\| \= \_ \*`).
+*Hint*: If a message is not sent, have a look in `logs/ERROR.log`
+
 *usage:* send_markdownv2_message "${CHAT[ID]}" "markdown message"
 
 *example:* 
@@ -1146,5 +1149,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.21-dev-32-g2aa5c75
+#### $$VERSION$$ v1.21-pre-29-gdad68a9
 
