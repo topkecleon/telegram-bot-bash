@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-pre-41-g9acb2cd
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -12,13 +12,13 @@ cd "${TESTDIR}" || exit 1
 
 # run JSON.sh with and without options
 cd "test" || exit 1
-echo "Check JSON.sh ..."
+printf "Check JSON.sh ...\n"
 JSON="../JSON.sh/JSON.sh"
 
 for i in 1 2
 do
-    [ "${i}" = "1" ] && echo "  ... JSON.sh -s -b -n"
-    [ "${i}" = "2" ] && echo "  ... JSON.sh"
+    [ "${i}" = "1" ] && printf "  ... JSON.sh -b -n\n"
+    [ "${i}" = "2" ] && printf "  ... JSON.sh\n"
     set +f
     for jsonfile in "${REFDIR}"/*.in
     do
@@ -29,7 +29,7 @@ do
 	# output processed input
 	diff -c "${jsonfile%.in}.result-${i}" "${jsonfile}.out-${i}" || exit 1
     done
-    echo "${SUCCESS}"
+    printf "%s\n" "${SUCCESS}"
 done
 
 cd "${DIRME}" || exit 1
