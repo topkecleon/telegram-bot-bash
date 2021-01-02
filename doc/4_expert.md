@@ -262,7 +262,7 @@ This is also useful if you want to force bashbot to always use full pathnames in
 #### Change config values
 
 ##### BASHBOT_URL
-Uses given URL instead of official telegram API URL, useful if you have your own telegram server or for testing.
+Uses given URL instead of official Telegram API URL, useful if you have your own telegram server or for testing.
 
 ```bash
   unset  BASHBOT_URL       # use Telegram URL https://api.telegram.org/bot<token> (default)

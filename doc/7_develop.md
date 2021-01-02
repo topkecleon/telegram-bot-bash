@@ -175,7 +175,7 @@ BASHBOT_EVENT_TIMER["example_10min","$(( (EVENT_TIMER+10) * -1 ))"]="example_in1
 
 ----
 
-#### Create a stripped down Version of your Bot
+#### Create a stripped down version of your Bot
 Currently bashbot is more a bot development environment than a bot, containing examples, developer scripts, modules, documentation and more.
 You don't need all these files after you're finished with your cool new bot.
 
