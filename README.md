@@ -67,11 +67,11 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
 
 ### Your really first bashbot in a nutshell
 
-To install and run bashbot you need access to a linux/unix command line with bash, a [Telegram client](https://telegram.org) and a mobile phone [with a Telegram account](https://telegramguide.com/create-a-telegram-account/).
+To install and run bashbot you need access to a Linux/Unix command line with bash, a [Telegram client](https://telegram.org) and a mobile phone [with a Telegram account](https://telegramguide.com/create-a-telegram-account/).
 
 First you need to [create a new Telegram Bot token](doc/1_firstbot.md) for your bot and write it down.
 
-Now open a linux/unix terminal with bash, create a new directory, change to it and install telegram-bot-bash:
+Now open a Linux/Unix terminal with bash, create a new directory, change to it and install telegram-bot-bash:
 
 ```bash
 # create bot dir
@@ -146,7 +146,7 @@ e.g. set IFS appropriate, disable globbing (set -f) and quote everything. In add
 from your Bot, e.g. everything in `example/` and disable/remove all not needed bot commands.
 
 It's important to escape or remove `$` in input from user, files or network (_as bashbot does_)
-One of the powerful features of unix shells are variable and command substitution using `${}` and`$()`,
+One of the powerful features of Unix shells are variable and command substitution using `${}` and`$()`,
 this can lead to remote code execution (RCE) or remote information disclosure (RID) bugs if unescaped `$` is included in untrusted input, e.g. `$$` or `$(rm -rf /*)`
 
 A powerful tool to improve your scripts is `shellcheck`. You can [use it online](https://www.shellcheck.net/) or
@@ -164,7 +164,7 @@ you shouldn't use echo to display it. [Use printf whenever possible](https://uni
 All files your Bot have write access to are in danger to be overwritten/deleted if your bot is hacked.
 For the same reason every file your Bot can read is in danger to be disclosed. Restrict your Bots access rights to the absolute minimum.
 
-**Never run your Bot as root, this is the most dangerous you can do!** Usually the user 'nobody' has almost no rights on unix/linux systems. See [Expert use](doc/4_expert.md) on how to run your Bot as an other user.
+**Never run your Bot as root, this is the most dangerous you can do!** Usually the user 'nobody' has almost no rights on Linux/Unix systems. See [Expert use](doc/4_expert.md) on how to run your Bot as an other user.
 
 ### Secure your Bot installation
 **Your Bot configuration must no be readable from other users.** Everyone who can read your Bots token is able to act as your Bot and has access to all chats the Bot is in!
@@ -181,10 +181,10 @@ Bashbot is not more (in)secure as any Bot written in an other language, we have 
 **Note:** Up to version 0.941 (mai/22/2020) telegram-bot-bash had a remote code execution bug, please update if you use an older version!
 
 ### Why Bash and not the much better xyz?
-Well, that's a damn good question ... may be because I'm an unix admin from stone age. Nevertheless there are more reasons from my side:
+Well, that's a damn good question... maybe because I'm a Unix admin from stone age. Nevertheless there are more reasons from my side:
 
-- bashbot will run everywhere where bash and (gnu) sed is available, from embedded linux to mainframe
-- easy to integrate with other shell script, e.g. for sending system message / health status
+- bashbot will run everywhere where bash and (gnu) sed is available, from embedded Linux to mainframe
+- easy to integrate with other shell scripts, e.g. for sending system message / health status
 - no need to install or learn a new programming language, library or framework
 - no database, not event driven, not object oriented ...
 

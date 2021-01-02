@@ -214,7 +214,7 @@ Location of the files `commands.sh`, `mycommands.sh`, `botconfig.jssh`, `botacl`
   unset  BASHBOT_ETC     # keep in telegram-bot-bash (default)
   export BASHBOT_ETC ""  # keep in telegram-bot-bash
 
-  export BASHBOT_ETC "/etc/bashbot"  # unix like config location
+  export BASHBOT_ETC "/etc/bashbot"  # Unix-like config location
 
   export BASHBOT_ETC "/etc/bashbot/bot1"  # multibot configuration bot 1
   export BASHBOT_ETC "/etc/bashbot/bot2"  # multibot configuration bot 2
@@ -228,7 +228,7 @@ Location of runtime data `data-bot-bash`, `count.jssh`
   unset  BASHBOT_VAR     # keep in telegram-bot-bash (default)
   export BASHBOT_VAR ""  # keep in telegram-bot-bash
 
-  export BASHBOT_VAR "/var/spool/bashbot"  # unix like config location
+  export BASHBOT_VAR "/var/spool/bashbot"  # Unix-like config location
 
   export BASHBOT_VAR "/var/spool/bashbot/bot1"  # multibot configuration bot 1
   export BASHBOT_VAR "/var/spool/bashbot/bot2"  # multibot configuration bot 2
@@ -253,7 +253,7 @@ This is also useful if you want to force bashbot to always use full pathnames in
   unset  BASHBOT_HOME     # autodetection (default)
   export BASHBOT_HOME ""  # autodetection
 
-  export BASHBOT_HOME "/usr/local/telegram-bot-bash"	# unix like location
+  export BASHBOT_HOME "/usr/local/telegram-bot-bash"	# Unix-like location
   export BASHBOT_HOME "/usr/local/bin"	# Note: you MUST set ETC, VAR and JSONSH to other locations to make this work!
 ```
 

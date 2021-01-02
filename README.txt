@@ -81,14 +81,14 @@ available on www.github.com
 
 ### Your really first bashbot in a nutshell
 
-To install and run bashbot you need access to a linux/unix command line with 
+To install and run bashbot you need access to a Linux/Unix command line with 
 bash, a [Telegram client](https://telegram.org) and a mobile phone [with a 
 Telegram account](https://telegramguide.com/create-a-telegram-account/).
 
 First you need to [create a new Telegram Bot token](doc/1_firstbot.md) for your 
 bot and write it down.
 
-Now open a linux/unix terminal with bash, create a new directory, change to it 
+Now open a Linux/Unix terminal with bash, create a new directory, change to it 
 and install telegram-bot-bash:
 
 ```bash
@@ -183,7 +183,7 @@ bot commands.
 
 It's important to escape or remove `$` in input from user, files or network 
 (_as bashbot does_)
-One of the powerful features of unix shells are variable and command 
+One of the powerful features of Unix shells are variable and command 
 substitution using `${}` and`$()`,
 this can lead to remote code execution (RCE) or remote information disclosure 
 (RID) bugs if unescaped `$` is included in untrusted input, e.g. `$$` or `$(rm 
@@ -214,7 +214,7 @@ For the same reason every file your Bot can read is in danger to be disclosed.
 Restrict your Bots access rights to the absolute minimum.
 
 **Never run your Bot as root, this is the most dangerous you can do!** Usually 
-the user 'nobody' has almost no rights on unix/linux systems. See [Expert 
+the user 'nobody' has almost no rights on Linux/Unix systems. See [Expert 
 use](doc/4_expert.md) on how to run your Bot as an other user.
 
 ### Secure your Bot installation
@@ -243,12 +243,12 @@ bot commands you wrote and you should know about the risks ...
 execution bug, please update if you use an older version!
 
 ### Why Bash and not the much better xyz?
-Well, that's a damn good question ... may be because I'm an unix admin from 
+Well, that's a damn good question... maybe because I'm a Unix admin from 
 stone age. Nevertheless there are more reasons from my side:
 
 - bashbot will run everywhere where bash and (gnu) sed is available, from 
-embedded linux to mainframe
-- easy to integrate with other shell script, e.g. for sending system message / 
+embedded Linux to mainframe
+- easy to integrate with other shell scripts, e.g. for sending system message / 
 health status
 - no need to install or learn a new programming language, library or framework
 - no database, not event driven, not object oriented ...

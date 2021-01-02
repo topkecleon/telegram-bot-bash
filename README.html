@@ -287,9 +287,9 @@ Written by Drew (@topkecleon) and Kay M (@gnadelwartz).
 <li><a href="examples/README.md">Examples Dir</a></li>
 </ul>
 <h3>Your really first bashbot in a nutshell</h3>
-<p>To install and run bashbot you need access to a linux/unix command line with bash, a <a href="https://telegram.org">Telegram client</a> and a mobile phone <a href="https://telegramguide.com/create-a-telegram-account/">with a Telegram account</a>.</p>
+<p>To install and run bashbot you need access to a Linux/Unix command line with bash, a <a href="https://telegram.org">Telegram client</a> and a mobile phone <a href="https://telegramguide.com/create-a-telegram-account/">with a Telegram account</a>.</p>
 <p>First you need to <a href="doc/1_firstbot.md">create a new Telegram Bot token</a> for your bot and write it down.</p>
-<p>Now open a linux/unix terminal with bash, create a new directory, change to it and install telegram-bot-bash:</p>
+<p>Now open a Linux/Unix terminal with bash, create a new directory, change to it and install telegram-bot-bash:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create bot dir</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> mybot</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> mybot</span>
@@ -340,13 +340,13 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>Running a Telegram Bot means it is connected to the public and you never know what's send to your Bot.</p>
 <p>Bash scripts in general are not designed to be bullet proof, so consider this Bot as a proof of concept. Bash programmers often struggle with 'quoting hell' and globbing, see <a href="https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells">Implications of wrong quoting</a></p>
 <p>Whenever you are processing input from untrusted sources (messages, files, network) you must be as careful as possible, e.g. set IFS appropriate, disable globbing (set -f) and quote everything. In addition remove unused scripts and examples from your Bot, e.g. everything in <code>example/</code> and disable/remove all not needed bot commands.</p>
-<p>It's important to escape or remove <code>$</code> in input from user, files or network (<em>as bashbot does</em>) One of the powerful features of unix shells are variable and command substitution using <code>${}</code> and<code>$()</code>, this can lead to remote code execution (RCE) or remote information disclosure (RID) bugs if unescaped <code>$</code> is included in untrusted input, e.g. <code>$$</code> or <code>$(rm -rf /*)</code></p>
+<p>It's important to escape or remove <code>$</code> in input from user, files or network (<em>as bashbot does</em>) One of the powerful features of Unix shells are variable and command substitution using <code>${}</code> and<code>$()</code>, this can lead to remote code execution (RCE) or remote information disclosure (RID) bugs if unescaped <code>$</code> is included in untrusted input, e.g. <code>$$</code> or <code>$(rm -rf /*)</code></p>
 <p>A powerful tool to improve your scripts is <code>shellcheck</code>. You can <a href="https://www.shellcheck.net/">use it online</a> or <a href="https://github.com/koalaman/shellcheck#installing">install shellcheck locally</a>. Shellcheck is used extensively in bashbot development to ensure a high code quality, e.g. it's not allowed to push changes without passing all shellcheck tests. In addition bashbot has a <a href="doc/7_develop.md">test suite</a> to check if important functionality is working as expected.</p>
 <h3>Use printf whenever possible</h3>
 <p>If you're writing a script and it is taking external input (from the user as arguments or file system...), you shouldn't use echo to display it. <a href="https://unix.stackexchange.com/a/6581">Use printf whenever possible</a></p>
 <h3>Run your Bot as a restricted user</h3>
 <p><strong>I recommend to run your bot as a user, with almost no access rights.</strong> All files your Bot have write access to are in danger to be overwritten/deleted if your bot is hacked. For the same reason every file your Bot can read is in danger to be disclosed. Restrict your Bots access rights to the absolute minimum.</p>
-<p><strong>Never run your Bot as root, this is the most dangerous you can do!</strong> Usually the user 'nobody' has almost no rights on unix/linux systems. See <a href="doc/4_expert.md">Expert use</a> on how to run your Bot as an other user.</p>
+<p><strong>Never run your Bot as root, this is the most dangerous you can do!</strong> Usually the user 'nobody' has almost no rights on Linux/Unix systems. See <a href="doc/4_expert.md">Expert use</a> on how to run your Bot as an other user.</p>
 <h3>Secure your Bot installation</h3>
 <p><strong>Your Bot configuration must no be readable from other users.</strong> Everyone who can read your Bots token is able to act as your Bot and has access to all chats the Bot is in!</p>
 <p>Everyone with read access to your Bot files can extract your Bots data. Especially your Bot config in<code>config.jssh</code> must be protected against other users. No one except you should have write access to the Bot files. The Bot should be restricted to have write access to<code>count.jssh</code> and <code>data-bot-bash</code> only, all other files must be write protected.</p>
@@ -356,10 +356,10 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>Bashbot is not more (in)secure as any Bot written in an other language, we have done our best to make it as secure as possible. But YOU are responsible for the bot commands you wrote and you should know about the risks ...</p>
 <p><strong>Note:</strong> Up to version 0.941 (mai/22/2020) telegram-bot-bash had a remote code execution bug, please update if you use an older version!</p>
 <h3>Why Bash and not the much better xyz?</h3>
-<p>Well, that's a damn good question ... may be because I'm an unix admin from stone age. Nevertheless there are more reasons from my side:</p>
+<p>Well, that's a damn good question... maybe because I'm a Unix admin from stone age. Nevertheless there are more reasons from my side:</p>
 <ul>
-<li>bashbot will run everywhere where bash and (gnu) sed is available, from embedded linux to mainframe</li>
-<li>easy to integrate with other shell script, e.g. for sending system message / health status</li>
+<li>bashbot will run everywhere where bash and (gnu) sed is available, from embedded Linux to mainframe</li>
+<li>easy to integrate with other shell scripts, e.g. for sending system message / health status</li>
 <li>no need to install or learn a new programming language, library or framework</li>
 <li>no database, not event driven, not object oriented ...</li>
 </ul>

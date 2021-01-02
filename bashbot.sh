@@ -123,7 +123,7 @@ debug_checks(){ {
 	} >>"${DEBUGLOG}"
 }
 
-# some linux, e.g. manajro seems not to have C locale activated by default
+# some Linux distributions (e.g. Manjaro) doesn't seem to have C locale activated by default
 if _exists locale && [ "$(locale -a | grep -c -e "^C$" -e "^C.utf8$")" -lt 2 ]; then
 	printf "${ORANGE}Warning: locale ${NC}${GREY}C${NC}${ORANGE} and/or ${NC}${GREY}C.utf8${NC}${ORANGE} seems missing, use \"${NC}${GREY}locale -a${NC}${ORANGE}\" to show what locales are installed on your system.${NN}"
 fi
