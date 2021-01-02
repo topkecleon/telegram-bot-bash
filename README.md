@@ -13,7 +13,7 @@ Linted by [#ShellCheck](https://github.com/koalaman/shellcheck)
 ## Prerequisites
 Uses [JSON.sh](http://github.com/dominictarr/JSON.sh) and the magic of sed.
 
-Even bashbot is written in bash, it depends on commands typically available in a Unix/Linux Environment.
+Even bashbot is written in bash, it depends on commands typically available in a Linux/Unix Environment.
 More concrete on the common commands provided by recent versions of [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or [toybox](https://landley.net/toybox/help.html), see [Developer Notes](doc/7_develop.md#common-commands)
 
 **Note for MacOS and BSD Users:** As bashbot heavily uses modern bash and (gnu) grep/sed features, bashbot will not run without installing additional software, see [Install Bashbot](doc/0_install.md)

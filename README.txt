@@ -18,7 +18,7 @@ Linted by [#ShellCheck](https://github.com/koalaman/shellcheck)
 Uses [JSON.sh](http://github.com/dominictarr/JSON.sh) and the magic of sed.
 
 Even bashbot is written in bash, it depends on commands typically available in 
-a Unix/Linux Environment.
+a Linux/Unix Environment.
 More concrete on the common commands provided by recent versions of 
 [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), 
 [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or 
