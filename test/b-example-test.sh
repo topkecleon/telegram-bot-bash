@@ -10,7 +10,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.21-pre-34-g9492f98
+#### $$VERSION$$ v1.21-pre-35-g32b99dc
 #===============================================================================
 
 # include common functions and definitions
@@ -23,7 +23,7 @@ source "./ALL-tests.inc.sh"
 # example: test if TESTDIR contains file bashbot.sh
 printf "Check if bashbot.sh exists in %s ...\n" " ${TESTDIR}"
 if [ -f "${TESTDIR}/bashbot.sh" ]; then
-	printf "bashbot.sh found!\n"
+	printf "    ... bashbot.sh found!\n"
 else
 	# stop test script if test failed
 	printf "%s\n" "${NOSUCCESS} ${TESTDIR}/bashbot.sh missing!"
