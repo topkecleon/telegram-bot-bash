@@ -5,12 +5,12 @@
 # 
 #         USAGE: must run only from dev/all-tests.sh
 #
-#   DESCRIPTION: test sending messages
+#   DESCRIPTION: test receiving messages
 # 
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.21-pre-36-g0dfbf7b
+#### $$VERSION$$ v1.21-pre-37-g7e1c1b5
 #===============================================================================
 
 # include common functions and definitions

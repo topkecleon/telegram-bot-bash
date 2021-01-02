@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#===============================================================================
+#
+#          FILE: d-user:is-test.sh
+# 
+#         USAGE: must run only from dev/all-tests.sh
+#
+#   DESCRIPTION: test user ACLs
+# 
+#	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
+#        AUTHOR: KayM (gnadelwartz), kay@rrr.de
+#
+#### $$VERSION$$ v1.21-pre-37-g7e1c1b5
+#===============================================================================
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -19,49 +31,49 @@ source "${TESTDIR}/commands.sh" source
 # start writing your tests here ...
 
 # first user asking for botadmin will botadmin
-echo "Check \"user_is_botadmin\" ..."
+printf "Check \"user_is_botadmin\" ...\n"
 
 printf '["botadmin"]	"?"\n' >>"${ADMINFILE}" # auto mode
 
-echo "BOTADMIN ..."
+printf "BOTADMIN ...\n"
 user_is_botadmin "BOTADMIN" || exit 1 # should never fail
-echo "NOBOTADMIN ..."
+printf "NOBOTADMIN ...\n"
 user_is_botadmin "NOBOTADMIN" && exit 1 # should fail
-echo "BOTADMIN ..."
+printf "BOTADMIN ...\n"
 user_is_botadmin "BOTADMIN" || exit 1 # same name as first one, should work
 
-echo "Check config file ..."
+printf "Check config file ...\n"
 if [ "$(getConfigKey "botadmin")" = "BOTADMIN" ]; then
-	echo "  ... \"user_is_botadmin\" seems to work as expected."
+	printf "  ... \"user_is_botadmin\" seems to work as expected.\n"
 else
 	exit 1
 fi
-echo "${SUCCESS}"
+printf "%s\n" "${SUCCESS}"
 
 # lets see If UAC works ...
-echo "Check \"user_is_allowed\" ..."
+printf "Check \"user_is_allowed\" ...\n"
 
-echo "  ... with not rules"
+printf "  ... with not rules\n"
 user_is_allowed "NOBOTADMIN" "ANYTHING" && exit 1 # should always fail because no rules exist
 user_is_allowed "BOTADMIN" "ANYTHING" && exit 1 # should fail even is BOTADMIN
-echo "${SUCCESS}"
+printf "%s\n" "${SUCCESS}"
 
-echo "  ... with BOTADMIN:*:*"
-echo 'BOTADMIN:*:*' >"${ACLFILE}" # RULE allow BOTADMIN everything
+printf "  ... with BOTADMIN:*:*\n"
+printf 'BOTADMIN:*:*\n' >"${ACLFILE}" # RULE allow BOTADMIN everything
 
 user_is_allowed "BOTADMIN" "ANYTHING" || exit 1 # should work now
 user_is_allowed "NOBOTADMIN" "ANYTHING" && exit 1 # should fail because user is not listed
-echo "${SUCCESS}"
+printf "%s\n" "${SUCCESS}"
 
-echo "  ... with NOBOTAMIN:SOMETHING:*"
-echo 'NOBOTADMIN:SOMETHING:*' >>"${ACLFILE}" # RULE allow NOBOTADMIN something
+printf "  ... with NOBOTAMIN:SOMETHING:*\n"
+printf 'NOBOTADMIN:SOMETHING:*\n' >>"${ACLFILE}" # RULE allow NOBOTADMIN something
 
 user_is_allowed "BOTADMIN" "ANYTHING" || exit 1 # should work
 user_is_allowed "BOTADMIN" "SOMETHING" || exit 1 # should work
 user_is_allowed "NOBOTADMIN" "SOMETHING" || exit 1 # should work now
 user_is_allowed "NOBOTADMIN" "ANYTHING" && exit 1 # should fail because only SOMETHING is listed 
 
-echo "${SUCCESS}"
+printf "%s\n" "${SUCCESS}"
 
-echo "  ... \"user_is_allowed\" seems to work as expected."
+printf "  ... \"user_is_allowed\" seems to work as expected.\n"
 

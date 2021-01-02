@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.21-dev-22-ga3efcd2
+#===============================================================================
+#
+#          FILE: d-send_message-test.sh
+# 
+#         USAGE: must run only from dev/all-tests.sh
+#
+#   DESCRIPTION: test sending messages
+# 
+#	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
+#        AUTHOR: KayM (gnadelwartz), kay@rrr.de
+#
+#### $$VERSION$$ v1.21-pre-37-g7e1c1b5
+#===============================================================================
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -16,7 +28,7 @@ source "${TESTDIR}/bashbot.sh" source
 # shellcheck source=./bashbot.sh
 source "${TESTDIR}/commands.sh" source
 
-_is_function send_message || echo "Send Message not found!"
+_is_function send_message || printf "Send Message not found!\n"
 
 # start writing your tests here ...
 
@@ -35,7 +47,7 @@ sendUpload() {
 
 # send text input to send_message
 
-echo -n "  Send line ..."
+printf "  Send line ..."
 
 # create dummy files for upload
 ALLOW='/tmp/allowed'
@@ -48,16 +60,17 @@ while read -r line ; do
 	set -x; set +e
 	send_message "123456" "$line" >>"${OUTPUTFILE}"
 	set +x; set -e
-	echo -n "."
+	printf "."
 done < "${INPUTFILE}" 2>>"${LOGFILE}"
 [ -d "$ALLOW" ] && rm -rf "$ALLOW"
 
-echo " done."
+printf " done.\n"
 
 { compare_sorted "${REFFILE}" "${OUTPUTFILE}" || exit 1; } | cat -v
 rm -f "${REFFILE}.sort"
 
-echo "  ... all \"send_message\" functions seems to work as expected."
-echo "${SUCCESS}"
+printf "  ... all \"send_message\" functions seems to work as expected.\n"
+
+printf "%s\n" "${SUCCESS}"
 
 
