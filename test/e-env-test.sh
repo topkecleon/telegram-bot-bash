@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.21-pre-7-g74dfdd7
+#===============================================================================
+#
+#          FILE: e-env-test.sh
+# 
+#         USAGE: must run only from dev/all-tests.sh
+#
+#   DESCRIPTION: test  BASHBOT_xxx variables working as expected
+# 
+#	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
+#        AUTHOR: KayM (gnadelwartz), kay@rrr.de
+#
+#### $$VERSION$$ v1.21-pre-38-gf7b5c19
+#===============================================================================
 
 # include common functions and definitions
 # shellcheck source=test/ALL-tests.inc.sh
@@ -36,7 +48,7 @@ cp -r "${TESTDIR}/bashbot.sh" "${TESTDIR}/modules" "${TESTDIR}/JSON.sh/JSON.sh" 
 TESTFILES="${TOKENFILE} ${ACLFILE}"
 
 
-echo "Check first run in ENVIRONMENT ..."
+printf "Check first run in ENVIRONMENT ...\n"
 mkdir "${BASHBOT_VAR}/${DATADIR}"
 
 # run bashbot first time with init
@@ -45,24 +57,24 @@ $TESTTOKEN
 nobody
 botadmin
 EOF
-echo "${SUCCESS}"
+printf "%s\n" "${SUCCESS}"
 
-echo "Check if files are placed in ENVIRONMENT  ..."
+printf "Check if files are placed in ENVIRONMENT  ...\n"
 if [ ! -f "${BASHBOT_JSONSH}" ]; then
-	echo "${NOSUCCESS} ${BASHBOT_JSONSH} missing!"
+	printf "%s\n" "${NOSUCCESS} ${BASHBOT_JSONSH} missing!"
 	exit 1
 fi
 if [ ! -d "${BASHBOT_VAR}/${DATADIR}" ]; then
-	echo "${NOSUCCESS} ${DATADIR} missing!"
+	printf "%s\n" "${NOSUCCESS} ${DATADIR} missing!"
 	exit 1
 fi
 if [ ! -f "${BASHBOT_VAR}/${COUNTFILE}" ]; then
-	echo "${NOSUCCESS} ${BASHBOT_VAR}/${COUNTFILE} missing!"
+	printf "%s\n" "${NOSUCCESS} ${BASHBOT_VAR}/${COUNTFILE} missing!"
 	exit 1
 fi
 
-echo "  ... BASHBOT_VAR seems to work!"
-echo "${SUCCESS}"
+printf "  ... BASHBOT_VAR seems to work!\n"
+printf "%s\n" "${SUCCESS}"
 
 
 # compare files with reference files
@@ -70,9 +82,9 @@ export FAIL="0"
 for file in ${TESTFILES}
 do
 	ls -d "${BASHBOT_ETC}/${file}" >>"${LOGFILE}"
-	if ! diff -q "${BASHBOT_ETC}/${file}" "${REFDIR}/${file}" >>"${LOGFILE}"; then echo "${NOSUCCESS} Fail diff ${file}!"; FAIL="1"; fi
+	if ! diff -q "${BASHBOT_ETC}/${file}" "${REFDIR}/${file}" >>"${LOGFILE}"; then printf "%s\n" "${NOSUCCESS} Fail diff ${file}!"; FAIL="1"; fi
 	
 done
 
-echo "  ... BASHBOT_ETC seems to work!"
-echo "${SUCCESS}"
+printf "  ... BASHBOT_ETC seems to work!\n"
+printf "%s\n" "${SUCCESS}"

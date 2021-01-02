@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #===============================================================================
 #
-#          FILE: d-user:is-test.sh
+#          FILE: d-user_is-test.sh
 # 
 #         USAGE: must run only from dev/all-tests.sh
 #
@@ -10,7 +10,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.21-pre-37-g7e1c1b5
+#### $$VERSION$$ v1.21-pre-38-gf7b5c19
 #===============================================================================
 
 # include common functions and definitions
