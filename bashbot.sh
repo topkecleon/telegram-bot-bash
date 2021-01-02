@@ -8,8 +8,8 @@
 # Description: bashbot, the Telegram bot written in bash.
 #
 #     Written by Drew (@topkecleon) KayM (@gnadelwartz).
-#     Also contributed: Daniil Gentili (@danogentili), JuanPotato,
-#                       BigNerd95, TiagoDanin, iicc1.
+#     Also contributed: Daniil Gentili (@danog), JuanPotato, BigNerd95,
+#                       TiagoDanin, iicc1, dcoomber
 #     https://github.com/topkecleon/telegram-bot-bash
 #
 #     This file is public domain in the USA and all free countries.
@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-pre-20-g051e603
+#### $$VERSION$$ v1.21-pre-28-g5415f28
 ##################################################################
 
 # emmbeded system may claim bash but it is not

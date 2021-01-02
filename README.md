@@ -3,7 +3,7 @@ Bashbot - A Telegram bot written in bash.
 </h2>
 Written by Drew (@topkecleon) and Kay M (@gnadelwartz).
 
-Contributions by Daniil Gentili (@danogentili), JuanPotato, BigNerd95, TiagoDanin, and iicc1.
+Contributions by Daniil Gentili (@danog), JuanPotato, BigNerd95, TiagoDanin, iicc1 and dcoomber.
 
 Released to the public domain wherever applicable.
 Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/copying/).
@@ -238,4 +238,4 @@ See `mycommnds.sh.dist` for an example.
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v1.21-dev-34-ga5307e3
+#### $$VERSION$$ v1.21-pre-28-g5415f28

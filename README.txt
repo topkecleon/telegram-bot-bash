@@ -5,8 +5,8 @@ Bashbot - A Telegram bot written in bash.
 </h2>
 Written by Drew (@topkecleon) and Kay M (@gnadelwartz).
 
-Contributions by Daniil Gentili (@danogentili), JuanPotato, BigNerd95, 
-TiagoDanin, and iicc1.
+Contributions by Daniil Gentili (@danog), JuanPotato, BigNerd95, TiagoDanin, 
+iicc1 and dcoomber.
 
 Released to the public domain wherever applicable.
 Elsewhere, consider it released under the 
@@ -17,21 +17,22 @@ Linted by [#ShellCheck](https://github.com/koalaman/shellcheck)
 ## Prerequisites
 Uses [JSON.sh](http://github.com/dominictarr/JSON.sh) and the magic of sed.
 
-Bashbot is written in bash. It depends on commands typically available in 
-a Linux/Unix Environment.
-For more concrete information on the common commands provided by recent versions of 
+Bashbot is written in bash. It depends on commands typically available in a 
+Linux/Unix Environment.
+For more concrete information on the common commands provided by recent 
+versions of 
 [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), 
 [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or 
 [toybox](https://landley.net/toybox/help.html), see [Developer 
 Notes](doc/7_develop.md#common-commands).
 
-**Note for MacOS and BSD Users:** Bashbot will not run without installing  
-additional software as it uses modern bash and (gnu) grep/sed features. 
-See [Install Bashbot](doc/0_install.md).
+**Note for MacOS and BSD Users:** Bashbot will not run without installing 
+additional software as it uses modern bash and (gnu) grep/sed features. See 
+[Install Bashbot](doc/0_install.md).
 
-**Note for embedded systems:** You need to install a "real" bash as the 
-vanilla installation of busybox or toybox is not sufficient. 
-See [Install Bashbot](doc/0_install.md).
+**Note for embedded systems:** You need to install a "real" bash as the vanilla 
+installation of busybox or toybox is not sufficient. See [Install 
+Bashbot](doc/0_install.md).
 
 Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and 
 [Downloads](https://github.com/topkecleon/telegram-bot-bash/releases) are 
@@ -121,8 +122,8 @@ Session Name: yourbotname_bot-startbot
 Bot started successfully.
 ```
 
-Now open the Telegram App on your mobile phone and start a chat with your 
-bot (_your bot's username is shown after 'Bot Name:'_):
+Now open the Telegram App on your mobile phone and start a chat with your bot 
+(_your bot's username is shown after 'Bot Name:'_):
 
 ```
 /start
@@ -149,8 +150,8 @@ logged to `ERROR.log`.
 Start bashbot in debug mode to see all messages sent to / received from 
 Telegram, as well as bash command error messages.
 
-To enable debug mode, start bashbot with debug as third argument: `bashbot start 
-debug`
+To enable debug mode, start bashbot with debug as third argument: `bashbot 
+start debug`
 
 ```
 ├── logs 
@@ -177,18 +178,17 @@ f-forgetting-to-quote-a-variable-in-bash-posix-shells).
 
 Whenever you are processing input from untrusted sources (messages, files, 
 network) you must be as careful as possible 
-(e.g. set IFS appropriately, disable globbing wity `set -f` and quote everything). In 
-addition remove unused scripts and examples
-from your Bot (e.g. everything in `example/`) and disable/remove all unused 
-bot commands.
+(e.g. set IFS appropriately, disable globbing with `set -f` and quote 
+everything). In addition remove unused scripts and examples
+from your Bot (e.g. everything in `example/`) and disable/remove all unused bot 
+commands.
 
 It's important to escape or remove `$` in input from user, files or network 
 (_as bashbot does_).
 One of the powerful features of Unix shells is variable and command 
-substitution using `${}` and`$()`
-can lead to remote code execution (RCE) or remote information disclosure 
-(RID) bugs if unescaped `$` is included in untrusted input (e.g. `$$` or `$(rm 
--rf /*)`).
+substitution using `${}` and`$()` can lead to remote code execution (RCE) or 
+remote information disclosure (RID) bugs if unescaped `$` is included in 
+untrusted input (e.g. `$$` or `$(rm -rf /*)`).
 
 A powerful tool to improve your scripts is `shellcheck`. You can [use it 
 online](https://www.shellcheck.net/) or
@@ -209,10 +209,10 @@ possible](https://unix.stackexchange.com/a/6581).
 
 ### Run your Bot as a restricted user
 **I recommend running your bot as a user with almost no access rights.** 
-All files your Bot has write access to are in danger of being overwritten/deleted 
-if your bot is hacked.
-For the same reason every file your Bot can read is in danger of being disclosed. 
-Restrict your Bots access rights to the absolute minimum.
+All files your Bot has write access to are in danger of being 
+overwritten/deleted if your bot is hacked.
+For the same reason every file your Bot can read is in danger of being 
+disclosed. Restrict your Bots access rights to the absolute minimum.
 
 **Never run your Bot as root, this is the most dangerous you can do!** Usually 
 the user 'nobody' has almost no rights on Linux/Unix systems. See [Expert 
@@ -244,11 +244,11 @@ bot commands you wrote and you should know about the risks ...
 execution bug, please update if you use an older version!
 
 ### Why Bash and not the much better xyz?
-Well, that's a damn good question... maybe because I'm a Unix admin from 
-the stone age. Nevertheless there are more reasons from my side:
+Well, that's a damn good question... maybe because I'm a Unix admin from the 
+stone age. Nevertheless there are more reasons from my side:
 
-- bashbot will run wherever bash and (gnu) sed is available, from 
-embedded Linux to mainframe
+- bashbot will run wherever bash and (gnu) sed is available, from embedded 
+Linux to mainframe
 - easy to integrate with other shell scripts, e.g. for sending system message / 
 health status
 - no need to install or learn a new programming language, library or framework
@@ -285,8 +285,8 @@ You can also source bashbot for use in your scripts, for more information see
 
 
 ### Blocked by telegram?
-This may happen if too many or wrong requests are sent to api.telegram.org, e.g. 
-using a invalid token or invalid API calls.
+This may happen if too many or wrong requests are sent to api.telegram.org, 
+e.g. using a invalid token or invalid API calls.
 If the block stay for longer time you can ask telegram service to unblock your 
 IP-Address. 
 
@@ -321,4 +321,4 @@ See `mycommnds.sh.dist` for an example.
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v1.21-dev-34-ga5307e3
+#### $$VERSION$$ v1.21-pre-28-g5415f28
