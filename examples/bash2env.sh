@@ -19,7 +19,7 @@ MYSHEBANG=""
 
 ################
 # uncomment one of the following lines to make the conversion
-# linux/unix  bash
+# Linux/Unix  bash
 # MYSHEBANG="#!/bin/bash"
 
 # BSD bash

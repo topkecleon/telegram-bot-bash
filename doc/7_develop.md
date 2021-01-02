@@ -175,7 +175,7 @@ BASHBOT_EVENT_TIMER["example_10min","$(( (EVENT_TIMER+10) * -1 ))"]="example_in1
 
 ----
 
-#### Create a stripped down Version of your Bot
+#### Create a stripped down version of your Bot
 Currently bashbot is more a bot development environment than a bot, containing examples, developer scripts, modules, documentation and more.
 You don't need all these files after you're finished with your cool new bot.
 
@@ -220,9 +220,9 @@ A typical bashbot develop loop looks as follow:
 
 #### common commands
 We state bashbot is a bash only bot, but this is not true. bashbot is a bash script using bash features PLUS external commands.
-Usually bash is used in a unix/linux environment where many (GNU) commands are available, but if commands are missing, bashbot may not work.
+Usually bash is used in a Linux/Unix environment where many (GNU) commands are available, but if commands are missing, bashbot may not work.
 
-To avoid this and make bashbot working on as many platforms as possible - from embedded linux to mainframe - I recommend to restrict
+To avoid this and make bashbot working on as many platforms as possible - from embedded Linux to mainframe - I recommend to restrict
 ourself to the common commands provided by bash and coreutils/busybox/toybox.
 See [Bash Builtins](https://www.gnu.org/software/bash/manual/html_node/Shell-Builtin-Commands.html),
 [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands),

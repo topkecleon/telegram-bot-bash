@@ -21,7 +21,7 @@ if true; then
   VAR="${BINDIR}"
 
 else
-  # alternative linux like locations
+  # alternative Linux-like locations
   BINDIR="/usr/local/bin"
   ETC="/etc/bashbot"
   VAR="/var/bashbot"

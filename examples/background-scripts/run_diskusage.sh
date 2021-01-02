@@ -1,5 +1,5 @@
 #!/bin/bash
-# file: run_diskcusage.sh
+# file: run_diskusage.sh
 # example for an background job display a system value
 #
 # This file is public domain in the USA and all free countries.
@@ -37,7 +37,7 @@ fi
 
 NEWLINE=$'\n'
 
-# output disk usgae every $1 seconds
+# output disk usage every $1 seconds
 WAIT=0
 while sleep $WAIT
 do

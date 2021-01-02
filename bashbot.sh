@@ -33,7 +33,7 @@
 # emmbeded system may claim bash but it is not
 # check for bash like ARRAY handlung
 if ! (unset a; set -A a a; eval "a=(a b)"; eval '[ -n "${a[1]}" ]'; ) > /dev/null 2>&1; then
-	printf "Error: Current shell does not support ARRAY's, may be busbox ash shell. pls install a real bash!\n"
+	printf "Error: Current shell does not support ARRAY's, may be busybox ash shell. pls install a real bash!\n"
 	exit 10
 fi
 
@@ -123,7 +123,7 @@ debug_checks(){ {
 	} >>"${DEBUGLOG}"
 }
 
-# some linux, e.g. manajro seems not to have C locale activated by default
+# some Linux distributions (e.g. Manjaro) doesn't seem to have C locale activated by default
 if _exists locale && [ "$(locale -a | grep -c -e "^C$" -e "^C.utf8$")" -lt 2 ]; then
 	printf "${ORANGE}Warning: locale ${NC}${GREY}C${NC}${ORANGE} and/or ${NC}${GREY}C.utf8${NC}${ORANGE} seems missing, use \"${NC}${GREY}locale -a${NC}${ORANGE}\" to show what locales are installed on your system.${NN}"
 fi
