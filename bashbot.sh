@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-pre-19-g5d9df7b
+#### $$VERSION$$ v1.21-pre-20-g051e603
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -103,7 +103,7 @@ log_error(){ printf "%s: %s\n" "$(date)" "$*" >>"${ERRORLOG}"; }
 log_debug(){ printf "%s: %s\n" "$(date)" "$*" >>"${DEBUGLOG}"; }
 log_update(){ printf "%s: %s\n" "$(date)" "$*" >>"${UPDATELOG}"; }
 # log $1 with date, special first \n
-log_message(){ printf "\n%s: %s\n" "$(date)" "$*" >>"${MESSAGELOG/\\n/$'\n'}"; }
+log_message(){ printf "\n%s: %s\n" "$(date)" "${1/\\n/$'\n'}" >>"${MESSAGELOG}"; }
 
 # additional tests if we run in debug mode
 export BASHBOTDEBUG
