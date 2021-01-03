@@ -607,6 +607,32 @@ Slow functions:
    jssh_writeDB, jssh_updateDB , jssh_deleteKeyDB, jssh_clearDB
 ```
 
+#### Key / Value
+
+JsshBD use bash associative arrays to store key/value pairs in memory. Associative arrays must be created with `declare -A` before first use.
+
+```bash
+# create key / value array
+decleare -A ARRAY
+
+ARRAY["key"]="value"
+ARRAY["key,subkey"]="value2"
+```
+
+For keys the following charatcsers are allowed: `a-z A-Z 0-9 _ .`, multiple keys must be separated by `,`.
+Keys contaiing other characters will be discarded when written to a file.
+
+```bash
+ARRAY["abc"]="abc"         # OK
+ARRAY["abx###"]="abc"      # works in bash but will not saved to file
+
+# write to file will discard second value
+jssh_writeDB "ARRAY" "file"
+
+cat file.jssh
+["abc"]      "abc"
+
+```
 
 #### File naming and locking
 
@@ -1149,5 +1175,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.21-pre-30-gbbda41b
+#### $$VERSION$$ v1.21-pre-44-ge0597ad
 
