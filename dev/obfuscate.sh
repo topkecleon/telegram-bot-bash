@@ -2,6 +2,7 @@
 #
 # joke hack to obfuscate bashbot.min.sh
 #
+#### $$VERSION$$ v1.21-0-gc85af77
 # shellcheck disable=SC2028,SC2016,SC1117
 
 infile="bashbot.sh"
@@ -15,7 +16,7 @@ fi
 {
 # shellcheck disable=SC2183
 printf '#!/bin/bash\na="$PWD";cd "$(mktemp -d)"||exit;%s'\
-	'printf '"'$(gzip -9 <bashbot.sh | base64)'"'|base64 -d|gunzip >a;export BASHBOT_HOME="$a";chmod +x a;./a "$@";a="$PWD";cd ..;rm -rf "$a"'
+	'printf '"'$(gzip -9 <"${infile}" | base64)'"'|base64 -d|gunzip >a;export BASHBOT_HOME="$a";chmod +x a;./a "$@";a="$PWD";cd ..;rm -rf "$a"'
 } >"${outfile}"
 
 chmod +x "${outfile}"

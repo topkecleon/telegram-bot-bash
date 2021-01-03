@@ -321,4 +321,4 @@ See `mycommnds.sh.dist` for an example.
 If you feel that there's something missing or if you found a bug, feel free to 
 submit a pull request!
 
-#### $$VERSION$$ v1.21-pre-28-g5415f28
+#### $$VERSION$$ v1.21-0-gc85af77

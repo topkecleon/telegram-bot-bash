@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-pre-28-g5415f28
+#### $$VERSION$$ v1.21-0-gc85af77
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -127,7 +127,7 @@ debug_checks(){ {
 }
 
 # some Linux distributions (e.g. Manjaro) doesn't seem to have C locale activated by default
-if _exists locale && [ "$(locale -a | grep -c -e "^C$" -e "^C.utf8$")" -lt 2 ]; then
+if _exists locale && [ "$(locale -a | grep -c -e "^C$" -e "^C.[uU][tT][fF]")" -lt 2 ]; then
 	printf "${ORANGE}Warning: locale ${NC}${GREY}C${NC}${ORANGE} and/or ${NC}${GREY}C.utf8${NC}${ORANGE} seems missing, use \"${NC}${GREY}locale -a${NC}${ORANGE}\" to show what locales are installed on your system.${NN}"
 fi
 
@@ -1289,14 +1289,14 @@ if [ -z "${SOURCE}" ]; then
 		;;
 	*)
 		printf "${RED}${REALME##*/}: unknown command${NN}"
-		printf "${RED}Available commands: ${GREY}${BOTCOMMANDS}${NN}" && exit
+		printf "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NN}" && exit
 		exit 4
 		;;
   esac
 
   # warn if root
   if [[ "${UID}" -eq "0" ]] ; then
-	printf "\\n${ORANGE}WARNING: ${SCRIPT} was started as ROOT (UID 0)!${NN}"
+	printf "\n${ORANGE}WARNING: ${SCRIPT} was started as ROOT (UID 0)!${NN}"
 	printf "${ORANGE}You are at HIGH RISK when running a Telegram BOT with root privileges!${NN}"
   fi
 fi # end source

@@ -634,6 +634,18 @@ cat file.jssh
 
 ```
 
+*Hint*: Try `tr -dc "[:alnum:],.\r\n"` to strip invalid characters from key.
+```bash
+# strip key containing invalid characters
+KEY="123abcABC,.#?(<>123ÄÖ*%&§"
+OK_KEY="$(tr -dc "[:alnum:],.\r\n" <<<"${KEY}")"
+
+# show stripped key
+printf "%s\n" "${OK_KEY}"
+
+123abcABC,.123
+```
+
 #### File naming and locking
 
 A jssh fileDB consists of two files and must reside inside `BASHBOT_ETC` or `BASHBOT_DATA`.
@@ -1175,5 +1187,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.21-pre-44-ge0597ad
+#### $$VERSION$$ v1.21-0-gc85af77
 

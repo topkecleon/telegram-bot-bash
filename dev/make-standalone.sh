@@ -9,7 +9,7 @@
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.21-pre-45-gfc847c3
+#### $$VERSION$$ v1.21-0-gc85af77
 ###################################################################
 
 # magic to ensure that we're always inside the root of our application,
@@ -84,9 +84,11 @@ chmod +x bashbot.sh
 rm -rf modules
 
 printf "Create minimized Version of bashbot.sh and commands.sh\n"
-sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e '/^$/d' -e 'N;s/\\\n/ /;P;D' bashbot.sh |\
+# shellcheck disable=SC2016
+sed -E -e '/(shellcheck)|(^#!\/)|(\$\$VERSION\$\$)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e '/^$/d' -e 'N;s/\\\n/ /;P;D' bashbot.sh |\
 	sed 'N;s/\\\n/ /;P;D' > bashbot.sh.min
-sed -E -e '/(shellcheck)|(#!\/bin\/bash)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e 's/\)[[:space:]]+#.*/)/' -e '/^$/d' commands.sh |\
+# shellcheck disable=SC2016
+sed -E -e '/(shellcheck)|(^#!\/)|(\$\$VERSION\$\$)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e 's/\)[[:space:]]+#.*/)/' -e '/^$/d' commands.sh |\
 	sed 'N;s/\\\n/ /;P;D' > commands.sh.min
 chmod +x bashbot.sh.min
 

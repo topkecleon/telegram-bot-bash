@@ -7,7 +7,7 @@
 #
 # Usage: source make-hmtl
 #
-#### $$VERSION$$ v1.21-pre-3-gbbbf57c
+#### $$VERSION$$ v1.21-0-gc85af77
 ##############################################################
 
 # check for correct dir

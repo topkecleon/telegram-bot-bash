@@ -11,7 +11,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.21-pre-33-g16e2077
+#### $$VERSION$$ v1.21-0-gc85af77
 #===============================================================================
 
 # common variables

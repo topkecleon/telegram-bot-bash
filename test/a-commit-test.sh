@@ -10,7 +10,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.21-pre-35-g32b99dc
+#### $$VERSION$$ v1.21-0-gc85af77
 #===============================================================================
 
 ../dev/hooks/pre-commit.sh

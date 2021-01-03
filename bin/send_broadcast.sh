@@ -24,7 +24,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 16:14
 #
-#### $$VERSION$$ v1.20-3-g232a16b
+#### $$VERSION$$ v1.21-0-gc85af77
 #===============================================================================
 # shellcheck disable=SC2059
 

@@ -10,7 +10,7 @@
 #        AUTHOR: KayM (), kay@rrr.de
 #          DATE: 19.12.2020 19:03
 #
-#### $$VERSION$$ v1.20-0-g2ab00a2
+#### $$VERSION$$ v1.21-0-gc85af77
 #===============================================================================
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034

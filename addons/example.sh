@@ -4,7 +4,7 @@
 # Addons can register to bashbot events at startup
 # by providing their name and a callback per event
 #
-#### $$VERSION$$ v1.21-dev-44-gb04ee84
+#### $$VERSION$$ v1.21-0-gc85af77
 #
 # If an event occurs each registered event function is called.
 #

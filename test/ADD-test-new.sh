@@ -10,7 +10,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.21-pre-38-gf7b5c19
+#### $$VERSION$$ v1.21-0-gc85af77
 #===============================================================================
 
 # magic to ensure that we're always inside the root of our application,
