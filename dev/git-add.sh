@@ -3,7 +3,7 @@
 #
 # works together with git pre-push.sh and ADD all changed files since last push
 
-#### $$VERSION$$ v1.21-pre-3-gbbbf57c
+#### $$VERSION$$ v1.21-pre-45-gfc847c3
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
@@ -17,7 +17,7 @@ fi
 [ ! -f .git/.lastcommit ] && printf "No previous commit or hooks not installed, use \"git add\" instead ... Abort\n" && exit
 
 set +f
-FILES="$(find ./*  -newer .git/.lastpush| grep -v -e 'DIST\/' -e 'STANDALONE\/' -e 'JSON.sh')"
+FILES="$(find ./*  -newer .git/.lastcommit| grep -v -e 'DIST\/' -e 'STANDALONE\/' -e 'JSON.sh')"
 set -f
 # FILES="$(find ./* -newer .git/.lastpush)"
 [ "${FILES}" = "" ] && printf "Nothing changed since last commit ...\n" && exit

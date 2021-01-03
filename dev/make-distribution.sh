@@ -7,7 +7,7 @@
 #
 # Options: --notest - skip tests
 #
-#### $$VERSION$$ v1.21-pre-7-g74dfdd7
+#### $$VERSION$$ v1.21-pre-45-gfc847c3
 ##############################################################
 
 # magic to ensure that we're always inside the root of our application,
@@ -81,4 +81,5 @@ printf "%s Done!\n" "$0"
 # shellcheck disable=SC2086
 ls -ld ${DISTNAME}-${VERSION}.*
 
-
+# an empty DEBUG.log is created ... :-(
+rm -f "$GIT_DIR/../test/"*.log

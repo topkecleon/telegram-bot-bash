@@ -5,7 +5,7 @@
 #
 # Description: run all tests, exit after failed test
 #
-#### $$VERSION$$ v1.21-pre-7-g74dfdd7
+#### $$VERSION$$ v1.21-pre-45-gfc847c3
 #############################################################
 
 # magic to ensure that we're always inside the root of our application,
@@ -51,6 +51,7 @@ do
   printf "TEST: %s\n" "${test}"
   "${test}" "${TESTENV}"
   ret=$?
+  set +e
   if [ "$ret" -eq 0 ] ; then
     printf "OK: ---- %s\n" "${test}"
     passed=$((passed+1))
