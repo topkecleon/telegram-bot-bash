@@ -15,11 +15,10 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-0-gd310805
 #
 
-# adjust your language setting here, e.g. when run from other user or cron.
-# https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
+# bashbot locale defaults to c.UTF-8, adjust locale in mycommands.sh if needed
 export 'LC_ALL=C.UTF-8'
 export 'LANG=C.UTF-8'
 export 'LANGUAGE=C.UTF-8'

@@ -9,10 +9,25 @@
 # #### mycommands.clean
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-0-gd310805
 #
 
-# uncomment the following lines to overwrite info and help messages
+##########
+# adjust your language setting here, default is C.UTF-8
+# https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
+export 'LC_ALL=C.UTF-8'
+export 'LANG=C.UTF-8'
+export 'LANGUAGE=C.UTF-8'
+
+##########
+# in UTF-8 äöü etc. are part of [:alnum:] and ranges (e.g. a-z)
+# for more information see  doc/4_expert.md#Character_classes
+# uncomment next line if you want classic ASCII ranges for [a-z] etc.
+#export LC_COLLATE=C
+
+
+##########
+# edit the following lines to fit your bot usage
 # use ${ME} for current bot name in messages
 # Note: you must escape '_' in botname with two \ in markdown messages!
 export bashbot_info='This is @'"${ME//_/\\\\_}"', the Telegram example bot written entirely in bash.
