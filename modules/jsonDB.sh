@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-1-g83fc57e
+#### $$VERSION$$ v1.21-2-g5ad7be5
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -38,6 +38,17 @@ azAZ09="${azAZaz}${R090909}"	# a-zA-z0-9	:alnum:
 
 # characters allowed for key in key/value pairs
 JSSH_KEYOK="[-${azAZ09},._]"
+
+# read string from stdin and and strip invalid characters
+# $1 - invalid charcaters are replaced with first character
+#      or deleted if $1 is empty
+jssh_stripKey() {	# tr: we must escape first - in [-a-z...]
+	if [[ "$1" =~ ^${JSSH_KEYOK} ]]; then # tr needs [\-...
+ 		tr -c "${JSSH_KEYOK/\[-/[\\-}\r\n" "${1:0:1}"
+	else
+ 		tr -dc "${JSSH_KEYOK/\[-/[\\-}\r\n"
+	fi
+}
 
 # use flock if command exist
 if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
