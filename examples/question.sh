@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-5-ga5aa756
 ########################################################################
 
 ######
@@ -39,7 +39,7 @@ else
 fi
 
 # question with Keyboard, repeating until correct answer given
-until [ "$SUCCESS" = "y" ] ;do
+until [ "${SUCCESS}" = "y" ] ;do
 	printf 'Do you like Music? mykeyboardstartshere "Yass!" , "No"\n'
 	read -r answer <"${INPUT}"
 	case ${answer,,} in

@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-5-ga5aa756
 
 # will be automatically sourced from bashbot
 
@@ -15,19 +15,19 @@ eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 
 # source from commands.sh to use the sendMessage functions
 
-MSG_URL=$URL'/sendMessage'
-EDIT_URL=$URL'/editMessageText'
-PHO_URL=$URL'/sendPhoto'
-AUDIO_URL=$URL'/sendAudio'
-DOCUMENT_URL=$URL'/sendDocument'
-STICKER_URL=$URL'/sendSticker'
-VIDEO_URL=$URL'/sendVideo'
-VOICE_URL=$URL'/sendVoice'
-LOCATION_URL=$URL'/sendLocation'
-VENUE_URL=$URL'/sendVenue'
-ACTION_URL=$URL'/sendChatAction'
-FORWARD_URL=$URL'/forwardMessage'
-ALBUM_URL=$URL'/sendMediaGroup'
+MSG_URL=${URL}'/sendMessage'
+EDIT_URL=${URL}'/editMessageText'
+PHO_URL=${URL}'/sendPhoto'
+AUDIO_URL=${URL}'/sendAudio'
+DOCUMENT_URL=${URL}'/sendDocument'
+STICKER_URL=${URL}'/sendSticker'
+VIDEO_URL=${URL}'/sendVideo'
+VOICE_URL=${URL}'/sendVoice'
+LOCATION_URL=${URL}'/sendLocation'
+VENUE_URL=${URL}'/sendVenue'
+ACTION_URL=${URL}'/sendChatAction'
+FORWARD_URL=${URL}'/forwardMessage'
+ALBUM_URL=${URL}'/sendMediaGroup'
 
 #
 # send/edit message variants ------------------
@@ -106,7 +106,7 @@ _markdownv2_message_url() {
 	text="${text//$'\n'/\\n}"
 	[ "${#text}" -ge 4096 ] && log_error "Warning: markdownv2 message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	# markdown v2 needs additional double escaping!
-	text="$(sed -E -e 's|([_|~`>+=#{}()!.-])|\\\1|g' <<< "$text")"
+	text="$(sed -E -e 's|([_|~`>+=#{}()!.-])|\\\1|g' <<< "${text}")"
 	until [ -z "${text}" ]; do
 		sendJson "${1}" '"text":"'"${text:0:4096}"'"'"${3}"'' "${4}"
 		text="${text:4096}"
@@ -126,7 +126,7 @@ send_keyboard() {
 		text='"text":"'"${text//$'\n'/\\n}"'"'
 	fi
 	local one_time=', "one_time_keyboard":true' && [ -n "$4" ] && one_time=""
-	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"'}' "$MSG_URL"
+	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"'}' "${MSG_URL}"
 	# '"text":"$2", "reply_markup": {"keyboard": [ ${3} ], "one_time_keyboard": true}'
 }
 
@@ -137,7 +137,7 @@ remove_keyboard() {
 		text="$(JsonEscape "${2}")"
 		text='"text":"'"${text//$'\n'/\\n}"'"'
 	fi
-	sendJson "${1}" "${text}"', "reply_markup": {"remove_keyboard":true}' "$MSG_URL"
+	sendJson "${1}" "${text}"', "reply_markup": {"remove_keyboard":true}' "${MSG_URL}"
 	# delete message if no message or $3 not empty
 	[[ -z "${2}" || -n "${3}" ]] && delete_message "${1}" "${BOTSENT[ID]}" "nolog"
 	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
@@ -146,7 +146,7 @@ remove_keyboard() {
 # $1 CHAT $2 message $3 keyboard
 send_inline_keyboard() {
 	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"Keyboard:"'"'
-	sendJson "${1}" "${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]}' "$MSG_URL"
+	sendJson "${1}" "${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]}' "${MSG_URL}"
 	# JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
 }
 # $1 CHAT $2 message $3 button text $4 URL
@@ -192,7 +192,7 @@ send_file() {
 	if [ "${err}" != "0" ]; then
 		BOTSENT=()
 		BOTSENT[OK]="false"
-		case "$err" in
+		case "${err}" in
 		    1)	BOTSENT[ERROR]="Path to file $2 contains to much '../' or starts with '.'";;
 		    2)	BOTSENT[ERROR]="Path to file $2 does not match regex: ${FILE_REGEX} ";;
 		    3)	if [[ "$2" == "/"* ]];then
@@ -208,63 +208,62 @@ send_file() {
 upload_file(){
 	local CUR_URL WHAT STATUS text=$3 file="$2"
 	# file access checks ...
-	[[ "$file" = *'..'* ]] && return 1  # no directory traversal
-	[[ "$file" = '.'* ]] && return 1	 # no hidden or relative files
-	if [[ "$file" = '/'* ]] ; then
-		[[ ! "$file" =~ ${FILE_REGEX} ]] && return 2 # absolute must match REGEX
+	[[ "${file}" = *'..'* ]] && return 1  # no directory traversal
+	[[ "${file}" = '.'* ]] && return 1	 # no hidden or relative files
+	if [[ "${file}" = '/'* ]] ; then
+		[[ ! "${file}" =~ ${FILE_REGEX} ]] && return 2 # absolute must match REGEX
 	else
 		file="${UPLOADDIR:-NOUPLOADDIR}/${file}" # othiers must be in UPLOADDIR
 	fi
-	[ ! -r "$file" ] && return 3 # and file must exits of course
+	[ ! -r "${file}" ] && return 3 # and file must exits of course
  
-	local ext="${file##*.}"
-	case $ext in
+	case "${file##*.}" in
         	mp3|flac)
-			CUR_URL="$AUDIO_URL"
+			CUR_URL="${AUDIO_URL}"
 			WHAT="audio"
 			STATUS="upload_audio"
 			;;
 		png|jpg|jpeg|gif|pic)
-			CUR_URL="$PHO_URL"
+			CUR_URL="${PHO_URL}"
 			WHAT="photo"
 			STATUS="upload_photo"
 			;;
 		webp)
-			CUR_URL="$STICKER_URL"
+			CUR_URL="${STICKER_URL}"
 			WHAT="sticker"
 			STATUS="upload_photo"
 			;;
 		mp4)
-			CUR_URL="$VIDEO_URL"
+			CUR_URL="${VIDEO_URL}"
 			WHAT="video"
 			STATUS="upload_video"
 			;;
 
 		ogg)
-			CUR_URL="$VOICE_URL"
+			CUR_URL="${VOICE_URL}"
 			WHAT="voice"
 			STATUS="upload_audio"
 			;;
 		*)
-			CUR_URL="$DOCUMENT_URL"
+			CUR_URL="${DOCUMENT_URL}"
 			WHAT="document"
 			STATUS="upload_document"
 			;;
 	esac
-	send_action "${1}" "$STATUS"
+	send_action "${1}" "${STATUS}"
 	sendUpload "$1" "${WHAT}" "${file}" "${CUR_URL}" "${text//\\n/$'\n'}"
 }
 
 # typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
 send_action() {
 	[ -z "$2" ] && return
-	sendJson "${1}" '"action": "'"${2}"'"' "$ACTION_URL" &
+	sendJson "${1}" '"action": "'"${2}"'"' "${ACTION_URL}" &
 }
 
 # $1 CHAT $2 lat $3 long
 send_location() {
 	[ -z "$3" ] && return
-	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"'' "$LOCATION_URL"
+	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"'' "${LOCATION_URL}"
 }
 
 # $1 CHAT $2 lat $3 long $4 title $5 address $6 foursquard id
@@ -272,7 +271,7 @@ send_venue() {
 	local add=""
 	[ -z "$5" ] && return
 	[ -n "$6" ] && add=', "foursquare_id": '"$6"''
-	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"', "address": "'"${5}"'", "title": "'"${4}"'"'"${add}" "$VENUE_URL"
+	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"', "address": "'"${5}"'", "title": "'"${4}"'"'"${add}" "${VENUE_URL}"
 }
 
 
@@ -283,7 +282,7 @@ send_venue() {
 # $1 CHAT $2 from chat  $3 from msg id
 forward_message() {
 	[ -z "$3" ] && return
-	sendJson "${1}" '"from_chat_id": '"${2}"', "message_id": '"${3}"'' "$FORWARD_URL"
+	sendJson "${1}" '"from_chat_id": '"${2}"', "message_id": '"${3}"'' "${FORWARD_URL}"
 }
 forward() { # backward compatibility
 	forward_message "$@" || return
@@ -308,35 +307,35 @@ send_message() {
 		title="$(sed <<< "${2}" '/mytitlestartshere /!d;s/.*mytitlestartshere //;s/ *my[kfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
 		address="$(sed <<< "${2}" '/myaddressstartshere /!d;s/.*myaddressstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
 	}
-	if [ -n "$no_keyboard" ]; then
-		remove_keyboard "$1" "$text"
+	if [ -n "${no_keyboard}" ]; then
+		remove_keyboard "$1" "${text}"
 		sent=y
 	fi
-	if [ -n "$keyboard" ]; then
-		if [[ "$keyboard" != *"["* ]]; then # pre 0.60 style
+	if [ -n "${keyboard}" ]; then
+		if [[ "${keyboard}" != *"["* ]]; then # pre 0.60 style
 			keyboard="[ ${keyboard//\" \"/\" \] , \[ \"} ]"
 		fi
-		send_keyboard "$1" "$text" "$keyboard"
+		send_keyboard "$1" "${text}" "${keyboard}"
 		sent=y
 	fi
-	if [ -n "$btext" ] && [ -n "$burl" ]; then
-		send_button "$1" "$text" "$btext" "$burl"
+	if [ -n "${btext}" ] && [ -n "${burl}" ]; then
+		send_button "$1" "${text}" "${btext}" "${burl}"
 		sent=y
 	fi
-	if [ -n "$file" ]; then
-		send_file "$1" "$file" "$text"
+	if [ -n "${file}" ]; then
+		send_file "$1" "${file}" "${text}"
 		sent=y
 	fi
-	if [ -n "$lat" ] && [ -n "$long" ]; then
-		if [ -n "$address" ] && [ -n "$title" ]; then
-			send_venue "$1" "$lat" "$long" "$title" "$address"
+	if [ -n "${lat}" ] && [ -n "${long}" ]; then
+		if [ -n "${address}" ] && [ -n "${title}" ]; then
+			send_venue "$1" "${lat}" "${long}" "${title}" "${address}"
 		else
-			send_location "$1" "$lat" "$long"
+			send_location "$1" "${lat}" "${long}"
 		fi
 		sent=y
 	fi
-	if [ "$sent" != "y" ];then
-		send_text_mode "$1" "$text"
+	if [ "${sent}" != "y" ];then
+		send_text_mode "$1" "${text}"
 	fi
 
 }

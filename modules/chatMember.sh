@@ -5,36 +5,36 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-5-ga5aa756
 
 # will be automatically sourced from bashbot
 
 # source once magic, function named like file
 eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 
-LEAVE_URL=$URL'/leaveChat'
-KICK_URL=$URL'/kickChatMember'
-UNBAN_URL=$URL'/unbanChatMember'
-GETMEMBER_URL=$URL'/getChatMember'
+LEAVE_URL=${URL}'/leaveChat'
+KICK_URL=${URL}'/kickChatMember'
+UNBAN_URL=${URL}'/unbanChatMember'
+GETMEMBER_URL=${URL}'/getChatMember'
 
 # usage: status="$(get_chat_member_status "chat" "user")"
 # $1 chat # $2 user
 get_chat_member_status() {
-	sendJson "$1" '"user_id":'"$2"'' "$GETMEMBER_URL"
+	sendJson "$1" '"user_id":'"$2"'' "${GETMEMBER_URL}"
 	# shellcheck disable=SC2154
-	JsonGetString '"result","status"' <<< "$res"
+	JsonGetString '"result","status"' <<< "${res}"
 }
 
 kick_chat_member() {
-	sendJson "$1" 'user_id: '"$2"'' "$KICK_URL"
+	sendJson "$1" 'user_id: '"$2"'' "${KICK_URL}"
 }
 
 unban_chat_member() {
-	sendJson "$1" 'user_id: '"$2"'' "$UNBAN_URL"
+	sendJson "$1" 'user_id: '"$2"'' "${UNBAN_URL}"
 }
 
 leave_chat() {
-	sendJson "$1" "" "$LEAVE_URL"
+	sendJson "$1" "" "${LEAVE_URL}"
 }
 
 user_is_creator() {

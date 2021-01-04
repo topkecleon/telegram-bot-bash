@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117,SC2059
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-5-ga5aa756
 
 # will be automatically sourced from bashbot
 
@@ -65,7 +65,7 @@ start_proc() {
 	printf "%s: Start interacitve script CHAT=%s JOB=%s CMD=%s\n" "$(date)" "${1}" "${fifo##*/}" "${2} ${3} ${4}" >>"${UPDATELOG}"
 	check_proc "$1" && kill_proc "$1"
 	mkfifo "${fifo}"
-	nohup bash -c "{ $2 \"$4\" \"$5\" \"$fifo\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"
+	nohup bash -c "{ $2 \"$4\" \"$5\" \"${fifo}\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"
 		rm \"${fifo}\"; [ -s \"${fifo}.log\" ] || rm -f \"${fifo}.log\"; }" &>>"${fifo}.log" &
 }
 

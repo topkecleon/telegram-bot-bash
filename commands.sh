@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.25-dev-0-gd310805
+#### $$VERSION$$ v1.25-dev-5-ga5aa756
 #
 
 # bashbot locale defaults to c.UTF-8, adjust locale in mycommands.sh if needed
@@ -78,7 +78,7 @@ export FILE_REGEX="${BASHBOT_ETC}/.*"
 if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
     # detect inline commands....
     # no default commands, all processing is done in myinlines()
-    if [ "$INLINE" != "0" ] && [ -n "${iQUERY[ID]}" ]; then
+    if [ "${INLINE}" != "0" ] && [ -n "${iQUERY[ID]}" ]; then
     	# forward iinline query to optional dispatcher
 	_exec_if_function myinlines
 

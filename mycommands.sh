@@ -9,7 +9,7 @@
 # #### mycommands.clean
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.25-dev-0-gd310805
+#### $$VERSION$$ v1.25-dev-5-ga5aa756
 #
 
 ##########
@@ -193,40 +193,40 @@ else
 		##################
 		# example commands, replace thm by your own
 		'/echo'*) # example echo command
-			send_normal_message "${CHAT[ID]}" "$MESSAGE"
+			send_normal_message "${CHAT[ID]}" "${MESSAGE}"
 			;;
 		'/question'*) # start interactive questions
 			checkproc 
-			if [ "$res" -gt 0 ] ; then
+			if [ "${res}" -gt 0 ] ; then
 				startproc "examples/question.sh" || send_normal_message "${CHAT[ID]}" "Can't start question."
 			else
-				send_normal_message "${CHAT[ID]}" "$MESSAGE already running ..."
+				send_normal_message "${CHAT[ID]}" "${MESSAGE} already running ..."
 			fi
 			;;
 
 		'/cancel'*) # cancel interactive command
 			checkproc
-			if [ "$res" -gt 0 ] ;then 
+			if [ "${res}" -gt 0 ] ;then 
 				killproc && send_normal_message "${CHAT[ID]}" "Command canceled."
 			else
 				send_normal_message "${CHAT[ID]}" "No command is currently running."
 			fi
 			;;
 		'/run_notify'*) # start notify background job
-			myback="notify"; checkback "$myback"
-			if [ "$res" -gt 0 ] ; then
-				background "examples/notify.sh 60" "$myback" || send_normal_message "${CHAT[ID]}" "Can't start notify."
+			myback="notify"; checkback "${myback}"
+			if [ "${res}" -gt 0 ] ; then
+				background "examples/notify.sh 60" "${myback}" || send_normal_message "${CHAT[ID]}" "Can't start notify."
 			else
-				send_normal_message "${CHAT[ID]}" "Background command $myback already running ..."
+				send_normal_message "${CHAT[ID]}" "Background command ${myback} already running ..."
 			fi
 			;;
 		'/stop_notify'*) # kill notify background job
-			myback="notify"; checkback "$myback"
-			if [ "$res" -eq 0 ] ; then
-				killback "$myback"
-				send_normal_message "${CHAT[ID]}" "Background command $myback canceled."
+			myback="notify"; checkback "${myback}"
+			if [ "${res}" -eq 0 ] ; then
+				killback "${myback}"
+				send_normal_message "${CHAT[ID]}" "Background command ${myback} canceled."
 			else
-				send_normal_message "${CHAT[ID]}" "No background command $myback is currently running.."
+				send_normal_message "${CHAT[ID]}" "No background command ${myback} is currently running.."
 			fi
 			;;
 
@@ -262,15 +262,15 @@ else
 			;;
 		"2"*)	# two photos
 			answer_inline_multi "${iQUERY[ID]}" "
-			    $(inline_query_compose "$RANDOM" "photo" "https://avatars.githubusercontent.com/u/13046303"), 
-			    $(inline_query_compose "$RANDOM" "photo" "https://avatars.githubusercontent.com/u/4593242")
+			    $(inline_query_compose "${RANDOM}" "photo" "https://avatars.githubusercontent.com/u/13046303"), 
+			    $(inline_query_compose "${RANDOM}" "photo" "https://avatars.githubusercontent.com/u/4593242")
 			    "
 			;;
 		"3"*) # three photos
 			answer_inline_multi "${iQUERY[ID]}" "
-			    $(inline_query_compose "$RANDOM" "photo" "https://avatars.githubusercontent.com/u/13046303"), 
-			    $(inline_query_compose "$RANDOM" "photo" "https://avatars.githubusercontent.com/u/4593242")
-			    $(inline_query_compose "$RANDOM" "photo" "https://avatars.githubusercontent.com/u/102707")
+			    $(inline_query_compose "${RANDOM}" "photo" "https://avatars.githubusercontent.com/u/13046303"), 
+			    $(inline_query_compose "${RANDOM}" "photo" "https://avatars.githubusercontent.com/u/4593242")
+			    $(inline_query_compose "${RANDOM}" "photo" "https://avatars.githubusercontent.com/u/102707")
 			    "
 			;;
 
@@ -279,7 +279,7 @@ else
 			local avatar=("https://avatars.githubusercontent.com/u/13046303" "https://avatars.githubusercontent.com/u/4593242" "https://avatars.githubusercontent.com/u/102707" "https://avatars.githubusercontent.com/u/6460407")
 			answer_inline_multi "${iQUERY[ID]}" "
 				$(for photo in  ${avatar[*]} ; do
-					printf "%s\n" "${sep}"; inline_query_compose "$RANDOM" "photo" "${photo}" "${photo}"; sep=","
+					printf "%s\n" "${sep}"; inline_query_compose "${RANDOM}" "photo" "${photo}" "${photo}"; sep=","
 				done)
 				"
 			;;
@@ -318,10 +318,10 @@ else
 	local image result sep="" count="1"
 	result="$(wget --user-agent 'Mozilla/5.0' -qO - "https://images.search.yahoo.com/search/images?p=$1" |  sed 's/</\n</g' | grep "<img src=")"
 	while read -r image; do
-		[ "$count" -gt "20" ] && break
+		[ "${count}" -gt "20" ] && break
 		image="${image#* src=\'}"; image="${image%%&pid=*}"
 		[[ "${image}" = *"src="* ]] && continue
-		printf "%s\n" "${sep}"; inline_query_compose "$RANDOM" "photo" "${image}"; sep=","
+		printf "%s\n" "${sep}"; inline_query_compose "${RANDOM}" "photo" "${image}"; sep=","
 		count=$(( count + 1 ))
 	done <<<"${result}"
     }

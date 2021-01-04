@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-7-g0798f1a
+#### $$VERSION$$ v1.25-dev-5-ga5aa756
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -42,7 +42,7 @@ fi
 
 # are we running in a terminal?
 NN="\n"
-if [ -t 1 ] && [ -n "$TERM" ];  then
+if [ -t 1 ] && [ -n "${TERM}" ];  then
     INTERACTIVE='yes'
     RED='\e[31m'
     GREEN='\e[32m'
@@ -150,13 +150,13 @@ MODULEDIR="${SCRIPTDIR}/modules"
 # adjust locations based on source and real name
 [[ "${SCRIPT}" != "${REALME}" || "$1" == "source" ]] && SOURCE="yes"
 
-if [ -n "$BASHBOT_HOME" ]; then
-	SCRIPTDIR="$BASHBOT_HOME"
+if [ -n "${BASHBOT_HOME}" ]; then
+	SCRIPTDIR="${BASHBOT_HOME}"
  else
 	BASHBOT_HOME="${SCRIPTDIR}"
 fi
-[ -z "${BASHBOT_ETC}" ] && BASHBOT_ETC="$BASHBOT_HOME"
-[ -z "${BASHBOT_VAR}" ] && BASHBOT_VAR="$BASHBOT_HOME"
+[ -z "${BASHBOT_ETC}" ] && BASHBOT_ETC="${BASHBOT_HOME}"
+[ -z "${BASHBOT_VAR}" ] && BASHBOT_VAR="${BASHBOT_HOME}"
 
 ADDONDIR="${BASHBOT_ETC:-.}/addons"
 RUNUSER="${USER}" # USER is overwritten by bashbot array :-(, save original
@@ -169,16 +169,16 @@ case "$1" in
 		exit;;
 	"help") HELP="${BASHBOT_HOME:-.}/README"
 		if [ -n "${INTERACTIVE}" ];then
-			_exists w3m && w3m "$HELP.html" && exit
-			_exists lynx && lynx "$HELP.html" && exit
-			_exists less && less "$HELP.txt" && exit
+			_exists w3m && w3m "${HELP}.html" && exit
+			_exists lynx && lynx "${HELP}.html" && exit
+			_exists less && less "${HELP}.txt" && exit
 		fi
-		cat "$HELP.txt"
+		cat "${HELP}.txt"
 		exit;;
 esac
 
 # OK, ENVIRONMENT is set up, let's do some additional tests
-if [[ -z "${SOURCE}" && -z "$BASHBOT_HOME" ]] && ! cd "${RUNDIR}" ; then
+if [[ -z "${SOURCE}" && -z "${BASHBOT_HOME}" ]] && ! cd "${RUNDIR}" ; then
 	printf "${RED}ERROR: Can't change to ${RUNDIR} ...${NN}"
 	exit 1
 fi
@@ -301,10 +301,10 @@ fi
 BASHBOT_RETRY="" # retry by default
 
 URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
-ME_URL=$URL'/getMe'
+ME_URL=${URL}'/getMe'
 
-UPD_URL=$URL'/getUpdates?offset='
-GETFILE_URL=$URL'/getFile'
+UPD_URL=${URL}'/getUpdates?offset='
+GETFILE_URL=${URL}'/getFile'
 
 #################
 # BASHBOT COMMON functions
@@ -351,8 +351,8 @@ fi
 # outputs final filename
 download() {
 	local empty="no.file" file="${2:-${empty}}"
-	if [[ "$file" = *"/"* ]] || [[ "$file" = "."* ]]; then file="${empty}"; fi
-	while [ -f "${DATADIR:-.}/${file}" ] ; do file="$RAMDOM-${file}"; done
+	if [[ "${file}" = *"/"* ]] || [[ "${file}" = "."* ]]; then file="${empty}"; fi
+	while [ -f "${DATADIR:-.}/${file}" ] ; do file="${RANDOM}-${file}"; done
 	getJson "$1" >"${DATADIR:-.}/${file}" || return
 	printf '%s\n' "${DATADIR:-.}/${file}"
 }
@@ -386,7 +386,7 @@ killallproc() {
 
 
 # $ chat $2 msg_id $3 nolog
-declare -xr DELETE_URL=$URL'/deleteMessage'
+declare -xr DELETE_URL=${URL}'/deleteMessage'
 delete_message() {
 	[ -z "$3" ] && log_update "Delete Message CHAT=${1} MSG_ID=${2}"
 	sendJson "${1}" '"message_id": '"${2}"'' "${DELETE_URL}"
@@ -435,8 +435,8 @@ if ! _exists iconv; then
 	function iconv() { cat; }
 fi
 
-TIMEOUT="${BASHBOT_TIMEOUT}"
-[[ "$TIMEOUT" =~ ^[${o9o9o9}]+$ ]] || TIMEOUT="20"
+TIMEOUT="${BASHBOT_TIMEOUT:-20}"
+[[ "${TIMEOUT}" =~ ^[${o9o9o9}]+$ ]] || TIMEOUT="20"
 
 # usage: sendJson "chat" "JSON" "URL"
 sendJson(){
@@ -644,7 +644,7 @@ title2Json(){
 # get bot name and id from telegram
 getBotName() {
 	declare -A BOTARRAY
-	Json2Array 'BOTARRAY' <<<"$(getJson "$ME_URL" | "${JSONSHFILE}" -b -n 2>/dev/null)"
+	Json2Array 'BOTARRAY' <<<"$(getJson "${ME_URL}" | "${JSONSHFILE}" -b -n 2>/dev/null)"
 	[ -z "${BOTARRAY["result","username"]}" ] && return 1
 	# save botname and id
 	setConfigKey "botname" "${BOTARRAY["result","username"]}"
@@ -657,7 +657,7 @@ getBotName() {
 JsonDecode() {
 	local out="$1" remain="" U=""
 	local regexp='(.*)\\u[dD]([0-9a-fA-F]{3})\\u[dD]([0-9a-fA-F]{3})(.*)'
-	while [[ "${out}" =~ $regexp ]] ; do
+	while [[ "${out}" =~ ${regexp} ]] ; do
 	U=$(( ( (0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ) | ( 0xd${BASH_REMATCH[3]} & 0x3ff ) + 0x10000 ))
 			remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
 			out="${BASH_REMATCH[1]}"
@@ -683,7 +683,7 @@ process_updates() {
 	max="$(grep -F ',"update_id"]'  <<< "${UPDATE}" | tail -1 | cut -d , -f 2 )"
 	Json2Array 'UPD' <<<"${UPDATE}"
 	for ((num=0; num<=max; num++)); do
-		process_client "$num" "${debug}"
+		process_client "${num}" "${debug}"
 	done
 }
 
@@ -731,7 +731,7 @@ process_client() {
 	jssh_countKeyDB_async "${CHAT[ID]}" "${COUNTFILE}"
 }
 
-declare -Ax BASHBOT_EVENT_INLINE BASHBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASHBOT_EVENT_REPLY BASHBOT_EVENT_FORWARD BASHBOT_EVENT_SEND
+declare -Ax BASHBOT_EVENT_INLINE BASHBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASHBOT_EVENT_REPLYTO BASHBOT_EVENT_FORWARD BASHBOT_EVENT_SEND
 declare -Ax BASHBOT_EVENT_CONTACT BASHBOT_EVENT_LOCATION BASHBOT_EVENT_FILE BASHBOT_EVENT_TEXT BASHBOT_EVENT_TIMER BASHBOT_BLOCKED
 
 start_timer(){
@@ -745,7 +745,7 @@ start_timer(){
 EVENT_SEND="0"
 event_send() {
 	# max recursion level 5 to avoid fork bombs
-	(( EVENT_SEND++ )); [ "$EVENT_SEND" -gt "5" ] && return
+	(( EVENT_SEND++ )); [ "${EVENT_SEND}" -gt "5" ] && return
 	# shellcheck disable=SC2153
 	for key in "${!BASHBOT_EVENT_SEND[@]}"
 	do
@@ -761,7 +761,7 @@ event_timer() {
 	for key in "${!BASHBOT_EVENT_TIMER[@]}"
 	do
 		timer="${key##*,}"
-		[[ ! "$timer" =~ ^-*[1-9][0-9]*$ ]] && continue
+		[[ ! "${timer}" =~ ^-*[1-9][0-9]*$ ]] && continue
 		if [ "$(( EVENT_TIMER % timer ))" = "0" ]; then
 			_exec_if_function "${BASHBOT_EVENT_TIMER[${key}]}" "timer" "${key}" "${debug}"
 			[ "$(( EVENT_TIMER % timer ))" -lt "0" ] && \
@@ -1041,7 +1041,7 @@ start_bot() {
 	# start timer events
 	if [ -n "${BASHBOT_START_TIMER}" ] ; then
 		# shellcheck disable=SC2064
-		trap "event_timer $DEBUGMSG" ALRM
+		trap "event_timer ${DEBUGMSG}" ALRM
 		start_timer &
 		# shellcheck disable=SC2064
 		trap "kill -9 $!; exit" EXIT INT HUP TERM QUIT 
@@ -1075,7 +1075,7 @@ start_bot() {
 			OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
 			((OFFSET++))
 
-			if [ "$OFFSET" != "1" ]; then
+			if [ "${OFFSET}" != "1" ]; then
 				nextsleep="100"
 				process_updates "${DEBUGMSG}"
 			fi
@@ -1113,22 +1113,22 @@ bot_init() {
 	printf "Done.\n"
 	# setup bashbot
 	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
-	printf "Enter User to run bashbot [$RUNUSER]: "
+	printf "Enter User to run bashbot [${RUNUSER}]: "
 	read -r TOUSER
-	[ -z "$TOUSER" ] && TOUSER="$RUNUSER"
-	if ! id "$TOUSER" &>/dev/null; then
-		printf "${RED}User \"$TOUSER\" not found!${NN}"
+	[ -z "${TOUSER}" ] && TOUSER="${RUNUSER}"
+	if ! id "${TOUSER}" &>/dev/null; then
+		printf "${RED}User \"${TOUSER}\" not found!${NN}"
 		exit 3
 	else
 		printf "Adjusting files and permissions for user \"${TOUSER}\" ...\n"
-		[ -w "bashbot.rc" ] && sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' "bashbot.rc"
+		[ -w "bashbot.rc" ] && sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'"${TOUSER}"'"/' "bashbot.rc"
 		chmod 711 .
 		chmod -R o-w ./*
 		chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" logs "${LOGDIR}/"*.log 2>/dev/null
 		chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTACL}" 2>/dev/null
 		# jsshDB must writeable by owner
 		find . -name '*.jssh*' -exec chmod u+w \{\} +
-		chown -R "$TOUSER" . ./*
+		chown -R "${TOUSER}" . ./*
 		printf "Done.\n"
 	fi
 	# ask to check bottoken online
@@ -1187,7 +1187,7 @@ if [ -z "${SOURCE}" ]; then
 		else
 			printf "${GREY}Info: Can't get Botname from Telegram, try cached one ...${NN}"
 			ME="$(getConfigKey "botname")"
-			if [ -z "$ME" ]; then
+			if [ -z "${ME}" ]; then
 			    printf "${RED}ERROR: No cached botname, can't continue! ...${NN}"
 			    exit 1
 			fi
@@ -1202,7 +1202,7 @@ if [ -z "${SOURCE}" ]; then
 		ME="$(getConfigKey "botname")"
 		# read until terminated
 		while read -r line ;do
-			[ -n "$line" ] && send_message "$2" "$line"
+			[ -n "${line}" ] && send_message "$2" "${line}"
 		done 
 		# cleanup datadir, keep logfile if not empty
 		rm -f -r "${DATADIR:-.}/$3"
@@ -1256,7 +1256,7 @@ if [ -z "${SOURCE}" ]; then
 		BOTPID="$(proclist "${SESSION}")"
 		# shellcheck disable=SC2086
 		[ -n "${BOTPID}" ] && kill ${BOTPID}
-		nohup "$SCRIPT" "startbot" "$2" "${SESSION}" &>/dev/null &
+		nohup "${SCRIPT}" "startbot" "$2" "${SESSION}" &>/dev/null &
 		printf "Session Name: %s\n" "${SESSION}"
 		sleep 1
 		if [ -n "$(proclist "${SESSION}")" ]; then
