@@ -26,7 +26,7 @@ bash --version | grep "bash"
 Installing bashbot is very simple: Download and extract the installation archive.
 
 1. Choose a directory to install bashbot (_e.g.your HOME or /usr/local_)
-2. Download [latest release zip / tar archive] (https://github.com/topkecleon/telegram-bot-bash/releases/latest) and extract all files. 
+2. Download [latest release zip / tar archive](https://github.com/topkecleon/telegram-bot-bash/releases/latest) and extract all files. 
 3. Change into the directory `telegram-bot-bash`
 4. Copy `mycommands.sh.dist` or `mycommands.sh.clean` to `mycommands.sh`
 5. Run `./bashbot.sh init`\* to setup the environment and enter your Bots token given by botfather.
@@ -129,5 +129,5 @@ You must update to [Version 1.20](https://github.com/topkecleon/telegram-bot-bas
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.25-dev-2-g0d678f4
+#### $$VERSION$$ v1.25-dev-3-g53c107d
 
