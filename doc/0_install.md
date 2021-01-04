@@ -63,9 +63,9 @@ Most systems with awk can use `JSON.awk` as drop in replacement
 
 BSD and MacOS users must install `gnu awk` and adjust the shebang, see below
 
-After you have checked that 'JSON.awk.dist' is working correct on your system copy it to `JSON.awk` and (re)start bashbot.
+After you have checked that `JSON.awk.dist` is working correct on your system copy it to `JSON.awk` and (re)start bashbot.
 
-Note: If you are not using the zip / tar archive, you must install `JSON.awk` manually into the same directory as 'JSON.sh`:
+Note: If you are not using the zip / tar archive, you must install `JSON.awk` manually into the same directory as `JSON.sh`:
 
 	wget https://cdn.jsdelivr.net/gh/step-/JSON.awk/JSON.awk 
 	wget https://cdn.jsdelivr.net/gh/step-/JSON.awk/tool/patch-for-busybox-awk.sh
@@ -124,7 +124,7 @@ to get an impression how different they are.
 
 #### Support for update from pre-1.0 removed
 
-From Version 1.21 on updating from a pre-1.0 version is no more supported!
+From Version 1.21 on updating from a pre-1.0 version (_no \*.jssh config_) is no more supported!
 You must update to [Version 1.20](https://github.com/topkecleon/telegram-bot-bash/releases/tags/v1.20) first!
 
 
