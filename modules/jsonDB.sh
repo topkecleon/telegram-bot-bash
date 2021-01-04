@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-6-g5f6476d
+#### $$VERSION$$ v1.21-7-g0798f1a
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -31,12 +31,12 @@ export JSSH_LOCKNAME=".flock"
 # for more information see  doc/4_expert.md#Character_classes
 azazaz='abcdefghijklmnopqrstuvwxyz'	# a-z   :lower:
 AZAZAZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ'	# A-Z   :upper:
-R090909='0123456789'			# 0-9   :digit:
+o9o9o9='0123456789'			# 0-9   :digit:
 azAZaz="${azazaz}${AZAZAZ}"	# a-zA-Z	:alpha:
-azAZ09="${azAZaz}${R090909}"	# a-zA-z0-9	:alnum:
+azAZo9="${azAZaz}${o9o9o9}"	# a-zA-z0-9	:alnum:
 
 # characters allowed for key in key/value pairs
-JSSH_KEYOK="[-${azAZ09},._]"
+JSSH_KEYOK="[-${azAZo9},._]"
 
 # read string from stdin and and strip invalid characters
 # $1 - invalid charcaters are replaced with first character

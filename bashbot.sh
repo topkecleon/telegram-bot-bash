@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-6-g5f6476d
+#### $$VERSION$$ v1.21-7-g0798f1a
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -67,9 +67,9 @@ fi
 # for more information see  doc/4_expert.md#Character_classes
 azazaz='abcdefghijklmnopqrstuvwxyz'	# a-z   :lower:
 AZAZAZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ'	# A-Z   :upper:
-R090909='0123456789'			# 0-9   :digit:
+o9o9o9='0123456789'			# 0-9   :digit:
 azAZaz="${azazaz}${AZAZAZ}"	# a-zA-Z	:alpha:
-azAZ09="${azAZaz}${R090909}"	# a-zA-z0-9	:alnum:
+azAZo9="${azAZaz}${o9o9o9}"	# a-zA-z0-9	:alnum:
 
 # some important helper functions
 # returns true if command exist
@@ -88,22 +88,22 @@ _is_function() {
 # round $1 in international notation! , returns float with $2 decimal digits
 # if $2 is not given or is not a positive number zero is assumed
 _round_float() {
-	local digit="${2}"; [[ "${2}" =~ ^[${R090909}]+$ ]] || digit="0"
+	local digit="${2}"; [[ "${2}" =~ ^[${o9o9o9}]+$ ]] || digit="0"
 	{ LC_ALL=C.utf-8 printf "%.${digit}f" "${1}"; } 2>/dev/null
 }
 setConfigKey() {
-	[[ "$1" =~ ^[-${azAZ09},._]+$ ]] || return 3
+	[[ "$1" =~ ^[-${azAZo9},._]+$ ]] || return 3
 	[ -z "${BOTCONFIG}" ] && return 1
 	printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${2//\"/\\\"}" >>"${BOTCONFIG}.jssh"
 }
 getConfigKey() {
-	[[ "$1" =~ ^[-${azAZ09},._]+$ ]] || return 3
+	[[ "$1" =~ ^[-${azAZo9},._]+$ ]] || return 3
 	[ -r "${BOTCONFIG}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTCONFIG}.jssh" | tail -n 1
 }
 # check if $1 seems a valid token
 # return true if token seems to be valid
 check_token(){
-	[[ "${1}" =~ ^[${R090909}]{8,10}:[${azAZ09}_-]{35}$ ]] && return 0
+	[[ "${1}" =~ ^[${o9o9o9}]{8,10}:[${azAZo9}_-]{35}$ ]] && return 0
 	return 1
 }
 # log $1 with date
@@ -286,11 +286,11 @@ if ! check_token "${BOTTOKEN}"; then
 		"<your_bot_id>${RED}:${NC}<35_alphanumeric_characters-hash> ${RED}e.g. =>${NC} 123456789${RED}:${NC}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4\n\n"\
 		"${GREY}Your bot token: '${NC}${BOTTOKEN//:/${RED}:${NC}}'\n"
 
-	if [[ ! "${BOTTOKEN}" =~ ^[${R090909}]{8,10}: ]]; then
+	if [[ ! "${BOTTOKEN}" =~ ^[${o9o9o9}]{8,10}: ]]; then
 		printf "${GREY}\tHint: Bot id not a number or wrong len: ${NC}$(($(wc -c <<<"${BOTTOKEN%:*}")-1)) ${GREY}but should be${NC} 8-10\n"
 		[ -n "$(getConfigKey "botid")" ] && printf "\t${GREEN}Did you mean: \"${NC}$(getConfigKey "botid")${GREEN}\" ?${NN}"
 	fi
-	[[ ! "${BOTTOKEN}" =~ :[${azAZ09}_-]{35}$ ]] &&\
+	[[ ! "${BOTTOKEN}" =~ :[${azAZo9}_-]{35}$ ]] &&\
 		printf "${GREY}\tHint: Hash contains invalid character or has not len${NC} 35 ${GREY}, hash len is ${NC}$(($(wc -c <<<"${BOTTOKEN#*:}")-1))\n"
 	printf "\n"
 fi
@@ -436,14 +436,14 @@ if ! _exists iconv; then
 fi
 
 TIMEOUT="${BASHBOT_TIMEOUT}"
-[[ "$TIMEOUT" =~ ^[${R090909}]+$ ]] || TIMEOUT="20"
+[[ "$TIMEOUT" =~ ^[${o9o9o9}]+$ ]] || TIMEOUT="20"
 
 # usage: sendJson "chat" "JSON" "URL"
 sendJson(){
 	local json chat=""
 	if [ -n "${1}" ]; then
 		 chat='"chat_id":'"${1}"','
-		 [[ "${1}" == *[!${R090909}-]* ]] && chat='"chat_id":"'"${1}"' NAN",' # chat id not a number!
+		 [[ "${1}" == *[!${o9o9o9}-]* ]] && chat='"chat_id":"'"${1}"' NAN",' # chat id not a number!
 	fi
 	# compose final json
 	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
@@ -535,7 +535,7 @@ fi
 # $1 function $2 sleep $3 ... $n arguments
 sendJsonRetry(){
 	local retry="${1}"; shift
-	[[ "${1}" =~ ^\ *[${R090909}.]+\ *$ ]] && sleep "${1}"; shift
+	[[ "${1}" =~ ^\ *[${o9o9o9}.]+\ *$ ]] && sleep "${1}"; shift
 	printf "%s: RETRY %s %s %s\n" "$(date)" "${retry}" "${1}" "${2:0:60}"
 	case "${retry}" in
 		'sendJson'*)
@@ -1143,7 +1143,7 @@ bot_init() {
 	# check if botconf seems valid
 	printf "${GREEN}This is your bot config:${NN}"
 	sed 's/^/\t/' "${BOTCONFIG}.jssh" | grep -vF '["bot_config_key"]'
-	if check_token "$(getConfigKey "bottoken")" && [[ "$(getConfigKey "botadmin")" =~ ^[${R090909}]+$ ]]; then
+	if check_token "$(getConfigKey "bottoken")" && [[ "$(getConfigKey "botadmin")" =~ ^[${o9o9o9}]+$ ]]; then
 		printf "Bot config seems to be valid. Should I make a backup copy? (Y/n) Y\b"
 		read -r ANSWER
 		if [[ -z "${ANSWER}" || "${ANSWER}" =~ ^[^Nn] ]]; then

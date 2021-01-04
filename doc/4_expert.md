@@ -85,12 +85,12 @@ To work independent of language and bash settings bashbot uses solution 1. and u
 ```bash
 azazaz='abcdefghijklmnopqrstuvwxyz'	# a-z   :lower:
 AZAZAZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ'	# A-Z   :upper:
-R090909='0123456789'			# 0-9   :digit:
+o9o9o9='0123456789'			# 0-9   :digit:
 azAZaz="${azazaz}${AZAZAZ}"	# a-zA-Z	:alpha:
-azAZ09="${azAZaz}${R090909}"	# a-zA-z0-9	:alnum:
+azAZo9="${azAZaz}${o9o9o9}"	# a-zA-z0-9	:alnum:
 
 # e.g. characters allowed for key in key/value pairs
-JSSH_KEYOK="[-${azAZ09},._]"
+JSSH_KEYOK="[-${azAZo9},._]"
 ```
 
 #### Bashbot UTF-8 Support
@@ -434,5 +434,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v1.21-6-g5f6476d
+#### $$VERSION$$ v1.21-7-g0798f1a
 
