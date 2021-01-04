@@ -9,13 +9,13 @@ two bytes for encoding and covers almost all `Latin` alphabets, also `Greek`, `C
 `Hebrew`, `Arabic` and more. See [Wikipedia](https://en.wikipedia.org/wiki/UTF-8) for more details.
 
 #### Setting up your Environment
-In general `bash` and `GNU` utitities are UTF-8 aware if you to setup your environment
-and your scripts accordingly:
+In general `bash` and `GNU` utitities are UTF-8 aware  aware if you to setup your environment
+and your scripts accordingly (_locale setting_):
 
 1. Your Terminal and Editor must support UTF-8:
    Set Terminal and Editor locale to UTF-8, eg. in `Settings/Configuration` select UTF-8 (Unicode) as Charset.
 
-2. Set `Shell` environment to UTF-8 in your  `.profile` and your scripts. The usual settings are:
+2. Set `Shell` locale environment to UTF-8 in your  `.profile` and your scripts. The usual settings are:
 
 ```bash
 export 'LC_ALL=C.UTF-8'
@@ -31,18 +31,19 @@ export 'LANGUAGE=de_DE.UTF-8'
 ```bash
 export 'LC_ALL=en_US.UTF-8'
 export 'LANG=de_en_US.UTF-8'
-export 'LANGUAGE=den_US.UTF-8'
+export 'LANGUAGE=en_US.UTF-8'
 ```
-3. make sure your bot scripts use the correct  settings, eg. include the lines above at the beginning of your scripts
+3. make sure your bot scripts use the correct settings, eg. include the lines above at the beginning of your scripts
 
-#### Known UTF-8 pitfalls
+
+#### Known locale pitfalls
 
 ##### Missing locale C
 
 Even required by POSIX standard some systems (e.g. Manjaro Linux) has no locale `C` and `C.UTF-8` installed.
 If bashbot display a warning about missing locale you must install locale `C` and `C.UTF-8`.
 
-If you don't know what locales are installed on your sytsem use `locale -a | more` to display them.
+If you don't know what locales are installed on your sytsem use `locale -a` to display them.
 [Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8).
 
 
@@ -51,22 +52,25 @@ If you don't know what locales are installed on your sytsem use `locale -a | mor
 In ASCII times it was clear `[:lower:]` and `[a-z]` means ONLY the lowercase letters `[abcd...xyz]`.
 With introdution of locales character classes and ranges contains every character fitting the class definition.
 
-This mean `[:lower:]` and `[a-z]` contains ALL lowercase letters e.g. `ä á ø ǆ ȼ` 
-also, see [Unicode Latin lowercase letters]https://www.fileformat.info/info/unicode/category/Ll/list.htm)
+This means for UTF-8 locales `[:lower:]` and `[a-z]` contains ALL lowercase letters, e.g. `á ø ü` also,
+see [Unicode Latin lowercase letters](https://www.fileformat.info/info/unicode/category/Ll/list.htm)
 
 If that's ok for your script your'e fine, but many scripts rely on the idea of ASCII ranges and may produce undesired results.
 
 ```bash
 # try with different locales ...
-lowercase="abcäöü"
+# new bash to not change your current locale!
+bash
+lower="abcö"
 
-[[ "$string" =~ ^[a-z]$ ] && echo "String is all lower case"
+echo "$LC_ALL"
+[[ "$lower" =~ ^[a-z]+$ ]] && echo "Ups, $lower is all lower case!" || echo "OK, not lower case"
 
-LANG="en_EN
-[[ "$string" =~ ^[a-z]$ ] && echo "String is all lower case"
+LC_ALL="en_US.UTF-8"
+[[ "$lower" =~ ^[a-z]+$ ]] && echo "Ups, $lower is all lower case!" || echo "OK, not lower case"
 
-LANG="C"
-[[ "$string" =~ ^[a-z]$ ] && echo "String is all lower case"
+LC_ALL="C"
+[[ "$lower" =~ ^[a-z]+$ ]] && echo "Ups, $lower is all lower case!" || echo "OK, not lower case"
 ```
 
 There are three solutions:
@@ -430,5 +434,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v1.21-4-g966ee5d
+#### $$VERSION$$ v1.21-5-g8a095bc
 
