@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-2-g5ad7be5
+#### $$VERSION$$ v1.21-3-ge072afa
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -27,7 +27,7 @@ eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 # lockfile filename.flock is persistent and will be testet with flock for active lock (file open)
 export JSSH_LOCKNAME=".flock"
 
-# in UTF-8 äöü etc. are part of [:alnum:] and rages (e.g. a-z), but we want ASCII a-z ranges!
+# in UTF-8 äöü etc. are part of [:alnum:] and ranges (e.g. a-z), but we want ASCII a-z ranges!
 # there are two solutions: set "LC_COLLATE=C" or set bash option "globasciiranges"
 # to be independent of the settings mentioned above, we define our own "ranges"
 azazaz='abcdefghijklmnopqrstuvwxyz'	# a-z   :lower:
@@ -367,7 +367,7 @@ Array2Json() {
 	declare -n ARRAY="$1"
 	for key in "${!ARRAY[@]}"
        	do
-		#[[ "${key}" =~ ^${JSSH_KEYOK}$ ]] || continue
+		[[ "${key}" =~ ^${JSSH_KEYOK}$ ]] || continue
 		# in case val contains newline convert to \n
 		val="${ARRAY[${key}]//$'\n'/\\n}"
 		printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${val//\"/\\\"}"
