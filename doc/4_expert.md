@@ -38,10 +38,10 @@ export 'LANGUAGE=en_US.UTF-8'
 
 #### Known locale pitfalls
 
-##### Missing locale C
+##### Missing C locale
 
-Even required by POSIX standard some systems (e.g. Manjaro Linux) has no locale `C` and `C.UTF-8` installed.
-If bashbot display a warning about missing locale you must install locale `C` and `C.UTF-8`.
+Even required by POSIX standard some systems (e.g. Manjaro Linux) has `C` and `C.UTF-8` locale not installed.
+If bashbot display a warning about missing locale you must install `C` and `C.UTF-8` locale.
 
 If you don't know what locales are installed on your sytsem use `locale -a` to display them.
 [Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8).
@@ -50,9 +50,9 @@ If you don't know what locales are installed on your sytsem use `locale -a` to d
 ##### Character classes
 
 In ASCII times it was clear `[:lower:]` and `[a-z]` means ONLY the lowercase letters `[abcd...xyz]`.
-With introdution of locales character classes and ranges contains every character fitting the class definition.
+With introdution of localesi, character classes and ranges contains all charatcers fitting the class definition.
 
-This means for UTF-8 locales `[:lower:]` and `[a-z]` contains ALL lowercase letters, e.g. `á ø ü` also,
+This means with a Latin UTF-8 locale `[:lower:]` and `[a-z]` contains also e.g. `á ø ü` etc,
 see [Unicode Latin lowercase letters](https://www.fileformat.info/info/unicode/category/Ll/list.htm)
 
 If that's ok for your script your'e fine, but many scripts rely on the idea of ASCII ranges and may produce undesired results.
@@ -63,7 +63,7 @@ If that's ok for your script your'e fine, but many scripts rely on the idea of A
 bash
 lower="abcö"
 
-echo "$LC_ALL"
+echo "$LC_ALL $LC_COLLATE"
 [[ "$lower" =~ ^[a-z]+$ ]] && echo "Ups, $lower is all lower case!" || echo "OK, not lower case"
 
 LC_ALL="en_US.UTF-8"
@@ -80,7 +80,7 @@ There are three solutions:
 3. use `LC_COLLATE` to change behavior of all programs: `export LC_COLLATE=C`
 
 
-To work independent of language and bash settings bashbot uses solution 1. and uses own "classes" if an exact match is mandatory:
+To work independent of language and bash settings bashbot uses solution 1.: Own "ranges" if an exact match is mandatory:
 
 ```bash
 azazaz='abcdefghijklmnopqrstuvwxyz'	# a-z   :lower:
@@ -434,5 +434,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v1.21-7-g0798f1a
+#### $$VERSION$$ v1.25-dev-1-g8162695
 
