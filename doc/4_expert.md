@@ -50,7 +50,7 @@ If you don't know what locales are installed on your sytsem use `locale -a` to d
 ##### Character classes
 
 In ASCII times it was clear `[:lower:]` and `[a-z]` means ONLY the lowercase letters `[abcd...xyz]`.
-With introdution of localesi, character classes and ranges contains all charatcers fitting the class definition.
+With introdution of locales, character classes and ranges contains all characters fitting the class definition.
 
 This means with a Latin UTF-8 locale `[:lower:]` and `[a-z]` contains also e.g. `á ø ü` etc,
 see [Unicode Latin lowercase letters](https://www.fileformat.info/info/unicode/category/Ll/list.htm)
@@ -434,5 +434,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v1.25-dev-1-g8162695
+#### $$VERSION$$ v1.25-dev-2-g0d678f4
 
