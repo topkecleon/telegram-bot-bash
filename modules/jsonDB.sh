@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-4-g966ee5d
+#### $$VERSION$$ v1.21-6-g5f6476d
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -28,8 +28,7 @@ eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 export JSSH_LOCKNAME=".flock"
 
 # in UTF-8 äöü etc. are part of [:alnum:] and ranges (e.g. a-z), but we want ASCII a-z ranges!
-# there are two solutions: set "LC_COLLATE=C" or set bash option "globasciiranges"
-# to be independent of the settings mentioned above, we define our own "ranges"
+# for more information see  doc/4_expert.md#Character_classes
 azazaz='abcdefghijklmnopqrstuvwxyz'	# a-z   :lower:
 AZAZAZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ'	# A-Z   :upper:
 R090909='0123456789'			# 0-9   :digit:

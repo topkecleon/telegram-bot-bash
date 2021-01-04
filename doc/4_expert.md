@@ -9,7 +9,7 @@ two bytes for encoding and covers almost all `Latin` alphabets, also `Greek`, `C
 `Hebrew`, `Arabic` and more. See [Wikipedia](https://en.wikipedia.org/wiki/UTF-8) for more details.
 
 #### Setting up your Environment
-In general `bash` and `GNU` utitities are UTF-8 aware  aware if you to setup your environment
+In general `bash` and `GNU` utitities are UTF-8 aware if you to setup your environment
 and your scripts accordingly (_locale setting_):
 
 1. Your Terminal and Editor must support UTF-8:
@@ -434,5 +434,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v1.21-5-g8a095bc
+#### $$VERSION$$ v1.21-6-g5f6476d
 
