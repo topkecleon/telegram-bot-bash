@@ -2,7 +2,7 @@
 
 ## Check bash installation
 
-There may systems where bash seems to be installed but it is not (e.g. embedded systems_) or where bash is to old.
+There may systems where bash seems to be installed but it is not (_e.g. embedded systems_) or where bash is to old.
 Bashbot has some builtin checks but it may better to check before installing bashbot.
 
 Run the following commands to see if your bash looks ok ...
