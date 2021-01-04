@@ -35,7 +35,59 @@ export 'LANGUAGE=den_US.UTF-8'
 ```
 3. make sure your bot scripts use the correct  settings, eg. include the lines above at the beginning of your scripts
 
-To display all available locales on your system run `locale -a | more`. [Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8)
+#### Known UTF-8 pitfalls
+
+##### Missing locale C
+
+Even required by POSIX standard some systems (e.g. Manjaro Linux) has no locale `C` and `C.UTF-8` installed.
+If bashbot display a warning about missing locale you must install locale `C` and `C.UTF-8`.
+
+If you don't know what locales are installed on your sytsem use `locale -a | more` to display them.
+[Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8).
+
+
+##### Character classes
+
+In ASCII times it was clear `[:lower:]` and `[a-z]` means ONLY the lowercase letters `[abcd...xyz]`.
+With introdution of locales character classes and ranges contains every character fitting the class definition.
+
+This mean `[:lower:]` and `[a-z]` contains ALL lowercase letters e.g. `ä á ø ǆ ȼ` 
+also, see [Unicode Latin lowercase letters]https://www.fileformat.info/info/unicode/category/Ll/list.htm)
+
+If that's ok for your script your'e fine, but many scripts rely on the idea of ASCII ranges and may produce undesired results.
+
+```bash
+# try with different locales ...
+lowercase="abcäöü"
+
+[[ "$string" =~ ^[a-z]$ ] && echo "String is all lower case"
+
+LANG="en_EN
+[[ "$string" =~ ^[a-z]$ ] && echo "String is all lower case"
+
+LANG="C"
+[[ "$string" =~ ^[a-z]$ ] && echo "String is all lower case"
+```
+
+There are three solutions:
+
+1. list exactly the characters you want: `[abcd...]`
+2. instruct bash to use `C` locale for ranges: `shopt -s "globasciiranges"`
+3. use `LC_COLLATE` to change behavior of all programs: `export LC_COLLATE=C`
+
+
+To work independent of language and bash settings bashbot uses solution 1. and uses own "classes" if an exact match is mandatory:
+
+```bash
+azazaz='abcdefghijklmnopqrstuvwxyz'	# a-z   :lower:
+AZAZAZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ'	# A-Z   :upper:
+R090909='0123456789'			# 0-9   :digit:
+azAZaz="${azazaz}${AZAZAZ}"	# a-zA-Z	:alpha:
+azAZ09="${azAZaz}${R090909}"	# a-zA-z0-9	:alnum:
+
+# e.g. characters allowed for key in key/value pairs
+JSSH_KEYOK="[-${azAZ09},._]"
+```
 
 #### Bashbot UTF-8 Support
 Bashbot handles all messages transparently, regardless of the charset in use. The only exception is when converting from JSON data to strings.
@@ -378,5 +430,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.21-4-g966ee5d
 
