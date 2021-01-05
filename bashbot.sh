@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.25-dev-15-g4582efd
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -487,13 +487,13 @@ if detect_curl ; then
   sendUpload() {
 	[ "$#" -lt 4  ] && return
 	if [ -n "$5" ]; then
-	[ -n "${BASHBOTDEBUG}" ] &&\
-		log_update "sendUpload CHAT=$1 WHAT=$2  FILE=$3 CAPT=$5"
-	# shellcheck disable=SC2086
+		[ -n "${BASHBOTDEBUG}" ] &&\
+			log_update "sendUpload CHAT=$1 WHAT=$2  FILE=$3 CAPT=$5"
+		# shellcheck disable=SC2086
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -b -n 2>/dev/null )"
 	else
-	# shellcheck disable=SC2086
+		# shellcheck disable=SC2086
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -b -n 2>/dev/null )"
 	fi

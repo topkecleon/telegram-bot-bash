@@ -21,7 +21,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 25.12.2020 20:24
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.25-dev-15-g4582efd
 #===============================================================================
 
 ####
@@ -54,7 +54,8 @@ else
 fi
 
 FILE="$2"
-[[ "$2" != "/"* ]] && FILE="${PWD}/$2"
+# convert to absolute path if not start with / or http://
+[[ ! ( "$2" == "/"* ||  "$2" =~ ^https*:// ) ]] && FILE="${PWD}/$2"
 
 # send message in selected format
 "${SEND}" "${CHAT}" "${FILE}" "$3"

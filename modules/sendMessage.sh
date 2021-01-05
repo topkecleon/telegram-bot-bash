@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.25-dev-15-g4582efd
 
 # will be automatically sourced from bashbot
 
@@ -205,19 +205,28 @@ send_file() {
 	fi
 }
 
+# supports http and local file
+# $1 chat, $2 file, $3 caption, $4 extension (optional)
 upload_file(){
-	local CUR_URL WHAT STATUS text=$3 file="$2"
-	# file access checks ...
-	[[ "${file}" = *'..'* ]] && return 1  # no directory traversal
-	[[ "${file}" = '.'* ]] && return 1	 # no hidden or relative files
-	if [[ "${file}" = '/'* ]] ; then
-		[[ ! "${file}" =~ ${FILE_REGEX} ]] && return 2 # absolute must match REGEX
+	local CUR_URL WHAT STATUS media text file="$2" ext="$4"
+	text="$(JsonEscape "$3")"
+	if [[ "${file}" =~ ^https*:// ]]; then
+		media="URL"
 	else
-		file="${UPLOADDIR:-NOUPLOADDIR}/${file}" # othiers must be in UPLOADDIR
+		# we have a file, check file location ...
+		media="FILE"
+		[[ "${file}" = *'..'* ]] && return 1  # no directory traversal
+		[[ "${file}" = '.'* ]] && return 1	 # no hidden or relative files
+		if [[ "${file}" = '/'* ]] ; then
+			[[ ! "${file}" =~ ${FILE_REGEX} ]] && return 2 # absolute must match REGEX
+		else
+			file="${UPLOADDIR:-NOUPLOADDIR}/${file}" # othiers must be in UPLOADDIR
+		fi
+		[ ! -r "${file}" ] && return 3 # and file must exits of course
 	fi
-	[ ! -r "${file}" ] && return 3 # and file must exits of course
  
-	case "${file##*.}" in
+	[ -z "${ext}" ] && ext="${file##*.}"
+	case "${ext}" in
         	mp3|flac)
 			CUR_URL="${AUDIO_URL}"
 			WHAT="audio"
@@ -250,8 +259,19 @@ upload_file(){
 			STATUS="upload_document"
 			;;
 	esac
+
+	# prepare to send FILE / URL
 	send_action "$1" "${STATUS}"
-	sendUpload "$1" "${WHAT}" "${file}" "${CUR_URL}" "${text//\\n/$'\n'}"
+	# select method to use
+	case "${media}" in
+		FILE)	# send local file ...
+			sendUpload "$1" "${WHAT}" "${file}" "${CUR_URL}" "${text//\\n/$'\n'}";;
+
+		URL)	# send URL, should also work for file_id ...
+				# e.g. '"photo":"https://dealz.rrr.de/assets/images/rbofd-1.gif","caption":"some text"'
+			sendJson "$1" '"'"${WHAT}"'":"'"${file}"'","caption":"'"${text//\\n/$'\n'}"'"' "${CUR_URL}"
+	esac
+	return 0
 }
 
 # typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
