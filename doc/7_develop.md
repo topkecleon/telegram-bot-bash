@@ -13,16 +13,15 @@ you can the change the level of verbosity of the debug argument:
 ```
 	"debug"		all output is redirected to "DEBUG.log", in addition every incoming message is logged in "MESSAGE.log" and "INLINE.log"
 	"xdebug"	same as debug plus set bash option '-x' to log any executed command in "DEBUG.log"
-
-	use the command tail to watch your bot live, e.g. "tail -f DEBUG.log", to obtain more information place set -x; set +x in your code.
 ```
 
-```
-	sometimes its useful to watch the bot live in the terminal:
+Use the command `tail` to watch your bot live, e.g. "tail -f DEBUG.log". To obtain more information place set -x; set +x in your code.
 
+Sometimes it's useful to watch the bot live in the terminal:
+
+```
 	"debugx"	debug output and errors are sent to terminal
-    "xdebugx"   same as debugx plus set bash option '-x' to show any executed command
-
+	"xdebugx"   same as debugx plus set bash option '-x' to show any executed command
 ```
 
 Logging of Telegram update poll is disabled by default, also in `debug` mode. To enable it without using verbose `xdebug` mode
@@ -357,5 +356,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.21-24-g7cf624f
 
