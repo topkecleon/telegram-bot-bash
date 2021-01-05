@@ -50,12 +50,12 @@ If you don't know what locales are installed on your sytsem use `locale -a` to d
 ##### Character classes
 
 In ASCII times it was clear `[:lower:]` and `[a-z]` means ONLY the lowercase letters `[abcd...xyz]`.
-With introdution of locales, character classes and ranges contains all characters fitting the class definition.
+With the introduction of locales, character classes and ranges now contain all characters fitting the class definition.
 
 This means with a Latin UTF-8 locale `[:lower:]` and `[a-z]` contains also e.g. `á ø ü` etc,
 see [Unicode Latin lowercase letters](https://www.fileformat.info/info/unicode/category/Ll/list.htm)
 
-If that's ok for your script your'e fine, but many scripts rely on the idea of ASCII ranges and may produce undesired results.
+If that's ok for your script you're fine, but many scripts rely on the idea of ASCII ranges and may produce undesired results.
 
 ```bash
 # try with different locales ...
@@ -101,11 +101,11 @@ The Emoticons ` 😁 😘 ❤️ 😊 👍 ` are encoded as: ` \uD83D\uDE01 \uD8
 
 **This "mixed" JSON encoding needs special handling and can not decoded from** `echo -e` or `printf '%s\\n'`
 
-Bbashbot uses an internal, pure bash implementation which is well tested now, even there may some corner cases*.
+Bashbot uses an internal, pure bash implementation which is well tested now, even there may some corner cases*.
 
 
 ### Run as other user or system service
-Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or scheduled from cron. This is recommended if you want to bashbot run as a service.
+Bashbot is designed to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or scheduled from cron. This is recommended if you want to bashbot run as a service.
 
 Setup the environment for the user you want to run bashbot and enter desired username, e.g. nobody :
 ```bash
@@ -154,7 +154,7 @@ To use bashbot as a system service include a working `bashbot.rc` in your init s
 An example crontab is provided in `examples/bashbot.cron`.
 
 - If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username `nobody`.
-- if you run bashbot as an other user or a system service edit `examples/bashbot.cron` to fit your needs and replace username `nobody` with the username you want to run bashbot. copy the modified file to `/etc/cron.d/bashbot`
+- if you run bashbot as an other user or a system service edit `examples/bashbot.cron` to fit your needs and replace username `nobody` with the username you want to run bashbot. Copy the modified file to `/etc/cron.d/bashbot`
 
 
 ### Use bashbot from CLI and scripts
@@ -231,10 +231,10 @@ User or Chat you are in. See [Send Messages](2_usage.md#sending-messages).
 
 *Examples:* You can test this by sending messages to yourself:
 ```bash
-# fist Hello World
+# first Hello World
 send_normal_message "$(getConfigKey "botadmin")"  "Hello World! This is my first message"
 
-# now with some markdown and  HTML
+# now with some markdown and HTML
 send_markdown_message 	"$(getConfigKey "botadmin")"  '*Hello World!* _This is my first markdown message_'
 send_html_message	"$(getConfigKey "botadmin")"  '<b>Hello World!</b> <em>This is my first HTML message</em>'
 send_keyboard "$(getConfigKey "botadmin")"  'Do you like it?' '[ "Yep" , "No" ]'
@@ -258,10 +258,10 @@ This section describe how you can customize bashbot to your needs by setting env
 
 
 #### Change file locations
-In standard setup bashbot is self containing, this means you can place 'telegram-bot-bash'  any location
+In standard setup bashbot is self containing, this means you can place 'telegram-bot-bash' any location
 and run it from there. All files - program, config, data etc - will reside in 'telegram-bot-bash'.
 
-If you want to have other locations for config, data etc,  define and export the following environment variables.
+If you want to have other locations for config, data etc, define and export the following environment variables.
 **Note: all specified directories and files must exist or running 'bashbot.sh' will fail.**
 
 ##### BASHBOT_ETC
@@ -379,7 +379,7 @@ BASHBOT_TIMEOUT to a numeric value between 1 and 999. Any non numeric or negativ
 
 ##### BASHBOT_SLEEP
 Instead of polling permanently or with a fixed delay, bashbot offers a simple adaptive polling.
-If messages are received bashbot polls with no dealy. If no messages are available bashbot add 100ms delay
+If messages are received bashbot polls with no delay. If no messages are available bashbot add 100ms delay
 for every poll until the maximum of BASHBOT_SLEEP ms.
 ```bash
   unset  BASHBOT_SLEEP       # 5000ms (default)
