@@ -33,6 +33,7 @@ Have FUN!
 ├── bin                  # ready to use scripts, use `scriptname --help` for help
 │   ├── send_message.sh          # send message to given chat
 │   ├── edit_message.sh          # replace given message id in given chat
+│   ├── delete_message.sh        # delete given message id in given chat
 │   ├── send_broadcast.sh        # send message to all known chats
 │   ├── send_file.sh             # send file to given chat
 │   ├── bashbot_stats.sh         # does what it says ...
@@ -341,5 +342,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-18-g3d9f784
 

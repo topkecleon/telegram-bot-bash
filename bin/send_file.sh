@@ -3,14 +3,17 @@
 #
 #          FILE: bin/send_file.sh
 # 
-#         USAGE: send_file.sh [-h|--help] "CHAT[ID]" "file" "caption ...." [debug]
+#         USAGE: send_file.sh [-h|--help] "CHAT[ID]" "file|URL" "caption ...." [type] [debug]
 # 
 #   DESCRIPTION: send a file to the given user/group
 # 
 #       OPTIONS: CHAT[ID] - ID number of CHAT or BOTADMIN to send to yourself
-#                file - file to send, must be an absolute path or relative to pwd
+#                file - local file to send, must be an absolute path or relative to pwd
 #                       Note: must not contain .. or . and located below BASHBOT_ETC
+#                URL - send an URL instead local file
+#
 #                caption - message to send with file
+#                type - photo, video, sticker, voice, document (optional)
 #
 #                -h - display short help
 #                --help -  this help
@@ -21,7 +24,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 25.12.2020 20:24
 #
-#### $$VERSION$$ v1.25-dev-15-g4582efd
+#### $$VERSION$$ v1.25-dev-18-g3d9f784
 #===============================================================================
 
 ####
@@ -32,7 +35,7 @@ case "$1" in
 		printf "missing arguments\n"
 		;&
 	"-h"*)
-		printf 'usage: send_file [-h|--help] "CHAT[ID]" "file" "caption ...." [debug]\n'
+		printf 'usage: send_file [-h|--help] "CHAT[ID]" "file" "caption ...." [type] [debug]\n'
 		exit 1
 		;;
 	'--h'*)
@@ -43,7 +46,7 @@ esac
 
 # set bashbot environment
 # shellcheck disable=SC1090
-source "${0%/*}/bashbot_env.inc.sh" "$4" # $4 debug
+source "${0%/*}/bashbot_env.inc.sh" "$5" # $5 debug
 
 ####
 # ready, do stuff here -----
@@ -58,7 +61,7 @@ FILE="$2"
 [[ ! ( "$2" == "/"* ||  "$2" =~ ^https*:// ) ]] && FILE="${PWD}/$2"
 
 # send message in selected format
-"${SEND}" "${CHAT}" "${FILE}" "$3"
+"${SEND}" "${CHAT}" "${FILE}" "$3" "$4"
 
 # output send message result
 jssh_printDB "BOTSENT" | sort -r
