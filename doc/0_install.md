@@ -97,9 +97,7 @@ This creates the installation archives in `DIST/` and a ready to run test instal
 Use the installation archives to install or update bashbot as described above.
 
 To run a test bot, e.g. while development or testing latest changes, you can use the bashbot installation provided in `DIST/telegram-bot-bash`.
-To update\* the test installation (_after git pull, local changes or switch master/develop_) run `dev/make-distrubition.sh` again.
-
-\* _`mycommands.sh` and `bashbot.rc` will be overwritten._
+To update the test installation (_after git pull, local changes or switch master/develop_) run `dev/make-distrubition.sh` again.
 
 
 ### Note for BSD and MacOS
@@ -129,5 +127,5 @@ You must update to [Version 1.20](https://github.com/topkecleon/telegram-bot-bas
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.25-dev-3-g53c107d
+#### $$VERSION$$ v1.25-dev-13-g1631b02
 
