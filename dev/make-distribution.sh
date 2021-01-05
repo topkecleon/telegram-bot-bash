@@ -7,7 +7,7 @@
 #
 # Options: --notest - skip tests
 #
-#### $$VERSION$$ v1.25-dev-12-gb3c22bc
+#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
 ##############################################################
 
 # magic to ensure that we're always inside the root of our application,

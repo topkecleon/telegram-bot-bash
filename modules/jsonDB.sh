@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.25-dev-10-g5f50011
+#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -85,8 +85,8 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # complex slow, warpper async
   jssh_updateDB() {
 	# for atomic update we can't use read/writeDB
-	[ -z "${2}" ] && return 1
-	local DB="${2}.jssh" # check in async
+	[ -z "$2" ] && return 1
+	local DB="$2.jssh" # check in async
 	[ ! -f "${DB}" ] && return 2
 	{ flock -e -w 10 200; jssh_updateDB_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
   }
@@ -115,9 +115,9 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
   # medium complex slow, wrapper async
   jssh_deleteKeyDB() {
-	[ -z "${2}" ] && return 1
+	[ -z "$2" ] && return 1
 	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
-	local DB="${2}.jssh"
+	local DB="$2.jssh"
 	# start atomic delete here, exclusive max wait 10s 
 	{ flock -e -w 10 200; jssh_deleteKeyDB_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
   }
@@ -144,9 +144,9 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # side effect: if $3 is not given, we add to end of file to be as fast as possible
   # complex, wrapper to async
   jssh_countKeyDB() {
-	[ -z "${2}" ] && return 1
+	[ -z "$2" ] && return 1
 	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
-	local DB="${2}.jssh"
+	local DB="$2.jssh"
 	# start atomic delete here, exclusive max wait 5 
 	{ flock -e -w 5 200; jssh_countKeyDB_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
   }
@@ -158,11 +158,11 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   #no own locking, so async is the same as updatekeyDB
   jssh_updateKeyDB() {
 	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
-	[ -z "${3}" ] && return 1
+	[ -z "$3" ] && return 1
 	declare -A updARR
 	# shellcheck disable=SC2034
 	updARR["$1"]="$2"
-	jssh_updateDB "updARR" "${3}" || return 3
+	jssh_updateDB "updARR" "$3" || return 3
   }
 
   # $1 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
@@ -178,11 +178,11 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # $3 id used to identify caller
   # medium complex, wrapper async
   jssh_updateArray() { 
-	[ -z "${2}" ] && return 1
-	local DB="${2}.jssh" # name check in async
+	[ -z "$2" ] && return 1
+	local DB="$2.jssh" # name check in async
 	[ ! -f "${DB}" ] && return 2
 	declare -n ARRAY="$1"
-	[[ -z "${ARRAY[*]}" ||  "${DB}" -nt "${DB}.last${3}" ]] && touch "${DB}.last${3}" && jssh_readDB "${1}" "${2}"
+	[[ -z "${ARRAY[*]}" ||  "${DB}" -nt "${DB}.last$3" ]] && touch "${DB}.last$3" && jssh_readDB "$1" "$2"
   }
 
 else
@@ -228,9 +228,9 @@ jssh_checkDB(){
 	[ -z "$1" ] && return 1
 	[[ "$1" = *'../.'* ]] && return 2
 	if [[ "$1" == "${BASHBOT_VAR:-.}"* ]] || [[ "$1" == "${BASHBOT_DATA:-.}"* ]]; then
-		DB="${1}.jssh"
+		DB="$1.jssh"
 	else
-		DB="${BASHBOT_VAR:-.}/${1}.jssh"
+		DB="${BASHBOT_VAR:-.}/$1.jssh"
 	fi
 	[ "${DB}" != ".jssh" ] && printf '%s' "${DB}"
 }
@@ -254,7 +254,7 @@ jssh_writeDB_async() {
 }
 
 jssh_updateDB_async() {
-	[ -z "${2}" ] && return 1
+	[ -z "$2" ] && return 1
 	declare -n ARRAY="$1"
 	[ -z "${ARRAY[*]}" ] && return 1
 	declare -A oldARR
@@ -325,11 +325,11 @@ jssh_countKeyDB_async() {
 #no own locking, so async is the same as updatekeyDB
 jssh_updateKeyDB_async() {
 	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
-	[ -z "${3}" ] && return 1
+	[ -z "$3" ] && return 1
 	declare -A updARR
 	# shellcheck disable=SC2034
 	updARR["$1"]="$2"
-	jssh_updateDB_async "updARR" "${3}" || return 3
+	jssh_updateDB_async "updARR" "$3" || return 3
 }
 
 jssh_clearDB_async() {
@@ -343,7 +343,7 @@ function jssh_updateArray_async() {
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
 	declare -n ARRAY="$1"
-	[[ -z "${ARRAY[*]}" ||  "${DB}" -nt "${DB}.last${3}" ]] && touch "${DB}.last${3}" && jssh_readDB_async "${1}" "${2}"
+	[[ -z "${ARRAY[*]}" ||  "${DB}" -nt "${DB}.last$3" ]] && touch "${DB}.last$3" && jssh_readDB_async "$1" "$2"
 }
 
 ##############

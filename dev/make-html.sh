@@ -7,7 +7,7 @@
 #
 # Usage: source make-hmtl
 #
-#### $$VERSION$$ v1.25-dev-6-g641727d
+#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
 ##############################################################
 
 # check for correct dir
@@ -28,16 +28,16 @@ else
 	cp README.html html/index.html
 	# convert *.md files in doc to *.hmtl in html
 	find doc -iname "*.md" -type f -exec sh -c\
-		 'printf "."; pandoc -s -f commonmark -M "title=Bashobot Documentation - ${0%.md}.html"  "${0}" -o "./html/$(basename ${0%.md}.html)"' {} \;
+		 'printf "."; pandoc -s -f commonmark -M "title=Bashobot Documentation - ${0%.md}.html"  "$0" -o "./html/$(basename ${0%.md}.html)"' {} \;
 	# html for examples dir
 	if [ -d "examples" ]; then
 		EXAMPLES="examples" # add to final conversion job
 		find examples -iname "*.md" -type f -exec sh -c\
-			'printf "."; pandoc -s -f commonmark -M "title=Bashobot Documentation - ${0%.md}.html"  "${0}" -o "${0%.md}.html"' {} \;
+			'printf "."; pandoc -s -f commonmark -M "title=Bashobot Documentation - ${0%.md}.html"  "$0" -o "${0%.md}.html"' {} \;
 	fi
 	# final: convert links from *.md to *.html
 	find README.html html "${EXAMPLES}" -iname "*.html" -type f -exec sh -c\
-		'sed -i -E "s/href=\"(\.\.\/)*doc\//href=\"\1html\//g;s/href=\"(.*).md(#.*)*\"/href=\"\1.html\"/g" ${0}' {} \;
+		'sed -i -E "s/href=\"(\.\.\/)*doc\//href=\"\1html\//g;s/href=\"(.*).md(#.*)*\"/href=\"\1.html\"/g" $0' {} \;
 	printf " Done!\n"
     fi
 fi

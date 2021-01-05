@@ -11,7 +11,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.25-dev-8-g248a065
+#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
 #===============================================================================
 
 # common variables
@@ -71,11 +71,11 @@ print_array() {
 
 compare_sorted() {
 	local ret=0
-	sort -d -o "${1}.sort" "${1}"
-	sort -d -o "${2}.sort" "${2}"
-	diff -c "${1}.sort" "${2}.sort" || ret=1
-	[[ "${1}" != "${TESTDIR}"* ]] && rm -f "${1}.sort"
-	[[ "${2}" != "${TESTDIR}"* ]] && rm -f "${2}.sort"
+	sort -d -o "$1.sort" "$1"
+	sort -d -o "$2.sort" "$2"
+	diff -c "$1.sort" "$2.sort" || ret=1
+	[[ "$1" != "${TESTDIR}"* ]] && rm -f "$1.sort"
+	[[ "$2" != "${TESTDIR}"* ]] && rm -f "$2.sort"
 	return "${ret}"
 }
 

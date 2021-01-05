@@ -9,7 +9,7 @@
 # #### mycommands.clean
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.25-dev-5-ga5aa756
+#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
 #
 
 ##########
@@ -298,7 +298,7 @@ else
     # $1 current date, $2 from where the function was called, $3 ... $n optional information
     my_debug_checks() {
 	# example check because my bot created a wrong file
-	[ -f ".jssh" ] && printf "%s: %s\n" "${1}" "Ups, found file \"${PWD:-.}/.jssh\"! =========="
+	[ -f ".jssh" ] && printf "%s: %s\n" "$1" "Ups, found file \"${PWD:-.}/.jssh\"! =========="
     }
 
     # called when bashbot send_xxx command failed because we can not connect to telegram

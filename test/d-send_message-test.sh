@@ -10,7 +10,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.25-dev-8-g248a065
+#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
 #===============================================================================
 
 # include common functions and definitions
@@ -34,15 +34,15 @@ _is_function send_message || printf "Send Message not found!\n"
 
 # over write sendJson to output parameter only
 sendEmpty() {
-	printf 'chat:%s\tJSON:%s\nURL:%s\n\n' "${1}" "${2}" "${3}"
+	printf 'chat:%s\tJSON:%s\nURL:%s\n\n' "$1" "$2" "$3"
 }
 
 sendJson() {
-	printf 'chat:%s\tJSON:%s\nURL:%s\n\n' "${1}" "${2}" "${3}"
+	printf 'chat:%s\tJSON:%s\nURL:%s\n\n' "$1" "$2" "$3"
 }
 sendUpload() {
 #JSON:"document":"/tmp/allowed/this_is_my.doc","caption":"Text plus absolute file will appear in chat""
-	printf 'chat:%s\tJSON:"%s":"%s","caption":"%s"\nURL:%s\n\n' "${1}" "${2}" "${3}" "${5}" "${4}"
+	printf 'chat:%s\tJSON:"%s":"%s","caption":"%s"\nURL:%s\n\n' "$1" "$2" "$3" "$5" "$4"
 }
 
 # send text input to send_message

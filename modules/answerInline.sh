@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.25-dev-5-ga5aa756
+#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
 
 # will be automatically sourced from bashbot
 
@@ -15,10 +15,10 @@ eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 INLINE_QUERY=${URL}'/answerInlineQuery'
 
 answer_inline_query() {
-	answer_inline_multi "${1}" "$(shift; inline_query_compose "${RANDOM}" "$@")"
+	answer_inline_multi "$1" "$(shift; inline_query_compose "${RANDOM}" "$@")"
 }
 answer_inline_multi() {
-	sendJson "" '"inline_query_id": '"${1}"', "results": ['"${2}"']' "${INLINE_QUERY}"
+	sendJson "" '"inline_query_id": '"$1"', "results": ['"$2"']' "${INLINE_QUERY}"
 }
 
 # $1 unique ID for answer
@@ -27,10 +27,10 @@ answer_inline_multi() {
 # followed by the optional arguments: https://core.telegram.org/bots/api#inlinequeryresult
 inline_query_compose(){
 	local JSON="{}"
-	local ID="${1}"
+	local ID="$1"
 	local fours last
 								# title2Json title caption description markup inlinekeyboard
-	case "${2}" in
+	case "$2" in
 		# user provided media
 		"article"|"message") # article ID title message (markup description)
 			JSON='{"type":"article","id":"'${ID}'","input_message_content": {"message_text":"'$4'"} '$(title2Json "$3" "" "$5" "$6" "$7")'}'

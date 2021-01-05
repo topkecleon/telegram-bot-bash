@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.25-dev-5-ga5aa756
+#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -74,22 +74,22 @@ azAZo9="${azAZaz}${o9o9o9}"	# a-zA-z0-9	:alnum:
 # some important helper functions
 # returns true if command exist
 _exists() {
-	[ "$(type -t "${1}")" = "file" ]
+	[ "$(type -t "$1")" = "file" ]
 }
 # execute function if exists
 _exec_if_function() {
-	[ "$(type -t "${1}")" != "function" ] && return 1
+	[ "$(type -t "$1")" != "function" ] && return 1
 	"$@"
 }
 # returns true if function exist
 _is_function() {
-	[ "$(type -t "${1}")" = "function" ]
+	[ "$(type -t "$1")" = "function" ]
 }
 # round $1 in international notation! , returns float with $2 decimal digits
 # if $2 is not given or is not a positive number zero is assumed
 _round_float() {
-	local digit="${2}"; [[ "${2}" =~ ^[${o9o9o9}]+$ ]] || digit="0"
-	{ LC_ALL=C.utf-8 printf "%.${digit}f" "${1}"; } 2>/dev/null
+	local digit="$2"; [[ "$2" =~ ^[${o9o9o9}]+$ ]] || digit="0"
+	{ LC_ALL=C.utf-8 printf "%.${digit}f" "$1"; } 2>/dev/null
 }
 setConfigKey() {
 	[[ "$1" =~ ^[-${azAZo9},._]+$ ]] || return 3
@@ -103,7 +103,7 @@ getConfigKey() {
 # check if $1 seems a valid token
 # return true if token seems to be valid
 check_token(){
-	[[ "${1}" =~ ^[${o9o9o9}]{8,10}:[${azAZo9}_-]{35}$ ]] && return 0
+	[[ "$1" =~ ^[${o9o9o9}]{8,10}:[${azAZo9}_-]{35}$ ]] && return 0
 	return 1
 }
 # log $1 with date
@@ -121,7 +121,7 @@ export BASHBOTDEBUG
 # shellcheck disable=SC2094
 debug_checks(){ {
 	[  -z "${BASHBOTDEBUG}" ] && return
-	local DATE WHERE MYTOKEN; DATE="$(date)"; WHERE="${1}"; shift
+	local DATE WHERE MYTOKEN; DATE="$(date)"; WHERE="$1"; shift
 	printf "%s: debug_checks: %s: bashbot.sh %s\n" "${DATE}" "${WHERE}" "${@##*/}"
 	# shellcheck disable=SC2094
 	[ -z "${DEBUGLOG}" ] && printf "%s: %s\n" "${DATE}" "DEBUGLOG not set! =========="
@@ -381,20 +381,20 @@ killallproc() {
 		# shellcheck disable=SC2046
 		[ -n "${procid}" ] && kill $(proclist -9 "$1")
 	fi
-	debug_checks "end killallproc" "${1}"
+	debug_checks "end killallproc" "$1"
 }
 
 
 # $ chat $2 msg_id $3 nolog
 declare -xr DELETE_URL=${URL}'/deleteMessage'
 delete_message() {
-	[ -z "$3" ] && log_update "Delete Message CHAT=${1} MSG_ID=${2}"
-	sendJson "${1}" '"message_id": '"${2}"'' "${DELETE_URL}"
+	[ -z "$3" ] && log_update "Delete Message CHAT=$1 MSG_ID=$2"
+	sendJson "$1" '"message_id": '"$2"'' "${DELETE_URL}"
 }
 
 get_file() {
 	[ -z "$1" ] && return
-	sendJson ""  '"file_id": "'"${1}"'"' "${GETFILE_URL}"
+	sendJson ""  '"file_id": "'"$1"'"' "${GETFILE_URL}"
 	printf '%s\n' "${URL}"/"$(JsonGetString <<< "${res}" '"result","file_path"')"
 }
 
@@ -441,9 +441,9 @@ TIMEOUT="${BASHBOT_TIMEOUT:-20}"
 # usage: sendJson "chat" "JSON" "URL"
 sendJson(){
 	local json chat=""
-	if [ -n "${1}" ]; then
-		 chat='"chat_id":'"${1}"','
-		 [[ "${1}" == *[!${o9o9o9}-]* ]] && chat='"chat_id":"'"${1}"' NAN",' # chat id not a number!
+	if [ -n "$1" ]; then
+		 chat='"chat_id":'"$1"','
+		 [[ "$1" == *[!${o9o9o9}-]* ]] && chat='"chat_id":"'"$1"' NAN",' # chat id not a number!
 	fi
 	# compose final json
 	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
@@ -459,7 +459,7 @@ sendJson(){
 	fi
 	# OK here we go ...
 	# route to curl/wget specific function
-	res="$(sendJson_do "${json}" "${3}")"
+	res="$(sendJson_do "${json}" "$3")"
 	# check telegram response
 	sendJsonResult "${res}" "sendJson (${DETECTED_CURL})" "$@"
 	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" &
@@ -472,7 +472,7 @@ if detect_curl ; then
   # here we have curl ----
   [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
   getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -n "${3}" ]] && log_debug "getJson (curl) URL=${1##*/}"
+	[[ -n "${BASHBOTDEBUG}" && -n "$3" ]] && log_debug "getJson (curl) URL=${1##*/}"
 	# shellcheck disable=SC2086
 	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
   }
@@ -481,14 +481,14 @@ if detect_curl ; then
   sendJson_do(){
 	# shellcheck disable=SC2086
 	"${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
-		-d "${1}" -X POST "${2}" -H "Content-Type: application/json" | "${JSONSHFILE}" -b -n 2>/dev/null
+		-d "$1" -X POST "$2" -H "Content-Type: application/json" | "${JSONSHFILE}" -b -n 2>/dev/null
   }
   #$1 Chat, $2 what, $3 file, $4 URL, $5 caption
   sendUpload() {
 	[ "$#" -lt 4  ] && return
 	if [ -n "$5" ]; then
 	[ -n "${BASHBOTDEBUG}" ] &&\
-		log_update "sendUpload CHAT=${1} WHAT=${2}  FILE=${3} CAPT=${5}"
+		log_update "sendUpload CHAT=$1 WHAT=$2  FILE=$3 CAPT=$5"
 	# shellcheck disable=SC2086
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -b -n 2>/dev/null )"
@@ -504,7 +504,7 @@ else
   # NO curl, try wget
   if _exists wget; then
     getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && log_debug "getJson (wget) URL=${1##*/}"
+	[[ -n "${BASHBOTDEBUG}" && -z "$3" ]] && log_debug "getJson (wget) URL=${1##*/}"
 	# shellcheck disable=SC2086
 	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
     }
@@ -512,8 +512,8 @@ else
     # usage: "JSON" "URL"
     sendJson_do(){
 	# shellcheck disable=SC2086
-	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data="${1}" \
-		--header='Content-Type:application/json' "${2}" | "${JSONSHFILE}" -b -n 2>/dev/null
+	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data="$1" \
+		--header='Content-Type:application/json' "$2" | "${JSONSHFILE}" -b -n 2>/dev/null
     }
     sendUpload() {
 	log_error "Sorry, wget does not support file upload"
@@ -534,9 +534,9 @@ fi
 # retry sendJson
 # $1 function $2 sleep $3 ... $n arguments
 sendJsonRetry(){
-	local retry="${1}"; shift
-	[[ "${1}" =~ ^\ *[${o9o9o9}.]+\ *$ ]] && sleep "${1}"; shift
-	printf "%s: RETRY %s %s %s\n" "$(date)" "${retry}" "${1}" "${2:0:60}"
+	local retry="$1"; shift
+	[[ "$1" =~ ^\ *[${o9o9o9}.]+\ *$ ]] && sleep "$1"; shift
+	printf "%s: RETRY %s %s %s\n" "$(date)" "${retry}" "$1" "${2:0:60}"
 	case "${retry}" in
 		'sendJson'*)
 			sendJson "$@"	
@@ -552,7 +552,7 @@ sendJsonRetry(){
 			return
 			;;
 	esac
-	[ "${BOTSENT[OK]}" = "true" ] && log_error "Retry OK:${retry} ${1} ${2:0:60}"
+	[ "${BOTSENT[OK]}" = "true" ] && log_error "Retry OK:${retry} $1 ${2:0:60}"
 } >>"${ERRORLOG}"
 
 # process sendJson result
@@ -562,18 +562,18 @@ sendJsonResult(){
 	local offset=0
 	BOTSENT=( )
 	[ -n "${BASHBOTDEBUG}" ] && log_message "New Result ==========\n$1"
-	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${1}")"
+	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$1")"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
-		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${1}")"
+		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$1")"
 		return
 		# hot path everything OK!
 	else
 	    # oops something went wrong!
-	    if [ "${1}" != "" ]; then
-			BOTSENT[ERROR]="$(JsonGetValue '"error_code"' <<< "${1}")"
-			BOTSENT[DESCRIPTION]="$(JsonGetString '"description"' <<< "${1}")"
-			grep -qs -F '"parameters","retry_after"' <<< "${1}" &&\
-				BOTSENT[RETRY]="$(JsonGetValue '"parameters","retry_after"' <<< "${1}")"
+	    if [ "$1" != "" ]; then
+			BOTSENT[ERROR]="$(JsonGetValue '"error_code"' <<< "$1")"
+			BOTSENT[DESCRIPTION]="$(JsonGetString '"description"' <<< "$1")"
+			grep -qs -F '"parameters","retry_after"' <<< "$1" &&\
+				BOTSENT[RETRY]="$(JsonGetValue '"parameters","retry_after"' <<< "$1")"
 	    else
 			BOTSENT[OK]="false"
 			BOTSENT[ERROR]="999"
@@ -583,7 +583,7 @@ sendJsonResult(){
 	    [[ "${BOTSENT[ERROR]}" = "400" && "${BOTSENT[DESCRIPTION]}" == *"starting at byte offset"* ]] &&\
 			 offset="${BOTSENT[DESCRIPTION]%* }"
 	    printf "%s: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s ACTION=%s\n" "$(date)"\
-			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4:${offset}:100}"
+			"${BOTSENT[OK]}"  "$2" "$3" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4:${offset}:100}"
 	    # warm path, do not retry on error, also if we use wegt
 	    [ -n "${BASHBOT_RETRY}${BASHBOT_WGET}" ] && return
 
@@ -591,8 +591,8 @@ sendJsonResult(){
 	    # throttled, telegram say we send too many messages
 	    if [ -n "${BOTSENT[RETRY]}" ]; then
 			BASHBOT_RETRY="$(( ++BOTSENT[RETRY] ))"
-			printf "Retry %s in %s seconds ...\n" "${2}" "${BASHBOT_RETRY}"
-			sendJsonRetry "${2}" "${BASHBOT_RETRY}" "${@:3}"
+			printf "Retry %s in %s seconds ...\n" "$2" "${BASHBOT_RETRY}"
+			sendJsonRetry "$2" "${BASHBOT_RETRY}" "${@:3}"
 			unset BASHBOT_RETRY
 			return
 	    fi
@@ -604,8 +604,8 @@ sendJsonResult(){
 				# user provided function to recover or notify block
 				if _exec_if_function bashbotBlockRecover; then
 					BASHBOT_RETRY="2"
-					printf "bashbotBlockRecover returned true, retry %s ...\n" "${2}"
-					sendJsonRetry "${2}" "${BASHBOT_RETRY}" "${@:3}"
+					printf "bashbotBlockRecover returned true, retry %s ...\n" "$2"
+					sendJsonRetry "$2" "${BASHBOT_RETRY}" "${@:3}"
 					unset BASHBOT_RETRY
 				fi
 		    return
@@ -613,9 +613,9 @@ sendJsonResult(){
 	        # are not blocked, default curl and args are working
 			if [ -n "${BASHBOT_CURL_ARGS}" ] || [ "${BASHBOT_CURL}" != "curl" ]; then
 				printf "Problem with \"%s %s\"? retry %s with default config ...\n"\
-					"${BASHBOT_CURL}" "${BASHBOT_CURL_ARGS}" "${2}"
+					"${BASHBOT_CURL}" "${BASHBOT_CURL_ARGS}" "$2"
 				BASHBOT_RETRY="2"; BASHBOT_CURL="curl"; BASHBOT_CURL_ARGS=""
-				sendJsonRetry "${2}" "${BASHBOT_RETRY}" "${@:3}"
+				sendJsonRetry "$2" "${BASHBOT_RETRY}" "${@:3}"
 				unset BASHBOT_RETRY
 			fi
 	    fi
@@ -853,7 +853,7 @@ event_message() {
 
 }
 pre_process_message(){
-	local num="${1}"
+	local num="$1"
 	# unset everything to not have old values
 	CMD=( ); iQUERY=( ); MESSAGE=(); CHAT=(); USER=(); CONTACT=(); LOCATION=(); unset CAPTION
 	REPLYTO=( ); FORWARD=( ); URLS=(); VENUE=( ); SERVICE=( ); NEWMEMBER=( ); LEFTMEMBER=( ); PINNED=( ); MIGRATE=( )
@@ -866,7 +866,7 @@ pre_process_message(){
 	return 0
 }
 process_inline() {
-	local num="${1}"
+	local num="$1"
 	iQUERY[0]="$(JsonDecode "${UPD["result",${num},"inline_query","query"]}")"
 	iQUERY[USER_ID]="${UPD["result",${num},"inline_query","from","id"]}"
 	iQUERY[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","first_name"]}")"
@@ -1025,8 +1025,8 @@ start_bot() {
 	DEBUGMSG="Start BASHBOT updates in Mode \"${1:-normal}\" =========="
 	log_update "${DEBUGMSG}"
 	# redirect to Debug.log
-	[[ "${1}" == *"debug" ]] && exec &>>"${DEBUGLOG}"
-	log_debug "${DEBUGMSG}"; DEBUGMSG="${1}"
+	[[ "$1" == *"debug" ]] && exec &>>"${DEBUGLOG}"
+	log_debug "${DEBUGMSG}"; DEBUGMSG="$1"
 	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x && unset BASHBOT_UPDATELOG
 	# cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
@@ -1175,7 +1175,7 @@ if [ -z "${SOURCE}" ]; then
   ##############
   # internal options only for use from bashbot and developers
   # shellcheck disable=SC2221,SC2222
-  case "${1}" in
+  case "$1" in
 	# update botname when starting only
 	"botname"|"start"*)
 		ME="$(getBotName)"

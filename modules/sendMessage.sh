@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.25-dev-5-ga5aa756
+#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
 
 # will be automatically sourced from bashbot
 
@@ -35,17 +35,17 @@ ALBUM_URL=${URL}'/sendMediaGroup'
 
 # $1 CHAT $2 message
 send_normal_message() {
-	local len text; text="$(JsonEscape "${2}")"
+	local len text; text="$(JsonEscape "$2")"
 	text="${text//$'\n'/\\n}"
 	until [ -z "${text}" ]; do
 		if [ "${#text}" -le 4096 ]; then
-			sendJson "${1}" '"text":"'"${text}"'"' "${MSG_URL}"
+			sendJson "$1" '"text":"'"${text}"'"' "${MSG_URL}"
 			break
 		else
 			len=4095
 			[ "${text:4095:2}" != "\n" ] &&\
 				len="${text:0:4096}" && len="${len%\\n*}" && len="${#len}"
-			sendJson "${1}" '"text":"'"${text:0:${len}}"'"' "${MSG_URL}"
+			sendJson "$1" '"text":"'"${text:0:${len}}"'"' "${MSG_URL}"
 			text="${text:$((len+2))}"
 		fi
 	done
@@ -53,48 +53,48 @@ send_normal_message() {
 
 # $1 CHAT $2 message
 send_markdown_message() {
-	_format_message_url "${1}" "${2}" ',"parse_mode":"markdown"' "${MSG_URL}"
+	_format_message_url "$1" "$2" ',"parse_mode":"markdown"' "${MSG_URL}"
 }
 
 # $1 CHAT $2 message
 send_markdownv2_message() {
-	_markdownv2_message_url "${1}" "${2}" ',"parse_mode":"markdownv2"' "${MSG_URL}"
+	_markdownv2_message_url "$1" "$2" ',"parse_mode":"markdownv2"' "${MSG_URL}"
 }
 
 # $1 CHAT $2 message
 send_html_message() {
-	_format_message_url "${1}" "${2}" ',"parse_mode":"html"' "${MSG_URL}"
+	_format_message_url "$1" "$2" ',"parse_mode":"html"' "${MSG_URL}"
 }
 
 # $1 CHAT $2 msg-id $3 message
 edit_normal_message() {
-	_format_message_url "${1}" "${3}" ',"message_id":'"${2}"'' "${EDIT_URL}"
+	_format_message_url "$1" "$3" ',"message_id":'"$2"'' "${EDIT_URL}"
 }
 
 # $1 CHAT $2 msg-id $3 message
 edit_markdown_message() {
-	_format_message_url "${1}" "${3}" ',"message_id":'"${2}"',"parse_mode":"markdown"' "${EDIT_URL}"
+	_format_message_url "$1" "$3" ',"message_id":'"$2"',"parse_mode":"markdown"' "${EDIT_URL}"
 }
 
 # $1 CHAT $2 msg-id $3 message
 edit_markdownv2_message() {
-	_markdownv2_message_url "${1}" "${3}" ',"message_id":'"${2}"',"parse_mode":"markdownv2"' "${EDIT_URL}"
+	_markdownv2_message_url "$1" "$3" ',"message_id":'"$2"',"parse_mode":"markdownv2"' "${EDIT_URL}"
 }
 
 # $1 CHAT $2 msg-id $3 message
 edit_html_message() {
-	_format_message_url "${1}" "${3}" ',"message_id":'"${2}"',"parse_mode":"html"' "${EDIT_URL}"
+	_format_message_url "$1" "$3" ',"message_id":'"$2"',"parse_mode":"html"' "${EDIT_URL}"
 }
 
 
 # internal function, send/edit formatted message with parse_mode and URL
 # $1 CHAT $2 message $3 action $4 URL
 _format_message_url(){
-	local text; text="$(JsonEscape "${2}")"
+	local text; text="$(JsonEscape "$2")"
 	text="${text//$'\n'/\\n}"
 	[ "${#text}" -ge 4096 ] && log_error "Warning: html/markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'"'"${3}"'' "${4}"
+		sendJson "$1" '"text":"'"${text:0:4096}"'"'"$3"'' "$4"
 		text="${text:4096}"
 	done
 }
@@ -102,13 +102,13 @@ _format_message_url(){
 # internal function, send/edit markdownv2 message with URL
 # $1 CHAT $2 message $3 action $4 URL
 _markdownv2_message_url() {
-	local text; text="$(JsonEscape "${2}")"
+	local text; text="$(JsonEscape "$2")"
 	text="${text//$'\n'/\\n}"
 	[ "${#text}" -ge 4096 ] && log_error "Warning: markdownv2 message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	# markdown v2 needs additional double escaping!
 	text="$(sed -E -e 's|([_|~`>+=#{}()!.-])|\\\1|g' <<< "${text}")"
 	until [ -z "${text}" ]; do
-		sendJson "${1}" '"text":"'"${text:0:4096}"'"'"${3}"'' "${4}"
+		sendJson "$1" '"text":"'"${text:0:4096}"'"'"$3"'' "$4"
 		text="${text:4096}"
 	done
 }
@@ -121,37 +121,37 @@ _markdownv2_message_url() {
 send_keyboard() {
 	if [[ "$3" != *'['* ]]; then old_send_keyboard "${@}"; return; fi
 	local text='"text":"'"Keyboard:"'"'
-	if [ -n "${2}" ]; then
-		text="$(JsonEscape "${2}")"
+	if [ -n "$2" ]; then
+		text="$(JsonEscape "$2")"
 		text='"text":"'"${text//$'\n'/\\n}"'"'
 	fi
 	local one_time=', "one_time_keyboard":true' && [ -n "$4" ] && one_time=""
-	sendJson "${1}" "${text}"', "reply_markup": {"keyboard": [ '"${3}"' ] '"${one_time}"'}' "${MSG_URL}"
-	# '"text":"$2", "reply_markup": {"keyboard": [ ${3} ], "one_time_keyboard": true}'
+	sendJson "$1" "${text}"', "reply_markup": {"keyboard": [ '"$3"' ] '"${one_time}"'}' "${MSG_URL}"
+	# '"text":"$2", "reply_markup": {"keyboard": [ $3 ], "one_time_keyboard": true}'
 }
 
 # $1 CHAT $2 message $3 remove
 remove_keyboard() {
 	local text='"text":"'"remove custom keyboard ..."'"'
-	if [ -n "${2}" ]; then
-		text="$(JsonEscape "${2}")"
+	if [ -n "$2" ]; then
+		text="$(JsonEscape "$2")"
 		text='"text":"'"${text//$'\n'/\\n}"'"'
 	fi
-	sendJson "${1}" "${text}"', "reply_markup": {"remove_keyboard":true}' "${MSG_URL}"
+	sendJson "$1" "${text}"', "reply_markup": {"remove_keyboard":true}' "${MSG_URL}"
 	# delete message if no message or $3 not empty
-	[[ -z "${2}" || -n "${3}" ]] && delete_message "${1}" "${BOTSENT[ID]}" "nolog"
+	[[ -z "$2" || -n "$3" ]] && delete_message "$1" "${BOTSENT[ID]}" "nolog"
 	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
 }
 
 # $1 CHAT $2 message $3 keyboard
 send_inline_keyboard() {
-	local text; text='"text":"'$(JsonEscape "${2}")'"'; [ -z "${2}" ] && text='"text":"'"Keyboard:"'"'
-	sendJson "${1}" "${text}"', "reply_markup": {"inline_keyboard": [ '"${3}"' ]}' "${MSG_URL}"
+	local text; text='"text":"'$(JsonEscape "$2")'"'; [ -z "$2" ] && text='"text":"'"Keyboard:"'"'
+	sendJson "$1" "${text}"', "reply_markup": {"inline_keyboard": [ '"$3"' ]}' "${MSG_URL}"
 	# JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
 }
 # $1 CHAT $2 message $3 button text $4 URL
 send_button() {
-	send_inline_keyboard "${1}" "${2}" '[ {"text":"'"$(JsonEscape "${3}")"'", "url":"'"${4}"'"}]' 
+	send_inline_keyboard "$1" "$2" '[ {"text":"'"$(JsonEscape "$3")"'", "url":"'"$4"'"}]' 
 }
 
 
@@ -159,9 +159,9 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 # there are no checks if URL or ID exists
 # $1 chat $3 ... $n URL or ID
   send_album(){
-	[ -z "${1}" ] && return 1
-	[ -z "${3}" ] && return 2 # minimum 2 files
-	local CHAT JSON IMAGE; CHAT="${1}"; shift 
+	[ -z "$1" ] && return 1
+	[ -z "$3" ] && return 2 # minimum 2 files
+	local CHAT JSON IMAGE; CHAT="$1"; shift 
 	for IMAGE in "$@"
 	do
 		[ -n "${JSON}" ] && JSON+=","
@@ -250,20 +250,20 @@ upload_file(){
 			STATUS="upload_document"
 			;;
 	esac
-	send_action "${1}" "${STATUS}"
+	send_action "$1" "${STATUS}"
 	sendUpload "$1" "${WHAT}" "${file}" "${CUR_URL}" "${text//\\n/$'\n'}"
 }
 
 # typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
 send_action() {
 	[ -z "$2" ] && return
-	sendJson "${1}" '"action": "'"${2}"'"' "${ACTION_URL}" &
+	sendJson "$1" '"action": "'"$2"'"' "${ACTION_URL}" &
 }
 
 # $1 CHAT $2 lat $3 long
 send_location() {
 	[ -z "$3" ] && return
-	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"'' "${LOCATION_URL}"
+	sendJson "$1" '"latitude": '"$2"', "longitude": '"$3"'' "${LOCATION_URL}"
 }
 
 # $1 CHAT $2 lat $3 long $4 title $5 address $6 foursquard id
@@ -271,7 +271,7 @@ send_venue() {
 	local add=""
 	[ -z "$5" ] && return
 	[ -n "$6" ] && add=', "foursquare_id": '"$6"''
-	sendJson "${1}" '"latitude": '"${2}"', "longitude": '"${3}"', "address": "'"${5}"'", "title": "'"${4}"'"'"${add}" "${VENUE_URL}"
+	sendJson "$1" '"latitude": '"$2"', "longitude": '"$3"', "address": "'"$5"'", "title": "'"$4"'"'"${add}" "${VENUE_URL}"
 }
 
 
@@ -282,7 +282,7 @@ send_venue() {
 # $1 CHAT $2 from chat  $3 from msg id
 forward_message() {
 	[ -z "$3" ] && return
-	sendJson "${1}" '"from_chat_id": '"${2}"', "message_id": '"${3}"'' "${FORWARD_URL}"
+	sendJson "$1" '"from_chat_id": '"$2"', "message_id": '"$3"'' "${FORWARD_URL}"
 }
 forward() { # backward compatibility
 	forward_message "$@" || return
@@ -292,20 +292,20 @@ forward() { # backward compatibility
 send_message() {
 	[ -z "$2" ] && return
 	local text keyboard btext burl no_keyboard file lat long title address sent
-	text="$(sed <<< "${2}" 's/ mykeyboardend.*//;s/ *my[kfltab][a-z]\{2,13\}startshere.*//')$(sed <<< "${2}" -n '/mytextstartshere/ s/.*mytextstartshere//p')"
+	text="$(sed <<< "$2" 's/ mykeyboardend.*//;s/ *my[kfltab][a-z]\{2,13\}startshere.*//')$(sed <<< "$2" -n '/mytextstartshere/ s/.*mytextstartshere//p')"
 	#shellcheck disable=SC2001
 	text="$(sed <<< "${text}" 's/ *mynewlinestartshere */\n/g')"
 	text="${text//$'\n'/\\n}"
 	[ "$3" != "safe" ] && {
-		no_keyboard="$(sed <<< "${2}" '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
-		keyboard="$(sed <<< "${2}" '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere *//;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
-		btext="$(sed <<< "${2}" '/mybtextstartshere /!d;s/.*mybtextstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
-		burl="$(sed <<< "${2}" '/myburlstartshere /!d;s/.*myburlstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//g;s/ *mykeyboardendshere.*//g')"
-		file="$(sed <<< "${2}" '/myfile[^s]*startshere /!d;s/.*myfile[^s]*startshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
-		lat="$(sed <<< "${2}" '/mylatstartshere /!d;s/.*mylatstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
-		long="$(sed <<< "${2}" '/mylongstartshere /!d;s/.*mylongstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
-		title="$(sed <<< "${2}" '/mytitlestartshere /!d;s/.*mytitlestartshere //;s/ *my[kfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
-		address="$(sed <<< "${2}" '/myaddressstartshere /!d;s/.*myaddressstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
+		no_keyboard="$(sed <<< "$2" '/mykeyboardendshere/!d;s/.*mykeyboardendshere.*/mykeyboardendshere/')"
+		keyboard="$(sed <<< "$2" '/mykeyboardstartshere /!d;s/.*mykeyboardstartshere *//;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
+		btext="$(sed <<< "$2" '/mybtextstartshere /!d;s/.*mybtextstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
+		burl="$(sed <<< "$2" '/myburlstartshere /!d;s/.*myburlstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//g;s/ *mykeyboardendshere.*//g')"
+		file="$(sed <<< "$2" '/myfile[^s]*startshere /!d;s/.*myfile[^s]*startshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
+		lat="$(sed <<< "$2" '/mylatstartshere /!d;s/.*mylatstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
+		long="$(sed <<< "$2" '/mylongstartshere /!d;s/.*mylongstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
+		title="$(sed <<< "$2" '/mytitlestartshere /!d;s/.*mytitlestartshere //;s/ *my[kfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
+		address="$(sed <<< "$2" '/myaddressstartshere /!d;s/.*myaddressstartshere //;s/ *my[nkfltab][a-z]\{2,13\}startshere.*//;s/ *mykeyboardendshere.*//')"
 	}
 	if [ -n "${no_keyboard}" ]; then
 		remove_keyboard "$1" "${text}"

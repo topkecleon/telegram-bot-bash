@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
 #
 # will be automatically sourced from bashbot
 
@@ -23,36 +23,36 @@ _is_creator() {
 	user_is_creator "${CHAT[ID]}" "${USER[ID]}"
 }
 _is_allowed() {
-	user_is_allowed "${USER[ID]}" "${1}" "${CHAT[ID]}"
+	user_is_allowed "${USER[ID]}" "$1" "${CHAT[ID]}"
 }
 _leave() {
 	leave_chat "${CHAT[ID]}"
 }
 _kick_user() {
-	kick_chat_member "${CHAT[ID]}" "${1}"
+	kick_chat_member "${CHAT[ID]}" "$1"
 }
 _unban_user() {
-	unban_chat_member "${CHAT[ID]}" "${1}"
+	unban_chat_member "${CHAT[ID]}" "$1"
 }
 # easy sending of messages of messages
 _message() {
-	send_normal_message "${CHAT[ID]}" "${1}"
+	send_normal_message "${CHAT[ID]}" "$1"
 }
 _normal_message() {
-	send_normal_message "${CHAT[ID]}" "${1}"
+	send_normal_message "${CHAT[ID]}" "$1"
 }
 _html_message() {
-	send_html_message "${CHAT[ID]}" "${1}"
+	send_html_message "${CHAT[ID]}" "$1"
 }
 _markdown_message() {
-	send_markdown_message "${CHAT[ID]}" "${1}"
+	send_markdown_message "${CHAT[ID]}" "$1"
 }
 # easy handling of keyboards
 _inline_button() {
-	send_inline_button "${CHAT[ID]}" "" "${1}" "${2}" 
+	send_inline_button "${CHAT[ID]}" "" "$1" "$2" 
 }
 _inline_keyboard() {
-	send_inline_keyboard "${CHAT[ID]}" "" "${1}"
+	send_inline_keyboard "${CHAT[ID]}" "" "$1"
 }
 _keyboard_numpad() {
 	send_keyboard "${CHAT[ID]}" "" '["1","2","3"],["4","5","6"],["7","8","9"],["-","0","."]' "yes"
