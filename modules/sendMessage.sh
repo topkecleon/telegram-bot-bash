@@ -227,28 +227,28 @@ upload_file(){
  
 	[ -z "${ext}" ] && ext="${file##*.}"
 	case "${ext}" in
-        	mp3|flac)
+        	audio|mp3|flac)
 			CUR_URL="${AUDIO_URL}"
 			WHAT="audio"
 			STATUS="upload_audio"
 			;;
-		png|jpg|jpeg|gif|pic)
+		photo|png|jpg|jpeg|gif|pic)
 			CUR_URL="${PHO_URL}"
 			WHAT="photo"
 			STATUS="upload_photo"
 			;;
-		webp)
+		sticker|webp)
 			CUR_URL="${STICKER_URL}"
 			WHAT="sticker"
 			STATUS="upload_photo"
 			;;
-		mp4)
+		video|mp4)
 			CUR_URL="${VIDEO_URL}"
 			WHAT="video"
 			STATUS="upload_video"
 			;;
 
-		ogg)
+		voice|ogg)
 			CUR_URL="${VOICE_URL}"
 			WHAT="voice"
 			STATUS="upload_audio"
