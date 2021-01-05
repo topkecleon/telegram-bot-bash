@@ -10,7 +10,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-8-g248a065
 #===============================================================================
 
 # include common functions and definitions
@@ -24,7 +24,7 @@ TESTFILES="${TOKENFILE} ${ACLFILE} ${COUNTFILE} ${BLOCKEDFILE} ${ADMINFILE}"
 # run bashbot first time with init
 printf "Run bashbot init ...\n"
 "${TESTDIR}/bashbot.sh" init >"${LOGFILE}"  <<EOF
-$TESTTOKEN
+${TESTTOKEN}
 nobody
 botadmin
 
@@ -46,7 +46,7 @@ trap exit 1 EXIT
 cd "${TESTDIR}" || exit
 
 printf "%s\n" "Test if ${JSONSHFILE} exists ..."
-[ ! -x "$JSONSHFILE" ] && { printf "%s\n" "${NOSUCCESS} json.sh not found"; exit 1; }
+[ ! -x "${JSONSHFILE}" ] && { printf "%s\n" "${NOSUCCESS} json.sh not found"; exit 1; }
 
 printf "Test Sourcing of bashbot.sh ...\n"
 # shellcheck source=./bashbot.sh

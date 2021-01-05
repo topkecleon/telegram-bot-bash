@@ -10,7 +10,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-8-g248a065
 #===============================================================================
 
 # include common functions and definitions
@@ -51,18 +51,18 @@ printf "  Send line ..."
 
 # create dummy files for upload
 ALLOW='/tmp/allowed'
-FILE_REGEX="$ALLOW/.*"
-[ -d "$ALLOW" ] || mkdir "$ALLOW"
-touch "$ALLOW/this_is_my.gif" "$ALLOW/this_is_my.doc"
-touch "$DATADIR/this_is_my.gif" "$DATADIR/this_is_my.doc"
+FILE_REGEX="${ALLOW}/.*"
+[ -d "${ALLOW}" ] || mkdir "${ALLOW}"
+touch "${ALLOW}/this_is_my.gif" "${ALLOW}/this_is_my.doc"
+touch "${DATADIR}/this_is_my.gif" "${DATADIR}/this_is_my.doc"
 
 while read -r line ; do
 	set -x; set +e
-	send_message "123456" "$line" >>"${OUTPUTFILE}"
+	send_message "123456" "${line}" >>"${OUTPUTFILE}"
 	set +x; set -e
 	printf "."
 done < "${INPUTFILE}" 2>>"${LOGFILE}"
-[ -d "$ALLOW" ] && rm -rf "$ALLOW"
+[ -d "${ALLOW}" ] && rm -rf "${ALLOW}"
 
 printf " done.\n"
 

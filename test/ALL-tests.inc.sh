@@ -11,7 +11,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-8-g248a065
 #===============================================================================
 
 # common variables
@@ -61,9 +61,9 @@ print_array() {
   local idx t
   local arrays=( "${@}" )
   for idx in "${arrays[@]}"; do
-    declare -n temp="$idx"
+    declare -n temp="${idx}"
 	for t in "${!temp[@]}"; do 
-  		printf '%s:\t%s\t%s\n' "$idx" "$t" "${temp[$t]}"
+  		printf '%s:\t%s\t%s\n' "${idx}" "${t}" "${temp[${t}]}"
 	done | sort
   done | grep -v '^USER:	0'
 }
@@ -76,7 +76,7 @@ compare_sorted() {
 	diff -c "${1}.sort" "${2}.sort" || ret=1
 	[[ "${1}" != "${TESTDIR}"* ]] && rm -f "${1}.sort"
 	[[ "${2}" != "${TESTDIR}"* ]] && rm -f "${2}.sort"
-	return "$ret"
+	return "${ret}"
 }
 
 ######
