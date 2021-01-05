@@ -171,7 +171,7 @@ All output of the script will be sent to the user, to stop a background job use:
 ```bash
 kill_back "${CHAT[ID]}" "jobname"
 ```
-You can also suspend and resume currently running background jobs from outside bashbot, e.g. in your startup schripts:
+You can also suspend and resume currently running background jobs from outside bashbot, e.g. in your startup scripts:
 ```bash
 ./bashbot.sh suspendback
 ./bashbot.sh resumeback
