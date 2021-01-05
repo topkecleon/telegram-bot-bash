@@ -7,7 +7,7 @@
 #
 # Options: --notest - skip tests
 #
-#### $$VERSION$$ v1.25-dev-6-g641727d
+#### $$VERSION$$ v1.25-dev-12-gb3c22bc
 ##############################################################
 
 # magic to ensure that we're always inside the root of our application,
@@ -24,8 +24,10 @@ VERSION="$(git describe --tags | sed -e 's/-[0-9].*//' -e 's/v//')"
 
 DISTNAME="telegram-bot-bash"
 DISTDIR="./DIST/${DISTNAME}" 
-DISTFILES="bashbot.rc bashbot.sh commands.sh mycommands.sh mycommands.sh.clean bin doc examples scripts modules addons LICENSE README.md README.txt README.html"
-DISTMKDIR="data-bot-bash logs bin bin/logs"
+DISTMKDIR="data-bot-bash logs bin bin/logs addons"
+
+DISTFILES="bashbot.rc bashbot.sh commands.sh mycommands.sh.clean bin doc examples scripts modules LICENSE README.md README.txt README.html"
+DISTFILESDIST="mycommands.sh bashbot.rc $(echo "addons/"*.sh)"
 
 # run tests first!
 for test in $1 dev/all-test*.sh
@@ -55,10 +57,10 @@ done
 
 # do not overwrite on update
 printf "Create .dist files\n"
-for file in mycommands.sh bashbot.rc addons/*.sh
+for file in ${DISTFILESDIST}
 do
 	[ "${file}" = "addons/*.sh" ] && continue
-	mv "${file}" "${file}.dist"
+	cp "${GIT_DIR}/../${file}" "${file}.dist"
 done
 
 # inject JSON.sh into distribution
