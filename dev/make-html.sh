@@ -7,7 +7,7 @@
 #
 # Usage: source make-hmtl
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-6-g641727d
 ##############################################################
 
 # check for correct dir
@@ -36,7 +36,7 @@ else
 			'printf "."; pandoc -s -f commonmark -M "title=Bashobot Documentation - ${0%.md}.html"  "${0}" -o "${0%.md}.html"' {} \;
 	fi
 	# final: convert links from *.md to *.html
-	find README.html html ${EXAMPLES} -iname "*.html" -type f -exec sh -c\
+	find README.html html "${EXAMPLES}" -iname "*.html" -type f -exec sh -c\
 		'sed -i -E "s/href=\"(\.\.\/)*doc\//href=\"\1html\//g;s/href=\"(.*).md(#.*)*\"/href=\"\1.html\"/g" ${0}' {} \;
 	printf " Done!\n"
     fi

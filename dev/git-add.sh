@@ -3,13 +3,13 @@
 #
 # works together with git pre-push.sh and ADD all changed files since last push
 
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-6-g641727d
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
 GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
-if [ "$GIT_DIR" != "" ] ; then
-	cd "$GIT_DIR/.." || exit 1
+if [ "${GIT_DIR}" != "" ] ; then
+	cd "${GIT_DIR}/.." || exit 1
 else
 	printf "Sorry, no git repository %s\n" "$(pwd)" && exit 1
 fi
@@ -31,7 +31,7 @@ for file in ${FILES}
 do
 	[ -d "${file}" ] && continue
 	printf "%s" "${file} "
-	git add "$file"
+	git add "${file}"
 done
 printf " - Done.\n"
 

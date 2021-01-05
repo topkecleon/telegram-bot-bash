@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-6-g641727d
 # shellcheck disable=SC2016
 #
 # Easy Versioning in git:
@@ -37,8 +37,8 @@
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
 GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
-if [ "$GIT_DIR" != "" ] ; then
-	cd "$GIT_DIR/.." || exit 1
+if [ "${GIT_DIR}" != "" ] ; then
+	cd "${GIT_DIR}/.." || exit 1
 else
 	printf "Sorry, no git repository %s\n" "$(pwd)" && exit 1
 fi
@@ -52,7 +52,7 @@ printf "Update to version %s ...\n" "${VERSION}"
 FILES="$(find ./*)"
 [ "$1" != "" ] && FILES="$*"
 
-for file in $FILES
+for file in ${FILES}
 do
 	[ ! -f "${file}" ] && continue
 	#[ "${file}" == "version" ] && continue

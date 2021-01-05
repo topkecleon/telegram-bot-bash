@@ -5,14 +5,14 @@
 #
 # Description: run all tests, exit after failed test
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-6-g641727d
 #############################################################
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
 GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
-if [ "$GIT_DIR" != "" ] ; then
-	cd "$GIT_DIR/.." || exit 1
+if [ "${GIT_DIR}" != "" ] ; then
+	cd "${GIT_DIR}/.." || exit 1
 else
 	printf "Sorry, no git repository %s\n" "$(pwd)" && exit 1
 fi
@@ -52,7 +52,7 @@ do
   "${test}" "${TESTENV}"
   ret=$?
   set +e
-  if [ "$ret" -eq 0 ] ; then
+  if [ "${ret}" -eq 0 ] ; then
     printf "OK: ---- %s\n" "${test}"
     passed=$((passed+1))
   else
@@ -64,7 +64,7 @@ done
 
 ###########################
 # cleanup depending on test state
-if [ "$fail" -eq 0 ]; then
+if [ "${fail}" -eq 0 ]; then
   printf 'SUCCESS '
   exitcode=0
   rm -rf "${TESTENV}"
@@ -82,4 +82,4 @@ printf "%s\n\n" "${passed} / ${tests}"
 
 ls -ld /tmp/bashbot.test* 2>/dev/null && printf "Do not forget to delete bashbot test files in /tmp!!\n"
 
-exit ${exitcode}
+exit "${exitcode}"

@@ -9,21 +9,21 @@
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-6-g641727d
 ###################################################################
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
 GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
-if [ "$GIT_DIR" != "" ] ; then
-	[[ "$GIT_DIR" != "/"* ]] && GIT_DIR="${PWD}/${GIT_DIR}"
-	cd "$GIT_DIR/.." || exit 1
+if [ "${GIT_DIR}" != "" ] ; then
+	[[ "${GIT_DIR}" != "/"* ]] && GIT_DIR="${PWD}/${GIT_DIR}"
+	cd "${GIT_DIR}/.." || exit 1
 else
 	[ ! -f "bashbot.sh" ] && printf "bashbot.sh not found in %s\n" " $(pwd)" && exit 1
 fi
 
 #DISTNAME="telegram-bot-bash"
-DISTDIR="./STANDALONE/${DISTNAME}" 
+DISTDIR="./STANDALONE" 
 DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh dev/obfuscate.sh modules scripts logs LICENSE README.* doc botacl botconfig.jssh"
 
 # run pre_commit on files
@@ -37,7 +37,7 @@ cd "${DISTDIR}" || exit 1
 
 # inject JSON.sh into distribution
 # shellcheck disable=SC1090
-source "$GIT_DIR/../dev/inject-json.sh"
+source "${GIT_DIR}/../dev/inject-json.sh"
 
 #######################
 # here the magic starts
@@ -95,7 +95,7 @@ chmod +x bashbot.sh.min
 # make html doc
 printf "Create html doc\n"
 #shellcheck disable=SC1090
-source "$GIT_DIR/../dev/make-html.sh"
+source "${GIT_DIR}/../dev/make-html.sh"
 
 printf "%s Done!\n" "$0"
 

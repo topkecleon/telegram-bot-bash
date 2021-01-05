@@ -7,15 +7,15 @@
 #
 # Options: --notest - skip tests
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-6-g641727d
 ##############################################################
 
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
 GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
-if [ "$GIT_DIR" != "" ] ; then
-	[[ "$GIT_DIR" != "/"* ]] && GIT_DIR="${PWD}/${GIT_DIR}"
-	cd "$GIT_DIR/.." || exit 1
+if [ "${GIT_DIR}" != "" ] ; then
+	[[ "${GIT_DIR}" != "/"* ]] && GIT_DIR="${PWD}/${GIT_DIR}"
+	cd "${GIT_DIR}/.." || exit 1
 else
 	printf "Sorry, no git repository %s\n" "$(pwd)" && exit 1
 fi
@@ -47,6 +47,7 @@ cp -r ${DISTFILES} "${DISTDIR}"
 cd "${DISTDIR}" || exit 1
 
 printf "Create directories\n"
+# shellcheck disable=SC2250
 for dir in $DISTMKDIR
 do
 	[ ! -d "${dir}" ] && mkdir "${dir}"
@@ -62,7 +63,7 @@ done
 
 # inject JSON.sh into distribution
 # shellcheck disable=SC1090
-source "$GIT_DIR/../dev/inject-json.sh"
+source "${GIT_DIR}/../dev/inject-json.sh"
 
 # make html doc
 printf "Create html doc\n"
@@ -73,13 +74,13 @@ source "../../dev/make-html.sh"
 cd .. || exit 1
 printf "Create dist archives\n"
 # shellcheck disable=SC2046
-zip -rq - "${DISTNAME}" --exclude $(cat  "$GIT_DIR/../dev/${0##*/}.exclude") >"${DISTNAME}-${VERSION}.zip"
-tar --exclude-ignore="$GIT_DIR/../dev/${0##*/}.exclude" -czf "${DISTNAME}-${VERSION}.tar.gz" "${DISTNAME}"
+zip -rq - "${DISTNAME}" --exclude $(cat  "${GIT_DIR}/../dev/${0##*/}.exclude") >"${DISTNAME}-${VERSION}.zip"
+tar --exclude-ignore="${GIT_DIR}/../dev/${0##*/}.exclude" -czf "${DISTNAME}-${VERSION}.tar.gz" "${DISTNAME}"
 
 printf "%s Done!\n" "$0"
 
 # shellcheck disable=SC2086
-ls -ld ${DISTNAME}-${VERSION}.*
+ls -ld "${DISTNAME}-${VERSION}".*
 
 # an empty DEBUG.log is created ... :-(
-rm -f "$GIT_DIR/../test/"*.log
+rm -f "${GIT_DIR}/../test/"*.log
