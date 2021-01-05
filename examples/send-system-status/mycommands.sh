@@ -5,7 +5,7 @@
 # to show how you can customize bashbot by only editing mycommands.sh
 # NOTE: this is not tested, simply copied from original source and reworked!
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-7-g9ef8778
 #
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -38,7 +38,7 @@ mycommands() {
     local msg=""
 
     if user_is_botadmin "${USER[ID]}" || user_is_allowed "${USER[ID]}" "systemstatus"; then
-	case "$CMD" in
+	case "${CMD}" in
 		'/md'*) msg="$(cat /proc/mdstat)";;
 		'/smb'*) msg="$(smbstatus)" ;;
 		'/se'*) msg="$(sensors | sed -r 's/\s|\)+//g' | sed -r 's/\(high=|\(min=/\//' | sed -r 's/\,crit=|\,max=/\//')";;
@@ -51,14 +51,14 @@ mycommands() {
 		'/smart'*)
 			[ "${CMD[1]}" == "" ] && msg="example \`/smart sda\`" && return
 			drive="$(echo "${CMD[1]}" | cut -c 1-3)"
-			echo "smartctl -a /dev/$drive"
-			msg="$(smartctl -a "/dev/$drive")"
+			echo "smartctl -a /dev/${drive}"
+			msg="$(smartctl -a "/dev/${drive}")"
 			;;
 		'/df') msg="$(df -h | sed -r 's/^/\n/' | sed -r 's/\s+/\n/g')";;
 	esac
 
-	if [ "$msg" != "" ]; then
-		send_normal_message "${CHAT[ID]}" "$msg" 
+	if [ "${msg}" != "" ]; then
+		send_normal_message "${CHAT[ID]}" "${msg}" 
 	fi
     else
 	send_normal_message "${USER[ID]}" "Sorry, you are not allowed to use this bot!"

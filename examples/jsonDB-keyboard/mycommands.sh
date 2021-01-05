@@ -10,7 +10,7 @@
 #        AUTHOR: KayM (), kay@rrr.de
 #          DATE: 19.12.2020 19:03
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-7-g9ef8778
 #===============================================================================
 # shellcheck disable=SC2154
 # shellcheck disable=SC2034
@@ -326,8 +326,8 @@ fi
 	MYKEYF="$2"
 	MINLEN="4"
 	# check len of keys
-	for MYKEY in ${MYFIND}; do [ "${#MYKEY}" -lt ${MINLEN} ] && break; done
-	if [ "${#MYKEY}" -lt ${MINLEN} ]; then
+	for MYKEY in ${MYFIND}; do [ "${#MYKEY}" -lt "${MINLEN}" ] && break; done
+	if [ "${#MYKEY}" -lt "${MINLEN}" ]; then
 		send_markdownv2_message "${CHAT[ID]}" "*Ein Suchbegriff ist kürzer als ${MINLEN} Zeichen!*"
 	else
 		MYFIND="$(create_pattern "${MYFIND}")"

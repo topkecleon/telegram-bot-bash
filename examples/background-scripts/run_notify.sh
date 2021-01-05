@@ -4,7 +4,7 @@
 #
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-7-g9ef8778
 
 ######
 # parameters
@@ -25,15 +25,15 @@ unset IFS
 cat >/dev/null & 
 
 # check if $1 is a number
-re='^[0-9]+$'
-if [[ $1 =~ $re ]] ; then
+regex='^[0-9]+$'
+if [[ "$1" =~ ${regex} ]] ; then
 	SLEEP="$1"
 else
 	SLEEP=10 # time between time notifications
 fi
 
 # output current time every $1 seconds
-while sleep $SLEEP
+while sleep "${SLEEP}"
 do
 	date "+* It's %k:%M:%S o' clock ..."
 done

@@ -6,12 +6,12 @@ export res
 # your additional bashbot commands ...
 mycommands() {
 
-	case "$MESSAGE" in
+	case "${MESSAGE}" in
 		'/run_'*) 
 			myback="run_${MESSAGE#*_}"
 			if [ -x "./${myback}.sh" ]; then
 			    checkback "${myback}"
-			    if [ "$res" -gt 0 ] ; then
+			    if [ "${res}" -gt 0 ] ; then
 				send_normal_message "${CHAT[ID]}" "Start ${myback}, use /kill${myback} to stop it."
 				background "./${myback}.sh" "${myback}"
 			    else
@@ -23,7 +23,7 @@ mycommands() {
 			myback="run_${MESSAGE#*_}"
 			if [ -x "./${myback}.sh" ]; then
 			    checkback "${myback}"
-			    if [ "$res" -eq 0 ] ; then
+			    if [ "${res}" -eq 0 ] ; then
 				killback "${myback}"
 				send_normal_message "${CHAT[ID]}" "Stopping ${myback}, use /run_${myback} to start again."
 			    else
@@ -56,7 +56,7 @@ watch_dir_loop() {
 		echo "$(date): new file: ${newfile}" >>"$0.log"
 		# note: loop callback must a function in the calling script! 
 		if _is_function loop_callback ; then
-			loop_callback "$1/$newfile"
+			loop_callback "$1/${newfile}"
 		else
 			echo "ERROR: loop_callback not found!" >&2
 			exit 1
@@ -94,8 +94,8 @@ output_file() {
 	sed <<< "${1}" '
 	s/ *mynewlinestartshere */\n/
 	s/ my[a-z]\{3,15}\(start\|ends\)here.*//g
-	' >"$publish$$"
-	cat  "$publish" >>"$publish$$"
+	' >"${publish}$$"
+	cat  "${publish}" >>"${publish}$$"
 	mv "${publish}$$" "${publish}"
 } # >>"$0.log" 2>&1
 
