@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.25-dev-9-g14fa2c7
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
@@ -7,7 +7,7 @@
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
 GIT_DIR=$(git rev-parse --git-dir)
-cd "$GIT_DIR/.." || exit 1
+cd "${GIT_DIR}/.." || exit 1
 
 export HOOKDIR="dev/hooks"
 LASTPUSH='.git/.lastpush'
@@ -32,9 +32,9 @@ set +f
 FILES="$(find ./* -name '*.sh' | grep -v -e 'DIST\/' -e 'STANDALONE\/' -e 'JSON.sh')"
 set -f
 FILES="${FILES} $(sed '/^#/d' <"dev/shellcheck.files")"
-if [ "$FILES" != "" ]; then
+if [ "${FILES}" != "" ]; then
 	# shellcheck disable=SC2086
-	shellcheck -x ${FILES} || exit 1
+	shellcheck -o all -e SC2249,SC2154 -x ${FILES} || exit 1
 	printf "    OK\n............................\n"
 else
 	# something went wrong
