@@ -21,7 +21,7 @@ Sometimes it's useful to watch the bot live in the terminal:
 
 ```
 	"debugx"	debug output and errors are sent to terminal
-	"xdebugx"   same as debugx plus set bash option '-x' to show any executed command
+	"xdebugx"	same as debugx plus set bash option '-x' to show any executed command
 ```
 
 Logging of Telegram update poll is disabled by default, also in `debug` mode. To enable it without using verbose `xdebug` mode
