@@ -117,25 +117,29 @@ The main use case for send_message is to process the output of interactive chats
 
 
 ##### send_file
-send_file can send different file types using a local file or a http URL (_e.g. https://)
+send_file can send local files, URL's or file_id's as different filex types (_e.g. photo video sticker_)
 
-*usage:* send_file "${CHAT[ID]}" "file/URL" "caption" ["type"]
+*usage:* send_file "${CHAT[ID]}" "file/URL/file_id" "caption" ["type"]
 
 Argument "type" is optional, if not given `send_file` detects file type by the file extension.
+if file/URL has no extension `photo` is assumed. Unknown types and extensions are send as type `document`
+
 Supported file types are: photo (_png jpg jpeg gif pic_) audio (_mp3 flac_) sticker (_webp_) video (_mp4_) voice (_ogg_) or document.
 
 It's recommended to use __absolute path names__ for local files (_starting with `/`_), as relative path names are threated as __relative to UPLOADDIR__ `data-bot-bash/upload`!
 
 For security reasons the following restrictions apply to local files:
 
-- absolute path name must match the __shell regex__ `FILE_REGEX` (_not file glob_)
+- absolute path name must match the __shell regex__ `FILE_REGEX`
+- relative path name is threated as relative to `UPLOADDIR` (_default: data-bot-bash/upload_)
 - path must not start with `./` and not contain `../`
 
 
 *example:*
 ```bash
 # send picture from web
-send_file "${CHAT[ID]}" "https://dealz.rrr.de/assets/images/rbofd-1.gif" "My Bot"
+send_file "${CHAT[ID]}" "https://dealz.rrr.de/assets/images/rbofd-1.gif" "My Bot" "photo"
+send_file "${CHAT[ID]}" "https://images-na.ssl-images-amazon.com/images/I/81DQ0FpoSNL._AC_SL1500_.jpg"
 
 # local file recommended: absolute path
 send_file "${CHAT[ID]}" "/home/user/dog.jpg" "My Dog"
@@ -1193,5 +1197,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.25-dev-16-gdd19f0f
+#### $$VERSION$$ v1.25-dev-26-gc205ae5
 
