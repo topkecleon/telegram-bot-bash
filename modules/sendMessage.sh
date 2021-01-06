@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.25-dev-16-gdd19f0f
+#### $$VERSION$$ v1.25-dev-25-gcb81f7c
 
 # will be automatically sourced from bashbot
 
@@ -212,6 +212,9 @@ upload_file(){
 	text="$(JsonEscape "$3")"
 	if [[ "${file}" =~ ^https*:// ]]; then
 		media="URL"
+	elif [[ "${file}" == file_id://* ]]; then
+		media="ID"
+		file="${file#file_id://}"
 	else
 		# we have a file, check file location ...
 		media="FILE"
@@ -224,8 +227,11 @@ upload_file(){
 		fi
 		[ ! -r "${file}" ] && return 3 # and file must exits of course
 	fi
- 
-	[ -z "${ext}" ] && ext="${file##*.}"
+	# no type given, use file ext, if no ext type photo
+	if [ -z "${ext}" ]; then
+		ext="${file##*.}"
+		[ "${ext}" = "${file}" ] && ext="photo"
+	fi
 	case "${ext}" in
         	audio|mp3|flac)
 			CUR_URL="${AUDIO_URL}"
@@ -267,10 +273,13 @@ upload_file(){
 		FILE)	# send local file ...
 			sendUpload "$1" "${WHAT}" "${file}" "${CUR_URL}" "${text//\\n/$'\n'}";;
 
-		URL)	# send URL, should also work for file_id ...
-				# e.g. '"photo":"https://dealz.rrr.de/assets/images/rbofd-1.gif","caption":"some text"'
+		URL|ID)	# send URL, should also work for file_id ...
 			sendJson "$1" '"'"${WHAT}"'":"'"${file}"'","caption":"'"${text//\\n/$'\n'}"'"' "${CUR_URL}"
 	esac
+	if [ "${BOTSENT[OK]}" = "true" ]; then
+		 BOTSENT[FILE_ID]="$(JsonGetString '.*,"file_id"' <<< "${res}")"
+		 BOTSENT[FILE_TYPE]="${WHAT}"
+	fi
 	return 0
 }
 
