@@ -262,6 +262,20 @@ VAR="$(( 1 + 2 ))" -> (( var=1+2 ))
 
 INDEX="$(( ${INDEX} + 1 ))" -> (( INDEX++ ))
 
+# manipulate the same variable multiple times without storing intermediate
+START="1a23_b__x###"
+
+BAR="${START//[0-9]}"	# a_b__x###
+BAR="${BAR%%#*}"	# a_b__x
+BAR="${BAR/__x/_c}"	# a_b_c
+
+: "${START//[0-9]}"	# a_b__x###
+: "${_%%#*}"		# a_b__x
+BAR="${_/__x/_c}"	# a_b_c
+
+# works also for output of commands
+: "$(date "+%A")"	# Weekday
+UPPERDAY="${_^^}"	# WEEKDAY
 ```
 For more examples see [Pure bash bible](https://github.com/dylanaraps/pure-bash-bible)
 
@@ -358,5 +372,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v1.25-dev-23-g8be95a3
+#### $$VERSION$$ v1.25-dev-30-gefca2e0
 
