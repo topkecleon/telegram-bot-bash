@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.25-dev-25-gcb81f7c
+#### $$VERSION$$ v1.25-dev-27-gf08df73
 
 # will be automatically sourced from bashbot
 
@@ -183,32 +183,10 @@ fi
 
 UPLOADDIR="${BASHBOT_UPLOAD:-${DATADIR}/upload}"
 
-# for now this can only send local files with curl!
-# extend to allow send files by URL or telegram ID
-send_file() {
-	local err
-	upload_file "${@}"; err="$?"
-	# fake Telegram response to provide error
-	if [ "${err}" != "0" ]; then
-		BOTSENT=()
-		BOTSENT[OK]="false"
-		case "${err}" in
-		    1)	BOTSENT[ERROR]="Path to file $2 contains to much '../' or starts with '.'";;
-		    2)	BOTSENT[ERROR]="Path to file $2 does not match regex: ${FILE_REGEX} ";;
-		    3)	if [[ "$2" == "/"* ]];then
-				BOTSENT[ERROR]="File not found: $2"
-			else
-				BOTSENT[ERROR]="File not found: ${UPLOADDIR}/$2"
-			fi;;
-		esac
-		[ -n "${BASHBOTDEBUG}" ] && log_message "Error in upload_file: ${BOTSENT[ERROR]}"
-	fi
-}
-
-# supports http and local file
-# $1 chat, $2 file, $3 caption, $4 extension (optional)
-upload_file(){
-	local CUR_URL WHAT STATUS media text file="$2" ext="$4"
+# supports local file, URL and file_id
+# $1 chat, $2 file https::// file_id:// , $3 caption, $4 extension (optional)
+send_file(){
+	local CUR_URL WHAT STATUS err media text file="$2" ext="$4"
 	text="$(JsonEscape "$3")"
 	if [[ "${file}" =~ ^https*:// ]]; then
 		media="URL"
@@ -218,64 +196,68 @@ upload_file(){
 	else
 		# we have a file, check file location ...
 		media="FILE"
-		[[ "${file}" = *'..'* ]] && return 1  # no directory traversal
-		[[ "${file}" = '.'* ]] && return 1	 # no hidden or relative files
+		[[ "${file}" = *'..'* || "${file}" = '.'* ]] && err=1  # no directory traversal
 		if [[ "${file}" = '/'* ]] ; then
-			[[ ! "${file}" =~ ${FILE_REGEX} ]] && return 2 # absolute must match REGEX
+			[[ ! "${file}" =~ ${FILE_REGEX} ]] && err=2 # absolute must match REGEX
 		else
-			file="${UPLOADDIR:-NOUPLOADDIR}/${file}" # othiers must be in UPLOADDIR
+			file="${UPLOADDIR:-NOUPLOADDIR}/${file}" # others must be in UPLOADDIR
 		fi
-		[ ! -r "${file}" ] && return 3 # and file must exits of course
+		[ ! -r "${file}" ] && err=3 # and file must exits of course
+		# file path error, generate error response
+		if [ -n "${err}" ]; then
+		    BOTSENT=(); BOTSENT[OK]="false"
+		    case "${err}" in
+			1) BOTSENT[ERROR]="Path to file $2 contains to much '../' or starts with '.'";;
+			2) BOTSENT[ERROR]="Path to file $2 does not match regex: ${FILE_REGEX} ";;
+			3) if [[ "$2" == "/"* ]];then
+				BOTSENT[ERROR]="File not found: $2"
+			   else
+				BOTSENT[ERROR]="File not found: ${UPLOADDIR}/$2"
+			   fi;;
+		    esac
+		    [ -n "${BASHBOTDEBUG}" ] && log_message "Error in upload_file: ${BOTSENT[ERROR]}"
+		    return
+		fi
+		# file OK, let's continue
 	fi
+
 	# no type given, use file ext, if no ext type photo
 	if [ -z "${ext}" ]; then
 		ext="${file##*.}"
 		[ "${ext}" = "${file}" ] && ext="photo"
 	fi
+	# select upload URL
 	case "${ext}" in
         	audio|mp3|flac)
-			CUR_URL="${AUDIO_URL}"
-			WHAT="audio"
-			STATUS="upload_audio"
+			CUR_URL="${AUDIO_URL}"; WHAT="audio"; STATUS="upload_audio"
 			;;
 		photo|png|jpg|jpeg|gif|pic)
-			CUR_URL="${PHO_URL}"
-			WHAT="photo"
-			STATUS="upload_photo"
+			CUR_URL="${PHO_URL}"; WHAT="photo"; STATUS="upload_photo"
 			;;
 		sticker|webp)
-			CUR_URL="${STICKER_URL}"
-			WHAT="sticker"
-			STATUS="upload_photo"
+			CUR_URL="${STICKER_URL}"; WHAT="sticker"; STATUS="upload_photo"
 			;;
 		video|mp4)
-			CUR_URL="${VIDEO_URL}"
-			WHAT="video"
-			STATUS="upload_video"
+			CUR_URL="${VIDEO_URL}"; WHAT="video"; STATUS="upload_video"
 			;;
-
 		voice|ogg)
-			CUR_URL="${VOICE_URL}"
-			WHAT="voice"
-			STATUS="upload_audio"
+			CUR_URL="${VOICE_URL}"; WHAT="voice"; STATUS="record_audio"
 			;;
-		*)
-			CUR_URL="${DOCUMENT_URL}"
-			WHAT="document"
-			STATUS="upload_document"
+		*)	CUR_URL="${DOCUMENT_URL}"; WHAT="document"; STATUS="upload_document"
 			;;
 	esac
 
-	# prepare to send FILE / URL
+	# show file upload to user
 	send_action "$1" "${STATUS}"
-	# select method to use
+	# select method to send
 	case "${media}" in
 		FILE)	# send local file ...
 			sendUpload "$1" "${WHAT}" "${file}" "${CUR_URL}" "${text//\\n/$'\n'}";;
 
-		URL|ID)	# send URL, should also work for file_id ...
+		URL|ID)	# send URL, file_id ...
 			sendJson "$1" '"'"${WHAT}"'":"'"${file}"'","caption":"'"${text//\\n/$'\n'}"'"' "${CUR_URL}"
 	esac
+	# get file_id and file_type
 	if [ "${BOTSENT[OK]}" = "true" ]; then
 		 BOTSENT[FILE_ID]="$(JsonGetString '.*,"file_id"' <<< "${res}")"
 		 BOTSENT[FILE_TYPE]="${WHAT}"
@@ -283,7 +265,7 @@ upload_file(){
 	return 0
 }
 
-# typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location
+# $1 typing upload_photo record_video upload_video record_audio upload_audio upload_document find_location
 send_action() {
 	[ -z "$2" ] && return
 	sendJson "$1" '"action": "'"$2"'"' "${ACTION_URL}" &
