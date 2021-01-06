@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.25-dev-15-g4582efd
+#### $$VERSION$$ v1.25-dev-23-g8be95a3
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -91,6 +91,10 @@ _round_float() {
 	local digit="$2"; [[ "$2" =~ ^[${o9o9o9}]+$ ]] || digit="0"
 	{ LC_ALL=C.utf-8 printf "%.${digit}f" "$1"; } 2>/dev/null
 }
+# date is external, printf is much faster
+_date(){
+	printf "%(%c)T\n" -1
+}
 setConfigKey() {
 	[[ "$1" =~ ^[-${azAZo9},._]+$ ]] || return 3
 	[ -z "${BOTCONFIG}" ] && return 1
@@ -107,11 +111,11 @@ check_token(){
 	return 1
 }
 # log $1 with date
-log_error(){ printf "%s: %s\n" "$(date)" "$*" >>"${ERRORLOG}"; }
-log_debug(){ printf "%s: %s\n" "$(date)" "$*" >>"${DEBUGLOG}"; }
-log_update(){ printf "%s: %s\n" "$(date)" "$*" >>"${UPDATELOG}"; }
+log_error(){ printf "%(%c)T: %s\n" "-1" "$*" >>"${ERRORLOG}"; }
+log_debug(){ printf "%(%c)T: %s\n" "-1" "$*" >>"${DEBUGLOG}"; }
+log_update(){ printf "%(%c)T: %s\n" "-1" "$*" >>"${UPDATELOG}"; }
 # log $1 with date, special first \n
-log_message(){ printf "\n%s: %s\n" "$(date)" "${1/\\n/$'\n'}" >>"${MESSAGELOG}"; }
+log_message(){ printf "\n%(%c)T: %s\n" "-1" "${1/\\n/$'\n'}" >>"${MESSAGELOG}"; }
 
 # additional tests if we run in debug mode
 export BASHBOTDEBUG
@@ -121,16 +125,16 @@ export BASHBOTDEBUG
 # shellcheck disable=SC2094
 debug_checks(){ {
 	[  -z "${BASHBOTDEBUG}" ] && return
-	local DATE WHERE MYTOKEN; DATE="$(date)"; WHERE="$1"; shift
-	printf "%s: debug_checks: %s: bashbot.sh %s\n" "${DATE}" "${WHERE}" "${@##*/}"
+	local where token; where="$1"; shift
+	printf "%(%c)T: debug_checks: %s: bashbot.sh %s\n" "-1" "${where}" "${1##*/}"
 	# shellcheck disable=SC2094
-	[ -z "${DEBUGLOG}" ] && printf "%s: %s\n" "${DATE}" "DEBUGLOG not set! =========="
-	MYTOKEN="$(getConfigKey "bottoken")"
-	[ -z "${MYTOKEN}" ] && printf "%s: %s\n" "${DATE}" "Bot token is missing! =========="
-	check_token "${MYTOKEN}" || printf "%s: %s\n" "${DATE}" "Invalid bot token! =========="
-	[ -z "$(getConfigKey "botadmin")" ] && printf "%s: %s\n" "${DATE}" "Bot admin is missing! =========="
+	[ -z "${DEBUGLOG}" ] && printf "%(%c)T: %s\n" "-1" "DEBUGLOG not set! =========="
+	token="$(getConfigKey "bottoken")"
+	[ -z "${token}" ] && printf "%(%c)T: %s\n" "-1" "Bot token is missing! =========="
+	check_token "${token}" || printf "%(%c)T: %s\n%s\n" "-1" "Invalid bot token! ==========" "${token}"
+	[ -z "$(getConfigKey "botadmin")" ] && printf "%(%c)T: %s\n" "-1" "Bot admin is missing! =========="
 	# call user defined debug_checks if exists
-	_exec_if_function my_debug_checks "${DATE}" "${WHERE}" "$*"
+	_exec_if_function my_debug_checks "$(_date)" "${where}" "$*"
 	} >>"${DEBUGLOG}"
 }
 
@@ -261,7 +265,6 @@ ERRORLOG="${LOGDIR}/ERROR.log"
 UPDATELOG="${LOGDIR}/BASHBOT.log"
 MESSAGELOG="${LOGDIR}/MESSAGE.log"
 
-debug_checks "start SOURCE=${SOURCE:-no}" "$@"
 # read BOTTOKEN from bot database if not set
 if [ -z "${BOTTOKEN}" ]; then
     BOTTOKEN="$(getConfigKey "bottoken")"
@@ -327,6 +330,7 @@ if [  -r "${COMMANDS}" ]; then
 else
 	[ -z "${SOURCE}" ] && printf "${RED}Warning: ${COMMANDS} does not exist or is not readable!.${NN}"
 fi
+debug_checks "start SOURCE=${SOURCE:-no}" "$@"
 
 ###############
 # load modules
@@ -536,7 +540,7 @@ fi
 sendJsonRetry(){
 	local retry="$1"; shift
 	[[ "$1" =~ ^\ *[${o9o9o9}.]+\ *$ ]] && sleep "$1"; shift
-	printf "%s: RETRY %s %s %s\n" "$(date)" "${retry}" "$1" "${2:0:60}"
+	printf "%(%c)T: RETRY %s %s %s\n" "-1" "${retry}" "$1" "${2:0:60}"
 	case "${retry}" in
 		'sendJson'*)
 			sendJson "$@"	
@@ -582,7 +586,7 @@ sendJsonResult(){
 	    # log error
 	    [[ "${BOTSENT[ERROR]}" = "400" && "${BOTSENT[DESCRIPTION]}" == *"starting at byte offset"* ]] &&\
 			 offset="${BOTSENT[DESCRIPTION]%* }"
-	    printf "%s: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s ACTION=%s\n" "$(date)"\
+	    printf "%(%c)T: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s ACTION=%s\n" "-1"\
 			"${BOTSENT[OK]}"  "$2" "$3" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4:${offset}:100}"
 	    # warm path, do not retry on error, also if we use wegt
 	    [ -n "${BASHBOT_RETRY}${BASHBOT_WGET}" ] && return
@@ -600,7 +604,7 @@ sendJsonResult(){
 	    if [ "${BOTSENT[ERROR]}" == "999" ];then
 		# check if default curl and args are OK
 			if ! curl -sL -k -m 2 "${URL}" >/dev/null 2>&1 ; then
-				printf "%s: BASHBOT IP Address seems blocked!\n" "$(date)"
+				printf "%(%c)T: BASHBOT IP Address seems blocked!\n" "-1"
 				# user provided function to recover or notify block
 				if _exec_if_function bashbotBlockRecover; then
 					BASHBOT_RETRY="2"
@@ -706,12 +710,12 @@ process_client() {
 			MESSAGE[0]="/_edited_message "
 		fi
 		process_message "${num}" "${debug}"
-	        printf "%s: update received FROM=%s CHAT=%s CMD=%s\n" "$(date)" "${USER[USERNAME]:0:20} (${USER[ID]})"\
+	        printf "%(%c)T: update received FROM=%s CHAT=%s CMD=%s\n" "-1" "${USER[USERNAME]:0:20} (${USER[ID]})"\
 			"${CHAT[USERNAME]:0:20}${CHAT[TITLE]:0:30} (${CHAT[ID]})"\
 			"${MESSAGE:0:30}${CAPTION:0:30}${URLS[*]:0:30}" >>"${UPDATELOG}"
 	else
 		process_inline "${num}" "${debug}"
-	        printf "%s: iQuery received FROM=%s iQUERY=%s\n" "$(date)"\
+	        printf "%(%c)T: iQuery received FROM=%s iQUERY=%s\n" "-1"\
 			"${iQUERY[USERNAME]:0:20} (${iQUERY[USER_ID]})" "${iQUERY[0]}" >>"${UPDATELOG}"
 	fi
 	#####
@@ -1050,7 +1054,7 @@ start_bot() {
 	jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
         [ -f "${COUNTFILE}.jssh.flock" ] && rm -f "${COUNTFILE}.jssh.flock"
 	# store start time and cleanup botconfig on startup
-	jssh_updateKeyDB "startup" "$(date)" "${BOTCONFIG}"
+	jssh_updateKeyDB "startup" "$(_date)" "${BOTCONFIG}"
         [ -f "${BOTCONFIG}.jssh.flock" ] && rm -f "${BOTCONFIG}.jssh.flock"
 	# read blocked users
 	jssh_readDB_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"

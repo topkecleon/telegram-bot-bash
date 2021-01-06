@@ -11,11 +11,11 @@ If you want to get error messages (and more) start bashbot  `./bashbot.sh startb
 you can the change the level of verbosity of the debug argument: 
 
 ```
-	"debug"		all output is redirected to "DEBUG.log", in addition every incoming message is logged in "MESSAGE.log" and "INLINE.log"
-	"xdebug"	same as debug plus set bash option '-x' to log any executed command in "DEBUG.log"
+	"debug"		all output is redirected to `DEBUG.log`, in addition every incoming message is logged in `MESSAGE.log` and `INLINE.log`
+	"xdebug"	same as debug plus set bash option '-x' to log any executed command in `DEBUG.log`
 ```
 
-Use the command `tail` to watch your bot live, e.g. "tail -f DEBUG.log". To obtain more information place set -x; set +x in your code.
+Use the command `tail` to watch your bot live, e.g. `tail -f DEBUG.log`. To obtain more information place `set -x; ... set +x` around suspected code.
 
 Sometimes it's useful to watch the bot live in the terminal:
 
@@ -147,7 +147,7 @@ This means if you register an every 5 minutes callback first execution may < 5 M
     * x	execute every x minutes
     * -x execute once WITHIN the next x Minutes (next 10 Minutes since start "event")
 
-Note: If you want exact "in x minutes" use "EVENT_TIMER plus x" as time: `-(EVENT_TIMER + x)`
+Note: If you want exact "in x minutes" use "EVENT_TIMER" as reference: `(EVENT_TIMER +x)`
 
 *Example:*
 ```bash
@@ -166,8 +166,8 @@ BASHBOT_EVENT_TIMER["example_every5","5"]="example_every5min"
 # execute once on the next 10 minutes since start "event"
 BASHBOT_EVENT_TIMER["example_10min","-10"]="example_in10min"
 
-# once in exact 10 minutes
-BASHBOT_EVENT_TIMER["example_10min","$(( (EVENT_TIMER+10) * -1 ))"]="example_in10min"
+# once in exact 10 minutes, note the -
+BASHBOT_EVENT_TIMER["example_10min","-$(( EVENT_TIMER+10 ))"]="example_in10min"
 
 ```
 
@@ -251,6 +251,8 @@ seq 1 100 -> {0..100}
 data="$(cat file)" -> data="$(<"file")"
 
 DIR="$(dirname $0) -> DIR="${0%/*}"
+
+date -> printf"%(%c)T\n" -1	# 100 times faster!
 
 PROG="($basename $0)" -> PROG="${0##*/}*
 
@@ -356,5 +358,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v1.21-24-g7cf624f
+#### $$VERSION$$ v1.25-dev-23-g8be95a3
 

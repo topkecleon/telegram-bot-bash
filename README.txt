@@ -158,10 +158,9 @@ start debug`
 │   ├── BASHBOT.log      # log what your bot is doing ...
 │   ├── ERROR.log        # connection errors from / to Telegram API
 │   │
-│   ├── DEBUG.log        # stdout/stderr of you bot (debug mode 
+│   ├── DEBUG.log        # stdout/stderr of you bot (debug mode enabled)
+│   └── MESSAGE.log      # full text of all message send/received (debug mode 
 enabled)
-│   └── MESSAGE.log      # full text of all message send/received 
-(debug mode enabled)
 ```
 
 ----
