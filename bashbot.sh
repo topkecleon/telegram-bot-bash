@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.25-dev-23-g8be95a3
+#### $$VERSION$$ v1.25-dev-24-gbbc6794
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -111,11 +111,11 @@ check_token(){
 	return 1
 }
 # log $1 with date
-log_error(){ printf "%(%c)T: %s\n" "-1" "$*" >>"${ERRORLOG}"; }
-log_debug(){ printf "%(%c)T: %s\n" "-1" "$*" >>"${DEBUGLOG}"; }
-log_update(){ printf "%(%c)T: %s\n" "-1" "$*" >>"${UPDATELOG}"; }
+log_error(){ printf "%(%c)T: %s\n" -1 "$*" >>"${ERRORLOG}"; }
+log_debug(){ printf "%(%c)T: %s\n" -1 "$*" >>"${DEBUGLOG}"; }
+log_update(){ printf "%(%c)T: %s\n" -1 "$*" >>"${UPDATELOG}"; }
 # log $1 with date, special first \n
-log_message(){ printf "\n%(%c)T: %s\n" "-1" "${1/\\n/$'\n'}" >>"${MESSAGELOG}"; }
+log_message(){ printf "\n%(%c)T: %s\n" -1 "${1/\\n/$'\n'}" >>"${MESSAGELOG}"; }
 
 # additional tests if we run in debug mode
 export BASHBOTDEBUG
@@ -126,13 +126,13 @@ export BASHBOTDEBUG
 debug_checks(){ {
 	[  -z "${BASHBOTDEBUG}" ] && return
 	local where token; where="$1"; shift
-	printf "%(%c)T: debug_checks: %s: bashbot.sh %s\n" "-1" "${where}" "${1##*/}"
+	printf "%(%c)T: debug_checks: %s: bashbot.sh %s\n" -1 "${where}" "${1##*/}"
 	# shellcheck disable=SC2094
-	[ -z "${DEBUGLOG}" ] && printf "%(%c)T: %s\n" "-1" "DEBUGLOG not set! =========="
+	[ -z "${DEBUGLOG}" ] && printf "%(%c)T: %s\n" -1 "DEBUGLOG not set! =========="
 	token="$(getConfigKey "bottoken")"
-	[ -z "${token}" ] && printf "%(%c)T: %s\n" "-1" "Bot token is missing! =========="
-	check_token "${token}" || printf "%(%c)T: %s\n%s\n" "-1" "Invalid bot token! ==========" "${token}"
-	[ -z "$(getConfigKey "botadmin")" ] && printf "%(%c)T: %s\n" "-1" "Bot admin is missing! =========="
+	[ -z "${token}" ] && printf "%(%c)T: %s\n" -1 "Bot token is missing! =========="
+	check_token "${token}" || printf "%(%c)T: %s\n%s\n" -1 "Invalid bot token! ==========" "${token}"
+	[ -z "$(getConfigKey "botadmin")" ] && printf "%(%c)T: %s\n" -1 "Bot admin is missing! =========="
 	# call user defined debug_checks if exists
 	_exec_if_function my_debug_checks "$(_date)" "${where}" "$*"
 	} >>"${DEBUGLOG}"
@@ -540,7 +540,7 @@ fi
 sendJsonRetry(){
 	local retry="$1"; shift
 	[[ "$1" =~ ^\ *[${o9o9o9}.]+\ *$ ]] && sleep "$1"; shift
-	printf "%(%c)T: RETRY %s %s %s\n" "-1" "${retry}" "$1" "${2:0:60}"
+	printf "%(%c)T: RETRY %s %s %s\n" -1 "${retry}" "$1" "${2:0:60}"
 	case "${retry}" in
 		'sendJson'*)
 			sendJson "$@"	
@@ -573,7 +573,7 @@ sendJsonResult(){
 		# hot path everything OK!
 	else
 	    # oops something went wrong!
-	    if [ "$1" != "" ]; then
+	    if [ -n "$1" ]; then
 			BOTSENT[ERROR]="$(JsonGetValue '"error_code"' <<< "$1")"
 			BOTSENT[DESCRIPTION]="$(JsonGetString '"description"' <<< "$1")"
 			grep -qs -F '"parameters","retry_after"' <<< "$1" &&\
@@ -586,7 +586,7 @@ sendJsonResult(){
 	    # log error
 	    [[ "${BOTSENT[ERROR]}" = "400" && "${BOTSENT[DESCRIPTION]}" == *"starting at byte offset"* ]] &&\
 			 offset="${BOTSENT[DESCRIPTION]%* }"
-	    printf "%(%c)T: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s ACTION=%s\n" "-1"\
+	    printf "%(%c)T: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s ACTION=%s\n" -1\
 			"${BOTSENT[OK]}"  "$2" "$3" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4:${offset}:100}"
 	    # warm path, do not retry on error, also if we use wegt
 	    [ -n "${BASHBOT_RETRY}${BASHBOT_WGET}" ] && return
@@ -604,7 +604,7 @@ sendJsonResult(){
 	    if [ "${BOTSENT[ERROR]}" == "999" ];then
 		# check if default curl and args are OK
 			if ! curl -sL -k -m 2 "${URL}" >/dev/null 2>&1 ; then
-				printf "%(%c)T: BASHBOT IP Address seems blocked!\n" "-1"
+				printf "%(%c)T: BASHBOT IP Address seems blocked!\n" -1
 				# user provided function to recover or notify block
 				if _exec_if_function bashbotBlockRecover; then
 					BASHBOT_RETRY="2"
@@ -710,12 +710,12 @@ process_client() {
 			MESSAGE[0]="/_edited_message "
 		fi
 		process_message "${num}" "${debug}"
-	        printf "%(%c)T: update received FROM=%s CHAT=%s CMD=%s\n" "-1" "${USER[USERNAME]:0:20} (${USER[ID]})"\
+	        printf "%(%c)T: update received FROM=%s CHAT=%s CMD=%s\n" -1 "${USER[USERNAME]:0:20} (${USER[ID]})"\
 			"${CHAT[USERNAME]:0:20}${CHAT[TITLE]:0:30} (${CHAT[ID]})"\
 			"${MESSAGE:0:30}${CAPTION:0:30}${URLS[*]:0:30}" >>"${UPDATELOG}"
 	else
 		process_inline "${num}" "${debug}"
-	        printf "%(%c)T: iQuery received FROM=%s iQUERY=%s\n" "-1"\
+	        printf "%(%c)T: iQuery received FROM=%s iQUERY=%s\n" -1\
 			"${iQUERY[USERNAME]:0:20} (${iQUERY[USER_ID]})" "${iQUERY[0]}" >>"${UPDATELOG}"
 	fi
 	#####
