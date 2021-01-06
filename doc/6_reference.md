@@ -121,6 +121,10 @@ send_file can send local files, URL's or file_id's as different filex types (_e.
 
 *usage:* send_file "${CHAT[ID]}" "file/URL/file_id" "caption" ["type"]
 
+URL's must start with `http://` or `https://` and remote server must send an appropriate media type.
+A file_id must start with `file_id://`, all other file names are threated as local files.
+If Telegram accepts the file `BOTSENT[FILE_ID]` and `BOTSENT[FILE_TYPE]` are set. 
+
 Argument "type" is optional, if not given `send_file` detects file type by the file extension.
 if file/URL has no extension `photo` is assumed. Unknown types and extensions are send as type `document`
 
@@ -1197,5 +1201,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.25-dev-26-gc205ae5
+#### $$VERSION$$ v1.25-dev-28-g1525ac8
 
