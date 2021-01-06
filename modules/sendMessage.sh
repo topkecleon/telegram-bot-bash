@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.25-dev-27-gf08df73
+#### $$VERSION$$ v1.25-dev-29-gac2e1a9
 
 # will be automatically sourced from bashbot
 
@@ -186,8 +186,8 @@ UPLOADDIR="${BASHBOT_UPLOAD:-${DATADIR}/upload}"
 # supports local file, URL and file_id
 # $1 chat, $2 file https::// file_id:// , $3 caption, $4 extension (optional)
 send_file(){
-	local CUR_URL WHAT STATUS err media text file="$2" ext="$4"
-	text="$(JsonEscape "$3")"
+	local url what stat err media capt file="$2" ext="$4"
+	capt="$(JsonEscape "$3")"
 	if [[ "${file}" =~ ^https*:// ]]; then
 		media="URL"
 	elif [[ "${file}" == file_id://* ]]; then
@@ -229,38 +229,38 @@ send_file(){
 	# select upload URL
 	case "${ext}" in
         	audio|mp3|flac)
-			CUR_URL="${AUDIO_URL}"; WHAT="audio"; STATUS="upload_audio"
+			url="${AUDIO_URL}"; what="audio"; stat="upload_audio"
 			;;
 		photo|png|jpg|jpeg|gif|pic)
-			CUR_URL="${PHO_URL}"; WHAT="photo"; STATUS="upload_photo"
+			url="${PHO_URL}"; what="photo"; stat="upload_photo"
 			;;
 		sticker|webp)
-			CUR_URL="${STICKER_URL}"; WHAT="sticker"; STATUS="upload_photo"
+			url="${STICKER_URL}"; what="sticker"; stat="upload_photo"
 			;;
 		video|mp4)
-			CUR_URL="${VIDEO_URL}"; WHAT="video"; STATUS="upload_video"
+			url="${VIDEO_URL}"; what="video"; stat="upload_video"
 			;;
 		voice|ogg)
-			CUR_URL="${VOICE_URL}"; WHAT="voice"; STATUS="record_audio"
+			url="${VOICE_URL}"; what="voice"; stat="record_audio"
 			;;
-		*)	CUR_URL="${DOCUMENT_URL}"; WHAT="document"; STATUS="upload_document"
+		*)	url="${DOCUMENT_URL}"; what="document"; stat="upload_document"
 			;;
 	esac
 
 	# show file upload to user
-	send_action "$1" "${STATUS}"
+	send_action "$1" "${stat}"
 	# select method to send
 	case "${media}" in
 		FILE)	# send local file ...
-			sendUpload "$1" "${WHAT}" "${file}" "${CUR_URL}" "${text//\\n/$'\n'}";;
+			sendUpload "$1" "${what}" "${file}" "${url}" "${capt//\\n/$'\n'}";;
 
 		URL|ID)	# send URL, file_id ...
-			sendJson "$1" '"'"${WHAT}"'":"'"${file}"'","caption":"'"${text//\\n/$'\n'}"'"' "${CUR_URL}"
+			sendJson "$1" '"'"${what}"'":"'"${file}"'","caption":"'"${capt//\\n/$'\n'}"'"' "${url}"
 	esac
 	# get file_id and file_type
 	if [ "${BOTSENT[OK]}" = "true" ]; then
 		 BOTSENT[FILE_ID]="$(JsonGetString '.*,"file_id"' <<< "${res}")"
-		 BOTSENT[FILE_TYPE]="${WHAT}"
+		 BOTSENT[FILE_TYPE]="${what}"
 	fi
 	return 0
 }
