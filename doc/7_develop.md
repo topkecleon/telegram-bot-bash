@@ -261,21 +261,32 @@ ADDME="$ADDME something to add" -> ADDME+=" something to add""
 VAR="$(( 1 + 2 ))" -> (( var=1+2 ))
 
 INDEX="$(( ${INDEX} + 1 ))" -> (( INDEX++ ))
+```
 
-# manipulate the same variable multiple times without storing intermediate
-START="1a23_b__x###"
+The special variable stores the expanded __last__ argument of the previous command.
+This allows some useful optimisations, especially in combination with the no-op command `:`.
 
-BAR="${START//[0-9]}"	# a_b__x###
-BAR="${BAR%%#*}"	# a_b__x
-BAR="${BAR/__x/_c}"	# a_b_c
+```bash
+# mkdir plus cd to it
+mkdir "tmpdir$$" && cd "$_"	# rmpdir1234 (process id)
 
-: "${START//[0-9]}"	# a_b__x###
+# manipulate a variable multiple times without storing intermediate results
+start="1a23_b__x###"
+...
+: "${start//[0-9]}"	# a_b__x###
 : "${_%%#*}"		# a_b__x
-BAR="${_/__x/_c}"	# a_b_c
+bar="${_/__x/_c}"	# a_b_c
 
-# works also for output of commands
-: "$(date "+%A")"	# Weekday
-UPPERDAY="${_^^}"	# WEEKDAY
+
+# BE AWARE OF ...
+# pitfall/magic missing quotes: $_ is LAST arg
+: ${SOMEVAR}		# String in var $_ -> "var" 
+: $(<"file")		# Content     of\n  file $_ -> "file"
+
+# pitfall/magic command substitution: globbing and IFS is applied!
+: "$(echo "a* is born")"# $_ -> a* is globbed even quoted!
+: "$(echo "a   b   c")"	# $_ -> "a b c"
+: "$(<"file")"		# "Content     of\n  file" $_ -> "Content of file"
 ```
 For more examples see [Pure bash bible](https://github.com/dylanaraps/pure-bash-bible)
 
@@ -372,5 +383,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v1.25-dev-30-gefca2e0
+#### $$VERSION$$ v1.25-dev-31-g6f8515d
 
