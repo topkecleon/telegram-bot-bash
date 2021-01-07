@@ -21,14 +21,14 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 11:34
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.25-dev-34-gda214ab
 #===============================================================================
 
 ####
 # parse args
 SEND="send_message"
 case "$1" in
-	"nor*"|"tex*")
+	"nor"*|"tex"*)
 		SEND="send_normal_message"
 		shift
 		;;

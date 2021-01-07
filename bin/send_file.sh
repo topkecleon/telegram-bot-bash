@@ -24,12 +24,12 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 25.12.2020 20:24
 #
-#### $$VERSION$$ v1.25-dev-25-gcb81f7c
+#### $$VERSION$$ v1.25-dev-34-gda214ab
 #===============================================================================
 
 ####
 # parse args
-SEND="upload_file"
+SEND="send_file"
 case "$1" in
 	'')
 		printf "missing arguments\n"

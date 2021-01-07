@@ -22,14 +22,14 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 16:52
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.25-dev-34-gda214ab
 #===============================================================================
 
 ####
 # parse args
 SEND="edit_normal_message"
 case "$1" in
-	"nor*"|"tex*")
+	"nor"*|"tex"*)
 		SEND="edit_normal_message"
 		shift
 		;;
@@ -53,7 +53,6 @@ case "$1" in
 		exit 1
 		;;
 esac
-
 
 # set bashbot environment
 # shellcheck disable=SC1090
