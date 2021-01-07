@@ -263,8 +263,9 @@ VAR="$(( 1 + 2 ))" -> (( var=1+2 ))
 INDEX="$(( ${INDEX} + 1 ))" -> (( INDEX++ ))
 ```
 
-The special variable stores the expanded __last__ argument of the previous command.
-This allows some useful optimisations, especially in combination with the no-op command `:`.
+The special variable `$_` stores the expanded __last__ argument of the previous command.
+This allows some nice optimisations, especially in combination with the no-op command `:`,
+but be aware of the pitfalls.
 
 ```bash
 # mkdir plus cd to it
