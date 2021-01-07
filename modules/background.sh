@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117,SC2059
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.21-26-g0d3a53a
 
 # will be automatically sourced from bashbot
 
@@ -62,7 +62,7 @@ start_proc() {
 	[ -z "$2" ] && return
 	[ -x "${2%% *}" ] || return 1
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1")"
-	printf "%s: Start interacitve script CHAT=%s JOB=%s CMD=%s\n" "$(date)" "$1" "${fifo##*/}" "$2 $3 $4" >>"${UPDATELOG}"
+	printf "%s: Start interactive script CHAT=%s JOB=%s CMD=%s\n" "$(date)" "$1" "${fifo##*/}" "$2 $3 $4" >>"${UPDATELOG}"
 	check_proc "$1" && kill_proc "$1"
 	mkfifo "${fifo}"
 	nohup bash -c "{ $2 \"$4\" \"$5\" \"${fifo}\" | \"${SCRIPT}\" outproc \"$1\" \"${fifo}\"
@@ -99,7 +99,7 @@ kill_proc() {
 	fifo="$(procname "$1" "$2")"
 	prid="$(proclist "${fifo}")"
 	fifo="${DATADIR:-.}/${fifo}"
-	printf "%s: Stop interacitve / background CHAT=%s JOB=%s\n" "$(date)" "$1" "${fifo##*/}" >>"${UPDATELOG}"
+	printf "%s: Stop interactive / background CHAT=%s JOB=%s\n" "$(date)" "$1" "${fifo##*/}" >>"${UPDATELOG}"
 	# shellcheck disable=SC2086
 	[ -n "${prid}" ] && kill ${prid}
 	[ -s "${fifo}.log" ] || rm -f "${fifo}.log"

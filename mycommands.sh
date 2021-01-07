@@ -9,7 +9,7 @@
 # #### mycommands.clean
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.21-26-g0d3a53a
 #
 
 ##########
@@ -191,7 +191,7 @@ else
 
 	case "${MESSAGE}" in
 		##################
-		# example commands, replace thm by your own
+		# example commands, replace them with your own
 		'/echo'*) # example echo command
 			send_normal_message "${CHAT[ID]}" "${MESSAGE}"
 			;;
