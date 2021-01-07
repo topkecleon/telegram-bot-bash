@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.25-dev-33-g04e3c18
 # shellcheck disable=SC2016
 #
 # Easy Versioning in git:
@@ -52,6 +52,18 @@ printf "Update to version %s ...\n" "${VERSION}"
 FILES="$(find ./*)"
 [ "$1" != "" ] && FILES="$*"
 
+# autogenerate REMADME.html REMADE.txt
+if [[ "${FILES}" == *"README.md"* ]]; then
+	FILES+=" README.html README.txt"
+	type -f pandoc >/dev/null && pandoc -s -f commonmark -M "title=Bashbot README" README.md >README.html
+	if type -f html2text >/dev/null; then
+		html2text -style pretty -width 90  README.html >README.txt
+	else
+		type -f fold >/dev/null && fold -s -w 90 README.md >README.txt
+	fi
+fi
+
+# change version string in given files
 for file in ${FILES}
 do
 	[ ! -f "${file}" ] && continue
@@ -59,9 +71,6 @@ do
 	printf "%s" " ${file}" >&2
 	sed -i 's/^#### $$VERSION$$.*/#### \$\$VERSION\$\$ '"${VERSION}"'/' "${file}"
 done
-# try to compile README.txt
-printf " README.txt" >&2
-type -f pandoc >/dev/null && pandoc -s -f commonmark -M "title=Bashbot README" README.md >README.html
-fold -s README.md >README.txt
+
 printf " done.\n"
 
