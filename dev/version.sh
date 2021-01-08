@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#### $$VERSION$$ v1.25-dev-37-gf0a2843
+#### $$VERSION$$ v1.25-dev-39-gbd2d2e1
 # shellcheck disable=SC2016
 #
 # Easy Versioning in git:
@@ -56,12 +56,13 @@ FILES="$(find ./*)"
 if [[ "${FILES}" == *"README.md"* ]]; then
 	FILES+=" README.html README.txt"
 	type -f pandoc >/dev/null && pandoc -s -f commonmark -M "title=Bashbot README" README.md >README.html
-	if type -f html2text >/dev/null; then
+	cat "dev/bashbot.ascii" >"README.txt"
+	if [ -f "README.html" ] && type -f html2text >/dev/null; then
 		# convert html links to text [link]
 		sed -E 's/<a href="([^>]+)">([^<#]+)<\/a>/\2 [\1]/' <README.html |\
-		html2text -style pretty -width 90 - >README.txt
+		html2text -style pretty -width 90 - >>README.txt
 	else
-		type -f fold >/dev/null && fold -s -w 90 README.md >README.txt
+		type -f fold >/dev/null && fold -s -w 90 README.md >>README.txt
 	fi
 fi
 

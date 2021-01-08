@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.25-dev-24-gbbc6794
+#### $$VERSION$$ v1.25-dev-39-gbd2d2e1
 ##################################################################
 
 # emmbeded system may claim bash but it is not

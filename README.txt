@@ -1,4 +1,26 @@
 
+                      ..
+                     ****                     
+                ****oooooo*****             
+           *****ooooooooooooo*****        
+       *****oooooooooooooooooooooo****  
+   ****oooooooooooooooooooooooooooooooo**
+ *.*oooooooooooooooooooooooooooooooooooo**
+ *.ooooooooooooooooooooooooooooooooo**....
+ *.oooooooooooooooooooooooooooo**.........
+ *.oooooooooooooooooooooooo**.............
+ *.ooooooooooooooooooo**..................     ____               _      _             _   
+ *.oooooooooooooooooo.......,.............    |  _ \             | |    | |           | |  
+ *.ooooooooooooooooo*.....,***,...........    | |_) |  __ _  ___ | |__  | |__    ___  | |_ 
+ *.ooooooooooooooooo*....o*...............    |  _ <  / _` |/ __|| '_ \ | '_ \  / _ \ | __|
+ *.ooooooooooooooooo*....*o***,...........    | |_) || (_| |\__ \| | | || |_) || (_) || |_ 
+ *.*oooooooooooooooo*........o*.....oo....    |____/  \__,_||___/|_| |_||_.__/  \___/  \__|
+   ****ooooooooooooo*....`***....oo......
+       *****oooooooo*......*..oo.....**  
+           ******ooo*.............*       
+                ***oo........**             
+                    **...**                    
+
 
 
 
@@ -287,5 +309,5 @@ That's it all guys!
 If you feel that there's something missing or if you found a bug, feel free to submit a
 pull request!
 
-$$VERSION$$ v1.25-dev-37-gf0a2843
+$$VERSION$$ v1.25-dev-39-gbd2d2e1
 
