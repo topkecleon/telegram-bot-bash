@@ -238,4 +238,4 @@ See `mycommnds.sh.dist` for an example.
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v1.25-dev-33-g04e3c18
+#### $$VERSION$$ v1.25-dev-37-gf0a2843
