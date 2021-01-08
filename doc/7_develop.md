@@ -262,34 +262,36 @@ VAR="$(( 1 + 2 ))" -> (( var=1+2 ))
 
 INDEX="$(( ${INDEX} + 1 ))" -> (( INDEX++ ))
 ```
+For more examples see [Pure bash bible](https://github.com/dylanaraps/pure-bash-bible)
 
 The special variable `$_` stores the expanded __last__ argument of the previous command.
-This allows some nice optimisations, especially in combination with the no-op command `:`,
-but be aware of the pitfalls.
+This allows a nice optimisation in combination with the no-op command `:`, but be aware of `$_` pitfalls.
 
 ```bash
-# mkdir plus cd to it
-mkdir "tmpdir$$" && cd "$_"	# rmpdir1234 (process id)
+# $_ example: mkdir plus cd to it
+mkdir "somedir-$$" && cd "$_"	# somedir-1234 (process id)
 
 # manipulate a variable multiple times without storing intermediate results
-start="1a23_b__x###"
+foo="1a23_b__x###"
 ...
-: "${start//[0-9]}"	# a_b__x###
+: "${foo//[0-9]}"	# a_b__x###
 : "${_%%#*}"		# a_b__x
 bar="${_/__x/_c}"	# a_b_c
 
 
 # BE AWARE OF ...
-# pitfall/magic missing quotes: $_ is LAST arg
-: ${SOMEVAR}		# String in var $_ -> "var" 
-: $(<"file")		# Content     of\n  file $_ -> "file"
+# pitfall missing quotes: $_ is LAST arg
+: ${SOMEVAR}		# "String in var" $_ -> "var" 
+: $(<"file")		# "Content     of\n  file" $_ -> "file"
 
-# pitfall/magic command substitution: globbing and IFS is applied!
+# pitfall test command
+[ -n "$MYVAR" ] && echo "$_"	# outputs "]" 
+
+# pitfall command substitution: globbing and IFS is applied!
 : "$(echo "a* is born")"# $_ -> a* is globbed even quoted!
-: "$(echo "a   b   c")"	# $_ -> "a b c"
+: "$(echo "a   b    c")"# $_ -> "a b c"
 : "$(<"file")"		# "Content     of\n  file" $_ -> "Content of file"
 ```
-For more examples see [Pure bash bible](https://github.com/dylanaraps/pure-bash-bible)
 
 #### Prepare a new version
 After some development it may time to create a new version for the users. a new version can be in sub version upgrade, e.g. for fixes and smaller additions or
@@ -384,5 +386,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v1.25-dev-31-g6f8515d
+#### $$VERSION$$ v1.25-dev-36-g58e789a
 
