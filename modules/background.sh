@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117,SC2059
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.25-dev-38-g1eafc91
 
 # will be automatically sourced from bashbot
 
@@ -48,7 +48,7 @@ start_back() {
 }
 restart_back() {
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1" "back-$3-")"
-	printf "%s: Start background job CHAT=%s JOB=%s CMD=%s\n" "$(date)" "$1" "${fifo##*/}" "${2##*/} $4 $5" >>"${UPDATELOG}"
+	log_message "Start background job CHAT=$1 JOB=${fifo##*/} CMD=${2##*/} $4 $5"
 	check_back "$1" "$3" && kill_proc "$1" "back-$3-"
 	nohup bash -c "{ $2 \"$4\" \"$5\" \"${fifo}\" | \"${SCRIPT}\" outproc \"$1\" \"${fifo}\"; }" &>>"${fifo}.log" &
 	sleep 0.5 # give bg job some time to init
@@ -62,7 +62,7 @@ start_proc() {
 	[ -z "$2" ] && return
 	[ -x "${2%% *}" ] || return 1
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1")"
-	printf "%s: Start interacitve script CHAT=%s JOB=%s CMD=%s\n" "$(date)" "$1" "${fifo##*/}" "$2 $3 $4" >>"${UPDATELOG}"
+	log_message "Start interactive script CHAT=$1 JOB=${fifo##*/} CMD=$2 $3 $4"
 	check_proc "$1" && kill_proc "$1"
 	mkfifo "${fifo}"
 	nohup bash -c "{ $2 \"$4\" \"$5\" \"${fifo}\" | \"${SCRIPT}\" outproc \"$1\" \"${fifo}\"
@@ -99,7 +99,7 @@ kill_proc() {
 	fifo="$(procname "$1" "$2")"
 	prid="$(proclist "${fifo}")"
 	fifo="${DATADIR:-.}/${fifo}"
-	printf "%s: Stop interacitve / background CHAT=%s JOB=%s\n" "$(date)" "$1" "${fifo##*/}" >>"${UPDATELOG}"
+	log_message "Stop interactive / background CHAT=$1 JOB=${fifo##*/}"
 	# shellcheck disable=SC2086
 	[ -n "${prid}" ] && kill ${prid}
 	[ -s "${fifo}.log" ] || rm -f "${fifo}.log"
