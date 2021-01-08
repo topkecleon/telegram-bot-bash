@@ -7,7 +7,7 @@
 #
 # Options: --notest - skip tests
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.25-dev-35-gfa8e8a2
 ##############################################################
 
 # magic to ensure that we're always inside the root of our application,
@@ -26,7 +26,7 @@ DISTNAME="telegram-bot-bash"
 DISTDIR="./DIST/${DISTNAME}" 
 DISTMKDIR="data-bot-bash logs bin bin/logs addons"
 
-DISTFILES="bashbot.rc bashbot.sh commands.sh mycommands.sh.clean bin doc examples scripts modules LICENSE README.md README.txt README.html"
+DISTFILES="bashbot.sh commands.sh mycommands.sh.clean bin doc examples scripts modules LICENSE README.md README.txt README.html"
 DISTFILESDIST="mycommands.sh bashbot.rc $(echo "addons/"*.sh)"
 
 # run tests first!
