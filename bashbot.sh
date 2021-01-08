@@ -16,7 +16,7 @@
 #     Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # Usage: bashbot.sh [-h|--help|BOTCOMMANDS]
-         BOTCOMMANDS="start, stop, status, help, init, suspendback, resumeback, killback"
+BOTCOMMANDS="--help help init start  stop  status suspendback resumeback killback"
 #
 # Exit Codes:
 #     0 - success (hopefully)
@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.25-dev-39-gbd2d2e1
+#### $$VERSION$$ v1.25-dev-40-g4a9d1f0
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -167,9 +167,11 @@ RUNUSER="${USER}" # USER is overwritten by bashbot array :-(, save original
 
 # provide help
 case "$1" in
-	""|"-h"*) [ -z "${SOURCE}" ] && printf "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NN}" && exit
+	"") [ -z "${SOURCE}" ] && printf "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NN}" && exit
 		;;
-	"--h"*)	sed -nE -e '/(NOT EDIT)|(shellcheck)/d' -e '3,/###/p' <"$0"
+	"--h"*)	LOGO="${BASHBOT_HOME:-.}/bin/bashbot.ascii"
+		[ -r "${LOGO}" ] && cat "${LOGO}"
+		sed -nE -e '/(NOT EDIT)|(shellcheck)/d' -e '3,/###/p' <"$0"
 		exit;;
 	"help") HELP="${BASHBOT_HOME:-.}/README"
 		if [ -n "${INTERACTIVE}" ];then
