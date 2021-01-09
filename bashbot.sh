@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.25-dev-41-g37e4539
+#### $$VERSION$$ v1.25-dev-46-g8253a53
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -169,7 +169,7 @@ RUNUSER="${USER}" # USER is overwritten by bashbot array :-(, save original
 case "$1" in
 	"") [ -z "${SOURCE}" ] && printf "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NN}" && exit
 		;;
-	"-h"*)	LOGO="${BASHBOT_HOME:-.}/bin/bashbot.ascii"
+	"-h"*)	LOGO="${BASHBOT_HOME:-.}/doc/bashbot.ascii"
 		[ -r "${LOGO}" ] && cat "${LOGO}"
 		sed -nE -e '/(NOT EDIT)|(shellcheck)/d' -e '3,/###/p' <"$0"
 		exit;;
