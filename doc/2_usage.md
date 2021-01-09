@@ -19,8 +19,10 @@ Have FUN!
 ```
 .
 ├── mycommands.sh        # THIS is your bot, place logic and commands here!
+├── mycommands.conf      # place your bot config and bot messages here!
 │
-├── mycommands.sh.clean      # copy to "mycommands.sh" if you start developing your bot
+├── mycommands.conf.dist     # copy to "mycommands.conf" if not exist
+├── mycommands.sh.clean      # copy to "mycommands.sh" to start developing a new bot
 ├── mycommands.sh.dist       # example bot, also used for testing bashbot internally 
 │
 ├── count.jssh           # count bashbot usage in jssh key-value store
@@ -344,5 +346,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.25-dev-26-gc205ae5
+#### $$VERSION$$ v1.25-dev-42-gde24ded
 

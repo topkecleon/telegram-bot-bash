@@ -28,10 +28,11 @@ Installing bashbot is very simple: Download and extract the installation archive
 1. Choose a directory to install bashbot (_e.g.your HOME or /usr/local_)
 2. Download [latest release zip / tar archive](https://github.com/topkecleon/telegram-bot-bash/releases/latest) and extract all files. 
 3. Change into the directory `telegram-bot-bash`
+4. Copy `mycommands.conf.dist` `mycommands.conf`
 4. Copy `mycommands.sh.dist` or `mycommands.sh.clean` to `mycommands.sh`
 5. Run `./bashbot.sh init`\* to setup the environment and enter your Bots token given by botfather.
 
-Edit `mycommands.sh` to fit your needs.
+Edit config in `mycommands.conf` and commands in `mycommands.sh` to fit your need.
 Now your Bot is ready to start ...
 
 *If you are new to Bot development read [Bots: An introduction for developers](https://core.telegram.org/bots)*
@@ -51,7 +52,7 @@ Update bashbot is almost identical to installing bashbot: Download and extract t
 5. Run `./bashbot.sh init`\* to setup your environment after the update
 6. Restart your bot `./bashbot.sh start`
 
-`mycommands.sh` will not overwritten, this avoids losing your bot commands on updates.
+`mycommands.conf` and `mycommands.sh` will not overwritten, this avoids losing your bot config and commands on updates.
 
 *Note*: If you are updating from a pre-1.0 version, update to [Version 1.20](https://github.com/topkecleon/telegram-bot-bash/releases/tags/v1.20) first!
 
@@ -120,6 +121,10 @@ to get an impression how different they are.
 
 ### Notes on Changes
 
+#### Config moved to mycommands.conf
+
+From Version 1.30 on config for new bots is moved to `mycommands.conf`.
+
 #### Support for update from pre-1.0 removed
 
 From Version 1.21 on updating from a pre-1.0 version (_no \*.jssh config_) is no more supported!
@@ -127,5 +132,5 @@ You must update to [Version 1.20](https://github.com/topkecleon/telegram-bot-bas
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.25-dev-23-g8be95a3
+#### $$VERSION$$ v1.25-dev-42-gde24ded
 
