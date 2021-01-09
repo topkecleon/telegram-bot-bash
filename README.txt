@@ -10,15 +10,15 @@
  *.oooooooooooooooooooooooooooo**.........
  *.oooooooooooooooooooooooo**.............
  *.ooooooooooooooooooo**..................     ____               _      _             _   
- *.oooooooooooooooooo.......,.............    |  _ \             | |    | |           | |  
+ *.ooooooooooooooooo*.......,.............    |  _ \             | |    | |           | |  
  *.ooooooooooooooooo*.....,***,...........    | |_) |  __ _  ___ | |__  | |__    ___  | |_ 
  *.ooooooooooooooooo*....o*...............    |  _ <  / _` |/ __|| '_ \ | '_ \  / _ \ | __|
  *.ooooooooooooooooo*....*o***,...........    | |_) || (_| |\__ \| | | || |_) || (_) || |_ 
  *.*oooooooooooooooo*........o*.....oo....    |____/  \__,_||___/|_| |_||_.__/  \___/  \__|
-   ****ooooooooooooo*....`***....oo......
+   ****ooooooooooooo*....`***....oo.....*
        *****oooooooo*......*..oo.....**  
            ******ooo*.............*       
-                ***oo........**             
+                ***o*........**             
                     **...**                    
 
 
