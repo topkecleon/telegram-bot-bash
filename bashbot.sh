@@ -16,7 +16,7 @@
 #     Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # Usage: bashbot.sh [-h|--help|BOTCOMMANDS]
-BOTCOMMANDS="--help help init start  stop  status suspendback resumeback killback"
+BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killback"
 #
 # Exit Codes:
 #     0 - success (hopefully)
@@ -30,7 +30,7 @@ BOTCOMMANDS="--help help init start  stop  status suspendback resumeback killbac
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.25-dev-40-g4a9d1f0
+#### $$VERSION$$ v1.25-dev-41-g37e4539
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -169,7 +169,7 @@ RUNUSER="${USER}" # USER is overwritten by bashbot array :-(, save original
 case "$1" in
 	"") [ -z "${SOURCE}" ] && printf "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NN}" && exit
 		;;
-	"--h"*)	LOGO="${BASHBOT_HOME:-.}/bin/bashbot.ascii"
+	"-h"*)	LOGO="${BASHBOT_HOME:-.}/bin/bashbot.ascii"
 		[ -r "${LOGO}" ] && cat "${LOGO}"
 		sed -nE -e '/(NOT EDIT)|(shellcheck)/d' -e '3,/###/p' <"$0"
 		exit;;
