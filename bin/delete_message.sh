@@ -3,7 +3,7 @@
 #
 #          FILE: bin/delete_message.sh
 # 
-#         USAGE: delete_message.sh [-h|--help]  "CHAT[ID]" "MESSAGE[ID]" [debug]
+USAGE='delete_message.sh [-h|--help]  "CHAT[ID]" "MESSAGE[ID]" [debug]'
 # 
 #   DESCRIPTION: delete a message in the given user/group
 # 
@@ -19,7 +19,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 03.01.2021 15:37
 #
-#### $$VERSION$$ v1.25-dev-34-gda214ab
+#### $$VERSION$$ v1.25-dev-45-g2a3ab2a
 #===============================================================================
 
 ####
@@ -30,7 +30,7 @@ case "$1" in
 		printf "missing arguments\n"
 		;&
 	"-h"*)
-		printf 'usage: send_edit_message [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "message ..."  [debug]\n'
+		printf 'usage: %s\n' "${USAGE}"
 		exit 1
 		;;
 	'--h'*)

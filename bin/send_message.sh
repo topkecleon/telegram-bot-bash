@@ -3,7 +3,7 @@
 #
 #          FILE: bin/send_message.sh
 # 
-#         USAGE: send_message.sh [-h|--help] [format] "CHAT[ID]" "message ...." [debug]
+USAGE='send_message.sh [-h|--help] [format] "CHAT[ID]" "message ...." [debug]'
 # 
 #   DESCRIPTION: send a message to the given user/group
 # 
@@ -21,7 +21,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 11:34
 #
-#### $$VERSION$$ v1.25-dev-34-gda214ab
+#### $$VERSION$$ v1.25-dev-45-g2a3ab2a
 #===============================================================================
 
 ####
@@ -44,7 +44,7 @@ case "$1" in
 		printf "missing arguments\n"
 		;&
 	"-h"*)
-		printf 'usage: send_message [-h|--help] [format] "CHAT[ID]" "message ...." [debug]\n'
+		printf 'usage: %s\n' "${USAGE}"
 		exit 1
 		;;
 	'--h'*)

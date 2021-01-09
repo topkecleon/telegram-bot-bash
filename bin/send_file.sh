@@ -2,8 +2,8 @@
 #===============================================================================
 #
 #          FILE: bin/send_file.sh
-# 
-#         USAGE: send_file.sh [-h|--help] "CHAT[ID]" "file|URL" "caption ...." [type] [debug]
+#
+USAGE='send_file.sh [-h|--help] "CHAT[ID]" "file|URL" "caption ...." [type] [debug]'
 # 
 #   DESCRIPTION: send a file to the given user/group
 # 
@@ -24,7 +24,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 25.12.2020 20:24
 #
-#### $$VERSION$$ v1.25-dev-34-gda214ab
+#### $$VERSION$$ v1.25-dev-45-g2a3ab2a
 #===============================================================================
 
 ####
@@ -35,7 +35,7 @@ case "$1" in
 		printf "missing arguments\n"
 		;&
 	"-h"*)
-		printf 'usage: send_file [-h|--help] "CHAT[ID]" "file" "caption ...." [type] [debug]\n'
+		printf 'usage: %s\n' "${USAGE}"
 		exit 1
 		;;
 	'--h'*)

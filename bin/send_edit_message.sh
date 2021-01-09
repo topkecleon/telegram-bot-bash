@@ -3,7 +3,7 @@
 #
 #          FILE: bin/send_message.sh
 # 
-#         USAGE: send_edit_message.sh [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "message ...." [debug]
+USAGE='send_edit_message.sh [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "message ...." [debug]'
 # 
 #   DESCRIPTION: replace a message in the given user/group
 # 
@@ -22,7 +22,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 16:52
 #
-#### $$VERSION$$ v1.25-dev-34-gda214ab
+#### $$VERSION$$ v1.25-dev-45-g2a3ab2a
 #===============================================================================
 
 ####
@@ -45,7 +45,7 @@ case "$1" in
 		printf "missing arguments\n"
 		;&
 	"-h"*)
-		printf 'usage: send_edit_message [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "message ..."  [debug]\n'
+		printf 'usage: %s\n' "${USAGE}"
 		exit 1
 		;;
 	'--h'*)
