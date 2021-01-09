@@ -10,7 +10,7 @@ USAGE='broadcast_message.sh [-h|--help] [--doit] [--groups|--both|--db=file] [fo
 # 
 #       OPTIONS: --doit - broadcast is dangerous, simulate run without --doit
 #                --groups - send to groups instead of users
-#                --both - send to users and groups
+#                --both - send to users and groups (default with --db)
 #                --db name - send to all user/groups in jsonDB database (e.g. blocked)
 #                     db file: name.jssh, db keys are user/chat id, values are ignored
 #
@@ -27,7 +27,7 @@ USAGE='broadcast_message.sh [-h|--help] [--doit] [--groups|--both|--db=file] [fo
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 16:14
 #
-#### $$VERSION$$ v1.25-dev-44-g168584d
+#### $$VERSION$$ v1.25-dev-48-g171b196
 #===============================================================================
 
 ####
@@ -102,7 +102,7 @@ if [ -z "${SENDALL[*]}" ]; then
 fi
 
 	# loop over users
-	printf "${GREEN}Sending broadcast message to user of ${BOT_NAME} using database:${NC}${GREY} ${database##*/}"
+	printf "${GREEN}Sending broadcast message to ${SENDTO}${GROUPSALSO} of ${BOT_NAME} using database:${NC}${GREY} ${database##*/}"
 
 { 	# dry run
 	[ -z "${DOIT}" ] && printf "${NC}\n${ORANGE}DRY RUN! use --doit as first argument to execute broadcast...${NC}\n"
