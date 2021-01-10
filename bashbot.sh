@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.25-dev-53-gfb8b022
+#### $$VERSION$$ v1.25-dev-54-gbd664da
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -1128,7 +1128,8 @@ bot_init() {
 		exit 3
 	elif [[ "${UID}" != "0" && "${touser}" != "${runuser}" ]]; then
 		# different user but not root ...
-		printf "${ORANGE}You are not root change to \"${touser}\" may fail, try \"sudo ./bashbot.sh init\"${NN}" 1>&2
+		printf "${ORANGE}You are not root, adjusting permissions may fail. Try \"sudo ./bashbot.sh init\"${NN}Press <CTRL+C> to stop or <Enter> to continue..." 1>&2
+		[ -n "${INTERACTIVE}" ] && read -r runuser
 	fi
 	# adjust permissions
 	printf "Adjusting files and permissions for user \"${touser}\" ...\n"
