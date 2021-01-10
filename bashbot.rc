@@ -5,7 +5,7 @@
 #
 # tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.25-dev-9-g14fa2c7
+#### $$VERSION$$ v1.25-dev-51-gb2eecc5
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 
@@ -34,8 +34,12 @@ runas="nobody"
 # runcmd="runuser ${runas} -s /bin/bash -c " # runasuser with *runuser*
 
 # edit the values of the following lines to fit your config:
-start="cd /usr/local/telegram-bot-bash; /usr/local/telegram-bot-bash/bashbot.sh"	# location of your bashbot.sh script
-name='' 	# your bot name as given to botfather, e.g. mysomething_bot
+# your bot installation dir
+bashbot="cd /usr/local/telegram-bot-bash; /usr/local/telegram-bot-bash/bashbot.sh"
+# your bot name as given to botfather, e.g. mysomething_bot
+name=""
+# set additionl parameter, e.g. debug
+mode=""
 
 # END Configuration
 #######################
@@ -45,12 +49,12 @@ name='' 	# your bot name as given to botfather, e.g. mysomething_bot
 case "$1" in
 'start')
 	# shellcheck disable=SC2250
-	$runcmd "$start start" # >/dev/null 2>&1 </dev/null
+	$runcmd "$bashbot start $mode" # >/dev/null 2>&1 </dev/null
 	RETVAL=$?
 	;;
 'stop')
 	# shellcheck disable=SC2250
-	$runcmd "$start stop"
+	$runcmd "$bashbot stop $mode"
 	RETVAL=$?
 	;;
 'status')
@@ -73,7 +77,7 @@ case "$1" in
 	;;
 'suspendback'|'resumeback'|'killback')
 	# shellcheck disable=SC2250
-	$runcmd "$start $1"
+	$runcmd "$bashbot $1 $mode"
 	RETVAL=$?
 	# kill inotifywait from runuser
 	if [ "$1" != "resumeback" ]; then 
