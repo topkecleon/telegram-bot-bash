@@ -22,7 +22,7 @@ USAGE='send_edit_message.sh [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "messa
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 16:52
 #
-#### $$VERSION$$ v1.25-dev-45-g2a3ab2a
+#### $$VERSION$$ v1.25-dev-49-g41ce9cc
 #===============================================================================
 
 ####
@@ -56,7 +56,7 @@ esac
 
 # set bashbot environment
 # shellcheck disable=SC1090
-source "${0%/*}/bashbot_env.inc.sh" "$4" # $4 debug
+source "${0%/*}/bashbot_env.inc.sh" "${4:-debug}" # $4 debug
 
 ####
 ####

@@ -19,7 +19,7 @@ USAGE='delete_message.sh [-h|--help]  "CHAT[ID]" "MESSAGE[ID]" [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 03.01.2021 15:37
 #
-#### $$VERSION$$ v1.25-dev-45-g2a3ab2a
+#### $$VERSION$$ v1.25-dev-49-g41ce9cc
 #===============================================================================
 
 ####
@@ -42,7 +42,7 @@ esac
 
 # set bashbot environment
 # shellcheck disable=SC1090
-source "${0%/*}/bashbot_env.inc.sh" "$3" # $3 debug
+source "${0%/*}/bashbot_env.inc.sh" "${3:-debug}" # $3 debug
 
 ####
 ####

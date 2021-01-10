@@ -21,7 +21,7 @@ USAGE='send_message.sh [-h|--help] [format] "CHAT[ID]" "message ...." [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 11:34
 #
-#### $$VERSION$$ v1.25-dev-45-g2a3ab2a
+#### $$VERSION$$ v1.25-dev-49-g41ce9cc
 #===============================================================================
 
 ####
@@ -55,7 +55,7 @@ esac
 
 # set bashbot environment
 # shellcheck disable=SC1090
-source "${0%/*}/bashbot_env.inc.sh" "$3" # $3 debug
+source "${0%/*}/bashbot_env.inc.sh" "${3:-debug}" # $3 debug
 
 ####
 # ready, do stuff here -----

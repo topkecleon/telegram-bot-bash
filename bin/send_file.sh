@@ -24,7 +24,7 @@ USAGE='send_file.sh [-h|--help] "CHAT[ID]" "file|URL" "caption ...." [type] [deb
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 25.12.2020 20:24
 #
-#### $$VERSION$$ v1.25-dev-45-g2a3ab2a
+#### $$VERSION$$ v1.25-dev-49-g41ce9cc
 #===============================================================================
 
 ####
@@ -46,7 +46,7 @@ esac
 
 # set bashbot environment
 # shellcheck disable=SC1090
-source "${0%/*}/bashbot_env.inc.sh" "$5" # $5 debug
+source "${0%/*}/bashbot_env.inc.sh" "${5:-debug}" # $5 debug
 
 ####
 # ready, do stuff here -----
