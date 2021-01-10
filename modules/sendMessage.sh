@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.25-dev-29-gac2e1a9
+#### $$VERSION$$ v1.30-dev-2-gcc299a5
 
 # will be automatically sourced from bashbot
 
@@ -17,17 +17,6 @@ eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 
 MSG_URL=${URL}'/sendMessage'
 EDIT_URL=${URL}'/editMessageText'
-PHO_URL=${URL}'/sendPhoto'
-AUDIO_URL=${URL}'/sendAudio'
-DOCUMENT_URL=${URL}'/sendDocument'
-STICKER_URL=${URL}'/sendSticker'
-VIDEO_URL=${URL}'/sendVideo'
-VOICE_URL=${URL}'/sendVoice'
-LOCATION_URL=${URL}'/sendLocation'
-VENUE_URL=${URL}'/sendVenue'
-ACTION_URL=${URL}'/sendChatAction'
-FORWARD_URL=${URL}'/forwardMessage'
-ALBUM_URL=${URL}'/sendMediaGroup'
 
 #
 # send/edit message variants ------------------
@@ -168,7 +157,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
 		JSON+='{"type":"photo","media":"'${IMAGE}'"}'
 	done
 	# shellcheck disable=SC2086
-	res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "${ALBUM_URL}" -F "chat_id=${CHAT}"\
+	res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "${URL}/sendMediaGroup" -F "chat_id=${CHAT}"\
 			-F "media=[${JSON}]" | "${JSONSHFILE}" -s -b -n 2>/dev/null )"
 	sendJsonResult "${res}" "send_album (curl)" "${CHAT}" "$@"
 	[[ -z "${SOURCE}" && -n "${BASHBOT_EVENT_SEND[*]}" ]] && event_send "album" "$@" &
@@ -228,22 +217,22 @@ send_file(){
 	fi
 	# select upload URL
 	case "${ext}" in
-        	audio|mp3|flac)
-			url="${AUDIO_URL}"; what="audio"; stat="upload_audio"
-			;;
 		photo|png|jpg|jpeg|gif|pic)
-			url="${PHO_URL}"; what="photo"; stat="upload_photo"
+			url="${URL}/sendPhoto"; what="photo"; stat="upload_photo"
+			;;
+        	audio|mp3|flac)
+			url="${URL}/sendAudio"; what="audio"; stat="upload_audio"
 			;;
 		sticker|webp)
-			url="${STICKER_URL}"; what="sticker"; stat="upload_photo"
+			url="${URL}/sendSticker"; what="sticker"; stat="upload_photo"
 			;;
 		video|mp4)
-			url="${VIDEO_URL}"; what="video"; stat="upload_video"
+			url="${URL}/sendVideo"; what="video"; stat="upload_video"
 			;;
 		voice|ogg)
-			url="${VOICE_URL}"; what="voice"; stat="record_audio"
+			url="${URL}/sendVoice"; what="voice"; stat="record_audio"
 			;;
-		*)	url="${DOCUMENT_URL}"; what="document"; stat="upload_document"
+		*)	url="${URL}/sendDocument"; what="document"; stat="upload_document"
 			;;
 	esac
 
@@ -268,13 +257,13 @@ send_file(){
 # $1 typing upload_photo record_video upload_video record_audio upload_audio upload_document find_location
 send_action() {
 	[ -z "$2" ] && return
-	sendJson "$1" '"action": "'"$2"'"' "${ACTION_URL}" &
+	sendJson "$1" '"action": "'"$2"'"' "${URL}/sendChatAction" &
 }
 
 # $1 CHAT $2 lat $3 long
 send_location() {
 	[ -z "$3" ] && return
-	sendJson "$1" '"latitude": '"$2"', "longitude": '"$3"'' "${LOCATION_URL}"
+	sendJson "$1" '"latitude": '"$2"', "longitude": '"$3"'' "${URL}/sendLocation"
 }
 
 # $1 CHAT $2 lat $3 long $4 title $5 address $6 foursquard id
@@ -282,7 +271,7 @@ send_venue() {
 	local add=""
 	[ -z "$5" ] && return
 	[ -n "$6" ] && add=', "foursquare_id": '"$6"''
-	sendJson "$1" '"latitude": '"$2"', "longitude": '"$3"', "address": "'"$5"'", "title": "'"$4"'"'"${add}" "${VENUE_URL}"
+	sendJson "$1" '"latitude": '"$2"', "longitude": '"$3"', "address": "'"$5"'", "title": "'"$4"'"'"${add}" "${URL}/sendVenue"
 }
 
 
@@ -293,7 +282,7 @@ send_venue() {
 # $1 CHAT $2 from chat  $3 from msg id
 forward_message() {
 	[ -z "$3" ] && return
-	sendJson "$1" '"from_chat_id": '"$2"', "message_id": '"$3"'' "${FORWARD_URL}"
+	sendJson "$1" '"from_chat_id": '"$2"', "message_id": '"$3"'' "${URL}/forwardMessage"
 }
 forward() { # backward compatibility
 	forward_message "$@" || return

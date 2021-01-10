@@ -5,20 +5,19 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.30-dev-2-gcc299a5
 
 # will be automatically sourced from bashbot
 
 # source once magic, function named like file
 eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 
-INLINE_QUERY=${URL}'/answerInlineQuery'
 
 answer_inline_query() {
 	answer_inline_multi "$1" "$(shift; inline_query_compose "${RANDOM}" "$@")"
 }
 answer_inline_multi() {
-	sendJson "" '"inline_query_id": '"$1"', "results": ['"$2"']' "${INLINE_QUERY}"
+	sendJson "" '"inline_query_id": '"$1"', "results": ['"$2"']' "${URL}/answerInlineQuery"
 }
 
 # $1 unique ID for answer
