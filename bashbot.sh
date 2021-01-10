@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.25-dev-54-gbd664da
+#### $$VERSION$$ v1.25-dev-55-gc6c30a4
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -1105,7 +1105,7 @@ start_bot() {
 # initialize bot environment, user and permissions
 bot_init() {
 	[ -n "${BASHBOT_HOME}" ] && cd "${BASHBOT_HOME}" || exit 1
-	local runuser touser DEBUG="$1"
+	local runuser chown touser botname DEBUG="$1"
 	# upgrade from old version
 	# currently no action
 	printf "Check for Update actions ...\n"
@@ -1120,8 +1120,8 @@ bot_init() {
 	# ask for bashbot user
 	runuser="${RUNUSER}"; [ "${UID}" = "0" ] && runuser="nobody"
 	printf "Enter User to run bashbot [${runuser}]: "
-	read -r touser
-	[ -z "${touser}" ] && touser="${runuser}"
+	read -r chown
+	[ -z "${chown}" ] && chown="${runuser}"; touser="${chown%:*}"
 	# check user ...
 	if ! id "${touser}" &>/dev/null; then
 		printf "${RED}User \"${touser}\" does not exist!${NN}"
@@ -1139,10 +1139,16 @@ bot_init() {
 	chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTACL}" 2>/dev/null
 	# jsshDB must writeable by owner
 	find . -name '*.jssh*' -exec chmod u+w \{\} +
-	chown -R "${touser}" . ./*
+	chown -Rf "${chown}" . ./*
 	printf "Done.\n"
 	# adjust values in bashbot.rc
-	[ -w "bashbot.rc" ] && sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'"${touser}"'"/' "bashbot.rc"
+	if [ -w "bashbot.rc" ]; then
+		printf "Adjust user and botname in bashbot.rc ...\n"
+		sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'"${touser}"'"/' "bashbot.rc"
+		botname="$(getConfigKey "botname")"
+		[ -n "${botname}" ] && sed -i '/^[# ]*name=/ s/name=.*$/name="'"${botname}"'"/' "bashbot.rc"
+		printf "Done.\n"
+	fi
 	# ask to check bottoken online
 	if [ -z "$(getConfigKey "botid")" ]; then
 		printf "Seems to be your first init. Should I verify your bot token online? (y/N) N\b"
