@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.25-dev-46-g8253a53
+#### $$VERSION$$ v1.25-dev-53-gfb8b022
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -1105,7 +1105,7 @@ start_bot() {
 # initialize bot environment, user and permissions
 bot_init() {
 	[ -n "${BASHBOT_HOME}" ] && cd "${BASHBOT_HOME}" || exit 1
-	local DEBUG="$1"
+	local runuser touser DEBUG="$1"
 	# upgrade from old version
 	# currently no action
 	printf "Check for Update actions ...\n"
@@ -1117,26 +1117,31 @@ bot_init() {
 		[ -r "${addons}" ] && source "${addons}" "init" "${DEBUG}"
 	done
 	printf "Done.\n"
-	# setup bashbot
-	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
-	printf "Enter User to run bashbot [${RUNUSER}]: "
-	read -r TOUSER
-	[ -z "${TOUSER}" ] && TOUSER="${RUNUSER}"
-	if ! id "${TOUSER}" &>/dev/null; then
-		printf "${RED}User \"${TOUSER}\" not found!${NN}"
+	# ask for bashbot user
+	runuser="${RUNUSER}"; [ "${UID}" = "0" ] && runuser="nobody"
+	printf "Enter User to run bashbot [${runuser}]: "
+	read -r touser
+	[ -z "${touser}" ] && touser="${runuser}"
+	# check user ...
+	if ! id "${touser}" &>/dev/null; then
+		printf "${RED}User \"${touser}\" does not exist!${NN}"
 		exit 3
-	else
-		printf "Adjusting files and permissions for user \"${TOUSER}\" ...\n"
-		[ -w "bashbot.rc" ] && sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'"${TOUSER}"'"/' "bashbot.rc"
-		chmod 711 .
-		chmod -R o-w ./*
-		chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" logs "${LOGDIR}/"*.log 2>/dev/null
-		chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTACL}" 2>/dev/null
-		# jsshDB must writeable by owner
-		find . -name '*.jssh*' -exec chmod u+w \{\} +
-		chown -R "${TOUSER}" . ./*
-		printf "Done.\n"
+	elif [[ "${UID}" != "0" && "${touser}" != "${runuser}" ]]; then
+		# different user but not root ...
+		printf "${ORANGE}You are not root change to \"${touser}\" may fail, try \"sudo ./bashbot.sh init\"${NN}" 1>&2
 	fi
+	# adjust permissions
+	printf "Adjusting files and permissions for user \"${touser}\" ...\n"
+	chmod 711 .
+	chmod -R o-w ./*
+	chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" logs "${LOGDIR}/"*.log 2>/dev/null
+	chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTACL}" 2>/dev/null
+	# jsshDB must writeable by owner
+	find . -name '*.jssh*' -exec chmod u+w \{\} +
+	chown -R "${touser}" . ./*
+	printf "Done.\n"
+	# adjust values in bashbot.rc
+	[ -w "bashbot.rc" ] && sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'"${touser}"'"/' "bashbot.rc"
 	# ask to check bottoken online
 	if [ -z "$(getConfigKey "botid")" ]; then
 		printf "Seems to be your first init. Should I verify your bot token online? (y/N) N\b"
