@@ -115,7 +115,6 @@ The main use case for send_message is to process the output of interactive chats
 
 ### File, Album, Location, Venue, Keyboard 
 
-
 ##### send_file
 send_file can send local files, URL's or file_id's as different filex types (_e.g. photo video sticker_)
 
@@ -254,6 +253,7 @@ send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"b 1", url"":"u 1"}, {"text":"b 
 
 Edit a message means replace the content of the message in place. The message stay on the same position in the chat and keep the same
 message id.
+If new message  is the same than current message Telegram return error 400 with description "Bad Request: chat message is not modified"
 
 There is no need to use the same format when replace a message, e.g. a message sent with `send_normal_message` can be replaced with
 `edit_markdown_message` or `edit_html_message` and vice versa. 
@@ -312,6 +312,24 @@ saved-id="${BOTSENT[ID]}"
 
 edit_html_message "${CHAT[ID]}" "${saved-id}" "this is <b>html</b> text"
 ```
+
+
+---
+
+### Manage Chat
+To use the following functions the bot must have administrator status in the chat / group
+
+#### set_chat_title
+`set_chat_title` sets a new chat title. If new title is the same than current title Telegram return error 400
+with description "Bad Request: chat title is not modified"
+
+*usage:* set_chat_title "${CHAT[ID]}" "new chat title"
+
+#### set_chat_description
+`set_chat_description` sets a new description title. If new description is the same than current description Telegram return error 400
+with description "Bad Request: chat description is not modified"
+
+*usage:* set_chat_description "${CHAT[ID]}" "new chat description"
 
 
 ----
@@ -1201,5 +1219,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.25-dev-28-g1525ac8
+#### $$VERSION$$ v1.30-dev-1-ge1f2097
 
