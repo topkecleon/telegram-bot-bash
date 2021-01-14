@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.25-dev-55-gc6c30a4
+#### $$VERSION$$ v1.30-dev-3-gf8d8ede
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -308,14 +308,11 @@ BASHBOT_RETRY="" # retry by default
 URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
 ME_URL=${URL}'/getMe'
 
-UPD_URL=${URL}'/getUpdates?offset='
-GETFILE_URL=${URL}'/getFile'
-
 #################
 # BASHBOT COMMON functions
 
 declare -rx SCRIPT SCRIPTDIR MODULEDIR RUNDIR ADDONDIR BOTACL DATADIR COUNTFILE
-declare -rx BOTTOKEN URL ME_URL UPD_URL GETFILE_URL
+declare -rx BOTTOKEN URL ME_URL
 
 declare -ax CMD
 declare -Ax UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
@@ -400,7 +397,7 @@ delete_message() {
 
 get_file() {
 	[ -z "$1" ] && return
-	sendJson ""  '"file_id": "'"$1"'"' "${GETFILE_URL}"
+	sendJson ""  '"file_id": "'"$1"'"' "${URL}/getFIle"
 	printf '%s\n' "${URL}"/"$(JsonGetString <<< "${res}" '"result","file_path"')"
 }
 
@@ -477,8 +474,9 @@ sendJson(){
 if detect_curl ; then
   # here we have curl ----
   [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
+  # $1 URL, $2 hack: log getJson if not ""
   getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -n "$3" ]] && log_debug "getJson (curl) URL=${1##*/}"
+	[[ -n "${BASHBOTDEBUG}" && -n "$2" ]] && log_debug "getJson (curl) URL=${1##*/}"
 	# shellcheck disable=SC2086
 	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
   }
@@ -510,7 +508,7 @@ else
   # NO curl, try wget
   if _exists wget; then
     getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -z "$3" ]] && log_debug "getJson (wget) URL=${1##*/}"
+	[[ -n "${BASHBOTDEBUG}" && -z "$2" ]] && log_debug "getJson (wget) URL=${1##*/}"
 	# shellcheck disable=SC2086
 	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
     }
@@ -1068,7 +1066,7 @@ start_bot() {
 		# adaptive sleep in ms rounded to next 0.1 s
 		sleep "$(_round_float "${nextsleep}e-3" "1")"
 		# get next update
-		UPDATE="$(getJson "${UPD_URL}${OFFSET}" "${BASHBOT_UPDATELOG}" 2>/dev/null | "${JSONSHFILE}" -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
+		UPDATE="$(getJson "${URL}/getUpdates?offset=${OFFSET}" "${BASHBOT_UPDATELOG}" 2>/dev/null | "${JSONSHFILE}" -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
 		# did we get an response?
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
