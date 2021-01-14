@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.30-dev-9-g5f602a9
+#### $$VERSION$$ v1.30-dev-11-gab71f37
 
 # will be automatically sourced from bashbot
 
@@ -45,7 +45,7 @@ unpin_chat_message() {
 }
 
 # $1 chat 
-unpinAll_chat_message() {
+unpinall_chat_message() {
 	sendJson "$1" "" "${URL}/unpinAllChatMessage"
 }
 
