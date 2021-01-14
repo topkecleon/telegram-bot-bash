@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.30-dev-5-gdaeffb3
+#### $$VERSION$$ v1.30-dev-6-g87f618f
 
 # will be automatically sourced from bashbot
 
@@ -149,9 +149,10 @@ send_sticker() {
 }
 
 
-if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
-# there are no checks if URL or ID exists
-# $1 chat $3 ... $n URL or ID
+# only curl can send files ... 
+if detect_curl ; then
+  # there are no checks if URL or ID exists
+  # $1 chat $3 ... $n URL or ID
   send_album(){
 	[ -z "$1" ] && return 1
 	[ -z "$3" ] && return 2 # minimum 2 files
@@ -169,7 +170,7 @@ if [ -z "${BASHBOT_WGET}" ] && _exists curl ; then
   }
 else
   send_album(){
-	log_error "Sorry, wget Album upload not yet implemented"
+	log_error "Sorry, wget Album upload not implemented"
 	BOTSENT[OK]="false"
 	[[ -z "${SOURCE}" && -n "${BASHBOT_EVENT_SEND[*]}" ]] && event_send "album" "$@" &
   }
