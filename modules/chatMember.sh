@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.30-dev-4-gf573d63
+#### $$VERSION$$ v1.30-dev-9-g5f602a9
 
 # will be automatically sourced from bashbot
 
@@ -112,6 +112,7 @@ user_is_botadmin() {
 # $1 user # $2 key # $3 chat
 user_is_allowed() {
 	[ -z "$1" ] && return 1
+	user_is_admin "$1" && return 0
 	# user can do everything
 	grep -F -xq "$1:*:*" <"${BOTACL}" && return 0
 	[ -z "$2" ] && return 1

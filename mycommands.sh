@@ -13,7 +13,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.25-dev-41-g37e4539
+#### $$VERSION$$ v1.30-dev-9-g5f602a9
 #######################################################
 # shellcheck disable=SC1117
 
@@ -124,6 +124,10 @@ else
 	case "${MESSAGE}" in
 		##################
 		# example commands, replace thm by your own
+		'/unpin'*) # unpin all messages if (bot)admin or allowed for user
+			 user_is_allowed "${USER[ID]}" "unpin" "${CHAT[ID]}" &&\
+				unpinall_chat_messages "${CHAT[ID]}"
+			;;
 		'/echo'*) # example echo command
 			send_normal_message "${CHAT[ID]}" "${MESSAGE}"
 			;;

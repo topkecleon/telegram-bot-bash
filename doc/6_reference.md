@@ -422,9 +422,10 @@ fi
 *See also [Chat Member](https://core.telegram.org/bots/api/#chatmember)*
 
 ##### user_is_allowed
-Bashbot supports User Access Control, see [Advanced Usage](3_advanced.md)
+`uers_is_allowed` checks if: user id botadmin, user is group admin or user is allowed to execute action..
+Allowed actions are configured as User Access Control rules, see [Advanced Usage](3_advanced.md)
 
-*usage:* user_is_allowed "${USER[ID]}" "what" "${CHAT[ID]}"
+*usage:* user_is_allowed "${USER[ID]}" "action" "${CHAT[ID]}"
 
 *example:* 
 ```bash
@@ -1219,5 +1220,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.30-dev-1-ge1f2097
+#### $$VERSION$$ v1.30-dev-9-g5f602a9
 
