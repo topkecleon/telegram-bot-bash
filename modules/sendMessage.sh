@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.30-dev-7-g71daed3
+#### $$VERSION$$ v1.30-dev-8-gafade2e
 
 # will be automatically sourced from bashbot
 
@@ -150,7 +150,7 @@ send_button() {
 
 # $1 chat, $2 file_id on telegram server 
 send_sticker() {
-	sendJson "$1" '"sticker": "'"$2"'"' "${URL}/setChatDescription"
+	sendJson "$1" '"sticker": "'"$2"'"' "${URL}/sendSticker"
 }
 
 
