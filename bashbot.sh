@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.30-dev-8-gafade2e
+#### $$VERSION$$ v1.30-dev-12-g0739a51
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -116,6 +116,27 @@ log_debug(){ printf "%(%c)T: %s\n" -1 "$*" >>"${DEBUGLOG}"; }
 log_update(){ printf "%(%c)T: %s\n" -1 "$*" >>"${UPDATELOG}"; }
 # log $1 with date, special first \n
 log_message(){ printf "\n%(%c)T: %s\n" -1 "${1/\\n/$'\n'}" >>"${MESSAGELOG}"; }
+# curl is preferred, try detect curl even not in PATH
+# sets BASHBOT_CURL to point to curl
+DETECTED_CURL="curl"
+detect_curl() {
+	local file warn="Warning: Curl not detected, try fallback to wget! pls install curl or adjust BASHBOT_CURL/BASHBOT_WGET environment variables."
+	# custom curl command
+	[ -n "${BASHBOT_CURL}" ] && return 0
+	# use wget
+	[ -n "${BASHBOT_WGET}" ] && DETECTED_CURL="wget" && return 1
+	# default use curl in PATH
+	BASHBOT_CURL="curl"
+	_exists curl && return 0
+	# search in usual locations
+	for file in /usr/bin /bin /usr/local/bin; do
+		[ -x "${file}/curl" ] && BASHBOT_CURL="${file}/curl" && return 0
+	done
+	# curl not in PATH and not in usual locations
+	DETECTED_CURL="wget"
+	log_update "${warn}"; [ -n "${BASHBOTDEBUG}" ] && log_debug "${warn}"
+	return 1
+}
 
 # additional tests if we run in debug mode
 export BASHBOTDEBUG
@@ -399,37 +420,6 @@ get_file() {
 	[ -z "$1" ] && return
 	sendJson ""  '"file_id": "'"$1"'"' "${URL}/getFile"
 	printf '%s\n' "${URL}"/"$(JsonGetString <<< "${res}" '"result","file_path"')"
-}
-
-# curl is preferred, try detect curl even not in PATH
-# return TRUE if curl is found or custom curl detected
-# return FALSE if no curl is found or wget is forced by BASHBOT_WGET
-# sets BASHBOT_CURL to point to curl
-DETECTED_CURL="curl"
-function detect_curl() {
-	# custom curl command
-	[ -n "${BASHBOT_CURL}" ] && return 0
-	# use wget
-	if [ -n "${BASHBOT_WGET}" ]; then
-		DETECTED_CURL="wget"
-		return 1
-	fi
-	# default use curl in PATH
-	BASHBOT_CURL="curl"
-	_exists curl && return 0
-	# search in usual locations
-	local file
-	for file in /usr/bin /bin /usr/local/bin; do
-		if [ -x "${file}/curl" ]; then
-			BASHBOT_CURL="${file}/curl"
-			return 0
-		fi
-	done
-	# curl not in PATH and not in usual locations
-	DETECTED_CURL="wget"
-	local warn="Warning: Curl not detected, try fallback to wget! pls install curl or adjust BASHBOT_CURL/BASHBOT_WGET environment variables."
-	log_update "${warn}"; [ -n "${BASHBOTDEBUG}" ] && log_debug "${warn}"
-	return 1
 }
 
 # iconv used to filter out broken utf characters, if not installed fake it
