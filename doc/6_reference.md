@@ -214,7 +214,7 @@ _keyboard_numpad
 ----
 
 ##### send_button
-*usage:*  send_button "chat-id" "message" "text" "URL"
+*usage:*  send_button "$CHAT[ID]" "message" "text" "URL"
 
 *alias:* _button "text" "URL"
 
@@ -222,6 +222,12 @@ _keyboard_numpad
 ```bash
 send_button "${CHAT[ID]}" "MAKE MONEY FAST!!!" "Visit my Shop" "https://dealz.rrr.de"
 ```
+
+##### send_sticker
+`send_sticker` sends a sticker using a `file_id` to send a sticker that exists on the Telegram servers.
+
+*usage:*  send_sticker "$CHAT[ID]" "file_id"
+
 
 ##### send_inline_keyboard
 Even its called keyboard, this function is different from send_keyboard. The main difference is that it's only possible to
@@ -313,23 +319,66 @@ saved-id="${BOTSENT[ID]}"
 edit_html_message "${CHAT[ID]}" "${saved-id}" "this is <b>html</b> text"
 ```
 
+##### edit_message_caption
+`edit_message_caption` changes the caption of a message (photo, audio, video, document) in the given chat.
+
+*usage:*  edit_message_caption "${CHAT[ID]}" "MESSAGE-ID" "caption"
+
 
 ---
 
-### Manage Chat
+### Manage Group
 To use the following functions the bot must have administrator status in the chat / group
 
-#### set_chat_title
+##### set_chat_title
 `set_chat_title` sets a new chat title. If new title is the same than current title Telegram return error 400
 with description "Bad Request: chat title is not modified"
 
 *usage:* set_chat_title "${CHAT[ID]}" "new chat title"
 
-#### set_chat_description
+
+##### set_chat_description
 `set_chat_description` sets a new description title. If new description is the same than current description Telegram return error 400
 with description "Bad Request: chat description is not modified"
 
 *usage:* set_chat_description "${CHAT[ID]}" "new chat description"
+
+
+##### new_chat_invite
+`new_chat_invite` generate a new invite link for a chat; any previously generated link is revoked. 
+Returns the new invite link as String on success.
+
+*usage:* new_chat_invite "${CHAT[ID]}"
+
+
+##### delete_chat_photo
+
+*usage:* delete_chat_photo "${CHAT[ID]}"
+
+
+##### pin_chat_message
+# $1 chat, $2 message_id 
+`pin_chat_message` add a message to the list of pinned messages in a chat.
+
+*usage:* pin_chat_message "${CHAT[ID]}" "message_id"
+
+
+##### unpin_chat_message
+`unpin_chat_message` remove a message from the list of pinned messages in a chat.
+
+*usage:* unpin_chat_message "${CHAT[ID]}" "message_id"
+
+
+##### unpinall_chat_message
+`unpinall_chat_message` clear the list of pinned messages in a chat.
+
+*usage:* unpinall_chat_message "${CHAT[ID]}"
+
+
+##### delete_chat_stickers
+`delete_chat_stickers` deletes a group sticker set from a supergroup.
+
+*usage:* delete_chat_stickers "${CHAT[ID]}"
 
 
 ----
@@ -1220,5 +1269,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.30-dev-9-g5f602a9
+#### $$VERSION$$ v1.30-dev-10-ge13b9eb
 
