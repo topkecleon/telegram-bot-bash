@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.30-dev-6-g87f618f
+#### $$VERSION$$ v1.30-dev-7-g71daed3
 
 # will be automatically sourced from bashbot
 
@@ -73,6 +73,11 @@ edit_markdownv2_message() {
 # $1 CHAT $2 msg-id $3 message
 edit_html_message() {
 	_format_message_url "$1" "$3" ',"message_id":'"$2"',"parse_mode":"html"' "${EDIT_URL}"
+}
+
+# $1 chat $2 mesage_id, $3 caption
+edit_message_caption() {
+	sendJson "$1" ',"message_id":'"$2"',"caption":"'"$3"'"' "${URL}/editMessageCaption"
 }
 
 
