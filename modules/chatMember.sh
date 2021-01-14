@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.30-dev-2-gcc299a5
+#### $$VERSION$$ v1.30-dev-4-gf573d63
 
 # will be automatically sourced from bashbot
 
@@ -14,6 +14,11 @@ eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 
 
 # manage chat functions -------
+# $1 chat 
+new_chat_invite() {
+	sendJson "$1" "" "${URL}/exportChatInviteLink"
+}
+
 # $1 chat, $2 title 
 set_chat_title() {
 	sendJson "$1" '"title": "'"$2"'"' "${URL}/setChatTitle"
@@ -24,6 +29,30 @@ set_chat_description() {
 	sendJson "$1" '"description": "'"$2"'"' "${URL}/setChatDescription"
 }
 
+# $1 chat 
+delete_chat_photo() {
+	sendJson "$1" "" "${URL}/deleteChatPhoto"
+}
+
+# $1 chat, $2 message_id 
+pin_chat_message() {
+	sendJson "$1" '"message_id": "'"$2"'"' "${URL}/pinChatMessage"
+}
+
+# $1 chat, $2 message_id 
+unpin_chat_message() {
+	sendJson "$1" '"message_id": "'"$2"'"' "${URL}/unpinChatMessage"
+}
+
+# $1 chat 
+unpinAll_chat_message() {
+	sendJson "$1" "" "${URL}/unpinAllChatMessage"
+}
+
+# $1 chat 
+delete_chat_stickers() {
+	sendJson "$1" "" "${URL}/deleteChatStickerSet"
+}
 
 # manage chat member functions -------
 kick_chat_member() {
