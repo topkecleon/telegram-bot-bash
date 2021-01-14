@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.30-dev-12-g0739a51
+#### $$VERSION$$ v1.30-dev-13-g29fa5cf
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -558,7 +558,9 @@ sendJsonResult(){
 	[ -n "${BASHBOTDEBUG}" ] && log_message "New Result ==========\n$1"
 	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$1")"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
+		BOTSENT[RESULT]="$(JsonGetString '"result"' <<< "$1")"
 		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$1")"
+		BOTSENT[CHAT]="$(JsonGetValue '"result","chat","id"' <<< "$1")"
 		return
 		# hot path everything OK!
 	else

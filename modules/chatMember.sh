@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.30-dev-11-gab71f37
+#### $$VERSION$$ v1.30-dev-13-g29fa5cf
 
 # will be automatically sourced from bashbot
 
@@ -17,6 +17,7 @@ eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 # $1 chat 
 new_chat_invite() {
 	sendJson "$1" "" "${URL}/exportChatInviteLink"
+	[ "${BOTSENT[OK]}" = "true" ] && printf "%s\n" "${BOTSENT[RESULT]}"
 }
 
 # $1 chat, $2 title 
@@ -46,7 +47,7 @@ unpin_chat_message() {
 
 # $1 chat 
 unpinall_chat_message() {
-	sendJson "$1" "" "${URL}/unpinAllChatMessage"
+	sendJson "$1" "" "${URL}/unpinAllChatMessages"
 }
 
 # $1 chat 
