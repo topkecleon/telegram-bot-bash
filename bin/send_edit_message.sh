@@ -3,11 +3,11 @@
 #
 #          FILE: bin/send_message.sh
 # 
-USAGE='send_edit_message.sh [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "message ...." [debug]'
+USAGE='send_edit_message.sh [-h|--help] [format|caption] "CHAT[ID]" "MESSAGE[ID]" "message ...." [debug]'
 # 
 #   DESCRIPTION: replace a message in the given user/group
 # 
-#       OPTIONS: format - normal, markdown, html (optional)
+#       OPTIONS: format - normal, markdown, html or caption for file caption (optional)
 #                CHAT[ID] - ID number of CHAT or BOTADMIN to send to yourself
 #                MESSAGE[ID] - message to replace
 #                message - message to send in specified format
@@ -22,7 +22,7 @@ USAGE='send_edit_message.sh [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "messa
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 16:52
 #
-#### $$VERSION$$ v1.30-dev-15-g8399096
+#### $$VERSION$$ v1.30-dev-16-g28ab301
 #===============================================================================
 
 ####
@@ -37,8 +37,12 @@ case "$1" in
 		SEND="edit_markdownv2_message"
 		shift
 		;;
-	"html")
+	"htm"*)
 		SEND="edit_html_message"
+		shift
+		;;
+	"cap"*)
+		SEND="edit_message_caption"
 		shift
 		;;
 	'')
@@ -68,6 +72,7 @@ else
 fi
 
 # send message in selected format
+set -x
 "${SEND}" "${CHAT}" "$2" "$3"
 
 # output send message result
