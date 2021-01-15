@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.30-dev-15-g8399096
+#### $$VERSION$$ v1.30-dev-25-gef972c5
 
 # will be automatically sourced from bashbot
 
@@ -259,7 +259,7 @@ send_file(){
 	esac
 	# get file_id and file_type
 	if [ "${BOTSENT[OK]}" = "true" ]; then
-		 BOTSENT[FILE_ID]="$(JsonGetString '.*,"file_id"' <<< "${res}")"
+		 BOTSENT[FILE_ID]="${UPD["${what},0,file_id"]}"
 		 BOTSENT[FILE_TYPE]="${what}"
 	fi
 	return 0
