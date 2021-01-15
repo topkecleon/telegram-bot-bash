@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#### $$VERSION$$ v1.25-dev-46-g8253a53
+#### $$VERSION$$ v1.30-dev-20-g541a279
 # shellcheck disable=SC2016
 #
 # Easy Versioning in git:
@@ -34,14 +34,8 @@
 # run this script to (re)place Version number in files
 #
 
-# magic to ensure that we're always inside the root of our application,
-# no matter from which directory we'll run script
-GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
-if [ "${GIT_DIR}" != "" ] ; then
-	cd "${GIT_DIR}/.." || exit 1
-else
-	printf "Sorry, no git repository %s\n" "$(pwd)" && exit 1
-fi
+#shellcheck disable=SC1090
+source "${0%/*}/dev.inc.sh"
 
 unset IFS
 # set -f # if you are paranoid use set -f to disable globbing

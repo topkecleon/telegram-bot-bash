@@ -9,18 +9,12 @@
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.30-dev-20-g541a279
 ###################################################################
 
-# magic to ensure that we're always inside the root of our application,
-# no matter from which directory we'll run script
-GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
-if [ "${GIT_DIR}" != "" ] ; then
-	[[ "${GIT_DIR}" != "/"* ]] && GIT_DIR="${PWD}/${GIT_DIR}"
-	cd "${GIT_DIR}/.." || exit 1
-else
-	[ ! -f "bashbot.sh" ] && printf "bashbot.sh not found in %s\n" " $(pwd)" && exit 1
-fi
+#shellcheck disable=SC1090
+source "${0%/*}/dev.inc.sh"
+[ ! -f "bashbot.sh" ] && printf "bashbot.sh not found in %s\n" " $(pwd)" && exit 1
 
 #DISTNAME="telegram-bot-bash"
 DISTDIR="./STANDALONE" 
@@ -37,7 +31,7 @@ cd "${DISTDIR}" || exit 1
 
 # inject JSON.sh into distribution
 # shellcheck disable=SC1090
-source "${GIT_DIR}/../dev/inject-json.sh"
+source "${BASE_DIR}/dev/inject-json.sh"
 
 #######################
 # here the magic starts
@@ -95,7 +89,7 @@ chmod +x bashbot.sh.min
 # make html doc
 printf "Create html doc\n"
 #shellcheck disable=SC1090
-source "${GIT_DIR}/../dev/make-html.sh"
+source "${BASE_DIR}/dev/make-html.sh"
 
 printf "%s Done!\n" "$0"
 

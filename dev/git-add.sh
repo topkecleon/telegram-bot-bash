@@ -3,16 +3,10 @@
 #
 # works together with git pre-push.sh and ADD all changed files since last push
 
-#### $$VERSION$$ v1.25-dev-50-g427e4df
+#### $$VERSION$$ v1.30-dev-20-g541a279
 
-# magic to ensure that we're always inside the root of our application,
-# no matter from which directory we'll run script
-GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
-if [ "${GIT_DIR}" != "" ] ; then
-	cd "${GIT_DIR}/.." || exit 1
-else
-	printf "Sorry, no git repository %s\n" "$(pwd)" && exit 1
-fi
+#shellcheck disable=SC1090
+source "${0%/*}/dev.inc.sh"
 
 [ ! -f .git/.lastcommit ] && printf "No previous commit or hooks not installed, use \"git add\" instead ... Abort\n" && exit
 
