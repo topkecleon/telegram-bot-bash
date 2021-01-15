@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.30-dev-13-g29fa5cf
+#### $$VERSION$$ v1.30-dev-18-gabe058a
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -146,7 +146,7 @@ export BASHBOTDEBUG
 # shellcheck disable=SC2094
 debug_checks(){ {
 	[  -z "${BASHBOTDEBUG}" ] && return
-	local where token; where="$1"; shift
+	local token where="$1"; shift
 	printf "%(%c)T: debug_checks: %s: bashbot.sh %s\n" -1 "${where}" "${1##*/}"
 	# shellcheck disable=SC2094
 	[ -z "${DEBUGLOG}" ] && printf "%(%c)T: %s\n" -1 "DEBUGLOG not set! =========="
@@ -651,15 +651,14 @@ getBotName() {
 # pure bash implementation, done by KayM (@gnadelwartz)
 # see https://stackoverflow.com/a/55666449/9381171
 JsonDecode() {
-	local out="$1" remain="" U=""
+	local remain U out="$1"
 	local regexp='(.*)\\u[dD]([0-9a-fA-F]{3})\\u[dD]([0-9a-fA-F]{3})(.*)'
 	while [[ "${out}" =~ ${regexp} ]] ; do
 	U=$(( ( (0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ) | ( 0xd${BASH_REMATCH[3]} & 0x3ff ) + 0x10000 ))
 			remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
 			out="${BASH_REMATCH[1]}"
 	done
-	#printf "%b\n" "${out}${remain}" # seems to work ... dealyed to next dev
-	echo -e "${out}${remain}"
+	printf "%b\n" "${out}${remain}"
 }
 
 JsonGetString() {
