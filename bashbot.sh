@@ -15,7 +15,7 @@
 #     This file is public domain in the USA and all free countries.
 #     Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-# Usage: bashbot.sh [-h|--help|BOTCOMMANDS]
+# Usage: bashbot.sh BOTCOMMAND
 BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killback"
 #
 # Exit Codes:
@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.30-dev-18-gabe058a
+#### $$VERSION$$ v1.30-dev-23-g0f27e71
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -191,8 +191,8 @@ case "$1" in
 	"") [ -z "${SOURCE}" ] && printf "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NN}" && exit
 		;;
 	"-h"*)	LOGO="${BASHBOT_HOME:-.}/doc/bashbot.ascii"
-		[ -r "${LOGO}" ] && cat "${LOGO}"
-		sed -nE -e '/(NOT EDIT)|(shellcheck)/d' -e '3,/###/p' <"$0"
+		{ [ -r "${LOGO}" ] && cat "${LOGO}"
+		sed -nE -e '/(NOT EDIT)|(shellcheck)/d' -e '3,/###/p' <"$0"; } | more
 		exit;;
 	"help") HELP="${BASHBOT_HOME:-.}/README"
 		if [ -n "${INTERACTIVE}" ];then
