@@ -141,7 +141,8 @@ Note: to get help about a script in bin/ run `scriptname.sh --help`
 ----
 
 ## Receive data
-Evertime a Message is received, you can read incoming data using the following variables:
+Evertime a Telegram update is received, you can read incoming data using the following variables:
+In case you need other update values, the array `UDP` contains complete Telegram response.
 
 ### Regular Messages
 
@@ -255,16 +256,20 @@ they contain the following variables only:
     * `${iQUERY[LAST_NAME]}`: User's last name
 
 
-### Send Message Results
+## Send data / get response
 
-BOTSENT is set on every send_xxx action and only valid until next send action. For more on message results see.  
-[Advanced Usage](3_advanced.md)
+After every `send_xxx` `get_xxx` call the array BOTSENT contains the most important values from Telegram response.
+In case you need other response values , the array `UDP` contains complete Telegram response.
+
+### BOTSENT array
 
 * `$BOTSENT`: This array contains the parsed results from the last transmission to telegram.
     * `${BOTSENT[OK]}`: contains the string `true`: after a successful transmission
     * `${BOTSENT[ID]}`: Message ID of sent message, image, file etc., if OK is true
     * `${BOTSENT[FILE_ID]}`: unique identifier returned for an uploaded file or URL
     * `${BOTSENT[FILE_TYPE]}`: file type: photo, audio, video, sticker, voice, document
+
+
 
 ## Usage of bashbot functions
 
@@ -346,5 +351,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.25-dev-42-gde24ded
+#### $$VERSION$$ v1.30-dev-26-gd12ab86
 
