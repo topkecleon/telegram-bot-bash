@@ -6,10 +6,12 @@
 # Description:
 #    even after make-distribution.sh bashbot is not self contained as it was in the past.
 #
+# Options: --notest
+#
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.30-dev-20-g541a279
+#### $$VERSION$$ v1.30-dev-21-g550a0de
 ###################################################################
 
 #shellcheck disable=SC1090
@@ -18,16 +20,25 @@ source "${0%/*}/dev.inc.sh"
 
 #DISTNAME="telegram-bot-bash"
 DISTDIR="./STANDALONE" 
-DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh dev/obfuscate.sh modules scripts logs LICENSE README.* doc botacl botconfig.jssh"
+DISTMKDIR="data-bot-bash logs"
+DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh dev/obfuscate.sh modules scripts addons LICENSE README.* doc botacl botconfig.jssh"
 
 # run pre_commit on files
-dev/hooks/pre-commit.sh
+[ "$1" != "--notest" ] &&  dev/hooks/pre-commit.sh
 
 # create dir for distribution and copy files
+printf "Create directories and copy files\n"
 mkdir -p "${DISTDIR}" 2>/dev/null
+
 # shellcheck disable=SC2086
 cp -r ${DISTFILES} "${DISTDIR}" 2>/dev/null
 cd "${DISTDIR}" || exit 1
+
+# shellcheck disable=SC2250
+for dir in $DISTMKDIR
+do
+	[ ! -d "${dir}" ] && mkdir "${dir}"
+done
 
 # inject JSON.sh into distribution
 # shellcheck disable=SC1090
@@ -60,7 +71,7 @@ printf "\n... create unified bashbot.sh\n"
 
 { 
   # first head of bashbot.sh
-  sed -n '0,/for modules in/ p' bashbot.sh | head -n -3
+  sed -n '0,/for module in/ p' bashbot.sh | head -n -3
 
   # then mycommands from first non comment line on
   printf '\n##############################\n# bashbot modules starts here ...\n'
