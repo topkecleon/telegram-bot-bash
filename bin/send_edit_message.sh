@@ -22,7 +22,7 @@ USAGE='send_edit_message.sh [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "messa
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 16:52
 #
-#### $$VERSION$$ v1.25-dev-49-g41ce9cc
+#### $$VERSION$$ v1.30-dev-15-g8399096
 #===============================================================================
 
 ####
