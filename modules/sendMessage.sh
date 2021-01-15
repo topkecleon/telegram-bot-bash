@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.30-dev-8-gafade2e
+#### $$VERSION$$ v1.30-dev-14-g8ae30fa
 
 # will be automatically sourced from bashbot
 
@@ -77,7 +77,7 @@ edit_html_message() {
 
 # $1 chat $2 mesage_id, $3 caption
 edit_message_caption() {
-	sendJson "$1" ',"message_id":'"$2"',"caption":"'"$3"'"' "${URL}/editMessageCaption"
+	sendJson "$1" '"message_id":'"$2"',"caption":"'"$3"'"' "${URL}/editMessageCaption"
 }
 
 
