@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.30-dev-23-g0f27e71
+#### $$VERSION$$ v1.30-dev-24-g2771783
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -555,21 +555,21 @@ sendJsonRetry(){
 sendJsonResult(){
 	local offset=0
 	BOTSENT=( )
+	Json2Array 'UPD' <<<"$1"
 	[ -n "${BASHBOTDEBUG}" ] && log_message "New Result ==========\n$1"
-	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "$1")"
+	BOTSENT[OK]="${UPD["ok"]}"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
-		BOTSENT[RESULT]="$(JsonGetString '"result"' <<< "$1")"
-		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "$1")"
-		BOTSENT[CHAT]="$(JsonGetValue '"result","chat","id"' <<< "$1")"
+		BOTSENT[ID]="${UPD["result","message_id"]}"
+		BOTSENT[CHAT]="${UPD["result","chat","id"]}"
+		[ -n "${UPD["result"]}" ] && BOTSENT[RESULT]="${UPD["result"]}"
 		return
 		# hot path everything OK!
 	else
 	    # oops something went wrong!
 	    if [ -n "$1" ]; then
-			BOTSENT[ERROR]="$(JsonGetValue '"error_code"' <<< "$1")"
-			BOTSENT[DESCRIPTION]="$(JsonGetString '"description"' <<< "$1")"
-			grep -qs -F '"parameters","retry_after"' <<< "$1" &&\
-				BOTSENT[RETRY]="$(JsonGetValue '"parameters","retry_after"' <<< "$1")"
+			BOTSENT[ERROR]="${UPD["error_code"]}"
+			BOTSENT[DESCRIPTION]="${UPD["description"]}"
+			[ -n "${UPD["parameters","retry_after"]}" ] && BOTSENT[RETRY]="${UPD["parameters","retry_after"]}"
 	    else
 			BOTSENT[OK]="false"
 			BOTSENT[ERROR]="999"
