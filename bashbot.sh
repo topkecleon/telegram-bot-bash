@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.30-dev-31-g161e883
+#### $$VERSION$$ v1.30-dev-32-g172a9e5
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -1133,9 +1133,10 @@ bot_init() {
 	# adjust values in bashbot.rc
 	if [ -w "bashbot.rc" ]; then
 		printf "Adjust user and botname in bashbot.rc ...\n"
-		sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'"${touser}"'"/' "bashbot.rc"
+		sed -i '/^[# ]*runas=/ s|runas=.*$|runas="'"${touser}"'"|' "bashbot.rc"
+		sed -i '/^[# ]*bashbot=/ s|bashbot=.*$|bashbot="cd '"${PWD}"'; '"${PWD}"'/'"${0##*/}"'"|' "bashbot.rc"
 		botname="$(getConfigKey "botname")"
-		[ -n "${botname}" ] && sed -i '/^[# ]*name=/ s/name=.*$/name="'"${botname}"'"/' "bashbot.rc"
+		[ -n "${botname}" ] && sed -i '/^[# ]*name=/ s|name=.*$|name="'"${botname}"'"|' "bashbot.rc"
 		printf "Done.\n"
 	fi
 	# ask to check bottoken online

@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.30-dev-28-gd269f98
+#### $$VERSION$$ v1.30-dev-31-g161e883
 
 # will be automatically sourced from bashbot
 
@@ -115,16 +115,16 @@ user_is_allowed() {
 	[ -z "$1" ] && return 1
 	user_is_admin "$1" && return 0
 	# user can do everything
-	grep -F -xq "$1:*:*" <"${BOTACL}" && return 0
+	grep -F -xq "$1:*:*" "${BOTACL}" && return 0
 	[ -z "$2" ] && return 1
 	# user is allowed todo one action in every chat
-	grep -F -xq "$1:$2:*" <"${BOTACL}" && return 0
+	grep -F -xq "$1:$2:*" "${BOTACL}" && return 0
 	# all users are allowed to do one action in every chat
-	grep -F -xq "ALL:$2:*" <"${BOTACL}" && return 0
+	grep -F -xq "ALL:$2:*" "${BOTACL}" && return 0
 	[ -z "$3" ] && return 1
 	# user is allowed to do one action in one chat
-	grep -F -xq "$1:$2:$3" <"${BOTACL}" && return 0
+	grep -F -xq "$1:$2:$3" "${BOTACL}" && return 0
 	# all users are allowed to do one action in one chat
-	grep -F -xq "ALL:$2:$3" <"${BOTACL}" && return 0
+	grep -F -xq "ALL:$2:$3" "${BOTACL}" && return 0
 	return 1
 }
