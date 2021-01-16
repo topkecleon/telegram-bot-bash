@@ -142,7 +142,7 @@ Note: to get help about a script in bin/ run `scriptname.sh --help`
 
 ## Receive data
 Evertime a Telegram update is received, you can read incoming data using the following variables:
-In case you need other update values, the array `UDP` contains complete Telegram response.
+In case you need other update values, the array `UPD` contains complete Telegram response.
 
 ### Regular Messages
 
@@ -259,7 +259,7 @@ they contain the following variables only:
 ## Send data / get response
 
 After every `send_xxx` `get_xxx` call the array BOTSENT contains the most important values from Telegram response.
-In case you need other response values , the array `UDP` contains complete Telegram response.
+In case you need other response values , the array `UPD` contains complete Telegram response.
 
 ### BOTSENT array
 
@@ -351,5 +351,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.30-dev-26-gd12ab86
+#### $$VERSION$$ v1.30-dev-27-g6857a55
 
