@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.25-dev-30-gefca2e0
+#### $$VERSION$$ v1.30-dev-31-g161e883
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -132,7 +132,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
 	[ -z "${DB}" ] && return 1
 	# start atomic delete here, exclusive max wait 1s 
 	{ flock -s -w 1 200
-	[ -r "${DB}" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${DB}" | tail -n 1
+	[ -r "${DB}" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' "${DB}" | tail -n 1
 	} 200>"${DB}${JSSH_LOCKNAME}"
   }
 
@@ -298,7 +298,7 @@ jssh_getKeyDB_async() {
 	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
 	local DB; DB="$(jssh_checkDB "$2")"
 	[ -z "${DB}" ] && return 1
-	[ -r "${DB}" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${DB}" | tail -n 1
+	[ -r "${DB}" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' "${DB}" | tail -n 1
 }
 
 jssh_countKeyDB_async() {
@@ -313,7 +313,7 @@ jssh_countKeyDB_async() {
 		Array2Json  "oldARR" >"${DB}"
 	elif [ -r "${DB}" ]; then
 		# it's append, but last one counts, its a simple DB ...
-		VAL="$(sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${DB}" | tail -n 1)"
+		VAL="$(sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' "${DB}" | tail -n 1)"
 		printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "$((++VAL))" >>"${DB}"
 	fi
   }

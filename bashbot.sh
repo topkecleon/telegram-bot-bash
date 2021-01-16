@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.30-dev-24-g2771783
+#### $$VERSION$$ v1.30-dev-31-g161e883
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -102,7 +102,7 @@ setConfigKey() {
 }
 getConfigKey() {
 	[[ "$1" =~ ^[-${azAZo9},._]+$ ]] || return 3
-	[ -r "${BOTCONFIG}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTCONFIG}.jssh" | tail -n 1
+	[ -r "${BOTCONFIG}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' "${BOTCONFIG}.jssh" | tail -n 1
 }
 # check if $1 seems a valid token
 # return true if token seems to be valid
@@ -192,7 +192,7 @@ case "$1" in
 		;;
 	"-h"*)	LOGO="${BASHBOT_HOME:-.}/doc/bashbot.ascii"
 		{ [ -r "${LOGO}" ] && cat "${LOGO}"
-		sed -nE -e '/(NOT EDIT)|(shellcheck)/d' -e '3,/###/p' <"$0"; } | more
+		sed -nE -e '/(NOT EDIT)|(shellcheck)/d' -e '3,/###/p' "$0"; } | more
 		exit;;
 	"help") HELP="${BASHBOT_HOME:-.}/README"
 		if [ -n "${INTERACTIVE}" ];then
