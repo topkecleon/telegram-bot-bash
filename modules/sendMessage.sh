@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.30-dev-25-gef972c5
+#### $$VERSION$$ v1.30-dev-30-g6bfab17
 
 # will be automatically sourced from bashbot
 
@@ -186,7 +186,7 @@ UPLOADDIR="${BASHBOT_UPLOAD:-${DATADIR}/upload}"
 # supports local file, URL and file_id
 # $1 chat, $2 file https::// file_id:// , $3 caption, $4 extension (optional)
 send_file(){
-	local url what stat err media capt file="$2" ext="$4"
+	local url what num stat err media capt file="$2" ext="$4"
 	capt="$(JsonEscape "$3")"
 	if [[ "${file}" =~ ^https*:// ]]; then
 		media="URL"
@@ -229,7 +229,7 @@ send_file(){
 	# select upload URL
 	case "${ext}" in
 		photo|png|jpg|jpeg|gif|pic)
-			url="${URL}/sendPhoto"; what="photo"; stat="upload_photo"
+			url="${URL}/sendPhoto"; what="photo"; num=",0"; stat="upload_photo"
 			;;
         	audio|mp3|flac)
 			url="${URL}/sendAudio"; what="audio"; stat="upload_audio"
@@ -259,8 +259,8 @@ send_file(){
 	esac
 	# get file_id and file_type
 	if [ "${BOTSENT[OK]}" = "true" ]; then
-		 BOTSENT[FILE_ID]="${UPD["${what},0,file_id"]}"
-		 BOTSENT[FILE_TYPE]="${what}"
+		BOTSENT[FILE_ID]="${UPD["result,${what}${num},file_id"]}"
+		BOTSENT[FILE_TYPE]="${what}"
 	fi
 	return 0
 }
