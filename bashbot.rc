@@ -5,7 +5,7 @@
 #
 # tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.25-dev-51-gb2eecc5
+#### $$VERSION$$ v1.30-dev-28-gd269f98
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 
@@ -60,7 +60,7 @@ case "$1" in
 'status')
 	ps -f -u "${runas}" | grep "${name}" | grep -qF "bashbot.sh startbot"
 	if [ "$?" = "0" ]; then
-		printf "bashbot (%s) is runningi\n" "${name}"
+		printf "bashbot (%s) is running\n" "${name}"
 		RETVAL=0
 	else
 		printf "bashbot (%s) is stopped\n" "${name}"
