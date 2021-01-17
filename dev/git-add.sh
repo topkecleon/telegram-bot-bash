@@ -3,7 +3,7 @@
 #
 # works together with git pre-push.sh and ADD all changed files since last push
 
-#### $$VERSION$$ v1.30-dev-20-g541a279
+#### $$VERSION$$ v1.30-0-g3266427
 
 #shellcheck disable=SC1090
 source "${0%/*}/dev.inc.sh"

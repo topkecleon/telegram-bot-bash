@@ -19,7 +19,7 @@ USAGE='delete_message.sh [-h|--help]  "CHAT[ID]" "MESSAGE[ID]" [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 03.01.2021 15:37
 #
-#### $$VERSION$$ v1.25-dev-49-g41ce9cc
+#### $$VERSION$$ v1.30-0-g3266427
 #===============================================================================
 
 ####

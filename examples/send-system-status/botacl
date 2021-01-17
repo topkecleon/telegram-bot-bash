@@ -1,7 +1,7 @@
 # file: botacl
 # a user not listed here, will return false from 'user_is_allowed'
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 # Format:
 # user:resource:chat
 

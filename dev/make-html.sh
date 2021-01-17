@@ -7,7 +7,7 @@
 #
 # Usage: source make-hmtl
 #
-#### $$VERSION$$ v1.30-dev-21-g550a0de
+#### $$VERSION$$ v1.30-0-g3266427
 ##############################################################
 
 # check for correct dir

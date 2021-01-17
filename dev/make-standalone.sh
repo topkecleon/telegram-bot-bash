@@ -11,7 +11,7 @@
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.30-dev-23-g0f27e71
+#### $$VERSION$$ v1.30-0-g3266427
 ###################################################################
 
 #shellcheck disable=SC1090

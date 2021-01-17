@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.30-dev-33-gd8453aa
+#### $$VERSION$$ v1.30-0-g3266427
 ##################################################################
 
 # emmbeded system may claim bash but it is not

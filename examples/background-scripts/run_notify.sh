@@ -4,7 +4,7 @@
 #
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
-#### $$VERSION$$ v1.25-dev-7-g9ef8778
+#### $$VERSION$$ v1.30-0-g3266427
 
 ######
 # parameters

@@ -386,5 +386,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v1.25-dev-36-g58e789a
+#### $$VERSION$$ v1.30-0-g3266427
 

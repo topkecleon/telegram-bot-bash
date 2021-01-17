@@ -132,5 +132,5 @@ You must update to [Version 1.20](https://github.com/topkecleon/telegram-bot-bas
 
 #### [Next Create Bot](1_firstbot.md)
 
-#### $$VERSION$$ v1.25-dev-42-gde24ded
+#### $$VERSION$$ v1.30-0-g3266427
 

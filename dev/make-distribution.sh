@@ -7,7 +7,7 @@
 #
 # Options: --notest - skip tests
 #
-#### $$VERSION$$ v1.30-dev-20-g541a279
+#### $$VERSION$$ v1.30-0-g3266427
 ##############################################################
 
 #shellcheck disable=SC1090

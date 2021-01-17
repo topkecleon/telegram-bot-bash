@@ -56,6 +56,6 @@ convert existing bots.
 **jsonDB-keybords** contains a stripped down real world example from my bot showing the usage of jsonDB to store and retrieve values
 plus use of keyboards in private chats. It's an extended version of mycommands.sh.dist. Messages and help are in german.
 
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 
 
