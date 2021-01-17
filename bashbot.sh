@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.30-dev-32-g172a9e5
+#### $$VERSION$$ v1.30-dev-33-gd8453aa
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -466,7 +466,6 @@ if detect_curl ; then
   [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
   # $1 URL, $2 hack: log getJson if not ""
   getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -n "$2" ]] && log_debug "getJson (curl) URL=${1##*/}"
 	# shellcheck disable=SC2086
 	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
   }
@@ -498,7 +497,6 @@ else
   # NO curl, try wget
   if _exists wget; then
     getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -z "$2" ]] && log_debug "getJson (wget) URL=${1##*/}"
 	# shellcheck disable=SC2086
 	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
     }
@@ -1009,7 +1007,6 @@ process_message() {
 #########################
 # main get updates loop, should never terminate
 declare -A BASHBOTBLOCKED
-export BASHBOT_UPDATELOG="${BASHBOT_UPDATELOG-nolog}" # allow to be ""
 start_bot() {
 	local DEBUGMSG OFFSET=0
 	# adaptive sleep defaults
@@ -1022,7 +1019,7 @@ start_bot() {
 	# redirect to Debug.log
 	[[ "$1" == *"debug" ]] && exec &>>"${DEBUGLOG}"
 	log_debug "${DEBUGMSG}"; DEBUGMSG="$1"
-	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x && unset BASHBOT_UPDATELOG
+	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x
 	# cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
 	find "${DATADIR}" -size 0 -name "*.log" -delete
@@ -1057,7 +1054,7 @@ start_bot() {
 		# adaptive sleep in ms rounded to next 0.1 s
 		sleep "$(_round_float "${nextsleep}e-3" "1")"
 		# get next update
-		UPDATE="$(getJson "${URL}/getUpdates?offset=${OFFSET}" "${BASHBOT_UPDATELOG}" 2>/dev/null | "${JSONSHFILE}" -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
+		UPDATE="$(getJson "${URL}/getUpdates?offset=${OFFSET}" 2>/dev/null | "${JSONSHFILE}" -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
 		# did we get an response?
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
