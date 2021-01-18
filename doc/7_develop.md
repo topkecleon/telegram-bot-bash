@@ -1,7 +1,7 @@
 #### [Home](../README.md)
 
 ## Notes for bashbot developers
-This section is about help and best practices for new bashbot developers. The main focus on is creating new versions of bashbot, modules and addons, not on develop your individual bot. Nevertheless the information provided here should help your bot development also.
+This section is about help and best practices for new bashbot developers. The main focus on is creating new versions of bashbot, modules and addons, not on developing your individual bot. Nevertheless the information provided here should also help you with your bot development.
 
 If you want to provide fixes or new features [fork bashbot on github](https://help.github.com/en/articles/fork-a-repo) and provide changes as [pull request on github](https://help.github.com/en/articles/creating-a-pull-request).
 
@@ -11,21 +11,20 @@ If you want to get error messages (and more) start bashbot  `./bashbot.sh startb
 you can the change the level of verbosity of the debug argument: 
 
 ```
-	"debug"		all output is redirected to "DEBUG.log", in addition every incoming message is logged in "MESSAGE.log" and "INLINE.log"
-	"xdebug"	same as debug plus set bash option '-x' to log any executed command in "DEBUG.log"
-
-	use the command tail to watch your bot live, e.g. "tail -f DEBUG.log", to obtain more information place set -x; set +x in your code.
+	"debug"		all output is redirected to `DEBUG.log`, in addition every incoming message is logged in `MESSAGE.log` and `INLINE.log`
+	"xdebug"	same as debug plus set bash option '-x' to log any executed command in `DEBUG.log`
 ```
 
-```
-	sometimes its useful to watch the bot live in the terminal:
+Use the command `tail` to watch your bot live, e.g. `tail -f DEBUG.log`. To obtain more information place `set -x; ... set +x` around suspected code.
 
+Sometimes it's useful to watch the bot live in the terminal:
+
+```
 	"debugx"	debug output and errors are sent to terminal
-        "xdebugx"       same as debugx plus set bash option '-x' to show any executed command
-
+	"xdebugx"	same as debugx plus set bash option '-x' to show any executed command
 ```
 
-Logging of telegram update poll is disabled by default, also in `debug` mode. To enable it without using verbose `xdebug` mode
+Logging of Telegram update poll is disabled by default, also in `debug` mode. To enable it without using verbose `xdebug` mode
 set `BASHBOT_UPDATELOG` to an empty value (not unset) `export BASHBOT_UPDATELOG=""`
 
 ### Modules and Addons
@@ -36,7 +35,7 @@ disable modules, e.g. by rename the respective module file to 'module.sh.off'.
 Modules must use only functions provided by 'bashbot.sh' or the module itself and should not depend on other modules or addons.
 The only mandatory module is 'module/sendMessage.sh'.
 
-If a not mandatory module is used in 'bashbot.sh' or 'commands.sh', the use of `_is_function` or
+If an optional module is used in 'bashbot.sh' or 'commands.sh', the use of `_is_function` or
 `_execute_if_function` is mandatory to catch absence of the module.
 
 **Addons** resides in `addons/*.sh.dist` and are not enabled by default. To activate an addon rename it to end with '.sh', e.g. by
@@ -63,18 +62,17 @@ Note: For the same reason event function MUST return immediately! Time consuming
 
 ##### SEND RECEIVE events
 
-An RECEIVE event is executed when a Message is received, same iQuery / Message variables are available as in commands.sh
+A RECEIVE event is executed when a Message is received, same iQuery / Message variables are available as in commands.sh
 
-* `BASHBOT_EVENT_INLINE`        an inline query is received
-
-* BASHBOT_EVENT_MESSAGE`        any of the following message types is received
-    * `BASHBOT_EVENT_TEXT`      a message containing text is received
-    * `BASHBOT_EVENT_CMD`       a message containing a command is received (starts with /)
-    * `BASHBOT_EVENT_REPLYTO`   a reply to a message is received
-    * `BASHBOT_EVENT_FORWARD`   a forwarded message is received
-    * `BASHBOT_EVENT_CONTACT`   a contact is received
-    * `BASHBOT_EVENT_LOCATION`  a location or a venue is received
-    * `BASHBOT_EVENT_FILE`      a file is received
+* `BASHBOT_EVENT_INLINE`    an inline query is received
+* `BASHBOT_EVENT_MESSAGE`   any of the following message types is received
+* `BASHBOT_EVENT_TEXT`      a message containing text is received
+* `BASHBOT_EVENT_CMD`       a message containing a command is received (starts with /)
+* `BASHBOT_EVENT_REPLYTO`   a reply to a message is received
+* `BASHBOT_EVENT_FORWARD`   a forwarded message is received
+* `BASHBOT_EVENT_CONTACT`   a contact is received
+* `BASHBOT_EVENT_LOCATION`  a location or a venue is received
+* `BASHBOT_EVENT_FILE`      a file is received
 
 *usage*: BASHBOT_EVENT_xxx[ "unique-name" ]="callback"
 
@@ -149,7 +147,7 @@ This means if you register an every 5 minutes callback first execution may < 5 M
     * x	execute every x minutes
     * -x execute once WITHIN the next x Minutes (next 10 Minutes since start "event")
 
-Note: If you want exact "in x minutes" use "EVENT_TIMER plus x" as time: `-(EVENT_TIMER + x)`
+Note: If you want exact "in x minutes" use "EVENT_TIMER" as reference: `(EVENT_TIMER +x)`
 
 *Example:*
 ```bash
@@ -168,8 +166,8 @@ BASHBOT_EVENT_TIMER["example_every5","5"]="example_every5min"
 # execute once on the next 10 minutes since start "event"
 BASHBOT_EVENT_TIMER["example_10min","-10"]="example_in10min"
 
-# once in exact 10 minutes
-BASHBOT_EVENT_TIMER["example_10min","$(( (EVENT_TIMER+10) * -1 ))"]="example_in10min"
+# once in exact 10 minutes, note the -
+BASHBOT_EVENT_TIMER["example_10min","-$(( EVENT_TIMER+10 ))"]="example_in10min"
 
 ```
 
@@ -182,8 +180,8 @@ You don't need all these files after you're finished with your cool new bot.
 Let's create a stripped down version:
 
 - delete all modules you do not need from `modules`, e.g. `modules/inline.sh` if you don't use inline queries
-- delete not needed standard commands and messages from `commands.sh`
-- delete not needed commands and functions from `mycommands.sh`
+- delete unused standard commands and messages from `commands.sh`
+- delete unused commands and functions from `mycommands.sh`
 - run `dev/make-standalone.sh` to create a a stripped down version of your bot
 
 Now have a look at the directory `standalone`, here you find the files `bashbot.sh` and `commands.sh` containing everything to run your bot.
@@ -198,8 +196,8 @@ Now have a look at the directory `standalone`, here you find the files `bashbot.
 5. give your (dev) fork a new version tag: `git tag v1.xx`
 6. setup github hooks by running `dev/install-hooks.sh`
 
-Run `dev/make-distrubition.sh` to create installation archives and a test installation in `DIST/`.
-To update the test installation, e.g. after git pull, local changes or switch master/develop, run `dev/make-distrubition.sh` again.
+Run `dev/make-distribution.sh` to create installation archives and a test installation in `DIST/`.
+To update the test installation, e.g. after git pull, local changes or switch master/develop, run `dev/make-distribution.sh` again.
 
 Note for Debian: Debian Buster ships older versions of many utilities, pls try to install from [buster-backports](https://backports.debian.org/Instructions/)
 ```bash
@@ -210,7 +208,7 @@ sudo apt-get -t buster-backports install git shellcheck pandoc codespell curl
 A typical bashbot develop loop looks as follow:
 
 1. start developing - *change, copy, edit bashbot files ...*
-2. after changing a bash sript: `shellcheck -x script.sh`
+2. after changing a bash script: `shellcheck -x script.sh`
 3. `dev/all-tests.sh` - *in case if errors back to 2.*
 4. `dev/git-add.sh` - *check for changed files, update version string, run git add*
 5. `git commit -m "COMMIT MESSAGE"; git push`
@@ -254,6 +252,8 @@ data="$(cat file)" -> data="$(<"file")"
 
 DIR="$(dirname $0) -> DIR="${0%/*}"
 
+date -> printf"%(%c)T\n" -1	# 100 times faster!
+
 PROG="($basename $0)" -> PROG="${0##*/}*
 
 ADDME="$ADDME something to add" -> ADDME+=" something to add""
@@ -261,9 +261,37 @@ ADDME="$ADDME something to add" -> ADDME+=" something to add""
 VAR="$(( 1 + 2 ))" -> (( var=1+2 ))
 
 INDEX="$(( ${INDEX} + 1 ))" -> (( INDEX++ ))
-
 ```
 For more examples see [Pure bash bible](https://github.com/dylanaraps/pure-bash-bible)
+
+The special variable `$_` stores the expanded __last__ argument of the previous command.
+This allows a nice optimisation in combination with the no-op command `:`, but be aware of `$_` pitfalls.
+
+```bash
+# $_ example: mkdir plus cd to it
+mkdir "somedir-$$" && cd "$_"	# somedir-1234 (process id)
+
+# manipulate a variable multiple times without storing intermediate results
+foo="1a23_b__x###"
+...
+: "${foo//[0-9]}"	# a_b__x###
+: "${_%%#*}"		# a_b__x
+bar="${_/__x/_c}"	# a_b_c
+
+
+# BE AWARE OF ...
+# pitfall missing quotes: $_ is LAST arg
+: ${SOMEVAR}		# "String in var" $_ -> "var" 
+: $(<"file")		# "Content     of\n  file" $_ -> "file"
+
+# pitfall test command
+[ -n "$MYVAR" ] && echo "$_"	# outputs "]" 
+
+# pitfall command substitution: globbing and IFS is applied!
+: "$(echo "a* is born")"# $_ -> a* is globbed even quoted!
+: "$(echo "a   b    c")"# $_ -> "a b c"
+: "$(<"file")"		# "Content     of\n  file" $_ -> "Content of file"
+```
 
 #### Prepare a new version
 After some development it may time to create a new version for the users. a new version can be in sub version upgrade, e.g. for fixes and smaller additions or
@@ -291,15 +319,15 @@ To update version in all files run 'dev/version.sh' without parameter.
 
 For a shell script running as a service it's important to be paranoid about quoting, globbing and other common problems. So it's a must to run shellchek on all shell scripts before you commit a change. this is automated by a git hook activated in Setup step 6.
 
-To run shellcheck for a single script run `shellcheck -x script.sh`, to check all schripts run `dev/hooks/pre-commit.sh`.
+To run shellcheck for a single script run `shellcheck -x script.sh`, to check all scripts run `dev/hooks/pre-commit.sh`.
 
 
 ### bashbot test suite
-Starting with version 0.70 bashbot has a test suite. To start testsuite run `dev/all-tests.sh`. all-tests.sh will return 'SUCCESS' only if all tests pass.
+Starting with version 0.70 bashbot has a test suite. To start the test suite run `dev/all-tests.sh`. all-tests.sh will return 'SUCCESS' if ALL tests pass.
 
 #### enabling / disabling tests
 
-All tests are placed in the directory  `test`. To disable a test remove the execute flag from the '*-test.sh' script, to (re)enable a test make the script executable again.
+All tests are placed in the directory `test`. To disable a test remove the execute flag from the '*-test.sh' script, to (re)enable a test make the script executable again.
 
 
 #### creating new tests
@@ -328,7 +356,7 @@ The file `ALL-tests.inc.sh` must be included from all tests and provide the test
  ADMINFILE="botadmin"
  DATADIR="data-bot-bash"
 
-# SUCCESS NOSUCCES -> echo "${SUCCESS}" or echo "${NOSUCCESS}" 
+# SUCCESS NOSUCCESS -> echo "${SUCCESS}" or echo "${NOSUCCESS}" 
  SUCCESS="   OK"
  NOSUCCESS="   FAILED!"
 
@@ -358,5 +386,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 

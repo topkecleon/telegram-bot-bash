@@ -62,6 +62,7 @@ You must use the function `user_is_allowed` to check if a user has the capabilit
 		# GLOBAL commands start here, only edit messages
 		'/start'*)
 			user_is_botadmin "${USER[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *BOTADMIN*."
+			#  true if: user is botadmin, user is group admin, user is allowed 
 			if user_is_allowed "${USER[ID]}" "start" "${CHAT[ID]}" ; then
 				bot_help "${CHAT[ID]}"
 			else
@@ -171,7 +172,7 @@ All output of the script will be sent to the user, to stop a background job use:
 ```bash
 kill_back "${CHAT[ID]}" "jobname"
 ```
-You can also suspend and resume currently running background jobs from outside bashbot, e.g. in your startup schripts:
+You can also suspend and resume currently running background jobs from outside bashbot, e.g. in your startup scripts:
 ```bash
 ./bashbot.sh suspendback
 ./bashbot.sh resumeback
@@ -301,5 +302,5 @@ Note: If you disable automatic retry, se above, you disable also connection prob
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 

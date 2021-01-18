@@ -3,11 +3,11 @@
 #
 #          FILE: bin/send_message.sh
 # 
-#         USAGE: send_edit_message.sh [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "message ...." [debug]
+USAGE='send_edit_message.sh [-h|--help] [format|caption] "CHAT[ID]" "MESSAGE[ID]" "message ...." [debug]'
 # 
 #   DESCRIPTION: replace a message in the given user/group
 # 
-#       OPTIONS: format - normal, markdown, html (optional)
+#       OPTIONS: format - normal, markdown, html or caption for file caption (optional)
 #                CHAT[ID] - ID number of CHAT or BOTADMIN to send to yourself
 #                MESSAGE[ID] - message to replace
 #                message - message to send in specified format
@@ -22,14 +22,14 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 16:52
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 #===============================================================================
 
 ####
 # parse args
 SEND="edit_normal_message"
 case "$1" in
-	"nor*"|"tex*")
+	"nor"*|"tex"*)
 		SEND="edit_normal_message"
 		shift
 		;;
@@ -37,15 +37,19 @@ case "$1" in
 		SEND="edit_markdownv2_message"
 		shift
 		;;
-	"html")
+	"htm"*)
 		SEND="edit_html_message"
+		shift
+		;;
+	"cap"*)
+		SEND="edit_message_caption"
 		shift
 		;;
 	'')
 		printf "missing arguments\n"
 		;&
 	"-h"*)
-		printf 'usage: send_edit_message [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "message ..."  [debug]\n'
+		printf 'usage: %s\n' "${USAGE}"
 		exit 1
 		;;
 	'--h'*)
@@ -54,10 +58,9 @@ case "$1" in
 		;;
 esac
 
-
 # set bashbot environment
 # shellcheck disable=SC1090
-source "${0%/*}/bashbot_env.inc.sh" "$4" # $4 debug
+source "${0%/*}/bashbot_env.inc.sh" "${4:-debug}" # $4 debug
 
 ####
 ####

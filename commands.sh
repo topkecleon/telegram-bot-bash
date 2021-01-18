@@ -15,11 +15,10 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 #
 
-# adjust your language setting here, e.g. when run from other user or cron.
-# https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
+# bashbot locale defaults to c.UTF-8, adjust locale in mycommands.sh if needed
 export 'LC_ALL=C.UTF-8'
 export 'LANG=C.UTF-8'
 export 'LANGUAGE=C.UTF-8'
@@ -52,12 +51,12 @@ Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
 
 # load modules on startup and always on on debug
-if [ -n "${1}" ]; then
+if [ -n "$1" ]; then
     # load all readable modules
     for modules in "${MODULEDIR:-.}"/*.sh ; do
-	if [[ "${1}" == *"debug"* ]] || ! _is_function "$(basename "${modules}")"; then
+	if [[ "$1" == *"debug"* ]] || ! _is_function "$(basename "${modules}")"; then
 		# shellcheck source=./modules/aliases.sh
-		[ -r "${modules}" ] && source "${modules}" "${1}"
+		[ -r "${modules}" ] && source "${modules}" "$1"
 	fi
     done
 fi
@@ -73,13 +72,13 @@ export FILE_REGEX="${BASHBOT_ETC}/.*"
 
 # load mycommands
 # shellcheck source=./commands.sh
-[ -r "${BASHBOT_ETC:-.}/mycommands.sh" ] && source "${BASHBOT_ETC:-.}/mycommands.sh"  "${1}"
+[ -r "${BASHBOT_ETC:-.}/mycommands.sh" ] && source "${BASHBOT_ETC:-.}/mycommands.sh"  "$1"
 
 
-if [ -z "${1}" ] || [[ "${1}" == *"debug"* ]];then
+if [ -z "$1" ] || [[ "$1" == *"debug"* ]];then
     # detect inline commands....
     # no default commands, all processing is done in myinlines()
-    if [ "$INLINE" != "0" ] && [ -n "${iQUERY[ID]}" ]; then
+    if [ "${INLINE}" != "0" ] && [ -n "${iQUERY[ID]}" ]; then
     	# forward iinline query to optional dispatcher
 	_exec_if_function myinlines
 

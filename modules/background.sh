@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117,SC2059
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 
 # will be automatically sourced from bashbot
 
@@ -48,9 +48,9 @@ start_back() {
 }
 restart_back() {
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1" "back-$3-")"
-	printf "%s: Start background job CHAT=%s JOB=%s CMD=%s\n" "$(date)" "${1}" "${fifo##*/}" "${2##*/} ${4} ${5}" >>"${UPDATELOG}"
+	log_message "Start background job CHAT=$1 JOB=${fifo##*/} CMD=${2##*/} $4 $5"
 	check_back "$1" "$3" && kill_proc "$1" "back-$3-"
-	nohup bash -c "{ $2 \"$4\" \"$5\" \"${fifo}\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"; }" &>>"${fifo}.log" &
+	nohup bash -c "{ $2 \"$4\" \"$5\" \"${fifo}\" | \"${SCRIPT}\" outproc \"$1\" \"${fifo}\"; }" &>>"${fifo}.log" &
 	sleep 0.5 # give bg job some time to init
 }
 
@@ -62,10 +62,10 @@ start_proc() {
 	[ -z "$2" ] && return
 	[ -x "${2%% *}" ] || return 1
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1")"
-	printf "%s: Start interacitve script CHAT=%s JOB=%s CMD=%s\n" "$(date)" "${1}" "${fifo##*/}" "${2} ${3} ${4}" >>"${UPDATELOG}"
+	log_message "Start interactive script CHAT=$1 JOB=${fifo##*/} CMD=$2 $3 $4"
 	check_proc "$1" && kill_proc "$1"
 	mkfifo "${fifo}"
-	nohup bash -c "{ $2 \"$4\" \"$5\" \"$fifo\" | \"${SCRIPT}\" outproc \"${1}\" \"${fifo}\"
+	nohup bash -c "{ $2 \"$4\" \"$5\" \"${fifo}\" | \"${SCRIPT}\" outproc \"$1\" \"${fifo}\"
 		rm \"${fifo}\"; [ -s \"${fifo}.log\" ] || rm -f \"${fifo}.log\"; }" &>>"${fifo}.log" &
 }
 
@@ -99,7 +99,7 @@ kill_proc() {
 	fifo="$(procname "$1" "$2")"
 	prid="$(proclist "${fifo}")"
 	fifo="${DATADIR:-.}/${fifo}"
-	printf "%s: Stop interacitve / background CHAT=%s JOB=%s\n" "$(date)" "${1}" "${fifo##*/}" >>"${UPDATELOG}"
+	log_message "Stop interactive / background CHAT=$1 JOB=${fifo##*/}"
 	# shellcheck disable=SC2086
 	[ -n "${prid}" ] && kill ${prid}
 	[ -s "${fifo}.log" ] || rm -f "${fifo}.log"
@@ -127,7 +127,7 @@ job_control() {
 	local BOT ADM content proc CHAT job fifo killall=""
 	BOT="$(getConfigKey "botname")"
 	ADM="$(getConfigKey "botadmin")"
-	debug_checks "Enter job_control" "${1}"
+	debug_checks "Enter job_control" "$1"
 	for FILE in "${DATADIR:-.}/"*-back.cmd; do
 		[ "${FILE}" = "${DATADIR:-.}/*-back.cmd" ] && printf "${RED}No background processes.${NN}" && break
 		content="$(< "${FILE}")"
@@ -136,7 +136,7 @@ job_control() {
 		proc="${job#*:}"
 		job="${job%:*}"
 		fifo="$(procname "${CHAT}" "${job}")" 
-		debug_checks "Execute job_control" "${1}" "${FILE##*/}"
+		debug_checks "Execute job_control" "$1" "${FILE##*/}"
 		case "$1" in
 		"resumeb"*|"backgr"*)
 			printf "Restart Job: %s %s\n" "${proc}" " ${fifo##*/}"
@@ -163,7 +163,7 @@ job_control() {
 		# send message only onnfirst job
 		ADM=""
 	done
-	debug_checks "end job_control" "${1}"
+	debug_checks "end job_control" "$1"
 	# kill all requestet. kill ALL background jobs, even not listed in data-bot-bash
 	[ "${killall}" = "y" ] && killallproc "back-"
 }

@@ -1,5 +1,7 @@
 data-bot-bash/*
 JSON.awk
+bashbot.rc
+mycommands.sh
 awk-patch.sh
 *.jssh*
 botacl

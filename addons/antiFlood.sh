@@ -4,7 +4,7 @@
 # this addon counts how many files, e.g. stickers, are sent to
 # a chat and takes actions if threshold is reached
 #  
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 
 # used events:
 #
@@ -37,7 +37,7 @@ ANTIFL_BAN="5"	# 5 minutes
 
 # initialize after installation or update
 if [[ "$1" = "init"* ]]; then 
-	jssh_newDB "addons/$ANTIFL_ME"
+	jssh_newDB "addons/${ANTIFL_ME}"
 fi
 
 
@@ -46,7 +46,7 @@ fi
 if [[ "$1" = "start"* ]]; then 
     ANTIFL_ADMIN="$(getConfigKey "botadmin")"
     #load existing chat settings on start
-    jssh_readDB "ANTIFL_CHATS" "addons/$ANTIFL_ME"
+    jssh_readDB "ANTIFL_CHATS" "addons/${ANTIFL_ME}"
 
     # register to CMD
     BASHBOT_EVENT_CMD["${ANTIFL_ME}"]="${ANTIFL_ME}_cmd"
@@ -71,14 +71,14 @@ if [[ "$1" = "start"* ]]; then
 		"/afdo" | "/afactive")
 			[[ "${CMD[1]}"  =~ ^[-0-9]+$  ]] && user_is_botadmin "${USER[ID]}" && chat="$3"
 			ANTIFL_CHATS["${chat}","active"]="yes"
-			jssh_writeDB "ANTIFL_CHATS" "addons/$ANTIFL_ME" &
+			jssh_writeDB "ANTIFL_CHATS" "addons/${ANTIFL_ME}" &
 			send_normal_message "${USER[ID]}" "Antiflood activated for chat ${chat}" &
 		;;
 		# command /afactive starts counter meausares
 		"/afstop")
 			[[ "${CMD[1]}"  =~ ^[-0-9]+$  ]] && user_is_botadmin "${USER[ID]}" && chat="$3"
 			ANTIFL_CHATS["${chat}","active"]="no"
-			jssh_writeDB "ANTIFL_CHATS" "addons/$ANTIFL_ME" &
+			jssh_writeDB "ANTIFL_CHATS" "addons/${ANTIFL_ME}" &
 			send_normal_message "${USER[ID]}" "Antiflood stopped for chat ${chat}" &
 		;;
 	esac
@@ -90,7 +90,7 @@ if [[ "$1" = "start"* ]]; then
     # save settings and reset flood level every BAN Min
     antiFlood_timer(){
 	ANTIFL_ACTUALS=( ) 
-	jssh_writeDB "ANTIFL_CHATS" "addons/$ANTIFL_ME" &
+	jssh_writeDB "ANTIFL_CHATS" "addons/${ANTIFL_ME}" &
     }
 
     # register to inline and command

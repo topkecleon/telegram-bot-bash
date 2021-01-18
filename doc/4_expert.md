@@ -10,12 +10,12 @@ two bytes for encoding and covers almost all `Latin` alphabets, also `Greek`, `C
 
 #### Setting up your Environment
 In general `bash` and `GNU` utitities are UTF-8 aware if you to setup your environment
-and your scripts accordingly:
+and your scripts accordingly (_locale setting_):
 
 1. Your Terminal and Editor must support UTF-8:
    Set Terminal and Editor locale to UTF-8, eg. in `Settings/Configuration` select UTF-8 (Unicode) as Charset.
 
-2. Set `Shell` environment to UTF-8 in your  `.profile` and your scripts. The usual settings are:
+2. Set `Shell` locale environment to UTF-8 in your  `.profile` and your scripts. The usual settings are:
 
 ```bash
 export 'LC_ALL=C.UTF-8'
@@ -31,11 +31,67 @@ export 'LANGUAGE=de_DE.UTF-8'
 ```bash
 export 'LC_ALL=en_US.UTF-8'
 export 'LANG=de_en_US.UTF-8'
-export 'LANGUAGE=den_US.UTF-8'
+export 'LANGUAGE=en_US.UTF-8'
 ```
-3. make sure your bot scripts use the correct  settings, eg. include the lines above at the beginning of your scripts
+3. make sure your bot scripts use the correct settings, eg. include the lines above at the beginning of your scripts
 
-To display all available locales on your system run `locale -a | more`. [Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8)
+
+#### Known locale pitfalls
+
+##### Missing C locale
+
+Even required by POSIX standard some systems (e.g. Manjaro Linux) has `C` and `C.UTF-8` locale not installed.
+If bashbot display a warning about missing locale you must install `C` and `C.UTF-8` locale.
+
+If you don't know what locales are installed on your sytsem use `locale -a` to display them.
+[Gentoo Wiki](https://wiki.gentoo.org/wiki/UTF-8).
+
+
+##### Character classes
+
+In ASCII times it was clear `[:lower:]` and `[a-z]` means ONLY the lowercase letters `[abcd...xyz]`.
+With the introduction of locales, character classes and ranges now contain all characters fitting the class definition.
+
+This means with a Latin UTF-8 locale `[:lower:]` and `[a-z]` contains also e.g. `á ø ü` etc,
+see [Unicode Latin lowercase letters](https://www.fileformat.info/info/unicode/category/Ll/list.htm)
+
+If that's ok for your script you're fine, but many scripts rely on the idea of ASCII ranges and may produce undesired results.
+
+```bash
+# try with different locales ...
+# new bash to not change your current locale!
+bash
+lower="abcö"
+
+echo "$LC_ALL $LC_COLLATE"
+[[ "$lower" =~ ^[a-z]+$ ]] && echo "Ups, $lower is all lower case!" || echo "OK, not lower case"
+
+LC_ALL="en_US.UTF-8"
+[[ "$lower" =~ ^[a-z]+$ ]] && echo "Ups, $lower is all lower case!" || echo "OK, not lower case"
+
+LC_ALL="C"
+[[ "$lower" =~ ^[a-z]+$ ]] && echo "Ups, $lower is all lower case!" || echo "OK, not lower case"
+```
+
+There are three solutions:
+
+1. list exactly the characters you want: `[abcd...]`
+2. instruct bash to use `C` locale for ranges: `shopt -s "globasciiranges"`
+3. use `LC_COLLATE` to change behavior of all programs: `export LC_COLLATE=C`
+
+
+To work independent of language and bash settings bashbot uses solution 1.: Own "ranges" if an exact match is mandatory:
+
+```bash
+azazaz='abcdefghijklmnopqrstuvwxyz'	# a-z   :lower:
+AZAZAZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ'	# A-Z   :upper:
+o9o9o9='0123456789'			# 0-9   :digit:
+azAZaz="${azazaz}${AZAZAZ}"	# a-zA-Z	:alpha:
+azAZo9="${azAZaz}${o9o9o9}"	# a-zA-z0-9	:alnum:
+
+# e.g. characters allowed for key in key/value pairs
+JSSH_KEYOK="[-${azAZo9},._]"
+```
 
 #### Bashbot UTF-8 Support
 Bashbot handles all messages transparently, regardless of the charset in use. The only exception is when converting from JSON data to strings.
@@ -45,11 +101,11 @@ The Emoticons ` 😁 😘 ❤️ 😊 👍 ` are encoded as: ` \uD83D\uDE01 \uD8
 
 **This "mixed" JSON encoding needs special handling and can not decoded from** `echo -e` or `printf '%s\\n'`
 
-Bbashbot uses an internal, pure bash implementation which is well tested now, even there may some corner cases*.
+Bashbot uses an internal, pure bash implementation which is well tested now, even there may some corner cases*.
 
 
 ### Run as other user or system service
-Bashbot is desingned to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or scheduled from cron. This is recommended if you want to bashbot run as a service.
+Bashbot is designed to run manually by the user who installed it. Nevertheless it's possible to run it by an other user-ID, as a system service or scheduled from cron. This is recommended if you want to bashbot run as a service.
 
 Setup the environment for the user you want to run bashbot and enter desired username, e.g. nobody :
 ```bash
@@ -98,7 +154,7 @@ To use bashbot as a system service include a working `bashbot.rc` in your init s
 An example crontab is provided in `examples/bashbot.cron`.
 
 - If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username `nobody`.
-- if you run bashbot as an other user or a system service edit `examples/bashbot.cron` to fit your needs and replace username `nobody` with the username you want to run bashbot. copy the modified file to `/etc/cron.d/bashbot`
+- if you run bashbot as an other user or a system service edit `examples/bashbot.cron` to fit your needs and replace username `nobody` with the username you want to run bashbot. Copy the modified file to `/etc/cron.d/bashbot`
 
 
 ### Use bashbot from CLI and scripts
@@ -175,10 +231,10 @@ User or Chat you are in. See [Send Messages](2_usage.md#sending-messages).
 
 *Examples:* You can test this by sending messages to yourself:
 ```bash
-# fist Hello World
+# first Hello World
 send_normal_message "$(getConfigKey "botadmin")"  "Hello World! This is my first message"
 
-# now with some markdown and  HTML
+# now with some markdown and HTML
 send_markdown_message 	"$(getConfigKey "botadmin")"  '*Hello World!* _This is my first markdown message_'
 send_html_message	"$(getConfigKey "botadmin")"  '<b>Hello World!</b> <em>This is my first HTML message</em>'
 send_keyboard "$(getConfigKey "botadmin")"  'Do you like it?' '[ "Yep" , "No" ]'
@@ -202,10 +258,10 @@ This section describe how you can customize bashbot to your needs by setting env
 
 
 #### Change file locations
-In standard setup bashbot is self containing, this means you can place 'telegram-bot-bash'  any location
+In standard setup bashbot is self containing, this means you can place 'telegram-bot-bash' any location
 and run it from there. All files - program, config, data etc - will reside in 'telegram-bot-bash'.
 
-If you want to have other locations for config, data etc,  define and export the following environment variables.
+If you want to have other locations for config, data etc, define and export the following environment variables.
 **Note: all specified directories and files must exist or running 'bashbot.sh' will fail.**
 
 ##### BASHBOT_ETC
@@ -323,7 +379,7 @@ BASHBOT_TIMEOUT to a numeric value between 1 and 999. Any non numeric or negativ
 
 ##### BASHBOT_SLEEP
 Instead of polling permanently or with a fixed delay, bashbot offers a simple adaptive polling.
-If messages are received bashbot polls with no dealy. If no messages are available bashbot add 100ms delay
+If messages are received bashbot polls with no delay. If no messages are available bashbot add 100ms delay
 for every poll until the maximum of BASHBOT_SLEEP ms.
 ```bash
   unset  BASHBOT_SLEEP       # 5000ms (default)
@@ -378,5 +434,5 @@ for every poll until the maximum of BASHBOT_SLEEP ms.
 #### [Prev Advanced Use](3_advanced.md)
 #### [Next Best Practice](5_practice.md)
 
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 

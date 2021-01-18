@@ -1,15 +1,18 @@
 #!/bin/bash
 #===============================================================================
+# shellcheck disable=SC2059
 #
 #          FILE: bin/broadcast_message.sh
 # 
-#         USAGE: broadcast_message.sh [-h|--help] [--doit] [--groups|--both] [format] "message ...." [debug]
+USAGE='broadcast_message.sh [-h|--help] [--doit] [--groups|--both|--db=file] [format] "message ...." [debug]'
 # 
-#   DESCRIPTION: send a message to all users the bot have seen (listet in count.jssh)
+#   DESCRIPTION: send a message to all users listed in a jsonDB (default count db)
 # 
 #       OPTIONS: --doit - broadcast is dangerous, simulate run without --doit
 #                --groups - send to groups instead of users
-#                --both - send to users and groups
+#                --both - send to users and groups (default with --db)
+#                --db name - send to all user/groups in jsonDB database (e.g. blocked)
+#                     db file: name.jssh, db keys are user/chat id, values are ignored
 #
 #                format - normal, markdown, html (optional)
 #                message - message to send in specified format
@@ -24,13 +27,13 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 16:14
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 #===============================================================================
-# shellcheck disable=SC2059
 
 ####
 # minimum messages seen in a chat before send a broadcast to it
 MINCOUNT=2
+USERDB=""
 
 ####
 # broadcast is dangerous, without --doit we do a dry run ...
@@ -49,13 +52,18 @@ elif [ "$1" = "--groups" ]; then
 	SENDTO="groups"
 	GROUPSALSO=" only"
 	shift
+elif [ "$1" = "--db" ]; then
+	USERDB="${2%.jssh}"
+	MINCOUNT=""
+	GROUPSALSO=" and groups"
+	shift 2
 fi
 
 ####
 # parse args -----------------
 SEND="send_message"
 case "$1" in
-	"nor*"|"tex*")
+	"nor"*|"tex"*)
 		SEND="send_normal_message"
 		shift
 		;;
@@ -71,11 +79,11 @@ case "$1" in
 		printf "missing missing arguments\n"
 		;&
 	"-h"*)
-		printf 'usage: send_message [-h|--help] [--groups|--both] [format] "message ...." [debug]\n'
+		printf 'usage: %s\n' "${USAGE}"
 		exit 1
 		;;
 	'--h'*)
-		sed -n '3,/###/p' <"$0"
+		sed -n -e '/# shellcheck /d' -e '3,/###/p' <"$0"
 		exit 1
 		;;
 esac
@@ -85,15 +93,16 @@ esac
 source "${0%/*}/bashbot_env.inc.sh" "$2" # $3 debug
 
 
-# read in users 
+# read in users from given DB or count.jssh 
+database="${USERDB:-${COUNTFILE}}"
 declare -A SENDALL
-jssh_readDB_async "SENDALL" "${COUNTFILE}"
+jssh_readDB_async "SENDALL" "${database}"
 if [ -z "${SENDALL[*]}" ]; then
-	printf "${ORANGE}Countfile not found or empty,${NC}\n"
+	printf "${ORANGE}User database not found or empty: ${NC}${database}\n"
 fi
 
 	# loop over users
-	printf "${GREEN}Sending broadcast message to all users of ${BOT_NAME}${NC}${GREY}"
+	printf "${GREEN}Sending broadcast message to ${SENDTO}${GROUPSALSO} of ${BOT_NAME} using database:${NC}${GREY} ${database##*/}"
 
 { 	# dry run
 	[ -z "${DOIT}" ] && printf "${NC}\n${ORANGE}DRY RUN! use --doit as first argument to execute broadcast...${NC}\n"
@@ -106,7 +115,7 @@ fi
 		# ignore everything not a user or group
 		[[ ! "${USER}" =~ ^[0-9-]*$ ]] && continue
 		# ignore chats with no count or lower MINCOUNT
-		[[ ! "${SENDALL[${USER}]}" =~ ^[0-9]*$ || "${SENDALL[${USER}]}" -lt "${MINCOUNT}" ]] && continue 
+		[[ -n "${MINCOUNT}" && ( ! "${SENDALL[${USER}]}" =~ ^[0-9]*$ || "${SENDALL[${USER}]}" -lt "${MINCOUNT}" ) ]] && continue 
 		(( COUNT++ ))
 		if [ -z "${DOIT}" ]; then
 			printf  "${SEND} ${USER} $1 $2\n" 

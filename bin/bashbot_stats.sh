@@ -3,7 +3,7 @@
 #
 #          FILE: bin/bashbot_stats.sh
 # 
-#         USAGE: bashbot_stats.sh [-h|--help] [debug]
+USAGE='bashbot_stats.sh [-h|--help] [debug]'
 # 
 #   DESCRIPTION: output bashbot user stats
 # 
@@ -16,14 +16,14 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 20:34
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 #===============================================================================
 
 ####
 # parse args
 case "$1" in
 	"-h"*)
-		echo "usage: send_message [-h|--help] [debug]"
+		printf "usage: %s\n" "${USAGE}"
 		exit 1
 		;;
 	'--h'*)

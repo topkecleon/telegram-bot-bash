@@ -1,83 +1,30 @@
 #!/bin/bash
-#########
+#######################################################
 #
-# files: mycommands.sh.dist
+#        File: mycommands.sh.dist
 #
 # this is an out of the box test and example file to show what's possible in mycommands.sh
 #
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
+#       Usage: will be executed when a bot command is received 
+#
+#     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
+#      Author: KayM (gnadelwartz), kay@rrr.de
+#
+#### $$VERSION$$ v1.30-0-g3266427
+#######################################################
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.21-0-gc85af77
-#
 
-# uncomment the following lines to overwrite info and help messages
-# use ${ME} for current bot name in messages
-# Note: you must escape '_' in botname with two \ in markdown messages!
-export bashbot_info='This is @'"${ME//_/\\\\_}"', the Telegram example bot written entirely in bash.
-Edit commands and messages in mycommands.sh!
-'
-# export bashbot_help='*Available commands*:
-#'
-export res=""
+####################
+# Config has moved to bashbot.conf
+# shellcheck source=./commands.sh
+[ -r "${BASHBOT_ETC:-.}/mycommands.conf" ] && source "${BASHBOT_ETC:-.}/mycommands.conf"  "$1"
 
-# Set INLINE to 1 in order to receive inline queries.
-# To enable this option in your bot, send the /setinline command to @BotFather.
-export INLINE="0"
 
-# if your bot is group admin it get commands sent to other bots
-# Set MEONLY to 1 to ignore commands sent to other bots
-export MEONLY="0"
-
-# Set to .* to allow sending files from all locations
-# NOTE: this is a regex, not shell globbing! you must use a valid egex,
-# '.' matches any character and '.*' matches all remaining charatcers!
-# additionally you must escape special characters with '\', e.g. '\. \? \[ \*" to match them literally
-export FILE_REGEX="${BASHBOT_ETC}/.*"
-
-# set BASHBOT_RETRY to enable retry in case of recoverable errors, e.g.  throtteling
-# problems with send_xxx message etc are looged to  logs/ERROR.log
-unset BASHBOT_RETRY
-#export BASHBOT_RETRY="yes"
-
-# set value for adaptive sleeping while waiting for uodates in millisconds
-# max slepp between polling updates 10s (default 5s)
-export BASHBOT_SLEEP="10000"
-# add 0.2s if no update available, up to BASHBOT_SLEEP (default 0.1s)
-export BASHBOT_SLEEP_STEP="200"
-
-# if you want to use timer functions, set BASHBOT_START_TIMER to a not empty value
-# default is to not start timer
-unset BASHBOT_START_TIMER
-#export BASHBOT_START_TIMER="yes"
-
-# set to "yes" and give your bot admin privilegs to remove service messages from groups
-export SILENCER="no"
-
-# uncomment to remove keyboards sent from your bot
-# export REMOVEKEYBOARD="yes"
-# export REMOVEKEYBOARD_PRIVATE="yes"
-
-# uncomment to say welcome to new chat members
-# export WELCOME_NEWMEMBER="yes"
-WELCOME_MSG="Welcome"
-
-# uncomment to be informed about new/left chat members
-# export REPORT_NEWMEMBER="yes"
-# export REPORT_LEFTMEMBER="yes"
-
-# messages for admin only commands
-NOTADMIN="Sorry, this command is allowed for admin or owner only"
-NOTBOTADMIN="Sorry, this command is allowed for bot owner only"
-
-########
-# special network setup may require additional ARGS to curl
-#
-# example: run bashbot over TOR or SOCKS proxy
-# export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1:9050" # TOR
-# export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1" # regular SOCKS
-
+##################
+# let's go ...
 if [ "$1" = "startbot" ];then
     ###################
     # this section is processed on startup
@@ -177,41 +124,45 @@ else
 	case "${MESSAGE}" in
 		##################
 		# example commands, replace thm by your own
+		'/unpin'*) # unpin all messages if (bot)admin or allowed for user
+			 user_is_allowed "${USER[ID]}" "unpin" "${CHAT[ID]}" &&\
+				unpinall_chat_messages "${CHAT[ID]}"
+			;;
 		'/echo'*) # example echo command
-			send_normal_message "${CHAT[ID]}" "$MESSAGE"
+			send_normal_message "${CHAT[ID]}" "${MESSAGE}"
 			;;
 		'/question'*) # start interactive questions
 			checkproc 
-			if [ "$res" -gt 0 ] ; then
+			if [ "${res}" -gt 0 ] ; then
 				startproc "examples/question.sh" || send_normal_message "${CHAT[ID]}" "Can't start question."
 			else
-				send_normal_message "${CHAT[ID]}" "$MESSAGE already running ..."
+				send_normal_message "${CHAT[ID]}" "${MESSAGE} already running ..."
 			fi
 			;;
 
 		'/cancel'*) # cancel interactive command
 			checkproc
-			if [ "$res" -gt 0 ] ;then 
+			if [ "${res}" -gt 0 ] ;then 
 				killproc && send_normal_message "${CHAT[ID]}" "Command canceled."
 			else
 				send_normal_message "${CHAT[ID]}" "No command is currently running."
 			fi
 			;;
 		'/run_notify'*) # start notify background job
-			myback="notify"; checkback "$myback"
-			if [ "$res" -gt 0 ] ; then
-				background "examples/notify.sh 60" "$myback" || send_normal_message "${CHAT[ID]}" "Can't start notify."
+			myback="notify"; checkback "${myback}"
+			if [ "${res}" -gt 0 ] ; then
+				background "examples/notify.sh 60" "${myback}" || send_normal_message "${CHAT[ID]}" "Can't start notify."
 			else
-				send_normal_message "${CHAT[ID]}" "Background command $myback already running ..."
+				send_normal_message "${CHAT[ID]}" "Background command ${myback} already running ..."
 			fi
 			;;
 		'/stop_notify'*) # kill notify background job
-			myback="notify"; checkback "$myback"
-			if [ "$res" -eq 0 ] ; then
-				killback "$myback"
-				send_normal_message "${CHAT[ID]}" "Background command $myback canceled."
+			myback="notify"; checkback "${myback}"
+			if [ "${res}" -eq 0 ] ; then
+				killback "${myback}"
+				send_normal_message "${CHAT[ID]}" "Background command ${myback} canceled."
 			else
-				send_normal_message "${CHAT[ID]}" "No background command $myback is currently running.."
+				send_normal_message "${CHAT[ID]}" "No background command ${myback} is currently running.."
 			fi
 			;;
 
@@ -247,15 +198,15 @@ else
 			;;
 		"2"*)	# two photos
 			answer_inline_multi "${iQUERY[ID]}" "
-			    $(inline_query_compose "$RANDOM" "photo" "https://avatars.githubusercontent.com/u/13046303"), 
-			    $(inline_query_compose "$RANDOM" "photo" "https://avatars.githubusercontent.com/u/4593242")
+			    $(inline_query_compose "${RANDOM}" "photo" "https://avatars.githubusercontent.com/u/13046303"), 
+			    $(inline_query_compose "${RANDOM}" "photo" "https://avatars.githubusercontent.com/u/4593242")
 			    "
 			;;
 		"3"*) # three photos
 			answer_inline_multi "${iQUERY[ID]}" "
-			    $(inline_query_compose "$RANDOM" "photo" "https://avatars.githubusercontent.com/u/13046303"), 
-			    $(inline_query_compose "$RANDOM" "photo" "https://avatars.githubusercontent.com/u/4593242")
-			    $(inline_query_compose "$RANDOM" "photo" "https://avatars.githubusercontent.com/u/102707")
+			    $(inline_query_compose "${RANDOM}" "photo" "https://avatars.githubusercontent.com/u/13046303"), 
+			    $(inline_query_compose "${RANDOM}" "photo" "https://avatars.githubusercontent.com/u/4593242")
+			    $(inline_query_compose "${RANDOM}" "photo" "https://avatars.githubusercontent.com/u/102707")
 			    "
 			;;
 
@@ -264,7 +215,7 @@ else
 			local avatar=("https://avatars.githubusercontent.com/u/13046303" "https://avatars.githubusercontent.com/u/4593242" "https://avatars.githubusercontent.com/u/102707" "https://avatars.githubusercontent.com/u/6460407")
 			answer_inline_multi "${iQUERY[ID]}" "
 				$(for photo in  ${avatar[*]} ; do
-					printf "%s\n" "${sep}"; inline_query_compose "$RANDOM" "photo" "${photo}" "${photo}"; sep=","
+					printf "%s\n" "${sep}"; inline_query_compose "${RANDOM}" "photo" "${photo}" "${photo}"; sep=","
 				done)
 				"
 			;;
@@ -283,7 +234,7 @@ else
     # $1 current date, $2 from where the function was called, $3 ... $n optional information
     my_debug_checks() {
 	# example check because my bot created a wrong file
-	[ -f ".jssh" ] && printf "%s: %s\n" "${1}" "Ups, found file \"${PWD:-.}/.jssh\"! =========="
+	[ -f ".jssh" ] && printf "%s: %s\n" "$1" "Ups, found file \"${PWD:-.}/.jssh\"! =========="
     }
 
     # called when bashbot send_xxx command failed because we can not connect to telegram
@@ -303,10 +254,10 @@ else
 	local image result sep="" count="1"
 	result="$(wget --user-agent 'Mozilla/5.0' -qO - "https://images.search.yahoo.com/search/images?p=$1" |  sed 's/</\n</g' | grep "<img src=")"
 	while read -r image; do
-		[ "$count" -gt "20" ] && break
+		[ "${count}" -gt "20" ] && break
 		image="${image#* src=\'}"; image="${image%%&pid=*}"
 		[[ "${image}" = *"src="* ]] && continue
-		printf "%s\n" "${sep}"; inline_query_compose "$RANDOM" "photo" "${image}"; sep=","
+		printf "%s\n" "${sep}"; inline_query_compose "${RANDOM}" "photo" "${image}"; sep=","
 		count=$(( count + 1 ))
 	done <<<"${result}"
     }

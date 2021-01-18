@@ -1,16 +1,14 @@
 #!/bin/bash
 #===============================================================================
 #
-#          FILE: bin/send_message.sh
+#          FILE: bin/delete_message.sh
 # 
-USAGE='send_message.sh [-h|--help] [format] "CHAT[ID]" "message ...." [debug]'
+USAGE='delete_message.sh [-h|--help]  "CHAT[ID]" "MESSAGE[ID]" [debug]'
 # 
-#   DESCRIPTION: send a message to the given user/group
+#   DESCRIPTION: delete a message in the given user/group
 # 
-#       OPTIONS: format - normal, markdown, html (optional)
-#                CHAT[ID] - ID number of CHAT or BOTADMIN to send to yourself
-#                message - message to send in specified format
-#                    if no format is givern send_message() format is used
+#       OPTIONS: CHAT[ID] - ID number of CHAT or BOTADMIN 
+#                MESSAGE[ID] - message to delete
 #
 #                -h - display short help
 #                --help -  this help
@@ -19,27 +17,15 @@ USAGE='send_message.sh [-h|--help] [format] "CHAT[ID]" "message ...." [debug]'
 #
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
-#       CREATED: 16.12.2020 11:34
+#       CREATED: 03.01.2021 15:37
 #
 #### $$VERSION$$ v1.30-0-g3266427
 #===============================================================================
 
 ####
 # parse args
-SEND="send_message"
+DELETE="delete_message"
 case "$1" in
-	"nor"*|"tex"*)
-		SEND="send_normal_message"
-		shift
-		;;
-	"mark"*)
-		SEND="send_markdownv2_message"
-		shift
-		;;
-	"html")
-		SEND="send_html_message"
-		shift
-		;;
 	'')
 		printf "missing arguments\n"
 		;&
@@ -53,10 +39,12 @@ case "$1" in
 		;;
 esac
 
+
 # set bashbot environment
 # shellcheck disable=SC1090
 source "${0%/*}/bashbot_env.inc.sh" "${3:-debug}" # $3 debug
 
+####
 ####
 # ready, do stuff here -----
 if [ "$1" == "BOTADMIN" ]; then
@@ -65,8 +53,10 @@ else
 	CHAT="$1"
 fi
 
-# send message in selected format
-"${SEND}" "${CHAT}" "$2"
+# delete message
+"${DELETE}" "${CHAT}" "$2"
+
+[ "${BOTSENT[OK]}" = "true" ] && BOTSENT[ID]="$2"
 
 # output send message result
 jssh_printDB "BOTSENT" | sort -r

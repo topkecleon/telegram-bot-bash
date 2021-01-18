@@ -115,23 +115,36 @@ The main use case for send_message is to process the output of interactive chats
 
 ### File, Album, Location, Venue, Keyboard 
 
-
 ##### send_file
-send_file can send different type's of files, e.g. photos, stickers, audio, media, etc.
-[see Telegram API documentation](https://core.telegram.org/bots/api#sending-files).
+send_file can send local files, URL's or file_id's as different filex types (_e.g. photo video sticker_)
 
-It's recommended to use __absolute path names__ (_starting with `/`_), as relative path names are threated as __relative to UPLOADDIR__ `data-bot-bash/upload`!
+*usage:* send_file "${CHAT[ID]}" "file/URL/file_id" "caption" ["type"]
 
-For security reasons the following restrictions apply:
+URL's must start with `http://` or `https://` and remote server must send an appropriate media type.
+A file_id must start with `file_id://`, all other file names are threated as local files.
+If Telegram accepts the file `BOTSENT[FILE_ID]` and `BOTSENT[FILE_TYPE]` are set. 
 
-- absolute path name must match the __shell regex__ `FILE_REGEX` (_not file glob_)
+Argument "type" is optional, if not given `send_file` detects file type by the file extension.
+if file/URL has no extension `photo` is assumed. Unknown types and extensions are send as type `document`
+
+Supported file types are: photo (_png jpg jpeg gif pic_) audio (_mp3 flac_) sticker (_webp_) video (_mp4_) voice (_ogg_) or document.
+
+It's recommended to use __absolute path names__ for local files (_starting with `/`_), as relative path names are threated as __relative to UPLOADDIR__ `data-bot-bash/upload`!
+
+For security reasons the following restrictions apply to local files:
+
+- absolute path name must match the __shell regex__ `FILE_REGEX`
+- relative path name is threated as relative to `UPLOADDIR` (_default: data-bot-bash/upload_)
 - path must not start with `./` and not contain `../`
 
-*usage:* send_file "${CHAT[ID]}" "file" "caption"
 
 *example:*
 ```bash
-# recommended: absolute path
+# send picture from web
+send_file "${CHAT[ID]}" "https://dealz.rrr.de/assets/images/rbofd-1.gif" "My Bot" "photo"
+send_file "${CHAT[ID]}" "https://images-na.ssl-images-amazon.com/images/I/81DQ0FpoSNL._AC_SL1500_.jpg"
+
+# local file recommended: absolute path
 send_file "${CHAT[ID]}" "/home/user/dog.jpg" "My Dog"
 
 # relative to UPLOADDIR: data-bot-bash/upload/dog.jpg
@@ -201,7 +214,7 @@ _keyboard_numpad
 ----
 
 ##### send_button
-*usage:*  send_button "chat-id" "message" "text" "URL"
+*usage:*  send_button "$CHAT[ID]" "message" "text" "URL"
 
 *alias:* _button "text" "URL"
 
@@ -209,6 +222,12 @@ _keyboard_numpad
 ```bash
 send_button "${CHAT[ID]}" "MAKE MONEY FAST!!!" "Visit my Shop" "https://dealz.rrr.de"
 ```
+
+##### send_sticker
+`send_sticker` sends a sticker using a `file_id` to send a sticker that exists on the Telegram servers.
+
+*usage:*  send_sticker "$CHAT[ID]" "file_id"
+
 
 ##### send_inline_keyboard
 Even its called keyboard, this function is different from send_keyboard. The main difference is that it's only possible to
@@ -240,6 +259,7 @@ send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"b 1", url"":"u 1"}, {"text":"b 
 
 Edit a message means replace the content of the message in place. The message stay on the same position in the chat and keep the same
 message id.
+If new message  is the same than current message Telegram return error 400 with description "Bad Request: chat message is not modified"
 
 There is no need to use the same format when replace a message, e.g. a message sent with `send_normal_message` can be replaced with
 `edit_markdown_message` or `edit_html_message` and vice versa. 
@@ -298,6 +318,67 @@ saved-id="${BOTSENT[ID]}"
 
 edit_html_message "${CHAT[ID]}" "${saved-id}" "this is <b>html</b> text"
 ```
+
+##### edit_message_caption
+`edit_message_caption` changes the caption of a message (photo, audio, video, document) in the given chat.
+
+*usage:*  edit_message_caption "${CHAT[ID]}" "MESSAGE-ID" "caption"
+
+
+---
+
+### Manage Group
+To use the following functions the bot must have administrator status in the chat / group
+
+##### set_chat_title
+`set_chat_title` sets a new chat title. If new title is the same than current title Telegram return error 400
+with description "Bad Request: chat title is not modified"
+
+*usage:* set_chat_title "${CHAT[ID]}" "new chat title"
+
+
+##### set_chat_description
+`set_chat_description` sets a new description title. If new description is the same than current description Telegram return error 400
+with description "Bad Request: chat description is not modified"
+
+*usage:* set_chat_description "${CHAT[ID]}" "new chat description"
+
+
+##### new_chat_invite
+`new_chat_invite` generate a new invite link for a chat; any previously generated link is revoked. 
+Returns the new invite link as String on success.
+
+*usage:* new_chat_invite "${CHAT[ID]}"
+
+
+##### delete_chat_photo
+
+*usage:* delete_chat_photo "${CHAT[ID]}"
+
+
+##### pin_chat_message
+# $1 chat, $2 message_id 
+`pin_chat_message` add a message to the list of pinned messages in a chat.
+
+*usage:* pin_chat_message "${CHAT[ID]}" "message_id"
+
+
+##### unpin_chat_message
+`unpin_chat_message` remove a message from the list of pinned messages in a chat.
+
+*usage:* unpin_chat_message "${CHAT[ID]}" "message_id"
+
+
+##### unpinall_chat_message
+`unpinall_chat_message` clear the list of pinned messages in a chat.
+
+*usage:* unpinall_chat_message "${CHAT[ID]}"
+
+
+##### delete_chat_stickers
+`delete_chat_stickers` deletes a group sticker set from a supergroup.
+
+*usage:* delete_chat_stickers "${CHAT[ID]}"
 
 
 ----
@@ -390,9 +471,10 @@ fi
 *See also [Chat Member](https://core.telegram.org/bots/api/#chatmember)*
 
 ##### user_is_allowed
-Bashbot supports User Access Control, see [Advanced Usage](3_advanced.md)
+`uers_is_allowed` checks if: user id botadmin, user is group admin or user is allowed to execute action..
+Allowed actions are configured as User Access Control rules, see [Advanced Usage](3_advanced.md)
 
-*usage:* user_is_allowed "${USER[ID]}" "what" "${CHAT[ID]}"
+*usage:* user_is_allowed "${USER[ID]}" "action" "${CHAT[ID]}"
 
 *example:* 
 ```bash
@@ -1187,5 +1269,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 

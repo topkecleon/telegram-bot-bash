@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
@@ -7,7 +7,7 @@
 # magic to ensure that we're always inside the root of our application,
 # no matter from which directory we'll run script
 GIT_DIR=$(git rev-parse --git-dir)
-cd "$GIT_DIR/.." || exit 1
+cd "${GIT_DIR}/.." || exit 1
 
 export HOOKDIR="dev/hooks"
 LASTPUSH='.git/.lastpush'

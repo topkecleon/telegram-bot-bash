@@ -2,14 +2,14 @@
 # file. multibot.sh
 # description:  run multiple telegram bots from one installation
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 
-if [ "${2}" = "" ] || [ "${2}" = "-h" ]; then
+if [ "$2" = "" ] || [ "$2" = "-h" ]; then
 	echo "Usage: $0 botname command"
 	exit 1
 fi
 
-BOT="${1}"
+BOT="$1"
 [ "${#BOT}" -lt 5 ] && echo "Botname must have a minimum length of 5 characters" && exit 1
 
 # where should the bots live?

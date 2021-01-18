@@ -2,7 +2,7 @@
 # file:  run_filename
 # background job to display content of all new files in WATCHDIR
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 
 ######
 # parameters
@@ -40,4 +40,4 @@ loop_callback() {
 	output_telegram "Contents of ${1}: ${NEWLINE} $(cat "${1}")"
 }
 
-watch_dir_loop "$WATCHDIR"
+watch_dir_loop "${WATCHDIR}"

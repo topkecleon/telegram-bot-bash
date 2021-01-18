@@ -2,7 +2,7 @@
 # file:  run_filename
 # background job to display all new files in WATCHDIR
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 
 ######
 # parameters
@@ -38,5 +38,5 @@ loop_callback() {
 	echo "New file ${1} created in ${WATCHDIR}!"
 }
 
-watch_dir_loop "$WATCHDIR"
+watch_dir_loop "${WATCHDIR}"
 

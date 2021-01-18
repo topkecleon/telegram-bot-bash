@@ -19,8 +19,10 @@ Have FUN!
 ```
 .
 ├── mycommands.sh        # THIS is your bot, place logic and commands here!
+├── mycommands.conf      # place your bot config and bot messages here!
 │
-├── mycommands.sh.clean      # copy to "mycommands.sh" if you start developing your bot
+├── mycommands.conf.dist     # copy to "mycommands.conf" if not exist
+├── mycommands.sh.clean      # copy to "mycommands.sh" to start developing a new bot
 ├── mycommands.sh.dist       # example bot, also used for testing bashbot internally 
 │
 ├── count.jssh           # count bashbot usage in jssh key-value store
@@ -33,6 +35,7 @@ Have FUN!
 ├── bin                  # ready to use scripts, use `scriptname --help` for help
 │   ├── send_message.sh          # send message to given chat
 │   ├── edit_message.sh          # replace given message id in given chat
+│   ├── delete_message.sh        # delete given message id in given chat
 │   ├── send_broadcast.sh        # send message to all known chats
 │   ├── send_file.sh             # send file to given chat
 │   ├── bashbot_stats.sh         # does what it says ...
@@ -138,7 +141,8 @@ Note: to get help about a script in bin/ run `scriptname.sh --help`
 ----
 
 ## Receive data
-Evertime a Message is received, you can read incoming data using the following variables:
+Evertime a Telegram update is received, you can read incoming data using the following variables:
+In case you need other update values, the array `UPD` contains complete Telegram response.
 
 ### Regular Messages
 
@@ -252,14 +256,19 @@ they contain the following variables only:
     * `${iQUERY[LAST_NAME]}`: User's last name
 
 
-### Send Message Results
+## Send data / get response
 
-BOTSENT is set on every send_xxx action and only valid until next send action. For more on message results see.  
-[Advanced Usage](3_advanced.md)
+After every `send_xxx` `get_xxx` call the array BOTSENT contains the most important values from Telegram response.
+In case you need other response values , the array `UPD` contains complete Telegram response.
+
+### BOTSENT array
 
 * `$BOTSENT`: This array contains the parsed results from the last transmission to telegram.
     * `${BOTSENT[OK]}`: contains the string `true`: after a successful transmission
     * `${BOTSENT[ID]}`: Message ID of sent message, image, file etc., if OK is true
+    * `${BOTSENT[FILE_ID]}`: unique identifier returned for an uploaded file or URL
+    * `${BOTSENT[FILE_TYPE]}`: file type: photo, audio, video, sticker, voice, document
+
 
 
 ## Usage of bashbot functions
@@ -314,9 +323,10 @@ send_message "${CHAT[ID]}" "lol" "safe"
 
 
 #### Send files, locations, keyboards.
-To send images, videos, voice files, photos etc. use the `send_photo`function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):
+To send local files or URL's (photo, video, voice, sticker, documents) use the `send_file` function.
 ```bash
-send_file "${CHAT[ID]}" "/home/user/doge.jpg" "Lool"
+send_file "${CHAT[ID]}" "/home/user/dog.jpg" "Lool" "photo"
+send_file "${CHAT[ID]}" "https://images-na.ssl-images-amazon.com/images/I/81DQ0FpoSNL._AC_SL1500_.jpg"
 ```
 To send custom keyboards use the `send_keyboard`function:
 ```bash
@@ -341,5 +351,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 

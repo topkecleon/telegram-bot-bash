@@ -4,7 +4,7 @@
 #
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 
 ######
 # parameters
@@ -28,8 +28,8 @@ cat >/dev/null &
 source "./mycommands.sh"
 
 # check if $1 is a number
-re='^[0-9]+$'
-if [[ $1 =~ $re ]] ; then
+regex='^[0-9]+$'
+if [[ $1 =~ ${regex} ]] ; then
 	SLEEP="$1"
 else
 	SLEEP=100 # time between time notifications
@@ -39,11 +39,11 @@ NEWLINE=$'\n'
 
 # output disk usage every $1 seconds
 WAIT=0
-while sleep $WAIT
+while sleep "${WAIT}"
 do
 	output_telegram "Current Disk usage ${NEWLINE} $(df -h / /tmp /usr /var /home)"
 	# only for testing, delete echo line for production ...
 	echo "Current Disk usage ${NEWLINE} $(df -h / /tmp /usr /var /home)"
-	WAIT="$SLEEP"
+	WAIT="${SLEEP}"
 done
 

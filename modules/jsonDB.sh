@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -26,6 +26,28 @@ eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 
 # lockfile filename.flock is persistent and will be testet with flock for active lock (file open)
 export JSSH_LOCKNAME=".flock"
+
+# in UTF-8 äöü etc. are part of [:alnum:] and ranges (e.g. a-z), but we want ASCII a-z ranges!
+# for more information see  doc/4_expert.md#Character_classes
+azazaz='abcdefghijklmnopqrstuvwxyz'	# a-z   :lower:
+AZAZAZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ'	# A-Z   :upper:
+o9o9o9='0123456789'			# 0-9   :digit:
+azAZaz="${azazaz}${AZAZAZ}"	# a-zA-Z	:alpha:
+azAZo9="${azAZaz}${o9o9o9}"	# a-zA-z0-9	:alnum:
+
+# characters allowed for key in key/value pairs
+JSSH_KEYOK="[-${azAZo9},._]"
+
+# read string from stdin and and strip invalid characters
+# $1 - invalid charcaters are replaced with first character
+#      or deleted if $1 is empty
+jssh_stripKey() {	# tr: we must escape first - in [-a-z...]
+	if [[ "$1" =~ ^${JSSH_KEYOK} ]]; then # tr needs [\-...
+ 		tr -c "${JSSH_KEYOK/\[-/[\\-}\r\n" "${1:0:1}"
+	else
+ 		tr -dc "${JSSH_KEYOK/\[-/[\\-}\r\n"
+	fi
+}
 
 # use flock if command exist
 if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
@@ -63,8 +85,8 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # complex slow, warpper async
   jssh_updateDB() {
 	# for atomic update we can't use read/writeDB
-	[ -z "${2}" ] && return 1
-	local DB="${2}.jssh" # check in async
+	[ -z "$2" ] && return 1
+	local DB="$2.jssh" # check in async
 	[ ! -f "${DB}" ] && return 2
 	{ flock -e -w 10 200; jssh_updateDB_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
   }
@@ -76,7 +98,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   alias jssh_insertDB=jssh_insertKeyDB # backward compatibility
   # renamed to be more consistent
   jssh_insertKeyDB() {
-	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
 	local DB; DB="$(jssh_checkDB "$3")"
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
@@ -93,9 +115,9 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
   # medium complex slow, wrapper async
   jssh_deleteKeyDB() {
-	[ -z "${2}" ] && return 1
-	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	local DB="${2}.jssh"
+	[ -z "$2" ] && return 1
+	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
+	local DB="$2.jssh"
 	# start atomic delete here, exclusive max wait 10s 
 	{ flock -e -w 10 200; jssh_deleteKeyDB_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
   }
@@ -105,12 +127,12 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # $2 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
   alias jssh_getDB=jssh_getKeyDB
   jssh_getKeyDB() {
-	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
 	local DB; DB="$(jssh_checkDB "$2")"
 	[ -z "${DB}" ] && return 1
 	# start atomic delete here, exclusive max wait 1s 
 	{ flock -s -w 1 200
-	[ -r "${DB}" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${DB}" | tail -n 1
+	[ -r "${DB}" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' "${DB}" | tail -n 1
 	} 200>"${DB}${JSSH_LOCKNAME}"
   }
 
@@ -122,9 +144,9 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # side effect: if $3 is not given, we add to end of file to be as fast as possible
   # complex, wrapper to async
   jssh_countKeyDB() {
-	[ -z "${2}" ] && return 1
-	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	local DB="${2}.jssh"
+	[ -z "$2" ] && return 1
+	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
+	local DB="$2.jssh"
 	# start atomic delete here, exclusive max wait 5 
 	{ flock -e -w 5 200; jssh_countKeyDB_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
   }
@@ -135,12 +157,12 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # $3 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
   #no own locking, so async is the same as updatekeyDB
   jssh_updateKeyDB() {
-	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	[ -z "${3}" ] && return 1
+	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
+	[ -z "$3" ] && return 1
 	declare -A updARR
 	# shellcheck disable=SC2034
 	updARR["$1"]="$2"
-	jssh_updateDB "updARR" "${3}" || return 3
+	jssh_updateDB "updARR" "$3" || return 3
   }
 
   # $1 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
@@ -156,11 +178,11 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # $3 id used to identify caller
   # medium complex, wrapper async
   jssh_updateArray() { 
-	[ -z "${2}" ] && return 1
-	local DB="${2}.jssh" # name check in async
+	[ -z "$2" ] && return 1
+	local DB="$2.jssh" # name check in async
 	[ ! -f "${DB}" ] && return 2
 	declare -n ARRAY="$1"
-	[[ -z "${ARRAY[*]}" ||  "${DB}" -nt "${DB}.last${3}" ]] && touch "${DB}.last${3}" && jssh_readDB "${1}" "${2}"
+	[[ -z "${ARRAY[*]}" ||  "${DB}" -nt "${DB}.last$3" ]] && touch "${DB}.last$3" && jssh_readDB "$1" "$2"
   }
 
 else
@@ -206,9 +228,9 @@ jssh_checkDB(){
 	[ -z "$1" ] && return 1
 	[[ "$1" = *'../.'* ]] && return 2
 	if [[ "$1" == "${BASHBOT_VAR:-.}"* ]] || [[ "$1" == "${BASHBOT_DATA:-.}"* ]]; then
-		DB="${1}.jssh"
+		DB="$1.jssh"
 	else
-		DB="${BASHBOT_VAR:-.}/${1}.jssh"
+		DB="${BASHBOT_VAR:-.}/$1.jssh"
 	fi
 	[ "${DB}" != ".jssh" ] && printf '%s' "${DB}"
 }
@@ -232,7 +254,7 @@ jssh_writeDB_async() {
 }
 
 jssh_updateDB_async() {
-	[ -z "${2}" ] && return 1
+	[ -z "$2" ] && return 1
 	declare -n ARRAY="$1"
 	[ -z "${ARRAY[*]}" ] && return 1
 	declare -A oldARR
@@ -253,7 +275,7 @@ jssh_updateDB_async() {
 
 jssh_insertDB_async() { jssh_insertKeyDB "$@"; }
 jssh_insertKeyDB_async() {
-	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
 	local DB; DB="$(jssh_checkDB "$3")"
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
@@ -263,7 +285,7 @@ jssh_insertKeyDB_async() {
 }
 
 jssh_deleteKeyDB_async() {
-	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
 	local DB; DB="$(jssh_checkDB "$2")"
 	[ -z "${DB}" ] && return 1
 	declare -A oldARR
@@ -273,14 +295,14 @@ jssh_deleteKeyDB_async() {
 }
 
 jssh_getKeyDB_async() {
-	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
 	local DB; DB="$(jssh_checkDB "$2")"
 	[ -z "${DB}" ] && return 1
-	[ -r "${DB}" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${DB}" | tail -n 1
+	[ -r "${DB}" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' "${DB}" | tail -n 1
 }
 
 jssh_countKeyDB_async() {
-	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
 	local VAL DB; DB="$(jssh_checkDB "$2")"
 	[ -z "${DB}" ] && return 1
 	# start atomic delete here, exclusive max wait 5 
@@ -291,7 +313,7 @@ jssh_countKeyDB_async() {
 		Array2Json  "oldARR" >"${DB}"
 	elif [ -r "${DB}" ]; then
 		# it's append, but last one counts, its a simple DB ...
-		VAL="$(sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${DB}" | tail -n 1)"
+		VAL="$(sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' "${DB}" | tail -n 1)"
 		printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "$((++VAL))" >>"${DB}"
 	fi
   }
@@ -302,12 +324,12 @@ jssh_countKeyDB_async() {
 # $3 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
 #no own locking, so async is the same as updatekeyDB
 jssh_updateKeyDB_async() {
-	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	[ -z "${3}" ] && return 1
+	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
+	[ -z "$3" ] && return 1
 	declare -A updARR
 	# shellcheck disable=SC2034
 	updARR["$1"]="$2"
-	jssh_updateDB_async "updARR" "${3}" || return 3
+	jssh_updateDB_async "updARR" "$3" || return 3
 }
 
 jssh_clearDB_async() {
@@ -321,7 +343,7 @@ function jssh_updateArray_async() {
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
 	declare -n ARRAY="$1"
-	[[ -z "${ARRAY[*]}" ||  "${DB}" -nt "${DB}.last${3}" ]] && touch "${DB}.last${3}" && jssh_readDB_async "${1}" "${2}"
+	[[ -z "${ARRAY[*]}" ||  "${DB}" -nt "${DB}.last$3" ]] && touch "${DB}.last$3" && jssh_readDB_async "$1" "$2"
 }
 
 ##############
@@ -340,13 +362,13 @@ Json2Array() {
 # $1 ARRAY name, must be declared with "declare -A ARRAY" before calling
 Array2Json() {
 	[ -z "$1" ] && return 1
-	local key val
+	local key
 	declare -n ARRAY="$1"
 	for key in "${!ARRAY[@]}"
        	do
-		# in case val contains newline convert to \n
-		val="${ARRAY[${key}]//$'\n'/\\n}"
-		printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${val//\"/\\\"}"
+		[[ "${key}" =~ ^${JSSH_KEYOK}+$ ]] || continue
+		# in case value contains newline convert to \n
+		: "${ARRAY[${key}]//$'\n'/\\n}"
+		printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${_//\"/\\\"}"
        	done
 }
-

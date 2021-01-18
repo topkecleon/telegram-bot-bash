@@ -10,7 +10,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 #===============================================================================
 
 # include common functions and definitions
@@ -53,7 +53,7 @@ mkdir "${BASHBOT_VAR}/${DATADIR}"
 
 # run bashbot first time with init
 "${BASHBOT_BIN}/bashbot.sh" init >"${LOGFILE}"  <<EOF
-$TESTTOKEN
+${TESTTOKEN}
 nobody
 botadmin
 EOF

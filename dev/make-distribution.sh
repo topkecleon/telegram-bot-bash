@@ -7,25 +7,20 @@
 #
 # Options: --notest - skip tests
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 ##############################################################
 
-# magic to ensure that we're always inside the root of our application,
-# no matter from which directory we'll run script
-GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
-if [ "$GIT_DIR" != "" ] ; then
-	[[ "$GIT_DIR" != "/"* ]] && GIT_DIR="${PWD}/${GIT_DIR}"
-	cd "$GIT_DIR/.." || exit 1
-else
-	printf "Sorry, no git repository %s\n" "$(pwd)" && exit 1
-fi
+#shellcheck disable=SC1090
+source "${0%/*}/dev.inc.sh"
 
 VERSION="$(git describe --tags | sed -e 's/-[0-9].*//' -e 's/v//')"
 
 DISTNAME="telegram-bot-bash"
 DISTDIR="./DIST/${DISTNAME}" 
-DISTFILES="bashbot.rc bashbot.sh commands.sh mycommands.sh mycommands.sh.clean bin doc examples scripts modules addons LICENSE README.md README.txt README.html"
-DISTMKDIR="data-bot-bash logs bin bin/logs"
+DISTMKDIR="data-bot-bash logs bin bin/logs addons"
+
+DISTFILES="bashbot.sh commands.sh mycommands.sh.clean bin doc examples scripts modules LICENSE README.md README.txt README.html"
+DISTFILESDIST="mycommands.sh mycommands.conf bashbot.rc $(echo "addons/"*.sh)"
 
 # run tests first!
 for test in $1 dev/all-test*.sh
@@ -47,6 +42,7 @@ cp -r ${DISTFILES} "${DISTDIR}"
 cd "${DISTDIR}" || exit 1
 
 printf "Create directories\n"
+# shellcheck disable=SC2250
 for dir in $DISTMKDIR
 do
 	[ ! -d "${dir}" ] && mkdir "${dir}"
@@ -54,15 +50,15 @@ done
 
 # do not overwrite on update
 printf "Create .dist files\n"
-for file in mycommands.sh bashbot.rc addons/*.sh
+for file in ${DISTFILESDIST}
 do
 	[ "${file}" = "addons/*.sh" ] && continue
-	mv "${file}" "${file}.dist"
+	cp "${BASE_DIR}/${file}" "${file}.dist"
 done
 
 # inject JSON.sh into distribution
 # shellcheck disable=SC1090
-source "$GIT_DIR/../dev/inject-json.sh"
+source "${BASE_DIR}/dev/inject-json.sh"
 
 # make html doc
 printf "Create html doc\n"
@@ -73,13 +69,13 @@ source "../../dev/make-html.sh"
 cd .. || exit 1
 printf "Create dist archives\n"
 # shellcheck disable=SC2046
-zip -rq - "${DISTNAME}" --exclude $(cat  "$GIT_DIR/../dev/${0##*/}.exclude") >"${DISTNAME}-${VERSION}.zip"
-tar --exclude-ignore="$GIT_DIR/../dev/${0##*/}.exclude" -czf "${DISTNAME}-${VERSION}.tar.gz" "${DISTNAME}"
+zip -rq - "${DISTNAME}" --exclude $(cat  "${BASE_DIR}/dev/${0##*/}.exclude") >"${DISTNAME}-${VERSION}.zip"
+tar --exclude-ignore="${BASE_DIR}/dev/${0##*/}.exclude" -czf "${DISTNAME}-${VERSION}.tar.gz" "${DISTNAME}"
 
 printf "%s Done!\n" "$0"
 
 # shellcheck disable=SC2086
-ls -ld ${DISTNAME}-${VERSION}.*
+ls -ld "${DISTNAME}-${VERSION}".*
 
 # an empty DEBUG.log is created ... :-(
-rm -f "$GIT_DIR/../test/"*.log
+rm -f "${BASE_DIR}/test/"*.log

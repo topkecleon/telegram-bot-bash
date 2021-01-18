@@ -15,8 +15,8 @@
 #     This file is public domain in the USA and all free countries.
 #     Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-# Usage: bashbot.sh [-h|--help|BOTCOMMANDS]
-         BOTCOMMANDS="start, stop, status, help, init, suspendback, resumeback, killback"
+# Usage: bashbot.sh BOTCOMMAND
+BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killback"
 #
 # Exit Codes:
 #     0 - success (hopefully)
@@ -30,7 +30,7 @@
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -42,7 +42,7 @@ fi
 
 # are we running in a terminal?
 NN="\n"
-if [ -t 1 ] && [ -n "$TERM" ];  then
+if [ -t 1 ] && [ -n "${TERM}" ];  then
     INTERACTIVE='yes'
     RED='\e[31m'
     GREEN='\e[32m'
@@ -63,47 +63,80 @@ if [ "$({ LC_ALL=C.utf-8 printf "%b" "\u1111"; } 2>/dev/null)" = "\u1111" ]; the
 fi
 
 
+# in UTF-8 äöü etc. are part of [:alnum:] and ranges (e.g. a-z), but we want ASCII a-z ranges!
+# for more information see  doc/4_expert.md#Character_classes
+azazaz='abcdefghijklmnopqrstuvwxyz'	# a-z   :lower:
+AZAZAZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ'	# A-Z   :upper:
+o9o9o9='0123456789'			# 0-9   :digit:
+azAZaz="${azazaz}${AZAZAZ}"	# a-zA-Z	:alpha:
+azAZo9="${azAZaz}${o9o9o9}"	# a-zA-z0-9	:alnum:
+
 # some important helper functions
 # returns true if command exist
 _exists() {
-	[ "$(type -t "${1}")" = "file" ]
+	[ "$(type -t "$1")" = "file" ]
 }
 # execute function if exists
 _exec_if_function() {
-	[ "$(type -t "${1}")" != "function" ] && return 1
+	[ "$(type -t "$1")" != "function" ] && return 1
 	"$@"
 }
 # returns true if function exist
 _is_function() {
-	[ "$(type -t "${1}")" = "function" ]
+	[ "$(type -t "$1")" = "function" ]
 }
 # round $1 in international notation! , returns float with $2 decimal digits
 # if $2 is not given or is not a positive number zero is assumed
 _round_float() {
-	local digit="${2}"; [[ "${2}" =~ ^[0-9]+$ ]] || digit="0"
-	{ LC_ALL=C.utf-8 printf "%.${digit}f" "${1}"; } 2>/dev/null
+	local digit="$2"; [[ "$2" =~ ^[${o9o9o9}]+$ ]] || digit="0"
+	{ LC_ALL=C.utf-8 printf "%.${digit}f" "$1"; } 2>/dev/null
+}
+# date is external, printf is much faster
+_date(){
+	printf "%(%c)T\n" -1
 }
 setConfigKey() {
-	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
+	[[ "$1" =~ ^[-${azAZo9},._]+$ ]] || return 3
 	[ -z "${BOTCONFIG}" ] && return 1
 	printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${2//\"/\\\"}" >>"${BOTCONFIG}.jssh"
 }
 getConfigKey() {
-	[[ "$1" =~ ^[-a-zA-Z0-9,._]+$ ]] || return 3
-	[ -r "${BOTCONFIG}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' <"${BOTCONFIG}.jssh" | tail -n 1
+	[[ "$1" =~ ^[-${azAZo9},._]+$ ]] || return 3
+	[ -r "${BOTCONFIG}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' "${BOTCONFIG}.jssh" | tail -n 1
 }
 # check if $1 seems a valid token
 # return true if token seems to be valid
 check_token(){
-	[[ "${1}" =~ ^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$ ]] && return 0
+	[[ "$1" =~ ^[${o9o9o9}]{8,10}:[${azAZo9}_-]{35}$ ]] && return 0
 	return 1
 }
 # log $1 with date
-log_error(){ printf "%s: %s\n" "$(date)" "$*" >>"${ERRORLOG}"; }
-log_debug(){ printf "%s: %s\n" "$(date)" "$*" >>"${DEBUGLOG}"; }
-log_update(){ printf "%s: %s\n" "$(date)" "$*" >>"${UPDATELOG}"; }
+log_error(){ printf "%(%c)T: %s\n" -1 "$*" >>"${ERRORLOG}"; }
+log_debug(){ printf "%(%c)T: %s\n" -1 "$*" >>"${DEBUGLOG}"; }
+log_update(){ printf "%(%c)T: %s\n" -1 "$*" >>"${UPDATELOG}"; }
 # log $1 with date, special first \n
-log_message(){ printf "\n%s: %s\n" "$(date)" "${1/\\n/$'\n'}" >>"${MESSAGELOG}"; }
+log_message(){ printf "\n%(%c)T: %s\n" -1 "${1/\\n/$'\n'}" >>"${MESSAGELOG}"; }
+# curl is preferred, try detect curl even not in PATH
+# sets BASHBOT_CURL to point to curl
+DETECTED_CURL="curl"
+detect_curl() {
+	local file warn="Warning: Curl not detected, try fallback to wget! pls install curl or adjust BASHBOT_CURL/BASHBOT_WGET environment variables."
+	# custom curl command
+	[ -n "${BASHBOT_CURL}" ] && return 0
+	# use wget
+	[ -n "${BASHBOT_WGET}" ] && DETECTED_CURL="wget" && return 1
+	# default use curl in PATH
+	BASHBOT_CURL="curl"
+	_exists curl && return 0
+	# search in usual locations
+	for file in /usr/bin /bin /usr/local/bin; do
+		[ -x "${file}/curl" ] && BASHBOT_CURL="${file}/curl" && return 0
+	done
+	# curl not in PATH and not in usual locations
+	DETECTED_CURL="wget"
+	log_update "${warn}"; [ -n "${BASHBOTDEBUG}" ] && log_debug "${warn}"
+	return 1
+}
 
 # additional tests if we run in debug mode
 export BASHBOTDEBUG
@@ -113,16 +146,16 @@ export BASHBOTDEBUG
 # shellcheck disable=SC2094
 debug_checks(){ {
 	[  -z "${BASHBOTDEBUG}" ] && return
-	local DATE WHERE MYTOKEN; DATE="$(date)"; WHERE="${1}"; shift
-	printf "%s: debug_checks: %s: bashbot.sh %s\n" "${DATE}" "${WHERE}" "${@##*/}"
+	local token where="$1"; shift
+	printf "%(%c)T: debug_checks: %s: bashbot.sh %s\n" -1 "${where}" "${1##*/}"
 	# shellcheck disable=SC2094
-	[ -z "${DEBUGLOG}" ] && printf "%s: %s\n" "${DATE}" "DEBUGLOG not set! =========="
-	MYTOKEN="$(getConfigKey "bottoken")"
-	[ -z "${MYTOKEN}" ] && printf "%s: %s\n" "${DATE}" "Bot token is missing! =========="
-	check_token "${MYTOKEN}" || printf "%s: %s\n" "${DATE}" "Invalid bot token! =========="
-	[ -z "$(getConfigKey "botadmin")" ] && printf "%s: %s\n" "${DATE}" "Bot admin is missing! =========="
+	[ -z "${DEBUGLOG}" ] && printf "%(%c)T: %s\n" -1 "DEBUGLOG not set! =========="
+	token="$(getConfigKey "bottoken")"
+	[ -z "${token}" ] && printf "%(%c)T: %s\n" -1 "Bot token is missing! =========="
+	check_token "${token}" || printf "%(%c)T: %s\n%s\n" -1 "Invalid bot token! ==========" "${token}"
+	[ -z "$(getConfigKey "botadmin")" ] && printf "%(%c)T: %s\n" -1 "Bot admin is missing! =========="
 	# call user defined debug_checks if exists
-	_exec_if_function my_debug_checks "${DATE}" "${WHERE}" "$*"
+	_exec_if_function my_debug_checks "$(_date)" "${where}" "$*"
 	} >>"${DEBUGLOG}"
 }
 
@@ -142,35 +175,37 @@ MODULEDIR="${SCRIPTDIR}/modules"
 # adjust locations based on source and real name
 [[ "${SCRIPT}" != "${REALME}" || "$1" == "source" ]] && SOURCE="yes"
 
-if [ -n "$BASHBOT_HOME" ]; then
-	SCRIPTDIR="$BASHBOT_HOME"
+if [ -n "${BASHBOT_HOME}" ]; then
+	SCRIPTDIR="${BASHBOT_HOME}"
  else
 	BASHBOT_HOME="${SCRIPTDIR}"
 fi
-[ -z "${BASHBOT_ETC}" ] && BASHBOT_ETC="$BASHBOT_HOME"
-[ -z "${BASHBOT_VAR}" ] && BASHBOT_VAR="$BASHBOT_HOME"
+[ -z "${BASHBOT_ETC}" ] && BASHBOT_ETC="${BASHBOT_HOME}"
+[ -z "${BASHBOT_VAR}" ] && BASHBOT_VAR="${BASHBOT_HOME}"
 
 ADDONDIR="${BASHBOT_ETC:-.}/addons"
 RUNUSER="${USER}" # USER is overwritten by bashbot array :-(, save original
 
 # provide help
 case "$1" in
-	""|"-h"*) [ -z "${SOURCE}" ] && printf "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NN}" && exit
+	"") [ -z "${SOURCE}" ] && printf "${ORANGE}Available commands: ${GREY}${BOTCOMMANDS}${NN}" && exit
 		;;
-	"--h"*)	sed -nE -e '/(NOT EDIT)|(shellcheck)/d' -e '3,/###/p' <"$0"
+	"-h"*)	LOGO="${BASHBOT_HOME:-.}/doc/bashbot.ascii"
+		{ [ -r "${LOGO}" ] && cat "${LOGO}"
+		sed -nE -e '/(NOT EDIT)|(shellcheck)/d' -e '3,/###/p' "$0"; } | more
 		exit;;
 	"help") HELP="${BASHBOT_HOME:-.}/README"
 		if [ -n "${INTERACTIVE}" ];then
-			_exists w3m && w3m "$HELP.html" && exit
-			_exists lynx && lynx "$HELP.html" && exit
-			_exists less && less "$HELP.txt" && exit
+			_exists w3m && w3m "${HELP}.html" && exit
+			_exists lynx && lynx "${HELP}.html" && exit
+			_exists less && less "${HELP}.txt" && exit
 		fi
-		cat "$HELP.txt"
+		cat "${HELP}.txt"
 		exit;;
 esac
 
 # OK, ENVIRONMENT is set up, let's do some additional tests
-if [[ -z "${SOURCE}" && -z "$BASHBOT_HOME" ]] && ! cd "${RUNDIR}" ; then
+if [[ -z "${SOURCE}" && -z "${BASHBOT_HOME}" ]] && ! cd "${RUNDIR}" ; then
 	printf "${RED}ERROR: Can't change to ${RUNDIR} ...${NN}"
 	exit 1
 fi
@@ -253,7 +288,6 @@ ERRORLOG="${LOGDIR}/ERROR.log"
 UPDATELOG="${LOGDIR}/BASHBOT.log"
 MESSAGELOG="${LOGDIR}/MESSAGE.log"
 
-debug_checks "start SOURCE=${SOURCE:-no}" "$@"
 # read BOTTOKEN from bot database if not set
 if [ -z "${BOTTOKEN}" ]; then
     BOTTOKEN="$(getConfigKey "bottoken")"
@@ -278,11 +312,11 @@ if ! check_token "${BOTTOKEN}"; then
 		"<your_bot_id>${RED}:${NC}<35_alphanumeric_characters-hash> ${RED}e.g. =>${NC} 123456789${RED}:${NC}Aa-Zz_0Aa-Zz_1Aa-Zz_2Aa-Zz_3Aa-Zz_4\n\n"\
 		"${GREY}Your bot token: '${NC}${BOTTOKEN//:/${RED}:${NC}}'\n"
 
-	if [[ ! "${BOTTOKEN}" =~ ^[0-9]{8,10}: ]]; then
+	if [[ ! "${BOTTOKEN}" =~ ^[${o9o9o9}]{8,10}: ]]; then
 		printf "${GREY}\tHint: Bot id not a number or wrong len: ${NC}$(($(wc -c <<<"${BOTTOKEN%:*}")-1)) ${GREY}but should be${NC} 8-10\n"
 		[ -n "$(getConfigKey "botid")" ] && printf "\t${GREEN}Did you mean: \"${NC}$(getConfigKey "botid")${GREEN}\" ?${NN}"
 	fi
-	[[ ! "${BOTTOKEN}" =~ :[a-zA-Z0-9_-]{35}$ ]] &&\
+	[[ ! "${BOTTOKEN}" =~ :[${azAZo9}_-]{35}$ ]] &&\
 		printf "${GREY}\tHint: Hash contains invalid character or has not len${NC} 35 ${GREY}, hash len is ${NC}$(($(wc -c <<<"${BOTTOKEN#*:}")-1))\n"
 	printf "\n"
 fi
@@ -293,16 +327,13 @@ fi
 BASHBOT_RETRY="" # retry by default
 
 URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
-ME_URL=$URL'/getMe'
-
-UPD_URL=$URL'/getUpdates?offset='
-GETFILE_URL=$URL'/getFile'
+ME_URL=${URL}'/getMe'
 
 #################
 # BASHBOT COMMON functions
 
 declare -rx SCRIPT SCRIPTDIR MODULEDIR RUNDIR ADDONDIR BOTACL DATADIR COUNTFILE
-declare -rx BOTTOKEN URL ME_URL UPD_URL GETFILE_URL
+declare -rx BOTTOKEN URL ME_URL
 
 declare -ax CMD
 declare -Ax UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY
@@ -319,6 +350,7 @@ if [  -r "${COMMANDS}" ]; then
 else
 	[ -z "${SOURCE}" ] && printf "${RED}Warning: ${COMMANDS} does not exist or is not readable!.${NN}"
 fi
+debug_checks "start SOURCE=${SOURCE:-no}" "$@"
 
 ###############
 # load modules
@@ -343,8 +375,8 @@ fi
 # outputs final filename
 download() {
 	local empty="no.file" file="${2:-${empty}}"
-	if [[ "$file" = *"/"* ]] || [[ "$file" = "."* ]]; then file="${empty}"; fi
-	while [ -f "${DATADIR:-.}/${file}" ] ; do file="$RAMDOM-${file}"; done
+	if [[ "${file}" = *"/"* ]] || [[ "${file}" = "."* ]]; then file="${empty}"; fi
+	while [ -f "${DATADIR:-.}/${file}" ] ; do file="${RANDOM}-${file}"; done
 	getJson "$1" >"${DATADIR:-.}/${file}" || return
 	printf '%s\n' "${DATADIR:-.}/${file}"
 }
@@ -373,52 +405,21 @@ killallproc() {
 		# shellcheck disable=SC2046
 		[ -n "${procid}" ] && kill $(proclist -9 "$1")
 	fi
-	debug_checks "end killallproc" "${1}"
+	debug_checks "end killallproc" "$1"
 }
 
 
 # $ chat $2 msg_id $3 nolog
-declare -xr DELETE_URL=$URL'/deleteMessage'
+declare -xr DELETE_URL=${URL}'/deleteMessage'
 delete_message() {
-	[ -z "$3" ] && log_update "Delete Message CHAT=${1} MSG_ID=${2}"
-	sendJson "${1}" '"message_id": '"${2}"'' "${DELETE_URL}"
+	[ -z "$3" ] && log_update "Delete Message CHAT=$1 MSG_ID=$2"
+	sendJson "$1" '"message_id": '"$2"'' "${DELETE_URL}"
 }
 
 get_file() {
 	[ -z "$1" ] && return
-	sendJson ""  '"file_id": "'"${1}"'"' "${GETFILE_URL}"
+	sendJson ""  '"file_id": "'"$1"'"' "${URL}/getFile"
 	printf '%s\n' "${URL}"/"$(JsonGetString <<< "${res}" '"result","file_path"')"
-}
-
-# curl is preferred, try detect curl even not in PATH
-# return TRUE if curl is found or custom curl detected
-# return FALSE if no curl is found or wget is forced by BASHBOT_WGET
-# sets BASHBOT_CURL to point to curl
-DETECTED_CURL="curl"
-function detect_curl() {
-	# custom curl command
-	[ -n "${BASHBOT_CURL}" ] && return 0
-	# use wget
-	if [ -n "${BASHBOT_WGET}" ]; then
-		DETECTED_CURL="wget"
-		return 1
-	fi
-	# default use curl in PATH
-	BASHBOT_CURL="curl"
-	_exists curl && return 0
-	# search in usual locations
-	local file
-	for file in /usr/bin /bin /usr/local/bin; do
-		if [ -x "${file}/curl" ]; then
-			BASHBOT_CURL="${file}/curl"
-			return 0
-		fi
-	done
-	# curl not in PATH and not in usual locations
-	DETECTED_CURL="wget"
-	local warn="Warning: Curl not detected, try fallback to wget! pls install curl or adjust BASHBOT_CURL/BASHBOT_WGET environment variables."
-	log_update "${warn}"; [ -n "${BASHBOTDEBUG}" ] && log_debug "${warn}"
-	return 1
 }
 
 # iconv used to filter out broken utf characters, if not installed fake it
@@ -427,15 +428,15 @@ if ! _exists iconv; then
 	function iconv() { cat; }
 fi
 
-TIMEOUT="${BASHBOT_TIMEOUT}"
-[[ "$TIMEOUT" =~ ^[0-9]+$ ]] || TIMEOUT="20"
+TIMEOUT="${BASHBOT_TIMEOUT:-20}"
+[[ "${TIMEOUT}" =~ ^[${o9o9o9}]+$ ]] || TIMEOUT="20"
 
 # usage: sendJson "chat" "JSON" "URL"
 sendJson(){
 	local json chat=""
-	if [ -n "${1}" ]; then
-		 chat='"chat_id":'"${1}"','
-		 [[ "${1}" == *[!0-9-]* ]] && chat='"chat_id":"'"${1}"' NAN",' # chat id not a number!
+	if [ -n "$1" ]; then
+		 chat='"chat_id":'"$1"','
+		 [[ "$1" == *[!${o9o9o9}-]* ]] && chat='"chat_id":"'"$1"' NAN",' # chat id not a number!
 	fi
 	# compose final json
 	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
@@ -451,7 +452,7 @@ sendJson(){
 	fi
 	# OK here we go ...
 	# route to curl/wget specific function
-	res="$(sendJson_do "${json}" "${3}")"
+	res="$(sendJson_do "${json}" "$3")"
 	# check telegram response
 	sendJsonResult "${res}" "sendJson (${DETECTED_CURL})" "$@"
 	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" &
@@ -463,8 +464,8 @@ sendJson(){
 if detect_curl ; then
   # here we have curl ----
   [ -z "${BASHBOT_CURL}" ] && BASHBOT_CURL="curl"
+  # $1 URL, $2 hack: log getJson if not ""
   getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -n "${3}" ]] && log_debug "getJson (curl) URL=${1##*/}"
 	# shellcheck disable=SC2086
 	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
   }
@@ -473,19 +474,19 @@ if detect_curl ; then
   sendJson_do(){
 	# shellcheck disable=SC2086
 	"${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
-		-d "${1}" -X POST "${2}" -H "Content-Type: application/json" | "${JSONSHFILE}" -b -n 2>/dev/null
+		-d "$1" -X POST "$2" -H "Content-Type: application/json" | "${JSONSHFILE}" -b -n 2>/dev/null
   }
   #$1 Chat, $2 what, $3 file, $4 URL, $5 caption
   sendUpload() {
 	[ "$#" -lt 4  ] && return
 	if [ -n "$5" ]; then
-	[ -n "${BASHBOTDEBUG}" ] &&\
-		log_update "sendUpload CHAT=${1} WHAT=${2}  FILE=${3} CAPT=${5}"
-	# shellcheck disable=SC2086
+		[ -n "${BASHBOTDEBUG}" ] &&\
+			log_update "sendUpload CHAT=$1 WHAT=$2  FILE=$3 CAPT=$5"
+		# shellcheck disable=SC2086
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -b -n 2>/dev/null )"
 	else
-	# shellcheck disable=SC2086
+		# shellcheck disable=SC2086
 		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -b -n 2>/dev/null )"
 	fi
@@ -496,7 +497,6 @@ else
   # NO curl, try wget
   if _exists wget; then
     getJson(){
-	[[ -n "${BASHBOTDEBUG}" && -z "${3}" ]] && log_debug "getJson (wget) URL=${1##*/}"
 	# shellcheck disable=SC2086
 	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
     }
@@ -504,8 +504,8 @@ else
     # usage: "JSON" "URL"
     sendJson_do(){
 	# shellcheck disable=SC2086
-	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data="${1}" \
-		--header='Content-Type:application/json' "${2}" | "${JSONSHFILE}" -b -n 2>/dev/null
+	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data="$1" \
+		--header='Content-Type:application/json' "$2" | "${JSONSHFILE}" -b -n 2>/dev/null
     }
     sendUpload() {
 	log_error "Sorry, wget does not support file upload"
@@ -526,9 +526,9 @@ fi
 # retry sendJson
 # $1 function $2 sleep $3 ... $n arguments
 sendJsonRetry(){
-	local retry="${1}"; shift
-	[[ "${1}" =~ ^\ *[0-9.]+\ *$ ]] && sleep "${1}"; shift
-	printf "%s: RETRY %s %s %s\n" "$(date)" "${retry}" "${1}" "${2:0:60}"
+	local retry="$1"; shift
+	[[ "$1" =~ ^\ *[${o9o9o9}.]+\ *$ ]] && sleep "$1"; shift
+	printf "%(%c)T: RETRY %s %s %s\n" -1 "${retry}" "$1" "${2:0:60}"
 	case "${retry}" in
 		'sendJson'*)
 			sendJson "$@"	
@@ -544,7 +544,7 @@ sendJsonRetry(){
 			return
 			;;
 	esac
-	[ "${BOTSENT[OK]}" = "true" ] && log_error "Retry OK:${retry} ${1} ${2:0:60}"
+	[ "${BOTSENT[OK]}" = "true" ] && log_error "Retry OK:${retry} $1 ${2:0:60}"
 } >>"${ERRORLOG}"
 
 # process sendJson result
@@ -553,19 +553,21 @@ sendJsonRetry(){
 sendJsonResult(){
 	local offset=0
 	BOTSENT=( )
+	Json2Array 'UPD' <<<"$1"
 	[ -n "${BASHBOTDEBUG}" ] && log_message "New Result ==========\n$1"
-	BOTSENT[OK]="$(JsonGetLine '"ok"' <<< "${1}")"
+	BOTSENT[OK]="${UPD["ok"]}"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
-		BOTSENT[ID]="$(JsonGetValue '"result","message_id"' <<< "${1}")"
+		BOTSENT[ID]="${UPD["result","message_id"]}"
+		BOTSENT[CHAT]="${UPD["result","chat","id"]}"
+		[ -n "${UPD["result"]}" ] && BOTSENT[RESULT]="${UPD["result"]}"
 		return
 		# hot path everything OK!
 	else
 	    # oops something went wrong!
-	    if [ "${1}" != "" ]; then
-			BOTSENT[ERROR]="$(JsonGetValue '"error_code"' <<< "${1}")"
-			BOTSENT[DESCRIPTION]="$(JsonGetString '"description"' <<< "${1}")"
-			grep -qs -F '"parameters","retry_after"' <<< "${1}" &&\
-				BOTSENT[RETRY]="$(JsonGetValue '"parameters","retry_after"' <<< "${1}")"
+	    if [ -n "$1" ]; then
+			BOTSENT[ERROR]="${UPD["error_code"]}"
+			BOTSENT[DESCRIPTION]="${UPD["description"]}"
+			[ -n "${UPD["parameters","retry_after"]}" ] && BOTSENT[RETRY]="${UPD["parameters","retry_after"]}"
 	    else
 			BOTSENT[OK]="false"
 			BOTSENT[ERROR]="999"
@@ -574,8 +576,8 @@ sendJsonResult(){
 	    # log error
 	    [[ "${BOTSENT[ERROR]}" = "400" && "${BOTSENT[DESCRIPTION]}" == *"starting at byte offset"* ]] &&\
 			 offset="${BOTSENT[DESCRIPTION]%* }"
-	    printf "%s: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s ACTION=%s\n" "$(date)"\
-			"${BOTSENT[OK]}"  "${2}" "${3}" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4:${offset}:100}"
+	    printf "%(%c)T: RESULT=%s FUNC=%s CHAT[ID]=%s ERROR=%s DESC=%s ACTION=%s\n" -1\
+			"${BOTSENT[OK]}"  "$2" "$3" "${BOTSENT[ERROR]}" "${BOTSENT[DESCRIPTION]}" "${4:${offset}:100}"
 	    # warm path, do not retry on error, also if we use wegt
 	    [ -n "${BASHBOT_RETRY}${BASHBOT_WGET}" ] && return
 
@@ -583,8 +585,8 @@ sendJsonResult(){
 	    # throttled, telegram say we send too many messages
 	    if [ -n "${BOTSENT[RETRY]}" ]; then
 			BASHBOT_RETRY="$(( ++BOTSENT[RETRY] ))"
-			printf "Retry %s in %s seconds ...\n" "${2}" "${BASHBOT_RETRY}"
-			sendJsonRetry "${2}" "${BASHBOT_RETRY}" "${@:3}"
+			printf "Retry %s in %s seconds ...\n" "$2" "${BASHBOT_RETRY}"
+			sendJsonRetry "$2" "${BASHBOT_RETRY}" "${@:3}"
 			unset BASHBOT_RETRY
 			return
 	    fi
@@ -592,12 +594,12 @@ sendJsonResult(){
 	    if [ "${BOTSENT[ERROR]}" == "999" ];then
 		# check if default curl and args are OK
 			if ! curl -sL -k -m 2 "${URL}" >/dev/null 2>&1 ; then
-				printf "%s: BASHBOT IP Address seems blocked!\n" "$(date)"
+				printf "%(%c)T: BASHBOT IP Address seems blocked!\n" -1
 				# user provided function to recover or notify block
 				if _exec_if_function bashbotBlockRecover; then
 					BASHBOT_RETRY="2"
-					printf "bashbotBlockRecover returned true, retry %s ...\n" "${2}"
-					sendJsonRetry "${2}" "${BASHBOT_RETRY}" "${@:3}"
+					printf "bashbotBlockRecover returned true, retry %s ...\n" "$2"
+					sendJsonRetry "$2" "${BASHBOT_RETRY}" "${@:3}"
 					unset BASHBOT_RETRY
 				fi
 		    return
@@ -605,9 +607,9 @@ sendJsonResult(){
 	        # are not blocked, default curl and args are working
 			if [ -n "${BASHBOT_CURL_ARGS}" ] || [ "${BASHBOT_CURL}" != "curl" ]; then
 				printf "Problem with \"%s %s\"? retry %s with default config ...\n"\
-					"${BASHBOT_CURL}" "${BASHBOT_CURL_ARGS}" "${2}"
+					"${BASHBOT_CURL}" "${BASHBOT_CURL_ARGS}" "$2"
 				BASHBOT_RETRY="2"; BASHBOT_CURL="curl"; BASHBOT_CURL_ARGS=""
-				sendJsonRetry "${2}" "${BASHBOT_RETRY}" "${@:3}"
+				sendJsonRetry "$2" "${BASHBOT_RETRY}" "${@:3}"
 				unset BASHBOT_RETRY
 			fi
 	    fi
@@ -636,7 +638,7 @@ title2Json(){
 # get bot name and id from telegram
 getBotName() {
 	declare -A BOTARRAY
-	Json2Array 'BOTARRAY' <<<"$(getJson "$ME_URL" | "${JSONSHFILE}" -b -n 2>/dev/null)"
+	Json2Array 'BOTARRAY' <<<"$(getJson "${ME_URL}" | "${JSONSHFILE}" -b -n 2>/dev/null)"
 	[ -z "${BOTARRAY["result","username"]}" ] && return 1
 	# save botname and id
 	setConfigKey "botname" "${BOTARRAY["result","username"]}"
@@ -647,15 +649,14 @@ getBotName() {
 # pure bash implementation, done by KayM (@gnadelwartz)
 # see https://stackoverflow.com/a/55666449/9381171
 JsonDecode() {
-	local out="$1" remain="" U=""
+	local remain U out="$1"
 	local regexp='(.*)\\u[dD]([0-9a-fA-F]{3})\\u[dD]([0-9a-fA-F]{3})(.*)'
-	while [[ "${out}" =~ $regexp ]] ; do
+	while [[ "${out}" =~ ${regexp} ]] ; do
 	U=$(( ( (0xd${BASH_REMATCH[2]} & 0x3ff) <<10 ) | ( 0xd${BASH_REMATCH[3]} & 0x3ff ) + 0x10000 ))
 			remain="$(printf '\\U%8.8x' "${U}")${BASH_REMATCH[4]}${remain}"
 			out="${BASH_REMATCH[1]}"
 	done
-	#printf "%b\n" "${out}${remain}" # seems to work ... dealyed to next dev
-	echo -e "${out}${remain}"
+	printf "%b\n" "${out}${remain}"
 }
 
 JsonGetString() {
@@ -675,7 +676,7 @@ process_updates() {
 	max="$(grep -F ',"update_id"]'  <<< "${UPDATE}" | tail -1 | cut -d , -f 2 )"
 	Json2Array 'UPD' <<<"${UPDATE}"
 	for ((num=0; num<=max; num++)); do
-		process_client "$num" "${debug}"
+		process_client "${num}" "${debug}"
 	done
 }
 
@@ -698,12 +699,12 @@ process_client() {
 			MESSAGE[0]="/_edited_message "
 		fi
 		process_message "${num}" "${debug}"
-	        printf "%s: update received FROM=%s CHAT=%s CMD=%s\n" "$(date)" "${USER[USERNAME]:0:20} (${USER[ID]})"\
+	        printf "%(%c)T: update received FROM=%s CHAT=%s CMD=%s\n" -1 "${USER[USERNAME]:0:20} (${USER[ID]})"\
 			"${CHAT[USERNAME]:0:20}${CHAT[TITLE]:0:30} (${CHAT[ID]})"\
 			"${MESSAGE:0:30}${CAPTION:0:30}${URLS[*]:0:30}" >>"${UPDATELOG}"
 	else
 		process_inline "${num}" "${debug}"
-	        printf "%s: iQuery received FROM=%s iQUERY=%s\n" "$(date)"\
+	        printf "%(%c)T: iQuery received FROM=%s iQUERY=%s\n" -1\
 			"${iQUERY[USERNAME]:0:20} (${iQUERY[USER_ID]})" "${iQUERY[0]}" >>"${UPDATELOG}"
 	fi
 	#####
@@ -723,7 +724,7 @@ process_client() {
 	jssh_countKeyDB_async "${CHAT[ID]}" "${COUNTFILE}"
 }
 
-declare -Ax BASHBOT_EVENT_INLINE BASHBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASHBOT_EVENT_REPLY BASHBOT_EVENT_FORWARD BASHBOT_EVENT_SEND
+declare -Ax BASHBOT_EVENT_INLINE BASHBOT_EVENT_MESSAGE BASHBOT_EVENT_CMD BASHBOT_EVENT_REPLYTO BASHBOT_EVENT_FORWARD BASHBOT_EVENT_SEND
 declare -Ax BASHBOT_EVENT_CONTACT BASHBOT_EVENT_LOCATION BASHBOT_EVENT_FILE BASHBOT_EVENT_TEXT BASHBOT_EVENT_TIMER BASHBOT_BLOCKED
 
 start_timer(){
@@ -737,7 +738,7 @@ start_timer(){
 EVENT_SEND="0"
 event_send() {
 	# max recursion level 5 to avoid fork bombs
-	(( EVENT_SEND++ )); [ "$EVENT_SEND" -gt "5" ] && return
+	(( EVENT_SEND++ )); [ "${EVENT_SEND}" -gt "5" ] && return
 	# shellcheck disable=SC2153
 	for key in "${!BASHBOT_EVENT_SEND[@]}"
 	do
@@ -753,7 +754,7 @@ event_timer() {
 	for key in "${!BASHBOT_EVENT_TIMER[@]}"
 	do
 		timer="${key##*,}"
-		[[ ! "$timer" =~ ^-*[1-9][0-9]*$ ]] && continue
+		[[ ! "${timer}" =~ ^-*[1-9][0-9]*$ ]] && continue
 		if [ "$(( EVENT_TIMER % timer ))" = "0" ]; then
 			_exec_if_function "${BASHBOT_EVENT_TIMER[${key}]}" "timer" "${key}" "${debug}"
 			[ "$(( EVENT_TIMER % timer ))" -lt "0" ] && \
@@ -845,7 +846,7 @@ event_message() {
 
 }
 pre_process_message(){
-	local num="${1}"
+	local num="$1"
 	# unset everything to not have old values
 	CMD=( ); iQUERY=( ); MESSAGE=(); CHAT=(); USER=(); CONTACT=(); LOCATION=(); unset CAPTION
 	REPLYTO=( ); FORWARD=( ); URLS=(); VENUE=( ); SERVICE=( ); NEWMEMBER=( ); LEFTMEMBER=( ); PINNED=( ); MIGRATE=( )
@@ -858,7 +859,7 @@ pre_process_message(){
 	return 0
 }
 process_inline() {
-	local num="${1}"
+	local num="$1"
 	iQUERY[0]="$(JsonDecode "${UPD["result",${num},"inline_query","query"]}")"
 	iQUERY[USER_ID]="${UPD["result",${num},"inline_query","from","id"]}"
 	iQUERY[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","first_name"]}")"
@@ -1006,7 +1007,6 @@ process_message() {
 #########################
 # main get updates loop, should never terminate
 declare -A BASHBOTBLOCKED
-export BASHBOT_UPDATELOG="${BASHBOT_UPDATELOG-nolog}" # allow to be ""
 start_bot() {
 	local DEBUGMSG OFFSET=0
 	# adaptive sleep defaults
@@ -1017,9 +1017,9 @@ start_bot() {
 	DEBUGMSG="Start BASHBOT updates in Mode \"${1:-normal}\" =========="
 	log_update "${DEBUGMSG}"
 	# redirect to Debug.log
-	[[ "${1}" == *"debug" ]] && exec &>>"${DEBUGLOG}"
-	log_debug "${DEBUGMSG}"; DEBUGMSG="${1}"
-	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x && unset BASHBOT_UPDATELOG
+	[[ "$1" == *"debug" ]] && exec &>>"${DEBUGLOG}"
+	log_debug "${DEBUGMSG}"; DEBUGMSG="$1"
+	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x
 	# cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -delete
 	find "${DATADIR}" -size 0 -name "*.log" -delete
@@ -1033,7 +1033,7 @@ start_bot() {
 	# start timer events
 	if [ -n "${BASHBOT_START_TIMER}" ] ; then
 		# shellcheck disable=SC2064
-		trap "event_timer $DEBUGMSG" ALRM
+		trap "event_timer ${DEBUGMSG}" ALRM
 		start_timer &
 		# shellcheck disable=SC2064
 		trap "kill -9 $!; exit" EXIT INT HUP TERM QUIT 
@@ -1042,7 +1042,7 @@ start_bot() {
 	jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
         [ -f "${COUNTFILE}.jssh.flock" ] && rm -f "${COUNTFILE}.jssh.flock"
 	# store start time and cleanup botconfig on startup
-	jssh_updateKeyDB "startup" "$(date)" "${BOTCONFIG}"
+	jssh_updateKeyDB "startup" "$(_date)" "${BOTCONFIG}"
         [ -f "${BOTCONFIG}.jssh.flock" ] && rm -f "${BOTCONFIG}.jssh.flock"
 	# read blocked users
 	jssh_readDB_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
@@ -1054,7 +1054,7 @@ start_bot() {
 		# adaptive sleep in ms rounded to next 0.1 s
 		sleep "$(_round_float "${nextsleep}e-3" "1")"
 		# get next update
-		UPDATE="$(getJson "${UPD_URL}${OFFSET}" "${BASHBOT_UPDATELOG}" 2>/dev/null | "${JSONSHFILE}" -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
+		UPDATE="$(getJson "${URL}/getUpdates?offset=${OFFSET}" 2>/dev/null | "${JSONSHFILE}" -b -n 2>/dev/null | iconv -f utf-8 -t utf-8 -c)"
 		# did we get an response?
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
@@ -1067,7 +1067,7 @@ start_bot() {
 			OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
 			((OFFSET++))
 
-			if [ "$OFFSET" != "1" ]; then
+			if [ "${OFFSET}" != "1" ]; then
 				nextsleep="100"
 				process_updates "${DEBUGMSG}"
 			fi
@@ -1091,7 +1091,7 @@ start_bot() {
 # initialize bot environment, user and permissions
 bot_init() {
 	[ -n "${BASHBOT_HOME}" ] && cd "${BASHBOT_HOME}" || exit 1
-	local DEBUG="$1"
+	local runuser chown touser botname DEBUG="$1"
 	# upgrade from old version
 	# currently no action
 	printf "Check for Update actions ...\n"
@@ -1103,24 +1103,37 @@ bot_init() {
 		[ -r "${addons}" ] && source "${addons}" "init" "${DEBUG}"
 	done
 	printf "Done.\n"
-	# setup bashbot
-	[[ "${UID}" -eq "0" ]] && RUNUSER="nobody"
-	printf "Enter User to run bashbot [$RUNUSER]: "
-	read -r TOUSER
-	[ -z "$TOUSER" ] && TOUSER="$RUNUSER"
-	if ! id "$TOUSER" &>/dev/null; then
-		printf "${RED}User \"$TOUSER\" not found!${NN}"
+	# ask for bashbot user
+	runuser="${RUNUSER}"; [ "${UID}" = "0" ] && runuser="nobody"
+	printf "Enter User to run bashbot [${runuser}]: "
+	read -r chown
+	[ -z "${chown}" ] && chown="${runuser}"; touser="${chown%:*}"
+	# check user ...
+	if ! id "${touser}" &>/dev/null; then
+		printf "${RED}User \"${touser}\" does not exist!${NN}"
 		exit 3
-	else
-		printf "Adjusting files and permissions for user \"${TOUSER}\" ...\n"
-		[ -w "bashbot.rc" ] && sed -i '/^[# ]*runas=/ s/runas=.*$/runas="'$TOUSER'"/' "bashbot.rc"
-		chmod 711 .
-		chmod -R o-w ./*
-		chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" logs "${LOGDIR}/"*.log 2>/dev/null
-		chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTACL}" 2>/dev/null
-		# jsshDB must writeable by owner
-		find . -name '*.jssh*' -exec chmod u+w \{\} +
-		chown -R "$TOUSER" . ./*
+	elif [[ "${UID}" != "0" && "${touser}" != "${runuser}" ]]; then
+		# different user but not root ...
+		printf "${ORANGE}You are not root, adjusting permissions may fail. Try \"sudo ./bashbot.sh init\"${NN}Press <CTRL+C> to stop or <Enter> to continue..." 1>&2
+		[ -n "${INTERACTIVE}" ] && read -r runuser
+	fi
+	# adjust permissions
+	printf "Adjusting files and permissions for user \"${touser}\" ...\n"
+	chmod 711 .
+	chmod -R o-w ./*
+	chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" logs "${LOGDIR}/"*.log 2>/dev/null
+	chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTACL}" 2>/dev/null
+	# jsshDB must writeable by owner
+	find . -name '*.jssh*' -exec chmod u+w \{\} +
+	chown -Rf "${chown}" . ./*
+	printf "Done.\n"
+	# adjust values in bashbot.rc
+	if [ -w "bashbot.rc" ]; then
+		printf "Adjust user and botname in bashbot.rc ...\n"
+		sed -i '/^[# ]*runas=/ s|runas=.*$|runas="'"${touser}"'"|' "bashbot.rc"
+		sed -i '/^[# ]*bashbot=/ s|bashbot=.*$|bashbot="cd '"${PWD}"'; '"${PWD}"'/'"${0##*/}"'"|' "bashbot.rc"
+		botname="$(getConfigKey "botname")"
+		[ -n "${botname}" ] && sed -i '/^[# ]*name=/ s|name=.*$|name="'"${botname}"'"|' "bashbot.rc"
 		printf "Done.\n"
 	fi
 	# ask to check bottoken online
@@ -1135,7 +1148,7 @@ bot_init() {
 	# check if botconf seems valid
 	printf "${GREEN}This is your bot config:${NN}"
 	sed 's/^/\t/' "${BOTCONFIG}.jssh" | grep -vF '["bot_config_key"]'
-	if check_token "$(getConfigKey "bottoken")" && [[ "$(getConfigKey "botadmin")" =~ ^[0-9]+$ ]]; then
+	if check_token "$(getConfigKey "bottoken")" && [[ "$(getConfigKey "botadmin")" =~ ^[${o9o9o9}]+$ ]]; then
 		printf "Bot config seems to be valid. Should I make a backup copy? (Y/n) Y\b"
 		read -r ANSWER
 		if [[ -z "${ANSWER}" || "${ANSWER}" =~ ^[^Nn] ]]; then
@@ -1167,7 +1180,7 @@ if [ -z "${SOURCE}" ]; then
   ##############
   # internal options only for use from bashbot and developers
   # shellcheck disable=SC2221,SC2222
-  case "${1}" in
+  case "$1" in
 	# update botname when starting only
 	"botname"|"start"*)
 		ME="$(getBotName)"
@@ -1179,7 +1192,7 @@ if [ -z "${SOURCE}" ]; then
 		else
 			printf "${GREY}Info: Can't get Botname from Telegram, try cached one ...${NN}"
 			ME="$(getConfigKey "botname")"
-			if [ -z "$ME" ]; then
+			if [ -z "${ME}" ]; then
 			    printf "${RED}ERROR: No cached botname, can't continue! ...${NN}"
 			    exit 1
 			fi
@@ -1194,7 +1207,7 @@ if [ -z "${SOURCE}" ]; then
 		ME="$(getConfigKey "botname")"
 		# read until terminated
 		while read -r line ;do
-			[ -n "$line" ] && send_message "$2" "$line"
+			[ -n "${line}" ] && send_message "$2" "${line}"
 		done 
 		# cleanup datadir, keep logfile if not empty
 		rm -f -r "${DATADIR:-.}/$3"
@@ -1248,7 +1261,7 @@ if [ -z "${SOURCE}" ]; then
 		BOTPID="$(proclist "${SESSION}")"
 		# shellcheck disable=SC2086
 		[ -n "${BOTPID}" ] && kill ${BOTPID}
-		nohup "$SCRIPT" "startbot" "$2" "${SESSION}" &>/dev/null &
+		nohup "${SCRIPT}" "startbot" "$2" "${SESSION}" &>/dev/null &
 		printf "Session Name: %s\n" "${SESSION}"
 		sleep 1
 		if [ -n "$(proclist "${SESSION}")" ]; then

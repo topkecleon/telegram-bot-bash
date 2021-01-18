@@ -6,38 +6,43 @@
 # Description:
 #    even after make-distribution.sh bashbot is not self contained as it was in the past.
 #
+# Options: --notest
+#
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
 ###################################################################
 
-# magic to ensure that we're always inside the root of our application,
-# no matter from which directory we'll run script
-GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
-if [ "$GIT_DIR" != "" ] ; then
-	[[ "$GIT_DIR" != "/"* ]] && GIT_DIR="${PWD}/${GIT_DIR}"
-	cd "$GIT_DIR/.." || exit 1
-else
-	[ ! -f "bashbot.sh" ] && printf "bashbot.sh not found in %s\n" " $(pwd)" && exit 1
-fi
+#shellcheck disable=SC1090
+source "${0%/*}/dev.inc.sh"
+[ ! -f "bashbot.sh" ] && printf "bashbot.sh not found in %s\n" " $(pwd)" && exit 1
 
 #DISTNAME="telegram-bot-bash"
-DISTDIR="./STANDALONE/${DISTNAME}" 
-DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh dev/obfuscate.sh modules scripts logs LICENSE README.* doc botacl botconfig.jssh"
+DISTDIR="./STANDALONE" 
+DISTMKDIR="data-bot-bash logs bin bin/logs addons"
+DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh dev/obfuscate.sh modules bin scripts LICENSE README.* doc botacl botconfig.jssh $(echo "addons/"*.sh)"
 
 # run pre_commit on files
-dev/hooks/pre-commit.sh
+[ "$1" != "--notest" ] &&  dev/hooks/pre-commit.sh
 
 # create dir for distribution and copy files
+printf "Create directories and copy files\n"
 mkdir -p "${DISTDIR}" 2>/dev/null
+
 # shellcheck disable=SC2086
 cp -r ${DISTFILES} "${DISTDIR}" 2>/dev/null
 cd "${DISTDIR}" || exit 1
 
+# shellcheck disable=SC2250
+for dir in $DISTMKDIR
+do
+	[ ! -d "${dir}" ] && mkdir "${dir}"
+done
+
 # inject JSON.sh into distribution
 # shellcheck disable=SC1090
-source "$GIT_DIR/../dev/inject-json.sh"
+source "${BASE_DIR}/dev/inject-json.sh"
 
 #######################
 # here the magic starts
@@ -66,7 +71,7 @@ printf "\n... create unified bashbot.sh\n"
 
 { 
   # first head of bashbot.sh
-  sed -n '0,/for modules in/ p' bashbot.sh | head -n -3
+  sed -n '0,/for module in/ p' bashbot.sh | head -n -3
 
   # then mycommands from first non comment line on
   printf '\n##############################\n# bashbot modules starts here ...\n'
@@ -95,7 +100,7 @@ chmod +x bashbot.sh.min
 # make html doc
 printf "Create html doc\n"
 #shellcheck disable=SC1090
-source "$GIT_DIR/../dev/make-html.sh"
+source "${BASE_DIR}/dev/make-html.sh"
 
 printf "%s Done!\n" "$0"
 

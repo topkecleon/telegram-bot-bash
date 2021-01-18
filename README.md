@@ -104,10 +104,10 @@ Now open the Telegram App on your mobile phone and start a chat with your bot (_
 /start
 
 You are Botadmin
-*Available commands*:
-*• /start*: _Start bot and get this message_.
-*• /help*: _Get this message_.
-*• /info*: _Get shorter info message about this bot_....
+Available commands:
+  /start: _Start bot and get this message_.
+  /help: _Get this message_.
+  /info: _Get shorter info message about this bot_....
 
 /info
 
@@ -124,12 +124,12 @@ Start bashbot in debug mode to see all messages sent to / received from Telegram
 To enable debug mode, start bashbot with debug as third argument: `bashbot start debug`
 
 ```
-├── logs 
-│   ├── BASHBOT.log      # log what your bot is doing ...
-│   ├── ERROR.log        # connection errors from / to Telegram API
-│   │
-│   ├── DEBUG.log        # stdout/stderr of you bot (debug mode enabled)
-│   └── MESSAGE.log      # full text of all message send/received (debug mode enabled)
+|__ logs
+|     |__ BASHBOT.log  # log what your bot is doing ...
+|     |__ ERROR.log    # connection errors from / to Telegram API
+|     |
+|     |__ DEBUG.log    # stdout/stderr of you bot (debug mode enabled)
+|     |__ MESSAGE.log  # full text of all message send/received (debug mode enabled)
 ```
 
 ----
@@ -238,4 +238,4 @@ See `mycommnds.sh.dist` for an example.
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.30-0-g3266427
