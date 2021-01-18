@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.31-dev-0-gad532cc
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -89,7 +89,8 @@ _is_function() {
 # if $2 is not given or is not a positive number zero is assumed
 _round_float() {
 	local digit="$2"; [[ "$2" =~ ^[${o9o9o9}]+$ ]] || digit="0"
-	{ LC_ALL=C.utf-8 printf "%.${digit}f" "$1"; } 2>/dev/null
+	: "$(LC_ALL=C printf "%.${digit}f" "$1" 2>/dev/null)"
+	printf "%s" "${_//,/.}" # make more LANG independent
 }
 # date is external, printf is much faster
 _date(){
