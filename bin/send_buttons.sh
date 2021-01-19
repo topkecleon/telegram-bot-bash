@@ -3,13 +3,14 @@
 #
 #          FILE: bin/send_message.sh
 # 
-USAGE='send_message.sh [-h|--help] "CHAT[ID]" "message ...." "buttons" [debug]'
+USAGE='send_message.sh [-h|--help] "CHAT[ID]" "message" "text|url" ...'
 # 
-#   DESCRIPTION: send a message to the given user/group
+#   DESCRIPTION: send a send buttons in a row to the given user/group
 # 
 #       OPTIONS: CHAT[ID] - ID number of CHAT or BOTADMIN to send to yourself
 #                message - message to send
-#                buttons - buttons to send as button array
+#                text|url - buttons to send in a row, each as "button text|url"
+#                     e.g. "Amazon|https://www.amzon.com" "Mydealz|https://mydealz.de" ...
 #
 #                -h - display short help
 #                --help -  this help
@@ -20,7 +21,7 @@ USAGE='send_message.sh [-h|--help] "CHAT[ID]" "message ...." "buttons" [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.01.2021 11:34
 #
-#### $$VERSION$$ v1.31-dev-4-g0ee6973
+#### $$VERSION$$ v1.31-dev-8-g8854e03
 #===============================================================================
 
 ####
@@ -42,7 +43,7 @@ esac
 
 # set bashbot environment
 # shellcheck disable=SC1090
-source "${0%/*}/bashbot_env.inc.sh" "${4:-debug}" # $4 debug
+source "${0%/*}/bashbot_env.inc.sh" "debug"
 
 ####
 # ready, do stuff here -----
@@ -51,9 +52,11 @@ if [ "$1" == "BOTADMIN" ]; then
 else
 	CHAT="$1"
 fi
+TEXT="$2"
+shift 2
 
 # send message in selected format
-"${SEND}" "${CHAT}" "$2" "$3"
+"${SEND}" "${CHAT}" "${TEXT}" "$(_button_row "$@")"
 
 # output send message result
 jssh_printDB "BOTSENT" | sort -r

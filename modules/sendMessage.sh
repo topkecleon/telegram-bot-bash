@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.31-dev-7-ge923e2e
+#### $$VERSION$$ v1.31-dev-8-g8854e03
 
 # will be automatically sourced from bashbot
 
