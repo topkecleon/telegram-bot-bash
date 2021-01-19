@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.31-dev-0-gfe1fb75
+#### $$VERSION$$ v1.31-dev-1-g62378f7
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -420,7 +420,7 @@ delete_message() {
 get_file() {
 	[ -z "$1" ] && return
 	sendJson ""  '"file_id": "'"$1"'"' "${URL}/getFile"
-	printf "%s\n" "${URL}/${UPD["result","file_path"]}"
+	printf "%s\n" "${URL}/${UPD["result,file_path"]}"
 }
 
 # iconv used to filter out broken utf characters, if not installed fake it
@@ -558,8 +558,8 @@ sendJsonResult(){
 	[ -n "${BASHBOTDEBUG}" ] && log_message "New Result ==========\n$1"
 	BOTSENT[OK]="${UPD["ok"]}"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
-		BOTSENT[ID]="${UPD["result","message_id"]}"
-		BOTSENT[CHAT]="${UPD["result","chat","id"]}"
+		BOTSENT[ID]="${UPD["result,message_id"]}"
+		BOTSENT[CHAT]="${UPD["result,chat,id"]}"
 		[ -n "${UPD["result"]}" ] && BOTSENT[RESULT]="${UPD["result"]}"
 		return
 		# hot path everything OK!
@@ -568,7 +568,7 @@ sendJsonResult(){
 	    if [ -n "$1" ]; then
 			BOTSENT[ERROR]="${UPD["error_code"]}"
 			BOTSENT[DESCRIPTION]="${UPD["description"]}"
-			[ -n "${UPD["parameters","retry_after"]}" ] && BOTSENT[RETRY]="${UPD["parameters","retry_after"]}"
+			[ -n "${UPD["parameters,retry_after"]}" ] && BOTSENT[RETRY]="${UPD["parameters,retry_after"]}"
 	    else
 			BOTSENT[OK]="false"
 			BOTSENT[ERROR]="999"
@@ -851,146 +851,146 @@ pre_process_message(){
 	# unset everything to not have old values
 	CMD=( ); iQUERY=( ); MESSAGE=(); CHAT=(); USER=(); CONTACT=(); LOCATION=(); unset CAPTION
 	REPLYTO=( ); FORWARD=( ); URLS=(); VENUE=( ); SERVICE=( ); NEWMEMBER=( ); LEFTMEMBER=( ); PINNED=( ); MIGRATE=( )
-	iQUERY[ID]="${UPD["result",${num},"inline_query","id"]}"
-	CHAT[ID]="${UPD["result",${num},"message","chat","id"]}"
-	USER[ID]="${UPD["result",${num},"message","from","id"]}"
-	[ -z "${CHAT[ID]}" ] && CHAT[ID]="${UPD["result",${num},"edited_message","chat","id"]}"
-	[ -z "${USER[ID]}" ] && USER[ID]="${UPD["result",${num},"edited_message","from","id"]}"
+	iQUERY[ID]="${UPD["result,${num},inline_query,id"]}"
+	CHAT[ID]="${UPD["result,${num},message,chat,id"]}"
+	USER[ID]="${UPD["result,${num},message,from,id"]}"
+	[ -z "${CHAT[ID]}" ] && CHAT[ID]="${UPD["result,${num},edited_message,chat,id"]}"
+	[ -z "${USER[ID]}" ] && USER[ID]="${UPD["result,${num},edited_message,from,id"]}"
 	# always true
 	return 0
 }
 process_inline() {
 	local num="$1"
-	iQUERY[0]="$(JsonDecode "${UPD["result",${num},"inline_query","query"]}")"
-	iQUERY[USER_ID]="${UPD["result",${num},"inline_query","from","id"]}"
-	iQUERY[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","first_name"]}")"
-	iQUERY[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","last_name"]}")"
-	iQUERY[USERNAME]="$(JsonDecode "${UPD["result",${num},"inline_query","from","username"]}")"
+	iQUERY[0]="$(JsonDecode "${UPD["result,${num},inline_query,query"]}")"
+	iQUERY[USER_ID]="${UPD["result,${num},inline_query,from,id"]}"
+	iQUERY[FIRST_NAME]="$(JsonDecode "${UPD["result,${num},inline_query,from,first_name"]}")"
+	iQUERY[LAST_NAME]="$(JsonDecode "${UPD["result,${num},inline_query,from,last_name"]}")"
+	iQUERY[USERNAME]="$(JsonDecode "${UPD["result,${num},inline_query,from,username"]}")"
 	# always true
 	return 0
 }
 process_message() {
 	local num="$1"
 	# Message
-	MESSAGE[0]+="$(JsonDecode "${UPD["result",${num},"message","text"]}" | sed 's|\\/|/|g')"
-	MESSAGE[ID]="${UPD["result",${num},"message","message_id"]}"
+	MESSAGE[0]+="$(JsonDecode "${UPD["result,${num},message,text"]}" | sed 's|\\/|/|g')"
+	MESSAGE[ID]="${UPD["result,${num},message,message_id"]}"
 
 	# Chat ID is now parsed when update is received
-	CHAT[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","chat","last_name"]}")"
-	CHAT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","chat","first_name"]}")"
-	CHAT[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","chat","username"]}")"
+	CHAT[LAST_NAME]="$(JsonDecode "${UPD["result,${num},message,chat,last_name"]}")"
+	CHAT[FIRST_NAME]="$(JsonDecode "${UPD["result,${num},message,chat,first_name"]}")"
+	CHAT[USERNAME]="$(JsonDecode "${UPD["result,${num},message,chat,username"]}")"
 	# set real name as username if empty
 	[ -z "${CHAT[USERNAME]}" ] && CHAT[USERNAME]="${CHAT[FIRST_NAME]} ${CHAT[LAST_NAME]}"
-	CHAT[TITLE]="$(JsonDecode "${UPD["result",${num},"message","chat","title"]}")"
-	CHAT[TYPE]="$(JsonDecode "${UPD["result",${num},"message","chat","type"]}")"
-	CHAT[ALL_ADMIN]="${UPD["result",${num},"message","chat","all_members_are_administrators"]}"
+	CHAT[TITLE]="$(JsonDecode "${UPD["result,${num},message,chat,title"]}")"
+	CHAT[TYPE]="$(JsonDecode "${UPD["result,${num},message,chat,type"]}")"
+	CHAT[ALL_ADMIN]="${UPD["result,${num},message,chat,all_members_are_administrators"]}"
 
 	# user ID is now parsed when update is received
-	#USER[ID]="${UPD["result",${num},"message","from","id"]}"
-	USER[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","from","first_name"]}")"
-	USER[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","from","last_name"]}")"
-	USER[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","from","username"]}")"
+	#USER[ID]="${UPD["result,${num},message,from,id"]}"
+	USER[FIRST_NAME]="$(JsonDecode "${UPD["result,${num},message,from,first_name"]}")"
+	USER[LAST_NAME]="$(JsonDecode "${UPD["result,${num},message,from,last_name"]}")"
+	USER[USERNAME]="$(JsonDecode "${UPD["result,${num},message,from,username"]}")"
 	# set real name as username if empty
 	[ -z "${USER[USERNAME]}" ] && USER[USERNAME]="${USER[FIRST_NAME]} ${USER[LAST_NAME]}"
 
 	# in reply to message from
-	if [ -n "${UPD["result",${num},"message","reply_to_message","from","id"]}" ]; then
-	   REPLYTO[UID]="${UPD["result",${num},"message","reply_to_message","from","id"]}"
-	   REPLYTO[0]="$(JsonDecode "${UPD["result",${num},"message","reply_to_message","text"]}")"
-	   REPLYTO[ID]="${UPD["result",${num},"message","reply_to_message","message_id"]}"
-	   REPLYTO[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","reply_to_message","from","first_name"]}")"
-	   REPLYTO[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","reply_to_message","from","last_name"]}")"
-	   REPLYTO[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","reply_to_message","from","username"]}")"
+	if [ -n "${UPD["result,${num},message,reply_to_message,from,id"]}" ]; then
+	   REPLYTO[UID]="${UPD["result,${num},message,reply_to_message,from,id"]}"
+	   REPLYTO[0]="$(JsonDecode "${UPD["result,${num},message,reply_to_message,text"]}")"
+	   REPLYTO[ID]="${UPD["result,${num},message,reply_to_message,message_id"]}"
+	   REPLYTO[FIRST_NAME]="$(JsonDecode "${UPD["result,${num},message,reply_to_message,from,first_name"]}")"
+	   REPLYTO[LAST_NAME]="$(JsonDecode "${UPD["result,${num},message,reply_to_message,from,last_name"]}")"
+	   REPLYTO[USERNAME]="$(JsonDecode "${UPD["result,${num},message,reply_to_message,from,username"]}")"
 	fi
 
 	# forwarded message from
-	if [ -n "${UPD["result",${num},"message","forward_from","id"]}" ]; then
-	   FORWARD[UID]="${UPD["result",${num},"message","forward_from","id"]}"
+	if [ -n "${UPD["result,${num},message,forward_from,id"]}" ]; then
+	   FORWARD[UID]="${UPD["result,${num},message,forward_from,id"]}"
 	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
-	   FORWARD[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","forward_from","first_name"]}")"
-	   FORWARD[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","forward_from","last_name"]}")"
-	   FORWARD[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","forward_from","username"]}")"
+	   FORWARD[FIRST_NAME]="$(JsonDecode "${UPD["result,${num},message,forward_from,first_name"]}")"
+	   FORWARD[LAST_NAME]="$(JsonDecode "${UPD["result,${num},message,forward_from,last_name"]}")"
+	   FORWARD[USERNAME]="$(JsonDecode "${UPD["result,${num},message,forward_from,username"]}")"
 	fi
 
 	# get file URL from telegram, check for any of them!
 	if grep -qs -e '\["result",'"${num}"',"message","[avpsd].*,"file_id"\]' <<<"${UPDATE}"; then
-	    URLS[AUDIO]="$(get_file "${UPD["result",${num},"message","audio","file_id"]}")"
-	    URLS[DOCUMENT]="$(get_file "${UPD["result",${num},"message","document","file_id"]}")"
-	    URLS[PHOTO]="$(get_file "${UPD["result",${num},"message","photo",0,"file_id"]}")"
-	    URLS[STICKER]="$(get_file "${UPD["result",${num},"message","sticker","file_id"]}")"
-	    URLS[VIDEO]="$(get_file "${UPD["result",${num},"message","video","file_id"]}")"
-	    URLS[VOICE]="$(get_file "${UPD["result",${num},"message","voice","file_id"]}")"
+	    URLS[AUDIO]="$(get_file "${UPD["result,${num},message,audio,file_id"]}")"
+	    URLS[DOCUMENT]="$(get_file "${UPD["result,${num},message,document,file_id"]}")"
+	    URLS[PHOTO]="$(get_file "${UPD["result,${num},message,photo,0,file_id"]}")"
+	    URLS[STICKER]="$(get_file "${UPD["result,${num},message,sticker,file_id"]}")"
+	    URLS[VIDEO]="$(get_file "${UPD["result,${num},message,video,file_id"]}")"
+	    URLS[VOICE]="$(get_file "${UPD["result,${num},message,voice,file_id"]}")"
 	fi
 	# Contact, must have phone_number
-	if [ -n "${UPD["result",${num},"message","contact","phone_number"]}" ]; then
-		CONTACT[USER_ID]="$(JsonDecode  "${UPD["result",${num},"message","contact","user_id"]}")"
-		CONTACT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","first_name"]}")"
-		CONTACT[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","last_name"]}")"
-		CONTACT[NUMBER]="${UPD["result",${num},"message","contact","phone_number"]}"
-		CONTACT[VCARD]="${UPD["result","${num}","message","contact","vcard"]}"
+	if [ -n "${UPD["result,${num},message,contact,phone_number"]}" ]; then
+		CONTACT[USER_ID]="$(JsonDecode  "${UPD["result,${num},message,contact,user_id"]}")"
+		CONTACT[FIRST_NAME]="$(JsonDecode "${UPD["result,${num},message,contact,first_name"]}")"
+		CONTACT[LAST_NAME]="$(JsonDecode "${UPD["result,${num},message,contact,last_name"]}")"
+		CONTACT[NUMBER]="${UPD["result,${num},message,contact,phone_number"]}"
+		CONTACT[VCARD]="${UPD["result,${num},message,contact,vcard"]}"
 	fi
 
 	# venue, must have a position
-	if [ -n "${UPD["result",${num},"message","venue","location","longitude"]}" ]; then
-		VENUE[TITLE]="$(JsonDecode "${UPD["result",${num},"message","venue","title"]}")"
-		VENUE[ADDRESS]="$(JsonDecode "${UPD["result",${num},"message","venue","address"]}")"
-		VENUE[LONGITUDE]="${UPD["result",${num},"message","venue","location","longitude"]}"
-		VENUE[LATITUDE]="${UPD["result",${num},"message","venue","location","latitude"]}"
-		VENUE[FOURSQUARE]="${UPD["result",${num},"message","venue","foursquare_id"]}"
+	if [ -n "${UPD["result,${num},message,venue,location,longitude"]}" ]; then
+		VENUE[TITLE]="$(JsonDecode "${UPD["result,${num},message,venue,title"]}")"
+		VENUE[ADDRESS]="$(JsonDecode "${UPD["result,${num},message,venue,address"]}")"
+		VENUE[LONGITUDE]="${UPD["result,${num},message,venue,location,longitude"]}"
+		VENUE[LATITUDE]="${UPD["result,${num},message,venue,location,latitude"]}"
+		VENUE[FOURSQUARE]="${UPD["result,${num},message,venue,foursquare_id"]}"
 	fi
 
 	# Caption
-	CAPTION="$(JsonDecode "${UPD["result",${num},"message","caption"]}")"
+	CAPTION="$(JsonDecode "${UPD["result,${num},message,caption"]}")"
 
 	# Location
-	LOCATION[LONGITUDE]="${UPD["result",${num},"message","location","longitude"]}"
-	LOCATION[LATITUDE]="${UPD["result",${num},"message","location","latitude"]}"
+	LOCATION[LONGITUDE]="${UPD["result,${num},message,location,longitude"]}"
+	LOCATION[LATITUDE]="${UPD["result,${num},message,location,latitude"]}"
 
 	# service messages, group or channel only!
 	if [[ "${CHAT[ID]}" == "-"* ]] ; then
 	    # new chat member
-	    if [ -n "${UPD["result",${num},"message","new_chat_member","id"]}" ]; then
-		SERVICE[NEWMEMBER]="${UPD["result",${num},"message","new_chat_member","id"]}"
+	    if [ -n "${UPD["result,${num},message,new_chat_member,id"]}" ]; then
+		SERVICE[NEWMEMBER]="${UPD["result,${num},message,new_chat_member,id"]}"
 		NEWMEMBER[ID]="${SERVICE[NEWMEMBER]}"
-		NEWMEMBER[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","new_chat_member","first_name"]}")"
-		NEWMEMBER[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","new_chat_member","last_name"]}")"
-		NEWMEMBER[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","new_chat_member","username"]}")"
-		NEWMEMBER[ISBOT]="${UPD["result",${num},"message","new_chat_member","is_bot"]}"
+		NEWMEMBER[FIRST_NAME]="$(JsonDecode "${UPD["result,${num},message,new_chat_member,first_name"]}")"
+		NEWMEMBER[LAST_NAME]="$(JsonDecode "${UPD["result,${num},message,new_chat_member,last_name"]}")"
+		NEWMEMBER[USERNAME]="$(JsonDecode "${UPD["result,${num},message,new_chat_member,username"]}")"
+		NEWMEMBER[ISBOT]="${UPD["result,${num},message,new_chat_member,is_bot"]}"
 		[ -z "${MESSAGE[0]}" ] &&\
 		MESSAGE[0]="/_new_chat_member ${NEWMEMBER[ID]} ${NEWMEMBER[USERNAME]:=${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]}}"
 	    fi
 	    # left chat member
-	    if [ -n "${UPD["result",${num},"message","left_chat_member","id"]}" ]; then
-		SERVICE[LEFTMEMBER]="${UPD["result",${num},"message","left_chat_member","id"]}"
+	    if [ -n "${UPD["result,${num},message,left_chat_member,id"]}" ]; then
+		SERVICE[LEFTMEMBER]="${UPD["result,${num},message,left_chat_member,id"]}"
 		LEFTMEMBER[ID]="${SERVICE[LEFTMEBER]}"
-		LEFTMEMBER[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","left_chat_member","first_name"]}")"
-		LEFTMEMBER[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","left_chat_member","last_name"]}")"
-		LEFTMEBER[USERNAME]="$(JsonDecode "${UPD["result",${num},"message","left_chat_member","username"]}")"
-		LEFTMEMBER[ISBOT]="${UPD["result",${num},"message","left_chat_member","is_bot"]}"
+		LEFTMEMBER[FIRST_NAME]="$(JsonDecode "${UPD["result,${num},message,left_chat_member,first_name"]}")"
+		LEFTMEMBER[LAST_NAME]="$(JsonDecode "${UPD["result,${num},message,left_chat_member,last_name"]}")"
+		LEFTMEBER[USERNAME]="$(JsonDecode "${UPD["result,${num},message,left_chat_member,username"]}")"
+		LEFTMEMBER[ISBOT]="${UPD["result,${num},message,left_chat_member,is_bot"]}"
 		[ -z "${MESSAGE[0]}" ] &&\
 		MESSAGE[0]="/_left_chat_member ${LEFTMEMBER[ID]} ${LEFTMEMBER[USERNAME]:=${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]}}"
 	    fi
 	    # chat title / photo, check for any of them!
 	    if grep -qs -e '\["result",'"${num}"',"message","new_chat_[tp]' <<<"${UPDATE}"; then
-		SERVICE[NEWTITLE]="$(JsonDecode "${UPD["result",${num},"message","new_chat_title"]}")"
+		SERVICE[NEWTITLE]="$(JsonDecode "${UPD["result,${num},message,new_chat_title"]}")"
 		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWTITLE]}" ] &&\
 			MESSAGE[0]="/_new_chat_title ${USER[ID]} ${SERVICE[NEWTITLE]}"
-		SERVICE[NEWPHOTO]="$(get_file "${UPD["result",${num},"message","new_chat_photo",0,"file_id"]}")"
+		SERVICE[NEWPHOTO]="$(get_file "${UPD["result,${num},message,new_chat_photo,0,file_id"]}")"
 		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWPHOTO]}" ] &&\
 			 MESSAGE[0]="/_new_chat_photo ${USER[ID]} ${SERVICE[NEWPHOTO]}"
 	    fi
 	    # pinned message
-	    if [ -n "${UPD["result",${num},"message","pinned_message","message_id"]}" ]; then
-		SERVICE[PINNED]="${UPD["result",${num},"message","pinned_message","message_id"]}"
+	    if [ -n "${UPD["result,${num},message,pinned_message,message_id"]}" ]; then
+		SERVICE[PINNED]="${UPD["result,${num},message,pinned_message,message_id"]}"
 		PINNED[ID]="${SERVICE[PINNED]}"
-		PINNED[MESSAGE]="$(JsonDecode "${UPD["result",${num},"message","pinned_message","text"]}")"
+		PINNED[MESSAGE]="$(JsonDecode "${UPD["result,${num},message,pinned_message,text"]}")"
 		[ -z "${MESSAGE[0]}" ] &&\
 			MESSAGE[0]="/_new_pinned_message ${USER[ID]} ${PINNED[ID]} ${PINNED[MESSAGE]}"
 	    fi
 	    # migrate to super group
-	    if [ -n "${UPD["result",${num},"message","migrate_to_chat_id"]}" ]; then
-		MIGRATE[TO]="${UPD["result",${num},"message","migrate_to_chat_id"]}"
-		MIGRATE[FROM]="${UPD["result",${num},"message","migrate_from_chat_id"]}"
+	    if [ -n "${UPD["result,${num},message,migrate_to_chat_id"]}" ]; then
+		MIGRATE[TO]="${UPD["result,${num},message,migrate_to_chat_id"]}"
+		MIGRATE[FROM]="${UPD["result,${num},message,migrate_from_chat_id"]}"
 		SERVICE[MIGRATE]="${MIGRATE[FROM]} ${MIGRATE[TO]}"
 		[ -z "${MESSAGE[0]}" ] &&\
 			MESSAGE[0]="/_migrate_group ${SERVICE[MIGRATE]}"
