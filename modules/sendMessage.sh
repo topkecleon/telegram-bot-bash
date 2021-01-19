@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.31-dev-6-gf2dd64c
+#### $$VERSION$$ v1.31-dev-7-ge923e2e
 
 # will be automatically sourced from bashbot
 
@@ -145,9 +145,9 @@ send_inline_keyboard() {
 }
 
 
-# $1 CHAT $2 message $3 button text
+# $1 CHAT $2 message $3 button text $4 button url
 send_button() {
-	send_inline_keyboard "$1" "$2" '[{"text":"'"$3"'", "url":"'"$4"'"}]'
+	send_inline_keyboard "$1" "$2" '[{"text":"'"$(JsonEscape "$3")"'", "url":"'"$4"'"}]'
 }
 
 # helper function to create json for a button row
@@ -158,7 +158,7 @@ _button_row() {
 	for arg in "$@"
 	do
 		[ -n "${json}" ] && json+=","
-		json+='{"text":"'"${arg%|*}"'", "url":"'"${arg##*|}"'"}'
+		json+='{"text":"'"$(JsonEscape "${arg%|*}")"'", "url":"'"${arg##*|}"'"}'
 	done
 	printf "[%s]" "${json}"
 }
