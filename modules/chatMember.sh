@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.31-dev-0-gfe1fb75
 
 # will be automatically sourced from bashbot
 
@@ -76,7 +76,7 @@ leave_chat() {
 get_chat_member_status() {
 	sendJson "$1" '"user_id":'"$2"'' "${URL}/getChatMember"
 	# shellcheck disable=SC2154
-	JsonGetString '"result","status"' <<< "${res}"
+	printf "%s\n" "${UPD["result,status"]}"
 }
 
 user_is_creator() {

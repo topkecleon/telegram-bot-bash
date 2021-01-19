@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.31-dev-0-gad532cc
+#### $$VERSION$$ v1.31-dev-0-gfe1fb75
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -420,7 +420,7 @@ delete_message() {
 get_file() {
 	[ -z "$1" ] && return
 	sendJson ""  '"file_id": "'"$1"'"' "${URL}/getFile"
-	printf '%s\n' "${URL}"/"$(JsonGetString <<< "${res}" '"result","file_path"')"
+	printf "%s\n" "${URL}/${UPD["result","file_path"]}"
 }
 
 # iconv used to filter out broken utf characters, if not installed fake it
@@ -660,15 +660,15 @@ JsonDecode() {
 	printf "%b\n" "${out}${remain}"
 }
 
-JsonGetString() {
-	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]"\(.*\)"$/\1/p'
-}
-JsonGetLine() {
-	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]//p'
-}
-JsonGetValue() {
-	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]\([0-9.,]*\).*/\1/p'
-}
+#JsonGetString() {
+#	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]"\(.*\)"$/\1/p'
+#}
+#JsonGetLine() {
+#	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]//p'
+#}
+#JsonGetValue() {
+#	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]\([0-9.,]*\).*/\1/p'
+#}
 
 ################
 # processing of updates starts here
@@ -927,7 +927,7 @@ process_message() {
 		CONTACT[FIRST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","first_name"]}")"
 		CONTACT[LAST_NAME]="$(JsonDecode "${UPD["result",${num},"message","contact","last_name"]}")"
 		CONTACT[NUMBER]="${UPD["result",${num},"message","contact","phone_number"]}"
-		CONTACT[VCARD]="$(JsonGetString '"result",'"${num}"',"message","contact","vcard"' <<<"${UPDATE}")"
+		CONTACT[VCARD]="${UPD["result","${num}","message","contact","vcard"]}"
 	fi
 
 	# venue, must have a position
