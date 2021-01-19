@@ -5,7 +5,7 @@
 #
 # Description: common stuff for all dev scripts
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.31-dev-2-g427f670
 #############################################################
 
 # magic to ensure that we're always inside the root of our application,
@@ -20,3 +20,5 @@ else
 	printf "Sorry, no git repository %s\n" "$(pwd)" && exit 1
 fi
 
+HOOKDIR="dev/hooks"
+LASTCOMMIT=".git/.lastcommit"
