@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.31-dev-3-gb0f653b
 
 # will be automatically sourced from bashbot
 
@@ -139,7 +139,7 @@ remove_keyboard() {
 
 # $1 CHAT $2 message $3 keyboard
 send_inline_keyboard() {
-	local text; text='"text":"'$(JsonEscape "$2")'"'; [ -z "$2" ] && text='"text":"'"Keyboard:"'"'
+	local text; text='"text":"'$(JsonEscape "$2")'"'; [ -z "$2" ] && text='"text":"..."'
 	sendJson "$1" "${text}"', "reply_markup": {"inline_keyboard": [ '"$3"' ]}' "${MSG_URL}"
 	# JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
 }

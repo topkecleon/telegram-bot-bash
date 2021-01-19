@@ -213,6 +213,12 @@ _keyboard_numpad
 
 ----
 
+##### send_sticker
+`send_sticker` sends a sticker using a `file_id` to send a sticker that exists on the Telegram servers.
+
+*usage:*  send_sticker "$CHAT[ID]" "file_id"
+
+
 ##### send_button
 *usage:*  send_button "$CHAT[ID]" "message" "text" "URL"
 
@@ -223,32 +229,27 @@ _keyboard_numpad
 send_button "${CHAT[ID]}" "MAKE MONEY FAST!!!" "Visit my Shop" "https://dealz.rrr.de"
 ```
 
-##### send_sticker
-`send_sticker` sends a sticker using a `file_id` to send a sticker that exists on the Telegram servers.
-
-*usage:*  send_sticker "$CHAT[ID]" "file_id"
-
-
 ##### send_inline_keyboard
-Even its called keyboard, this function is different from send_keyboard. The main difference is that it's only possible to
-specify URL buttons, no Text Buttons and the Buttons must be an Array of Buttons as specified for
-[Telegram InlineMarkup](https://core.telegram.org/bots/api#inlinekeyboardmarkup).
+`send_inline_keyboard` send an array of buttons.
 
-The inline buttons must be specified as a JSON string in the following format:
-
-`[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ]```
-
-Each button consists of a pair of text and URL values, sourrounded by '{ }', multiple buttons are separated by '**,**' and everything is wrapped in '[ ]'.
-
-*usage:*  send_inline_keyboard "chat-id" "message" "[ {"text":"text", "url":"url"} ...]"
+*usage:*  send_inline_keyboard "CHAT[ID]" "message" "[ {"text":"text", "url":"url"} ...]"
 
 *alias:* _inline_keyboard "[{"text":"text", "url":"url"} ...]"
 
+The buttons array must be specified as a JSON string in the following format per button row, multiple rowsare concateneated with ',' 
+
+`[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ]`
+
 *example:* 
 ```bash
-send_inline_keyboard "${CHAT[ID]}" "MAKE MONEY FAST!!!" '[{"text":"Visit my Shop", url"":"https://dealz.rrr.de"}]'
-send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"button 1", url"":"url 1"}, {"text":"button 2", url"":"url 2"} ]'
-send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"b 1", url"":"u 1"}, {"text":"b 2", url"":"u 2"}, {"text":"b 2", url"":"u 2"} ]'
+# one button, same as send_button
+send_inline_keyboard "${CHAT[ID]}" "MAKE MONEY FAST!!!" '[{"text":"Visit my Shop", "url":"https://dealz.rrr.de"}]'
+
+# one button row
+send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"button 1", url"":"http://rrr.de"}, {"text":"button 2", "url":"http://rrr.de"} ]'
+
+# multiple button rows
+send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"b1", "url":"http://rrr.de"}, {"text":"b2", "url":"http://rrr.de"}], [{"text":"b4", "url":"http://rrr.de"}, "text":"b5", "url":"http://rrr.de"}]'
 ```
 
 *See also [Inline keyboard markup](https://core.telegram.org/bots/api/#inlinekeyboardmarkup)*
@@ -1269,5 +1270,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.31-dev-3-gb0f653b
 
