@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.31-dev-5-gf66e570
+#### $$VERSION$$ v1.31-dev-6-gf2dd64c
 
 # will be automatically sourced from bashbot
 
@@ -145,9 +145,22 @@ send_inline_keyboard() {
 }
 
 
-# $1 CHAT $2 message $3 button text $4 URL
+# $1 CHAT $2 message $3 button text
 send_button() {
 	send_inline_keyboard "$1" "$2" '[{"text":"'"$3"'", "url":"'"$4"'"}]'
+}
+
+# helper function to create json for a button row
+# buttons will specified as "text|url" ... "text|url"
+_button_row() {
+	[ -z "$1" ] && return 1
+	local arg json
+	for arg in "$@"
+	do
+		[ -n "${json}" ] && json+=","
+		json+='{"text":"'"${arg%|*}"'", "url":"'"${arg##*|}"'"}'
+	done
+	printf "[%s]" "${json}"
 }
 
 # $1 chat, $2 file_id on telegram server 
