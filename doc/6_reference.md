@@ -236,9 +236,9 @@ send_button "${CHAT[ID]}" "Awesome Deals!" "Visit my Shop" "https://dealz.rrr.de
 
 *usage:*  _button_row "text|url" "text|url" "" "url" "" "text|url" ...
 
-Each button is specified as a `"tex|url"` pair separated by `|`, text is shown on the button and url is opened on button click.
+Each button is specified as a `"text|url"` pair separated by `|`, `text` is shown on the button and `url` is opened on button click.
 By default all buttons are displayed on one row, an empty string `""` starts a new button row.  
-If `"url"` without text is given, the url is shown on the button and opened on button click.
+If `"url"` without text is given, `url` is shown on the button and opened on button click.
 
 *example:* 
 ```bash
@@ -1291,5 +1291,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.31-dev-10-gf95b6c2
+#### $$VERSION$$ v1.31-dev-11-gf6e319c
 
