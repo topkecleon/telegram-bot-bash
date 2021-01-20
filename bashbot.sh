@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.31-dev-1-g62378f7
+#### $$VERSION$$ v1.31-dev-12-g85a178d
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -342,6 +342,13 @@ declare -Ax SERVICE NEWMEMBER LEFTMEMBER PINNED MIGRATE
 export res CAPTION ME
 
 
+###############
+# load modules
+for module in "${MODULEDIR:-.}"/*.sh ; do
+	# shellcheck source=./modules/aliases.sh
+	if ! _is_function "$(basename "${module}")" && [ -r "${module}" ]; then source "${module}" "source"; fi
+done
+
 ##################
 # read commands file if we are not sourced
 COMMANDS="${BASHBOT_ETC:-.}/commands.sh"
@@ -353,12 +360,6 @@ else
 fi
 debug_checks "start SOURCE=${SOURCE:-no}" "$@"
 
-###############
-# load modules
-for module in "${MODULEDIR:-.}"/*.sh ; do
-	# shellcheck source=./modules/aliases.sh
-	if ! _is_function "$(basename "${module}")" && [ -r "${module}" ]; then source "${module}" "source"; fi
-done
 
 #####################
 # BASHBOT INTERNAL functions

@@ -246,7 +246,7 @@ If `"url"` without text is given, `url` is shown on the button and opened on but
 send_inline_keyboard "${CHAT[ID]}" "Best Dealz!" "$(_button_row "Visit my Shop|https://dealz.rrr.de")"
 
 # one button row
-send_inline_keyboard "${CHAT[ID]}" "message" "$(_button_row "button 1|"http://rrr.de" "button 2|http://rrr.de")"
+send_inline_keyboard "${CHAT[ID]}" "message" "$(_button_row "button 1|http://rrr.de" "button 2|http://rrr.de")"
 
 # multiple button rows
 send_inline_keyboard "${CHAT[ID]}" "message" "$(_button_row "b1|http://rrr.de" "b2|http://rrr.de" "" "b3|http://rrr.de" "b4|http://rrr.de")"
@@ -1291,5 +1291,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.31-dev-11-gf6e319c
+#### $$VERSION$$ v1.31-dev-12-g85a178d
 
