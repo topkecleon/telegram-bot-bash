@@ -220,36 +220,57 @@ _keyboard_numpad
 
 
 ##### send_button
+`send_button` sends a text message followed by a single button.
+
 *usage:*  send_button "$CHAT[ID]" "message" "text" "URL"
 
 *alias:* _button "text" "URL"
 
 *example:* 
 ```bash
-send_button "${CHAT[ID]}" "MAKE MONEY FAST!!!" "Visit my Shop" "https://dealz.rrr.de"
+send_button "${CHAT[ID]}" "Awesome Deals!" "Visit my Shop" "https://dealz.rrr.de"
 ```
 
-##### send_inline_keyboard
-`send_inline_keyboard` send an array of buttons.
+##### _button_row
+`_button_row` is a helper function to create a JSON button array for use with `send_inline_keyboard`.
 
-*usage:*  send_inline_keyboard "CHAT[ID]" "message" "[ {"text":"text", "url":"url"} ...]"
+*usage:*  _button_row "text|url" "text|url" "" "url" "" "text|url" ...
 
-*alias:* _inline_keyboard "[{"text":"text", "url":"url"} ...]"
-
-The buttons array must be specified as a JSON string in the following format per button row, multiple rowsare concateneated with ',' 
-
-`[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ]`
+Each button is specified as a `"tex|url"` pair separated by `|`, text is shown on the button and url is opened on button click.
+By default all buttons are displayed on one row, an empty string `""` starts a new button row.  
+If `"url"` without text is given, the url is shown on the button and opened on button click.
 
 *example:* 
 ```bash
 # one button, same as send_button
-send_inline_keyboard "${CHAT[ID]}" "MAKE MONEY FAST!!!" '[{"text":"Visit my Shop", "url":"https://dealz.rrr.de"}]'
+send_inline_keyboard "${CHAT[ID]}" "Best Dealz!" "$(_button_row "Visit my Shop|https://dealz.rrr.de")"
 
 # one button row
-send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"button 1", url"":"http://rrr.de"}, {"text":"button 2", "url":"http://rrr.de"} ]'
+send_inline_keyboard "${CHAT[ID]}" "message" "$(_button_row "button 1|"http://rrr.de" "button 2|http://rrr.de")"
 
 # multiple button rows
-send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"b1", "url":"http://rrr.de"}, {"text":"b2", "url":"http://rrr.de"}], [{"text":"b4", "url":"http://rrr.de"}, "text":"b5", "url":"http://rrr.de"}]'
+send_inline_keyboard "${CHAT[ID]}" "message" "$(_button_row "b1|http://rrr.de" "b2|http://rrr.de" "" "b3|http://rrr.de" "b4|http://rrr.de")"
+```
+
+##### send_inline_keyboard
+`send_inline_keyboard` send buttons given as an array of buttons in JSON format.
+
+*usage:*  send_inline_keyboard "CHAT[ID]" "message" "[JSON button array]"
+
+A JSON button array has the following format, but I suggest to use `_button_row` to create them:
+
+`[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ],[...]`
+
+*example:* 
+```bash
+# one button, same as send_button
+send_inline_keyboard "${CHAT[ID]}" "Best Dealz!" '[{"text":"Visit my Shop", "url":"https://dealz.rrr.de"}]'
+
+# one button row
+send_inline_keyboard "${CHAT[ID]}" "message" '[{"text":"button 1", url"":"http://rrr.de"}, {"text":"button 2", "url":"http://rrr.de"} ]'
+
+# multiple button rows
+send_inline_keyboard "${CHAT[ID]}" "message" '[{"text":"b1", "url":"http://rrr.de"}, {"text":"b2", "url":"http://rrr.de"}], [{"text":"b3", "url":"http://rrr.de"}, "text":"b4", "url":"http://rrr.de"}]'
 ```
 
 *See also [Inline keyboard markup](https://core.telegram.org/bots/api/#inlinekeyboardmarkup)*
@@ -1270,5 +1291,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.31-dev-3-gb0f653b
+#### $$VERSION$$ v1.31-dev-10-gf95b6c2
 

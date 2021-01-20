@@ -9,11 +9,14 @@ USAGE='send_message.sh [-h|--help] "CHAT[ID]" "message" "text|url" ...'
 # 
 #       OPTIONS: CHAT[ID] - ID number of CHAT or BOTADMIN to send to yourself
 #                message - message to send
-#                text|url - buttons to send in a row, each as "button text|url"
-#                     e.g. "Amazon|https://www.amzon.com" "Mydealz|https://mydealz.de" ...
+#                text|url - buttons to send,  each button as "text|url" pair or
+#                        "url" only to show url as text also, "" starts new row
 #
 #                -h - display short help
 #                --help -  this help
+#
+#       EXAMPLE: 2 buttons on 2 rows, first shows Amazon, second the url as text
+#                send_buttons.sh "Amazon|https://www.amazon.com" "" "https://mydealz.de" ...
 #
 #                Set BASHBOT_HOME to your installation directory
 #
@@ -21,7 +24,7 @@ USAGE='send_message.sh [-h|--help] "CHAT[ID]" "message" "text|url" ...'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.01.2021 11:34
 #
-#### $$VERSION$$ v1.31-dev-9-g6c91a32
+#### $$VERSION$$ v1.31-dev-10-gf95b6c2
 #===============================================================================
 
 ####
