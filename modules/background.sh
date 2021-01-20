@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117,SC2059
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.31-dev-13-g127cc85
 
 # will be automatically sourced from bashbot
 
@@ -51,7 +51,7 @@ restart_back() {
 	log_message "Start background job CHAT=$1 JOB=${fifo##*/} CMD=${2##*/} $4 $5"
 	check_back "$1" "$3" && kill_proc "$1" "back-$3-"
 	nohup bash -c "{ $2 \"$4\" \"$5\" \"${fifo}\" | \"${SCRIPT}\" outproc \"$1\" \"${fifo}\"; }" &>>"${fifo}.log" &
-	sleep 0.5 # give bg job some time to init
+	sleep 0.5	# give bg job some time to init
 }
 
 
@@ -110,7 +110,7 @@ kill_proc() {
 # $2 message
 send_interactive() {
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1")"
-	[ -p "${fifo}" ] && printf '%s\n' "$2" >"${fifo}" & # not blocking!
+	[ -p "${fifo}" ] && printf '%s\n' "$2" >"${fifo}" &	# not blocking!
 }
 
 # old style but may not work because of local checks
@@ -154,7 +154,7 @@ job_control() {
 		"killb"*)
 			printf "Kill Job: %s %s\n" "${proc}" " ${fifo##*/}"
 			kill_proc "${CHAT}" "${job}"
-			rm -f "${FILE}" # remove job
+			rm -f "${FILE}"	# remove job
 			# inform botadmin about stop
 			[ -n "${ADM}" ] && send_normal_message "${ADM}" "Bot ${BOT} kill  background jobs ..." &
 			killall="y"

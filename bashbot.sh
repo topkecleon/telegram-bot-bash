@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.31-dev-12-g85a178d
+#### $$VERSION$$ v1.31-dev-13-g127cc85
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -90,7 +90,7 @@ _is_function() {
 _round_float() {
 	local digit="$2"; [[ "$2" =~ ^[${o9o9o9}]+$ ]] || digit="0"
 	: "$(LC_ALL=C printf "%.${digit}f" "$1" 2>/dev/null)"
-	printf "%s" "${_//,/.}" # make more LANG independent
+	printf "%s" "${_//,/.}"	# make more LANG independent
 }
 # date is external, printf is much faster
 _date(){
@@ -185,7 +185,7 @@ fi
 [ -z "${BASHBOT_VAR}" ] && BASHBOT_VAR="${BASHBOT_HOME}"
 
 ADDONDIR="${BASHBOT_ETC:-.}/addons"
-RUNUSER="${USER}" # USER is overwritten by bashbot array :-(, save original
+RUNUSER="${USER}"	# USER is overwritten by bashbot array :-(, save original
 
 # provide help
 case "$1" in
@@ -325,7 +325,7 @@ fi
 
 ##################
 # here we start with the real stuff
-BASHBOT_RETRY="" # retry by default
+BASHBOT_RETRY=""	# retry by default
 
 URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
 ME_URL=${URL}'/getMe'
@@ -438,7 +438,7 @@ sendJson(){
 	local json chat=""
 	if [ -n "$1" ]; then
 		 chat='"chat_id":'"$1"','
-		 [[ "$1" == *[!${o9o9o9}-]* ]] && chat='"chat_id":"'"$1"' NAN",' # chat id not a number!
+		 [[ "$1" == *[!${o9o9o9}-]* ]] && chat='"chat_id":"'"$1"' NAN",'	# chat id not a number!
 	fi
 	# compose final json
 	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
@@ -887,7 +887,6 @@ process_message() {
 	CHAT[ALL_ADMIN]="${UPD["result,${num},message,chat,all_members_are_administrators"]}"
 
 	# user ID is now parsed when update is received
-	#USER[ID]="${UPD["result,${num},message,from,id"]}"
 	USER[FIRST_NAME]="$(JsonDecode "${UPD["result,${num},message,from,first_name"]}")"
 	USER[LAST_NAME]="$(JsonDecode "${UPD["result,${num},message,from,last_name"]}")"
 	USER[USERNAME]="$(JsonDecode "${UPD["result,${num},message,from,username"]}")"
@@ -907,7 +906,7 @@ process_message() {
 	# forwarded message from
 	if [ -n "${UPD["result,${num},message,forward_from,id"]}" ]; then
 	   FORWARD[UID]="${UPD["result,${num},message,forward_from,id"]}"
-	   FORWARD[ID]="${MESSAGE[ID]}" # same as message ID
+	   FORWARD[ID]="${MESSAGE[ID]}"	# same as message ID
 	   FORWARD[FIRST_NAME]="$(JsonDecode "${UPD["result,${num},message,forward_from,first_name"]}")"
 	   FORWARD[LAST_NAME]="$(JsonDecode "${UPD["result,${num},message,forward_from,last_name"]}")"
 	   FORWARD[USERNAME]="$(JsonDecode "${UPD["result,${num},message,forward_from,username"]}")"
@@ -1203,7 +1202,7 @@ if [ -z "${SOURCE}" ]; then
 		[ "$1" = "botname" ] && exit
 		;;&
 	# used to send output of background and interactive to chats
-	"outproc") # $2 chat_id $3 identifier of job, internal use only!
+	"outproc")	# $2 chat_id $3 identifier of job, internal use only!
 		[ -z "$3" ] && printf "No job identifier\n" && exit 3
 		[ -z "$2"  ] && printf "No chat to send to\n" && exit 3
 		ME="$(getConfigKey "botname")"

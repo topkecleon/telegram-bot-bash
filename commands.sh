@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.31-dev-13-g127cc85
 #
 
 # bashbot locale defaults to c.UTF-8, adjust locale in mycommands.sh if needed
@@ -127,7 +127,7 @@ if [ -z "$1" ] || [[ "$1" == *"debug"* ]];then
 		'/help'*)
 			send_markdown_message "${CHAT[ID]}" "${bashbot_help}"
 			;;
-		'/leavechat'*) # bot leave chat if user is admin in chat
+		'/leavechat'*)	# bot leave chat if user is admin in chat
 			if user_is_admin "${CHAT[ID]}" "${USER[ID]}" || user_is_allowed  "${USER[ID]}" "leave" ; then
 				send_markdown_message "${CHAT[ID]}" "*LEAVING CHAT...*"
    				leave_chat "${CHAT[ID]}"

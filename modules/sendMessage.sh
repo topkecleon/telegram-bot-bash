@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.31-dev-9-g6c91a32
+#### $$VERSION$$ v1.31-dev-13-g127cc85
 
 # will be automatically sourced from bashbot
 
@@ -176,7 +176,7 @@ if detect_curl ; then
   # $1 chat $3 ... $n URL or ID
   send_album(){
 	[ -z "$1" ] && return 1
-	[ -z "$3" ] && return 2 # minimum 2 files
+	[ -z "$3" ] && return 2	# minimum 2 files
 	local CHAT JSON IMAGE; CHAT="$1"; shift 
 	for IMAGE in "$@"
 	do
@@ -212,13 +212,13 @@ send_file(){
 	else
 		# we have a file, check file location ...
 		media="FILE"
-		[[ "${file}" = *'..'* || "${file}" = '.'* ]] && err=1  # no directory traversal
+		[[ "${file}" = *'..'* || "${file}" = '.'* ]] && err=1 	# no directory traversal
 		if [[ "${file}" = '/'* ]] ; then
-			[[ ! "${file}" =~ ${FILE_REGEX} ]] && err=2 # absolute must match REGEX
+			[[ ! "${file}" =~ ${FILE_REGEX} ]] && err=2	# absolute must match REGEX
 		else
-			file="${UPLOADDIR:-NOUPLOADDIR}/${file}" # others must be in UPLOADDIR
+			file="${UPLOADDIR:-NOUPLOADDIR}/${file}"	# others must be in UPLOADDIR
 		fi
-		[ ! -r "${file}" ] && err=3 # and file must exits of course
+		[ ! -r "${file}" ] && err=3	# and file must exits of course
 		# file path error, generate error response
 		if [ -n "${err}" ]; then
 		    BOTSENT=(); BOTSENT[OK]="false"
@@ -311,7 +311,7 @@ forward_message() {
 	[ -z "$3" ] && return
 	sendJson "$1" '"from_chat_id": '"$2"', "message_id": '"$3"'' "${URL}/forwardMessage"
 }
-forward() { # backward compatibility
+forward() {	# backward compatibility
 	forward_message "$@" || return
 }
 
@@ -339,7 +339,7 @@ send_message() {
 		sent=y
 	fi
 	if [ -n "${keyboard}" ]; then
-		if [[ "${keyboard}" != *"["* ]]; then # pre 0.60 style
+		if [[ "${keyboard}" != *"["* ]]; then	# pre 0.60 style
 			keyboard="[ ${keyboard//\" \"/\" \] , \[ \"} ]"
 		fi
 		send_keyboard "$1" "${text}" "${keyboard}"
