@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1090,SC2034
 #===============================================================================
 # shellcheck disable=SC2059
 #
@@ -27,7 +28,7 @@ USAGE='broadcast_message.sh [-h|--help] [--doit] [--groups|--both|--db=file] [fo
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 16:14
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.31-dev-14-g749eee7
 #===============================================================================
 
 ####
@@ -75,23 +76,11 @@ case "$1" in
 		SEND="send_html_message"
 		shift
 		;;
-	'')
-		printf "missing missing arguments\n"
-		;&
-	"-h"*)
-		printf 'usage: %s\n' "${USAGE}"
-		exit 1
-		;;
-	'--h'*)
-		sed -n -e '/# shellcheck /d' -e '3,/###/p' <"$0"
-		exit 1
-		;;
 esac
 
 # set bashbot environment
-# shellcheck disable=SC1090
 source "${0%/*}/bashbot_env.inc.sh" "$2" # $3 debug
-
+print_help
 
 # read in users from given DB or count.jssh 
 database="${USERDB:-${COUNTFILE}}"

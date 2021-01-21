@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1090,SC2034
 #===============================================================================
 #
 #          FILE: bin/send_message.sh
@@ -21,7 +22,7 @@ USAGE='send_message.sh [-h|--help] [format] "CHAT[ID]" "message ...." [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 11:34
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.31-dev-14-g749eee7
 #===============================================================================
 
 ####
@@ -40,22 +41,11 @@ case "$1" in
 		SEND="send_html_message"
 		shift
 		;;
-	'')
-		printf "missing arguments\n"
-		;&
-	"-h"*)
-		printf 'usage: %s\n' "${USAGE}"
-		exit 1
-		;;
-	'--h'*)
-		sed -n '3,/###/p' <"$0"
-		exit 1
-		;;
 esac
 
 # set bashbot environment
-# shellcheck disable=SC1090
 source "${0%/*}/bashbot_env.inc.sh" "${3:-debug}" # $3 debug
+print_help "$1"
 
 ####
 # ready, do stuff here -----
@@ -69,5 +59,4 @@ fi
 "${SEND}" "${CHAT}" "$2"
 
 # output send message result
-jssh_printDB "BOTSENT" | sort -r
-
+print_result

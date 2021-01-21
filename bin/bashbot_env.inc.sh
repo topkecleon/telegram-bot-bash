@@ -13,7 +13,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.12.2020 12:27
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.31-dev-14-g749eee7
 #===============================================================================
 
 ############
@@ -62,4 +62,25 @@ BOT_ADMIN="$(getConfigKey "botadmin")"
 BOT_NAME="$(getConfigKey "botname")"
 [[ -z "${BOT_ADMIN}" || "${BOT_ADMIN}" == "?" ]] && printf "%s\n" "${ORANGE}Warning: Botadmin not set, did you forget to sent command${NC} /start"
 [[ -z "${BOT_NAME}"  ]] && printf "%s\n" "${ORANGE}Warning: Botname not set, did you ever run bashbot?"
+
+# output command result or Telegram response
+print_result() { jssh_printDB "BOTSENT" | sort -r; }
+print_response() { jssh_printDB "UPD"; }
+
+# check and output help
+print_help() {
+ case "$1" in
+	'')
+		printf "missing arguments\n"
+		;&
+	"-h"*)
+		printf 'usage: %s\n' "${USAGE}"
+		exit 1
+		;;
+	'--h'*)
+		sed -n '/^#====/,/^#====/p' <"$0"
+		exit 1
+		;;
+ esac
+}
 

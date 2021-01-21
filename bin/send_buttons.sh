@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1090,SC2034
 #===============================================================================
 #
 #          FILE: bin/send_message.sh
@@ -24,29 +25,16 @@ USAGE='send_message.sh [-h|--help] "CHAT[ID]" "message" "text|url" ...'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.01.2021 11:34
 #
-#### $$VERSION$$ v1.31-dev-10-gf95b6c2
+#### $$VERSION$$ v1.31-dev-14-g749eee7
 #===============================================================================
 
 ####
 # parse args
 SEND="send_inline_keyboard"
-case "$1" in
-	'')
-		printf "missing arguments\n"
-		;&
-	"-h"*)
-		printf 'usage: %s\n' "${USAGE}"
-		exit 1
-		;;
-	'--h'*)
-		sed -n '3,/###/p' <"$0"
-		exit 1
-		;;
-esac
 
 # set bashbot environment
-# shellcheck disable=SC1090
 source "${0%/*}/bashbot_env.inc.sh" "debug"
+print_help
 
 ####
 # ready, do stuff here -----
@@ -62,5 +50,4 @@ shift 2
 "${SEND}" "${CHAT}" "${TEXT}" "$(_button_row "$@")"
 
 # output send message result
-jssh_printDB "BOTSENT" | sort -r
-
+print_result
