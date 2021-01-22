@@ -25,7 +25,7 @@ USAGE='send_message.sh [-h|--help] "CHAT[ID]" "message" "text|url" ...'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.01.2021 11:34
 #
-#### $$VERSION$$ v1.32-dev-1-g662c6f4
+#### $$VERSION$$ v1.32-dev-6-g2832801
 #===============================================================================
 
 ####
@@ -34,7 +34,7 @@ SEND="send_inline_keyboard"
 
 # set bashbot environment
 source "${0%/*}/bashbot_env.inc.sh" "debug"
-print_help
+print_help "$1"
 
 ####
 # ready, do stuff here -----

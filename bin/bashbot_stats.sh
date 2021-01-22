@@ -17,12 +17,12 @@ USAGE='bashbot_stats.sh [-h|--help] [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 20:34
 #
-#### $$VERSION$$ v1.31-dev-14-g749eee7
+#### $$VERSION$$ v1.32-dev-6-g2832801
 #===============================================================================
 
 # set bashbot environment
 source "${0%/*}/bashbot_env.inc.sh" "$1"
-[ -n "$1" ] && print_help
+[ -n "$1" ] && print_help "$1"
 
 ####
 # ready, do stuff here -----

@@ -20,7 +20,7 @@ USAGE='delete_message.sh [-h|--help]  "CHAT[ID]" "MESSAGE[ID]" [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 03.01.2021 15:37
 #
-#### $$VERSION$$ v1.31-dev-14-g749eee7
+#### $$VERSION$$ v1.32-dev-6-g2832801
 #===============================================================================
 
 ####
@@ -29,7 +29,7 @@ DELETE="delete_message"
 
 # set bashbot environment
 source "${0%/*}/bashbot_env.inc.sh" "${3:-debug}" # $3 debug
-print_help 
+print_help "$1"
 
 ####
 # ready, do stuff here -----

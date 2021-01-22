@@ -28,7 +28,7 @@ USAGE='broadcast_message.sh [-h|--help] [--doit] [--groups|--both|--db=file] [fo
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 16:14
 #
-#### $$VERSION$$ v1.31-dev-14-g749eee7
+#### $$VERSION$$ v1.32-dev-6-g2832801
 #===============================================================================
 
 ####
@@ -80,7 +80,7 @@ esac
 
 # set bashbot environment
 source "${0%/*}/bashbot_env.inc.sh" "$2" # $3 debug
-print_help
+print_help "$1"
 
 # read in users from given DB or count.jssh 
 database="${USERDB:-${COUNTFILE}}"

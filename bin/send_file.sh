@@ -25,7 +25,7 @@ USAGE='send_file.sh [-h|--help] "CHAT[ID]" "file|URL" "caption ...." [type] [deb
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 25.12.2020 20:24
 #
-#### $$VERSION$$ v1.31-dev-14-g749eee7
+#### $$VERSION$$ v1.32-dev-6-g2832801
 #===============================================================================
 
 ####
@@ -34,7 +34,7 @@ SEND="send_file"
 
 # set bashbot environment
 source "${0%/*}/bashbot_env.inc.sh" "${5:-debug}" # $5 debug
-print_help
+print_help "$1"
 
 ####
 # ready, do stuff here -----
