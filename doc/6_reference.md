@@ -275,6 +275,32 @@ send_inline_keyboard "${CHAT[ID]}" "message" '[{"text":"b1", "url":"http://rrr.d
 
 *See also [Inline keyboard markup](https://core.telegram.org/bots/api/#inlinekeyboardmarkup)*
 
+##### edit_inline_keyboard
+`edit_inline_keyboard` can add inline keyboards to existing messages and replace existing inline keyboards.
+In both cases the message itself is not changed, only the attached inline keyboard.
+
+*usage:*  edit_inline_keyboard "CHAT[ID]" "MESSAGE[ID]" "[JSON button array]"
+
+To create a JSON button array I suggest to use `_button_row`.
+
+```bash
+# message without button
+send_markdownv2_message "${CHAT[ID]}" "*HI* this is a _markdown_ message ..."
+echo ${BOTSEND[ID]}
+567
+
+# add one button row
+edit_inline_keyboard "${CHAT[ID]}" "567" "$(_button_row "button 1|http://rrr.de" "button 2|http://rrr.de")"
+
+# change buttons
+edit_inline_keyboard "${CHAT[ID]}" "567" "$(_button_row "Success edit_inline_keyboard|http://rrr.de")"
+
+# delete button by replace whole message
+edit_markdownv2_message "${CHAT[ID]}" "*HI* this is a _markdown_ message inline *removed*..."
+
+```
+
+
 ----
 
 ### Edit / Replace Messages
@@ -1291,5 +1317,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.31-dev-12-g85a178d
+#### $$VERSION$$ v1.32-dev-7-g8bb4b7e
 
