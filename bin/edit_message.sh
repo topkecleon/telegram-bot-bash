@@ -2,7 +2,7 @@
 # shellcheck disable=SC1090,SC2034
 #===============================================================================
 #
-#          FILE: bin/send_message.sh
+#          FILE: bin/edit_message.sh
 # 
 USAGE='send_edit_message.sh [-h|--help] [format|caption] "CHAT[ID]" "MESSAGE[ID]" "message ...." [debug]'
 # 
@@ -23,7 +23,7 @@ USAGE='send_edit_message.sh [-h|--help] [format|caption] "CHAT[ID]" "MESSAGE[ID]
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 16:52
 #
-#### $$VERSION$$ v1.31-dev-14-g749eee7
+#### $$VERSION$$ v1.32-dev-5-g3378c1a
 #===============================================================================
 
 ####
