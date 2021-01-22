@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.31-dev-13-g127cc85
+#### $$VERSION$$ v1.32-dev-0-ge954399
 
 # will be automatically sourced from bashbot
 
@@ -136,6 +136,13 @@ remove_keyboard() {
 	[[ -z "$2" || -n "$3" ]] && delete_message "$1" "${BOTSENT[ID]}" "nolog"
 	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
 }
+
+# $1 CHAT $2 message-id $3 keyboard
+edit_inline_keyboard() {
+	sendJson "$1" '"message_id":'"$2"', "reply_markup": {"inline_keyboard": [ '"$3"' ]}' "${URL}/editMessageReplyMarkup"
+	# JSON='"message_id":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
+}
+
 
 # $1 CHAT $2 message $3 keyboard
 send_inline_keyboard() {
