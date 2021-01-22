@@ -25,7 +25,7 @@ USAGE='send_message.sh [-h|--help] "CHAT[ID]" "message" "text|url" ...'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.01.2021 11:34
 #
-#### $$VERSION$$ v1.31-dev-14-g749eee7
+#### $$VERSION$$ v1.32-dev-1-g662c6f4
 #===============================================================================
 
 ####
@@ -43,11 +43,11 @@ if [ "$1" == "BOTADMIN" ]; then
 else
 	CHAT="$1"
 fi
-TEXT="$2"
+MESSAGE="$2"
 shift 2
 
 # send message in selected format
-"${SEND}" "${CHAT}" "${TEXT}" "$(_button_row "$@")"
+"${SEND}" "${CHAT}" "${MESSAGE}" "$(_button_row "$@")"
 
 # output send message result
 print_result
