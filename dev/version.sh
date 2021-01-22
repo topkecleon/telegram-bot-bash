@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.32-dev-4-g407194b
 # shellcheck disable=SC2016
 #
 # Easy Versioning in git:
@@ -64,7 +64,8 @@ fi
 # change version string in given files
 for file in ${FILES}
 do
-	[ ! -f "${file}" ] && continue
+	# symlink is a file :-(
+	[[  -L "${file}" || ! -f "${file}" ]] && continue
 	#[ "${file}" == "version" ] && continue
 	printf "%s" " ${file}" >&2
 	sed -i 's/^#### $$VERSION$$.*/#### \$\$VERSION\$\$ '"${VERSION}"'/' "${file}"

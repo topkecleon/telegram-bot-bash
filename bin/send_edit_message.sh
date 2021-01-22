@@ -2,54 +2,38 @@
 # shellcheck disable=SC1090,SC2034
 #===============================================================================
 #
-#          FILE: bin/send_message.sh
+#          FILE: bin/edit_buttons.sh
 # 
-USAGE='send_edit_message.sh [-h|--help] [format|caption] "CHAT[ID]" "MESSAGE[ID]" "message ...." [debug]'
+USAGE='send_message.sh [-h|--help] "CHAT[ID]" "MESSAGE[ID]" "text|url" ...'
 # 
-#   DESCRIPTION: replace a message in the given user/group
+#   DESCRIPTION: send a send buttons in a row to the given user/group
 # 
-#       OPTIONS: format - normal, markdown, html or caption for file caption (optional)
-#                CHAT[ID] - ID number of CHAT or BOTADMIN to send to yourself
-#                MESSAGE[ID] - message to replace
-#                message - message to send in specified format
-#                    if no format is given send_normal_message() format is used
+#       OPTIONS: CHAT[ID] - ID number of CHAT or BOTADMIN to send to yourself
+#                MESSAGE[ID] - ID of MESSAGE with buttons to edit
+#                text|url - buttons to send,  each button as "text|url" pair or
+#                        "url" only to show url as text also, "" starts new row
 #
 #                -h - display short help
 #                --help -  this help
+#
+#       EXAMPLE: 2 buttons on 2 rows, first shows Amazon, second the url as text
+#                send_buttons.sh "Amazon|https://www.amazon.com" "" "https://mydealz.de" ...
 #
 #                Set BASHBOT_HOME to your installation directory
 #
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
-#       CREATED: 23.12.2020 16:52
+#       CREATED: 21.01.2021 08:10
 #
-#### $$VERSION$$ v1.32-dev-1-g662c6f4
+#### $$VERSION$$ v1.32-dev-4-g407194b
 #===============================================================================
 
 ####
 # parse args
-SEND="edit_normal_message"
-case "$1" in
-	"nor"*|"tex"*)
-		SEND="edit_normal_message"
-		shift
-		;;
-	"mark"*)
-		SEND="edit_markdownv2_message"
-		shift
-		;;
-	"htm"*)
-		SEND="edit_html_message"
-		shift
-		;;
-	"cap"*)
-		SEND="edit_message_caption"
-		shift
-		;;
-esac
+SEND="edit_inline_keyboard"
 
 # set bashbot environment
-source "${0%/*}/bashbot_env.inc.sh" "${4:-debug}" # $4 debug
+source "${0%/*}/bashbot_env.inc.sh" "debug"
 print_help
 
 ####
@@ -59,9 +43,11 @@ if [ "$1" == "BOTADMIN" ]; then
 else
 	CHAT="$1"
 fi
+MESSAGE_ID="$2"
+shift 2
 
 # send message in selected format
-"${SEND}" "${CHAT}" "$2" "$3"
+"${SEND}" "${CHAT}" "${MESSAGE_ID}" "$(_button_row "$@")"
 
 # output send message result
 print_result
