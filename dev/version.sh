@@ -43,7 +43,8 @@ unset IFS
 VERSION="$(git describe --tags --long)"
 printf "Update to version %s ...\n" "${VERSION}"
 
-FILES="$(find ./*)"
+# only regular files, ignore .dot files/dirs, e.g. .git .gitinore in BASEDIR
+FILES="$(find ./* -type f)"
 [ "$1" != "" ] && FILES="$*"
 
 # autogenerate REMADME.html REMADE.txt
