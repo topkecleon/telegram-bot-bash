@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.32-dev-11-g41e956d
+#### $$VERSION$$ v1.32-dev-12-g78e4551
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -104,6 +104,12 @@ setConfigKey() {
 getConfigKey() {
 	[[ "$1" =~ ^[-${azAZo9},._]+$ ]] || return 3
 	[ -r "${BOTCONFIG}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' "${BOTCONFIG}.jssh" | tail -n 1
+}
+# escape / remove text characters for json strings, eg. " -> \" 
+# $1 string
+# output escaped string
+JsonEscape(){
+	sed 's/\([-"`´,§$%&/(){}#@!?*.\t]\)/\\\1/g' <<< "$1"
 }
 # check if $1 seems a valid token
 # return true if token seems to be valid
@@ -617,13 +623,6 @@ sendJsonResult(){
 	    fi
 	fi
 } >>"${ERRORLOG}"
-
-# escape / remove text characters for json strings, eg. " -> \" 
-# $1 string
-# output escaped string
-JsonEscape(){
-	sed 's/\([-"`´,§$%&/(){}#@!?*.\t]\)/\\\1/g' <<< "$1"
-}
 
 # convert common telegram entities to JSON
 # title caption description markup inlinekeyboard
