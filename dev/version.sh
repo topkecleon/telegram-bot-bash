@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#### $$VERSION$$ v1.32-dev-4-g407194b
+#### $$VERSION$$ v1.32-dev-9-g13052f0
 # shellcheck disable=SC2016
 #
 # Easy Versioning in git:
@@ -54,7 +54,7 @@ if [[ "${FILES}" == *"README.md"* ]]; then
 	cat "doc/bashbot.ascii" >"README.txt"
 	if [ -r "README.html" ] && type -f html2text >/dev/null; then
 		# convert html links to text [link]
-		sed -E 's/<a href="([^>]+)">([^<#]+)<\/a>/\2 [\1]/' <README.html |\
+		sed -E 's/<a href="([^>]+)">([^<#]+)<\/a>/\2 [\1]/g' <README.html |\
 		html2text -style pretty -width 90 - >>README.txt
 	else
 		type -f fold >/dev/null && fold -s -w 90 README.md >>README.txt
