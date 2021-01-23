@@ -39,11 +39,11 @@ Linted by #ShellCheck
 
 Prerequisites
 
-Uses JSON.sh [http://github.com/dominictarr/JSON.sh] and the magic of sed.
+Uses JSON.sh [http://github.com/dominictarr/JSON.sh]/JSON.awk and the magic of sed.
 Bashbot is written in bash. It depends on commands typically available in a Linux/Unix
-Environment. For more concrete information on the common commands provided by recent
-versions of coreutils [https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands],
-busybox or toybox, see Developer_Notes.
+Environment. For more information on commands provided by recent versions of coreutils
+[https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands], busybox or toybox,
+see Developer_Notes.
 Note for MacOS and BSD Users: Bashbot will not run without installing additional software
 as it uses modern bash and (gnu) grep/sed features. See Install Bashbot [doc/
 0_install.md].

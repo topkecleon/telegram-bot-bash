@@ -11,10 +11,10 @@ Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/cop
 Linted by [#ShellCheck](https://github.com/koalaman/shellcheck)
 
 ## Prerequisites
-Uses [JSON.sh](http://github.com/dominictarr/JSON.sh) and the magic of sed.
+Uses [JSON.sh](http://github.com/dominictarr/JSON.sh)/[JSON.awk](https://github.com/step-/JSON.awk) and the magic of sed.
 
 Bashbot is written in bash. It depends on commands typically available in a Linux/Unix Environment.
-For more concrete information on the common commands provided by recent versions of [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or [toybox](https://landley.net/toybox/help.html), see [Developer Notes](doc/7_develop.md#common-commands).
+For more information on commands provided by recent versions of [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or [toybox](https://landley.net/toybox/help.html), see [Developer Notes](doc/7_develop.md#common-commands).
 
 **Note for MacOS and BSD Users:** Bashbot will not run without installing additional software as it uses modern bash and (gnu) grep/sed features. See [Install Bashbot](doc/0_install.md).
 
@@ -238,4 +238,4 @@ See `mycommnds.sh.dist` for an example.
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.32-dev-8-g2960e58
