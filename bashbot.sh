@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.31-dev-13-g127cc85
+#### $$VERSION$$ v1.32-dev-10-g121f131
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -661,15 +661,6 @@ JsonDecode() {
 	printf "%b\n" "${out}${remain}"
 }
 
-#JsonGetString() {
-#	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]"\(.*\)"$/\1/p'
-#}
-#JsonGetLine() {
-#	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]//p'
-#}
-#JsonGetValue() {
-#	sed -n -e '0,/\['"$1"'\]/ s/\['"$1"'\][ \t]\([0-9.,]*\).*/\1/p'
-#}
 
 ################
 # processing of updates starts here
