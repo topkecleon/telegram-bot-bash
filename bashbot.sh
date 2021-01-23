@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.32-dev-10-g121f131
+#### $$VERSION$$ v1.32-dev-11-g41e956d
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -982,6 +982,8 @@ process_message() {
 	    if [ -n "${UPD["result,${num},message,migrate_to_chat_id"]}" ]; then
 		MIGRATE[TO]="${UPD["result,${num},message,migrate_to_chat_id"]}"
 		MIGRATE[FROM]="${UPD["result,${num},message,migrate_from_chat_id"]}"
+		# CHAT is already migrated, so set new chat id
+		[ "${CHAT[ID]}" = "${MIGRATE[FROM]}" ] && CHAT[ID]="${MIGRATE[FROM]}"
 		SERVICE[MIGRATE]="${MIGRATE[FROM]} ${MIGRATE[TO]}"
 		[ -z "${MESSAGE[0]}" ] &&\
 			MESSAGE[0]="/_migrate_group ${SERVICE[MIGRATE]}"
