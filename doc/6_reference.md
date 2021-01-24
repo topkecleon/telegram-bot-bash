@@ -176,15 +176,11 @@ send_album "$(getConfigKey "botadmin")" "http://www.rrr.de/slider/main-image1.jp
 ----
 
 ##### send_keyboard
-Note: Since version 0.6 send_keyboard was changed to use native "JSON Array" notation as used from Telegram.
-Detection and emulation for old format will be removed after 1.0 release!
+`send_keyboard` sends a custom keyboard, a Telegram client will it show instead of the regular keyboard.
+If a user click a button on the custom keyboard, the text shown on the button is send to the chat.
 
 Example Keyboard Array definitions:
 
-- yes no in two rows:
-    - OLD format: 'yes' 'no' (two strings)
-    - NEW format: '[ "yes" ] , [ "no" ]' (two arrays with a string)
-- new layouts made easy with NEW format:
     - Yes No in one row: '[ "yes" , "no" ]'
     - Yes No plus Maybe in 2.row: '[ "yes" , "no" ] , [ "maybe" ]' 
     - number pad style keyboard: '[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [ "7" , "8" , "9" ] , [ "0" ]'
@@ -205,6 +201,8 @@ _keyboard_numpad
 ```
 
 ##### remove_keyboard
+`remove_keyboard` deletes the last custom keyboard. Depending on used Telegram client this will hide or delete the custom keyboard.
+
 *usage:* remove_keybord "$CHAT[ID]" "message"
 
 *alias:* _del_keyboard "message"
@@ -260,10 +258,10 @@ send_inline_keyboard "${CHAT[ID]}" "message" "$(_button_row "b1|http://rrr.de" "
 
 *usage:*  send_inline_keyboard "CHAT[ID]" "message" "[JSON button array]"
 
-A JSON button array has the following format, but I suggest to use `_button_row` to create them,
+I suggest to use `_button_row` to create the JSON button array. In case you want to write by hand the following format must be used,
 see [Inline Keyboard Markup](https://core.telegram.org/bots/api#inlinekeyboardmarkup)
 
-URL buttons: `[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ],[...]`
+URL buttons: `[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ],[...]`\
 CALLBACK buttons: `[ {"text":"text1", "callback_data":"abc"}, ... {"text":"textN", "callback_data":"defg"} ],[...]`
 
 *example:* 
@@ -1322,5 +1320,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.35-dev-3-g461e748
+#### $$VERSION$$ v1.35-dev-4-gaa2c20b
 
