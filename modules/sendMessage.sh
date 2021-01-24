@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.35-dev-1-g9023b21
+#### $$VERSION$$ v1.35-dev-3-g461e748
 
 # will be automatically sourced from bashbot
 
@@ -167,7 +167,7 @@ _button_row() {
 	do
 		[ -z "${arg}" ] && sep="],[" && continue
 		type="callback_data"
-		[[ "${arg##*|}" =~ ^https*:// ]] && type="url"
+		[[ "${arg##*|}" =~ ^(https*://|tg://) ]] && type="url"
 		json+="${sep}"'{"text":"'"$(JsonEscape "${arg%|*}")"'", "'"${type}"'":"'"${arg##*|}"'"}'
 		sep=","
 	done

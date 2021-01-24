@@ -240,6 +240,9 @@ Each button is specified as a `"text|url"` pair separated by `|`, `text` is show
 By default all buttons are displayed on one row, an empty string `""` starts a new button row.  
 If `"url"` without text is given, `url` is shown on the button and opened on button click.
 
+**Important**: An `url` not startung with http(s):// or tg:// will be converted to a
+[Callback Button](https://core.telegram.org/bots/2-0-intro#callback-buttons)
+
 *example:* 
 ```bash
 # one button, same as send_button
@@ -257,9 +260,11 @@ send_inline_keyboard "${CHAT[ID]}" "message" "$(_button_row "b1|http://rrr.de" "
 
 *usage:*  send_inline_keyboard "CHAT[ID]" "message" "[JSON button array]"
 
-A JSON button array has the following format, but I suggest to use `_button_row` to create them:
+A JSON button array has the following format, but I suggest to use `_button_row` to create them,
+see [Inline Keyboard Markup](https://core.telegram.org/bots/api#inlinekeyboardmarkup)
 
-`[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ],[...]`
+URL buttons: `[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ],[...]`
+CALLBACK buttons: `[ {"text":"text1", "callback_data":"abc"}, ... {"text":"textN", "callback_data":"defg"} ],[...]`
 
 *example:* 
 ```bash
@@ -1317,5 +1322,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.32-dev-7-g8bb4b7e
+#### $$VERSION$$ v1.35-dev-3-g461e748
 

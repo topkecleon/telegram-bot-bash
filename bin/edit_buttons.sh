@@ -12,6 +12,7 @@ USAGE='send_message.sh [-h|--help] "CHAT[ID]" "MESSAGE[ID]" "text|url" ...'
 #                MESSAGE[ID] - ID of MESSAGE with buttons to edit
 #                text|url - buttons to send,  each button as "text|url" pair or
 #                        "url" only to show url as text also, "" starts new row
+#                        "url" not http(s):// or tg:// is sent as callback_data
 #
 #                -h - display short help
 #                --help -  this help
@@ -25,7 +26,7 @@ USAGE='send_message.sh [-h|--help] "CHAT[ID]" "MESSAGE[ID]" "text|url" ...'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 21.01.2021 08:10
 #
-#### $$VERSION$$ v1.32-dev-6-g2832801
+#### $$VERSION$$ v1.35-dev-3-g461e748
 #===============================================================================
 
 ####
