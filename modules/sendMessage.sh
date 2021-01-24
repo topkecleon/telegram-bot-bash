@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.32-dev-1-g662c6f4
+#### $$VERSION$$ v1.35-dev-1-g9023b21
 
 # will be automatically sourced from bashbot
 
@@ -159,13 +159,16 @@ send_button() {
 
 # helper function to create json for a button row
 # buttons will specified as "text|url" ... "text|url" empty arg starts new row
+# url not starting with http:// or https:// will be send as callback_data 
 _button_row() {
 	[ -z "$1" ] && return 1
-	local arg json sep
+	local arg type json sep
 	for arg in "$@"
 	do
 		[ -z "${arg}" ] && sep="],[" && continue
-		json+="${sep}"'{"text":"'"$(JsonEscape "${arg%|*}")"'", "url":"'"${arg##*|}"'"}'
+		type="callback_data"
+		[[ "${arg##*|}" =~ ^https*:// ]] && type="url"
+		json+="${sep}"'{"text":"'"$(JsonEscape "${arg%|*}")"'", "'"${type}"'":"'"${arg##*|}"'"}'
 		sep=","
 	done
 	printf "[%s]" "${json}"
