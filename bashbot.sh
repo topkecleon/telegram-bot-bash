@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.35-dev-1-g9023b21
+#### $$VERSION$$ v1.35-dev-2-g1fe22a0
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -689,8 +689,8 @@ process_client() {
 			"${iQUERY[USERNAME]:0:20} (${iQUERY[USER_ID]})" "${iQUERY[0]}" >>"${UPDATELOG}"
 	elif [ -n "${iBUTTON[ID]}" ]; then
 		process_inline_button "${num}" "${debug}"
-	        printf "%(%c)T: Inline Button update received FROM=%s CHAT=%s ID=%s DATA:%s \n" -1\
-			"${iBUTTON[USERNAME]:0:20} (${iBUTTON[USER_ID]})" "${iBUTTON[CHAT_ID]}" "{iBUTTON[ID]" "{iBUTTON[DATA]" >>"${UPDATELOG}"
+	        printf "%(%c)T: Inline Button update received FROM=%s CHAT=%s CALLBACK=%s DATA:%s \n" -1\
+			"${iBUTTON[USERNAME]:0:20} (${iBUTTON[USER_ID]})" "${iBUTTON[CHAT_ID]}" "${iBUTTON[ID]}" "${iBUTTON[DATA]}" >>"${UPDATELOG}"
 	else
 		if grep -qs -e '\["result",'"${num}"',"edited_message"' <<<"${UPDATE}"; then
 			# edited message
@@ -847,7 +847,7 @@ pre_process_message(){
 	CMD=( ); iQUERY=( ); iBUTTON=(); MESSAGE=(); CHAT=(); USER=(); CONTACT=(); LOCATION=(); unset CAPTION
 	REPLYTO=( ); FORWARD=( ); URLS=(); VENUE=( ); SERVICE=( ); NEWMEMBER=( ); LEFTMEMBER=( ); PINNED=( ); MIGRATE=( )
 	iQUERY[ID]="${UPD["result,${num},inline_query,id"]}"
-	iBUTTON[ID]="${UPD["result,${num},inline_callback,id"]}"
+	iBUTTON[ID]="${UPD["result,${num},callback_query,id"]}"
 	CHAT[ID]="${UPD["result,${num},message,chat,id"]}"
 	USER[ID]="${UPD["result,${num},message,from,id"]}"
 	[ -z "${CHAT[ID]}" ] && CHAT[ID]="${UPD["result,${num},edited_message,chat,id"]}"
@@ -867,19 +867,18 @@ process_inline_query() {
 }
 process_inline_button() {
 # debugging for impelemetation
-	log_message "${res}"
-set -x
 	local num="$1"
-	iBUTTON[DATA]="${UPD["result,${num},inline_callback,data"]}"
-	iBUTTON[CHAT_ID]="${UPD["result,${num},inline_callback,chat_instance"]}"
-	iBUTTON[MESSAGE_ID]="${UPD["result,${num},inline_callback,inline_message_id"]}"
-	iBUTTON[MEESSAGE]="$(JsonDecode "${UPD["result,${num},inline_callback,message,text"]}")"
+	iBUTTON[DATA]="${UPD["result,${num},callback_query,data"]}"
+	#iBUTTON[CHAT_INSTANCE]="${UPD["result,${num},callback_query,chat_instance"]}"
+	#iBUTTON[INLINE_ID]="${UPD["result,${num},callback_query,inline_message_id"]}"
+	iBUTTON[CHAT_ID]="${UPD["result,${num},callback_query,message,chat,id"]}"
+	iBUTTON[MESSAGE_ID]="${UPD["result,${num},callback_query,message,message_id"]}"
+	iBUTTON[MEESSAGE]="$(JsonDecode "${UPD["result,${num},callback_query,message,text"]}")"
 # XXX should we give back pressed button, all buttons or nothing?
-	iBUTTON[USER_ID]="${UPD["result,${num},inline_callback,from,id"]}"
-	iBUTTON[FIRST_NAME]="$(JsonDecode "${UPD["result,${num},inline_callback,from,first_name"]}")"
-	iBUTTON[LAST_NAME]="$(JsonDecode "${UPD["result,${num},inline_callback,from,last_name"]}")"
-	iBUTTON[USERNAME]="$(JsonDecode "${UPD["result,${num},inline_callback,from,username"]}")"
-set +x
+	iBUTTON[USER_ID]="${UPD["result,${num},callback_query,from,id"]}"
+	iBUTTON[FIRST_NAME]="$(JsonDecode "${UPD["result,${num},callback_query,from,first_name"]}")"
+	iBUTTON[LAST_NAME]="$(JsonDecode "${UPD["result,${num},callback_query,from,last_name"]}")"
+	iBUTTON[USERNAME]="$(JsonDecode "${UPD["result,${num},callback_query,from,username"]}")"
 	# always true
 	return 0
 }
