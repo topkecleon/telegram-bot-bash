@@ -173,11 +173,17 @@ send_album "$(getConfigKey "botadmin")" "http://www.rrr.de/slider/main-image1.jp
 *usage:* send_venue "${CHAT[ID]}" "Latitude" "Longitude" "Title" "Address" "foursquare id (optional)"
 
 
+##### send_sticker
+`send_sticker` sends a sticker using a `file_id` to send a sticker that exists on the Telegram servers.
+
+*usage:*  send_sticker "$CHAT[ID]" "file_id"
+
+
 ----
 
 ##### send_keyboard
-`send_keyboard` sends a custom keyboard, a Telegram client will it show instead of the regular keyboard.
-If a user click a button on the custom keyboard, the text shown on the button is send to the chat.
+`send_keyboard` sends a custom keyboard, Telegram clients will show it instead of the regular keyboard.
+If the user press a button on the custom keyboard, the text shown on the button is send to the chat.
 
 Example Keyboard Array definitions:
 
@@ -209,16 +215,9 @@ _keyboard_numpad
 
 *See also: [Keyboard Markup](https://core.telegram.org/bots/api/#replykeyboardmarkup)*
 
-----
-
-##### send_sticker
-`send_sticker` sends a sticker using a `file_id` to send a sticker that exists on the Telegram servers.
-
-*usage:*  send_sticker "$CHAT[ID]" "file_id"
-
 
 ##### send_button
-`send_button` sends a text message followed by a single button.
+`send_button` sends a text message with a single button for opneing and URL.
 
 *usage:*  send_button "$CHAT[ID]" "message" "text" "URL"
 
@@ -230,7 +229,7 @@ send_button "${CHAT[ID]}" "Awesome Deals!" "Visit my Shop" "https://dealz.rrr.de
 ```
 
 ##### _button_row
-`_button_row` is a helper function to create a JSON button array for use with `send_inline_keyboard`.
+`_button_row` is a helper function to make it easier to send messages with with multiple buttons.
 
 *usage:*  _button_row "text|url" "text|url" "" "url" "" "text|url" ...
 
@@ -254,15 +253,17 @@ send_inline_keyboard "${CHAT[ID]}" "message" "$(_button_row "b1|http://rrr.de" "
 ```
 
 ##### send_inline_keyboard
-`send_inline_keyboard` send buttons given as an array of buttons in JSON format.
+`send_inline_keyboard` send a message with attached buttons, buttons are given as an array of buttons in JSON format.
+In contrast to `send_keyboard` the button are attached to a message and do not send text to the chat.
 
 *usage:*  send_inline_keyboard "CHAT[ID]" "message" "[JSON button array]"
 
-I suggest to use `_button_row` to create the JSON button array. In case you want to write by hand the following format must be used,
+I suggest to use `_button_row` to create the JSON button array. For hand crafted JSON the following format must be used,
 see [Inline Keyboard Markup](https://core.telegram.org/bots/api#inlinekeyboardmarkup)
 
-URL buttons: `[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ],[...]`\
-CALLBACK buttons: `[ {"text":"text1", "callback_data":"abc"}, ... {"text":"textN", "callback_data":"defg"} ],[...]`
+URL `[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ],[...]`\
+CALLBACK `[ {"text":"text1", "callback_data":"abc"}, ... {"text":"textN", "callback_data":"defg"} ],[...]`\
+An URL Button opens the given URL, a CALLBACK button sends an update the bot must react on. 
 
 *example:* 
 ```bash
@@ -1320,5 +1321,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.35-dev-4-gaa2c20b
+#### $$VERSION$$ v1.35-dev-5-gcc7afdb
 
