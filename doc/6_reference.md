@@ -471,6 +471,25 @@ fi
 
 See also [kick Chat Member](https://core.telegram.org/bots/api/#kickchatmember)*
 
+
+##### promote_chat_member
+`promote_chat_member` promote or denote user right in a chat. Bot must be admin an can only promote own rights.
+
+Right are specified as "right:bool" pairs, where right is one of `long` or `short` listed below, followed
+by `:true` or `:false`. Anything but `:true` (e.g. nothing or :xyz) is `:false`.
+
+long: `is_anonymous can_change_info can_post_messages can_edit_messages can_delete_messages can_invite_users can_restrict_members can_pin_messages can_promote_member`
+short: `anon change post edit delete invite restrict pin promote`
+
+*usage:* promote_chat_member "CHAT[ID]" "USER[ID]" "right[:true|false]" ... "right[:true|false]"
+
+See also [promote Chat Member](https://core.telegram.org/bots/api#promotechatmember)*
+
+*example:* 
+```bash
+#                                 USER      can post,      can't edit,     can't delete, can't pin message, can invite users
+promote_chat_member "CHAT[ID}" "USER[ID]" "post:true"  "can_edit_message" "delete:false"   "pin:xxx"        "invite:true"
+```
 ----
 
 The following functions are bashbot only and not part of the Telegram API. 
@@ -1323,5 +1342,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.35-dev-6-gc90b565
+#### $$VERSION$$ v1.35-dev-9-g5ceddde
 
