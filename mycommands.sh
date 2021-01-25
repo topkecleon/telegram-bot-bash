@@ -13,7 +13,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.35-dev-6-gc90b565
 #######################################################
 # shellcheck disable=SC1117
 
@@ -177,6 +177,40 @@ else
 			return 1
 			;;
 	esac
+     }
+
+     mycallbacks() {
+	#######################
+	# callbacks from buttons bot has attached to messages can processed here
+	# we have no standard use case for processing callbacks, we log them based on user and chat
+	case "${USER[ID]}+${CHAT[ID]}" in
+	    'USERID1+'*) # do something for all callbacks from USER
+		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBOTTON[USER_ID]}" "${iBOTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\
+				>>"${DATADIR}/${iBOTTON[USER_ID]}.log"
+		answer_callback_query "${iBUTTON[ID]}" "Request has been logged in your user log..."
+		return
+		;;
+	    *'+CHATID1') # do something for all callbacks from CHAT
+		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBOTTON[USER_ID]}" "${iBOTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\
+				>>"${DATADIR}/${iBOTTON[CHAT_ID]}.log"
+		answer_callback_query "${iBUTTON[ID]}" "Request has been logged in chat log..."
+		return
+		;;
+	    'USERID2+CHATID2') # do something only for callbacks form USER in CHAT
+		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBOTTON[USER_ID]}" "${iBOTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\
+				>>"${DATADIR}/${iBOTTON[USER_ID]}-${iBOTTON[CHAT_ID]}.log"
+		answer_callback_query "${iBUTTON[ID]}" "Request has been logged in user-chat log..."
+		return
+		;;
+	    *)	# all other callbacks are processed here
+		: # your processing here ...
+		:	
+		# Telegram needs an ack each callback query, default empty
+		answer_callback_query "${iBUTTON[ID]}" ""
+		;;
+	esac
+
+
      }
 
      myinlines() {

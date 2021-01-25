@@ -216,8 +216,10 @@ _keyboard_numpad
 *See also: [Keyboard Markup](https://core.telegram.org/bots/api/#replykeyboardmarkup)*
 
 
+----
+
 ##### send_button
-`send_button` sends a text message with a single button for opneing and URL.
+`send_button` sends a text message with a single button to open an URL attached.
 
 *usage:*  send_button "$CHAT[ID]" "message" "text" "URL"
 
@@ -253,8 +255,8 @@ send_inline_keyboard "${CHAT[ID]}" "message" "$(_button_row "b1|http://rrr.de" "
 ```
 
 ##### send_inline_keyboard
-`send_inline_keyboard` send a message with attached buttons, buttons are given as an array of buttons in JSON format.
-In contrast to `send_keyboard` the button are attached to a message and do not send text to the chat.
+`send_inline_keyboard` sends a message with buttons attached, buttons must be given in JSON format.
+In contrast to `send_keyboard` buttons are attached to the message and do not send text.
 
 *usage:*  send_inline_keyboard "CHAT[ID]" "message" "[JSON button array]"
 
@@ -1321,5 +1323,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.35-dev-5-gcc7afdb
+#### $$VERSION$$ v1.35-dev-6-gc90b565
 

@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.31-dev-13-g127cc85
+#### $$VERSION$$ v1.35-dev-6-gc90b565
 #
 
 # bashbot locale defaults to c.UTF-8, adjust locale in mycommands.sh if needed
@@ -66,6 +66,7 @@ fi
 # copy "mycommands.sh.dist" to "mycommands.sh" and change the values there
 # defaults to no inline, all commands  and nonsense home dir
 export INLINE="0"
+export CALLBACK="0"
 export MEONLY="0"
 export FILE_REGEX="${BASHBOT_ETC}/.*"
 
@@ -76,14 +77,18 @@ export FILE_REGEX="${BASHBOT_ETC}/.*"
 
 
 if [ -z "$1" ] || [[ "$1" == *"debug"* ]];then
-    # detect inline commands....
-    # no default commands, all processing is done in myinlines()
-    if [ "${INLINE}" != "0" ] && [ -n "${iQUERY[ID]}" ]; then
+    #################
+    # detect inline and callback query
+    if [[ -n "${iQUERY[ID]}" && "${INLINE:-0}" != "0" ]]; then
     	# forward iinline query to optional dispatcher
 	_exec_if_function myinlines
 
-    # regular (global) commands ...
-    # your commands are in mycommands() 
+    elif [[ -n "${iBUTTON[ID]}" && "${CALLBACK:-0}" != "0" ]]; then
+    	# forward iinline query to optional dispatcher
+	_exec_if_function mycallbacks
+
+    #################
+    # regular command
     else
 	
 	###################
