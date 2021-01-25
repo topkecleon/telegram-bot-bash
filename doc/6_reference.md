@@ -8,7 +8,7 @@ To insert line brakes in a message or caption you can place `\n` in the text.
 ##### send_action
 `send_action` shows users what your bot is currently doing.
 
-*usage:* send_action "${CHAT[ID]}" "action"
+*usage:* send_action "CHAT[ID]" "action"
 
 *"action":* `typing`, `upload_photo`, `record_video`, `upload_video`, `record_audio`, `upload_audio`, `upload_document`, `find_location`.
 
@@ -23,7 +23,7 @@ send_action "${CHAT[ID]}" "record_audio"
 ##### send_normal_message
 `send_normal_message` sends text only messages to the given chat.
 
-*usage:*  send_normal_message "${CHAT[ID]}" "message"
+*usage:*  send_normal_message "CHAT[ID]" "message"
 
 *alias:* _normal_message "message"
 
@@ -41,7 +41,7 @@ has more formatting codes and is more robust, but incompatible with old telegram
 To send characters reserved for markdown v2 formatting, you must prefix them with `\` ( e.g. `\| \= \_ \*`).\
 *Hint*: If a message is not sent, have a look in `logs/ERROR.log`
 
-*usage:* send_markdownv2_message "${CHAT[ID]}" "markdown message"
+*usage:* send_markdownv2_message "CHAT[ID]" "markdown message"
 
 *example:* 
 ```bash
@@ -55,7 +55,7 @@ send_markdownv2_message "${CHAT[ID]}" "*bold* __underlined__ [text](link)"
 This is the old, legacy Telegram markdown style, retained for backward compatibility.
 It supports a [reduced set of Markdown](https://core.telegram.org/bots/api#markdown-style) only
 
-*usage:* send_markdown_message "${CHAT[ID]}" "markdown message"
+*usage:* send_markdown_message "CHAT[ID]" "markdown message"
 
 *alias:* _markdown "message"
 
@@ -70,7 +70,7 @@ send_markdown_message "${CHAT[ID]}" "*bold* _italic_ [text](link)"
 `send_html_message` sends HTML style messages to the given chat.
 Telegram supports a [reduced set of HTML](https://core.telegram.org/bots/api#html-style) only
 
-*usage:* send_html_message "${CHAT[ID]}" "html message" 
+*usage:* send_html_message "CHAT[ID]" "html message" 
 
 *alias:* _html_message "message"
 
@@ -96,7 +96,7 @@ See also [Text formatting options](https://core.telegram.org/bots/api#formatting
 ##### delete_message
 A bot can only delete messages if he is admin of a Chat, if not he can delete his own messages only.
 
-*usage:* delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
+*usage:* delete_message "CHAT[ID]" "${MESSAGE[ID]}"
 
 See also [deleteMessage limitations](https://core.telegram.org/bots/api#deletemessage)
 
@@ -107,7 +107,7 @@ See also [deleteMessage limitations](https://core.telegram.org/bots/api#deleteme
 
 The main use case for send_message is to process the output of interactive chats and background jobs. **For regular Bot commands I recommend using of the dedicated send_xxx_message() functions from above.**
 
-*usage:* send_message "${CHAT[ID]}" "message"
+*usage:* send_message "CHAT[ID]" "message"
 
 *example:* - see [Usage](2_usage.md#send_message) and [Advanced Usage](3_advanced.md#Interactive-Chats)
 
@@ -118,7 +118,7 @@ The main use case for send_message is to process the output of interactive chats
 ##### send_file
 send_file can send local files, URL's or file_id's as different filex types (_e.g. photo video sticker_)
 
-*usage:* send_file "${CHAT[ID]}" "file/URL/file_id" "caption" ["type"]
+*usage:* send_file "CHAT[ID]" "file/URL/file_id" "caption" ["type"]
 
 URL's must start with `http://` or `https://` and remote server must send an appropriate media type.
 A file_id must start with `file_id://`, all other file names are threated as local files.
@@ -158,7 +158,7 @@ send_file "${CHAT[ID]}" "dog.jpg" "My Dog"
 
 ##### send_album
 
-*usage:* send_album "${CHAT[ID]}" "URL1" "URL2" ... "URLn"
+*usage:* send_album "CHAT[ID]" "URL1" "URL2" ... "URLn"
 
 *example:*
 ```bash
@@ -166,11 +166,11 @@ send_album "$(getConfigKey "botadmin")" "http://www.rrr.de/slider/main-image1.jp
 ```
 
 ##### send_location
-*usage:* send_location "${CHAT[ID]}" "Latitude" "Longitude"
+*usage:* send_location "CHAT[ID]" "Latitude" "Longitude"
 
 
 ##### send_venue
-*usage:* send_venue "${CHAT[ID]}" "Latitude" "Longitude" "Title" "Address" "foursquare id (optional)"
+*usage:* send_venue "CHAT[ID]" "Latitude" "Longitude" "Title" "Address" "foursquare id (optional)"
 
 
 ##### send_sticker
@@ -324,7 +324,7 @@ To replace a message you must know the message id of the the original message. T
 ##### edit_normal_message
 `edit_normal_message` replace a message with a text message in the given chat.
 
-*usage:*  edit_normal_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+*usage:*  edit_normal_message "CHAT[ID]" "MESSAGE-ID" "message"
 
 *example:* 
 ```bash
@@ -337,7 +337,7 @@ edit_normal_message "${CHAT[ID]}" "${saved-id}" "this is another text"
 ##### edit_markdownv2_message
 `edit_markdownv2_message` replace a message with a markdown v2 message in the given chat.
 
-*usage:*  edit_markdownv2_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+*usage:*  edit_markdownv2_message "CHAT[ID]" "MESSAGE-ID" "message"
 
 *example:* 
 ```bash
@@ -350,7 +350,7 @@ edit_markdownv2_message "${CHAT[ID]}" "${saved-id}" "this is __markdown__ *V2* t
 ##### edit_markdown_message
 `edit_markdown_message` replace a message with a markdown message in the given chat.
 
-*usage:*  edit_markdown_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+*usage:*  edit_markdown_message "CHAT[ID]" "MESSAGE-ID" "message"
 
 *example:* 
 ```bash
@@ -363,7 +363,7 @@ edit_markdown_message "${CHAT[ID]}" "${saved-id}" "this is *markdown* text"
 ##### edit_html_message
 `edit_html_message` replace a message with a html message in the given chat.
 
-*usage:*  edit_html_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+*usage:*  edit_html_message "CHAT[ID]" "MESSAGE-ID" "message"
 
 *example:* 
 ```bash
@@ -376,7 +376,7 @@ edit_html_message "${CHAT[ID]}" "${saved-id}" "this is <b>html</b> text"
 ##### edit_message_caption
 `edit_message_caption` changes the caption of a message (photo, audio, video, document) in the given chat.
 
-*usage:*  edit_message_caption "${CHAT[ID]}" "MESSAGE-ID" "caption"
+*usage:*  edit_message_caption "CHAT[ID]" "MESSAGE-ID" "caption"
 
 
 ---
@@ -388,51 +388,51 @@ To use the following functions the bot must have administrator status in the cha
 `set_chat_title` sets a new chat title. If new title is the same than current title Telegram return error 400
 with description "Bad Request: chat title is not modified"
 
-*usage:* set_chat_title "${CHAT[ID]}" "new chat title"
+*usage:* set_chat_title "CHAT[ID]" "new chat title"
 
 
 ##### set_chat_description
 `set_chat_description` sets a new description title. If new description is the same than current description Telegram return error 400
 with description "Bad Request: chat description is not modified"
 
-*usage:* set_chat_description "${CHAT[ID]}" "new chat description"
+*usage:* set_chat_description "CHAT[ID]" "new chat description"
 
 
 ##### new_chat_invite
 `new_chat_invite` generate a new invite link for a chat; any previously generated link is revoked. 
 Returns the new invite link as String on success.
 
-*usage:* new_chat_invite "${CHAT[ID]}"
+*usage:* new_chat_invite "CHAT[ID]"
 
 
 ##### delete_chat_photo
 
-*usage:* delete_chat_photo "${CHAT[ID]}"
+*usage:* delete_chat_photo "CHAT[ID]"
 
 
 ##### pin_chat_message
 # $1 chat, $2 message_id 
 `pin_chat_message` add a message to the list of pinned messages in a chat.
 
-*usage:* pin_chat_message "${CHAT[ID]}" "message_id"
+*usage:* pin_chat_message "CHAT[ID]" "message_id"
 
 
 ##### unpin_chat_message
 `unpin_chat_message` remove a message from the list of pinned messages in a chat.
 
-*usage:* unpin_chat_message "${CHAT[ID]}" "message_id"
+*usage:* unpin_chat_message "CHAT[ID]" "message_id"
 
 
 ##### unpinall_chat_message
 `unpinall_chat_message` clear the list of pinned messages in a chat.
 
-*usage:* unpinall_chat_message "${CHAT[ID]}"
+*usage:* unpinall_chat_message "CHAT[ID]"
 
 
 ##### delete_chat_stickers
 `delete_chat_stickers` deletes a group sticker set from a supergroup.
 
-*usage:* delete_chat_stickers "${CHAT[ID]}"
+*usage:* delete_chat_stickers "CHAT[ID]"
 
 
 ----
@@ -444,21 +444,21 @@ More advanced API functions are currently not implemented in bashbot.
 ##### kick_chat_member
 If your Bot is a chat admin he can kick and ban a user.
 
-*usage:* kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
+*usage:* kick_chat_member "CHAT[ID]" "USER[ID]"
 
-*alias:* _kick_user "${USER[ID]}"
+*alias:* _kick_user "USER[ID]"
 
 ##### unban_chat_member
 If your Bot is a chat admin can unban a kicked user.
 
-*usage:*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
+*usage:*  unban_chat_member "CHAT[ID]" "USER[ID]"
 
-*alias:* _unban "${USER[ID]}"
+*alias:* _unban "USER[ID]"
 
 ##### leave_chat
 Your Bot will leave the chat.
 
-*usage:* leave_chat "${CHAT[ID]}"
+*usage:* leave_chat "CHAT[ID]"
 
 *alias:* _leave 
 
@@ -473,7 +473,7 @@ See also [kick Chat Member](https://core.telegram.org/bots/api/#kickchatmember)*
 
 
 ##### promote_chat_member
-`promote_chat_member` promote or denote user right in a chat. Bot must be admin an can only promote own rights.
+`promote_chat_member` promote or denote user rights in a chat. Bot must be admin and can only promote/denote rights he owns.
 
 Right are specified as "right:bool" pairs, where right is one of `long` or `short` listed below, followed
 by `:true` or `:false`. Anything but `:true` (e.g. nothing or :xyz) is `:false`.
@@ -497,7 +497,7 @@ The following functions are bashbot only and not part of the Telegram API.
 ##### bot_is_admin
 Return true (0) if bot is admin or creator of given chat.
  
-*usage:* bot_is_admin "${CHAT[ID]}"
+*usage:* bot_is_admin "CHAT[ID]"
 
 
 *example:* 
@@ -510,7 +510,7 @@ fi
 ##### user_is_botadmin
 Return true (0) if user is admin of bot, user id if botadmin is read from file './botadmin'.
 
-*usage:*  user_is_botadmin "${USER[ID]}"
+*usage:*  user_is_botadmin "USER[ID]"
 
 *alias:* _is_botadmin 
 
@@ -522,14 +522,14 @@ user_is_botadmin "${CHAT[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *
 ##### user_is_creator
 Return true (0) if user is creator of given chat or chat is a private chat.
 
-*usage:* user_is_creator "${CHAT[ID]}" "${USER[ID]}"
+*usage:* user_is_creator "CHAT[ID]" "USER[ID]"
 
 *alias:* _is_creator
 
 ##### user_is_admin
 Return true (0) if user is admin or creator of given chat.
  
-*usage:* user_is_admin "${CHAT[ID]}" "${USER[ID]}"
+*usage:* user_is_admin "CHAT[ID]" "USER[ID]"
 
 *alias:* _is_admin
 
@@ -547,7 +547,7 @@ fi
 `uers_is_allowed` checks if: user id botadmin, user is group admin or user is allowed to execute action..
 Allowed actions are configured as User Access Control rules, see [Advanced Usage](3_advanced.md)
 
-*usage:* user_is_allowed "${USER[ID]}" "action" "${CHAT[ID]}"
+*usage:* user_is_allowed "USER[ID]" "action" "CHAT[ID]"
 
 *example:* 
 ```bash
@@ -635,7 +635,7 @@ chats and send messages based on time or other external events.
 ##### start_proc
 `startproc` starts a script, the output of the script is sent to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
 
-*usage:* start_proc "${CHAT[ID]}" "script"
+*usage:* start_proc "CHAT[ID]" "script"
 
 *alias:* startproc "script"
 
@@ -648,7 +648,7 @@ startproc 'examples/calc.sh'
 ##### check_proc
 Return true (0) if an interactive script is running in the chat. 
 
-*usage:* check_prog "${CHAT[ID]}"
+*usage:* check_prog "CHAT[ID]"
 
 *alias:* checkprog 
 
@@ -664,7 +664,7 @@ fi
 ##### kill_proc
 Kill the interactive script running in the chat
 
-*usage:* kill_proc "${CHAT[ID]}"
+*usage:* kill_proc "CHAT[ID]"
 
 *alias:* killproc
 
@@ -684,7 +684,7 @@ Starts a script as a background job and attaches a job name to it. All output fr
 
 In contrast to interactive chats, background jobs do not receive user input and can run forever. In addition you can suspend and restart running jobs, e.g. after reboot.
 
-*usage:* start_back "${CHAT[ID]}" "script" "jobname"
+*usage:* start_back "CHAT[ID]" "script" "jobname"
 
 *alias:* background "script" "jobname"
 
@@ -696,7 +696,7 @@ background "examples/notify.sh" "notify"
 ##### check_back
 Return true (0) if an background job is active in the given chat. 
 
-*usage:*  check_back "${CHAT[ID]}" "jobname"
+*usage:*  check_back "CHAT[ID]" "jobname"
 
 *alias:*  checkback "jobname"
 
@@ -712,7 +712,7 @@ fi
 
 ##### kill_back
 
-*usage:* kill_back "${CHAT[ID]}" "jobname"
+*usage:* kill_back "CHAT[ID]" "jobname"
 
 *alias:* killback "jobname"
 
@@ -733,7 +733,7 @@ fi
 `send_interactive` is used to forward messages to interactive jobs.
 Usually a message is automatically forwarded from within `commands.sh`, but you can send messages yourself.
 
-*usage:* send_interactive "${CHAT[ID]}" "message"
+*usage:* send_interactive "CHAT[ID]" "message"
 
 ----
 
@@ -1090,13 +1090,13 @@ Do not use them in other files e.g. `bashbot.sh`, modules, addons etc.
 
 ##### _kick_user
 
-*usage:* _kick_user "${USER[ID]}"
+*usage:* _kick_user "USER[ID]"
 
 *alias for:* kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
 ##### _unban
 
-*usage:* _unban "${USER[ID]}"
+*usage:* _unban "USER[ID]"
 
 *alias for:*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
@@ -1272,7 +1272,7 @@ killallproc
 ----
 
 ##### get_file
-*usage:* url="$(get_file "${CHAT[ID]}" "message")"
+*usage:* url="$(get_file "CHAT[ID]" "message")"
 
 ----
 
@@ -1306,7 +1306,7 @@ Output ARRAY as JSON.sh style data to STDOUT
 ----
 
 ##### get_chat_member_status
-*usage:* get_chat_member_status "${CHAT[ID]}" "${USER[ID]}"
+*usage:* get_chat_member_status "CHAT[ID]" "USER[ID]"
 
 
 ----
@@ -1342,5 +1342,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.35-dev-9-g5ceddde
+#### $$VERSION$$ v1.35-dev-10-g70a3c19
 
