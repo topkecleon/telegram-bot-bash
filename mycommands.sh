@@ -13,7 +13,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.35-dev-6-gc90b565
+#### $$VERSION$$ v1.35-dev-7-g9584068
 #######################################################
 # shellcheck disable=SC1117
 
@@ -181,8 +181,8 @@ else
 
      mycallbacks() {
 	#######################
-	# callbacks from buttons bot has attached to messages can processed here
-	# we have no standard use case for processing callbacks, we log them based on user and chat
+	# callbacks from buttons attached to messages will be  processed here
+	# no standard use case for processing callbacks, let's log them for some users and chats
 	case "${USER[ID]}+${CHAT[ID]}" in
 	    'USERID1+'*) # do something for all callbacks from USER
 		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBOTTON[USER_ID]}" "${iBOTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\

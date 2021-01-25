@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.35-dev-6-gc90b565
+#### $$VERSION$$ v1.35-dev-7-g9584068
 #
 
 # bashbot locale defaults to c.UTF-8, adjust locale in mycommands.sh if needed
@@ -79,13 +79,13 @@ export FILE_REGEX="${BASHBOT_ETC}/.*"
 if [ -z "$1" ] || [[ "$1" == *"debug"* ]];then
     #################
     # detect inline and callback query
-    if [[ -n "${iQUERY[ID]}" && "${INLINE:-0}" != "0" ]]; then
-    	# forward iinline query to optional dispatcher
-	_exec_if_function myinlines
+    if [ -n "${iQUERY[ID]}" ]; then
+    	# forward inline query to optional dispatcher
+	[ "${INLINE:-0}" != "0" ] ||  _exec_if_function myinlines
 
-    elif [[ -n "${iBUTTON[ID]}" && "${CALLBACK:-0}" != "0" ]]; then
-    	# forward iinline query to optional dispatcher
-	_exec_if_function mycallbacks
+    elif [ -n "${iBUTTON[ID]}" ]; then
+    	# forward inline query to optional dispatcher
+	[ "${CALLBACK:-0}" != "0" ] || _exec_if_function mycallbacks
 
     #################
     # regular command
