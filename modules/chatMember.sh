@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.31-dev-0-gfe1fb75
+#### $$VERSION$$ v1.35-dev-8-gcc4ac1a
 
 # will be automatically sourced from bashbot
 
@@ -68,6 +68,34 @@ leave_chat() {
 	sendJson "$1" "" "${URL}/leaveChat"
 }
 
+# $1 chat, $2 userid, $3 ... "right[:true]" default false
+# right:  is_anonymous change_info post_messages edit_messages delete_messages invite_users restrict_members pin_messages promote_member
+promote_chat_member() {
+	local arg bool json chat="$1" user="$2; shift 2"
+	for arg in "$@"
+	do
+		# default false
+		bool=false; [ "${arg##*:}" = "true" ] && bool="true"
+		# expand args
+		case "${arg}" in
+			*"anon"*)	arg="is_anonymous";;
+			*"change"*)	arg="can_change_info";;
+			*"post"*)	arg="can_post_messages";;
+			*"edit"*)	arg="can_edit_messages";;
+			*"delete"*)	arg="can_delete_messages";;
+			*"pin"*)	arg="can_pin_messages";;
+			*"invite"*)	arg="can_invite_users";;
+			*"restrict"*)	arg="can_restrict_members";;
+			*"promote"*)	arg="can_promote_members";;
+			*) 	[ -n "${BASHBOT_DEBUG}" ] && debug_log "${FUNCNAME[0]}: unknown promotion ${arg}"
+				continue;; 
+		esac
+		# compose json
+		[ -n "${json}" ] && json+=","
+		json+='"'"${arg}"'": "'"${bool}"'"'
+	done
+	sendJson "${chat}" '"user_id":'"${user}"','"${json}"'' "${URL}/promoteChatMember"
+}
 
 # bashbot specific functions ---------
 
