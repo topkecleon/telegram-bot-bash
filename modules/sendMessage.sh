@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.35-dev-3-g461e748
+#### $$VERSION$$ v1.35-dev-15-gb441384
 
 # will be automatically sourced from bashbot
 
@@ -172,6 +172,13 @@ _button_row() {
 		sep=","
 	done
 	printf "[%s]" "${json}"
+}
+
+# $1 callback id, $2 test to show, alert if not empty
+answer_callback_query() {
+	local alert
+	[ -n "$3" ] && alert='","show_alert": true'
+	sendJson "" '"callback_query_id": "'"$1"'","text":"'"$2${alert}"'"' "${URL}/answerCallbackQuery"
 }
 
 # $1 chat, $2 file_id on telegram server 
