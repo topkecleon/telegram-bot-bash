@@ -10,7 +10,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.35-dev-18-ge4ee880
 #######################################################
 # shellcheck disable=SC1117
 
@@ -77,6 +77,18 @@ else
 	esac
      }
 
+     mycallbacks() {
+	#######################
+	# callbacks from buttons attached to messages will be  processed here
+	case "${iBUTTON[USER_ID]}+${iBUTTON[CHAT_ID]}" in
+	    *)	# all other callbacks are processed here
+		: # your processing here ...
+		:
+		# Telegram needs an ack each callback query, default empty
+		answer_callback_query "${iBUTTON[ID]}" ""
+		;;
+	esac
+     }
      myinlines() {
 	#######################
 	# this fuinction is called only if you has set INLINE=1 !!

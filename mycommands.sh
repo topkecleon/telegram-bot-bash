@@ -13,7 +13,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.35-dev-14-g08a0524
+#### $$VERSION$$ v1.35-dev-20-gfa0cb75
 #######################################################
 # shellcheck disable=SC1117
 
@@ -203,8 +203,11 @@ else
 		return
 		;;
 	    *)	# all other callbacks are processed here
-		: # your processing here ...
-		:	
+		# your processing here ...
+		if [[ -n "${iBUTTON[CHAT_ID]}" && -n "${iBUTTON[MESSAGE_ID]}" ]]; then
+			# output random button if message data is available
+			edit_inline_buttons "${iBUTTON[CHAT_ID]}" "${iBUTTON[MESSAGE_ID]}" "Button ${RANDOM}|${RANDOM}"
+		fi
 		# Telegram needs an ack each callback query, default empty
 		answer_callback_query "${iBUTTON[ID]}" ""
 		;;
