@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.35-dev-16-g2222875
+#### $$VERSION$$ v1.35-dev-18-ge4ee880
 
 # will be automatically sourced from bashbot
 
@@ -137,18 +137,18 @@ remove_keyboard() {
 	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
 }
 
-# $1 CHAT $2 message-id $3 keyboard
-edit_inline_keyboard() {
-	sendJson "$1" '"message_id":'"$2"', "reply_markup": {"inline_keyboard": [ '"$3"' ]}' "${URL}/editMessageReplyMarkup"
-	# JSON='"message_id":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
+# buttons will specified as "texts
+#|url" ... "text|url" empty arg starts new row
+# url not starting with http:// or https:// will be send as callback_data 
+send_inline_buttons(){
+	send_inline_keyboard "$1" "$2" "$(_button_row "${@:3}")"
 }
 
-
-# $1 CHAT $2 message $3 keyboard
-send_inline_keyboard() {
-	local text; text='"text":"'$(JsonEscape "$2")'"'; [ -z "$2" ] && text='"text":"..."'
-	sendJson "$1" "${text}"', "reply_markup": {"inline_keyboard": [ '"$3"' ]}' "${MSG_URL}"
-	# JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
+# $1 CHAT $2 message-id $3 buttons
+# buttons will specified as "text|url" ... "text|url" empty arg starts new row
+# url not starting with http:// or https:// will be send as callback_data 
+edit_inline_buttons(){
+	edit_inline_keyboard "$1" "$2" "$(_button_row "${@:3}")"
 }
 
 
@@ -172,6 +172,21 @@ _button_row() {
 		sep=","
 	done
 	printf "[%s]" "${json}"
+}
+
+# raw inline functions, for special use
+# $1 CHAT $2 message-id $3 keyboard
+edit_inline_keyboard() {
+	sendJson "$1" '"message_id":'"$2"', "reply_markup": {"inline_keyboard": [ '"$3"' ]}' "${URL}/editMessageReplyMarkup"
+	# JSON='"message_id":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
+}
+
+
+# $1 CHAT $2 message $3 keyboard
+send_inline_keyboard() {
+	local text; text='"text":"'$(JsonEscape "$2")'"'; [ -z "$2" ] && text='"text":"..."'
+	sendJson "$1" "${text}"', "reply_markup": {"inline_keyboard": [ '"$3"' ]}' "${MSG_URL}"
+	# JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
 }
 
 # $1 callback id, $2 text to show, alert if not empty
