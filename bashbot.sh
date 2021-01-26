@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.35-dev-13-gbc414ee
+#### $$VERSION$$ v1.35-dev-14-g08a0524
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -1134,9 +1134,9 @@ bot_init() {
 	fi
 	# check if mycommands exist
 	if [ ! -r "${BASHBOT_ETC:-.}/mycommands.sh" ]; then
-		printf "Mycommands.sh not found, copy ${GREY}mycommands.sh.dist${NC} to mycommands.sh? (y/N) N\b"
+		printf "Mycommands.sh not found, copy ${GREY}mycommands.sh.clean${NC} to mycommands.sh? (y/N) N\b"
 		read -r ANSWER
-		[[ "${ANSWER}" =~ ^[Yy] ]] && cp -f "${BASHBOT_ETC:-.}/mycommands.sh.dist" "${BASHBOT_ETC:-.}/mycommands.sh"
+		[[ "${ANSWER}" =~ ^[Yy] ]] && cp -f "${BASHBOT_ETC:-.}/mycommands.sh.clean" "${BASHBOT_ETC:-.}/mycommands.sh"
 		# offer to copy config also
 		if [ ! -r "${BASHBOT_ETC:-.}/mycommands.conf" ]; then
 			printf "Mycommands config file not found, copy ${GREY}mycommands.conf.dist${NC} to mycommands.conf? (y/N) N\b"

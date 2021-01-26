@@ -13,7 +13,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.35-dev-7-g9584068
+#### $$VERSION$$ v1.35-dev-14-g08a0524
 #######################################################
 # shellcheck disable=SC1117
 
@@ -183,22 +183,22 @@ else
 	#######################
 	# callbacks from buttons attached to messages will be  processed here
 	# no standard use case for processing callbacks, let's log them for some users and chats
-	case "${USER[ID]}+${CHAT[ID]}" in
+	case "${iBUTTON[USER_ID]}+${iBUTTON[CHAT_ID]}" in
 	    'USERID1+'*) # do something for all callbacks from USER
-		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBOTTON[USER_ID]}" "${iBOTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\
-				>>"${DATADIR}/${iBOTTON[USER_ID]}.log"
+		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBUTTON[USER_ID]}" "${iBUTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\
+				>>"${DATADIR}/${iBUTTON[USER_ID]}.log"
 		answer_callback_query "${iBUTTON[ID]}" "Request has been logged in your user log..."
 		return
 		;;
 	    *'+CHATID1') # do something for all callbacks from CHAT
-		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBOTTON[USER_ID]}" "${iBOTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\
-				>>"${DATADIR}/${iBOTTON[CHAT_ID]}.log"
+		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBUTTON[USER_ID]}" "${iBUTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\
+				>>"${DATADIR}/${iBUTTON[CHAT_ID]}.log"
 		answer_callback_query "${iBUTTON[ID]}" "Request has been logged in chat log..."
 		return
 		;;
 	    'USERID2+CHATID2') # do something only for callbacks form USER in CHAT
-		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBOTTON[USER_ID]}" "${iBOTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\
-				>>"${DATADIR}/${iBOTTON[USER_ID]}-${iBOTTON[CHAT_ID]}.log"
+		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBUTTON[USER_ID]}" "${iBUTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\
+				>>"${DATADIR}/${iBUTTON[USER_ID]}-${iBUTTON[CHAT_ID]}.log"
 		answer_callback_query "${iBUTTON[ID]}" "Request has been logged in user-chat log..."
 		return
 		;;
@@ -209,8 +209,6 @@ else
 		answer_callback_query "${iBUTTON[ID]}" ""
 		;;
 	esac
-
-
      }
 
      myinlines() {
