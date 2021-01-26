@@ -289,6 +289,7 @@ In both cases the message itself is not changed, only the attached inline keyboa
 
 To create a JSON button array I suggest to use `_button_row`.
 
+*example:* 
 ```bash
 # message without button
 send_markdownv2_message "${CHAT[ID]}" "*HI* this is a _markdown_ message ..."
@@ -306,6 +307,18 @@ edit_markdownv2_message "${CHAT[ID]}" "*HI* this is a _markdown_ message inline 
 
 ```
 
+##### answer_callback_query
+Each request send from a callback button must be answered by a call to `answer_callback_query`.
+If alert is given an alert will be shown by the Telegram client instead of a notification.
+
+*usage:*  answer_callback_query "iBUTTON[ID]" "text notification ..." ["alert"]
+
+*example:* 
+```bash
+answer_callback_query "${iBUTTON[ID]}" "Button data is: ${iBUTTON[DATA]}"
+
+answer_callback_query "${iBUTTON[ID]}" "Alert: Button pressed!" "alert"
+```
 
 ----
 
@@ -1342,5 +1355,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.35-dev-10-g70a3c19
+#### $$VERSION$$ v1.35-dev-16-g2222875
 
