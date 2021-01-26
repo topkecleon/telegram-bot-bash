@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.35-dev-2-g1fe22a0
+#### $$VERSION$$ v1.35-dev-12-g47cab80
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -1132,6 +1132,17 @@ bot_init() {
 		printf "${ORANGE}You are not root, adjusting permissions may fail. Try \"sudo ./bashbot.sh init\"${NN}Press <CTRL+C> to stop or <Enter> to continue..." 1>&2
 		[ -n "${INTERACTIVE}" ] && read -r runuser
 	fi
+	# check if mycommands exist
+	if [ ! -r "${BASHBOT_ETC:-.}/mycommands.sh" ]; then
+		printf "Mycommands.sh not found, copy ${GREY}mycommands.sh.dist${NC} to mycommands.sh? (y/N) N\b"
+		read -r ANSWER
+		[[ "${ANSWER}" =~ ^[Yy] ]] && cp -f "${BASHBOT_ETC:-.}/mycommands.sh.dist" "${BASHBOT_ETC:-.}/mycommands.sh"
+	fi
+	if [ ! -r "${BASHBOT_ETC:-.}/mycommands.conf" ]; then
+		printf "Mycommands config file not found, copy ${GREY}mycommands.conf.dist${NC} to mycommands.conf? (y/N) N\b"
+		read -r ANSWER
+		[[ "${ANSWER}" =~ ^[Yy] ]] && cp -f "${BASHBOT_ETC:-.}/mycommands.conf.dist" "${BASHBOT_ETC:-.}/mycommands.conf"
+	fi
 	# adjust permissions
 	printf "Adjusting files and permissions for user \"${touser}\" ...\n"
 	chmod 711 .
@@ -1161,8 +1172,8 @@ bot_init() {
 		fi 
 	fi
 	# check if botconf seems valid
-	printf "${GREEN}This is your bot config:${NN}"
-	sed 's/^/\t/' "${BOTCONFIG}.jssh" | grep -vF '["bot_config_key"]'
+	printf "${GREEN}This is your bot config:${NN}${GREY}"
+	sed 's/^/\t/' "${BOTCONFIG}.jssh" | grep -vF '["bot_config_key"]'; printf "${NC}"
 	if check_token "$(getConfigKey "bottoken")" && [[ "$(getConfigKey "botadmin")" =~ ^[${o9o9o9}]+$ ]]; then
 		printf "Bot config seems to be valid. Should I make a backup copy? (Y/n) Y\b"
 		read -r ANSWER
@@ -1174,7 +1185,7 @@ bot_init() {
 		printf "${ORANGE}Bot config may incomplete, pls check.${NN}"
 	fi
 	# show result
-	ls -ld "${DATADIR}" "${LOGDIR}" ./*.jssh* ./*.sh 2>/dev/null
+	printf  "${GREY}"; ls -ldp "${DATADIR}" "${LOGDIR}" ./*.jssh* ./*.sh ./*.conf 2>/dev/null; printf "${NC}"
 }
 
 if ! _is_function send_message ; then
