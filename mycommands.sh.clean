@@ -10,7 +10,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.35-dev-24-g5a0a571
+#### $$VERSION$$ v1.35-dev-26-gb45efa3
 #######################################################
 # shellcheck disable=SC1117
 
@@ -55,6 +55,8 @@ else
 	[ -n "${REMOVEKEYBOARD}" ] && remove_keyboard "${CHAT[ID]}" &
 	[[ -n "${REMOVEKEYBOARD_PRIVATE}" &&  "${CHAT[ID]}" == "${USER[ID]}" ]] && remove_keyboard "${CHAT[ID]}" &
 
+	# uncommet to fix first letter upper case because of smartphone auto correction
+	#[[ "${MESSAGE}" =~  ^/[[:upper:]] ]] && MESSAGE="${MESSAGE:0:1}$(tr '[:upper:]' '[:lower:]' <<<"${MESSAGE:1:1}")${MESSAGE:2}"
 	case "${MESSAGE}" in
 		##################
 		# example command, replace them by your own

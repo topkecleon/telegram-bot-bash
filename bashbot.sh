@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.35-dev-25-g079eb1c
+#### $$VERSION$$ v1.35-dev-26-gb45efa3
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -1144,19 +1144,20 @@ bot_init() {
 			read -r ANSWER
 			[[ "${ANSWER}" =~ ^[nN] ]] || cp -f "${BASHBOT_ETC:-.}/mycommands.conf.dist" "${BASHBOT_ETC:-.}/mycommands.conf"
 		fi
-		# adjust INLINE and CALLBACK
+		# adjust INLINE CALLBACK MEONLY SILENCER
 		if [ -w "${BASHBOT_ETC:-.}/mycommands.conf" ]; then
-			printf "Activate processing for ${GREY}<I>nline qeurys, <C>allback buttons, <B>oth or <N>one${NC} in mycommands.sh? (i/c/b/N) N\b"
+			printf "Activate processing for ${GREY}<I>nline queries, <C>allback buttons, <B>oth or <N>one${NC} in mycommands.sh? (i/c/b/N) N\b"
 			read -r ANSWER
 			[[ "${ANSWER}" =~ ^[iIbB] ]] && sed -i '/INLINE="/ s/^.*$/export INLINE="1"/' "${BASHBOT_ETC:-.}/mycommands.conf"
 			[[ "${ANSWER}" =~ ^[cCbB] ]] && sed -i '/CALLBACK="/ s/^.*$/export CALLBACK="1"/' "${BASHBOT_ETC:-.}/mycommands.conf"
-			printf "Always ignore commands for other Bots in chats ${GREY}(/cmd@other_bot)${NC}? (y/N) N\b"
+			printf "Always ignore commands for other Bots in chat ${GREY}(/cmd@other_bot)${NC}? (y/N) N\b"
 			read -r ANSWER
 			[[ "${ANSWER}" =~ ^[yY] ]] && sed -i '/MEONLY="/ s/^.*$/export MEONLY="1"/' "${BASHBOT_ETC:-.}/mycommands.conf"
 			printf "Delete administrative messages in chats ${GREY}(pinned, user join/leave, ...)${NC}? (y/N) N\b"
 			read -r ANSWER
 			[[ "${ANSWER}" =~ ^[yY] ]] && sed -i '/SILENCER="/ s/^.*$/export SILENCER="yes"/' "${BASHBOT_ETC:-.}/mycommands.conf"
 		fi
+		printf "Done.\n"
 	fi
 	# adjust permissions
 	printf "Adjusting files and permissions for user \"${touser}\" ...\n"
