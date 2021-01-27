@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.35-dev-29-g0c0dc01
+#### $$VERSION$$ v1.35-dev-30-ge83f4d4
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -381,13 +381,13 @@ fi
 
 # $1 URL, $2 filename in DATADIR
 # outputs final filename
-download() {
-	local empty="no.file" file="${2:-${empty}}"
-	if [[ "${file}" = *"/"* ]] || [[ "${file}" = "."* ]]; then file="${empty}"; fi
-	while [ -f "${DATADIR:-.}/${file}" ] ; do file="${RANDOM}-${file}"; done
-	getJson "$1" >"${DATADIR:-.}/${file}" || return
-	printf '%s\n' "${DATADIR:-.}/${file}"
-}
+#download() {
+#	local empty="no.file" file="${2:-${empty}}"
+#	if [[ "${file}" = *"/"* ]] || [[ "${file}" = "."* ]]; then file="${empty}"; fi
+#	while [ -f "${DATADIR:-.}/${file}" ] ; do file="${RANDOM}-${file}"; done
+#	getJson "$1" >"${DATADIR:-.}/${file}" || return
+#	printf '%s\n' "${DATADIR:-.}/${file}"
+#}
 
 # $1 postfix, e.g. chatid
 # $2 prefix, back- or startbot-
@@ -424,6 +424,7 @@ delete_message() {
 	sendJson "$1" '"message_id": '"$2"'' "${DELETE_URL}"
 }
 
+# get download url for file id, $1 file_id
 get_file() {
 	[ -z "$1" ] && return
 	sendJson ""  '"file_id": "'"$1"'"' "${URL}/getFile"
