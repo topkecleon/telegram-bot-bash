@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.35-dev-26-gb45efa3
+#### $$VERSION$$ v1.35-dev-27-gca9ea1b
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -1265,6 +1265,8 @@ if [ -z "${SOURCE}" ]; then
 		;;
 	# run after every update to update files and adjust permissions
 	"init") 
+		# shellcheck source=./bin/bashbot._init.inc.sh"
+		[ -r "${BASHBOT_HOME:-.}/bin/bashbot_init.inc.sh" ] && source "${BASHBOT_HOME:-.}/bin/bashbot_init.inc.sh"
 		bot_init "$2"
 		debug_checks "end init" "$@"
 		exit
