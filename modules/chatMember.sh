@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.35-dev-9-g5ceddde
+#### $$VERSION$$ v1.40-dev-0-g279a9e7
 
 # will be automatically sourced from bashbot
 
@@ -56,6 +56,12 @@ delete_chat_stickers() {
 }
 
 # manage chat member functions -------
+# $1 chat 
+chat_member_count() {
+	sendJson "$1" "" "${URL}/getChatMembersCount"
+	[ "${BOTSENT[OK]}" = "true" ] && printf "%s\n" "${BOTSENT[RESULT]}"
+}
+
 kick_chat_member() {
 	sendJson "$1" 'user_id: '"$2"'' "${URL}/kickChatMember"
 }
