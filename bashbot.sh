@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.35-dev-30-ge83f4d4
+#### $$VERSION$$ v1.35-dev-31-ga3eec98
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -870,11 +870,9 @@ process_inline_button() {
 # debugging for impelemetation
 	local num="$1"
 	iBUTTON[DATA]="${UPD["result,${num},callback_query,data"]}"
-	#iBUTTON[CHAT_INSTANCE]="${UPD["result,${num},callback_query,chat_instance"]}"
-	#iBUTTON[INLINE_ID]="${UPD["result,${num},callback_query,inline_message_id"]}"
 	iBUTTON[CHAT_ID]="${UPD["result,${num},callback_query,message,chat,id"]}"
 	iBUTTON[MESSAGE_ID]="${UPD["result,${num},callback_query,message,message_id"]}"
-	iBUTTON[MEESSAGE]="$(JsonDecode "${UPD["result,${num},callback_query,message,text"]}")"
+	iBUTTON[MESSAGE]="$(JsonDecode "${UPD["result,${num},callback_query,message,text"]}")"
 # XXX should we give back pressed button, all buttons or nothing?
 	iBUTTON[USER_ID]="${UPD["result,${num},callback_query,from,id"]}"
 	iBUTTON[FIRST_NAME]="$(JsonDecode "${UPD["result,${num},callback_query,from,first_name"]}")"
