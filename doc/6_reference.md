@@ -251,11 +251,31 @@ If `"url"` without text is given, `url` is shown on the button and opened on but
 # one button, same as send_button
 send_inline_keyboard "${CHAT[ID]}" "Best Dealz!" "Visit my Shop|https://dealz.rrr.de"
 
+# result
+   Best Dealz!
+  +----------------------------+
+  |       Visit my Shop        |
+  +----------------------------+
+
 # one button row
-send_inline_keyboard "${CHAT[ID]}" "message" "button 1|http://rrr.de" "button 2|http://rrr.de"
+send_inline_keyboard "${CHAT[ID]}" "message" "Button 1|http://rrr.de" "Button 2|http://rrr.de"
+
+# result
+   message ...
+  +----------------------------+
+  |   Button 1  |   Button 2   |
+  +----------------------------+
 
 # multiple button rows
-send_inline_keyboard "${CHAT[ID]}" "message" "b1|http://rrr.de" "b2|http://rrr.de" "" "b3|http://rrr.de" "b4|http://rrr.de"
+send_inline_keyboard "${CHAT[ID]}" "message" "Button 1|http://rrr.de" "Button 2|http://rrr.de" "" "Button on second row|http://rrr.de"
+
+# result
+   message ...
+  +----------------------------+
+  |   Button 1  |   Button 2   |
+  |----------------------------|
+  |   Button on second row     |
+  +----------------------------+
 ```
 
 ##### edit_inline_buttons
@@ -355,7 +375,7 @@ keyboard_json="$(_button_row "🤖 #Home of Deal-O-Mat Bot 🤖|https://dealz.rr
 
 send_inline_keyboard "CHAT[ID]" "${keyboard_text}" "${keyboard_json}"
 
-ä result
+# result
   +---------------------------------+
   |  🤖 #Home of Deal-O-Mat Bot 🤖  |
   |---------------------------------|
@@ -1431,5 +1451,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.35-dev-22-g8c85c81
+#### $$VERSION$$ v1.35-dev-23-g5192212
 
