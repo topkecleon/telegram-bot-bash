@@ -13,7 +13,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.35-dev-20-gfa0cb75
+#### $$VERSION$$ v1.35-dev-24-g5a0a571
 #######################################################
 # shellcheck disable=SC1117
 
@@ -131,6 +131,9 @@ else
 		'/echo'*) # example echo command
 			send_normal_message "${CHAT[ID]}" "${MESSAGE}"
 			;;
+		'/button'*)# inline button, set CALLBACK=1 for processing callbacks
+			send_inline_buttons "${CHAT[ID]}" "Press Button ..." "   Button   |RANDOM-BUTTON"
+			;;
 		'/question'*) # start interactive questions
 			checkproc 
 			if [ "${res}" -gt 0 ] ; then
@@ -203,13 +206,19 @@ else
 		return
 		;;
 	    *)	# all other callbacks are processed here
+		local callback_answer
 		# your processing here ...
+		# message available?
 		if [[ -n "${iBUTTON[CHAT_ID]}" && -n "${iBUTTON[MESSAGE_ID]}" ]]; then
-			# output random button if message data is available
-			edit_inline_buttons "${iBUTTON[CHAT_ID]}" "${iBUTTON[MESSAGE_ID]}" "Button ${RANDOM}|${RANDOM}"
+			if [ "${iBUTTON[DATA]}" = "RANDOM-BUTTON" ]; then
+			    callback_answer="Button pressed"
+			    edit_inline_buttons "${iBUTTON[CHAT_ID]}" "${iBUTTON[MESSAGE_ID]}" "Button ${RANDOM}|RANDOM-BUTTON"
+			fi
+		else
+			    callback_answer="Button to old, sorry."
 		fi
 		# Telegram needs an ack each callback query, default empty
-		answer_callback_query "${iBUTTON[ID]}" ""
+		answer_callback_query "${iBUTTON[ID]}" "${callback_answer}"
 		;;
 	esac
      }

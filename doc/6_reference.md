@@ -249,7 +249,7 @@ If `"url"` without text is given, `url` is shown on the button and opened on but
 *example:* 
 ```bash
 # one button, same as send_button
-send_inline_keyboard "${CHAT[ID]}" "Best Dealz!" "Visit my Shop|https://dealz.rrr.de"
+send_inline_buttons "${CHAT[ID]}" "Best Dealz!" "Visit my Shop|https://dealz.rrr.de"
 
 # result
    Best Dealz!
@@ -258,7 +258,7 @@ send_inline_keyboard "${CHAT[ID]}" "Best Dealz!" "Visit my Shop|https://dealz.rr
   +----------------------------+
 
 # one button row
-send_inline_keyboard "${CHAT[ID]}" "message" "Button 1|http://rrr.de" "Button 2|http://rrr.de"
+send_inline_buttons "${CHAT[ID]}" "message" "Button 1|http://rrr.de" "Button 2|http://rrr.de"
 
 # result
    message ...
@@ -267,7 +267,7 @@ send_inline_keyboard "${CHAT[ID]}" "message" "Button 1|http://rrr.de" "Button 2|
   +----------------------------+
 
 # multiple button rows
-send_inline_keyboard "${CHAT[ID]}" "message" "Button 1|http://rrr.de" "Button 2|http://rrr.de" "" "Button on second row|http://rrr.de"
+send_inline_buttons "${CHAT[ID]}" "message" "Button 1|http://rrr.de" "Button 2|http://rrr.de" "" "Button on second row|http://rrr.de"
 
 # result
    message ...
@@ -276,6 +276,7 @@ send_inline_keyboard "${CHAT[ID]}" "message" "Button 1|http://rrr.de" "Button 2|
   |----------------------------|
   |   Button on second row     |
   +----------------------------+
+
 ```
 
 ##### edit_inline_buttons
@@ -314,6 +315,42 @@ If alert is given an alert will be shown by the Telegram client instead of a not
 answer_callback_query "${iBUTTON[ID]}" "Button data is: ${iBUTTON[DATA]}"
 
 answer_callback_query "${iBUTTON[ID]}" "Alert: Button pressed!" "alert"
+```
+
+
+```bash
+# CALLBACK button example
+send_inline_buttons "${CHAT[ID]}" "Press Button ..." "   Button   |RANDOM-BUTTON"
+
+# result
+   Press Button ...
+  +----------------------------+
+  |         Button             |
+  +----------------------------+
+
+# react on button press from mycommands
+   CALLBACK="1" # enable callbacks
+...
+   mycallbacks() {
+	local answer
+	#######################
+	# callbacks from buttons attached to messages will be  processed here
+	if [ "${iBUTTON[DATA]}" = "RANDOM-BUTTON" ]; then
+	    answer="Button pressed"
+	    edit_inline_buttons "${iBUTTON[CHAT_ID]}" "${iBUTTON[MESSAGE_ID]}" " Button ${RANDOM}|RANDOM-BUTTON"
+	fi
+
+	# Telegram needs an ack each callback query, default empty
+	answer_callback_query "${iBUTTON[ID]}" "${answer}"
+	;;
+   }
+
+# result, XXXXX: random number changed on each press
+   Press Button ...
+  +----------------------------+
+  |      Button  XXXXXX        |
+  +----------------------------+
+
 ```
 
 ----
@@ -1451,5 +1488,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.35-dev-23-g5192212
+#### $$VERSION$$ v1.35-dev-24-g5a0a571
 

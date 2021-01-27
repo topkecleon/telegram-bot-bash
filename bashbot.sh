@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.35-dev-21-gcbf3945
+#### $$VERSION$$ v1.35-dev-24-g5a0a571
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -707,7 +707,7 @@ process_client() {
 	# process inline and message events
 	# first classic command dispatcher
 	# shellcheck source=./commands.sh
-	"${COMMANDS}" "${debug}" &
+	{ source "${COMMANDS}" "${debug}"; } &
 
 	# then all registered addons
 	if [ -z "${iQUERY[ID]}" ]; then
