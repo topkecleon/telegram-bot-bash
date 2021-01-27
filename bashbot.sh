@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.35-dev-24-g5a0a571
+#### $$VERSION$$ v1.35-dev-25-g079eb1c
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -1134,14 +1134,28 @@ bot_init() {
 	fi
 	# check if mycommands exist
 	if [ ! -r "${BASHBOT_ETC:-.}/mycommands.sh" ]; then
-		printf "Mycommands.sh not found, copy ${GREY}mycommands.sh.clean${NC} to mycommands.sh? (y/N) N\b"
+		printf "Mycommands.sh not found, copy ${GREY}<C>lean file, <E>xamples or <N>one${NC} to mycommands.sh? (c/e/N) N\b"
 		read -r ANSWER
-		[[ "${ANSWER}" =~ ^[Yy] ]] && cp -f "${BASHBOT_ETC:-.}/mycommands.sh.clean" "${BASHBOT_ETC:-.}/mycommands.sh"
+		[[ "${ANSWER}" =~ ^[cC] ]] && cp -f "${BASHBOT_ETC:-.}/mycommands.sh.clean" "${BASHBOT_ETC:-.}/mycommands.sh"
+		[[ "${ANSWER}" =~ ^[eE] ]] && cp -f "${BASHBOT_ETC:-.}/mycommands.sh.dist" "${BASHBOT_ETC:-.}/mycommands.sh"
 		# offer to copy config also
 		if [ ! -r "${BASHBOT_ETC:-.}/mycommands.conf" ]; then
-			printf "Mycommands config file not found, copy ${GREY}mycommands.conf.dist${NC} to mycommands.conf? (y/N) N\b"
+			printf "Mycommands config file not found, copy ${GREY}mycommands.conf.dist${NC} to mycommands.conf? (Y/n) Y\b"
 			read -r ANSWER
-			[[ "${ANSWER}" =~ ^[Yy] ]] && cp -f "${BASHBOT_ETC:-.}/mycommands.conf.dist" "${BASHBOT_ETC:-.}/mycommands.conf"
+			[[ "${ANSWER}" =~ ^[nN] ]] || cp -f "${BASHBOT_ETC:-.}/mycommands.conf.dist" "${BASHBOT_ETC:-.}/mycommands.conf"
+		fi
+		# adjust INLINE and CALLBACK
+		if [ -w "${BASHBOT_ETC:-.}/mycommands.conf" ]; then
+			printf "Activate processing for ${GREY}<I>nline qeurys, <C>allback buttons, <B>oth or <N>one${NC} in mycommands.sh? (i/c/b/N) N\b"
+			read -r ANSWER
+			[[ "${ANSWER}" =~ ^[iIbB] ]] && sed -i '/INLINE="/ s/^.*$/export INLINE="1"/' "${BASHBOT_ETC:-.}/mycommands.conf"
+			[[ "${ANSWER}" =~ ^[cCbB] ]] && sed -i '/CALLBACK="/ s/^.*$/export CALLBACK="1"/' "${BASHBOT_ETC:-.}/mycommands.conf"
+			printf "Always ignore commands for other Bots in chats ${GREY}(/cmd@other_bot)${NC}? (y/N) N\b"
+			read -r ANSWER
+			[[ "${ANSWER}" =~ ^[yY] ]] && sed -i '/MEONLY="/ s/^.*$/export MEONLY="1"/' "${BASHBOT_ETC:-.}/mycommands.conf"
+			printf "Delete administrative messages in chats ${GREY}(pinned, user join/leave, ...)${NC}? (y/N) N\b"
+			read -r ANSWER
+			[[ "${ANSWER}" =~ ^[yY] ]] && sed -i '/SILENCER="/ s/^.*$/export SILENCER="yes"/' "${BASHBOT_ETC:-.}/mycommands.conf"
 		fi
 	fi
 	# adjust permissions
