@@ -230,17 +230,21 @@ _keyboard_numpad
 send_button "${CHAT[ID]}" "Awesome Deals!" "Visit my Shop" "https://dealz.rrr.de"
 ```
 
+### Inline buttons
+Functions to send/edit messages with with some buttons attached.
+
 ##### send_inline_buttons
-`senbd_inline_buttons` sends a message with buttons attached.
+`senbd_inline_buttons` sends a message with multiple buttons attached.  Buttons can be an URL or a CALLBACK button.
+By default all buttons are displayed on one row, an empty string `""` starts a new row.  
 
 *usage:* send_inline_buttons "CHAT[ID]" "text|url" "text|url" "" "url" "" "text|url" ...
 
-Each button is specified as a `"text|url"` pair separated by `|`, `text` is shown on the button and `url` is opened on button click.
-By default all buttons are displayed on one row, an empty string `""` starts a new button row.  
+URL buttons are specified as a `"text|url"` pair separated by `|`, `text` is shown on the button and `url` is opened on button click.
 If `"url"` without text is given, `url` is shown on the button and opened on button click.
 
-**Important**: An `url` not startung with http(s):// or tg:// will be converted to a
-[Callback Button](https://core.telegram.org/bots/2-0-intro#callback-buttons)
+*Important* An `url` not startung with http(s):// or tg:// will create  a
+[CALLBACK Button](https://core.telegram.org/bots/2-0-intro#callback-buttons).
+
 
 *example:* 
 ```bash
@@ -255,12 +259,11 @@ send_inline_keyboard "${CHAT[ID]}" "message" "b1|http://rrr.de" "b2|http://rrr.d
 ```
 
 ##### edit_inline_buttons
-`edit_inline_buttons` can add inline buttons to existing messages and replace existing inline buttons.
-In both cases the message itself is not changed, only the attached inline buttons.
+`edit_inline_buttons` add inline buttons to existing messages,  existing inline buttons will be replaced.
+Only the attached buttons will be changed, not the message.
 
 *usage:*  edit_inline_buttons "CHAT[ID]" "MESSAGE[ID]" "text|url" "text|url" ...
 
-To create a JSON button array I suggest to use `_button_row`.
 
 *example:* 
 ```bash
@@ -281,7 +284,7 @@ edit_markdownv2_message "${CHAT[ID]}" "*HI* this is a _markdown_ message inline 
 ```
 
 ##### answer_callback_query
-Each request send from a callback button must be answered by a call to `answer_callback_query`.
+Each request send from a CALLBACK button must be answered by a call to `answer_callback_query`.
 If alert is given an alert will be shown by the Telegram client instead of a notification.
 
 *usage:*  answer_callback_query "iBUTTON[ID]" "text notification ..." ["alert"]
@@ -291,6 +294,114 @@ If alert is given an alert will be shown by the Telegram client instead of a not
 answer_callback_query "${iBUTTON[ID]}" "Button data is: ${iBUTTON[DATA]}"
 
 answer_callback_query "${iBUTTON[ID]}" "Alert: Button pressed!" "alert"
+```
+
+----
+
+#### Inline keyboards
+Functions to send/edit more complex button layouts (keyboards), I suggest to start with the simpler inline buttons above.
+
+##### _button_row
+`_button_row` is a helper function to specify a keyboard row in the form "text|url" pairs.
+Internally used by inline buttons also.
+
+*usage:*  _button_row "text|url" "text|url" "url" "text|url" ...
+
+*example:* 
+```bash
+# similar to send_button
+send_inline_keyboard "${CHAT[ID]}" "Best Dealz!" "$(_button_row "Visit my Shop|https://dealz.rrr.de")"
+
+# similar to send_inline_button
+send_inline_keyboard "${CHAT[ID]}" "message" "$(_button_row "button 1|http://rrr.de" "button 2|http://rrr.de")"
+
+# multiple button rows
+send_inline_keyboard "${CHAT[ID]}" "message" "$(_button_row "b1|http://rrr.de" "b2|http://rrr.de" "" "b3|http://rrr.de" "b4|http://rrr.de")"
+```
+
+##### send_inline_keyboard
+`send_inline_keyboard` sends a message with keyboards attached, keyboards must be specified in JSON format.
+
+*usage:*  send_inline_keyboard "CHAT[ID]" "message" "[JSON button array]"
+
+I suggest to use `_button_row` to create the used JSON. For hand crafted JSON the following format must be used,
+see [Inline Keyboard Markup](https://core.telegram.org/bots/api#inlinekeyboardmarkup)
+
+URL `[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ],[...]`\
+CALLBACK `[ {"text":"text1", "callback_data":"abc"}, ... {"text":"textN", "callback_data":"defg"} ],[...]`\
+An URL Button opens the given URL, a CALLBACK button sends an update the bot must react on. 
+
+*example:* 
+```bash
+# send_button
+send_inline_keyboard "${CHAT[ID]}" "Best Dealz!" '[{"text":"Visit my Shop", "url":"https://dealz.rrr.de"}]'
+
+# send_inline_button
+send_inline_keyboard "${CHAT[ID]}" "message" '[{"text":"button 1", url"":"http://rrr.de"}, {"text":"button 2", "url":"http://rrr.de"} ]'
+
+# multiple button rows
+send_inline_keyboard "${CHAT[ID]}" "message" '[{"text":"b1", "url":"http://rrr.de"}, {"text":"b2", "url":"http://rrr.de"}], [{"text":"b3", "url":"http://rrr.de"}, "text":"b4", "url":"http://rrr.de"}]'
+
+# more complex keyboard, note the ,
+keyboard_text="Deal-O-Mat public groups ..."
+keyboard_json="$(_button_row "🤖 #Home of Deal-O-Mat Bot 🤖|https://dealz.rrr.de/dealzbot.html")
+, $(_button_row "Amazon DE|https://t.me/joinchat/IvvRtlxxxxx" "Home & Family|https://t.me/joinchat/VPh_wexxxxx")
+, $(_button_row "Amz International |https://t.me/joinchat/IvvRtkxxxxx" "Amazon WHD|https://t.me/joinchat/IvvRxxxxx")
+, $(_button_row "Smartphones|https://t.me/joinchat/IvvRthtqxxxxx" "Gaming|https://t.me/joinchat/IvvRthRyrsmxxxxx")
+, $(_button_row "Accessoires|https://t.me/joinchat/IvvRthlJxxxxx" "eBay|https://t.me/joinchat/IvvRthxxxxx")
+, $(_button_row "!! Offtopic Discussions !!|https://t.me/joinchat/IvvRthRhxxxxx-pZrWw")
+, $(_button_row "Deals >100|https://t.me/joinchat/IvvRtxxxxx" "Leasing|https://t.me/joinchat/IvvRthRbxxxxx")
+, $(_button_row "Deals >1000|https://t.me/joinchat/IvvRtlxxxxx" "Deals >500|https://t.me/joinchat/IvvRthvbHxxxxx")
+
+send_inline_keyboard "CHAT[ID]" "${keyboard_text}" "${keyboard_json}"
+
+ä result
+  +---------------------------------+
+  |  🤖 #Home of Deal-O-Mat Bot 🤖  |
+  |---------------------------------|
+  |    Amazon DE   | Home & Family  |
+  |----------------|----------------|
+  |  Amz Internat  |   Amazon WHD   |
+  |----------------|----------------|
+  |  Smartphones   |     Gaming     |
+  |----------------|----------------|
+  |  Accessoires   |     eBay       |
+  |---------------------------------|
+  |   !!  Offtopic Discussions !!   |
+  |---------------------------------|
+  |   Deals >100   |    Leasing     |
+  |----------------|----------------|
+  |  Deals >1000   |   Deals >500   |
+  +---------------------------------+
+
+```
+
+*See also [Inline keyboard markup](https://core.telegram.org/bots/api/#inlinekeyboardmarkup)*
+
+##### edit_inline_keyboard
+`edit_inline_keyboard` add inline keyboards to existing messages and replace existing inline keyboards.
+Only the attached keyboard will be changed, not the message.
+
+*usage:*  edit_inline_keyboard "CHAT[ID]" "MESSAGE[ID]" "[JSON button array]"
+
+To create a JSON button array I suggest to use `_button_row`.
+
+*example:* 
+```bash
+# message without button
+send_markdownv2_message "${CHAT[ID]}" "*HI* this is a _markdown_ message ..."
+echo ${BOTSEND[ID]}
+567
+
+# add one button row with help of _button_row
+edit_inline_keyboard "${CHAT[ID]}" "567" "$(_button_row "button 1|http://rrr.de" "button 2|http://rrr.de")"
+
+# change buttons with help of _button_row
+edit_inline_keyboard "${CHAT[ID]}" "567" "$(_button_row "Success edit_inline_keyboard|http://rrr.de")"
+
+# delete button by replace whole message
+edit_markdownv2_message "${CHAT[ID]}" "*HI* this is a _markdown_ message inline *removed*..."
+
 ```
 
 ----
@@ -1316,87 +1427,9 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 
 *usage:* ME="$(getBotName)"
 
-----
-
-##### send_inline_keyboard
-`send_inline_keyboard` sends a message with buttons attached, buttons must be given in JSON format.
-In contrast to `send_keyboard` buttons are attached to the message and do not send text.
-
-*usage:*  send_inline_keyboard "CHAT[ID]" "message" "[JSON button array]"
-
-I suggest to use `_button_row` to create the JSON button array. For hand crafted JSON the following format must be used,
-see [Inline Keyboard Markup](https://core.telegram.org/bots/api#inlinekeyboardmarkup)
-
-URL `[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ],[...]`\
-CALLBACK `[ {"text":"text1", "callback_data":"abc"}, ... {"text":"textN", "callback_data":"defg"} ],[...]`\
-An URL Button opens the given URL, a CALLBACK button sends an update the bot must react on. 
-
-*example:* 
-```bash
-# one button, same as send_button
-send_inline_keyboard "${CHAT[ID]}" "Best Dealz!" '[{"text":"Visit my Shop", "url":"https://dealz.rrr.de"}]'
-
-# one button row
-send_inline_keyboard "${CHAT[ID]}" "message" '[{"text":"button 1", url"":"http://rrr.de"}, {"text":"button 2", "url":"http://rrr.de"} ]'
-
-# multiple button rows
-send_inline_keyboard "${CHAT[ID]}" "message" '[{"text":"b1", "url":"http://rrr.de"}, {"text":"b2", "url":"http://rrr.de"}], [{"text":"b3", "url":"http://rrr.de"}, "text":"b4", "url":"http://rrr.de"}]'
-```
-
-*See also [Inline keyboard markup](https://core.telegram.org/bots/api/#inlinekeyboardmarkup)*
-
-##### edit_inline_keyboard
-`edit_inline_keyboard` can add inline keyboards to existing messages and replace existing inline keyboards.
-In both cases the message itself is not changed, only the attached inline keyboard.
-
-*usage:*  edit_inline_keyboard "CHAT[ID]" "MESSAGE[ID]" "[JSON button array]"
-
-To create a JSON button array I suggest to use `_button_row`.
-
-*example:* 
-```bash
-# message without button
-send_markdownv2_message "${CHAT[ID]}" "*HI* this is a _markdown_ message ..."
-echo ${BOTSEND[ID]}
-567
-
-# add one button row
-edit_inline_keyboard "${CHAT[ID]}" "567" "$(_button_row "button 1|http://rrr.de" "button 2|http://rrr.de")"
-
-# change buttons
-edit_inline_keyboard "${CHAT[ID]}" "567" "$(_button_row "Success edit_inline_keyboard|http://rrr.de")"
-
-# delete button by replace whole message
-edit_markdownv2_message "${CHAT[ID]}" "*HI* this is a _markdown_ message inline *removed*..."
-
-```
-
-##### _button_row
-`_button_row` is a helper function to make it easier to send messages with with multiple buttons.
-
-*usage:*  _button_row "text|url" "text|url" "" "url" "" "text|url" ...
-
-Each button is specified as a `"text|url"` pair separated by `|`, `text` is shown on the button and `url` is opened on button click.
-By default all buttons are displayed on one row, an empty string `""` starts a new button row.  
-If `"url"` without text is given, `url` is shown on the button and opened on button click.
-
-**Important**: An `url` not startung with http(s):// or tg:// will be converted to a
-[Callback Button](https://core.telegram.org/bots/2-0-intro#callback-buttons)
-
-*example:* 
-```bash
-# one button, same as send_button
-send_inline_keyboard "${CHAT[ID]}" "Best Dealz!" "$(_button_row "Visit my Shop|https://dealz.rrr.de")"
-
-# one button row
-send_inline_keyboard "${CHAT[ID]}" "message" "$(_button_row "button 1|http://rrr.de" "button 2|http://rrr.de")"
-
-# multiple button rows
-send_inline_keyboard "${CHAT[ID]}" "message" "$(_button_row "b1|http://rrr.de" "b2|http://rrr.de" "" "b3|http://rrr.de" "b4|http://rrr.de")"
-```
 
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.35-dev-19-g75e7756
+#### $$VERSION$$ v1.35-dev-22-g8c85c81
 
