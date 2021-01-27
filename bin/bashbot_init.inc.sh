@@ -11,28 +11,32 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.01.2021 13:42
 #
-#### $$VERSION$$ v1.35-dev-28-g3f331dc
+#### $$VERSION$$ v1.35-dev-29-g0c0dc01
 #===============================================================================
 # shellcheck disable=SC2059
+
 ##########
 # commands to execute before bot_init() is called
-
 
 
 ########
 # called after default init is finished
 my_init() {
-	: # ypur commands here
+	: # your init here
 }
 
 
 #########
-# extended initialisation for advanced features like:
 #
-# running bto as rest 
+# extended initialisation:
 #
+# - uograde old config
+# - backup of botconfig.jssh
+# - running bot as service or other user
+# - copy clean and dist files if not exist
+# - configure bot for INLINE CALLBACK MEONLY SILENCER
 # 
-# delete from here to disable extended init
+# delete from here to disable extended initialisation
 bot_init() {
 	[ -n "${BASHBOT_HOME}" ] && cd "${BASHBOT_HOME}" || exit 1
 	local runuser chown touser botname DEBUG="$1"

@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.35-dev-28-g3f331dc
+#### $$VERSION$$ v1.35-dev-29-g0c0dc01
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -1108,7 +1108,7 @@ start_bot() {
 bot_init() {
 	[ -n "${BASHBOT_HOME}" ] && cd "${BASHBOT_HOME}" || exit 1
 	# load addons on startup
-	printf "Initialize modules and addons ...\n"
+	printf "Initialize addons ...\n"
 	for addons in "${ADDONDIR:-.}"/*.sh ; do
 		# shellcheck source=./modules/aliases.sh
 		[ -r "${addons}" ] && source "${addons}" "init" "$1"
