@@ -539,6 +539,11 @@ edit_html_message "${CHAT[ID]}" "${saved-id}" "this is <b>html</b> text"
 ### Manage Group
 To use the following functions the bot must have administrator status in the chat / group
 
+##### chat_member_count
+`chat_member_count` returns (putput) number of chat members.
+
+*usage:* num_members="$(chat_member_count "CHAT[ID]")"
+
 ##### set_chat_title
 `set_chat_title` sets a new chat title. If new title is the same than current title Telegram return error 400
 with description "Bad Request: chat title is not modified"
@@ -1488,5 +1493,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.35-dev-24-g5a0a571
+#### $$VERSION$$ v1.40-dev-1-g41e2d09
 
