@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.40-dev-3-g7c74824
+#### $$VERSION$$ v1.40-dev-4-gc693ab5
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -795,10 +795,9 @@ if [ -z "${SOURCE}" ]; then
 		 
 	# start bot as background job and check if bot is running
 	"start")
+		SESSION="${ME:-_bot}-startbot"
+		BOTPID="$(proclist "${SESSION}")"
 		if _is_function process_updates; then 
-			# shellcheck disable=SC2086
-			SESSION="${ME:-_bot}-startbot"
-			BOTPID="$(proclist "${SESSION}")"
 			# shellcheck disable=SC2086
 			[ -n "${BOTPID}" ] && kill ${BOTPID}
 			nohup "${SCRIPT}" "startbot" "$2" "${SESSION}" &>/dev/null &
