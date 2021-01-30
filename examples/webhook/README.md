@@ -4,13 +4,14 @@
 
 ### webhooks
 
-Bashbot default mode is to poll Telegram server for updates. Telegram offers the more efficiemt webhook method to deliver updates.
-Instead of running bashbot with `bashbot.sh start` permanently you can use the webhook method described here (experimental)
+Bashbot default mode is to poll Telegram server for updates. Telegram offers the more efficient webhook method to deliver updates.
+If your server is reachable from the Internet, you can use the webhook method described here (experimental), instead of running bashbot
+with `bashbot.sh start`
 
 #### Setup webhook
 
-To get updates with webhooks you must inform Telegram about where to deliver updates, this will be done with `set_webhook`.
-For security reasons bashbot adds you bottoken to the path.
+To get updates with webhooks your server must be reachable from the internet and you must inform Telegram about where to deliver updates,
+this will be done by calling `set_webhook URL`.  For security reasons bashbot adds you bottoken to the URL.
 
 *Example:*
 
@@ -19,7 +20,7 @@ bin/any_command.sh set_webhook "https://myserver.com/telegram"
 ```
 
 will instruct Telegram to use the URL `https://myserver.com/telegram/<your_bot_token>/` to deliver updates.
-After you setup webhook to deliver updates it'sno more possible to poll updates with `bashbot.sh start`.
+After you setup webhook to deliver updates it's no more possible to poll updates with `bashbot.sh start`.
 
 To stop delivering of updates with webhook run `bin/any_command.sh delete_webhook`
 
@@ -35,8 +36,8 @@ If you have an Apache webserver with a valid SLL certificate chain and php runni
 - copy `index.php` into new directory
 - edit `index.php` to point to your bashbot installation
 - setup webhook for your server (_e.g. `bin/any_command.sh set_webhook "https://myserver.com/telegram`_)
+- send a command to your bot (_e.g. `/start`_) to check correct setup 
 
-
-#### $$VERSION$$ v1.40-dev-10-gc0f1af5
+#### $$VERSION$$ v1.40-dev-11-g9316caa
 
 
