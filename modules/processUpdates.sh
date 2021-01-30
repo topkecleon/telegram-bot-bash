@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.40-dev-7-g10d275c
+#### $$VERSION$$ v1.40-dev-8-g9cfeab9
 ##################################################################
 
 ##############
@@ -15,7 +15,7 @@
 #      e.g. https://myhost.com -> https://myhost.com/12345678:azndfhbgdfbbbdsfg
 # $2 max connections 1-100 default 1 (because of bash ;-)
 set_webhook() {
-	local  url='"url": "'"$1/${BOTTOKEN}"'"'
+	local  url='"url": "'"$1/${BOTTOKEN}/"'"'
 	local  max=',"max_connections": 1'
 	[[ "$2" =~ ^[0-9]+$ ]] && max=',"max_connections": '"$2"''
 	# shellcheck disable=SC2153
@@ -44,16 +44,16 @@ delete_webhook() {
 
 ################
 # processing of updates starts here
-process_updates() {
+process_multi_updates() {
 	local max num debug="$1"
 	max="$(grep -F ',"update_id"]'  <<< "${UPDATE}" | tail -1 | cut -d , -f 2 )"
 	Json2Array 'UPD' <<<"${UPDATE}"
 	for ((num=0; num<=max; num++)); do
-		process_client "${num}" "${debug}"
+		process_update "${num}" "${debug}"
 	done
 }
 
-process_client() {
+process_update() {
 	local num="$1" debug="$2" 
 	pre_process_message "${num}"
 	# log message on debug
@@ -352,7 +352,7 @@ get_updates(){
 
 			if [ "${OFFSET}" != "1" ]; then
 				nextsleep="100"
-				process_updates "${DEBUGMSG}"
+				process_multi_updates "${DEBUGMSG}"
 			fi
 		else
 			# oops, something bad happened, wait maxsleep*10
