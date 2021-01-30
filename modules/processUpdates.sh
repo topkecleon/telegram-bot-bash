@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.40-dev-5-gc9daa82
+#### $$VERSION$$ v1.40-dev-7-g10d275c
 ##################################################################
 
 ##############
@@ -15,18 +15,23 @@
 #      e.g. https://myhost.com -> https://myhost.com/12345678:azndfhbgdfbbbdsfg
 # $2 max connections 1-100 default 1 (because of bash ;-)
 set_webhook() {
-	local  url='"url": "'"$1/${TOKEN}"'"'max=',"max_connections": 1'
+	local  url='"url": "'"$1/${BOTTOKEN}"'"'
+	local  max=',"max_connections": 1'
 	[[ "$2" =~ ^[0-9]+$ ]] && max=',"max_connections": '"$2"''
 	# shellcheck disable=SC2153
 	sendJson "" "${url}${max}" "${URL}/setWebhook"
+	unset "BOTSENT[ID]" "BOTSENT[CHAT]"
+
 }
 
 get_webhook_info() {
 	sendJson "" "" "${URL}/getWebhookInfo"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
-		 BOTSENT[URL]="${UPD[result,url]}"
-		 BOTSENT[COUNT]="${UPD[result,getWebhookInfo]}"
-		 BOTSENT[LASTERR]="${UPD[result,last_error_message]}"
+		BOTSENT[URL]="${UPD[result,url]}"
+		BOTSENT[COUNT]="${UPD[result,pending_update_count]}"
+		BOTSENT[CERT]="${UPD[result,has_custom_certificate]}"
+		BOTSENT[LASTERR]="${UPD[result,last_error_message]}"
+		unset "BOTSENT[ID]" "BOTSENT[CHAT]"
 	fi
 }
 
@@ -34,6 +39,7 @@ get_webhook_info() {
 delete_webhook() {
 	local drop; [ "$1" = "true" ] && drop='"drop_pending_updates": true'
 	sendJson "" "${drop}" "${URL}/deleteWebhook"
+	unset "BOTSENT[ID]" "BOTSENT[CHAT]"
 }
 
 ################
