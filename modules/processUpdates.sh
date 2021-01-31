@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.40-dev-8-g9cfeab9
+#### $$VERSION$$ v1.40-dev-18-g342a5da
 ##################################################################
 
 ##############
@@ -284,11 +284,7 @@ process_message() {
 # main get updates loop, should never terminate
 declare -A BASHBOTBLOCKED
 start_bot() {
-	local DEBUGMSG OFFSET=0
-	# adaptive sleep defaults
-	local nextsleep="100"
-	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
-	local maxsleep="${BASHBOT_SLEEP:-5000}"
+	local DEBUGMSG
 	# startup message
 	DEBUGMSG="Start BASHBOT updates in Mode \"${1:-normal}\" =========="
 	log_update "${DEBUGMSG}"
@@ -327,11 +323,16 @@ start_bot() {
 	send_normal_message "$(getConfigKey "botadmin")" "Bot $(getConfigKey "botname") started ..." &
 	##########
 	# bot is ready, start processing updates ...
-	get_updates
+	get_updates "${DEBUGMSG}"
 }
 
 
 get_updates(){
+	local errsleep="200" DEBUG="$1" OFFSET=0
+	# adaptive sleep defaults
+	local nextsleep="100"
+	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
+	local maxsleep="${BASHBOT_SLEEP:-5000}"
 	while true; do
 		# adaptive sleep in ms rounded to next 0.1 s
 		sleep "$(_round_float "${nextsleep}e-3" "1")"
@@ -341,18 +342,26 @@ get_updates(){
 		# did we get an response?
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
-			[ "${OFFSET}" = "-999" ] && [ "${nextsleep}" -gt "$((maxsleep*2))" ] &&\
+			[ "${OFFSET}" = "-999" ] && [ "${nextsleep}" -gt "$((maxsleep/2))" ] &&\
 				log_error "Recovered from timeout/broken/no connection, continue with telegram updates"
-			# escape bash $ expansion bug
+			# calculate next sleep interval
 			((nextsleep+= stepsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
+			# escape bash $ expansion bug
 			UPDATE="${UPDATE//$/\\$}"
+			# warn if webhook is set
+			if grep -q '^\["error_code"\]	409' <<<"${UPDATE}"; then
+				OFFSET="-999"; errsleep="$(_round_float "$(( errsleep = 200 * nextsleep ))e-3" "1")"
+				log_error "Warning conflicting webhook set, can't get updates until delete_webhook! Sleep ${errsleep}s ..."
+				sleep "${errsleep}"
+				continue
+			fi
 			# Offset
-			OFFSET="$(grep <<< "${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
+			OFFSET="$(grep <<<"${UPDATE}" '\["result",[0-9]*,"update_id"\]' | tail -1 | cut -f 2)"
 			((OFFSET++))
 
 			if [ "${OFFSET}" != "1" ]; then
 				nextsleep="100"
-				process_multi_updates "${DEBUGMSG}"
+				process_multi_updates "${DEBUG}"
 			fi
 		else
 			# oops, something bad happened, wait maxsleep*10
