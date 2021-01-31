@@ -11,7 +11,7 @@
  * @license    http://www.wtfpl.net/txt/copying/ WTFPLv2
  * @since      30.01.2021 20:24
  *
-#### $$VERSION$$ v1.40-dev-20-ga7c98d7
+#### $$VERSION$$ v1.40-dev-21-g5b0b121
  ***********************************************************/
 
  // bashbot home dir
@@ -47,9 +47,10 @@
 	$data = $json;
  } else {
 	$data = implode(" ",$_POST);
+	if ($data == '') { $data = implode(" ",$_GET); }
  }
- // file_put_contents('server.txt', print_r($_SERVER, TRUE));
- file_put_contents($json_file, $data);
+ // uncomment to save last received JSON
+ // file_put_contents($json_file, $data);
 
  // prepare for writing
  if ($data == '') {
