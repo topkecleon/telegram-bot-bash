@@ -1224,12 +1224,14 @@ https://linuxconfig.org/how-to-use-arrays-in-bash-script
 
 ----
 
-### Manage Webhooks
-Bashbot default mode is to poll Telegram server for updates. Telegram offers the more efficient webhook method to deliver updates.
-I recommend to use webhook with `bin/any_command.sh` to test and setup functionality, see also [webhook example](../example/webhook)
+### Manage webhook
+Bashbot default mode is to poll Telegram server for updates, but Telegram offers webhook as a more efficient method to deliver updates also.
+
+*Important*: Before using webhook your server must be setup to receive and process updates from Telegram!
+I recommend to use webhook with a test bot first. [Webhook examples](../examples/webhook)
 
 ##### get_webhook_info
-`get_webhook_info` get current webhook status for your bot, e.g. url, waiting updates, last error.
+`get_webhook_info` get current status of webhook for your bot, e.g. url, waiting updates, last error.
 
 *usage:*  get_webhook_info
  
@@ -1249,7 +1251,7 @@ bin/any_command.sh get_webhook_info
 
 
 ##### delete_webhook
-`delete_webhook` deletes current set webhook, deletes outstanding updates if second arg is `true`
+`delete_webhook` deletes iyour bots current webhook, deletes outstanding updates if second arg is `true`
 
 *usage:*  delete_webhook [true|false]
  
@@ -1267,7 +1269,10 @@ bin/any_command.sh delete_webhook false
 
 
 ##### set_webhook
-`set_webhook` deletes current set webhook, deletes outstanding updates if second arg is `true`
+`set_webhook` instructs Telgram to use your bots webhook for update delivery. If webhook is set on Telegram
+it's no more possible to pull updates from `bashbot start`, you must delete webhook first.
+
+*Important*: Before using webhook your server must be setup to receive and process updates from Telegram!
 
 *usage:*  set_webhook "https://host.dom[:port][/path]" [max_conn]
  
@@ -1571,5 +1576,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.40-dev-13-g2a3663a
+#### $$VERSION$$ v1.40-dev-14-g4833712
 
