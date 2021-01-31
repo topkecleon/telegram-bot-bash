@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.40-dev-4-gc693ab5
+#### $$VERSION$$ v1.40-dev-17-g8034a5f
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -754,7 +754,7 @@ if [ -z "${SOURCE}" ]; then
 		;;
 	# finally starts the read update loop, internal use only
 	"startbot" )
-		_exec_if_exist start_bot "$2"
+		_exec_if_function start_bot "$2"
 		debug_checks "end startbot" "$@"
 		exit
 		;;
@@ -797,7 +797,7 @@ if [ -z "${SOURCE}" ]; then
 	"start")
 		SESSION="${ME:-_bot}-startbot"
 		BOTPID="$(proclist "${SESSION}")"
-		if _is_function process_updates; then 
+		if _is_function process_update; then 
 			# shellcheck disable=SC2086
 			[ -n "${BOTPID}" ] && kill ${BOTPID}
 			nohup "${SCRIPT}" "startbot" "$2" "${SESSION}" &>/dev/null &
