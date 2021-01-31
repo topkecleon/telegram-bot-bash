@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.40-dev-18-g342a5da
+#### $$VERSION$$ v1.40-dev-19-g0dd5f83
 ##################################################################
 
 ##############
@@ -350,6 +350,7 @@ get_updates(){
 			UPDATE="${UPDATE//$/\\$}"
 			# warn if webhook is set
 			if grep -q '^\["error_code"\]	409' <<<"${UPDATE}"; then
+				[ "${OFFSET}" != "-999" ] && nextsleep="${stepsleep}"
 				OFFSET="-999"; errsleep="$(_round_float "$(( errsleep = 200 * nextsleep ))e-3" "1")"
 				log_error "Warning conflicting webhook set, can't get updates until delete_webhook! Sleep ${errsleep}s ..."
 				sleep "${errsleep}"
