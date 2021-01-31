@@ -1225,9 +1225,9 @@ https://linuxconfig.org/how-to-use-arrays-in-bash-script
 ----
 
 ### Manage webhook
-Bashbot default mode is to poll Telegram server for updates, but Telegram offers webhook as a more efficient method to deliver updates also.
+Bashbot default mode is to poll Telegram server for updates but Telegram offers also webhook as a more efficient method to deliver updates.
 
-*Important*: Before using webhook your server must be setup to receive and process updates from Telegram!
+*Important*: Before using webhook you must setup your server to receive and process updates from Telegram!
 I recommend to use webhook with a test bot first. [Webhook examples](../examples/webhook)
 
 ##### get_webhook_info
@@ -1251,7 +1251,7 @@ bin/any_command.sh get_webhook_info
 
 
 ##### delete_webhook
-`delete_webhook` deletes iyour bots current webhook, deletes outstanding updates if second arg is `true`
+`delete_webhook` deletes your bots current webhook, deletes outstanding updates also if second arg is `true`
 
 *usage:*  delete_webhook [true|false]
  
@@ -1269,21 +1269,23 @@ bin/any_command.sh delete_webhook false
 
 
 ##### set_webhook
-`set_webhook` instructs Telgram to use your bots webhook for update delivery. If webhook is set on Telegram
+`set_webhook` instructs Telegram to use your bots webhook for delivering updates. If a webhook is set 
 it's no more possible to pull updates from `bashbot start`, you must delete webhook first.
 
-*Important*: Before using webhook your server must be setup to receive and process updates from Telegram!
+*Important*: Before using webhook you must setup your server to receive and process updates from Telegram!
 
 *usage:*  set_webhook "https://host.dom[:port][/path]" [max_conn]
  
-First arg is URL to send updates to, port and path are optional. If port is given itmust be on of 443, 80, 88 or 8443.
-For security reasons your TOKEN will be added to URL,  e.g. https://myhost.com -> https://myhost.com/12345678:azndfhbgdfbbbdsfg
+First arg is webhook URL used to send updates to your bot, `:port` and `/path` are optional. 
+If `:port` is given it must be one of `:443`, `:80`, `:88` or `:8443`, default is`:80`.
+For security reasons `BOTTOKEN` will be added to URL (_e.g. `https://myhost.com` -> `https://myhost.com/12345678:azndfhbgdfbbbdsfg`_).
+
 Second arg is max connection rate in the range 1-100, bashbot default is 1.
 
 *example:* 
 
 ```bash
-bin/any_command.sh set_webhook https://myhost.com/telegram 2
+bin/any_command.sh set_webhook "https://myhost.com/telegram" "2"
 
 ["OK"]  "true"
 ["RESULT"]      "true"
@@ -1576,5 +1578,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.40-dev-14-g4833712
+#### $$VERSION$$ v1.40-dev-15-gbc3a3b3
 
