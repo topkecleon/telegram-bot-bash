@@ -2,18 +2,34 @@
 /************************************************************
  * @file        examples/webhook/index.php
  * @description example webhook implementation for apache
+ *              write to fifo/file if writeable, else pipe to command 
+ *
+ *             first line of BASHBOT_HOME is used as bot home (optional)  
+ *             must start with /, not contain /. and min 20 characters long
  *
  * @author     KayM (gnadelwartz), kay@rrr.de
  * @license    http://www.wtfpl.net/txt/copying/ WTFPLv2
  * @since      30.01.2021 20:24
  *
-#### $$VERSION$$ v1.40-dev-13-g2a3663a
+#### $$VERSION$$ v1.40-dev-20-ga7c98d7
  ***********************************************************/
 
  // bashbot home dir
+ $CONFIG_HOME='BASHBOT_HOME';
  $BASHBOT_HOME='/usr/local/telegram-bot-bash';
- // webhook endpoint
+ // read from config file
+ if (file_exists($CONFIG_HOME)) { 
+	$tmp = trim(fgets(fopen($CONFIG_HOME, 'r')));
+	// start with '/', not '/.', min 20 chars
+	if (substr($tmp,0,1) == '/' && strlen($tmp) >= 20 && strpos($tmp, '/.') === false) {
+		$BASHBOT_HOME=$tmp;
+	}
+ } 
+
+ // script endpoint
  $cmd=$BASHBOT_HOME.'/bin/process_update.sh';
+ // fifo endpoint
+ $fifo=$BASHBOT_HOME.'/data-bot-bash/webhook-fifo';
 
  // prepeare read, e.g. run from CLI
  $data='';
@@ -33,27 +49,38 @@
 	$data = implode(" ",$_POST);
  }
  // file_put_contents('server.txt', print_r($_SERVER, TRUE));
- // file_put_contents($json_file, $data);
+ file_put_contents($json_file, $data);
 
- // process telegram update
+ // prepare for writing
  if ($data == '') {
 	error_response(400, "No data received");
  }
  if (! chdir($BASHBOT_HOME)) {
 	error_response(403, "No route to bot home");
  }
- if (! is_executable($cmd)) {
-	error_response(502, "Webhook endpoint not found");
- }
 
- if (! $handle = popen( $cmd.' debug', 'w' )) {
-	error_response(503, "Can't open webhook endpoint");
+ // fifo or command? 
+ if (! is_writeable($fifo)) {
+     // pipe to command
+     if (! file_exists($cmd)) {
+	error_response(502, "Webhook endpoint not found");
+     }
+     if (! $handle = popen( $cmd.' debug', 'w' )) {
+	error_response(503, "Can't open webhook command endpoint");
+     }
+ } else  {
+	// write to fifo
+	if (! $handle = fopen( $fifo, 'a' )) {
+		error_response(503, "Can't open webhook file endpoint");
+	}
+	flock($handle, LOCK_EX);
  }
- if (fwrite( $handle, $data.'\n') === false) {
+ if (fwrite( $handle, str_replace(array("\n", "\r"), '',$data). PHP_EOL) === false) {
 	error_response(504, "Write to webhook failed");
  }
+ flock($handle, LOCK_UN);
  pclose($handle);
-
+/**/
 
  function error_response($code, $msg) {
     $api = substr(php_sapi_name(), 0, 3);
@@ -63,6 +90,6 @@
 	$protocol = isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
 	header($protocol.' '.$code.' '.$msg);
     }
-    exit('Error '.$code.': '.$msg);
+    exit('Error '.$code.': '.$msg. PHP_EOL);
  }
 ?>

@@ -32,13 +32,13 @@ To stop delivering of updates with webhook run `bin/any_command.sh delete_webhoo
 If you have an Apache webserver with a valid SLL certificate chain and php running you can use it as webhook endpoint:
 
 - setup bashbot to run as the same user as your web server (_`bashbot.sh init`_)
-- create the directory `telegram/<your_bot_token>` in webserver root
-- copy `index.php` into new directory
-- edit `index.php` to point to your bashbot installation
+- create the directory `telegram/<your_bot_token>` in apache web root
+- copy files all files form here into new directory and change to it
+- edit `BASHBOT_HOME` to point to your bashbot installation directory
 - setup webhook for your server (_e.g. `bin/any_command.sh set_webhook "https://myserver.com/telegram`_)
 - send a command to your bot (_e.g. `/start`_) to check correct setup 
 
-*Example index.php*, see [index.php](index.php) for a more complete implementation.
+*Example minimal index.php*, see [index.php](index.php) for complete implementation.
 
 ```php
 <?php
@@ -57,6 +57,6 @@ pclose($handle);
 ?>
 ```
 
-#### $$VERSION$$ v1.40-dev-12-ga289cb8
+#### $$VERSION$$ v1.40-dev-20-ga7c98d7
 
 
