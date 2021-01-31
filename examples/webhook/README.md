@@ -35,11 +35,42 @@ Now your Apache is ready to forward data to Bashbot.
 
 To configure simple update processing delete file `data-bot-bash/webhook-fifo` after your webhook is working.
 Every webhook call now forwards incoming Telegram updates to the named pipe `data-bot-bash/webhook-fifo`
-and Bashbot poll them like polling Telegram server. This is much more efficient than polling Telegram server.
+
+Now enable webhook on Telegram (_see below_).
+
+Every incoming Telegram update load Bashbot once for processing one command. Even it seems overkill to load
+Bashbot on every update, it's more responsive and create less server load for a low traffic bot.
+
+*Note:* You must NOT start bashbot when simple update processing is enabled.
+
+
+#### High traffic processing
+
+High traffic processing writes Telegram updates to the named pipe `data-bot-bash/webhook-fifo`
+and Bashbot poll them, this is much more efficient than polling Telegram server.
 
 To switch from `Simple processing` to `High traffic processing` start bashbot as `bashbot.sh start-hook`.
 Stop bashbot with `bashbot.sh stop` to switch back to `Simple processing`
 
-#### $$VERSION$$ v1.40-dev-21-g5b0b121
 
+#### Enable webhook on Telegram
+
+To get updates via webhook your server must be reachable from the internet and you must
+instruct Telegram where to deliver updates, this is done by calling bashbot function `set_webhook`.
+
+*Example:*
+
+```bash
+bin/any_command.sh set_webhook "https://myserver.com/telegram"
+```
+
+instruct Telegram to use the URL `https://myserver.com/telegram/<your_bot_token>/` to deliver updates.
+After you enable webhook to deliver Telegram updates it's no more possible to poll updates with `bashbot.sh start`.
+
+To stop delivering of Telegram updates via webhook run `bin/any_command.sh delete_webhook`.
+
+**Important**: Only https connections with a valid certificate chain are allowed as endpoint for webhook.
+
+
+#### $$VERSION$$ v1.40-dev-22-g6754273
 
