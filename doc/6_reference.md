@@ -1224,6 +1224,84 @@ https://linuxconfig.org/how-to-use-arrays-in-bash-script
 
 ----
 
+### Manage Webhooks
+Bashbot default mode is to poll Telegram server for updates. Telegram offers the more efficient webhook method to deliver updates.
+I recommend to use webhook with `bin/any_command.sh` to test and setup functionality, see also [webhook example](../example/webhook)
+
+##### get_webhook_info
+`get_webhook_info` get current webhook status for your bot, e.g. url, waiting updates, last error.
+
+*usage:*  get_webhook_info
+ 
+*example:* 
+```bash
+bin/any_command.sh get_webhook_info
+
+["URL"] ""
+["OK"]  "true"
+["LASTERR"]     ""
+["COUNT"]       "0"
+["CERT"]        "false"
+["result","pending_update_count"]       "0"
+["ok"]  "true"
+["result","has_custom_certificate"]     "false"
+```
+
+
+##### delete_webhook
+`delete_webhook` deletes current set webhook, deletes outstanding updates if second arg is `true`
+
+*usage:*  delete_webhook [true|false]
+ 
+*example:* 
+
+```bash
+bin/any_command.sh delete_webhook false
+
+["RESULT"]      "true"
+["OK"]  "true"
+["result"]      "true"
+["ok"]  "true"
+["description"] "Webhook was deleted"
+```
+
+
+##### set_webhook
+`set_webhook` deletes current set webhook, deletes outstanding updates if second arg is `true`
+
+*usage:*  set_webhook "https://host.dom[:port][/path]" [max_conn]
+ 
+First arg is URL to send updates to, port and path are optional. If port is given itmust be on of 443, 80, 88 or 8443.
+For security reasons your TOKEN will be added to URL,  e.g. https://myhost.com -> https://myhost.com/12345678:azndfhbgdfbbbdsfg
+Second arg is max connection rate in the range 1-100, bashbot default is 1.
+
+*example:* 
+
+```bash
+bin/any_command.sh set_webhook https://myhost.com/telegram 2
+
+["OK"]  "true"
+["RESULT"]      "true"
+["ok"]  "true"
+["result"]      "true"
+["description"] "Webhook is set"
+
+bin/any_command.sh get_webhook_info
+
+["OK"]  "true"
+["URL"] "https://myhost.com/telegram/12345678:AABBCCDDEE...aabbccee124567890/"
+["COUNT"]       "0"
+["CERT"]        "false"
+["ok"]  "true"
+["result","ip_address"] "1.2.3.4"
+["result","url"]        "https://myhost.com/telegram/12345678:AABBCCDDEE...aabbccee124567890/"
+["result","pending_update_count"]       "0"
+["result","max_connections"]    "2"
+["result","has_custom_certificate"]     "false"
+```
+
+----
+
 ### Aliases - shortcuts for often used functions 
 Aliases are handy shortcuts for use in `mycommands.sh` *only*, they avoid error prone typing of  "${CHAT[ID]}" "${USER[ID]}" as much as possible.
 Do not use them in other files e.g. `bashbot.sh`, modules, addons etc.
@@ -1493,5 +1571,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.40-dev-1-g41e2d09
+#### $$VERSION$$ v1.40-dev-13-g2a3663a
 

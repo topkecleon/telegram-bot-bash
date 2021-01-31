@@ -15,7 +15,7 @@ USAGE='process_update.sh [-h|--help] [debug] [<file]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 30.01.2021 19:14
 #
-#### $$VERSION$$ v1.40-dev-9-g1e49f6c
+#### $$VERSION$$ v1.40-dev-13-g2a3663a
 #===============================================================================
 
 ####
@@ -32,7 +32,7 @@ print_help "${1:-nix}"
 
 # read json from stdin and convert update format
 json='{"result": {"0":'"$(cat)"'}}'
-UPDATE="$(${JSONSHFILE} -b -n <<<"${json}")"
+UPDATE="$(${JSONSHFILE} -b -n <<<"${json}" 2>/dev/null)"
 
 # assign to bashbot ARRAY
 Json2Array 'UPD' <<<"${UPDATE}" 
