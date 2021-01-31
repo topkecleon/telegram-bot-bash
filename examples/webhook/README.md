@@ -38,6 +38,25 @@ If you have an Apache webserver with a valid SLL certificate chain and php runni
 - setup webhook for your server (_e.g. `bin/any_command.sh set_webhook "https://myserver.com/telegram`_)
 - send a command to your bot (_e.g. `/start`_) to check correct setup 
 
-#### $$VERSION$$ v1.40-dev-11-g9316caa
+*Example index.php*, see [index.php](index.php) for a more complete implementation.
+
+```php
+<?php
+// bashbot home
+$BASHBOT_HOME='/usr/local/telegram-bot-bash';
+$cmd=$BASHBOT_HOME.'/bin/process_update.sh';
+
+// save server context and webhook JSON
+$json = file_get_contents("php://input");
+
+// process teegram update
+chdir($BASHBOT_HOME);
+$handle = popen( $cmd, 'w' );
+fwrite( $handle, $json.'\n' );
+pclose($handle);
+?>
+```
+
+#### $$VERSION$$ v1.40-dev-12-ga289cb8
 
 
