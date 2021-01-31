@@ -1269,7 +1269,7 @@ bin/any_command.sh delete_webhook false
 
 
 ##### set_webhook
-`set_webhook` instructs Telegram to use your bots webhook for delivering updates. If a webhook is set 
+`set_webhook` instructs Telegram to use your bots webhook for delivering updates. If webhook is set 
 it's no more possible to pull updates from `bashbot start`, you must delete webhook first.
 
 *Important*: Before using webhook you must setup your server to receive and process updates from Telegram!
@@ -1278,7 +1278,7 @@ it's no more possible to pull updates from `bashbot start`, you must delete webh
  
 First arg is webhook URL used to send updates to your bot, `:port` and `/path` are optional. 
 If `:port` is given it must be one of `:443`, `:80`, `:88` or `:8443`, default is`:80`.
-For security reasons `BOTTOKEN` will be added to URL (_e.g. `https://myhost.com` -> `https://myhost.com/12345678:azndfhbgdfbbbdsfg`_).
+For security reasons `BOTTOKEN` will be added to URL (_e.g. `https://myhost.com` -> `https://myhost.com/12345678:azndfhbgdfbbbdsfg/`_).
 
 Second arg is max connection rate in the range 1-100, bashbot default is 1.
 
@@ -1578,5 +1578,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.40-dev-15-gbc3a3b3
+#### $$VERSION$$ v1.40-dev-16-gf377e17
 

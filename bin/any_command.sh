@@ -21,7 +21,7 @@ USAGE='any_command.sh [-h|--help] [--force|--reference] bot_command args ...'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 30.01.2021 10:24
 #
-#### $$VERSION$$ v1.40-dev-6-g08b7b85
+#### $$VERSION$$ v1.40-dev-16-gf377e17
 #===============================================================================
 
 ####
@@ -50,10 +50,10 @@ else
 		error=3
 	fi
 	# simple hack to get allowed commands from doc
-	if grep -q "^##### $1" <<<"$(sed -n -e '/^##### _is_/,$ d' -e '/^##### /p' "../doc/"6_*)"; then
+	if grep -q "^##### $1" <<<"$(sed -n -e '/^##### _is_/,$ d' -e '/^##### /p' "${BASHBOT_HOME:-..}doc/"6_*)"; then
 		# oiutput reference and exit
 		if [[ "${ref}" == "--ref"* ]]; then
-			sed -n -e '/^##### '"$1"'/,/^##/ p' "../doc/"6_*
+			sed -n -e '/^##### '"$1"'/,/^##/ p' "${BASHBOT_HOME:-..}doc/"6_*
 			exit
 		fi
 	else
