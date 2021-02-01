@@ -13,12 +13,12 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.12.2020 12:27
 #
-#### $$VERSION$$ v1.40-dev-27-gc4d100e
+#### $$VERSION$$ v1.40-dev-30-g3a29a9d
 #===============================================================================
 
 ############
 # set where your bashbot lives
-export BASHBOT_HOME BASHBOT_ETC BASHBOT_VAR FILE_REGEX
+export BASHBOT_HOME BASHBOT_ETC BASHBOT_VAR FILE_REGEX ME
 
 # default: one dir up 
 BASHBOT_HOME="$(cd "${BASH_SOURCE[0]%/*}" >/dev/null 2>&1 && pwd)/../"
@@ -61,6 +61,7 @@ FILE_REGEX="${UPLOADDIR}/.*"
 # get and check ADMIN and NAME
 BOT_ADMIN="$(getConfigKey "botadmin")"
 BOT_NAME="$(getConfigKey "botname")"
+ME="${BOT_NAME}"
 [[ -z "${BOT_ADMIN}" || "${BOT_ADMIN}" == "?" ]] && printf "%s\n" "${ORANGE}Warning: Botadmin not set, send bot command${NC} /start"
 [[ -z "${BOT_NAME}"  ]] && printf "%s\n" "${ORANGE}Warning: Botname not set, run bashbot.sh botname"
 
