@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.40-dev-19-g0dd5f83
+#### $$VERSION$$ v1.40-dev-23-g4e7b305
 ##################################################################
 
 ##############
@@ -342,7 +342,7 @@ get_updates(){
 		# did we get an response?
 		if [ -n "${UPDATE}" ]; then
 			# we got something, do processing
-			[ "${OFFSET}" = "-999" ] && [ "${nextsleep}" -gt "$((maxsleep/2))" ] &&\
+			[ "${OFFSET}" = "-999" ] && [ "${nextsleep}" -gt "$((maxsleep*2))" ] &&\
 				log_error "Recovered from timeout/broken/no connection, continue with telegram updates"
 			# calculate next sleep interval
 			((nextsleep+= stepsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
@@ -351,8 +351,8 @@ get_updates(){
 			# warn if webhook is set
 			if grep -q '^\["error_code"\]	409' <<<"${UPDATE}"; then
 				[ "${OFFSET}" != "-999" ] && nextsleep="${stepsleep}"
-				OFFSET="-999"; errsleep="$(_round_float "$(( errsleep = 200 * nextsleep ))e-3" "1")"
-				log_error "Warning conflicting webhook set, can't get updates until delete_webhook! Sleep ${errsleep}s ..."
+				OFFSET="-999"; errsleep="$(_round_float "$(( errsleep= 300*nextsleep ))e-3")"
+				log_error "Warning conflicting webhook set, can't get updates until delete_webhook! Sleep $((errsleep/60)) min ..."
 				sleep "${errsleep}"
 				continue
 			fi
