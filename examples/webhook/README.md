@@ -46,6 +46,8 @@ Bashbot on every update, it's more responsive and create less server load for a 
 
 #### High traffic processing
 
+#### CURRENTLY NOT IMPLEMENTED
+
 High traffic processing writes Telegram updates to the named pipe `data-bot-bash/webhook-fifo`
 and Bashbot poll them, this is much more efficient than polling Telegram server.
 
@@ -72,5 +74,5 @@ To stop delivering of Telegram updates via webhook run `bin/any_command.sh delet
 **Important**: Only https connections with a valid certificate chain are allowed as endpoint for webhook.
 
 
-#### $$VERSION$$ v1.40-dev-22-g6754273
+#### $$VERSION$$ v1.40-dev-28-g91a143a
 
