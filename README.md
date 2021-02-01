@@ -63,7 +63,8 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Modules, addons, events
     * Setup your environment
     * Bashbot test suite
-* [Examples Directory](examples/README.md)
+* [Examples Directory](examples)
+* [Webhook Example](examples/webhook)
 
 ### Your very first bashbot in a nutshell
 
@@ -238,4 +239,4 @@ See `mycommnds.sh.dist` for an example.
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v1.32-dev-9-g13052f0
+#### $$VERSION$$ v1.40-dev-29-g737be16

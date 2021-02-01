@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.40-dev-27-gc4d100e
+#### $$VERSION$$ v1.40-dev-29-g737be16
 ##################################################################
 
 # are we running in a terminal?
@@ -688,7 +688,7 @@ event_send() {
 # initialize bot environment, user and permissions
 bot_init() {
 	cd "${BASHBOT_HOME}" || printf "Can't change to BASHBOT_HOME" && exit_source 1
-	# load addons on startup
+	# initialize addons
 	printf "Initialize addons ...\n"
 	for addons in "${ADDONDIR:-.}"/*.sh ; do
 		# shellcheck source=./modules/aliases.sh

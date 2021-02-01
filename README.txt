@@ -112,7 +112,8 @@ Documentation
   o Setup your environment
   o Bashbot test suite
 
-* Examples Directory [examples/README.md]
+* Examples Directory [examples]
+* Webhook Example [examples/webhook]
 
 
 Your very first bashbot in a nutshell

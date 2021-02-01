@@ -33,15 +33,17 @@ Now your Apache is ready to forward data to Bashbot.
 
 #### Simple update processing
 
-To configure simple update processing delete file `data-bot-bash/webhook-fifo` after your webhook is working.
-Every webhook call now forwards incoming Telegram updates to the named pipe `data-bot-bash/webhook-fifo`
+To configure `Simple update processing` delete the file `data-bot-bash/webhook-fifo` after your webhook is working.
+All webhook calls are now forwarded to `bin/process_update.sh` for processing.
 
-Now enable webhook on Telegram (_see below_).
+To start `Simple processing ` enable webhook on Telegram (_see below_).
 
 Every incoming Telegram update load Bashbot once for processing one command. Even it seems overkill to load
-Bashbot on every update, it's more responsive and create less server load for a low traffic bot.
+Bashbot on every incoming update, it's more responsive and create less server load for low traffic bots.
 
-*Note:* You must NOT start bashbot when simple update processing is enabled.
+If your bot uses `addons` or `BASHBOT_EVENTs` you can't use `Simple processing`.
+
+*Note:* `Simple processing` works without running `bashbot.sh start`.
 
 
 #### High traffic processing
@@ -51,7 +53,7 @@ Bashbot on every update, it's more responsive and create less server load for a 
 High traffic processing writes Telegram updates to the named pipe `data-bot-bash/webhook-fifo`
 and Bashbot poll them, this is much more efficient than polling Telegram server.
 
-To switch from `Simple processing` to `High traffic processing` start bashbot as `bashbot.sh start-hook`.
+To switch from `Simple processing` to `High traffic processing` start bashbot as `bashbot.sh start-webhook`.
 Stop bashbot with `bashbot.sh stop` to switch back to `Simple processing`
 
 
@@ -74,5 +76,5 @@ To stop delivering of Telegram updates via webhook run `bin/any_command.sh delet
 **Important**: Only https connections with a valid certificate chain are allowed as endpoint for webhook.
 
 
-#### $$VERSION$$ v1.40-dev-28-g91a143a
+#### $$VERSION$$ v1.40-dev-29-g737be16
 

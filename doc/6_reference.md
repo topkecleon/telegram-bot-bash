@@ -1227,8 +1227,8 @@ https://linuxconfig.org/how-to-use-arrays-in-bash-script
 ### Manage webhook
 Bashbot default mode is to poll Telegram server for updates but Telegram offers also webhook as a more efficient method to deliver updates.
 
-*Important*: Before using webhook you must setup your server to receive and process updates from Telegram!
-I recommend to use webhook with a test bot first. [Webhook examples](../examples/webhook)
+*Important*: Before enable webhook you must setup your server to [receive and process webhook updates from Telegram](../examples/webhook)
+I recommend to use webhook with a test bot first.
 
 ##### get_webhook_info
 `get_webhook_info` get current status of webhook for your bot, e.g. url, waiting updates, last error.
@@ -1578,5 +1578,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.40-dev-17-g8034a5f
+#### $$VERSION$$ v1.40-dev-29-g737be16
 
