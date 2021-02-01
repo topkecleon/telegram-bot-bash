@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.40-dev-31-g9ce139a
+#### $$VERSION$$ v1.40-dev-32-gd876f75
 ##################################################################
 
 # are we running in a terminal?
@@ -688,7 +688,10 @@ event_send() {
 # fallback version, full version is in  bin/bashbot_init.in.sh
 # initialize bot environment, user and permissions
 bot_init() {
-	cd "${BASHBOT_HOME}" || printf "Can't change to BASHBOT_HOME" && exit_source 1
+	if [ -n "${BASHBOT_HOME}" ] && ! cd "${BASHBOT_HOME}"; then
+		 printf "Can't change to BASHBOT_HOME"
+		 exit 1
+	fi
 	# initialize addons
 	printf "Initialize addons ...\n"
 	for addons in "${ADDONDIR:-.}"/*.sh ; do

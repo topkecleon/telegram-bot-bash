@@ -11,7 +11,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.01.2021 13:42
 #
-#### $$VERSION$$ v1.35-dev-29-g0c0dc01
+#### $$VERSION$$ v1.40-dev-32-gd876f75
 #===============================================================================
 # shellcheck disable=SC2059
 
@@ -38,7 +38,10 @@ my_init() {
 # 
 # delete from here to disable extended initialisation
 bot_init() {
-	[ -n "${BASHBOT_HOME}" ] && cd "${BASHBOT_HOME}" || exit 1
+	if [ -n "${BASHBOT_HOME}" ] && ! cd "${BASHBOT_HOME}"; then
+		 printf "Can't change to BASHBOT_HOME"
+		 exit 1
+	fi
 	local runuser chown touser botname DEBUG="$1"
 	# upgrade from old version
 	# currently no action
