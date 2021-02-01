@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.40-dev-24-ge4a983b
+#### $$VERSION$$ v1.40-dev-25-gc1aec92
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -51,6 +51,7 @@ if [ -t 1 ] && [ -n "${TERM}" ];  then
     NC='\e[0m'
     NN="${NC}\n"
 fi
+declare -r INTERACTIVE RED GREEN ORANGE GREY NC NN
 
 # telegram uses utf-8 characters, check if we have an utf-8 charset
 if [ "${LANG}" = "${LANG%[Uu][Tt][Ff]*}" ]; then
@@ -179,8 +180,9 @@ RUNDIR="$(dirname "$0")"
 
 MODULEDIR="${SCRIPTDIR}/modules"
 
-# adjust locations based on source and real name
-[[ "${SCRIPT}" != "${REALME}" || "$1" == "source" ]] && SOURCE="yes"
+# adjust stuff for source
+alias exit_source='exit'
+[[ "${SCRIPT}" != "${REALME}" || "$1" == "source" ]] && SOURCE="yes" && alias exit_source='printf "Exit from source...\n";return'
 
 if [ -n "${BASHBOT_HOME}" ]; then
 	SCRIPTDIR="${BASHBOT_HOME}"
@@ -221,9 +223,11 @@ RUNDIR="."
 
 # check if JSON.sh is available
 JSONSHFILE="${BASHBOT_JSONSH:-${SCRIPTDIR}/JSON.sh/JSON.sh}"
-[ ! -x "${JSONSHFILE}" ] &&\
-	 printf "${RED}ERROR:${NC} ${JSONSHFILE} ${RED}does not exist, are we in dev environment?${NN}${GREY}%s${NN}\n"\
-		"\$JSONSHFILE is set wrong or bashbot is not installed correctly, see doc/0_install.md" && exit 3
+if [ ! -x "${JSONSHFILE}" ]; then
+	printf "${RED}ERROR:${NC} ${JSONSHFILE} ${RED}does not exist, are we in dev environment?${NN}${GREY}%s${NN}\n"\
+		"\$JSONSHFILE is set wrong or bashbot is not installed correctly, see doc/0_install.md"
+	exit_source 3
+fi
 
 # file locations based on ENVIRONMENT
 BOTCONFIG="${BASHBOT_ETC:-.}/botconfig"
@@ -376,7 +380,7 @@ sed '1ia' </dev/null 2>/dev/null || printf "${ORANGE}Warning: You may run on a B
 #jsonDB is now mandatory
 if ! _is_function jssh_newDB; then
 	printf "${RED}ERROR: Mandatory module jsonDB is missing or not readable!${NN}"
-	exit 6
+	exit_source 6
 fi
 
 # $1 URL, $2 filename in DATADIR
@@ -529,7 +533,7 @@ else
 	else
 		printf "${RED}Error: curl and wget not found, install curl!${NN}"
 	fi
-	exit 8
+	exit_source 8
   fi
 fi 
 
@@ -701,7 +705,7 @@ bot_init() {
 
 if ! _is_function send_message ; then
 	printf "${RED}ERROR: send_message is not available, did you deactivate ${MODULEDIR}/sendMessage.sh?${NN}"
-	exit 1
+	exit_source 1
 fi
 
 # check if JSON.awk exist and has x flag
