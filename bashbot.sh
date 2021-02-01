@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.40-dev-17-g8034a5f
+#### $$VERSION$$ v1.40-dev-24-ge4a983b
 ##################################################################
 
 # emmbeded system may claim bash but it is not
@@ -799,12 +799,13 @@ if [ -z "${SOURCE}" ]; then
 		BOTPID="$(proclist "${SESSION}")"
 		if _is_function process_update; then 
 			# shellcheck disable=SC2086
-			[ -n "${BOTPID}" ] && kill ${BOTPID}
+			[ -n "${BOTPID}" ] && kill ${BOTPID} && printf "${GREY}Stop already running bot ...${NN}"
 			nohup "${SCRIPT}" "startbot" "$2" "${SESSION}" &>/dev/null &
 			printf "Session Name: %s\n" "${SESSION}"
 			sleep 1
 		else
 			printf "${ORANGE}Update processing disabled, bot can only send messages.${NN}"
+			[ -n "${BOTPID}" ] && printf "${ORANGE}Already running bot found ...${NN}"
 		fi
 		if [ -n "$(proclist "${SESSION}")" ]; then
 		 	printf "${GREEN}Bot started successfully.${NN}"
