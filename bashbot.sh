@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.40-dev-29-g737be16
+#### $$VERSION$$ v1.40-dev-31-g9ce139a
 ##################################################################
 
 # are we running in a terminal?
@@ -372,7 +372,8 @@ if [  -r "${COMMANDS}" ]; then
 else
 	[ -z "${SOURCE}" ] && printf "${RED}Warning: ${COMMANDS} does not exist or is not readable!.${NN}"
 fi
-debug_checks "start SOURCE=${SOURCE:-no}" "$@"
+# no debug checks on source
+[ -z "${SOURCE}" ] && debug_checks "start" "$@"
 
 
 #####################
