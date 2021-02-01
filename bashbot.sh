@@ -30,15 +30,8 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.40-dev-25-gc1aec92
+#### $$VERSION$$ v1.40-dev-26-ge86c8dc
 ##################################################################
-
-# emmbeded system may claim bash but it is not
-# check for bash like ARRAY handlung
-if ! (unset a; set -A a a; eval "a=(a b)"; eval '[ -n "${a[1]}" ]'; ) > /dev/null 2>&1; then
-	printf "Error: Current shell does not support ARRAY's, may be busybox ash shell. pls install a real bash!\n"
-	exit 10
-fi
 
 # are we running in a terminal?
 NN="\n"
@@ -180,10 +173,21 @@ RUNDIR="$(dirname "$0")"
 
 MODULEDIR="${SCRIPTDIR}/modules"
 
-# adjust stuff for source
+# adjust stuff for source, use return from source without source
 alias exit_source='exit'
-[[ "${SCRIPT}" != "${REALME}" || "$1" == "source" ]] && SOURCE="yes" && alias exit_source='printf "Exit from source...\n";return'
+if [[ "${SCRIPT}" != "${REALME}" || "$1" == "source" ]]; then
+	SOURCE="yes"
+	[ -z "$1" ] && alias exit_source='printf "Exit from source ...\n";return'
+fi
 
+# emmbeded system may claim bash but it is not
+# check for bash like ARRAY handlung
+if ! (unset a; set -A a a; eval "a=(a b)"; eval '[ -n "${a[1]}" ]'; ) > /dev/null 2>&1; then
+	printf "Error: Current shell does not support ARRAY's, may be busybox ash shell. pls install a real bash!\n"
+	exit_source 10
+fi
+
+# adjust path variables
 if [ -n "${BASHBOT_HOME}" ]; then
 	SCRIPTDIR="${BASHBOT_HOME}"
  else
@@ -193,7 +197,7 @@ fi
 [ -z "${BASHBOT_VAR}" ] && BASHBOT_VAR="${BASHBOT_HOME}"
 
 ADDONDIR="${BASHBOT_ETC:-.}/addons"
-RUNUSER="${USER}"	# USER is overwritten by bashbot array :-(, save original
+RUNUSER="${USER}"	# save original USER
 
 # provide help
 case "$1" in
@@ -216,7 +220,7 @@ esac
 # OK, ENVIRONMENT is set up, let's do some additional tests
 if [[ -z "${SOURCE}" && -z "${BASHBOT_HOME}" ]] && ! cd "${RUNDIR}" ; then
 	printf "${RED}ERROR: Can't change to ${RUNDIR} ...${NN}"
-	exit 1
+	exit_source 1
 fi
 RUNDIR="."
 [ ! -w "." ] && printf "${ORANGE}WARNING: ${RUNDIR} is not writeable!${NN}"
@@ -275,7 +279,7 @@ if [ -z "${BOTTOKEN}" ]; then
   # check data dir file
   if [ ! -w "${DATADIR}" ]; then
 	printf "${RED}ERROR: ${DATADIR} does not exist or is not writeable!.${NN}"
-	exit 2
+	exit_source 2
   fi
   # setup count file 
   if [ ! -f "${COUNTFILE}.jssh" ]; then
@@ -283,7 +287,7 @@ if [ -z "${BOTTOKEN}" ]; then
   elif [ ! -w "${COUNTFILE}.jssh" ]; then
 	printf "${RED}ERROR: Can't write to ${COUNTFILE}!.${NN}"
 	ls -l "${COUNTFILE}.jssh"
-	exit 2
+	exit_source 2
   fi
   # setup blocked file 
   if [ ! -f "${BLOCKEDFILE}.jssh" ]; then
@@ -312,7 +316,7 @@ if [ -z "${BOTTOKEN}" ]; then
 			BOTTOKEN="$(getConfigKey "bottoken")"
 		else
 			printf "\n${RED}Error: Can't recover from missing bot token! Remove ${BOTCONFIG}.jssh and run${NC} bashbot.sh init\n"
-			exit 7
+			exit_source 7
 		fi
     fi
 fi
@@ -683,7 +687,7 @@ event_send() {
 # fallback version, full version is in  bin/bashbot_init.in.sh
 # initialize bot environment, user and permissions
 bot_init() {
-	[ -n "${BASHBOT_HOME}" ] && cd "${BASHBOT_HOME}" || exit 1
+	cd "${BASHBOT_HOME}" || printf "Can't change to BASHBOT_HOME" && exit_source 1
 	# load addons on startup
 	printf "Initialize addons ...\n"
 	for addons in "${ADDONDIR:-.}"/*.sh ; do
