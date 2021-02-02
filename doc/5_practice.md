@@ -12,7 +12,7 @@ If you don't have a github account, it may time to [setup a free account now](ht
 ### Add commands to mycommands.sh only
 Do not change `bashbot.sh` and `commands.sh`, instead place your commands in to  `mycommands.sh`.
 To start with a clean/minimal bot copy `mycommands.sh.clean` to `mycommands.sh` and start editing
-the message strings and place commands in the`case ... esac` block of the function mycommands():
+the message strings and place commands in the` case ... esac` block of the function mycommands():
 ```bash
 # file: mycommands.sh
 # your additional bashbot commands
@@ -160,5 +160,5 @@ The second warning is about an unused variable, this is true because in our exam
 #### [Prev Best Practice](5_practice.md)
 #### [Next Functions Reference](6_reference.md)
 
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-dev-34-g1440d56
 

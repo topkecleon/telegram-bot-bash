@@ -202,7 +202,7 @@ f and quote everything). In addition remove unused scripts and examples from you
 (e.g. everything in example/) and disable/remove all unused bot commands.
 It's important to escape or remove $ in input from user, files or network (as bashbot
 does). One of the powerful features of Unix shells is variable and command substitution
-using ${} and$() can lead to remote code execution (RCE) or remote information disclosure
+using ${} and $() can lead to remote code execution (RCE) or remote information disclosure
 (RID) bugs if unescaped $ is included in untrusted input (e.g. $$ or $(rm -rf /*)).
 A powerful tool to improve your scripts is shellcheck. You can use it online [https://
 www.shellcheck.net/] or install shellcheck locally [https://github.com/koalaman/
@@ -232,11 +232,14 @@ Secure your Bot installation
 Your Bot configuration must not be readable by other users. Everyone who can read your
 Bots token is able to act as your Bot and has access to all chats the Bot is in!
 Everyone with read access to your Bot files can extract your Bots data. Especially your
-Bot config inconfig.jssh must be protected against other users. No one except you should
-have write access to the Bot files. The Bot should be restricted to have write access
-tocount.jssh and data-bot-bash only, all other files must be write protected.
-To set access rights for your bashbot installation to a reasonable default runsudo ./
+Bot config in config.jssh must be protected against other users. No one except you should
+have write access to the Bot files. The Bot should be restricted to have write access to
+count.jssh, data-bot-bash/ and logs/ only, all other files must be write protected.
+To set access rights for your bashbot installation to a reasonable default run sudo ./
 bashbot.sh init after every update or change to your installation directory.
+Note: Keep old log files in a safe place or even better delete them, they are GDPR
+relevant and may contain information [https://github.com/topkecleon/telegram-bot-bash/
+issues/174] you don't want to be public.
 
 FAQ
 
@@ -264,9 +267,9 @@ Nevertheless there are more reasons from my side:
 
 Can I have the single bashbot.sh file back?
 
-At the beginning bashbot was simply the filebashbot.sh that you could copy everywhere and
+At the beginning bashbot was simply the file bashbot.sh that you could copy everywhere and
 run the bot. Now we have 'commands.sh', 'mycommands.sh', 'modules/*.sh' and much more.
-Hey no problem, if you are finished with your cool bot, rundev/make-standalone.sh to
+Hey no problem, if you are finished with your cool bot, run dev/make-standalone.sh to
 create a stripped down version of your bot containing only 'bashbot.sh' and 'commands.sh'!
 For more information see Create a stripped down version of your Bot [doc/7_develop.md].
 
@@ -315,5 +318,5 @@ That's it all guys!
 If you feel that there's something missing or if you found a bug, feel free to submit a
 pull request!
 
-$$VERSION$$ v1.40-dev-29-g737be16
+$$VERSION$$ v1.40-dev-34-g1440d56
 

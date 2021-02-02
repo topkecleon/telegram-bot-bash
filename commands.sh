@@ -8,14 +8,14 @@
 # | |__/ / |_| |  | | | | |_| | |__   | |____( (_| | | |__ _ 
 # |_____/ \___/   |_| |_|\___/ \___)  |_______)____|_|\___)_|
 #
-# this file *MUST* not be edited! place your config and commands in
-# the file "mycommands.sh". a clean version is provided as "mycommands.sh.clean"
+# this file *MUST* not edited! place your config in the file "mycommands.conf"
+# and commands in "mycommands.sh", a clean version is provided as "mycommands.sh.clean"
 #
 
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.35-dev-14-g08a0524
+#### $$VERSION$$ v1.40-dev-34-g1440d56
 #
 
 # bashbot locale defaults to c.UTF-8, adjust locale in mycommands.sh if needed

@@ -144,7 +144,7 @@ echo "Text that will appear in one message \nwith this text on a new line"
 ```
 
 In case you want extend a message already containing a location, a file, a keyboard etc.,
-with an additionial text simply add ` mytextstartshere additional text`at the end of the string:
+with an additionial text simply add ` mytextstartshere additional text` at the end of the string:
 ```bash
 out="Text that will appear mylatstartshere 45 mylongstartshere 45"
 [[ "$out" != *'in chat'* ]] &&  out="$out mytextstartshere in chat."
@@ -190,7 +190,7 @@ Note: Background jobs run independent from main bot and continue running until y
 
 In order to enable **inline mode**, send `/setinline` command to [@BotFather](https://telegram.me/botfather) and provide the placeholder text that the user will see in the input field after typing your bot’s name.
 
-The following commands allows you to send ansers to *inline queries*. To enable bashbot to process inline queries set `INLINE="1"`in 'mycommands.sh'.
+The following commands allows you to send ansers to *inline queries*. To enable bashbot to process inline queries set `INLINE="1"` in `mycommands.sh`.
 
 To send messages or links through an *inline query*:
 ```bash
@@ -258,7 +258,7 @@ By default you don't have to care about retry, as bashbot resend the message aft
 Only if the retry fails also an error is returned. The downside is that send_message functions will wait until resend is done.
 
 If you want to disable automatic error processing  and handle all errors manually (or don't care)
-set `BASHBOT_RETRY`to any no zero value.
+set `BASHBOT_RETRY` to any no zero value.
 
 [Telegram Bot API error codes](https://github.com/TelegramBotAPI/errors)
 
@@ -266,9 +266,9 @@ set `BASHBOT_RETRY`to any no zero value.
 #### Detect bot blocked
 
 If the we can't connect to telegram, e.g. blocked from telegram server but also any other reason,
-bashbot set `BOTSENT[ERROR]`to `999`.
+bashbot set `BOTSENT[ERROR]` to `999`.
 
-To get a notification on every connection problem create a function named `bashbotBlockRecover`and handle blocks there.
+To get a notification on every connection problem create a function named `bashbotBlockRecover` and handle blocks there.
 If the function returns true (0 or no value) bashbot will retry once and then return to the calling function.
 In case you return any non 0 value bashbot will return to the calling function without retry.
 
@@ -302,5 +302,5 @@ Note: If you disable automatic retry, se above, you disable also connection prob
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-dev-34-g1440d56
 

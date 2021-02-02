@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.40-dev-32-gd876f75
+#### $$VERSION$$ v1.40-dev-34-g1440d56
 ##################################################################
 
 # are we running in a terminal?
@@ -390,13 +390,13 @@ fi
 
 # $1 URL, $2 filename in DATADIR
 # outputs final filename
-#download() {
-#	local empty="no.file" file="${2:-${empty}}"
-#	if [[ "${file}" = *"/"* ]] || [[ "${file}" = "."* ]]; then file="${empty}"; fi
-#	while [ -f "${DATADIR:-.}/${file}" ] ; do file="${RANDOM}-${file}"; done
-#	getJson "$1" >"${DATADIR:-.}/${file}" || return
-#	printf '%s\n' "${DATADIR:-.}/${file}"
-#}
+download() {
+	local empty="no.file" file="${2:-${empty}}"
+	if [[ "${file}" = *"/"* ]] || [[ "${file}" = "."* ]]; then file="${empty}"; fi
+	while [ -f "${DATADIR:-.}/${file}" ] ; do file="${RANDOM}-${file}"; done
+	getJson "$1" >"${DATADIR:-.}/${file}" || return
+	printf '%s\n' "${DATADIR:-.}/${file}"
+}
 
 # $1 postfix, e.g. chatid
 # $2 prefix, back- or startbot-

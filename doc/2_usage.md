@@ -295,7 +295,7 @@ In case you need other response values , the array `UPD` contains complete Teleg
 ## Usage of bashbot functions
 
 #### sending messages
-To send messages use the `send_xxx_message`functions.
+To send messages use the `send_xxx_message` functions.
 To insert line brakes in a message place `\n` in the text. 
 
 To send regular text without any markdown use:
@@ -311,7 +311,7 @@ To send text with html:
 send_html_message "${CHAT[ID]}" "lol <b>bold</b>"
 ```
 
-To forward messages use the `forward`function:
+To forward messages use the `forward` function:
 ```bash
 forward "${CHAT[ID]}" "from_chat_id" "message_id"
 ```
@@ -349,20 +349,20 @@ To send local files or URL's (photo, video, voice, sticker, documents) use the `
 send_file "${CHAT[ID]}" "/home/user/dog.jpg" "Lool" "photo"
 send_file "${CHAT[ID]}" "https://images-na.ssl-images-amazon.com/images/I/81DQ0FpoSNL._AC_SL1500_.jpg"
 ```
-To send custom keyboards use the `send_keyboard`function:
+To send custom keyboards use the `send_keyboard` function:
 ```bash
 send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" '[ "Yep" , "No" ]' # note the single quotes!
 send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" "[ \\"Yep\\" , \\"No\\" ]" # within double quotes you must escape the inside double quots
 ```
-To send locations use the `send_location`function:
+To send locations use the `send_location` function:
 ```bash
 send_location "${CHAT[ID]}" "Latitude" "Longitude"
 ```
-To send venues use the `send_venue`function:
+To send venues use the `send_venue` function:
 ```bash
 send_venue "${CHAT[ID]}" "Latitude" "Longitude" "Title" "Address" "optional foursquare id"
 ```
-To send a chat action use the `send_action`function.
+To send a chat action use the `send_action` function.
 Allowed values: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for locations.
 ```bash
 send_action "${CHAT[ID]}" "action"
@@ -372,5 +372,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.35-dev-31-ga3eec98
+#### $$VERSION$$ v1.40-dev-34-g1440d56
 
