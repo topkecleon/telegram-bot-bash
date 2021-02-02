@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.40-dev-28-g91a143a
+#### $$VERSION$$ v1.40-dev-33-g969c7a9
 ##################################################################
 
 ##############
@@ -82,7 +82,7 @@ process_update() {
 		process_message "${num}" "${debug}"
 	        printf "%(%c)T: update received FROM=%s CHAT=%s CMD=%s\n" -1 "${USER[USERNAME]:0:20} (${USER[ID]})"\
 			"${CHAT[USERNAME]:0:20}${CHAT[TITLE]:0:30} (${CHAT[ID]})"\
-			"${MESSAGE:0:30}${CAPTION:0:30}${URLS[*]:0:30}" >>"${UPDATELOG}"
+			"${MESSAGE:0:30}${CAPTION:0:30}$(: "${URL[*]/bot*:}"; printf "%s" "${_//[A-Z-]}")" >>"${UPDATELOG}"
 	fi
 	#####
 	# process inline and message events
