@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -42,7 +42,7 @@ JSSH_KEYOK="[-${azAZo9},._]"
 # $1 - invalid charcaters are replaced with first character
 #      or deleted if $1 is empty
 jssh_stripKey() {	# tr: we must escape first - in [-a-z...]
-	if [[ "$1" =~ ^${JSSH_KEYOK} ]]; then # tr needs [\-...
+	if [[ "$1" =~ ^${JSSH_KEYOK} ]]; then	# tr needs [\-...
  		tr -c "${JSSH_KEYOK/\[-/[\\-}\r\n" "${1:0:1}"
 	else
  		tr -dc "${JSSH_KEYOK/\[-/[\\-}\r\n"
@@ -86,7 +86,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   jssh_updateDB() {
 	# for atomic update we can't use read/writeDB
 	[ -z "$2" ] && return 1
-	local DB="$2.jssh" # check in async
+	local DB="$2.jssh"	# check in async
 	[ ! -f "${DB}" ] && return 2
 	{ flock -e -w 10 200; jssh_updateDB_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
   }
@@ -95,7 +95,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # $1 key name, can only contain -a-zA-Z0-9,._
   # $2 key value
   # $3 filename (must exist!), must be relative to BASHBOT_ETC, and not contain '..'
-  alias jssh_insertDB=jssh_insertKeyDB # backward compatibility
+  alias jssh_insertDB=jssh_insertKeyDB	# backward compatibility
   # renamed to be more consistent
   jssh_insertKeyDB() {
 	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
@@ -179,7 +179,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   # medium complex, wrapper async
   jssh_updateArray() { 
 	[ -z "$2" ] && return 1
-	local DB="$2.jssh" # name check in async
+	local DB="$2.jssh"	# name check in async
 	[ ! -f "${DB}" ] && return 2
 	declare -n ARRAY="$1"
 	[[ -z "${ARRAY[*]}" ||  "${DB}" -nt "${DB}.last$3" ]] && touch "${DB}.last$3" && jssh_readDB "$1" "$2"
@@ -216,7 +216,7 @@ jssh_newDB_async() { jssh_newDB "$@"; }
 jssh_newDB() {
 	local DB; DB="$(jssh_checkDB "$1")"
 	[ -z "${DB}" ] && return 1
-	[ -f "${DB}" ] && return 2 # already exist
+	[ -f "${DB}" ] && return 2	# already exist
 	touch "${DB}"
 } 
 

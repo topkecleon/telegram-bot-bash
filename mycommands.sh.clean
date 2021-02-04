@@ -10,7 +10,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 #######################################################
 # shellcheck disable=SC1117
 
@@ -55,6 +55,8 @@ else
 	[ -n "${REMOVEKEYBOARD}" ] && remove_keyboard "${CHAT[ID]}" &
 	[[ -n "${REMOVEKEYBOARD_PRIVATE}" &&  "${CHAT[ID]}" == "${USER[ID]}" ]] && remove_keyboard "${CHAT[ID]}" &
 
+	# uncommet to fix first letter upper case because of smartphone auto correction
+	#[[ "${MESSAGE}" =~  ^/[[:upper:]] ]] && MESSAGE="${MESSAGE:0:1}$(tr '[:upper:]' '[:lower:]' <<<"${MESSAGE:1:1}")${MESSAGE:2}"
 	case "${MESSAGE}" in
 		##################
 		# example command, replace them by your own
@@ -77,6 +79,19 @@ else
 	esac
      }
 
+     mycallbacks() {
+	#######################
+	# callbacks from buttons attached to messages will be  processed here
+	case "${iBUTTON[USER_ID]}+${iBUTTON[CHAT_ID]}" in
+	    *)	# all other callbacks are processed here
+		local callback_answer
+		: # your processing here ...
+		:
+		# Telegram needs an ack each callback query, default empty
+		answer_callback_query "${iBUTTON[ID]}" "${callback_answer}"
+		;;
+	esac
+     }
      myinlines() {
 	#######################
 	# this fuinction is called only if you has set INLINE=1 !!

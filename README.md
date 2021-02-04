@@ -11,10 +11,10 @@ Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/cop
 Linted by [#ShellCheck](https://github.com/koalaman/shellcheck)
 
 ## Prerequisites
-Uses [JSON.sh](http://github.com/dominictarr/JSON.sh) and the magic of sed.
+Uses [JSON.sh](http://github.com/dominictarr/JSON.sh)/[JSON.awk](https://github.com/step-/JSON.awk) and the magic of sed.
 
 Bashbot is written in bash. It depends on commands typically available in a Linux/Unix Environment.
-For more concrete information on the common commands provided by recent versions of [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or [toybox](https://landley.net/toybox/help.html), see [Developer Notes](doc/7_develop.md#common-commands).
+For more information on commands provided by recent versions of [coreutils](https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands), [busybox](https://en.wikipedia.org/wiki/BusyBox#Commands) or [toybox](https://landley.net/toybox/help.html), see [Developer Notes](doc/7_develop.md#common-commands).
 
 **Note for MacOS and BSD Users:** Bashbot will not run without installing additional software as it uses modern bash and (gnu) grep/sed features. See [Install Bashbot](doc/0_install.md).
 
@@ -63,7 +63,8 @@ Bashbot [Documentation](https://github.com/topkecleon/telegram-bot-bash) and [Do
     * Modules, addons, events
     * Setup your environment
     * Bashbot test suite
-* [Examples Directory](examples/README.md)
+* [Examples Directory](examples)
+* [Webhook Example](examples/webhook)
 
 ### Your very first bashbot in a nutshell
 
@@ -146,7 +147,7 @@ Whenever you are processing input from untrusted sources (messages, files, netwo
 from your Bot (e.g. everything in `example/`) and disable/remove all unused bot commands.
 
 It's important to escape or remove `$` in input from user, files or network (_as bashbot does_).
-One of the powerful features of Unix shells is variable and command substitution using `${}` and`$()` can lead to remote code execution (RCE) or remote information disclosure (RID) bugs if unescaped `$` is included in untrusted input (e.g. `$$` or `$(rm -rf /*)`).
+One of the powerful features of Unix shells is variable and command substitution using `${}` and `$()` can lead to remote code execution (RCE) or remote information disclosure (RID) bugs if unescaped `$` is included in untrusted input (e.g. `$$` or `$(rm -rf /*)`).
 
 A powerful tool to improve your scripts is `shellcheck`. You can [use it online](https://www.shellcheck.net/) or
 [install shellcheck locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used extensively in bashbot development
@@ -168,9 +169,11 @@ For the same reason every file your Bot can read is in danger of being disclosed
 ### Secure your Bot installation
 **Your Bot configuration must not be readable by other users.** Everyone who can read your Bots token is able to act as your Bot and has access to all chats the Bot is in!
 
-Everyone with read access to your Bot files can extract your Bots data. Especially your Bot config in`config.jssh` must be protected against other users. No one except you should have write access to the Bot files. The Bot should be restricted to have write access to`count.jssh` and `data-bot-bash` only, all other files must be write protected.
+Everyone with read access to your Bot files can extract your Bots data. Especially your Bot config in `config.jssh` must be protected against other users. No one except you should have write access to the Bot files. The Bot should be restricted to have write access to `count.jssh`, `data-bot-bash/` and `logs/` only, all other files must be write protected.
 
-To set access rights for your bashbot installation to a reasonable default run`sudo ./bashbot.sh init` after every update or change to your installation directory.
+To set access rights for your bashbot installation to a reasonable default run `sudo ./bashbot.sh init` after every update or change to your installation directory.
+
+*Note*: Keep old log files in a safe place or even better delete them, they are GDPR relevant and [may contain information](https://github.com/topkecleon/telegram-bot-bash/issues/174) you don't want to be public.
 
 ## FAQ
 
@@ -188,9 +191,9 @@ Well, that's a damn good question... maybe because I'm a Unix admin from the sto
 - no database, not event driven, not object oriented ...
 
 ### Can I have the single bashbot.sh file back?
-At the beginning bashbot was simply the file`bashbot.sh` that you could copy everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 'modules/*.sh' and much more.
+At the beginning bashbot was simply the file `bashbot.sh` that you could copy everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 'modules/*.sh' and much more.
 
-Hey no problem, if you are finished with your cool bot, run`dev/make-standalone.sh` to create a stripped down version of your bot containing only
+Hey no problem, if you are finished with your cool bot, run `dev/make-standalone.sh` to create a stripped down version of your bot containing only
 'bashbot.sh' and 'commands.sh'! For more information see [Create a stripped down version of your Bot](doc/7_develop.md).
 
 ### Can I send messages from CLI and scripts?
@@ -238,4 +241,4 @@ See `mycommnds.sh.dist` for an example.
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50

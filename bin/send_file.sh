@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1090,SC2034
 #===============================================================================
 #
 #          FILE: bin/send_file.sh
@@ -24,29 +25,16 @@ USAGE='send_file.sh [-h|--help] "CHAT[ID]" "file|URL" "caption ...." [type] [deb
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 25.12.2020 20:24
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 #===============================================================================
 
 ####
 # parse args
 SEND="send_file"
-case "$1" in
-	'')
-		printf "missing arguments\n"
-		;&
-	"-h"*)
-		printf 'usage: %s\n' "${USAGE}"
-		exit 1
-		;;
-	'--h'*)
-		sed -n '3,/###/p' <"$0"
-		exit 1
-		;;
-esac
 
 # set bashbot environment
-# shellcheck disable=SC1090
 source "${0%/*}/bashbot_env.inc.sh" "${5:-debug}" # $5 debug
+print_help "$1"
 
 ####
 # ready, do stuff here -----
@@ -64,5 +52,4 @@ FILE="$2"
 "${SEND}" "${CHAT}" "${FILE}" "$3" "$4"
 
 # output send message result
-jssh_printDB "BOTSENT" | sort -r
-
+print_result

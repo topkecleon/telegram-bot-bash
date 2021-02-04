@@ -3,15 +3,21 @@
 #
 # works together with git pre-push.sh and ADD all changed files since last push
 
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 
 #shellcheck disable=SC1090
 source "${0%/*}/dev.inc.sh"
 
-[ ! -f .git/.lastcommit ] && printf "No previous commit or hooks not installed, use \"git add\" instead ... Abort\n" && exit
+# check for last commit date
+if [ ! -f "${LASTCOMMIT}" ]; then
+	if ! touch -d "$(git log -1 --format=%cD)" "${LASTCOMMIT}"; then
+		printf "No previous commit found, use \"git add\" instead ... Abort\n"
+		exit
+	fi
+fi
 
 set +f
-FILES="$(find ./*  -newer .git/.lastcommit| grep -v -e 'DIST\/' -e 'STANDALONE\/' -e 'JSON.sh')"
+FILES="$(find ./*  -newer "${LASTCOMMIT}" | grep -v -e 'DIST\/' -e 'STANDALONE\/' -e 'JSON.sh')"
 set -f
 # FILES="$(find ./* -newer .git/.lastpush)"
 [ "${FILES}" = "" ] && printf "Nothing changed since last commit ...\n" && exit

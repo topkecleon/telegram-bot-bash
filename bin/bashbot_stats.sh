@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1090,SC2034
 #===============================================================================
 #
 #          FILE: bin/bashbot_stats.sh
@@ -16,25 +17,12 @@ USAGE='bashbot_stats.sh [-h|--help] [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 20:34
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 #===============================================================================
 
-####
-# parse args
-case "$1" in
-	"-h"*)
-		printf "usage: %s\n" "${USAGE}"
-		exit 1
-		;;
-	'--h'*)
-		sed -n '3,/###/p' <"$0"
-		exit 1
-		;;
-esac
-
 # set bashbot environment
-# shellcheck disable=SC1090
 source "${0%/*}/bashbot_env.inc.sh" "$1"
+[ -n "$1" ] && print_help "$1"
 
 ####
 # ready, do stuff here -----

@@ -2,7 +2,7 @@
 #
 # joke hack to obfuscate bashbot.min.sh
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 # shellcheck disable=SC2028,SC2016,SC1117
 
 infile="bashbot.sh"

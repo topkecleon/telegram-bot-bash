@@ -8,14 +8,14 @@
 # | |__/ / |_| |  | | | | |_| | |__   | |____( (_| | | |__ _ 
 # |_____/ \___/   |_| |_|\___/ \___)  |_______)____|_|\___)_|
 #
-# this file *MUST* not be edited! place your config and commands in
-# the file "mycommands.sh". a clean version is provided as "mycommands.sh.clean"
+# this file *MUST* not edited! place your config in the file "mycommands.conf"
+# and commands in "mycommands.sh", a clean version is provided as "mycommands.sh.clean"
 #
 
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 #
 
 # bashbot locale defaults to c.UTF-8, adjust locale in mycommands.sh if needed
@@ -66,6 +66,7 @@ fi
 # copy "mycommands.sh.dist" to "mycommands.sh" and change the values there
 # defaults to no inline, all commands  and nonsense home dir
 export INLINE="0"
+export CALLBACK="0"
 export MEONLY="0"
 export FILE_REGEX="${BASHBOT_ETC}/.*"
 
@@ -76,14 +77,18 @@ export FILE_REGEX="${BASHBOT_ETC}/.*"
 
 
 if [ -z "$1" ] || [[ "$1" == *"debug"* ]];then
-    # detect inline commands....
-    # no default commands, all processing is done in myinlines()
-    if [ "${INLINE}" != "0" ] && [ -n "${iQUERY[ID]}" ]; then
-    	# forward iinline query to optional dispatcher
-	_exec_if_function myinlines
+    #################
+    # detect inline and callback query
+    if [ -n "${iQUERY[ID]}" ]; then
+    	# forward inline query to optional dispatcher
+	[ "${INLINE:-0}" != "0" ] &&  _exec_if_function myinlines
 
-    # regular (global) commands ...
-    # your commands are in mycommands() 
+    elif [ -n "${iBUTTON[ID]}" ]; then
+    	# forward inline query to optional dispatcher
+	[ "${CALLBACK:-0}" != "0" ] && _exec_if_function mycallbacks
+
+    #################
+    # regular command
     else
 	
 	###################
@@ -127,7 +132,7 @@ if [ -z "$1" ] || [[ "$1" == *"debug"* ]];then
 		'/help'*)
 			send_markdown_message "${CHAT[ID]}" "${bashbot_help}"
 			;;
-		'/leavechat'*) # bot leave chat if user is admin in chat
+		'/leavechat'*)	# bot leave chat if user is admin in chat
 			if user_is_admin "${CHAT[ID]}" "${USER[ID]}" || user_is_allowed  "${USER[ID]}" "leave" ; then
 				send_markdown_message "${CHAT[ID]}" "*LEAVING CHAT...*"
    				leave_chat "${CHAT[ID]}"

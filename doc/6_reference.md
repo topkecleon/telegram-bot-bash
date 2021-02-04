@@ -8,7 +8,7 @@ To insert line brakes in a message or caption you can place `\n` in the text.
 ##### send_action
 `send_action` shows users what your bot is currently doing.
 
-*usage:* send_action "${CHAT[ID]}" "action"
+*usage:* send_action "CHAT[ID]" "action"
 
 *"action":* `typing`, `upload_photo`, `record_video`, `upload_video`, `record_audio`, `upload_audio`, `upload_document`, `find_location`.
 
@@ -23,7 +23,7 @@ send_action "${CHAT[ID]}" "record_audio"
 ##### send_normal_message
 `send_normal_message` sends text only messages to the given chat.
 
-*usage:*  send_normal_message "${CHAT[ID]}" "message"
+*usage:*  send_normal_message "CHAT[ID]" "message"
 
 *alias:* _normal_message "message"
 
@@ -41,7 +41,7 @@ has more formatting codes and is more robust, but incompatible with old telegram
 To send characters reserved for markdown v2 formatting, you must prefix them with `\` ( e.g. `\| \= \_ \*`).\
 *Hint*: If a message is not sent, have a look in `logs/ERROR.log`
 
-*usage:* send_markdownv2_message "${CHAT[ID]}" "markdown message"
+*usage:* send_markdownv2_message "CHAT[ID]" "markdown message"
 
 *example:* 
 ```bash
@@ -55,7 +55,7 @@ send_markdownv2_message "${CHAT[ID]}" "*bold* __underlined__ [text](link)"
 This is the old, legacy Telegram markdown style, retained for backward compatibility.
 It supports a [reduced set of Markdown](https://core.telegram.org/bots/api#markdown-style) only
 
-*usage:* send_markdown_message "${CHAT[ID]}" "markdown message"
+*usage:* send_markdown_message "CHAT[ID]" "markdown message"
 
 *alias:* _markdown "message"
 
@@ -70,7 +70,7 @@ send_markdown_message "${CHAT[ID]}" "*bold* _italic_ [text](link)"
 `send_html_message` sends HTML style messages to the given chat.
 Telegram supports a [reduced set of HTML](https://core.telegram.org/bots/api#html-style) only
 
-*usage:* send_html_message "${CHAT[ID]}" "html message" 
+*usage:* send_html_message "CHAT[ID]" "html message" 
 
 *alias:* _html_message "message"
 
@@ -96,7 +96,7 @@ See also [Text formatting options](https://core.telegram.org/bots/api#formatting
 ##### delete_message
 A bot can only delete messages if he is admin of a Chat, if not he can delete his own messages only.
 
-*usage:* delete_message "${CHAT[ID]}" "${MESSAGE[ID]}"
+*usage:* delete_message "CHAT[ID]" "${MESSAGE[ID]}"
 
 See also [deleteMessage limitations](https://core.telegram.org/bots/api#deletemessage)
 
@@ -107,7 +107,7 @@ See also [deleteMessage limitations](https://core.telegram.org/bots/api#deleteme
 
 The main use case for send_message is to process the output of interactive chats and background jobs. **For regular Bot commands I recommend using of the dedicated send_xxx_message() functions from above.**
 
-*usage:* send_message "${CHAT[ID]}" "message"
+*usage:* send_message "CHAT[ID]" "message"
 
 *example:* - see [Usage](2_usage.md#send_message) and [Advanced Usage](3_advanced.md#Interactive-Chats)
 
@@ -118,7 +118,7 @@ The main use case for send_message is to process the output of interactive chats
 ##### send_file
 send_file can send local files, URL's or file_id's as different filex types (_e.g. photo video sticker_)
 
-*usage:* send_file "${CHAT[ID]}" "file/URL/file_id" "caption" ["type"]
+*usage:* send_file "CHAT[ID]" "file/URL/file_id" "caption" ["type"]
 
 URL's must start with `http://` or `https://` and remote server must send an appropriate media type.
 A file_id must start with `file_id://`, all other file names are threated as local files.
@@ -158,7 +158,7 @@ send_file "${CHAT[ID]}" "dog.jpg" "My Dog"
 
 ##### send_album
 
-*usage:* send_album "${CHAT[ID]}" "URL1" "URL2" ... "URLn"
+*usage:* send_album "CHAT[ID]" "URL1" "URL2" ... "URLn"
 
 *example:*
 ```bash
@@ -166,25 +166,27 @@ send_album "$(getConfigKey "botadmin")" "http://www.rrr.de/slider/main-image1.jp
 ```
 
 ##### send_location
-*usage:* send_location "${CHAT[ID]}" "Latitude" "Longitude"
+*usage:* send_location "CHAT[ID]" "Latitude" "Longitude"
 
 
 ##### send_venue
-*usage:* send_venue "${CHAT[ID]}" "Latitude" "Longitude" "Title" "Address" "foursquare id (optional)"
+*usage:* send_venue "CHAT[ID]" "Latitude" "Longitude" "Title" "Address" "foursquare id (optional)"
+
+
+##### send_sticker
+`send_sticker` sends a sticker using a `file_id` to send a sticker that exists on the Telegram servers.
+
+*usage:*  send_sticker "$CHAT[ID]" "file_id"
 
 
 ----
 
 ##### send_keyboard
-Note: Since version 0.6 send_keyboard was changed to use native "JSON Array" notation as used from Telegram.
-Detection and emulation for old format will be removed after 1.0 release!
+`send_keyboard` sends a custom keyboard, Telegram clients will show it instead of the regular keyboard.
+If the user press a button on the custom keyboard, the text shown on the button is send to the chat.
 
 Example Keyboard Array definitions:
 
-- yes no in two rows:
-    - OLD format: 'yes' 'no' (two strings)
-    - NEW format: '[ "yes" ] , [ "no" ]' (two arrays with a string)
-- new layouts made easy with NEW format:
     - Yes No in one row: '[ "yes" , "no" ]'
     - Yes No plus Maybe in 2.row: '[ "yes" , "no" ] , [ "maybe" ]' 
     - number pad style keyboard: '[ "1" , "2" , "3" ] , [ "4" , "5" , "6" ] , [ "7" , "8" , "9" ] , [ "0" ]'
@@ -205,55 +207,262 @@ _keyboard_numpad
 ```
 
 ##### remove_keyboard
+`remove_keyboard` deletes the last custom keyboard. Depending on used Telegram client this will hide or delete the custom keyboard.
+
 *usage:* remove_keybord "$CHAT[ID]" "message"
 
 *alias:* _del_keyboard "message"
 
 *See also: [Keyboard Markup](https://core.telegram.org/bots/api/#replykeyboardmarkup)*
 
+
 ----
 
 ##### send_button
+`send_button` sends a text message with a single button to open an URL attached.
+
 *usage:*  send_button "$CHAT[ID]" "message" "text" "URL"
 
 *alias:* _button "text" "URL"
 
 *example:* 
 ```bash
-send_button "${CHAT[ID]}" "MAKE MONEY FAST!!!" "Visit my Shop" "https://dealz.rrr.de"
+send_button "${CHAT[ID]}" "Awesome Deals!" "Visit my Shop" "https://dealz.rrr.de"
 ```
 
-##### send_sticker
-`send_sticker` sends a sticker using a `file_id` to send a sticker that exists on the Telegram servers.
+### Inline buttons
+Functions to send/edit messages with with some buttons attached.
 
-*usage:*  send_sticker "$CHAT[ID]" "file_id"
+##### send_inline_buttons
+`senbd_inline_buttons` sends a message with multiple buttons attached.  Buttons can be an URL or a CALLBACK button.
+By default all buttons are displayed on one row, an empty string `""` starts a new row.  
 
+*usage:* send_inline_buttons "CHAT[ID]" "text|url" "text|url" "" "url" "" "text|url" ...
 
-##### send_inline_keyboard
-Even its called keyboard, this function is different from send_keyboard. The main difference is that it's only possible to
-specify URL buttons, no Text Buttons and the Buttons must be an Array of Buttons as specified for
-[Telegram InlineMarkup](https://core.telegram.org/bots/api#inlinekeyboardmarkup).
+URL buttons are specified as a `"text|url"` pair separated by `|`, `text` is shown on the button and `url` is opened on button click.
+If `"url"` without text is given, `url` is shown on the button and opened on button click.
 
-The inline buttons must be specified as a JSON string in the following format:
+*Important* An `url` not startung with http(s):// or tg:// will create  a
+[CALLBACK Button](https://core.telegram.org/bots/2-0-intro#callback-buttons).
 
-`[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ]```
-
-Each button consists of a pair of text and URL values, sourrounded by '{ }', multiple buttons are separated by '**,**' and everything is wrapped in '[ ]'.
-
-*usage:*  send_inline_keyboard "chat-id" "message" "[ {"text":"text", "url":"url"} ...]"
-
-*alias:* _inline_keyboard "[{"text":"text", "url":"url"} ...]"
 
 *example:* 
 ```bash
-send_inline_keyboard "${CHAT[ID]}" "MAKE MONEY FAST!!!" '[{"text":"Visit my Shop", url"":"https://dealz.rrr.de"}]'
-send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"button 1", url"":"url 1"}, {"text":"button 2", url"":"url 2"} ]'
-send_inline_keyboard "${CHAT[ID]}" "" '[{"text":"b 1", url"":"u 1"}, {"text":"b 2", url"":"u 2"}, {"text":"b 2", url"":"u 2"} ]'
+# one button, same as send_button
+send_inline_buttons "${CHAT[ID]}" "Best Dealz!" "Visit my Shop|https://dealz.rrr.de"
+
+# result
+   Best Dealz!
+  +----------------------------+
+  |       Visit my Shop        |
+  +----------------------------+
+
+# one button row
+send_inline_buttons "${CHAT[ID]}" "message" "Button 1|http://rrr.de" "Button 2|http://rrr.de"
+
+# result
+   message ...
+  +----------------------------+
+  |   Button 1  |   Button 2   |
+  +----------------------------+
+
+# multiple button rows
+send_inline_buttons "${CHAT[ID]}" "message" "Button 1|http://rrr.de" "Button 2|http://rrr.de" "" "Button on second row|http://rrr.de"
+
+# result
+   message ...
+  +----------------------------+
+  |   Button 1  |   Button 2   |
+  |----------------------------|
+  |   Button on second row     |
+  +----------------------------+
+
+```
+
+##### edit_inline_buttons
+`edit_inline_buttons` add inline buttons to existing messages,  existing inline buttons will be replaced.
+Only the attached buttons will be changed, not the message.
+
+*usage:*  edit_inline_buttons "CHAT[ID]" "MESSAGE[ID]" "text|url" "text|url" ...
+
+
+*example:* 
+```bash
+# message without button
+send_markdownv2_message "${CHAT[ID]}" "*HI* this is a _markdown_ message ..."
+echo ${BOTSEND[ID]}
+567
+
+# add one button row
+edit_inline_keyboard "${CHAT[ID]}" "567" "button 1|http://rrr.de" "button 2|http://rrr.de"
+
+# change buttons
+edit_inline_keyboard "${CHAT[ID]}" "567" "Success edit_inline_keyboard|http://rrr.de"
+
+# delete button by replace whole message
+edit_markdownv2_message "${CHAT[ID]}" "*HI* this is a _markdown_ message inline *removed*..."
+
+```
+
+##### answer_callback_query
+Each request send from a CALLBACK button must be answered by a call to `answer_callback_query`.
+If alert is given an alert will be shown by the Telegram client instead of a notification.
+
+*usage:*  answer_callback_query "iBUTTON[ID]" "text notification ..." ["alert"]
+
+*example:* 
+```bash
+answer_callback_query "${iBUTTON[ID]}" "Button data is: ${iBUTTON[DATA]}"
+
+answer_callback_query "${iBUTTON[ID]}" "Alert: Button pressed!" "alert"
+```
+
+
+```bash
+# CALLBACK button example
+send_inline_buttons "${CHAT[ID]}" "Press Button ..." "   Button   |RANDOM-BUTTON"
+
+# result
+   Press Button ...
+  +----------------------------+
+  |         Button             |
+  +----------------------------+
+
+# react on button press from mycommands
+   CALLBACK="1" # enable callbacks
+...
+   mycallbacks() {
+	local answer
+	#######################
+	# callbacks from buttons attached to messages will be  processed here
+	if [ "${iBUTTON[DATA]}" = "RANDOM-BUTTON" ]; then
+	    answer="Button pressed"
+	    edit_inline_buttons "${iBUTTON[CHAT_ID]}" "${iBUTTON[MESSAGE_ID]}" " Button ${RANDOM}|RANDOM-BUTTON"
+	fi
+
+	# Telegram needs an ack each callback query, default empty
+	answer_callback_query "${iBUTTON[ID]}" "${answer}"
+	;;
+   }
+
+# result, XXXXX: random number changed on each press
+   Press Button ...
+  +----------------------------+
+  |      Button  XXXXXX        |
+  +----------------------------+
+
+```
+
+----
+
+#### Inline keyboards
+Functions to send/edit more complex button layouts (keyboards), I suggest to start with the simpler inline buttons above.
+
+##### _button_row
+`_button_row` is a helper function to specify a keyboard row in the form "text|url" pairs.
+Internally used by inline buttons also.
+
+*usage:*  _button_row "text|url" "text|url" "url" "text|url" ...
+
+*example:* 
+```bash
+# similar to send_button
+send_inline_keyboard "${CHAT[ID]}" "Best Dealz!" "$(_button_row "Visit my Shop|https://dealz.rrr.de")"
+
+# similar to send_inline_button
+send_inline_keyboard "${CHAT[ID]}" "message" "$(_button_row "button 1|http://rrr.de" "button 2|http://rrr.de")"
+
+# multiple button rows
+send_inline_keyboard "${CHAT[ID]}" "message" "$(_button_row "b1|http://rrr.de" "b2|http://rrr.de" "" "b3|http://rrr.de" "b4|http://rrr.de")"
+```
+
+##### send_inline_keyboard
+`send_inline_keyboard` sends a message with keyboards attached, keyboards must be specified in JSON format.
+
+*usage:*  send_inline_keyboard "CHAT[ID]" "message" "[JSON button array]"
+
+I suggest to use `_button_row` to create the used JSON. For hand crafted JSON the following format must be used,
+see [Inline Keyboard Markup](https://core.telegram.org/bots/api#inlinekeyboardmarkup)
+
+URL `[ {"text":"text1", "url":"url1"}, ... {"text":"textN", "url":"urlN"} ],[...]`\
+CALLBACK `[ {"text":"text1", "callback_data":"abc"}, ... {"text":"textN", "callback_data":"defg"} ],[...]`\
+An URL Button opens the given URL, a CALLBACK button sends an update the bot must react on. 
+
+*example:* 
+```bash
+# send_button
+send_inline_keyboard "${CHAT[ID]}" "Best Dealz!" '[{"text":"Visit my Shop", "url":"https://dealz.rrr.de"}]'
+
+# send_inline_button
+send_inline_keyboard "${CHAT[ID]}" "message" '[{"text":"button 1", url"":"http://rrr.de"}, {"text":"button 2", "url":"http://rrr.de"} ]'
+
+# multiple button rows
+send_inline_keyboard "${CHAT[ID]}" "message" '[{"text":"b1", "url":"http://rrr.de"}, {"text":"b2", "url":"http://rrr.de"}], [{"text":"b3", "url":"http://rrr.de"}, "text":"b4", "url":"http://rrr.de"}]'
+
+# more complex keyboard, note the ,
+keyboard_text="Deal-O-Mat public groups ..."
+keyboard_json="$(_button_row "🤖 #Home of Deal-O-Mat Bot 🤖|https://dealz.rrr.de/dealzbot.html")
+, $(_button_row "Amazon DE|https://t.me/joinchat/IvvRtlxxxxx" "Home & Family|https://t.me/joinchat/VPh_wexxxxx")
+, $(_button_row "Amz International |https://t.me/joinchat/IvvRtkxxxxx" "Amazon WHD|https://t.me/joinchat/IvvRxxxxx")
+, $(_button_row "Smartphones|https://t.me/joinchat/IvvRthtqxxxxx" "Gaming|https://t.me/joinchat/IvvRthRyrsmxxxxx")
+, $(_button_row "Accessoires|https://t.me/joinchat/IvvRthlJxxxxx" "eBay|https://t.me/joinchat/IvvRthxxxxx")
+, $(_button_row "!! Offtopic Discussions !!|https://t.me/joinchat/IvvRthRhxxxxx-pZrWw")
+, $(_button_row "Deals >100|https://t.me/joinchat/IvvRtxxxxx" "Leasing|https://t.me/joinchat/IvvRthRbxxxxx")
+, $(_button_row "Deals >1000|https://t.me/joinchat/IvvRtlxxxxx" "Deals >500|https://t.me/joinchat/IvvRthvbHxxxxx")
+
+send_inline_keyboard "CHAT[ID]" "${keyboard_text}" "${keyboard_json}"
+
+# result
+  +---------------------------------+
+  |  🤖 #Home of Deal-O-Mat Bot 🤖  |
+  |---------------------------------|
+  |    Amazon DE   | Home & Family  |
+  |----------------|----------------|
+  |  Amz Internat  |   Amazon WHD   |
+  |----------------|----------------|
+  |  Smartphones   |     Gaming     |
+  |----------------|----------------|
+  |  Accessoires   |     eBay       |
+  |---------------------------------|
+  |   !!  Offtopic Discussions !!   |
+  |---------------------------------|
+  |   Deals >100   |    Leasing     |
+  |----------------|----------------|
+  |  Deals >1000   |   Deals >500   |
+  +---------------------------------+
+
 ```
 
 *See also [Inline keyboard markup](https://core.telegram.org/bots/api/#inlinekeyboardmarkup)*
 
+##### edit_inline_keyboard
+`edit_inline_keyboard` add inline keyboards to existing messages and replace existing inline keyboards.
+Only the attached keyboard will be changed, not the message.
+
+*usage:*  edit_inline_keyboard "CHAT[ID]" "MESSAGE[ID]" "[JSON button array]"
+
+To create a JSON button array I suggest to use `_button_row`.
+
+*example:* 
+```bash
+# message without button
+send_markdownv2_message "${CHAT[ID]}" "*HI* this is a _markdown_ message ..."
+echo ${BOTSEND[ID]}
+567
+
+# add one button row with help of _button_row
+edit_inline_keyboard "${CHAT[ID]}" "567" "$(_button_row "button 1|http://rrr.de" "button 2|http://rrr.de")"
+
+# change buttons with help of _button_row
+edit_inline_keyboard "${CHAT[ID]}" "567" "$(_button_row "Success edit_inline_keyboard|http://rrr.de")"
+
+# delete button by replace whole message
+edit_markdownv2_message "${CHAT[ID]}" "*HI* this is a _markdown_ message inline *removed*..."
+
+```
+
 ----
+
 
 ### Edit / Replace Messages
 
@@ -270,7 +479,7 @@ To replace a message you must know the message id of the the original message. T
 ##### edit_normal_message
 `edit_normal_message` replace a message with a text message in the given chat.
 
-*usage:*  edit_normal_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+*usage:*  edit_normal_message "CHAT[ID]" "MESSAGE-ID" "message"
 
 *example:* 
 ```bash
@@ -283,7 +492,7 @@ edit_normal_message "${CHAT[ID]}" "${saved-id}" "this is another text"
 ##### edit_markdownv2_message
 `edit_markdownv2_message` replace a message with a markdown v2 message in the given chat.
 
-*usage:*  edit_markdownv2_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+*usage:*  edit_markdownv2_message "CHAT[ID]" "MESSAGE-ID" "message"
 
 *example:* 
 ```bash
@@ -296,7 +505,7 @@ edit_markdownv2_message "${CHAT[ID]}" "${saved-id}" "this is __markdown__ *V2* t
 ##### edit_markdown_message
 `edit_markdown_message` replace a message with a markdown message in the given chat.
 
-*usage:*  edit_markdown_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+*usage:*  edit_markdown_message "CHAT[ID]" "MESSAGE-ID" "message"
 
 *example:* 
 ```bash
@@ -309,7 +518,7 @@ edit_markdown_message "${CHAT[ID]}" "${saved-id}" "this is *markdown* text"
 ##### edit_html_message
 `edit_html_message` replace a message with a html message in the given chat.
 
-*usage:*  edit_html_message "${CHAT[ID]}" "MESSAGE-ID" "message"
+*usage:*  edit_html_message "CHAT[ID]" "MESSAGE-ID" "message"
 
 *example:* 
 ```bash
@@ -322,7 +531,7 @@ edit_html_message "${CHAT[ID]}" "${saved-id}" "this is <b>html</b> text"
 ##### edit_message_caption
 `edit_message_caption` changes the caption of a message (photo, audio, video, document) in the given chat.
 
-*usage:*  edit_message_caption "${CHAT[ID]}" "MESSAGE-ID" "caption"
+*usage:*  edit_message_caption "CHAT[ID]" "MESSAGE-ID" "caption"
 
 
 ---
@@ -330,55 +539,60 @@ edit_html_message "${CHAT[ID]}" "${saved-id}" "this is <b>html</b> text"
 ### Manage Group
 To use the following functions the bot must have administrator status in the chat / group
 
+##### chat_member_count
+`chat_member_count` returns (putput) number of chat members.
+
+*usage:* num_members="$(chat_member_count "CHAT[ID]")"
+
 ##### set_chat_title
 `set_chat_title` sets a new chat title. If new title is the same than current title Telegram return error 400
 with description "Bad Request: chat title is not modified"
 
-*usage:* set_chat_title "${CHAT[ID]}" "new chat title"
+*usage:* set_chat_title "CHAT[ID]" "new chat title"
 
 
 ##### set_chat_description
 `set_chat_description` sets a new description title. If new description is the same than current description Telegram return error 400
 with description "Bad Request: chat description is not modified"
 
-*usage:* set_chat_description "${CHAT[ID]}" "new chat description"
+*usage:* set_chat_description "CHAT[ID]" "new chat description"
 
 
 ##### new_chat_invite
 `new_chat_invite` generate a new invite link for a chat; any previously generated link is revoked. 
 Returns the new invite link as String on success.
 
-*usage:* new_chat_invite "${CHAT[ID]}"
+*usage:* new_chat_invite "CHAT[ID]"
 
 
 ##### delete_chat_photo
 
-*usage:* delete_chat_photo "${CHAT[ID]}"
+*usage:* delete_chat_photo "CHAT[ID]"
 
 
 ##### pin_chat_message
 # $1 chat, $2 message_id 
 `pin_chat_message` add a message to the list of pinned messages in a chat.
 
-*usage:* pin_chat_message "${CHAT[ID]}" "message_id"
+*usage:* pin_chat_message "CHAT[ID]" "message_id"
 
 
 ##### unpin_chat_message
 `unpin_chat_message` remove a message from the list of pinned messages in a chat.
 
-*usage:* unpin_chat_message "${CHAT[ID]}" "message_id"
+*usage:* unpin_chat_message "CHAT[ID]" "message_id"
 
 
 ##### unpinall_chat_message
 `unpinall_chat_message` clear the list of pinned messages in a chat.
 
-*usage:* unpinall_chat_message "${CHAT[ID]}"
+*usage:* unpinall_chat_message "CHAT[ID]"
 
 
 ##### delete_chat_stickers
 `delete_chat_stickers` deletes a group sticker set from a supergroup.
 
-*usage:* delete_chat_stickers "${CHAT[ID]}"
+*usage:* delete_chat_stickers "CHAT[ID]"
 
 
 ----
@@ -390,21 +604,21 @@ More advanced API functions are currently not implemented in bashbot.
 ##### kick_chat_member
 If your Bot is a chat admin he can kick and ban a user.
 
-*usage:* kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
+*usage:* kick_chat_member "CHAT[ID]" "USER[ID]"
 
-*alias:* _kick_user "${USER[ID]}"
+*alias:* _kick_user "USER[ID]"
 
 ##### unban_chat_member
 If your Bot is a chat admin can unban a kicked user.
 
-*usage:*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
+*usage:*  unban_chat_member "CHAT[ID]" "USER[ID]"
 
-*alias:* _unban "${USER[ID]}"
+*alias:* _unban "USER[ID]"
 
 ##### leave_chat
 Your Bot will leave the chat.
 
-*usage:* leave_chat "${CHAT[ID]}"
+*usage:* leave_chat "CHAT[ID]"
 
 *alias:* _leave 
 
@@ -417,6 +631,25 @@ fi
 
 See also [kick Chat Member](https://core.telegram.org/bots/api/#kickchatmember)*
 
+
+##### promote_chat_member
+`promote_chat_member` promote or denote user rights in a chat. Bot must be admin and can only promote/denote rights he owns.
+
+Right are specified as "right:bool" pairs, where right is one of `long` or `short` listed below, followed
+by `:true` or `:false`. Anything but `:true` (e.g. nothing or :xyz) is `:false`.
+
+long: `is_anonymous can_change_info can_post_messages can_edit_messages can_delete_messages can_invite_users can_restrict_members can_pin_messages can_promote_member`
+short: `anon change post edit delete invite restrict pin promote`
+
+*usage:* promote_chat_member "CHAT[ID]" "USER[ID]" "right[:true|false]" ... "right[:true|false]"
+
+See also [promote Chat Member](https://core.telegram.org/bots/api#promotechatmember)*
+
+*example:* 
+```bash
+#                                 USER      can post,      can't edit,     can't delete, can't pin message, can invite users
+promote_chat_member "CHAT[ID}" "USER[ID]" "post:true"  "can_edit_message" "delete:false"   "pin:xxx"        "invite:true"
+```
 ----
 
 The following functions are bashbot only and not part of the Telegram API. 
@@ -424,7 +657,7 @@ The following functions are bashbot only and not part of the Telegram API.
 ##### bot_is_admin
 Return true (0) if bot is admin or creator of given chat.
  
-*usage:* bot_is_admin "${CHAT[ID]}"
+*usage:* bot_is_admin "CHAT[ID]"
 
 
 *example:* 
@@ -437,7 +670,7 @@ fi
 ##### user_is_botadmin
 Return true (0) if user is admin of bot, user id if botadmin is read from file './botadmin'.
 
-*usage:*  user_is_botadmin "${USER[ID]}"
+*usage:*  user_is_botadmin "USER[ID]"
 
 *alias:* _is_botadmin 
 
@@ -449,14 +682,14 @@ user_is_botadmin "${CHAT[ID]}" && send_markdown_message "${CHAT[ID]}" "You are *
 ##### user_is_creator
 Return true (0) if user is creator of given chat or chat is a private chat.
 
-*usage:* user_is_creator "${CHAT[ID]}" "${USER[ID]}"
+*usage:* user_is_creator "CHAT[ID]" "USER[ID]"
 
 *alias:* _is_creator
 
 ##### user_is_admin
 Return true (0) if user is admin or creator of given chat.
  
-*usage:* user_is_admin "${CHAT[ID]}" "${USER[ID]}"
+*usage:* user_is_admin "CHAT[ID]" "USER[ID]"
 
 *alias:* _is_admin
 
@@ -474,7 +707,7 @@ fi
 `uers_is_allowed` checks if: user id botadmin, user is group admin or user is allowed to execute action..
 Allowed actions are configured as User Access Control rules, see [Advanced Usage](3_advanced.md)
 
-*usage:* user_is_allowed "${USER[ID]}" "action" "${CHAT[ID]}"
+*usage:* user_is_allowed "USER[ID]" "action" "CHAT[ID]"
 
 *example:* 
 ```bash
@@ -562,7 +795,7 @@ chats and send messages based on time or other external events.
 ##### start_proc
 `startproc` starts a script, the output of the script is sent to the user or chat, user input will be sent back to the script. see [Advanced Usage](3_advanced.md#Interactive-Chats)
 
-*usage:* start_proc "${CHAT[ID]}" "script"
+*usage:* start_proc "CHAT[ID]" "script"
 
 *alias:* startproc "script"
 
@@ -575,7 +808,7 @@ startproc 'examples/calc.sh'
 ##### check_proc
 Return true (0) if an interactive script is running in the chat. 
 
-*usage:* check_prog "${CHAT[ID]}"
+*usage:* check_prog "CHAT[ID]"
 
 *alias:* checkprog 
 
@@ -591,7 +824,7 @@ fi
 ##### kill_proc
 Kill the interactive script running in the chat
 
-*usage:* kill_proc "${CHAT[ID]}"
+*usage:* kill_proc "CHAT[ID]"
 
 *alias:* killproc
 
@@ -611,7 +844,7 @@ Starts a script as a background job and attaches a job name to it. All output fr
 
 In contrast to interactive chats, background jobs do not receive user input and can run forever. In addition you can suspend and restart running jobs, e.g. after reboot.
 
-*usage:* start_back "${CHAT[ID]}" "script" "jobname"
+*usage:* start_back "CHAT[ID]" "script" "jobname"
 
 *alias:* background "script" "jobname"
 
@@ -623,7 +856,7 @@ background "examples/notify.sh" "notify"
 ##### check_back
 Return true (0) if an background job is active in the given chat. 
 
-*usage:*  check_back "${CHAT[ID]}" "jobname"
+*usage:*  check_back "CHAT[ID]" "jobname"
 
 *alias:*  checkback "jobname"
 
@@ -639,7 +872,7 @@ fi
 
 ##### kill_back
 
-*usage:* kill_back "${CHAT[ID]}" "jobname"
+*usage:* kill_back "CHAT[ID]" "jobname"
 
 *alias:* killback "jobname"
 
@@ -660,7 +893,7 @@ fi
 `send_interactive` is used to forward messages to interactive jobs.
 Usually a message is automatically forwarded from within `commands.sh`, but you can send messages yourself.
 
-*usage:* send_interactive "${CHAT[ID]}" "message"
+*usage:* send_interactive "CHAT[ID]" "message"
 
 ----
 
@@ -991,6 +1224,91 @@ https://linuxconfig.org/how-to-use-arrays-in-bash-script
 
 ----
 
+### Manage webhook
+Bashbot default mode is to poll Telegram server for updates but Telegram offers also webhook as a more efficient method to deliver updates.
+
+*Important*: Before enable webhook you must setup your server to [receive and process webhook updates from Telegram](../examples/webhook)
+I recommend to use webhook with a test bot first.
+
+##### get_webhook_info
+`get_webhook_info` get current status of webhook for your bot, e.g. url, waiting updates, last error.
+
+*usage:*  get_webhook_info
+ 
+*example:* 
+```bash
+bin/any_command.sh get_webhook_info
+
+["URL"] ""
+["OK"]  "true"
+["LASTERR"]     ""
+["COUNT"]       "0"
+["CERT"]        "false"
+["result","pending_update_count"]       "0"
+["ok"]  "true"
+["result","has_custom_certificate"]     "false"
+```
+
+
+##### delete_webhook
+`delete_webhook` deletes your bots current webhook, deletes outstanding updates also if second arg is `true`
+
+*usage:*  delete_webhook [true|false]
+ 
+*example:* 
+
+```bash
+bin/any_command.sh delete_webhook false
+
+["RESULT"]      "true"
+["OK"]  "true"
+["result"]      "true"
+["ok"]  "true"
+["description"] "Webhook was deleted"
+```
+
+
+##### set_webhook
+`set_webhook` instructs Telegram to use your bots webhook for delivering updates. If webhook is set 
+it's no more possible to pull updates from `bashbot start`, you must delete webhook first.
+
+*Important*: Before using webhook you must setup your server to receive and process updates from Telegram!
+
+*usage:*  set_webhook "https://host.dom[:port][/path]" [max_conn]
+ 
+First arg is webhook URL used to send updates to your bot, `:port` and `/path` are optional. 
+If `:port` is given it must be one of `:443`, `:80`, `:88` or `:8443`, default is`:80`.
+For security reasons `BOTTOKEN` will be added to URL (_e.g. `https://myhost.com` -> `https://myhost.com/12345678:azndfhbgdfbbbdsfg/`_).
+
+Second arg is max connection rate in the range 1-100, bashbot default is 1.
+
+*example:* 
+
+```bash
+bin/any_command.sh set_webhook "https://myhost.com/telegram" "2"
+
+["OK"]  "true"
+["RESULT"]      "true"
+["ok"]  "true"
+["result"]      "true"
+["description"] "Webhook is set"
+
+bin/any_command.sh get_webhook_info
+
+["OK"]  "true"
+["URL"] "https://myhost.com/telegram/12345678:AABBCCDDEE...aabbccee124567890/"
+["COUNT"]       "0"
+["CERT"]        "false"
+["ok"]  "true"
+["result","ip_address"] "1.2.3.4"
+["result","url"]        "https://myhost.com/telegram/12345678:AABBCCDDEE...aabbccee124567890/"
+["result","pending_update_count"]       "0"
+["result","max_connections"]    "2"
+["result","has_custom_certificate"]     "false"
+```
+
+----
+
 ### Aliases - shortcuts for often used functions 
 Aliases are handy shortcuts for use in `mycommands.sh` *only*, they avoid error prone typing of  "${CHAT[ID]}" "${USER[ID]}" as much as possible.
 Do not use them in other files e.g. `bashbot.sh`, modules, addons etc.
@@ -1017,13 +1335,13 @@ Do not use them in other files e.g. `bashbot.sh`, modules, addons etc.
 
 ##### _kick_user
 
-*usage:* _kick_user "${USER[ID]}"
+*usage:* _kick_user "USER[ID]"
 
 *alias for:* kick_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
 ##### _unban
 
-*usage:* _unban "${USER[ID]}"
+*usage:* _unban "USER[ID]"
 
 *alias for:*  unban_chat_member "${CHAT[ID]}" "${USER[ID]}"
 
@@ -1060,16 +1378,6 @@ Do not use them in other files e.g. `bashbot.sh`, modules, addons etc.
 *alias for:* send_markdown_message "${CHAT[ID]}" "message"
 
 ----
-
-#### _inline_button
-*usage:* _inline_button "${1}" "${2}" 
-
-*alias for:* send_inline_button "${CHAT[ID]}" "" "${1}" "${2}" 
-
-#### _inline_keyboard
-*usage:* _inline_keyboard "${1}"
-
-*alias for:* _inline_keyboard "${CHAT[ID]}" "" "${1}"
 
 #### _keyboard_numpad
 *usage:* _keyboard_numpad
@@ -1199,7 +1507,7 @@ killallproc
 ----
 
 ##### get_file
-*usage:* url="$(get_file "${CHAT[ID]}" "message")"
+*usage:* url="$(get_file "CHAT[ID]" "message")"
 
 ----
 
@@ -1233,7 +1541,7 @@ Output ARRAY as JSON.sh style data to STDOUT
 ----
 
 ##### get_chat_member_status
-*usage:* get_chat_member_status "${CHAT[ID]}" "${USER[ID]}"
+*usage:* get_chat_member_status "CHAT[ID]" "USER[ID]"
 
 
 ----
@@ -1266,8 +1574,9 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 
 *usage:* ME="$(getBotName)"
 
+
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 

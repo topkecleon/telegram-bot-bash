@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 
 # will be automatically sourced from bashbot
 
@@ -137,15 +137,63 @@ remove_keyboard() {
 	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
 }
 
+# buttons will specified as "texts
+#|url" ... "text|url" empty arg starts new row
+# url not starting with http:// or https:// will be send as callback_data 
+send_inline_buttons(){
+	send_inline_keyboard "$1" "$2" "$(_button_row "${@:3}")"
+}
+
+# $1 CHAT $2 message-id $3 buttons
+# buttons will specified as "text|url" ... "text|url" empty arg starts new row
+# url not starting with http:// or https:// will be send as callback_data 
+edit_inline_buttons(){
+	edit_inline_keyboard "$1" "$2" "$(_button_row "${@:3}")"
+}
+
+
+# $1 CHAT $2 message $3 button text $4 button url
+send_button() {
+	send_inline_keyboard "$1" "$2" '[{"text":"'"$(JsonEscape "$3")"'", "url":"'"$4"'"}]'
+}
+
+# helper function to create json for a button row
+# buttons will specified as "text|url" ... "text|url" empty arg starts new row
+# url not starting with http:// or https:// will be send as callback_data 
+_button_row() {
+	[ -z "$1" ] && return 1
+	local arg type json sep
+	for arg in "$@"
+	do
+		[ -z "${arg}" ] && sep="],[" && continue
+		type="callback_data"
+		[[ "${arg##*|}" =~ ^(https*://|tg://) ]] && type="url"
+		json+="${sep}"'{"text":"'"$(JsonEscape "${arg%|*}")"'", "'"${type}"'":"'"${arg##*|}"'"}'
+		sep=","
+	done
+	printf "[%s]" "${json}"
+}
+
+# raw inline functions, for special use
+# $1 CHAT $2 message-id $3 keyboard
+edit_inline_keyboard() {
+	sendJson "$1" '"message_id":'"$2"', "reply_markup": {"inline_keyboard": [ '"$3"' ]}' "${URL}/editMessageReplyMarkup"
+	# JSON='"message_id":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
+}
+
+
 # $1 CHAT $2 message $3 keyboard
 send_inline_keyboard() {
-	local text; text='"text":"'$(JsonEscape "$2")'"'; [ -z "$2" ] && text='"text":"'"Keyboard:"'"'
+	local text; text='"text":"'$(JsonEscape "$2")'"'; [ -z "$2" ] && text='"text":"..."'
 	sendJson "$1" "${text}"', "reply_markup": {"inline_keyboard": [ '"$3"' ]}' "${MSG_URL}"
 	# JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
 }
-# $1 CHAT $2 message $3 button text $4 URL
-send_button() {
-	send_inline_keyboard "$1" "$2" '[ {"text":"'"$(JsonEscape "$3")"'", "url":"'"$4"'"}]' 
+
+# $1 callback id, $2 text to show, alert if not empty
+answer_callback_query() {
+	local alert
+	[ -n "$3" ] && alert='","show_alert": true'
+	sendJson "" '"callback_query_id": "'"$1"'","text":"'"$2${alert}"'"' "${URL}/answerCallbackQuery"
 }
 
 # $1 chat, $2 file_id on telegram server 
@@ -160,7 +208,7 @@ if detect_curl ; then
   # $1 chat $3 ... $n URL or ID
   send_album(){
 	[ -z "$1" ] && return 1
-	[ -z "$3" ] && return 2 # minimum 2 files
+	[ -z "$3" ] && return 2	# minimum 2 files
 	local CHAT JSON IMAGE; CHAT="$1"; shift 
 	for IMAGE in "$@"
 	do
@@ -196,13 +244,13 @@ send_file(){
 	else
 		# we have a file, check file location ...
 		media="FILE"
-		[[ "${file}" = *'..'* || "${file}" = '.'* ]] && err=1  # no directory traversal
+		[[ "${file}" = *'..'* || "${file}" = '.'* ]] && err=1 	# no directory traversal
 		if [[ "${file}" = '/'* ]] ; then
-			[[ ! "${file}" =~ ${FILE_REGEX} ]] && err=2 # absolute must match REGEX
+			[[ ! "${file}" =~ ${FILE_REGEX} ]] && err=2	# absolute must match REGEX
 		else
-			file="${UPLOADDIR:-NOUPLOADDIR}/${file}" # others must be in UPLOADDIR
+			file="${UPLOADDIR:-NOUPLOADDIR}/${file}"	# others must be in UPLOADDIR
 		fi
-		[ ! -r "${file}" ] && err=3 # and file must exits of course
+		[ ! -r "${file}" ] && err=3	# and file must exits of course
 		# file path error, generate error response
 		if [ -n "${err}" ]; then
 		    BOTSENT=(); BOTSENT[OK]="false"
@@ -295,7 +343,7 @@ forward_message() {
 	[ -z "$3" ] && return
 	sendJson "$1" '"from_chat_id": '"$2"', "message_id": '"$3"'' "${URL}/forwardMessage"
 }
-forward() { # backward compatibility
+forward() {	# backward compatibility
 	forward_message "$@" || return
 }
 
@@ -323,7 +371,7 @@ send_message() {
 		sent=y
 	fi
 	if [ -n "${keyboard}" ]; then
-		if [[ "${keyboard}" != *"["* ]]; then # pre 0.60 style
+		if [[ "${keyboard}" != *"["* ]]; then	# pre 0.60 style
 			keyboard="[ ${keyboard//\" \"/\" \] , \[ \"} ]"
 		fi
 		send_keyboard "$1" "${text}" "${keyboard}"

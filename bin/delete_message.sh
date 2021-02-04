@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1090,SC2034
 #===============================================================================
 #
 #          FILE: bin/delete_message.sh
@@ -19,32 +20,17 @@ USAGE='delete_message.sh [-h|--help]  "CHAT[ID]" "MESSAGE[ID]" [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 03.01.2021 15:37
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 #===============================================================================
 
 ####
 # parse args
 DELETE="delete_message"
-case "$1" in
-	'')
-		printf "missing arguments\n"
-		;&
-	"-h"*)
-		printf 'usage: %s\n' "${USAGE}"
-		exit 1
-		;;
-	'--h'*)
-		sed -n '3,/###/p' <"$0"
-		exit 1
-		;;
-esac
-
 
 # set bashbot environment
-# shellcheck disable=SC1090
 source "${0%/*}/bashbot_env.inc.sh" "${3:-debug}" # $3 debug
+print_help "$1"
 
-####
 ####
 # ready, do stuff here -----
 if [ "$1" == "BOTADMIN" ]; then
@@ -59,5 +45,4 @@ fi
 [ "${BOTSENT[OK]}" = "true" ] && BOTSENT[ID]="$2"
 
 # output send message result
-jssh_printDB "BOTSENT" | sort -r
-
+print_result

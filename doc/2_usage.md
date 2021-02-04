@@ -33,14 +33,19 @@ Have FUN!
 ├── JSON.sh              # bashbots JSON parser, see https://github.com/dominictarr/JSON.sh
 │
 ├── bin                  # ready to use scripts, use `scriptname --help` for help
+│   ├── bashbot_stats.sh         # does what it says ...
+│   ├── send_broadcast.sh        # send message to all known chats
 │   ├── send_message.sh          # send message to given chat
 │   ├── edit_message.sh          # replace given message id in given chat
-│   ├── delete_message.sh        # delete given message id in given chat
-│   ├── send_broadcast.sh        # send message to all known chats
 │   ├── send_file.sh             # send file to given chat
-│   ├── bashbot_stats.sh         # does what it says ...
+│   ├── delete_message.sh        # delete given message id in given chat
+│   ├── send_buttons.sh          # send message with attached button
+│   ├── edit_buttons.sh          # attach/edit message buttons
+│   ├── kickban_user.sh          # kick/unban user from given chat
+│   ├── promote_user.sh          # promote/dente user rights in given chat
 │   │
-│   └── bashbot_env.inc.sh       # bashbot location included from scripts, adapt if needed
+│   └── bashbot_env.inc.sh       # sourced from scripts, adapt locations if needed
+│   └── bashbot_init.inc.sh      # sourced from bashbot.sh init
 │
 ├── scripts              # place your bashbot interactive and background scripts here
 │   └── interactive.sh.clean     # interactive script template for new scripts
@@ -91,6 +96,7 @@ Start or Stop your Bot use the following commands:
 ```
 
 ### Scripts in bin/
+Use `script.sh -h` or `script --help` to get short/long help for script.
 
 To count the total number of users and messages run the following command:
 
@@ -244,8 +250,7 @@ e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user".
 
 
 ### Inline query messages
-
-Inline query messages are small, non regular messages used for interaction with the user,
+Inline query messages are special messages used for interaction with the user,
 they contain the following variables only:
 
 * `${iQUERY}`: Current inline query
@@ -254,6 +259,22 @@ they contain the following variables only:
     * `${iQUERY[USER_ID]}`: User's id
     * `${iQUERY[FIRST_NAME]}`: User's first name
     * `${iQUERY[LAST_NAME]}`: User's last name
+
+
+### Callback button messages
+Callback button messages special messages swedn from callback buttons,
+they contain the following variables only:
+
+* `$iBUTTON`: This array contains the ID, First name, last name, username and user id of the user clicked on the button
+    * `${iBUTTON[ID]}`: Callback query ID
+    * `${iBUTTON[DATA]`: Data attached to button, hopefully unique
+    * `${iBUTTON[CHAT_ID]`: Chat where button was pressed
+    * `${iBUTTON[MESSAGE_ID]`: Message to which button is attached
+    * `${iBUTTON[MESSAGE]`: Text of message
+    * `${iBUTTON[USER_ID]}`: User's id
+    * `${iBUTTON[FIRST_NAME]}`: User's first name
+    * `${iBUTTON[LAST_NAME]}`: User's last name
+    * `${iBUTTON[USERNAME]}`: User's @username
 
 
 ## Send data / get response
@@ -274,7 +295,7 @@ In case you need other response values , the array `UPD` contains complete Teleg
 ## Usage of bashbot functions
 
 #### sending messages
-To send messages use the `send_xxx_message`functions.
+To send messages use the `send_xxx_message` functions.
 To insert line brakes in a message place `\n` in the text. 
 
 To send regular text without any markdown use:
@@ -290,7 +311,7 @@ To send text with html:
 send_html_message "${CHAT[ID]}" "lol <b>bold</b>"
 ```
 
-To forward messages use the `forward`function:
+To forward messages use the `forward` function:
 ```bash
 forward "${CHAT[ID]}" "from_chat_id" "message_id"
 ```
@@ -328,20 +349,20 @@ To send local files or URL's (photo, video, voice, sticker, documents) use the `
 send_file "${CHAT[ID]}" "/home/user/dog.jpg" "Lool" "photo"
 send_file "${CHAT[ID]}" "https://images-na.ssl-images-amazon.com/images/I/81DQ0FpoSNL._AC_SL1500_.jpg"
 ```
-To send custom keyboards use the `send_keyboard`function:
+To send custom keyboards use the `send_keyboard` function:
 ```bash
 send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" '[ "Yep" , "No" ]' # note the single quotes!
 send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" "[ \\"Yep\\" , \\"No\\" ]" # within double quotes you must escape the inside double quots
 ```
-To send locations use the `send_location`function:
+To send locations use the `send_location` function:
 ```bash
 send_location "${CHAT[ID]}" "Latitude" "Longitude"
 ```
-To send venues use the `send_venue`function:
+To send venues use the `send_venue` function:
 ```bash
 send_venue "${CHAT[ID]}" "Latitude" "Longitude" "Title" "Address" "optional foursquare id"
 ```
-To send a chat action use the `send_action`function.
+To send a chat action use the `send_action` function.
 Allowed values: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for locations.
 ```bash
 send_action "${CHAT[ID]}" "action"
@@ -351,5 +372,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 

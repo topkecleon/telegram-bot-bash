@@ -1,7 +1,9 @@
 data-bot-bash/*
+webhook-fifo
 JSON.awk
 bashbot.rc
 mycommands.sh
+mycommands.conf
 awk-patch.sh
 *.jssh*
 botacl

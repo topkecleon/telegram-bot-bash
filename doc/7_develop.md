@@ -284,8 +284,9 @@ bar="${_/__x/_c}"	# a_b_c
 : ${SOMEVAR}		# "String in var" $_ -> "var" 
 : $(<"file")		# "Content     of\n  file" $_ -> "file"
 
-# pitfall test command
-[ -n "$MYVAR" ] && echo "$_"	# outputs "]" 
+# pitfall [ vs. test command
+[ -n "xxx" ] && echo "$_"	# $_ -> "]" 
+test -n "xxx" && echo "$_"	# $_ -> "xxx" 
 
 # pitfall command substitution: globbing and IFS is applied!
 : "$(echo "a* is born")"# $_ -> a* is globbed even quoted!
@@ -386,5 +387,5 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 

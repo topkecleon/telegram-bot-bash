@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 # shellcheck disable=SC2016
 #
 # Easy Versioning in git:
@@ -43,7 +43,8 @@ unset IFS
 VERSION="$(git describe --tags --long)"
 printf "Update to version %s ...\n" "${VERSION}"
 
-FILES="$(find ./*)"
+# only regular files, ignore .dot files/dirs, e.g. .git .gitinore in BASEDIR
+FILES="$(find ./* -type f)"
 [ "$1" != "" ] && FILES="$*"
 
 # autogenerate REMADME.html REMADE.txt
@@ -53,7 +54,7 @@ if [[ "${FILES}" == *"README.md"* ]]; then
 	cat "doc/bashbot.ascii" >"README.txt"
 	if [ -r "README.html" ] && type -f html2text >/dev/null; then
 		# convert html links to text [link]
-		sed -E 's/<a href="([^>]+)">([^<#]+)<\/a>/\2 [\1]/' <README.html |\
+		sed -E 's/<a href="([^>]+)">([^<#]+)<\/a>/\2 [\1]/g' <README.html |\
 		html2text -style pretty -width 90 - >>README.txt
 	else
 		type -f fold >/dev/null && fold -s -w 90 README.md >>README.txt
@@ -63,7 +64,8 @@ fi
 # change version string in given files
 for file in ${FILES}
 do
-	[ ! -f "${file}" ] && continue
+	# symlink is a file :-(
+	[[  -L "${file}" || ! -f "${file}" ]] && continue
 	#[ "${file}" == "version" ] && continue
 	printf "%s" " ${file}" >&2
 	sed -i 's/^#### $$VERSION$$.*/#### \$\$VERSION\$\$ '"${VERSION}"'/' "${file}"

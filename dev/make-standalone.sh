@@ -11,7 +11,7 @@
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 ###################################################################
 
 #shellcheck disable=SC1090
@@ -73,13 +73,14 @@ printf "\n... create unified bashbot.sh\n"
   # first head of bashbot.sh
   sed -n '0,/for module in/ p' bashbot.sh | head -n -3
 
-  # then mycommands from first non comment line on
+  # then modules without shebang
   printf '\n##############################\n# bashbot modules starts here ...\n'
-  cat modules/*.sh | sed -e 's/^#\!\/bin\/bash.*//' 
+  # shellcheck disable=SC2016
+  cat modules/*.sh | sed -e 's/^#\!\/bin\/bash.*//' -e '/^#.*\$\$VERSION\$\$/d' 
 
-  # last tail of commands.sh
-  printf '\n##############################\n# bashbot internal functions starts here ...\n\n'
-  sed -n '/BASHBOT INTERNAL functions/,$ p' bashbot.sh
+  # last remaining commands.sh
+  printf '\n##############################\n'
+  sed -n '/^# read commands file/,$ p' bashbot.sh
 
 } >>$$bashbot.sh
 
@@ -90,11 +91,11 @@ rm -rf modules
 
 printf "Create minimized Version of bashbot.sh and commands.sh\n"
 # shellcheck disable=SC2016
-sed -E -e '/(shellcheck)|(^#!\/)|(\$\$VERSION\$\$)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e '/^$/d' -e 'N;s/\\\n/ /;P;D' bashbot.sh |\
-	sed 'N;s/\\\n/ /;P;D' > bashbot.sh.min
+sed -E -e '/(shellcheck)|(^#!\/)|(\$\$VERSION\$\$)/! s/^[[:space:]]*#.*//' -e '/shellcheck/! s/\t+#.*//' -e 's/^[[:space:]]*//'\
+	 -e '/^$/d' bashbot.sh | sed 'N;s/\\\n/ /;P;D' | sed 'N;s/\\\n/ /;P;D' > bashbot.sh.min
 # shellcheck disable=SC2016
-sed -E -e '/(shellcheck)|(^#!\/)|(\$\$VERSION\$\$)/! s/^[[:space:]]*#.*//' -e 's/^[[:space:]]*//' -e 's/\)[[:space:]]+#.*/)/' -e '/^$/d' commands.sh |\
-	sed 'N;s/\\\n/ /;P;D' > commands.sh.min
+sed -E -e '/(shellcheck)|(^#!\/)|(\$\$VERSION\$\$)/! s/^[[:space:]]*#.*//' -e '/shellcheck/! s/\t+#.*//' -e 's/^[[:space:]]*//'\
+	  -e '/^$/d' commands.sh | sed 'N;s/\\\n/ /;P;D' > commands.sh.min
 chmod +x bashbot.sh.min
 
 # make html doc

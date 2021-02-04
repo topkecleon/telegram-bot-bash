@@ -13,7 +13,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 #######################################################
 # shellcheck disable=SC1117
 
@@ -131,6 +131,9 @@ else
 		'/echo'*) # example echo command
 			send_normal_message "${CHAT[ID]}" "${MESSAGE}"
 			;;
+		'/button'*)# inline button, set CALLBACK=1 for processing callbacks
+			send_inline_buttons "${CHAT[ID]}" "Press Button ..." "   Button   |RANDOM-BUTTON"
+			;;
 		'/question'*) # start interactive questions
 			checkproc 
 			if [ "${res}" -gt 0 ] ; then
@@ -176,6 +179,47 @@ else
 			send_markdownv2_mesage "${CHAT[ID]}" "This bot will *not* kick you!"
 			return 1
 			;;
+	esac
+     }
+
+     mycallbacks() {
+	#######################
+	# callbacks from buttons attached to messages will be  processed here
+	# no standard use case for processing callbacks, let's log them for some users and chats
+	case "${iBUTTON[USER_ID]}+${iBUTTON[CHAT_ID]}" in
+	    'USERID1+'*) # do something for all callbacks from USER
+		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBUTTON[USER_ID]}" "${iBUTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\
+				>>"${DATADIR}/${iBUTTON[USER_ID]}.log"
+		answer_callback_query "${iBUTTON[ID]}" "Request has been logged in your user log..."
+		return
+		;;
+	    *'+CHATID1') # do something for all callbacks from CHAT
+		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBUTTON[USER_ID]}" "${iBUTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\
+				>>"${DATADIR}/${iBUTTON[CHAT_ID]}.log"
+		answer_callback_query "${iBUTTON[ID]}" "Request has been logged in chat log..."
+		return
+		;;
+	    'USERID2+CHATID2') # do something only for callbacks form USER in CHAT
+		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBUTTON[USER_ID]}" "${iBUTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\
+				>>"${DATADIR}/${iBUTTON[USER_ID]}-${iBUTTON[CHAT_ID]}.log"
+		answer_callback_query "${iBUTTON[ID]}" "Request has been logged in user-chat log..."
+		return
+		;;
+	    *)	# all other callbacks are processed here
+		local callback_answer
+		# your processing here ...
+		# message available?
+		if [[ -n "${iBUTTON[CHAT_ID]}" && -n "${iBUTTON[MESSAGE_ID]}" ]]; then
+			if [ "${iBUTTON[DATA]}" = "RANDOM-BUTTON" ]; then
+			    callback_answer="Button pressed"
+			    edit_inline_buttons "${iBUTTON[CHAT_ID]}" "${iBUTTON[MESSAGE_ID]}" "Button ${RANDOM}|RANDOM-BUTTON"
+			fi
+		else
+			    callback_answer="Button to old, sorry."
+		fi
+		# Telegram needs an ack each callback query, default empty
+		answer_callback_query "${iBUTTON[ID]}" "${callback_answer}"
+		;;
 	esac
      }
 

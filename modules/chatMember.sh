@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.30-0-g3266427
+#### $$VERSION$$ v1.40-0-gf9dab50
 
 # will be automatically sourced from bashbot
 
@@ -56,6 +56,12 @@ delete_chat_stickers() {
 }
 
 # manage chat member functions -------
+# $1 chat 
+chat_member_count() {
+	sendJson "$1" "" "${URL}/getChatMembersCount"
+	[ "${BOTSENT[OK]}" = "true" ] && printf "%s\n" "${BOTSENT[RESULT]}"
+}
+
 kick_chat_member() {
 	sendJson "$1" 'user_id: '"$2"'' "${URL}/kickChatMember"
 }
@@ -68,6 +74,34 @@ leave_chat() {
 	sendJson "$1" "" "${URL}/leaveChat"
 }
 
+# $1 chat, $2 userid, $3 ... "right[:true]" default false
+# right:  is_anonymous change_info post_messages edit_messages delete_messages invite_users restrict_members pin_messages promote_member
+promote_chat_member() {
+	local arg bool json chat="$1" user="$2; shift 2"
+	for arg in "$@"
+	do
+		# default false
+		bool=false; [ "${arg##*:}" = "true" ] && bool="true"
+		# expand args
+		case "${arg}" in
+			*"anon"*)	arg="is_anonymous";;
+			*"change"*)	arg="can_change_info";;
+			*"post"*)	arg="can_post_messages";;
+			*"edit"*)	arg="can_edit_messages";;
+			*"delete"*)	arg="can_delete_messages";;
+			*"pin"*)	arg="can_pin_messages";;
+			*"invite"*)	arg="can_invite_users";;
+			*"restrict"*)	arg="can_restrict_members";;
+			*"promote"*)	arg="can_promote_members";;
+			*) 	[ -n "${BASHBOTDEBUG}" ] && debug_log "${FUNCNAME[0]}: unknown promotion ${arg}"
+				continue;; 
+		esac
+		# compose json
+		[ -n "${json}" ] && json+=","
+		json+='"'"${arg}"'": "'"${bool}"'"'
+	done
+	sendJson "${chat}" '"user_id":'"${user}"','"${json}"'' "${URL}/promoteChatMember"
+}
 
 # bashbot specific functions ---------
 
@@ -76,7 +110,7 @@ leave_chat() {
 get_chat_member_status() {
 	sendJson "$1" '"user_id":'"$2"'' "${URL}/getChatMember"
 	# shellcheck disable=SC2154
-	JsonGetString '"result","status"' <<< "${res}"
+	printf "%s\n" "${UPD["result,status"]}"
 }
 
 user_is_creator() {
