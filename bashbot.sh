@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.40-dev-34-g1440d56
+#### $$VERSION$$ v1.40-0-gf9dab50
 ##################################################################
 
 # are we running in a terminal?
@@ -460,7 +460,8 @@ sendJson(){
 	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
 	if [ -n "${BASHBOTDEBUG}" ] ; then
 		log_update "sendJson (${DETECTED_CURL}) CHAT=${chat#*:} JSON=${2:0:100} URL=${3##*/}"
-		log_message "DEBUG sendJson ==========\n$("${JSONSHFILE}" -b -n <<<"${json}" 2>&1)"
+		#									mask " and \ , remove newline from json
+		log_message "DEBUG sendJson ==========\n$("${JSONSHFILE}" -b -n  <<<"$(sed -E -e 's/\\"/+/g' -e 's/\\/\\\\/g' -e 's/(\r|\n)//g' <<<"${json}")" 2>&1)"
 	fi
 	# chat id not a number
 	if [[ "${chat}" == *"NAN\"," ]]; then

@@ -28,7 +28,7 @@ USAGE='broadcast_message.sh [-h|--help] [--doit] [--groups|--both|--db=file] [fo
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 16:14
 #
-#### $$VERSION$$ v1.32-dev-6-g2832801
+#### $$VERSION$$ v1.40-0-gf9dab50
 #===============================================================================
 
 ####

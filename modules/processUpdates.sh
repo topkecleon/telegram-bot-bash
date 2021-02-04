@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.40-dev-34-g1440d56
+#### $$VERSION$$ v1.40-0-gf9dab50
 ##################################################################
 
 ##############

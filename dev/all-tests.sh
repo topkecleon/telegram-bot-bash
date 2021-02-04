@@ -5,7 +5,7 @@
 #
 # Description: run all tests, exit after failed test
 #
-#### $$VERSION$$ v1.35-dev-0-gd9b3342
+#### $$VERSION$$ v1.40-0-gf9dab50
 #############################################################
 
 #shellcheck disable=SC1090

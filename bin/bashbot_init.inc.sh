@@ -11,7 +11,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.01.2021 13:42
 #
-#### $$VERSION$$ v1.40-dev-32-gd876f75
+#### $$VERSION$$ v1.40-0-gf9dab50
 #===============================================================================
 # shellcheck disable=SC2059
 

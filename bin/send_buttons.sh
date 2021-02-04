@@ -26,7 +26,7 @@ USAGE='send_message.sh [-h|--help] "CHAT[ID]" "message" "text|url" ...'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.01.2021 11:34
 #
-#### $$VERSION$$ v1.35-dev-3-g461e748
+#### $$VERSION$$ v1.40-0-gf9dab50
 #===============================================================================
 
 ####

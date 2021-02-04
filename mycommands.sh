@@ -13,7 +13,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.35-dev-24-g5a0a571
+#### $$VERSION$$ v1.40-0-gf9dab50
 #######################################################
 # shellcheck disable=SC1117
 

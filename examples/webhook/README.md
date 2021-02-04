@@ -76,5 +76,5 @@ To stop delivering of Telegram updates via webhook run `bin/any_command.sh delet
 **Important**: Only https connections with a valid certificate chain are allowed as endpoint for webhook.
 
 
-#### $$VERSION$$ v1.40-dev-29-g737be16
+#### $$VERSION$$ v1.40-0-gf9dab50
 

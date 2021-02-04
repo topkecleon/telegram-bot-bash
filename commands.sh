@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.40-dev-34-g1440d56
+#### $$VERSION$$ v1.40-0-gf9dab50
 #
 
 # bashbot locale defaults to c.UTF-8, adjust locale in mycommands.sh if needed
