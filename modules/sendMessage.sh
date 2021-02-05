@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.41-dev-1-g58fb001
 
 # will be automatically sourced from bashbot
 
@@ -25,7 +25,6 @@ EDIT_URL=${URL}'/editMessageText'
 # $1 CHAT $2 message
 send_normal_message() {
 	local len text; text="$(JsonEscape "$2")"
-	text="${text//$'\n'/\\n}"
 	until [ -z "${text}" ]; do
 		if [ "${#text}" -le 4096 ]; then
 			sendJson "$1" '"text":"'"${text}"'"' "${MSG_URL}"
@@ -85,7 +84,6 @@ edit_message_caption() {
 # $1 CHAT $2 message $3 action $4 URL
 _format_message_url(){
 	local text; text="$(JsonEscape "$2")"
-	text="${text//$'\n'/\\n}"
 	[ "${#text}" -ge 4096 ] && log_error "Warning: html/markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	until [ -z "${text}" ]; do
 		sendJson "$1" '"text":"'"${text:0:4096}"'"'"$3"'' "$4"
@@ -97,7 +95,6 @@ _format_message_url(){
 # $1 CHAT $2 message $3 action $4 URL
 _markdownv2_message_url() {
 	local text; text="$(JsonEscape "$2")"
-	text="${text//$'\n'/\\n}"
 	[ "${#text}" -ge 4096 ] && log_error "Warning: markdownv2 message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	# markdown v2 needs additional double escaping!
 	text="$(sed -E -e 's|([_|~`>+=#{}()!.-])|\\\1|g' <<< "${text}")"

@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.41-dev-0-gd15b4f5
+#### $$VERSION$$ v1.41-dev-1-g58fb001
 ##################################################################
 
 # are we running in a terminal?
@@ -102,7 +102,7 @@ getConfigKey() {
 # escape characters in json strings for telegram 
 # $1 string, output escaped string
 JsonEscape(){
-	sed 's/\([-"`´,§$%&/(){}#@!?*.\t]\)/\\\1/g' <<< "$1"
+	sed -E -e 's/\r//g' -e 's/([-"`´,§$%&/(){}#@!?*.\t])/\\\1/g' <<< "${1//$'\n'/\\n}"
 }
 # clean \ from escaped json string
 # $1 string, output cleaned string
