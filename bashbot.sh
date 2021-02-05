@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.41-dev-0-gd15b4f5
 ##################################################################
 
 # are we running in a terminal?
@@ -99,11 +99,15 @@ getConfigKey() {
 	[[ "$1" =~ ^[-${azAZo9},._]+$ ]] || return 3
 	[ -r "${BOTCONFIG}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' "${BOTCONFIG}.jssh" | tail -n 1
 }
-# escape / remove text characters for json strings, eg. " -> \" 
-# $1 string
-# output escaped string
+# escape characters in json strings for telegram 
+# $1 string, output escaped string
 JsonEscape(){
 	sed 's/\([-"`´,§$%&/(){}#@!?*.\t]\)/\\\1/g' <<< "$1"
+}
+# clean \ from escaped json string
+# $1 string, output cleaned string
+cleanEscaped(){	# remove "	all \ but  \n		\n or \r
+	sed -E -e 's/\\"/+/g' -e 's/\\([^n])/\1/g' -e 's/(\r|\n)//g' <<<"$1"
 }
 # check if $1 seems a valid token
 # return true if token seems to be valid
@@ -461,7 +465,7 @@ sendJson(){
 	if [ -n "${BASHBOTDEBUG}" ] ; then
 		log_update "sendJson (${DETECTED_CURL}) CHAT=${chat#*:} JSON=${2:0:100} URL=${3##*/}"
 		#									mask " and \ , remove newline from json
-		log_message "DEBUG sendJson ==========\n$("${JSONSHFILE}" -b -n  <<<"$(sed -E -e 's/\\"/+/g' -e 's/\\/\\\\/g' -e 's/(\r|\n)//g' <<<"${json}")" 2>&1)"
+		log_message "DEBUG sendJson ==========\n$("${JSONSHFILE}" -b -n  <<<"$(cleanEscaped "${json}")" 2>&1)"
 	fi
 	# chat id not a number
 	if [[ "${chat}" == *"NAN\"," ]]; then
