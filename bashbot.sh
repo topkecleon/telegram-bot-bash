@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.41-dev-9-g5294d00
+#### $$VERSION$$ v1.41-dev-10-gccac62d
 ##################################################################
 
 # are we running in a terminal?
