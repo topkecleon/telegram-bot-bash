@@ -241,7 +241,7 @@ e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user".
     * `${SERVICE[NEWPHOTO]}`: New Chat Picture 
         * `${MESSAGE}`: /_new_chat_picture SENDER URL
 **Important:** SERVICE[NEWPHOTO] is NOT a full URL, you must use `download_file "${SERVICE[NEWPHOTO]}"` or prefix path with telegram api url for manual download
-(_e.g. `getJson "${URL}/${SERVICE[NEWPHOTO]}" >file`_).
+(_e.g. `getJson "${FILEURL}/${SERVICE[NEWPHOTO]}" >file`_).
     * `${SERVICE[PINNED]}`: Pinned MESSAGE ID
         * `${MESSAGE}`: /_new_pinned_message SENDER ID
         * `${PINNED[ID]}`: Id of pinned message
@@ -376,5 +376,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.41-dev-4-gbaa4e14
+#### $$VERSION$$ v1.41-dev-7-g5212df4
 
