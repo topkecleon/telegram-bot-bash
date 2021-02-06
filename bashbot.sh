@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.41-dev-1-g58fb001
+#### $$VERSION$$ v1.41-dev-2-g5a689d2
 ##################################################################
 
 # are we running in a terminal?
@@ -392,16 +392,6 @@ if ! _is_function jssh_newDB; then
 	exit_source 6
 fi
 
-# $1 URL, $2 filename in DATADIR
-# outputs final filename
-download() {
-	local empty="no.file" file="${2:-${empty}}"
-	if [[ "${file}" = *"/"* ]] || [[ "${file}" = "."* ]]; then file="${empty}"; fi
-	while [ -f "${DATADIR:-.}/${file}" ] ; do file="${RANDOM}-${file}"; done
-	getJson "$1" >"${DATADIR:-.}/${file}" || return
-	printf '%s\n' "${DATADIR:-.}/${file}"
-}
-
 # $1 postfix, e.g. chatid
 # $2 prefix, back- or startbot-
 procname(){
@@ -437,12 +427,35 @@ delete_message() {
 	sendJson "$1" '"message_id": '"$2"'' "${DELETE_URL}"
 }
 
-# get download url for file id, $1 file_id
+# URL path for file id, $1 file_id
+# use download_file "path" to  download file
 get_file() {
 	[ -z "$1" ] && return
 	sendJson ""  '"file_id": "'"$1"'"' "${URL}/getFile"
-	printf "%s\n" "${URL}/${UPD["result,file_path"]}"
+	printf "%s\n" "${UPD["result,file_path"]}"
 }
+# download file to DATADIR
+# $1 URL path, $2 proposed filename (may modified/ignored)
+# outputs final filename
+# keep old function name for backward compatibility
+alias download="download_file"
+download_file() {
+	local url="$1" file="${2:-$1}"
+	# old mode if full URL is given
+	if [[  "${1}" =~ ^https*:// ]]; then
+		# download full URL with random filename
+		file="${RANDOM}"
+	else
+		# prefix https://api.telegram...
+		url="${URL}/${url}"
+	fi
+	# filename: replace "/" with "-", prefix random number if file exist
+	file="${file//\//-}"
+	while [ -f "${DATADIR:-.}/${file}" ] ; do file="${RANDOM}-${file}"; done
+	getJson "${url}" >"${DATADIR:-.}/${file}" || return
+	printf '%s\n' "${DATADIR:-.}/${file}"
+}
+
 
 # iconv used to filter out broken utf characters, if not installed fake it
 if ! _exists iconv; then
