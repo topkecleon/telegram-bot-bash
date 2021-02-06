@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.41-dev-6-g0702d58
+#### $$VERSION$$ v1.41-dev-9-g5294d00
 ##################################################################
 
 # are we running in a terminal?
@@ -457,7 +457,8 @@ download_file() {
 	file="${DATADIR:-.}/${file//\//-}"
 	[ -f "${file}" ] && file="$(mktemp -p "${DATADIR:-.}" "XXXXX-${file##*/}" )"
 	getJson "${url}" >"${file}" || return
-	printf '%s\n' "${file}"
+	# output absolute file path
+	printf "%s\n" "$(cd "${file%/*}" >/dev/null 2>&1 && pwd)/${file##*/}"
 }
 
 

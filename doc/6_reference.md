@@ -539,7 +539,7 @@ edit_html_message "${CHAT[ID]}" "${saved-id}" "this is <b>html</b> text"
 ### Get files from Telegram
 
 ##### download_file
-`download_file` download a file to DATADIR and returns the PATH to the file, main use is to download files send to chats.
+`download_file` download a file to `DATADIR` and returns the local `path` to the file on disc, main use is to download files send to chats.
 I tried to be as compatible as possible with old function `download`.
 
 *usage:* download_file path_to_ile prosed_filename
@@ -1627,5 +1627,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.41-dev-8-gb91e96d
+#### $$VERSION$$ v1.41-dev-9-g5294d00
 
