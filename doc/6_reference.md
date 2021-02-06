@@ -534,6 +534,85 @@ edit_html_message "${CHAT[ID]}" "${saved-id}" "this is <b>html</b> text"
 *usage:*  edit_message_caption "CHAT[ID]" "MESSAGE-ID" "caption"
 
 
+----
+
+### Get files from Telegram
+
+##### download_file
+`download_file` download a file to DATADIR and returns the PATH to the file, main use is to download files send to chats.
+I tried to be as compatible as possible with old function `download`.
+
+*usage:* download_file path_to_ile prosed_filename
+
+*alias*: download
+
+*Note:* You must use `download_file` to download  `URLS[...]` or `SERVICE[NEWPHOTO]` URLs from Telegram server.
+
+*example:* 
+```bash
+########
+# download from Telegram server
+# photo received in a chat
+photo="${URLS[PHOTO]}")"
+echo "$photo" -> photo/file_1234.jpg
+
+# first download
+file="$(download_file "${photo}"
+echo "$file" -> ./data-bot-bash/photo-file_1234.jpg
+
+# second download
+file="$(download_file "${photo}"
+echo "$file" -> ./data-bot-bash/jkdfhi-photo-file_1234.jpg
+
+ls data-bot-bash/*.jpg
+photo-file_1234.jpg  jkdfhi-photo-file_1234.jpg
+
+
+########
+# download from other sources (full URL)
+file="$(download "https://avatars.githubusercontent.com/u/13046303")"
+echo "$file" -> ./data-bot-bash/download-askjgftGJGdh1Z
+
+file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
+echo "$file" -> ./data-bot-bash/avatar.jpg
+
+file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
+echo "$file" -> ./data-bot-bash/jhsdf-avatar.jpg
+
+ls data-bot-bash/
+avatar.jpg  jhsdf-avatar.jpg  download-askjgftGJGdh1Z  
+
+
+#######
+# manually download files to current directory (not recommended)
+getJson "${FILEURL}/${photo}" >"downloaded_photo.jpg"
+getJson "https://avatars.githubusercontent.com/u/13046303" >"avatar.jpg"
+
+ls -F
+JSON.sh/ bin/ modules/ data-bot-bash/
+avatar.jpg  bashbot.sh*  botconfig.jssh  commands.sh  count.jssh  downloaded_photo.jpg  mycommands.sh ...
+
+```
+
+##### get_file
+`get_file` get the `path` to a file on Telegram server by it's `file_id`. File `path` is only valid for use with your bot token.
+
+*usage:* url="$(get_file "file_id")"
+
+*example*:
+
+```bash
+# download file by file_id
+file_id="kjhdsfhkj-kjshfbsdbfkjhsdkfjn"
+
+path="$(get_file "${file_id}")"
+file="$(download_file "${path}")"
+
+# one line
+file="$(download_file "$(get_file "${file_id}")")"
+
+```
+
 ---
 
 ### Manage Group
@@ -1397,62 +1476,6 @@ Do not use them in other files e.g. `bashbot.sh`, modules, addons etc.
 
 ### Helper functions
 
-##### download_file
-`download_file` download a file to DATADIR and returns the PATH to the file, main use is to download files send to chats.
-I tried to be as compatible as possible with old function `download`.
-
-*usage:* download_file path_to_ile prosed_filename
-
-*alias*: download
-
-*Note:* You must use `download_file` to download  `URLS[...]` or `SERVICE[NEWPHOTO]` URLs from Telegram server.
-
-*example:* 
-```bash
-########
-# download from Telegram server
-# photo received in a chat
-photo="${URLS[PHOTO]}")"
-echo "$photo" -> photo/file_1234.jpg
-
-# first download
-file="$(download_file "${photo}"
-echo "$file" -> ./data-bot-bash/photo-file_1234.jpg
-
-# second download
-file="$(download_file "${photo}"
-echo "$file" -> ./data-bot-bash/jkdfhi-photo-file_1234.jpg
-
-ls data-bot-bash/*.jpg
-photo-file_1234.jpg  jkdfhi-photo-file_1234.jpg
-
-
-########
-# download from other sources (full URL)
-file="$(download "https://avatars.githubusercontent.com/u/13046303")"
-echo "$file" -> ./data-bot-bash/download-askjgftGJGdh1Z
-
-file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
-echo "$file" -> ./data-bot-bash/avatar.jpg
-
-file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
-echo "$file" -> ./data-bot-bash/jhsdf-avatar.jpg
-
-ls data-bot-bash/
-avatar.jpg  jhsdf-avatar.jpg  download-askjgftGJGdh1Z  
-
-
-#######
-# manually download files to current directory (not recommended)
-getJson "${FILEURL}/${photo}" >"downloaded_photo.jpg"
-getJson "https://avatars.githubusercontent.com/u/13046303" >"avatar.jpg"
-
-ls -F
-JSON.sh/ bin/ modules/ data-bot-bash/
-avatar.jpg  bashbot.sh*  botconfig.jssh  commands.sh  count.jssh  downloaded_photo.jpg  mycommands.sh ...
-
-```
-
 ##### _exec_if_function
 Returns true, even if the given function does not exist. Return false if function exist but returns false.
 
@@ -1495,9 +1518,6 @@ _is_function "background" && _message "you can run background jobs!"
 
 ### Bashbot internal functions
 These functions are for internal use only and must not used in your bot commands.
-
-##### get_file
-*usage:* url="$(get_file "CHAT[ID]" "message")"
 
 ##### procname
 Returns PrefixBotname_Postfix
@@ -1555,16 +1575,6 @@ Outputs decoded string to STDOUT
 
 *usage:* JsonDecode "string"
 
-##### JsonGetString
-Reads JSON from STDIN and Outputs found String to STDOUT
-
-*usage:*  JsonGetString `"path","to","string"`
-
-##### JsonGetValue
-Reads JSON from STDIN and Outputs found Value to STDOUT
-
-*usage:*  JsonGetValue `"path","to","value"`
-
 
 ##### Json2Array
 Read JSON.sh style data from STDIN and assign to given ARRAY
@@ -1617,5 +1627,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.41-dev-7-g5212df4
+#### $$VERSION$$ v1.41-dev-8-gb91e96d
 
