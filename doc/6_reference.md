@@ -1419,33 +1419,37 @@ echo "$photo" -> photo/file_1234.jpg
 file="$(download_file "${photo}"
 echo "$file" -> ./data-bot-bash/photo-file_1234.jpg
 
-# second, third etc. download
+# second download
 file="$(download_file "${photo}"
-echo "$file" -> ./data-bot-bash/jkdfhihsdkf-photo-file_1234.jpg
+echo "$file" -> ./data-bot-bash/jkdfhi-photo-file_1234.jpg
 
 ls data-bot-bash/*.jpg
-photo-file_1234.jpg jkdfhihsdkf-photo-file_1234.jpg
+photo-file_1234.jpg  jkdfhi-photo-file_1234.jpg
+
 
 ########
 # download from other sources (full URL)
+file="$(download "https://avatars.githubusercontent.com/u/13046303")"
+echo "$file" -> ./data-bot-bash/download-askjgftGJGdh1Z
+
 file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
 echo "$file" -> ./data-bot-bash/avatar.jpg
 
 file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
-echo "$file" -> ./data-bot-bash/jhsdfjkakshdfkja-avatar.jpg
+echo "$file" -> ./data-bot-bash/jhsdf-avatar.jpg
 
-ls data-bot-bash/*.jpg
-photo-file_1234.jpg jkdfhihsdkf-photo-file_1234.jpg
-avatar.jpg jhsdfjkakshdfkja-avatar.jpg
+ls data-bot-bash/
+avatar.jpg  jhsdf-avatar.jpg  download-askjgftGJGdh1Z  
+
 
 #######
 # manually download files to current directory (not recommended)
 getJson "https://avatars.githubusercontent.com/u/13046303" >"avatar.jpg"
 getJson "i${URL}/${photo}" >"downloaded_photo.jpg"
 
-ls *
-JSON.sh/    addons/     bin/         data-bot_bash/        doc/     modules/         scripts/
-avatar.jpg  bashbot.sh  commands.sh  downloaded_photo.jpg  LICENSE  mycommands.conf  mycommands.sh  mycommands.sh    
+ls -F
+JSON.sh/ bin/ modules/ data-bot-bash/
+avatar.jpg  bashbot.sh*  botconfig.jssh  commands.sh  count.jssh  downloaded_photo.jpg  mycommands.sh ...
 
 ```
 
@@ -1613,5 +1617,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.41-dev-4-gbaa4e14
+#### $$VERSION$$ v1.41-dev-5-g54673ac
 

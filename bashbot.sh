@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.41-dev-2-g5a689d2
+#### $$VERSION$$ v1.41-dev-5-g54673ac
 ##################################################################
 
 # are we running in a terminal?
@@ -443,17 +443,20 @@ download_file() {
 	local url="$1" file="${2:-$1}"
 	# old mode if full URL is given
 	if [[  "${1}" =~ ^https*:// ]]; then
-		# download full URL with random filename
-		file="${RANDOM}"
+	   # random filename if not given for http
+	   if [ -z "$2" ]; then
+		: "$(mktemp -u  -p . "XXXXXXXXXX" 2>/dev/null)"
+		file="download-${_#./}"
+	  fi
 	else
 		# prefix https://api.telegram...
 		url="${URL}/${url}"
 	fi
-	# filename: replace "/" with "-", prefix random number if file exist
-	file="${file//\//-}"
-	while [ -f "${DATADIR:-.}/${file}" ] ; do file="${RANDOM}-${file}"; done
-	getJson "${url}" >"${DATADIR:-.}/${file}" || return
-	printf '%s\n' "${DATADIR:-.}/${file}"
+	# filename: replace "/" with "-", use mktemp if exist
+	file="${DATADIR:-.}/${file//\//-}"
+	[ -f "${file}" ] && file="$(mktemp -p "${DATADIR:-.}" "XXXXX-${file##*/}" )"
+	getJson "${url}" >"${file}" || return
+	printf '%s\n' "${file}"
 }
 
 
