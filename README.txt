@@ -318,5 +318,5 @@ That's it all guys!
 If you feel that there's something missing or if you found a bug, feel free to submit a
 pull request!
 
-$$VERSION$$ v1.40-0-gf9dab50
+$$VERSION$$ v1.41-0-gad1b91f
 
