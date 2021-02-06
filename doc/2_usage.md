@@ -186,14 +186,15 @@ The following variables are set if the message contains optional parts:
     * `${FORWARD[LAST_NAME]}`: Original user's' last name
     * `${FORWARD[USERNAME]}`: Original user's username
 * `$CAPTION`: Picture, Audio, Video, File Captions
-* `$URLS`: This array contains `path` to document, audio file, voice recording and sticker for download from telegram server.
+* `$URLS`: This array contains the `path` on Telegram server for files send to chat, e.g. photo, video, audio file.
     * `${URLS[AUDIO]}`: Path to audio file
     * `${URLS[VIDEO]}`: Path to video
     * `${URLS[PHOTO]}`: Path to photo (maximum quality)
     * `${URLS[VOICE]}`: Path to voice recording
     * `${URLS[STICKER]}`: Path to sticker
     * `${URLS[DOCUMENT]}`: Path to any other file
-**Important:** This is NO MORE a full URL, you must use `download_file` or `${URL}/${URLS[xxx]}` for manual download.
+**Important:** This is NOT a full URL, you must use `download_file "${URLS[xxx]}"` or prefix path with telegram api url for manual download
+(_e.g. `getJson "${URL}/${URLS[xxx]}" >file`_).
 * `$CONTACT`: This array contains info about contacts sent in a chat.
     * `${CONTACT[ID]}`: User id
     * `${CONTACT[NUMBER]}`: Phone number
@@ -239,7 +240,8 @@ e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user".
         * `${MESSAGE}`: /_new_chat_title SENDER TEXT
     * `${SERVICE[NEWPHOTO]}`: New Chat Picture 
         * `${MESSAGE}`: /_new_chat_picture SENDER URL
-**Important:** SERVICE[NEWPHOTO] is NOT a full URL, you must use `download_file` or `${URL}/${SERVICE[NEWPHOTO]}` for manual download.
+**Important:** SERVICE[NEWPHOTO] is NOT a full URL, you must use `download_file "${SERVICE[NEWPHOTO]}"` or prefix path with telegram api url for manual download
+(_e.g. `getJson "${URL}/${SERVICE[NEWPHOTO]}" >file`_).
     * `${SERVICE[PINNED]}`: Pinned MESSAGE ID
         * `${MESSAGE}`: /_new_pinned_message SENDER ID
         * `${PINNED[ID]}`: Id of pinned message
@@ -374,5 +376,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.41-dev-3-gbc40a3f
+#### $$VERSION$$ v1.41-dev-4-gbaa4e14
 

@@ -571,7 +571,6 @@ Returns the new invite link as String on success.
 
 
 ##### pin_chat_message
-# $1 chat, $2 message_id 
 `pin_chat_message` add a message to the list of pinned messages in a chat.
 
 *usage:* pin_chat_message "CHAT[ID]" "message_id"
@@ -1424,6 +1423,8 @@ echo "$file" -> ./data-bot-bash/photo-file_1234.jpg
 file="$(download_file "${photo}"
 echo "$file" -> ./data-bot-bash/jkdfhihsdkf-photo-file_1234.jpg
 
+ls data-bot-bash/*.jpg
+photo-file_1234.jpg jkdfhihsdkf-photo-file_1234.jpg
 
 ########
 # download from other sources (full URL)
@@ -1432,6 +1433,20 @@ echo "$file" -> ./data-bot-bash/avatar.jpg
 
 file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
 echo "$file" -> ./data-bot-bash/jhsdfjkakshdfkja-avatar.jpg
+
+ls data-bot-bash/*.jpg
+photo-file_1234.jpg jkdfhihsdkf-photo-file_1234.jpg
+avatar.jpg jhsdfjkakshdfkja-avatar.jpg
+
+#######
+# manually download files to current directory (not recommended)
+getJson "https://avatars.githubusercontent.com/u/13046303" >"avatar.jpg"
+getJson "i${URL}/${photo}" >"downloaded_photo.jpg"
+
+ls *
+JSON.sh/    addons/     bin/         data-bot_bash/        doc/     modules/         scripts/
+avatar.jpg  bashbot.sh  commands.sh  downloaded_photo.jpg  LICENSE  mycommands.conf  mycommands.sh  mycommands.sh    
+
 ```
 
 ##### _exec_if_function
@@ -1598,5 +1613,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.41-dev-3-gbc40a3f
+#### $$VERSION$$ v1.41-dev-4-gbaa4e14
 
