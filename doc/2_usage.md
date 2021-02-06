@@ -186,13 +186,14 @@ The following variables are set if the message contains optional parts:
     * `${FORWARD[LAST_NAME]}`: Original user's' last name
     * `${FORWARD[USERNAME]}`: Original user's username
 * `$CAPTION`: Picture, Audio, Video, File Captions
-* `$URLS`: This array contains documents, audio files, voice recordings and stickers as URL.
-    * `${URLS[AUDIO]}`: Audio files
-    * `${URLS[VIDEO]}`: Videos
-    * `${URLS[PHOTO]}`: Photos (maximum quality)
-    * `${URLS[VOICE]}`: Voice recordings
-    * `${URLS[STICKER]}`: Stickers
-    * `${URLS[DOCUMENT]}`: Any other file
+* `$URLS`: This array contains `path` to document, audio file, voice recording and sticker for download from telegram server.
+    * `${URLS[AUDIO]}`: Path to audio file
+    * `${URLS[VIDEO]}`: Path to video
+    * `${URLS[PHOTO]}`: Path to photo (maximum quality)
+    * `${URLS[VOICE]}`: Path to voice recording
+    * `${URLS[STICKER]}`: Path to sticker
+    * `${URLS[DOCUMENT]}`: Path to any other file
+**Important:** This is NO MORE a full URL, you must use `download_file` or `${URL}/${URLS[xxx]}` for manual download.
 * `$CONTACT`: This array contains info about contacts sent in a chat.
     * `${CONTACT[ID]}`: User id
     * `${CONTACT[NUMBER]}`: Phone number
@@ -238,6 +239,7 @@ e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user".
         * `${MESSAGE}`: /_new_chat_title SENDER TEXT
     * `${SERVICE[NEWPHOTO]}`: New Chat Picture 
         * `${MESSAGE}`: /_new_chat_picture SENDER URL
+**Important:** SERVICE[NEWPHOTO] is NOT a full URL, you must use `download_file` or `${URL}/${SERVICE[NEWPHOTO]}` for manual download.
     * `${SERVICE[PINNED]}`: Pinned MESSAGE ID
         * `${MESSAGE}`: /_new_pinned_message SENDER ID
         * `${PINNED[ID]}`: Id of pinned message
@@ -372,5 +374,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.41-dev-3-gbc40a3f
 

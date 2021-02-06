@@ -1398,18 +1398,40 @@ Do not use them in other files e.g. `bashbot.sh`, modules, addons etc.
 
 ### Helper functions
 
-##### download
-Download the given URL and returns the final filename in TMPDIR. If the given filename exists,the filename is prefixed with a
-random number. Filename is not allowed to contain '/' or '..'.
+##### download_file
+`download_file` download a file to DATADIR and returns the PATH to the file, main use is to download files send to chats.
+I tried to be as compatible as possible with old function `download`.
 
-*usage:* download URL filename
+*usage:* download_file path_to_ile prosed_filename
+
+*alias*: download
+
+*Note:* You must use `download_file` to download  `URLS[...]` or `SERVICE[NEWPHOTO]` URLs from Telegram server.
 
 *example:* 
 ```bash
+########
+# download from Telegram server
+# photo received in a chat
+photo="${URLS[PHOTO]}")"
+echo "$photo" -> photo/file_1234.jpg
+
+# first download
+file="$(download_file "${photo}"
+echo "$file" -> ./data-bot-bash/photo-file_1234.jpg
+
+# second, third etc. download
+file="$(download_file "${photo}"
+echo "$file" -> ./data-bot-bash/jkdfhihsdkf-photo-file_1234.jpg
+
+
+########
+# download from other sources (full URL)
 file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
 echo "$file" -> ./data-bot-bash/avatar.jpg
+
 file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
-echo "$file" -> ./data-bot-bash/12345-avatar.jpg
+echo "$file" -> ./data-bot-bash/jhsdfjkakshdfkja-avatar.jpg
 ```
 
 ##### _exec_if_function
@@ -1454,6 +1476,9 @@ _is_function "background" && _message "you can run background jobs!"
 
 ### Bashbot internal functions
 These functions are for internal use only and must not used in your bot commands.
+
+##### get_file
+*usage:* url="$(get_file "CHAT[ID]" "message")"
 
 ##### procname
 Returns PrefixBotname_Postfix
@@ -1503,11 +1528,6 @@ killallproc "_${CHAT[ID]}"
 # kill all bot processes, including YOURSELF!
 killallproc 
 ```
-
-----
-
-##### get_file
-*usage:* url="$(get_file "CHAT[ID]" "message")"
 
 ----
 
@@ -1578,5 +1598,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.41-dev-3-gbc40a3f
 
