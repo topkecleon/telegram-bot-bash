@@ -1444,8 +1444,8 @@ avatar.jpg  jhsdf-avatar.jpg  download-askjgftGJGdh1Z
 
 #######
 # manually download files to current directory (not recommended)
+getJson "${URL}/${photo}" >"downloaded_photo.jpg"
 getJson "https://avatars.githubusercontent.com/u/13046303" >"avatar.jpg"
-getJson "i${URL}/${photo}" >"downloaded_photo.jpg"
 
 ls -F
 JSON.sh/ bin/ modules/ data-bot-bash/
@@ -1617,5 +1617,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.41-dev-5-g54673ac
+#### $$VERSION$$ v1.41-dev-6-g0702d58
 

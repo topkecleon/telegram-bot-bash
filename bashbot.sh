@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.41-dev-5-g54673ac
+#### $$VERSION$$ v1.41-dev-6-g0702d58
 ##################################################################
 
 # are we running in a terminal?
@@ -346,6 +346,7 @@ fi
 BASHBOT_RETRY=""	# retry by default
 
 URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
+FILEURL="${URL%%/bot*}/file/bot${BOTTOKEN}"
 ME_URL=${URL}'/getMe'
 
 #################
@@ -450,7 +451,7 @@ download_file() {
 	  fi
 	else
 		# prefix https://api.telegram...
-		url="${URL}/${url}"
+		url="${FILEURL}/${url}"
 	fi
 	# filename: replace "/" with "-", use mktemp if exist
 	file="${DATADIR:-.}/${file//\//-}"
