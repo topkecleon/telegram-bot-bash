@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-3-g429c230
+#### $$VERSION$$ v1.45-dev-5-geee5458
 ##################################################################
 
 # are we running in a terminal?
@@ -276,29 +276,26 @@ if [ -z "${BOTTOKEN}" ]; then
      printf '["botadmin"]\t"%s"\n'  "${admin}" >> "${BOTCONFIG}.jssh"
   fi
 
-  # skip on init
-  if [ "$1" != "init" ]; then 
-	# setup botacl file
-	if [ ! -f "${BOTACL}" ]; then
-		printf "${GREY}Create initial ${BOTACL} file.${NN}"
-		printf '\n' >"${BOTACL}"
-	fi
-	# check data dir file
-	if [ ! -w "${DATADIR}" ]; then
-		printf "${RED}ERROR: ${DATADIR} does not exist or is not writeable!.${NN}"
-		exit_source 2
-	fi
-	# setup count file 
-	if [ ! -f "${COUNTFILE}.jssh" ]; then
-		printf '["counted_user_chat_id"]\t"num_messages_seen"\n' >> "${COUNTFILE}.jssh"
-	elif [ ! -w "${COUNTFILE}.jssh" ]; then
-		printf "${RED}WARNING: Can't write to ${COUNTFILE}!.${NN}"
-		ls -l "${COUNTFILE}.jssh"
-	fi
-	# setup blocked file 
-	if [ ! -f "${BLOCKEDFILE}.jssh" ]; then
-		printf '["blocked_user_or_chat_id"]\t"name and reason"\n' >>"${BLOCKEDFILE}.jssh"
-	fi
+  # setup botacl file
+  if [ ! -f "${BOTACL}" ]; then
+	printf "${GREY}Create initial ${BOTACL} file.${NN}"
+	printf '\n' >"${BOTACL}"
+  fi
+  # check data dir file
+  if [ ! -w "${DATADIR}" ]; then
+	printf "${RED}ERROR: ${DATADIR} does not exist or is not writeable!.${NN}"
+	[ "$1" != "init" ] && exit_source 2 # skip on init
+  fi
+  # setup count file 
+  if [ ! -f "${COUNTFILE}.jssh" ]; then
+	printf '["counted_user_chat_id"]\t"num_messages_seen"\n' >> "${COUNTFILE}.jssh"
+  elif [ ! -w "${COUNTFILE}.jssh" ]; then
+	printf "${RED}WARNING: Can't write to ${COUNTFILE}!.${NN}"
+	ls -l "${COUNTFILE}.jssh"
+  fi
+  # setup blocked file 
+  if [ ! -f "${BLOCKEDFILE}.jssh" ]; then
+	printf '["blocked_user_or_chat_id"]\t"name and reason"\n' >>"${BLOCKEDFILE}.jssh"
   fi
 fi
 
