@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.41-0-gad1b91f
+#### $$VERSION$$ v1.45-dev-1-g34455c2
 ##################################################################
 
 # are we running in a terminal?
@@ -178,10 +178,10 @@ RUNDIR="$(dirname "$0")"
 MODULEDIR="${SCRIPTDIR}/modules"
 
 # adjust stuff for source, use return from source without source
-alias exit_source='exit'
+exit_source() { exit "$1"; }
 if [[ "${SCRIPT}" != "${REALME}" || "$1" == "source" ]]; then
 	SOURCE="yes"
-	[ -z "$1" ] && alias exit_source='printf "Exit from source ...\n";return'
+	[ -z "$1" ] && exit_source() { printf "Exit from source ...\n"; return "$1"; }
 fi
 
 # emmbeded system may claim bash but it is not
@@ -282,16 +282,14 @@ if [ -z "${BOTTOKEN}" ]; then
   fi
   # check data dir file
   if [ ! -w "${DATADIR}" ]; then
-	printf "${RED}ERROR: ${DATADIR} does not exist or is not writeable!.${NN}"
-	exit_source 2
+	printf "${RED}WARNING: ${DATADIR} does not exist or is not writeable!.${NN}"
   fi
   # setup count file 
   if [ ! -f "${COUNTFILE}.jssh" ]; then
 	printf '["counted_user_chat_id"]\t"num_messages_seen"\n' >> "${COUNTFILE}.jssh"
   elif [ ! -w "${COUNTFILE}.jssh" ]; then
-	printf "${RED}ERROR: Can't write to ${COUNTFILE}!.${NN}"
+	printf "${RED}WARNING: Can't write to ${COUNTFILE}!.${NN}"
 	ls -l "${COUNTFILE}.jssh"
-	exit_source 2
   fi
   # setup blocked file 
   if [ ! -f "${BLOCKEDFILE}.jssh" ]; then
