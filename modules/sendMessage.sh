@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.45-dev-3-g429c230
+#### $$VERSION$$ v1.45-dev-4-g52d1ac5
 
 # will be automatically sourced from bashbot
 
@@ -310,10 +310,29 @@ send_file(){
 	return 0
 }
 
-# $1 typing upload_photo record_video upload_video record_audio upload_audio upload_document find_location
+# $1 chat $2 typing upload_photo record_video upload_video record_audio upload_audio upload_document find_location
 send_action() {
 	[ -z "$2" ] && return
 	sendJson "$1" '"action": "'"$2"'"' "${URL}/sendChatAction" &
+}
+
+# $1 chat $2 emoji “🎲”, “🎯”, “🏀”, “⚽”, “🎰"
+# code: \u201c\ud83c\udfb2\u201d \u201c\ud83c\udfaf\u201d \u201c\ud83c\udfc0\u201d \u201c\u26bd\u201d \u201c\ud83c\udfb0\u201d
+# text: ":game_die:" "game" ":dart:" "dart" ":basketball:" "basket" ":soccer:" "soccer" :slot_machine:" "slot"
+# $3 reply_to_id
+send_dice() {
+	local emoji reply
+	[ -n "$3" ] && reply=',"reply_to_message_id":'"$3"
+	case "$2" in # must be single character
+		*🎲*|*game*)	emoji='\u201c\ud83c\udfb2\u201d' ;;
+		*🎯*|*dart*)	emoji='\u201c\ud83c\udfaf\u201d' ;;
+		*🏀*|*basket*)	emoji='\u201c\ud83c\udfc0\u201d' ;;
+		*⚽*|*soccer*)	emoji='\u201c\u26bd\u201d' ;;
+		*🎰*|*slot*)	emoji='\u201c\ud83c\udfb0\u201d' ;;
+		*) # default emoji "🎲"
+				emoji='\u201c\ud83c\udfb2\u201d' ;;
+	esac
+	sendJson "$1" '"emoji": "'"${emoji}"'"'"${reply}" "${URL}/sendChatAction" &
 }
 
 # $1 CHAT $2 lat $3 long
