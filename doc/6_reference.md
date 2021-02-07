@@ -190,7 +190,7 @@ Dice can have values 1-6 for '🎲' and '🎯', values 1-5 for '🏀' and '⚽',
 ```bash
 # send die and output points
 send_dice "${CHAT[ID]}" ":game_die:"
-[ "$BOTSENT[ok]" = "true ] && send_markdownv2_message "*Congratulation* you got *${BOTSENT[RESULT]} Points*."
+[ "${BOTSENT[OK]}" = "true" ] && send_markdownv2_message "${CHAT[ID]}" "*Congratulation* you got *${BOTSENT[RESULT]} Point(s)*."
 ```
 
 ----
@@ -1641,5 +1641,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.45-dev-8-g069570e
+#### $$VERSION$$ v1.45-dev-9-g62b6b61
 

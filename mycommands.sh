@@ -13,7 +13,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-9-g62b6b61
 #######################################################
 # shellcheck disable=SC1117
 
@@ -123,7 +123,20 @@ else
 
 	case "${MESSAGE}" in
 		##################
-		# example commands, replace thm by your own
+		# example commands, replace them by your own
+		'/game'*) # send random dice 1-5
+			send_dice "${CHAT[ID]}" "$(shuf -i "1-5" -n 1)"
+			if [ "${BOTSENT[OK]}" = "true" ]; then
+				local gameresult="*Congratulation* you got *${BOTSENT[RESULT]} Points*."
+				sleep 5
+				case "${BOTSENT[RESULT]}" in
+				  1)	gameresult="*Sorry* only *one Point* ...";;
+				  2)	gameresult="*Hey*, 2 Points are *more then one!*";;
+				  64)	gameresult="*JACKPOT! ${BOTSENT[RESULT]} Points!*"
+				esac
+				send_markdownv2_message "${CHAT[ID]}" "${gameresult}"
+			fi
+			;;
 		'/unpin'*) # unpin all messages if (bot)admin or allowed for user
 			 user_is_allowed "${USER[ID]}" "unpin" "${CHAT[ID]}" &&\
 				unpinall_chat_messages "${CHAT[ID]}"
