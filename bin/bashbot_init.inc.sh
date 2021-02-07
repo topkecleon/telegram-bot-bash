@@ -11,7 +11,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.01.2021 13:42
 #
-#### $$VERSION$$ v1.45-dev-2-ga6ff405
+#### $$VERSION$$ v1.45-dev-3-g429c230
 #===============================================================================
 # shellcheck disable=SC2059
 
@@ -104,13 +104,13 @@ bot_init() {
 	fi
 	# adjust permissions
 	printf "Adjusting files and permissions for user \"${touser}\" ...\n"
+	chown -Rf "${chown}" . ./*
 	chmod 711 .
 	chmod -R o-w ./*
 	chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" logs "${LOGDIR}/"*.log 2>/dev/null
 	chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTACL}" 2>/dev/null
 	# jsshDB must writeable by owner
 	find . -name '*.jssh*' -exec chmod u+w \{\} +
-	chown -Rf "${chown}" . ./*
 	printf "Done.\n"
 	# adjust values in bashbot.rc
 	if [ -w "bashbot.rc" ]; then

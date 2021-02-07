@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.45-dev-0-g9d36f23
+#### $$VERSION$$ v1.45-dev-3-g429c230
 
 # will be automatically sourced from bashbot
 
@@ -340,8 +340,11 @@ forward_message() {
 	[ -z "$3" ] && return
 	sendJson "$1" '"from_chat_id": '"$2"', "message_id": '"$3"'' "${URL}/forwardMessage"
 }
-forward() {	# backward compatibility
-	forward_message "$@" || return
+
+# $1 CHAT $2 from chat  $3 from msg id
+copy_message() {
+	[ -z "$3" ] && return
+	sendJson "$1" '"from_chat_id": '"$2"', "message_id": '"$3"'' "${URL}/copyMessage"
 }
 
 # $1 CHAT $2 bashbot formatted message, see manual advanced usage
