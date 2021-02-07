@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-1-g34455c2
+#### $$VERSION$$ v1.45-dev-2-ga6ff405
 ##################################################################
 
 # are we running in a terminal?
@@ -161,7 +161,7 @@ debug_checks(){ {
 	[ -z "$(getConfigKey "botadmin")" ] && printf "%(%c)T: %s\n" -1 "Bot admin is missing! =========="
 	# call user defined debug_checks if exists
 	_exec_if_function my_debug_checks "$(_date)" "${where}" "$*"
-	} >>"${DEBUGLOG}"
+	} 2>/dev/null >>"${DEBUGLOG}"
 }
 
 # some Linux distributions (e.g. Manjaro) doesn't seem to have C locale activated by default
@@ -275,25 +275,30 @@ if [ -z "${BOTTOKEN}" ]; then
      [ -z "${admin}" ] && admin='?'
      printf '["botadmin"]\t"%s"\n'  "${admin}" >> "${BOTCONFIG}.jssh"
   fi
-  # setup botacl file
-  if [ ! -f "${BOTACL}" ]; then
-	printf "${GREY}Create initial ${BOTACL} file.${NN}"
-	printf '\n' >"${BOTACL}"
-  fi
-  # check data dir file
-  if [ ! -w "${DATADIR}" ]; then
-	printf "${RED}WARNING: ${DATADIR} does not exist or is not writeable!.${NN}"
-  fi
-  # setup count file 
-  if [ ! -f "${COUNTFILE}.jssh" ]; then
-	printf '["counted_user_chat_id"]\t"num_messages_seen"\n' >> "${COUNTFILE}.jssh"
-  elif [ ! -w "${COUNTFILE}.jssh" ]; then
-	printf "${RED}WARNING: Can't write to ${COUNTFILE}!.${NN}"
-	ls -l "${COUNTFILE}.jssh"
-  fi
-  # setup blocked file 
-  if [ ! -f "${BLOCKEDFILE}.jssh" ]; then
-	printf '["blocked_user_or_chat_id"]\t"name and reason"\n' >>"${BLOCKEDFILE}.jssh"
+
+  # skip on init
+  if [ "$1" != "init" ]; then 
+	# setup botacl file
+	if [ ! -f "${BOTACL}" ]; then
+		printf "${GREY}Create initial ${BOTACL} file.${NN}"
+		printf '\n' >"${BOTACL}"
+	fi
+	# check data dir file
+	if [ ! -w "${DATADIR}" ]; then
+		printf "${RED}ERROR: ${DATADIR} does not exist or is not writeable!.${NN}"
+		exit_source 2
+	fi
+	# setup count file 
+	if [ ! -f "${COUNTFILE}.jssh" ]; then
+		printf '["counted_user_chat_id"]\t"num_messages_seen"\n' >> "${COUNTFILE}.jssh"
+	elif [ ! -w "${COUNTFILE}.jssh" ]; then
+		printf "${RED}WARNING: Can't write to ${COUNTFILE}!.${NN}"
+		ls -l "${COUNTFILE}.jssh"
+	fi
+	# setup blocked file 
+	if [ ! -f "${BLOCKEDFILE}.jssh" ]; then
+		printf '["blocked_user_or_chat_id"]\t"name and reason"\n' >>"${BLOCKEDFILE}.jssh"
+	fi
   fi
 fi
 

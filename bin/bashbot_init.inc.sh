@@ -11,7 +11,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.01.2021 13:42
 #
-#### $$VERSION$$ v1.45-dev-1-g34455c2
+#### $$VERSION$$ v1.45-dev-2-ga6ff405
 #===============================================================================
 # shellcheck disable=SC2059
 
@@ -70,7 +70,7 @@ bot_init() {
 	if ! id "${touser}" &>/dev/null; then
 		printf "${RED}User \"${touser}\" does not exist!${NN}"
 		exit 3
-	elif [[ "${UID}" != "0" && "${touser}" != "${RUNUSER}" ]]; then
+	elif [ "${UID}" != "0" ]; then
 		# different user but not root ...
 		printf "${ORANGE}You are not root, adjusting permissions may fail. Try \"sudo ./bashbot.sh init\"${NN}Press <CTRL+C> to stop or <Enter> to continue..." 1>&2
 		[ -n "${INTERACTIVE}" ] && read -r runuser
