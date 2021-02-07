@@ -176,8 +176,22 @@ send_album "$(getConfigKey "botadmin")" "http://www.rrr.de/slider/main-image1.jp
 ##### send_sticker
 `send_sticker` sends a sticker using a `file_id` to send a sticker that exists on the Telegram servers.
 
-*usage:*  send_sticker "$CHAT[ID]" "file_id"
+*usage:*  send_sticker "CHAT[ID]" "file_id"
 
+##### send_dice
+`send_dice` send an animated emoji and returns a value (_e.g. points shown on die_).
+
+*usage:* send_dice "CHAT[ID]" "emoji"
+
+Emoji must be one of '🎲', '🎯', '🏀', '⚽', '🎰' or ":game_die:" ":dart:" ":basketball:" ":soccer:" :slot_machine:".
+Dice can have values 1-6 for '🎲' and '🎯', values 1-5 for '🏀' and '⚽', and values 1-64 for '🎰'. Defaults to '🎲' 
+
+*example:*
+```bash
+# send die and output points
+send_dice "${CHAT[ID]}" ":game_die:"
+[ "$BOTSENT[ok]" = "true ] && send_markdownv2_message "*Congratulation* you got *${BOTSENT[RESULT]} Points*."
+```
 
 ----
 
@@ -1627,5 +1641,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.41-0-gad1b91f
+#### $$VERSION$$ v1.45-dev-8-g069570e
 

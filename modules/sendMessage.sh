@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.45-dev-7-ga9ed559
+#### $$VERSION$$ v1.45-dev-8-g069570e
 
 # will be automatically sourced from bashbot
 
@@ -321,16 +321,14 @@ send_action() {
 # text: ":game_die:" ":dart:" ":basketball:" ":soccer:" :slot_machine:"
 # $3 reply_to_id
 send_dice() {
-	local emoji reply
+	local reply emoji='\ud83c\udfb2'	# default "🎲"
 	[[ "$3" =~ ^[${o9o9o9}-]+$ ]] && reply=',"reply_to_message_id":'"$3"',"allow_sending_without_reply": true'
 	case "$2" in # convert input to single character emoji
-		*🎲*|*game*  |*'dfb2'*|*'DFB2'*)	emoji='\ud83c\udfb2' ;;
+		*🎲*|*game*|*dice*|*'dfb2'*|*'DFB2'*)	: ;;
 		*🎯*|*dart*  |*'dfaf'*|*'DFAF'*)	emoji='\ud83c\udfaf' ;;
 		*🏀*|*basket*|*'dfc0'*|*'DFC0'*)	emoji='\ud83c\udfc0' ;;
 		*⚽*|*soccer*|*'26bd'*|*'26BD'*)	emoji='\u26bd' ;;
 		*🎰*|*slot*  |*'dfb0'*|*'DFB0'*)	emoji='\ud83c\udfb0' ;;
-		*) # default emoji "🎲"
-				emoji='\ud83c\udfb2' ;;
 	esac
 	sendJson "$1" '"emoji": "'"${emoji}"'"'"${reply}" "${URL}/sendDice"
 	if [ "${BOTSENT[OK]}" = "true" ]; then
