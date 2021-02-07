@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.45-dev-6-g2f6f3bd
+#### $$VERSION$$ v1.45-dev-7-ga9ed559
 
 # will be automatically sourced from bashbot
 
@@ -333,6 +333,10 @@ send_dice() {
 				emoji='\ud83c\udfb2' ;;
 	esac
 	sendJson "$1" '"emoji": "'"${emoji}"'"'"${reply}" "${URL}/sendDice"
+	if [ "${BOTSENT[OK]}" = "true" ]; then
+		BOTSENT[DICE]="${UPD["result,dice,emoji"]}"
+		BOTSENT[RESULT]="${UPD["result,dice,value"]}"
+	fi
 }
 
 # $1 CHAT $2 lat $3 long
