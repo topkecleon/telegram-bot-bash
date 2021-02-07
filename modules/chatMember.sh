@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-0-g9d36f23
 
 # will be automatically sourced from bashbot
 
@@ -93,7 +93,7 @@ promote_chat_member() {
 			*"invite"*)	arg="can_invite_users";;
 			*"restrict"*)	arg="can_restrict_members";;
 			*"promote"*)	arg="can_promote_members";;
-			*) 	[ -n "${BASHBOTDEBUG}" ] && debug_log "${FUNCNAME[0]}: unknown promotion ${arg}"
+			*) 	[ -n "${BASHBOTDEBUG}" ] && log_debug "promote_chat_member: unknown promotion CHAT=${chat} USER=${user} PROM=${arg}"
 				continue;; 
 		esac
 		# compose json

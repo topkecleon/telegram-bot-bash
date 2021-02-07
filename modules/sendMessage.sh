@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.41-dev-1-g58fb001
+#### $$VERSION$$ v1.45-dev-0-g9d36f23
 
 # will be automatically sourced from bashbot
 
@@ -260,7 +260,7 @@ send_file(){
 				BOTSENT[ERROR]="File not found: ${UPLOADDIR}/$2"
 			   fi;;
 		    esac
-		    [ -n "${BASHBOTDEBUG}" ] && log_message "Error in upload_file: ${BOTSENT[ERROR]}"
+		    [ -n "${BASHBOTDEBUG}" ] && log_debug "upload_file: CHAT=$1 FILE=$2 MSG=${BOTSENT[ERROR]}"
 		    return
 		fi
 		# file OK, let's continue
