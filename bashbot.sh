@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-11-g897458a
+#### $$VERSION$$ v1.45-dev-12-g066274c
 ##################################################################
 
 # are we running in a terminal?
@@ -466,17 +466,17 @@ download_file() {
 # if no specific function exist try to call bashbotProcessError
 processError(){
 	[[ "$4" != "4"* ]] && return 1
-	local func="$1" err="$2" chat="$3" user="$4" msg="$5"; shift 5
+	local func="$1" err="$2"
 	# check for bashbotError${func} provided in mycommands
 	# shellcheck disable=SC2082
-	if _is_function "bashbotError${func}"; then 
-		"bashbotError${func}" "${err}" "${chat}" "${user}" "${msg}" "$@"
+	if _is_function "bashbotError_${func}"; then 
+		"bashbotError_${func}" "$@"
 	# check for bashbotError${err} provided in mycommands
-	elif _is_function "bashbotError${err}"; then 
-		"bashbotError${err}" "${func}" "${chat}" "${user}" "${msg}" "$@"
+	elif _is_function "bashbotError_${err}"; then 
+		"bashbotError_${err}" "$@"
 	# noting found, try bashbotProcessError
 	else
-		_exec_if_function bashbotProcessError "${func}" "${err}" "${chat}" "${user}" "${msg}" "$@"
+		_exec_if_function bashbotProcessError "$@"
 	fi
 }
 
