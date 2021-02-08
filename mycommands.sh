@@ -13,7 +13,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.45-dev-9-g62b6b61
+#### $$VERSION$$ v1.45-dev-10-gb2fc405
 #######################################################
 # shellcheck disable=SC1117
 
@@ -124,15 +124,16 @@ else
 	case "${MESSAGE}" in
 		##################
 		# example commands, replace them by your own
-		'/game'*) # send random dice 1-5
-			send_dice "${CHAT[ID]}" "$(shuf -i "1-5" -n 1)"
+		'/game'*) # send random dice, edit list to fit your needs
+			send_dice "${CHAT[ID]}" ":$(printf "slot_machine\ngame_die\ndart\nbasketball\nsoccer\nslot_machine"|sort -R|shuf -n 1shuf -n 1):"
 			if [ "${BOTSENT[OK]}" = "true" ]; then
 				local gameresult="*Congratulation* you got *${BOTSENT[RESULT]} Points*."
 				sleep 5
 				case "${BOTSENT[RESULT]}" in
 				  1)	gameresult="*Sorry* only *one Point* ...";;
 				  2)	gameresult="*Hey*, 2 Points are *more then one!*";;
-				  64)	gameresult="*JACKPOT! ${BOTSENT[RESULT]} Points!*"
+				  5|6)	[[ "${BOTSENT[EMOJI]}" =~ fb0$ ]] || gameresult="*Super! ${BOTSENT[RESULT]} Points!*";;
+				  6*)	gameresult="*JACKPOT! ${BOTSENT[RESULT]} Points!*";;
 				esac
 				send_markdownv2_message "${CHAT[ID]}" "${gameresult}"
 			fi
