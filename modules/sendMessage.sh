@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.45-dev-13-g117255a
+#### $$VERSION$$ v1.45-dev-15-gd3a1cec
 
 # will be automatically sourced from bashbot
 
@@ -93,6 +93,15 @@ edit_html_message() {
 # $1 chat $2 mesage_id, $3 caption
 edit_message_caption() {
 	sendJson "$1" '"message_id":'"$2"',"caption":"'"$3"'"' "${URL}/editMessageCaption"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2" "$3"
+}
+
+
+# $ chat $2 msg_id $3 nolog
+delete_message() {
+	[ -z "$3" ] && log_update "Delete Message CHAT=$1 MSG_ID=$2"
+	sendJson "$1" '"message_id": '"$2"'' "${URL}/deleteMessage"
 	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
 	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2" "$3"
 }

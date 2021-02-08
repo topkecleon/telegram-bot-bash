@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-14-gf842730
+#### $$VERSION$$ v1.45-dev-15-gd3a1cec
 ##################################################################
 
 # are we running in a terminal?
@@ -418,16 +418,6 @@ killallproc() {
 		[ -n "${procid}" ] && kill $(proclist -9 "$1")
 	fi
 	debug_checks "end killallproc" "$1"
-}
-
-
-# $ chat $2 msg_id $3 nolog
-declare -xr DELETE_URL=${URL}'/deleteMessage'
-delete_message() {
-	[ -z "$3" ] && log_update "Delete Message CHAT=$1 MSG_ID=$2"
-	sendJson "$1" '"message_id": '"$2"'' "${DELETE_URL}"
-	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
-	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2" "$3"
 }
 
 # URL path for file id, $1 file_id
