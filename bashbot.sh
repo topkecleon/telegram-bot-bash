@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-12-g066274c
+#### $$VERSION$$ v1.45-dev-14-gf842730
 ##################################################################
 
 # are we running in a terminal?
@@ -426,6 +426,8 @@ declare -xr DELETE_URL=${URL}'/deleteMessage'
 delete_message() {
 	[ -z "$3" ] && log_update "Delete Message CHAT=$1 MSG_ID=$2"
 	sendJson "$1" '"message_id": '"$2"'' "${DELETE_URL}"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2" "$3"
 }
 
 # URL path for file id, $1 file_id
@@ -465,8 +467,8 @@ download_file() {
 # calls function based on error: bashbotError{function} basbotError{error}
 # if no specific function exist try to call bashbotProcessError
 processError(){
-	[[ "$4" != "4"* ]] && return 1
 	local func="$1" err="$2"
+	[[ "${err}" != "4"* ]] && return 1
 	# check for bashbotError${func} provided in mycommands
 	# shellcheck disable=SC2082
 	if _is_function "bashbotError_${func}"; then 
