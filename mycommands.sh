@@ -295,6 +295,8 @@ else
 	[ -f ".jssh" ] && printf "%s: %s\n" "$1" "Ups, found file \"${PWD:-.}/.jssh\"! =========="
     }
 
+    ###########################
+    # example recover from telegram block function
     # called when bashbot send_xxx command failed because we can not connect to telegram
     # return 0 to retry, return non 0 to give up
     bashbotBlockRecover() {
@@ -305,7 +307,22 @@ else
 	return 1 
     }
 
-    # place your processing functions here
+    ###########################
+    # example error processing
+    # called when delete Message failed
+    # func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+    bashbotError_delete_message() {
+	log_debug "errorProcessing for delete_message failed: ERR=$2 CHAT=$3 MSGID=$6 ERTXT=$5"
+    }
+
+    # called when error 403 is returned (and no func processing)
+    # func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+    bashbotError_403() {
+	log_debug "errorProcessing for error 403 in FUNC=$1 CHAT=$3 USER=${4:-no-user} MSGID=$6 ERTXT=$5"
+    }
+
+    ###########################
+    # place your processing functions here --------------
 
     # $1 search parameter
     my_image_search(){
@@ -321,3 +338,4 @@ else
     }
 
 fi
+
