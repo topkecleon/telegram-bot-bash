@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-5-geee5458
+#### $$VERSION$$ v1.45-dev-11-g897458a
 ##################################################################
 
 # are we running in a terminal?
@@ -460,7 +460,25 @@ download_file() {
 	# output absolute file path
 	printf "%s\n" "$(cd "${file%/*}" >/dev/null 2>&1 && pwd)/${file##*/}"
 }
-
+# notify mycommands about errors while sending
+# $1 calling function  $2 error $3 chat $4 user $5 error message $6 ... remaining args to calling function
+# calls function based on error: bashbotError{function} basbotError{error}
+# if no specific function exist try to call bashbotProcessError
+processError(){
+	[[ "$4" != "4"* ]] && return 1
+	local func="$1" err="$2" chat="$3" user="$4" msg="$5"; shift 5
+	# check for bashbotError${func} provided in mycommands
+	# shellcheck disable=SC2082
+	if _is_function "bashbotError${func}"; then 
+		"bashbotError${func}" "${err}" "${chat}" "${user}" "${msg}" "$@"
+	# check for bashbotError${err} provided in mycommands
+	elif _is_function "bashbotError${err}"; then 
+		"bashbotError${err}" "${func}" "${chat}" "${user}" "${msg}" "$@"
+	# noting found, try bashbotProcessError
+	else
+		_exec_if_function bashbotProcessError "${func}" "${err}" "${chat}" "${user}" "${msg}" "$@"
+	fi
+}
 
 # iconv used to filter out broken utf characters, if not installed fake it
 if ! _exists iconv; then
