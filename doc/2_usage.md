@@ -172,6 +172,8 @@ These Variables are always present in regular messages:
 
 The following variables are set if the message contains optional parts:
 
+* `MESSAGE[CAPTION]`: Picture, Audio, Video, File Captions
+* `MESSAGE[DICE]`: Animated DICE Emoji DICE vlaues is contained in `MESSAGE[RESULT]`
 * `$REPLYTO`: Original message which was replied to
 * `$REPLYTO`: This array contains the First name, last name, username and user id of the ORIGINAL sender of the message REPLIED to.
     * `${REPLYTO[ID]}`: ID of message which was replied to
@@ -185,7 +187,6 @@ The following variables are set if the message contains optional parts:
     * `${FORWARD[FIRST_NAME]}`: Original user's first name
     * `${FORWARD[LAST_NAME]}`: Original user's' last name
     * `${FORWARD[USERNAME]}`: Original user's username
-* `$CAPTION`: Picture, Audio, Video, File Captions
 * `$URLS`: This array contains the `path` on Telegram server for files send to chat, e.g. photo, video, audio file.
     * `${URLS[AUDIO]}`: Path to audio file
     * `${URLS[VIDEO]}`: Path to video
@@ -376,5 +377,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.41-0-gad1b91f
+#### $$VERSION$$ v1.45-dev-17-ga7d85e3
 
