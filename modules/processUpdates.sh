@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.41-0-gad1b91f
+#### $$VERSION$$ v1.45-dev-16-gc58fa22
 ##################################################################
 
 ##############
@@ -148,6 +148,10 @@ process_message() {
 	# Message
 	MESSAGE[0]+="$(JsonDecode "${UPD["result,${num},message,text"]}" | sed 's|\\/|/|g')"
 	MESSAGE[ID]="${UPD["result,${num},message,message_id"]}"
+	MESSAGE[DICE]="${UPD["result,${num},message,dice,emoji"]}"
+	MESSAGE[RESULT]="${UPD["result,${num},message,dice,value"]}"
+	MESSAGE[CAPTION]="$(JsonDecode "${UPD["result,${num},message,caption"]}")"
+	CAPTION="${MESSAGE[CAPTION]}"	# backward compatibility 
 
 	# Chat ID is now parsed when update is received
 	CHAT[LAST_NAME]="$(JsonDecode "${UPD["result,${num},message,chat,last_name"]}")"
@@ -211,9 +215,6 @@ process_message() {
 		VENUE[LATITUDE]="${UPD["result,${num},message,venue,location,latitude"]}"
 		VENUE[FOURSQUARE]="${UPD["result,${num},message,venue,foursquare_id"]}"
 	fi
-
-	# Caption
-	CAPTION="$(JsonDecode "${UPD["result,${num},message,caption"]}")"
 
 	# Location
 	LOCATION[LONGITUDE]="${UPD["result,${num},message,location,longitude"]}"
