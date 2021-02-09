@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.45-dev-16-gc58fa22
+#### $$VERSION$$ v1.45-dev-18-g193ca1e
 ##################################################################
 
 ##############
@@ -128,7 +128,6 @@ process_inline_query() {
 }
 
 process_inline_button() {
-# debugging for impelemetation
 	local num="$1"
 	iBUTTON[DATA]="${UPD["result,${num},callback_query,data"]}"
 	iBUTTON[CHAT_ID]="${UPD["result,${num},callback_query,message,chat,id"]}"
@@ -148,11 +147,14 @@ process_message() {
 	# Message
 	MESSAGE[0]+="$(JsonDecode "${UPD["result,${num},message,text"]}" | sed 's|\\/|/|g')"
 	MESSAGE[ID]="${UPD["result,${num},message,message_id"]}"
-	MESSAGE[DICE]="${UPD["result,${num},message,dice,emoji"]}"
-	MESSAGE[RESULT]="${UPD["result,${num},message,dice,value"]}"
 	MESSAGE[CAPTION]="$(JsonDecode "${UPD["result,${num},message,caption"]}")"
 	CAPTION="${MESSAGE[CAPTION]}"	# backward compatibility 
-
+	# dice received
+	MESSAGE[DICE]="${UPD["result,${num},message,dice,emoji"]}"
+	if [ -n "${MESSAGE[DICE]}" ]; then
+		MESSAGE[RESULT]="${UPD["result,${num},message,dice,value"]}"
+		MESSAGE[0]="/_dice_received ${MESSAGE[DICE]} ${MESSAGE[RESULT]}"
+	fi
 	# Chat ID is now parsed when update is received
 	CHAT[LAST_NAME]="$(JsonDecode "${UPD["result,${num},message,chat,last_name"]}")"
 	CHAT[FIRST_NAME]="$(JsonDecode "${UPD["result,${num},message,chat,first_name"]}")"
@@ -230,7 +232,6 @@ process_message() {
 		NEWMEMBER[LAST_NAME]="$(JsonDecode "${UPD["result,${num},message,new_chat_member,last_name"]}")"
 		NEWMEMBER[USERNAME]="$(JsonDecode "${UPD["result,${num},message,new_chat_member,username"]}")"
 		NEWMEMBER[ISBOT]="${UPD["result,${num},message,new_chat_member,is_bot"]}"
-		[ -z "${MESSAGE[0]}" ] &&\
 		MESSAGE[0]="/_new_chat_member ${NEWMEMBER[ID]} ${NEWMEMBER[USERNAME]:=${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]}}"
 	    fi
 	    # left chat member
@@ -241,16 +242,15 @@ process_message() {
 		LEFTMEMBER[LAST_NAME]="$(JsonDecode "${UPD["result,${num},message,left_chat_member,last_name"]}")"
 		LEFTMEBER[USERNAME]="$(JsonDecode "${UPD["result,${num},message,left_chat_member,username"]}")"
 		LEFTMEMBER[ISBOT]="${UPD["result,${num},message,left_chat_member,is_bot"]}"
-		[ -z "${MESSAGE[0]}" ] &&\
 		MESSAGE[0]="/_left_chat_member ${LEFTMEMBER[ID]} ${LEFTMEMBER[USERNAME]:=${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]}}"
 	    fi
 	    # chat title / photo, check for any of them!
 	    if grep -qs -e '\["result",'"${num}"',"message","new_chat_[tp]' <<<"${UPDATE}"; then
 		SERVICE[NEWTITLE]="$(JsonDecode "${UPD["result,${num},message,new_chat_title"]}")"
-		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWTITLE]}" ] &&\
+		[ -n "${SERVICE[NEWTITLE]}" ] &&\
 			MESSAGE[0]="/_new_chat_title ${USER[ID]} ${SERVICE[NEWTITLE]}"
 		SERVICE[NEWPHOTO]="$(get_file "${UPD["result,${num},message,new_chat_photo,0,file_id"]}")"
-		[ -z "${MESSAGE[0]}" ] && [ -n "${SERVICE[NEWPHOTO]}" ] &&\
+		[ -n "${SERVICE[NEWPHOTO]}" ] &&\
 			 MESSAGE[0]="/_new_chat_photo ${USER[ID]} ${SERVICE[NEWPHOTO]}"
 	    fi
 	    # pinned message
@@ -258,8 +258,7 @@ process_message() {
 		SERVICE[PINNED]="${UPD["result,${num},message,pinned_message,message_id"]}"
 		PINNED[ID]="${SERVICE[PINNED]}"
 		PINNED[MESSAGE]="$(JsonDecode "${UPD["result,${num},message,pinned_message,text"]}")"
-		[ -z "${MESSAGE[0]}" ] &&\
-			MESSAGE[0]="/_new_pinned_message ${USER[ID]} ${PINNED[ID]} ${PINNED[MESSAGE]}"
+		MESSAGE[0]="/_new_pinned_message ${USER[ID]} ${PINNED[ID]} ${PINNED[MESSAGE]}"
 	    fi
 	    # migrate to super group
 	    if [ -n "${UPD["result,${num},message,migrate_to_chat_id"]}" ]; then
@@ -268,8 +267,7 @@ process_message() {
 		# CHAT is already migrated, so set new chat id
 		[ "${CHAT[ID]}" = "${MIGRATE[FROM]}" ] && CHAT[ID]="${MIGRATE[FROM]}"
 		SERVICE[MIGRATE]="${MIGRATE[FROM]} ${MIGRATE[TO]}"
-		[ -z "${MESSAGE[0]}" ] &&\
-			MESSAGE[0]="/_migrate_group ${SERVICE[MIGRATE]}"
+		MESSAGE[0]="/_migrate_group ${SERVICE[MIGRATE]}"
 	    fi
 	    # set SERVICE to yes if a service message was received
 	    [[ "${SERVICE[*]}" =~  ^[[:blank:]]*$ ]] || SERVICE[0]="yes"

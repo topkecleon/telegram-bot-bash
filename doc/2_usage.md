@@ -173,7 +173,7 @@ These Variables are always present in regular messages:
 The following variables are set if the message contains optional parts:
 
 * `MESSAGE[CAPTION]`: Picture, Audio, Video, File Captions
-* `MESSAGE[DICE]`: Animated DICE Emoji DICE vlaues is contained in `MESSAGE[RESULT]`
+* `MESSAGE[DICE]`: Animated DICE Emoji DICE values is contained in `MESSAGE[RESULT]`
 * `$REPLYTO`: Original message which was replied to
 * `$REPLYTO`: This array contains the First name, last name, username and user id of the ORIGINAL sender of the message REPLIED to.
     * `${REPLYTO[ID]}`: ID of message which was replied to
