@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-24-g785e769
+#### $$VERSION$$ v1.45-dev-26-g82a57a7
 ##################################################################
 
 # are we running in a terminal?
@@ -106,8 +106,8 @@ JsonEscape(){
 }
 # clean \ from escaped json string
 # $1 string, output cleaned string
-cleanEscaped(){	# remove "	all \ but  \n		\n or \r
-	sed -E -e 's/\\"/+/g' -e 's/\\([^n])/\1/g' -e 's/(\r|\n)//g' <<<"$1"
+cleanEscaped(){	# remove "	all \ but  \n\u		\n or \r
+	sed -E -e 's/\\"/+/g' -e 's/\\([^nu])/\1/g' -e 's/(\r|\n)//g' <<<"$1"
 }
 # check if $1 seems a valid token
 # return true if token seems to be valid
