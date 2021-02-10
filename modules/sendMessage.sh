@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.45-dev-15-gd3a1cec
+#### $$VERSION$$ v1.45-dev-23-g805a74e
 
 # will be automatically sourced from bashbot
 
@@ -277,6 +277,7 @@ send_file(){
 	else
 		# we have a file, check file location ...
 		media="FILE"
+#XXX factor out to checkFileLocation ??
 		[[ "${file}" = *'..'* || "${file}" = '.'* ]] && err=1 	# no directory traversal
 		if [[ "${file}" = '/'* ]] ; then
 			[[ ! "${file}" =~ ${FILE_REGEX} ]] && err=2	# absolute must match REGEX
