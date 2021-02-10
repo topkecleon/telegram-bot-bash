@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.45-dev-24-g785e769
+#### $$VERSION$$ v1.45-dev-25-gb1f6a0b
 
 # will be automatically sourced from bashbot
 
@@ -20,6 +20,10 @@ new_chat_invite() {
 	[ "${BOTSENT[OK]}" = "true" ] && printf "%s\n" "${BOTSENT[RESULT]}"
 }
 
+# $1 chat, $2 user_id, $3 title 
+set_chatadmin_title() {
+	sendJson "$1" '"user_id":'"$2"',"custom_title": "'"$3"'"' "${URL}/setChatAdministratorCustomTitle"
+}
 # $1 chat, $2 title 
 set_chat_title() {
 	sendJson "$1" '"title": "'"$2"'"' "${URL}/setChatTitle"
