@@ -11,7 +11,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-21-ge67e43d
 #===============================================================================
 
 # common variables
@@ -39,12 +39,12 @@ export SUCCESS NOSUCCESS
  NOSUCCESS="   FAILED!"
 
 # default input, reference and output files
-export  INPUTFILE REFFILE INPUTFILE2 REFFILE2 OUTPUTFILE
+export  INPUTFILE REFFILE OUTPUTFILE INPUTFILELIST
+ # shellcheck disable=SC2125
+ INPUTFILELIST="${DIRME}/${REFDIR}/${REFDIR}-"*".input"
  OUTPUTFILE="${TESTDIR}/${REFDIR}.out"
  INPUTFILE="${DIRME}/${REFDIR}/${REFDIR}.input"
  REFFILE="${DIRME}/${REFDIR}/${REFDIR}.result"
- INPUTFILE2="${DIRME}/${REFDIR}/${REFDIR}2.input"
- REFFILE2="${DIRME}/${REFDIR}/${REFDIR}2.result"
 
 # reset ENVIRONMENT
 export BASHBOT_URL TESTTOKEN BOTTOKEN BASHBOT_HOME BASHBOT_VAR BASHBOT_ETC

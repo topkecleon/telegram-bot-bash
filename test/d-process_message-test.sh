@@ -10,7 +10,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-21-ge67e43d
 #===============================================================================
 
 # include common functions and definitions
@@ -38,34 +38,24 @@ declare -Ax UPD
 # run process_message --------------
 ARRAYS="USER CHAT REPLYTO FORWARD URLS CONTACT CAPTION LOCATION MESSAGE VENUE SERVICE NEWMEMBER LEFTMEMBER PINNED"
 
-printf "Check process_message regular message...\n"
+printf "Check process_message ...\n"
 
-UPDATE="$(< "${INPUTFILE}")"
-Json2Array 'UPD' <"${INPUTFILE}"
-set -x
-{ pre_process_message "0"; process_message "0";  set +x; } >>"${LOGFILE}" 2>&1;
-USER[ID]="123456789"; CHAT[ID]="123456789"
+for testfile in ${INPUTFILELIST}
+do
+	printf "  ... %s\n" "${testfile##*/}"
+	testref="${testfile%.input}.result"
+	UPDATE="$(< "${testfile}")"
+	Json2Array 'UPD' <"${testfile}"
+	set -x
+	{ pre_process_message "0"; process_message "0";  set +x; } >>"${LOGFILE}" 2>&1;
+	USER[ID]="123456789"; CHAT[ID]="123456789"
 
-# output processed input
-# shellcheck disable=SC2086
-print_array ${ARRAYS}  >"${OUTPUTFILE}"
-compare_sorted "${REFFILE}" "${OUTPUTFILE}" || exit 1
+	# output processed input
+	# shellcheck disable=SC2086
+	print_array ${ARRAYS}  >"${OUTPUTFILE}"
+	compare_sorted "${testref}" "${OUTPUTFILE}" || exit 1
+	printf "%s\n" "${SUCCESS}"
 
-# run process_message ------------
-printf "Check process_message service message...\n"
-
-UPDATE="$(cat "${INPUTFILE2}")"
-Json2Array 'UPD' <"${INPUTFILE2}"
-set -x
-{ pre_process_message "0"; process_message "0";  set +x; } >>"${LOGFILE}" 2>&1;
-USER[ID]="123456789"; CHAT[ID]="123456789"
-
-# output processed input
-# shellcheck disable=SC2086
-print_array ${ARRAYS}  >"${OUTPUTFILE}"
-compare_sorted "${REFFILE2}" "${OUTPUTFILE}" || exit 1
-
-
-printf "%s\n" "${SUCCESS}"
+done
 
 cd "${DIRME}" || exit 1
