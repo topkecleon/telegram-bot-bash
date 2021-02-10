@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.45-dev-23-g805a74e
+#### $$VERSION$$ v1.45-dev-24-g785e769
 
 # will be automatically sourced from bashbot
 
@@ -262,12 +262,10 @@ else
   }
 fi
 
-UPLOADDIR="${BASHBOT_UPLOAD:-${DATADIR}/upload}"
-
 # supports local file, URL and file_id
 # $1 chat, $2 file https::// file_id:// , $3 caption, $4 extension (optional)
 send_file(){
-	local url what num stat err media capt file="$2" ext="$4"
+	local url what num stat media capt file="$2" ext="$4"
 	capt="$(JsonEscape "$3")"
 	if [[ "${file}" =~ ^https*:// ]]; then
 		media="URL"
@@ -277,29 +275,8 @@ send_file(){
 	else
 		# we have a file, check file location ...
 		media="FILE"
-#XXX factor out to checkFileLocation ??
-		[[ "${file}" = *'..'* || "${file}" = '.'* ]] && err=1 	# no directory traversal
-		if [[ "${file}" = '/'* ]] ; then
-			[[ ! "${file}" =~ ${FILE_REGEX} ]] && err=2	# absolute must match REGEX
-		else
-			file="${UPLOADDIR:-NOUPLOADDIR}/${file}"	# others must be in UPLOADDIR
-		fi
-		[ ! -r "${file}" ] && err=3	# and file must exits of course
-		# file path error, generate error response
-		if [ -n "${err}" ]; then
-		    BOTSENT=(); BOTSENT[OK]="false"
-		    case "${err}" in
-			1) BOTSENT[ERROR]="Path to file $2 contains to much '../' or starts with '.'";;
-			2) BOTSENT[ERROR]="Path to file $2 does not match regex: ${FILE_REGEX} ";;
-			3) if [[ "$2" == "/"* ]];then
-				BOTSENT[ERROR]="File not found: $2"
-			   else
-				BOTSENT[ERROR]="File not found: ${UPLOADDIR}/$2"
-			   fi;;
-		    esac
-		    [ -n "${BASHBOTDEBUG}" ] && log_debug "upload_file: CHAT=$1 FILE=$2 MSG=${BOTSENT[DESCRIPTION]}"
-		    return
-		fi
+		file="$(checkUploadFile "$1" "$2" "send_file")"
+		[ -z "${file}" ] && return 1
 		# file OK, let's continue
 	fi
 

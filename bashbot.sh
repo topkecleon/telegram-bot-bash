@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-15-gd3a1cec
+#### $$VERSION$$ v1.45-dev-24-g785e769
 ##################################################################
 
 # are we running in a terminal?
@@ -507,6 +507,36 @@ sendJson(){
 	# check telegram response
 	sendJsonResult "${res}" "sendJson (${DETECTED_CURL})" "$@"
 	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" &
+}
+
+UPLOADDIR="${BASHBOT_UPLOAD:-${DATADIR}/upload}"
+
+# $1 chat $2 file, $3 calling function
+# return final file name or empty string on error
+checkUploadFile() {
+	local err file="$2"
+	[[ "${file}" = *'..'* || "${file}" = '.'* ]] && err=1 	# no directory traversal
+	if [[ "${file}" = '/'* ]] ; then
+		[[ ! "${file}" =~ ${FILE_REGEX} ]] && err=2	# absolute must match REGEX
+	else
+		file="${UPLOADDIR:-NOUPLOADDIR}/${file}"	# others must be in UPLOADDIR
+	fi
+	[ ! -r "${file}" ] && err=3	# and file must exits of course
+	# file path error, generate error response
+	if [ -n "${err}" ]; then
+	    BOTSENT=(); BOTSENT[OK]="false"
+	    case "${err}" in
+		1) BOTSENT[ERROR]="Path to file $2 contains to much '../' or starts with '.'";;
+		2) BOTSENT[ERROR]="Path to file $2 does not match regex: ${FILE_REGEX} ";;
+		3) if [[ "$2" == "/"* ]];then
+			BOTSENT[ERROR]="File not found: $2"
+		   else
+			BOTSENT[ERROR]="File not found: ${UPLOADDIR}/$2"
+		   fi;;
+	    esac
+	    [ -n "${BASHBOTDEBUG}" ] && log_debug "$3: CHAT=$1 FILE=$2 MSG=${BOTSENT[DESCRIPTION]}"
+	    return 1
+	fi
 }
 
 
