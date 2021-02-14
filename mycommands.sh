@@ -13,7 +13,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.45-dev-20-g2f4ef69
+#### $$VERSION$$ v1.45-dev-27-g77ffbab
 #######################################################
 # shellcheck disable=SC1117
 
@@ -127,7 +127,7 @@ else
 		'/_dice_re'*) # dice from user received
 			sleep 5
 			local gameresult="*Congratulation ${USER[FIRST_NAME]} ${USER[LAST_NAME]}* you got *${MESSAGE[RESULT]} Points*."
-			send_markdownv2_message "${CHAT[ID]}" "${gameresult}"
+			[ -z "${FORWARD[UID]}" ] && send_markdownv2_message "${CHAT[ID]}" "${gameresult}"
 			;;
 		'/game'*) # send random dice, edit list to fit your needs
 			send_dice "${CHAT[ID]}" ":$(printf "slot_machine\ngame_die\ndart\nbasketball\nsoccer\nslot_machine"|sort -R|shuf -n 1shuf -n 1):"
