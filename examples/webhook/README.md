@@ -16,7 +16,7 @@ Prerequisite: An Apache webserver with a valid SLL certificate chain and php ena
 Prepare Apache to forward webhook to Bashbot: 
 
 - install bashbot as described in [Bashbot Installation](../../doc/0_install.md)
-- create file `data-bot-bash/webhook-fifo`
+- create file `data-bot-bash/webhook-fifo-<botname>` (_<botname> as in `botconfig.jssh`_)
 - run `bashbot.sh init` to setup bashbot to run as same user as Apache (_e.g. www_)
 - go to apache web root and create directory `telegram/<your_bot_token>`
 - copy all files from `examples/webhook` to new directory and change to it
@@ -24,16 +24,16 @@ Prepare Apache to forward webhook to Bashbot:
 - execute `php index.php`
 
 Every call to webhook `https://<yourservername>/telegram/<your_bot_token>/` will execute
-`index.php` and write received JSON to file `data-bot-bash/webhook-fifo`.
+`index.php` and write received JSON to file `data-bot-bash/webhook-fifo-botname`.
 E.g. the URL `https://<yourservername>/telegram/<your_bot_token>/?json={"test":"me"}`
-will append `{"test":"me"}` to the file `data-bot-bash/webhook-fifo`.
+will append `{"test":"me"}` to the file `data-bot-bash/webhook-fifo-<botname>`.
 
 Now your Apache is ready to forward data to Bashbot. 
 
 
 #### Simple update processing
 
-To configure `Simple update processing` delete the file `data-bot-bash/webhook-fifo` after your webhook is working.
+To configure `Simple update processing` delete the file `data-bot-bash/webhook-fifo-<botname>` after your webhook is working.
 All webhook calls are now forwarded to `bin/process_update.sh` for processing.
 
 To start `Simple processing ` enable webhook on Telegram (_see below_).
@@ -76,5 +76,5 @@ To stop delivering of Telegram updates via webhook run `bin/any_command.sh delet
 **Important**: Only https connections with a valid certificate chain are allowed as endpoint for webhook.
 
 
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-28-g9958b5b
 
