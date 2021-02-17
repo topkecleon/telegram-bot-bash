@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.45-dev-18-g193ca1e
+#### $$VERSION$$ v1.45-dev-30-g8efbfca
 ##################################################################
 
 ##############
@@ -47,6 +47,8 @@ delete_webhook() {
 process_multi_updates() {
 	local max num debug="$1"
 	max="$(grep -F ',"update_id"]'  <<< "${UPDATE}" | tail -1 | cut -d , -f 2 )"
+	# escape bash $ expansion bug
+	UPDATE="${UPDATE//$/\\$}"
 	Json2Array 'UPD' <<<"${UPDATE}"
 	for ((num=0; num<=max; num++)); do
 		process_update "${num}" "${debug}"
@@ -345,8 +347,6 @@ get_updates(){
 				log_error "Recovered from timeout/broken/no connection, continue with telegram updates"
 			# calculate next sleep interval
 			((nextsleep+= stepsleep , nextsleep= nextsleep>maxsleep ?maxsleep:nextsleep))
-			# escape bash $ expansion bug
-			UPDATE="${UPDATE//$/\\$}"
 			# warn if webhook is set
 			if grep -q '^\["error_code"\]	409' <<<"${UPDATE}"; then
 				[ "${OFFSET}" != "-999" ] && nextsleep="${stepsleep}"
