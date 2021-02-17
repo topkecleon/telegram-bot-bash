@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-24-g785e769
 
 # will be automatically sourced from bashbot
 
@@ -25,7 +25,6 @@ EDIT_URL=${URL}'/editMessageText'
 # $1 CHAT $2 message
 send_normal_message() {
 	local len text; text="$(JsonEscape "$2")"
-	text="${text//$'\n'/\\n}"
 	until [ -z "${text}" ]; do
 		if [ "${#text}" -le 4096 ]; then
 			sendJson "$1" '"text":"'"${text}"'"' "${MSG_URL}"
@@ -38,46 +37,73 @@ send_normal_message() {
 			text="${text:$((len+2))}"
 		fi
 	done
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2"
 }
 
 # $1 CHAT $2 message
 send_markdown_message() {
 	_format_message_url "$1" "$2" ',"parse_mode":"markdown"' "${MSG_URL}"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2"
 }
 
 # $1 CHAT $2 message
 send_markdownv2_message() {
 	_markdownv2_message_url "$1" "$2" ',"parse_mode":"markdownv2"' "${MSG_URL}"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2"
 }
 
 # $1 CHAT $2 message
 send_html_message() {
 	_format_message_url "$1" "$2" ',"parse_mode":"html"' "${MSG_URL}"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2"
 }
 
 # $1 CHAT $2 msg-id $3 message
 edit_normal_message() {
 	_format_message_url "$1" "$3" ',"message_id":'"$2"'' "${EDIT_URL}"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2" "$3"
 }
 
 # $1 CHAT $2 msg-id $3 message
 edit_markdown_message() {
 	_format_message_url "$1" "$3" ',"message_id":'"$2"',"parse_mode":"markdown"' "${EDIT_URL}"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2" "$3"
 }
 
 # $1 CHAT $2 msg-id $3 message
 edit_markdownv2_message() {
 	_markdownv2_message_url "$1" "$3" ',"message_id":'"$2"',"parse_mode":"markdownv2"' "${EDIT_URL}"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2" "$3"
 }
 
 # $1 CHAT $2 msg-id $3 message
 edit_html_message() {
 	_format_message_url "$1" "$3" ',"message_id":'"$2"',"parse_mode":"html"' "${EDIT_URL}"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2" "$3"
 }
 
 # $1 chat $2 mesage_id, $3 caption
 edit_message_caption() {
 	sendJson "$1" '"message_id":'"$2"',"caption":"'"$3"'"' "${URL}/editMessageCaption"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2" "$3"
+}
+
+
+# $ chat $2 msg_id $3 nolog
+delete_message() {
+	[ -z "$3" ] && log_update "Delete Message CHAT=$1 MSG_ID=$2"
+	sendJson "$1" '"message_id": '"$2"'' "${URL}/deleteMessage"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2" "$3"
 }
 
 
@@ -85,7 +111,6 @@ edit_message_caption() {
 # $1 CHAT $2 message $3 action $4 URL
 _format_message_url(){
 	local text; text="$(JsonEscape "$2")"
-	text="${text//$'\n'/\\n}"
 	[ "${#text}" -ge 4096 ] && log_error "Warning: html/markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	until [ -z "${text}" ]; do
 		sendJson "$1" '"text":"'"${text:0:4096}"'"'"$3"'' "$4"
@@ -97,7 +122,6 @@ _format_message_url(){
 # $1 CHAT $2 message $3 action $4 URL
 _markdownv2_message_url() {
 	local text; text="$(JsonEscape "$2")"
-	text="${text//$'\n'/\\n}"
 	[ "${#text}" -ge 4096 ] && log_error "Warning: markdownv2 message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
 	# markdown v2 needs additional double escaping!
 	text="$(sed -E -e 's|([_|~`>+=#{}()!.-])|\\\1|g' <<< "${text}")"
@@ -120,8 +144,10 @@ send_keyboard() {
 		text='"text":"'"${text//$'\n'/\\n}"'"'
 	fi
 	local one_time=', "one_time_keyboard":true' && [ -n "$4" ] && one_time=""
-	sendJson "$1" "${text}"', "reply_markup": {"keyboard": [ '"$3"' ] '"${one_time}"'}' "${MSG_URL}"
 	# '"text":"$2", "reply_markup": {"keyboard": [ $3 ], "one_time_keyboard": true}'
+	sendJson "$1" "${text}"', "reply_markup": {"keyboard": [ '"$3"' ] '"${one_time}"'}' "${MSG_URL}"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2"
 }
 
 # $1 CHAT $2 message $3 remove
@@ -133,8 +159,10 @@ remove_keyboard() {
 	fi
 	sendJson "$1" "${text}"', "reply_markup": {"remove_keyboard":true}' "${MSG_URL}"
 	# delete message if no message or $3 not empty
-	[[ -z "$2" || -n "$3" ]] && delete_message "$1" "${BOTSENT[ID]}" "nolog"
 	#JSON='"text":"$2", "reply_markup": {"remove_keyboard":true}'
+	[[ -z "$2" || -n "$3" ]] && delete_message "$1" "${BOTSENT[ID]}" "nolog"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2"
 }
 
 # buttons will specified as "texts
@@ -177,8 +205,10 @@ _button_row() {
 # raw inline functions, for special use
 # $1 CHAT $2 message-id $3 keyboard
 edit_inline_keyboard() {
-	sendJson "$1" '"message_id":'"$2"', "reply_markup": {"inline_keyboard": [ '"$3"' ]}' "${URL}/editMessageReplyMarkup"
 	# JSON='"message_id":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
+	sendJson "$1" '"message_id":'"$2"', "reply_markup": {"inline_keyboard": [ '"$3"' ]}' "${URL}/editMessageReplyMarkup"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2"
 }
 
 
@@ -186,7 +216,8 @@ edit_inline_keyboard() {
 send_inline_keyboard() {
 	local text; text='"text":"'$(JsonEscape "$2")'"'; [ -z "$2" ] && text='"text":"..."'
 	sendJson "$1" "${text}"', "reply_markup": {"inline_keyboard": [ '"$3"' ]}' "${MSG_URL}"
-	# JSON='"text":"$2", "reply_markup": {"inline_keyboard": [ $3->[{"text":"text", "url":"url"}]<- ]}'
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2" "$3"
 }
 
 # $1 callback id, $2 text to show, alert if not empty
@@ -199,6 +230,8 @@ answer_callback_query() {
 # $1 chat, $2 file_id on telegram server 
 send_sticker() {
 	sendJson "$1" '"sticker": "'"$2"'"' "${URL}/sendSticker"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2"
 }
 
 
@@ -229,12 +262,10 @@ else
   }
 fi
 
-UPLOADDIR="${BASHBOT_UPLOAD:-${DATADIR}/upload}"
-
 # supports local file, URL and file_id
 # $1 chat, $2 file https::// file_id:// , $3 caption, $4 extension (optional)
 send_file(){
-	local url what num stat err media capt file="$2" ext="$4"
+	local url what num stat media capt file="$2" ext="$4"
 	capt="$(JsonEscape "$3")"
 	if [[ "${file}" =~ ^https*:// ]]; then
 		media="URL"
@@ -244,28 +275,8 @@ send_file(){
 	else
 		# we have a file, check file location ...
 		media="FILE"
-		[[ "${file}" = *'..'* || "${file}" = '.'* ]] && err=1 	# no directory traversal
-		if [[ "${file}" = '/'* ]] ; then
-			[[ ! "${file}" =~ ${FILE_REGEX} ]] && err=2	# absolute must match REGEX
-		else
-			file="${UPLOADDIR:-NOUPLOADDIR}/${file}"	# others must be in UPLOADDIR
-		fi
-		[ ! -r "${file}" ] && err=3	# and file must exits of course
-		# file path error, generate error response
-		if [ -n "${err}" ]; then
-		    BOTSENT=(); BOTSENT[OK]="false"
-		    case "${err}" in
-			1) BOTSENT[ERROR]="Path to file $2 contains to much '../' or starts with '.'";;
-			2) BOTSENT[ERROR]="Path to file $2 does not match regex: ${FILE_REGEX} ";;
-			3) if [[ "$2" == "/"* ]];then
-				BOTSENT[ERROR]="File not found: $2"
-			   else
-				BOTSENT[ERROR]="File not found: ${UPLOADDIR}/$2"
-			   fi;;
-		    esac
-		    [ -n "${BASHBOTDEBUG}" ] && log_message "Error in upload_file: ${BOTSENT[ERROR]}"
-		    return
-		fi
+		file="$(checkUploadFile "$1" "$2" "send_file")"
+		[ -z "${file}" ] && return 1
 		# file OK, let's continue
 	fi
 
@@ -313,24 +324,54 @@ send_file(){
 	return 0
 }
 
-# $1 typing upload_photo record_video upload_video record_audio upload_audio upload_document find_location
+# $1 chat $2 typing upload_photo record_video upload_video record_audio upload_audio upload_document find_location
 send_action() {
 	[ -z "$2" ] && return
 	sendJson "$1" '"action": "'"$2"'"' "${URL}/sendChatAction" &
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2"
+}
+
+# $1 chat $2 emoji “🎲”, “🎯”, “🏀”, “⚽”, “🎰"
+# code: "\ud83c\udfb2" "\ud83c\udfaf" "\ud83c\udfc0" "\u26bd" "\ud83c\udfb0"
+# text: ":game_die:" ":dart:" ":basketball:" ":soccer:" :slot_machine:"
+# $3 reply_to_id
+send_dice() {
+	local reply emoji='\ud83c\udfb2'	# default "🎲"
+	[[ "$3" =~ ^[${o9o9o9}-]+$ ]] && reply=',"reply_to_message_id":'"$3"',"allow_sending_without_reply": true'
+	case "$2" in # convert input to single character emoji
+		*🎲*|*game*|*dice*|*'dfb2'*|*'DFB2'*)	: ;;
+		*🎯*|*dart*  |*'dfaf'*|*'DFAF'*)	emoji='\ud83c\udfaf' ;;
+		*🏀*|*basket*|*'dfc0'*|*'DFC0'*)	emoji='\ud83c\udfc0' ;;
+		*⚽*|*soccer*|*'26bd'*|*'26BD'*)	emoji='\u26bd' ;;
+		*🎰*|*slot*  |*'dfb0'*|*'DFB0'*)	emoji='\ud83c\udfb0' ;;
+	esac
+	sendJson "$1" '"emoji": "'"${emoji}"'"'"${reply}" "${URL}/sendDice"
+	if [ "${BOTSENT[OK]}" = "true" ]; then
+		BOTSENT[DICE]="${UPD["result,dice,emoji"]}"
+		BOTSENT[RESULT]="${UPD["result,dice,value"]}"
+	else
+		# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+		processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2"
+	fi
 }
 
 # $1 CHAT $2 lat $3 long
 send_location() {
 	[ -z "$3" ] && return
 	sendJson "$1" '"latitude": '"$2"', "longitude": '"$3"'' "${URL}/sendLocation"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2" "$3"
 }
 
-# $1 CHAT $2 lat $3 long $4 title $5 address $6 foursquard id
+# $1 CHAT $2 lat $3 long $4 title $5 address $6 foursquare id
 send_venue() {
 	local add=""
 	[ -z "$5" ] && return
 	[ -n "$6" ] && add=', "foursquare_id": '"$6"''
 	sendJson "$1" '"latitude": '"$2"', "longitude": '"$3"', "address": "'"$5"'", "title": "'"$4"'"'"${add}" "${URL}/sendVenue"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2" "$3" "$4" "$5" "$6"
 }
 
 
@@ -342,9 +383,16 @@ send_venue() {
 forward_message() {
 	[ -z "$3" ] && return
 	sendJson "$1" '"from_chat_id": '"$2"', "message_id": '"$3"'' "${URL}/forwardMessage"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2" "$3"
 }
-forward() {	# backward compatibility
-	forward_message "$@" || return
+
+# $1 CHAT $2 from chat  $3 from msg id
+copy_message() {
+	[ -z "$3" ] && return
+	sendJson "$1" '"from_chat_id": '"$2"', "message_id": '"$3"'' "${URL}/copyMessage"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2" "$3"
 }
 
 # $1 CHAT $2 bashbot formatted message, see manual advanced usage

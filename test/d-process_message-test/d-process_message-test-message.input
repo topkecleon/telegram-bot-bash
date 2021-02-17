@@ -89,3 +89,7 @@
 ["result",0,"message","voice","duration"]	2
 ["result",0,"message","voice","mime_type"]	"audio/ogg"
 ["result",0,"message","voice","file_size"]	4262
+["result",0,"message","caption"]	"Myproteine kein spell check"
+["result","dice","emoji"]	"\ud83c\udfb2"
+["result","dice","value"]	5
+

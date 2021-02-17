@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-26-g82a57a7
 ##################################################################
 
 # are we running in a terminal?
@@ -99,11 +99,15 @@ getConfigKey() {
 	[[ "$1" =~ ^[-${azAZo9},._]+$ ]] || return 3
 	[ -r "${BOTCONFIG}.jssh" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' "${BOTCONFIG}.jssh" | tail -n 1
 }
-# escape / remove text characters for json strings, eg. " -> \" 
-# $1 string
-# output escaped string
+# escape characters in json strings for telegram 
+# $1 string, output escaped string
 JsonEscape(){
-	sed 's/\([-"`´,§$%&/(){}#@!?*.\t]\)/\\\1/g' <<< "$1"
+	sed -E -e 's/\r//g' -e 's/([-"`´,§$%&/(){}#@!?*.\t])/\\\1/g' <<< "${1//$'\n'/\\n}"
+}
+# clean \ from escaped json string
+# $1 string, output cleaned string
+cleanEscaped(){	# remove "	all \ but  \n\u		\n or \r
+	sed -E -e 's/\\"/+/g' -e 's/\\([^nu])/\1/g' -e 's/(\r|\n)//g' <<<"$1"
 }
 # check if $1 seems a valid token
 # return true if token seems to be valid
@@ -157,7 +161,7 @@ debug_checks(){ {
 	[ -z "$(getConfigKey "botadmin")" ] && printf "%(%c)T: %s\n" -1 "Bot admin is missing! =========="
 	# call user defined debug_checks if exists
 	_exec_if_function my_debug_checks "$(_date)" "${where}" "$*"
-	} >>"${DEBUGLOG}"
+	} 2>/dev/null >>"${DEBUGLOG}"
 }
 
 # some Linux distributions (e.g. Manjaro) doesn't seem to have C locale activated by default
@@ -174,10 +178,10 @@ RUNDIR="$(dirname "$0")"
 MODULEDIR="${SCRIPTDIR}/modules"
 
 # adjust stuff for source, use return from source without source
-alias exit_source='exit'
+exit_source() { exit "$1"; }
 if [[ "${SCRIPT}" != "${REALME}" || "$1" == "source" ]]; then
 	SOURCE="yes"
-	[ -z "$1" ] && alias exit_source='printf "Exit from source ...\n";return'
+	[ -z "$1" ] && exit_source() { printf "Exit from source ...\n"; return "$1"; }
 fi
 
 # emmbeded system may claim bash but it is not
@@ -271,6 +275,7 @@ if [ -z "${BOTTOKEN}" ]; then
      [ -z "${admin}" ] && admin='?'
      printf '["botadmin"]\t"%s"\n'  "${admin}" >> "${BOTCONFIG}.jssh"
   fi
+
   # setup botacl file
   if [ ! -f "${BOTACL}" ]; then
 	printf "${GREY}Create initial ${BOTACL} file.${NN}"
@@ -279,15 +284,14 @@ if [ -z "${BOTTOKEN}" ]; then
   # check data dir file
   if [ ! -w "${DATADIR}" ]; then
 	printf "${RED}ERROR: ${DATADIR} does not exist or is not writeable!.${NN}"
-	exit_source 2
+	[ "$1" != "init" ] && exit_source 2 # skip on init
   fi
   # setup count file 
   if [ ! -f "${COUNTFILE}.jssh" ]; then
 	printf '["counted_user_chat_id"]\t"num_messages_seen"\n' >> "${COUNTFILE}.jssh"
   elif [ ! -w "${COUNTFILE}.jssh" ]; then
-	printf "${RED}ERROR: Can't write to ${COUNTFILE}!.${NN}"
+	printf "${RED}WARNING: Can't write to ${COUNTFILE}!.${NN}"
 	ls -l "${COUNTFILE}.jssh"
-	exit_source 2
   fi
   # setup blocked file 
   if [ ! -f "${BLOCKEDFILE}.jssh" ]; then
@@ -342,6 +346,7 @@ fi
 BASHBOT_RETRY=""	# retry by default
 
 URL="${BASHBOT_URL:-https://api.telegram.org/bot}${BOTTOKEN}"
+FILEURL="${URL%%/bot*}/file/bot${BOTTOKEN}"
 ME_URL=${URL}'/getMe'
 
 #################
@@ -388,16 +393,6 @@ if ! _is_function jssh_newDB; then
 	exit_source 6
 fi
 
-# $1 URL, $2 filename in DATADIR
-# outputs final filename
-download() {
-	local empty="no.file" file="${2:-${empty}}"
-	if [[ "${file}" = *"/"* ]] || [[ "${file}" = "."* ]]; then file="${empty}"; fi
-	while [ -f "${DATADIR:-.}/${file}" ] ; do file="${RANDOM}-${file}"; done
-	getJson "$1" >"${DATADIR:-.}/${file}" || return
-	printf '%s\n' "${DATADIR:-.}/${file}"
-}
-
 # $1 postfix, e.g. chatid
 # $2 prefix, back- or startbot-
 procname(){
@@ -425,19 +420,56 @@ killallproc() {
 	debug_checks "end killallproc" "$1"
 }
 
-
-# $ chat $2 msg_id $3 nolog
-declare -xr DELETE_URL=${URL}'/deleteMessage'
-delete_message() {
-	[ -z "$3" ] && log_update "Delete Message CHAT=$1 MSG_ID=$2"
-	sendJson "$1" '"message_id": '"$2"'' "${DELETE_URL}"
-}
-
-# get download url for file id, $1 file_id
+# URL path for file id, $1 file_id
+# use download_file "path" to  download file
 get_file() {
 	[ -z "$1" ] && return
 	sendJson ""  '"file_id": "'"$1"'"' "${URL}/getFile"
-	printf "%s\n" "${URL}/${UPD["result,file_path"]}"
+	printf "%s\n" "${UPD["result,file_path"]}"
+}
+# download file to DATADIR
+# $1 URL path, $2 proposed filename (may modified/ignored)
+# outputs final filename
+# keep old function name for backward compatibility
+alias download="download_file"
+download_file() {
+	local url="$1" file="${2:-$1}"
+	# old mode if full URL is given
+	if [[  "${1}" =~ ^https*:// ]]; then
+	   # random filename if not given for http
+	   if [ -z "$2" ]; then
+		: "$(mktemp -u  -p . "XXXXXXXXXX" 2>/dev/null)"
+		file="download-${_#./}"
+	  fi
+	else
+		# prefix https://api.telegram...
+		url="${FILEURL}/${url}"
+	fi
+	# filename: replace "/" with "-", use mktemp if exist
+	file="${DATADIR:-.}/${file//\//-}"
+	[ -f "${file}" ] && file="$(mktemp -p "${DATADIR:-.}" "XXXXX-${file##*/}" )"
+	getJson "${url}" >"${file}" || return
+	# output absolute file path
+	printf "%s\n" "$(cd "${file%/*}" >/dev/null 2>&1 && pwd)/${file##*/}"
+}
+# notify mycommands about errors while sending
+# $1 calling function  $2 error $3 chat $4 user $5 error message $6 ... remaining args to calling function
+# calls function based on error: bashbotError{function} basbotError{error}
+# if no specific function exist try to call bashbotProcessError
+processError(){
+	local func="$1" err="$2"
+	[[ "${err}" != "4"* ]] && return 1
+	# check for bashbotError${func} provided in mycommands
+	# shellcheck disable=SC2082
+	if _is_function "bashbotError_${func}"; then 
+		"bashbotError_${func}" "$@"
+	# check for bashbotError${err} provided in mycommands
+	elif _is_function "bashbotError_${err}"; then 
+		"bashbotError_${err}" "$@"
+	# noting found, try bashbotProcessError
+	else
+		_exec_if_function bashbotProcessError "$@"
+	fi
 }
 
 # iconv used to filter out broken utf characters, if not installed fake it
@@ -461,7 +493,7 @@ sendJson(){
 	if [ -n "${BASHBOTDEBUG}" ] ; then
 		log_update "sendJson (${DETECTED_CURL}) CHAT=${chat#*:} JSON=${2:0:100} URL=${3##*/}"
 		#									mask " and \ , remove newline from json
-		log_message "DEBUG sendJson ==========\n$("${JSONSHFILE}" -b -n  <<<"$(sed -E -e 's/\\"/+/g' -e 's/\\/\\\\/g' -e 's/(\r|\n)//g' <<<"${json}")" 2>&1)"
+		log_message "DEBUG sendJson ==========\n$("${JSONSHFILE}" -b -n  <<<"$(cleanEscaped "${json}")" 2>&1)"
 	fi
 	# chat id not a number
 	if [[ "${chat}" == *"NAN\"," ]]; then
@@ -475,6 +507,36 @@ sendJson(){
 	# check telegram response
 	sendJsonResult "${res}" "sendJson (${DETECTED_CURL})" "$@"
 	[ -n "${BASHBOT_EVENT_SEND[*]}" ] && event_send "send" "${@}" &
+}
+
+UPLOADDIR="${BASHBOT_UPLOAD:-${DATADIR}/upload}"
+
+# $1 chat $2 file, $3 calling function
+# return final file name or empty string on error
+checkUploadFile() {
+	local err file="$2"
+	[[ "${file}" = *'..'* || "${file}" = '.'* ]] && err=1 	# no directory traversal
+	if [[ "${file}" = '/'* ]] ; then
+		[[ ! "${file}" =~ ${FILE_REGEX} ]] && err=2	# absolute must match REGEX
+	else
+		file="${UPLOADDIR:-NOUPLOADDIR}/${file}"	# others must be in UPLOADDIR
+	fi
+	[ ! -r "${file}" ] && err=3	# and file must exits of course
+	# file path error, generate error response
+	if [ -n "${err}" ]; then
+	    BOTSENT=(); BOTSENT[OK]="false"
+	    case "${err}" in
+		1) BOTSENT[ERROR]="Path to file $2 contains to much '../' or starts with '.'";;
+		2) BOTSENT[ERROR]="Path to file $2 does not match regex: ${FILE_REGEX} ";;
+		3) if [[ "$2" == "/"* ]];then
+			BOTSENT[ERROR]="File not found: $2"
+		   else
+			BOTSENT[ERROR]="File not found: ${UPLOADDIR}/$2"
+		   fi;;
+	    esac
+	    [ -n "${BASHBOTDEBUG}" ] && log_debug "$3: CHAT=$1 FILE=$2 MSG=${BOTSENT[DESCRIPTION]}"
+	    return 1
+	fi
 }
 
 

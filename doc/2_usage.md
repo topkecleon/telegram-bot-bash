@@ -172,6 +172,8 @@ These Variables are always present in regular messages:
 
 The following variables are set if the message contains optional parts:
 
+* `MESSAGE[CAPTION]`: Picture, Audio, Video, File Captions
+* `MESSAGE[DICE]`: Animated DICE Emoji DICE values is contained in `MESSAGE[RESULT]`
 * `$REPLYTO`: Original message which was replied to
 * `$REPLYTO`: This array contains the First name, last name, username and user id of the ORIGINAL sender of the message REPLIED to.
     * `${REPLYTO[ID]}`: ID of message which was replied to
@@ -185,14 +187,15 @@ The following variables are set if the message contains optional parts:
     * `${FORWARD[FIRST_NAME]}`: Original user's first name
     * `${FORWARD[LAST_NAME]}`: Original user's' last name
     * `${FORWARD[USERNAME]}`: Original user's username
-* `$CAPTION`: Picture, Audio, Video, File Captions
-* `$URLS`: This array contains documents, audio files, voice recordings and stickers as URL.
-    * `${URLS[AUDIO]}`: Audio files
-    * `${URLS[VIDEO]}`: Videos
-    * `${URLS[PHOTO]}`: Photos (maximum quality)
-    * `${URLS[VOICE]}`: Voice recordings
-    * `${URLS[STICKER]}`: Stickers
-    * `${URLS[DOCUMENT]}`: Any other file
+* `$URLS`: This array contains the `path` on Telegram server for files send to chat, e.g. photo, video, audio file.
+    * `${URLS[AUDIO]}`: Path to audio file
+    * `${URLS[VIDEO]}`: Path to video
+    * `${URLS[PHOTO]}`: Path to photo (maximum quality)
+    * `${URLS[VOICE]}`: Path to voice recording
+    * `${URLS[STICKER]}`: Path to sticker
+    * `${URLS[DOCUMENT]}`: Path to any other file
+**Important:** This is NOT a full URL, you must use `download_file "${URLS[xxx]}"` or prefix path with telegram api url for manual download
+(_e.g. `getJson "${URL}/${URLS[xxx]}" >file`_).
 * `$CONTACT`: This array contains info about contacts sent in a chat.
     * `${CONTACT[ID]}`: User id
     * `${CONTACT[NUMBER]}`: Phone number
@@ -238,6 +241,8 @@ e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user".
         * `${MESSAGE}`: /_new_chat_title SENDER TEXT
     * `${SERVICE[NEWPHOTO]}`: New Chat Picture 
         * `${MESSAGE}`: /_new_chat_picture SENDER URL
+**Important:** SERVICE[NEWPHOTO] is NOT a full URL, you must use `download_file "${SERVICE[NEWPHOTO]}"` or prefix path with telegram api url for manual download
+(_e.g. `getJson "${FILEURL}/${SERVICE[NEWPHOTO]}" >file`_).
     * `${SERVICE[PINNED]}`: Pinned MESSAGE ID
         * `${MESSAGE}`: /_new_pinned_message SENDER ID
         * `${PINNED[ID]}`: Id of pinned message
@@ -372,5 +377,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-17-ga7d85e3
 

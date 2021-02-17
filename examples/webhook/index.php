@@ -11,7 +11,7 @@
  * @license    http://www.wtfpl.net/txt/copying/ WTFPLv2
  * @since      30.01.2021 20:24
  *
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-28-g9958b5b
  ***********************************************************/
 
  // bashbot home dir
@@ -26,10 +26,26 @@
 	}
  } 
 
+ // bashbot config file
+ $CONFIG=$BASHBOT_HOME.'/botconfig.jssh';
+ // set botname here or read botname from config file if unknown
+ $botname="unknown";
+ if ($botname == "unknown" && file_exists($CONFIG)) { 
+	$prefix='["botname"]	"';
+	$len=strlen($prefix);
+	$arr = file($CONFIG, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	foreach ($arr as $line) {
+		if(substr($line, 0, $len) == $prefix) {
+			$botname=substr($line, $len, strlen($line)-$len-1);
+		}
+	}
+
+ } 
+
  // script endpoint
  $cmd=$BASHBOT_HOME.'/bin/process_update.sh';
- // fifo endpoint
- $fifo=$BASHBOT_HOME.'/data-bot-bash/webhook-fifo';
+ // default fifo endpoint
+ $fifo=$BASHBOT_HOME.'/data-bot-bash/webhook-fifo-'.$botname;
 
  // prepeare read, e.g. run from CLI
  $data='';

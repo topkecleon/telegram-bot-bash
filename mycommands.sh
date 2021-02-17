@@ -13,7 +13,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-27-g77ffbab
 #######################################################
 # shellcheck disable=SC1117
 
@@ -123,7 +123,26 @@ else
 
 	case "${MESSAGE}" in
 		##################
-		# example commands, replace thm by your own
+		# example commands, replace them by your own
+		'/_dice_re'*) # dice from user received
+			sleep 5
+			local gameresult="*Congratulation ${USER[FIRST_NAME]} ${USER[LAST_NAME]}* you got *${MESSAGE[RESULT]} Points*."
+			[ -z "${FORWARD[UID]}" ] && send_markdownv2_message "${CHAT[ID]}" "${gameresult}"
+			;;
+		'/game'*) # send random dice, edit list to fit your needs
+			send_dice "${CHAT[ID]}" ":$(printf "slot_machine\ngame_die\ndart\nbasketball\nsoccer\nslot_machine"|sort -R|shuf -n 1shuf -n 1):"
+			if [ "${BOTSENT[OK]}" = "true" ]; then
+				local gameresult="*Congratulation ${USER[FIRST_NAME]}* ${USER[LAST_NAME]} you got *${BOTSENT[RESULT]} Points*."
+				sleep 5
+				case "${BOTSENT[RESULT]}" in
+				  1)	gameresult="*Sorry* only *one Point* ...";;
+				  2)	gameresult="*Hey*, 2 Points are *more then one!*";;
+				  5|6)	[[ "${BOTSENT[EMOJI]}" =~ fb0$ ]] || gameresult="*Super! ${BOTSENT[RESULT]} Points!*";;
+				  6*)	gameresult="*JACKPOT! ${BOTSENT[RESULT]} Points!*";;
+				esac
+				send_markdownv2_message "${CHAT[ID]}" "${gameresult}"
+			fi
+			;;
 		'/unpin'*) # unpin all messages if (bot)admin or allowed for user
 			 user_is_allowed "${USER[ID]}" "unpin" "${CHAT[ID]}" &&\
 				unpinall_chat_messages "${CHAT[ID]}"
@@ -281,6 +300,8 @@ else
 	[ -f ".jssh" ] && printf "%s: %s\n" "$1" "Ups, found file \"${PWD:-.}/.jssh\"! =========="
     }
 
+    ###########################
+    # example recover from telegram block function
     # called when bashbot send_xxx command failed because we can not connect to telegram
     # return 0 to retry, return non 0 to give up
     bashbotBlockRecover() {
@@ -291,7 +312,22 @@ else
 	return 1 
     }
 
-    # place your processing functions here
+    ###########################
+    # example error processing
+    # called when delete Message failed
+    # func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+    bashbotError_delete_message() {
+	log_debug "errorProcessing for delete_message failed: ERR=$2 CHAT=$3 MSGID=$6 ERTXT=$5"
+    }
+
+    # called when error 403 is returned (and no func processing)
+    # func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+    bashbotError_403() {
+	log_debug "errorProcessing for error 403 in FUNC=$1 CHAT=$3 USER=${4:-no-user} MSGID=$6 ERTXT=$5"
+    }
+
+    ###########################
+    # place your processing functions here --------------
 
     # $1 search parameter
     my_image_search(){
@@ -307,3 +343,4 @@ else
     }
 
 fi
+

@@ -176,8 +176,22 @@ send_album "$(getConfigKey "botadmin")" "http://www.rrr.de/slider/main-image1.jp
 ##### send_sticker
 `send_sticker` sends a sticker using a `file_id` to send a sticker that exists on the Telegram servers.
 
-*usage:*  send_sticker "$CHAT[ID]" "file_id"
+*usage:*  send_sticker "CHAT[ID]" "file_id"
 
+##### send_dice
+`send_dice` send an animated emoji and returns a value (_e.g. points shown on die_).
+
+*usage:* send_dice "CHAT[ID]" "emoji"
+
+Emoji must be one of '🎲', '🎯', '🏀', '⚽', '🎰' or ":game_die:" ":dart:" ":basketball:" ":soccer:" :slot_machine:".
+Dice can have values 1-6 for '🎲' and '🎯', values 1-5 for '🏀' and '⚽', and values 1-64 for '🎰'. Defaults to '🎲' 
+
+*example:*
+```bash
+# send die and output points
+send_dice "${CHAT[ID]}" ":game_die:"
+[ "${BOTSENT[OK]}" = "true" ] && send_markdownv2_message "${CHAT[ID]}" "*Congratulation* you got *${BOTSENT[RESULT]} Point(s)*."
+```
 
 ----
 
@@ -534,6 +548,85 @@ edit_html_message "${CHAT[ID]}" "${saved-id}" "this is <b>html</b> text"
 *usage:*  edit_message_caption "CHAT[ID]" "MESSAGE-ID" "caption"
 
 
+----
+
+### Get files from Telegram
+
+##### download_file
+`download_file` download a file to `DATADIR` and returns the local `path` to the file on disc, main use is to download files send to chats.
+I tried to be as compatible as possible with old function `download`.
+
+*usage:* download_file path_to_ile prosed_filename
+
+*alias*: download
+
+*Note:* You must use `download_file` to download  `URLS[...]` or `SERVICE[NEWPHOTO]` URLs from Telegram server.
+
+*example:* 
+```bash
+########
+# download from Telegram server
+# photo received in a chat
+photo="${URLS[PHOTO]}")"
+echo "$photo" -> photo/file_1234.jpg
+
+# first download
+file="$(download_file "${photo}"
+echo "$file" -> ./data-bot-bash/photo-file_1234.jpg
+
+# second download
+file="$(download_file "${photo}"
+echo "$file" -> ./data-bot-bash/jkdfhi-photo-file_1234.jpg
+
+ls data-bot-bash/*.jpg
+photo-file_1234.jpg  jkdfhi-photo-file_1234.jpg
+
+
+########
+# download from other sources (full URL)
+file="$(download "https://avatars.githubusercontent.com/u/13046303")"
+echo "$file" -> ./data-bot-bash/download-askjgftGJGdh1Z
+
+file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
+echo "$file" -> ./data-bot-bash/avatar.jpg
+
+file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
+echo "$file" -> ./data-bot-bash/jhsdf-avatar.jpg
+
+ls data-bot-bash/
+avatar.jpg  jhsdf-avatar.jpg  download-askjgftGJGdh1Z  
+
+
+#######
+# manually download files to current directory (not recommended)
+getJson "${FILEURL}/${photo}" >"downloaded_photo.jpg"
+getJson "https://avatars.githubusercontent.com/u/13046303" >"avatar.jpg"
+
+ls -F
+JSON.sh/ bin/ modules/ data-bot-bash/
+avatar.jpg  bashbot.sh*  botconfig.jssh  commands.sh  count.jssh  downloaded_photo.jpg  mycommands.sh ...
+
+```
+
+##### get_file
+`get_file` get the `path` to a file on Telegram server by it's `file_id`. File `path` is only valid for use with your bot token.
+
+*usage:* url="$(get_file "file_id")"
+
+*example*:
+
+```bash
+# download file by file_id
+file_id="kjhdsfhkj-kjshfbsdbfkjhsdkfjn"
+
+path="$(get_file "${file_id}")"
+file="$(download_file "${path}")"
+
+# one line
+file="$(download_file "$(get_file "${file_id}")")"
+
+```
+
 ---
 
 ### Manage Group
@@ -571,7 +664,6 @@ Returns the new invite link as String on success.
 
 
 ##### pin_chat_message
-# $1 chat, $2 message_id 
 `pin_chat_message` add a message to the list of pinned messages in a chat.
 
 *usage:* pin_chat_message "CHAT[ID]" "message_id"
@@ -1398,20 +1490,6 @@ Do not use them in other files e.g. `bashbot.sh`, modules, addons etc.
 
 ### Helper functions
 
-##### download
-Download the given URL and returns the final filename in TMPDIR. If the given filename exists,the filename is prefixed with a
-random number. Filename is not allowed to contain '/' or '..'.
-
-*usage:* download URL filename
-
-*example:* 
-```bash
-file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
-echo "$file" -> ./data-bot-bash/avatar.jpg
-file="$(download "https://avatars.githubusercontent.com/u/13046303" "avatar.jpg")"
-echo "$file" -> ./data-bot-bash/12345-avatar.jpg
-```
-
 ##### _exec_if_function
 Returns true, even if the given function does not exist. Return false if function exist but returns false.
 
@@ -1506,25 +1584,10 @@ killallproc
 
 ----
 
-##### get_file
-*usage:* url="$(get_file "CHAT[ID]" "message")"
-
-----
-
 ##### JsonDecode
 Outputs decoded string to STDOUT
 
 *usage:* JsonDecode "string"
-
-##### JsonGetString
-Reads JSON from STDIN and Outputs found String to STDOUT
-
-*usage:*  JsonGetString `"path","to","string"`
-
-##### JsonGetValue
-Reads JSON from STDIN and Outputs found Value to STDOUT
-
-*usage:*  JsonGetValue `"path","to","value"`
 
 
 ##### Json2Array
@@ -1578,5 +1641,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-9-g62b6b61
 

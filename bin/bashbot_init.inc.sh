@@ -5,13 +5,13 @@
 # 
 #         USAGE: source bashbot_init.inc.sh
 #
-#   DESCRIPTION: extend / overwrite bashbot initialisation 
+#   DESCRIPTION: extend / overwrite bashbot initialisation
 # 
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.01.2021 13:42
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-3-g429c230
 #===============================================================================
 # shellcheck disable=SC2059
 
@@ -54,17 +54,23 @@ bot_init() {
 		[ -r "${addons}" ] && source "${addons}" "init" "${DEBUG}"
 	done
 	printf "Done.\n"
-	# ask for bashbot user
-	# shellcheck disable=SC2153
-	runuser="${RUNUSER}"; [ "${UID}" = "0" ] && runuser="nobody"
+	# guess bashbot from botconfig.jssh owner:group
+	[ -f "${BOTCONFIG}.jssh" ] && runuser="$(stat -c '%U' "${BOTCONFIG}.jssh"):$(stat -c '%G' "${BOTCONFIG}.jssh")"
+	# empty or ":" use user running init, nobody for root
+	if [ "${#runuser}" -lt 3 ]; then
+		# shellcheck disable=SC2153
+		runuser="${RUNUSER}"
+		[ "${UID}" = "0" ] && runuser="nobody"
+	fi
 	printf "Enter User to run bashbot [${runuser}]: "
 	read -r chown
-	[ -z "${chown}" ] && chown="${runuser}"; touser="${chown%:*}"
+	[ -z "${chown}" ] && chown="${runuser}"
+	touser="${chown%:*}"
 	# check user ...
 	if ! id "${touser}" &>/dev/null; then
 		printf "${RED}User \"${touser}\" does not exist!${NN}"
 		exit 3
-	elif [[ "${UID}" != "0" && "${touser}" != "${runuser}" ]]; then
+	elif [ "${UID}" != "0" ]; then
 		# different user but not root ...
 		printf "${ORANGE}You are not root, adjusting permissions may fail. Try \"sudo ./bashbot.sh init\"${NN}Press <CTRL+C> to stop or <Enter> to continue..." 1>&2
 		[ -n "${INTERACTIVE}" ] && read -r runuser
@@ -98,13 +104,13 @@ bot_init() {
 	fi
 	# adjust permissions
 	printf "Adjusting files and permissions for user \"${touser}\" ...\n"
+	chown -Rf "${chown}" . ./*
 	chmod 711 .
 	chmod -R o-w ./*
 	chmod -R u+w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" logs "${LOGDIR}/"*.log 2>/dev/null
 	chmod -R o-r,o-w "${COUNTFILE}"* "${BLOCKEDFILE}"* "${DATADIR}" "${BOTACL}" 2>/dev/null
 	# jsshDB must writeable by owner
 	find . -name '*.jssh*' -exec chmod u+w \{\} +
-	chown -Rf "${chown}" . ./*
 	printf "Done.\n"
 	# adjust values in bashbot.rc
 	if [ -w "bashbot.rc" ]; then
