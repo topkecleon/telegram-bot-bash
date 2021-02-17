@@ -34,6 +34,9 @@ print_help "${1:-nix}"
 json='{"result": ['"$(cat)"']}'
 UPDATE="$(${JSONSHFILE} -b -n <<<"${json}" 2>/dev/null)"
 
+# escape bash $ expansion bug
+UPDATE="${UPDATE//$/\\$}"
+
 # assign to bashbot ARRAY
 Json2Array 'UPD' <<<"${UPDATE}" 
 
