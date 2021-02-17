@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-26-g82a57a7
+#### $$VERSION$$ v1.45-dev-34-gb1e6e0f
 ##################################################################
 
 # are we running in a terminal?
@@ -515,8 +515,8 @@ UPLOADDIR="${BASHBOT_UPLOAD:-${DATADIR}/upload}"
 # return final file name or empty string on error
 checkUploadFile() {
 	local err file="$2"
-	[[ "${file}" = *'..'* || "${file}" = '.'* ]] && err=1 	# no directory traversal
-	if [[ "${file}" = '/'* ]] ; then
+	[[ "${file}" == *'..'* || "${file}" == '.'* ]] && err=1 	# no directory traversal
+	if [[ "${file}" == '/'* ]] ; then
 		[[ ! "${file}" =~ ${FILE_REGEX} ]] && err=2	# absolute must match REGEX
 	else
 		file="${UPLOADDIR:-NOUPLOADDIR}/${file}"	# others must be in UPLOADDIR
@@ -537,6 +537,7 @@ checkUploadFile() {
 	    [ -n "${BASHBOTDEBUG}" ] && log_debug "$3: CHAT=$1 FILE=$2 MSG=${BOTSENT[DESCRIPTION]}"
 	    return 1
 	fi
+	printf "%s\n" "${file}"
 }
 
 
