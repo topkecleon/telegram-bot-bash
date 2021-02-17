@@ -146,9 +146,9 @@ Whenever you are processing input from untrusted sources (messages, files, netwo
 (e.g. set IFS appropriately, disable globbing with `set -f` and quote everything). In addition remove unused scripts and examples
 from your Bot (e.g. everything in `example/`) and disable/remove all unused bot commands.
 
-It's important to escape or remove `$` and `\`` in input from user, files or network (_as bashbot does_).
-One of the powerful features of Unix shells is variable and command substitution using `${var}`, `$(cmd)` and `\`cmd\`` can lead to remote
-code execution (RCE) or remote information disclosure (RID) bugs if unescaped `$` or ` \`` is included in untrusted input (e.g. `$$` or `$(rm -rf /*)`).
+It's important to escape or remove `$` and \` in input from user, files or network (_as bashbot does_).
+One of the powerful features of Unix shells is variable and command substitution using `${var}`, `$(cmd)` and \`cmd\` can lead to remote
+code execution (RCE) or remote information disclosure (RID) bugs if unescaped `$` or \` is included in untrusted input (e.g. `$$` or `$(rm -rf /*)`).
 
 A powerful tool to improve your scripts is `shellcheck`. You can [use it online](https://www.shellcheck.net/) or
 [install shellcheck locally](https://github.com/koalaman/shellcheck#installing). Shellcheck is used extensively in bashbot development
@@ -242,4 +242,4 @@ See `mycommnds.sh.dist` for an example.
 
 If you feel that there's something missing or if you found a bug, feel free to submit a pull request!
 
-#### $$VERSION$$ v1.45-dev-36-gf7897fd
+#### $$VERSION$$ v1.45-dev-37-gfdbfceb
