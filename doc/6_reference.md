@@ -651,6 +651,15 @@ with description "Bad Request: chat description is not modified"
 *usage:* set_chat_description "CHAT[ID]" "new chat description"
 
 
+##### set_chat_photo
+`set_chat_photo` sets a new  profile photo for the chat, can't be changed for private chat.
+Photo must be a local image file in a supported format (_.jpg, .jpeg, .png, .gif, .bmp, .tiff_)
+
+Same location and naming restrictions as with `send_file` apply.
+
+*usage:* set_chat_photo "CHAT[ID]" "file"
+
+
 ##### new_chat_invite
 `new_chat_invite` generate a new invite link for a chat; any previously generated link is revoked. 
 Returns the new invite link as String on success.
@@ -685,6 +694,13 @@ Returns the new invite link as String on success.
 `delete_chat_stickers` deletes a group sticker set from a supergroup.
 
 *usage:* delete_chat_stickers "CHAT[ID]"
+
+
+##### set_chatadmin_title
+`set_chatadmin_title` set a custom title for an administrator in a supergroup promoted by the bot.
+ Admin title can be 0-16 characters long, emoji are not allowed.
+
+*usage:* set_chatadmin_title "CHAT[ID]" "USER[ID]" "admin title"
 
 
 ----
@@ -1641,5 +1657,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.45-dev-9-g62b6b61
+#### $$VERSION$$ v1.45-dev-36-gf7897fd
 
