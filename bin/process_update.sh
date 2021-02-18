@@ -15,12 +15,12 @@ USAGE='process_update.sh [-h|--help] [debug] [<file]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 30.01.2021 19:14
 #
-#### $$VERSION$$ v1.45-dev-30-g8efbfca
+#### $$VERSION$$ v1.45-dev-38-g882efa8
 #===============================================================================
 
 ####
 # parse args
-COMMAND="process_update"
+COMMAND="process_multi_updates"
 
 # set bashbot environment
 source "${0%/*}/bashbot_env.inc.sh" "debug" # debug
@@ -34,12 +34,6 @@ print_help "${1:-nix}"
 json='{"result": ['"$(cat)"']}'
 UPDATE="$(${JSONSHFILE} -b -n <<<"${json}" 2>/dev/null)"
 
-# escape bash $ expansion bug
-UPDATE="${UPDATE//$/\\$}"
-
-# assign to bashbot ARRAY
-Json2Array 'UPD' <<<"${UPDATE}" 
-
 # process telegram update
-"${COMMAND}" "0" "$1" 
+"${COMMAND}" "$1" 
 

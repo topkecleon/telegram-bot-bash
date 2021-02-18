@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.45-dev-30-g8efbfca
+#### $$VERSION$$ v1.45-dev-38-g882efa8
 ##################################################################
 
 ##############
@@ -43,18 +43,24 @@ delete_webhook() {
 }
 
 ################
-# processing of updates starts here
+# processing of array of updates starts here
 process_multi_updates() {
 	local max num debug="$1"
+	# get num array elements
 	max="$(grep -F ',"update_id"]'  <<< "${UPDATE}" | tail -1 | cut -d , -f 2 )"
 	# escape bash $ expansion bug
 	UPDATE="${UPDATE//$/\\$}"
+	# convert updates to bash array
 	Json2Array 'UPD' <<<"${UPDATE}"
+	# iterate over array
 	for ((num=0; num<=max; num++)); do
 		process_update "${num}" "${debug}"
 	done
 }
 
+################
+# processing of a single array item of update
+# $1 array index
 process_update() {
 	local num="$1" debug="$2" 
 	pre_process_message "${num}"
