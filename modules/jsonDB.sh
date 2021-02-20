@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.45-dev-30-g8efbfca
+#### $$VERSION$$ v1.45-dev-40-g7072442
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -25,7 +25,9 @@ eval "$(basename "${BASH_SOURCE[0]}")(){ :; }"
 # tinybox
 
 # lockfile filename.flock is persistent and will be testet with flock for active lock (file open)
-export JSSH_LOCKNAME=".flock"
+export JSSHDB_LOCKNAME=".flock"
+# an array value containing this string will not saveed to DB (unset)
+export JSSHDB_UNSET="99999999999999999999_JSSHDB_UNSET_99999999999999999999"
 
 # in UTF-8 äöü etc. are part of [:alnum:] and ranges (e.g. a-z), but we want ASCII a-z ranges!
 # for more information see  doc/4_expert.md#Character_classes
@@ -64,7 +66,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
 	# shared lock, many processes can read, max wait 1s
-	{ flock -s -w 1 200; Json2Array "$1" <"${DB}"; } 200>"${DB}${JSSH_LOCKNAME}"
+	{ flock -s -w 1 200; Json2Array "$1" <"${DB}"; } 200>"${DB}${JSSHDB_LOCKNAME}"
   }
 
   # write ARRAY content to a file in JSON.sh format
@@ -76,7 +78,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
 	[ -z "${DB}" ] && return 1
 	[ ! -f "${DB}" ] && return 2
 	# exclusive lock, no other process can read or write, maximum wait to get lock is 10s
-	{ flock -e -w 10 200; Array2Json "$1" >"${DB}"; } 200>"${DB}${JSSH_LOCKNAME}"
+	{ flock -e -w 10 200; Array2Json "$1" >"${DB}"; } 200>"${DB}${JSSHDB_LOCKNAME}"
   }
 
   # update/write ARRAY content in file without deleting keys not in ARRAY
@@ -88,7 +90,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
 	[ -z "$2" ] && return 1
 	local DB="$2.jssh"	# check in async
 	[ ! -f "${DB}" ] && return 2
-	{ flock -e -w 10 200; jssh_updateDB_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
+	{ flock -e -w 10 200; jssh_updateDB_async "$@"; } 200>"${DB}${JSSHDB_LOCKNAME}"
   }
 
   # insert, update, apped key/value to jsshDB
@@ -106,7 +108,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
 	{ flock -e -w 2 200
 	 # it's append, but last one counts, its a simple DB ...
 	  printf '["%s"]\t"%s"\n' "${1//,/\",\"}" "${2//\"/\\\"}" >>"${DB}"
-	} 200>"${DB}${JSSH_LOCKNAME}"
+	} 200>"${DB}${JSSHDB_LOCKNAME}"
 	
   }
 
@@ -119,7 +121,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
 	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
 	local DB="$2.jssh"
 	# start atomic delete here, exclusive max wait 10s 
-	{ flock -e -w 10 200; jssh_deleteKeyDB_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
+	{ flock -e -w 10 200; jssh_deleteKeyDB_async "$@"; } 200>"${DB}${JSSHDB_LOCKNAME}"
   }
 
   # get key/value from jsshDB
@@ -133,7 +135,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
 	# start atomic delete here, exclusive max wait 1s 
 	{ flock -s -w 1 200
 	[ -r "${DB}" ] && sed -n 's/\["'"$1"'"\]\t*"\(.*\)"/\1/p' "${DB}" | tail -n 1
-	} 200>"${DB}${JSSH_LOCKNAME}"
+	} 200>"${DB}${JSSHDB_LOCKNAME}"
   }
 
 
@@ -148,7 +150,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
 	[[ "$1" =~ ^${JSSH_KEYOK}+$ ]] || return 3
 	local DB="$2.jssh"
 	# start atomic delete here, exclusive max wait 5 
-	{ flock -e -w 5 200; jssh_countKeyDB_async "$@"; } 200>"${DB}${JSSH_LOCKNAME}"
+	{ flock -e -w 5 200; jssh_countKeyDB_async "$@"; } 200>"${DB}${JSSHDB_LOCKNAME}"
   }
 
   # update key/value in place to jsshDB
@@ -169,7 +171,7 @@ if [ "$(LC_ALL=C type -t "flock")" = "file" ]; then
   jssh_clearDB() {
 	local DB; DB="$(jssh_checkDB "$1")"
 	[ -z "${DB}" ] && return 1
-	{ flock -e -w 10 200; printf '' >"${DB}"; } 200>"${DB}${JSSH_LOCKNAME}"
+	{ flock -e -w 10 200; printf '' >"${DB}"; } 200>"${DB}${JSSHDB_LOCKNAME}"
   } 
 
   # updates Array if DB file has changed since last call
@@ -367,7 +369,7 @@ Array2Json() {
 	declare -n ARRAY="$1"
 	for key in "${!ARRAY[@]}"
        	do
-		[[ "${key}" =~ ^${JSSH_KEYOK}+$ ]] || continue
+		[[ ! "${key}" =~ ^${JSSH_KEYOK}+$ || "${ARRAY[${key}]}" = "${JSSHDB_UNSET}" ]] && continue
 		# in case value contains newline convert to \n
 		: "${ARRAY[${key}]//$'\n'/\\n}"
 		printf '["%s"]\t"%s"\n' "${key//,/\",\"}" "${_//\"/\\\"}"
