@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-34-gb1e6e0f
+#### $$VERSION$$ v1.45-dev-44-g17efeeb
 ##################################################################
 
 # are we running in a terminal?
@@ -106,7 +106,7 @@ JsonEscape(){
 }
 # clean \ from escaped json string
 # $1 string, output cleaned string
-cleanEscaped(){	# remove "	all \ but  \n\u		\n or \r
+cleanEscape(){	# remove "	all \ but  \n\u		\n or \r
 	sed -E -e 's/\\"/+/g' -e 's/\\([^nu])/\1/g' -e 's/(\r|\n)//g' <<<"$1"
 }
 # check if $1 seems a valid token
@@ -491,9 +491,8 @@ sendJson(){
 	# compose final json
 	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
 	if [ -n "${BASHBOTDEBUG}" ] ; then
-		log_update "sendJson (${DETECTED_CURL}) CHAT=${chat#*:} JSON=${2:0:100} URL=${3##*/}"
-		#									mask " and \ , remove newline from json
-		log_message "DEBUG sendJson ==========\n$("${JSONSHFILE}" -b -n  <<<"$(cleanEscaped "${json}")" 2>&1)"
+		log_update "sendJson (${DETECTED_CURL}) CHAT=${chat#*:} JSON=$(cleanEscape "${json:0:100}") URL=${3##*/}"
+		log_message "DEBUG sendJson ==========\n$("${JSONSHFILE}" -b -n  <<<"$(cleanEscape "${json}")" 2>&1)"
 	fi
 	# chat id not a number
 	if [[ "${chat}" == *"NAN\"," ]]; then
