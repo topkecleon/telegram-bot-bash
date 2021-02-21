@@ -1042,8 +1042,13 @@ ARRAY["key"]="value"
 ARRAY["key,subkey"]="value2"
 ```
 
-For keys the following charatcsers are allowed: `a-z A-Z 0-9 _ .`, multiple keys must be separated by `,`.
+Only the following characters are allowed: `a-z A-Z 0-9 _ .` for keys, multiple keys must be separated by `,`.
 Keys contaiing other characters will be discarded when written to a file.
+
+To delete (unset) a key/value pair in memory you can `unset ARRAY["abc"]` but this will not delete key/value
+piars when using `jssh_updateDB`. Therefore the special value `${JSSHDB_UNSET}` exists to delete a key/value pair
+when updateting  a file, see `jssh_updateDB`
+
 
 ```bash
 ARRAY["abc"]="abc"         # OK
@@ -1057,7 +1062,6 @@ cat file.jssh
 
 ```
 
-*Hint*: Try `tr -dc "[:alnum:],.\r\n"` to strip invalid characters from key.
 ```bash
 # strip key containing invalid characters
 KEY="123abcABC,.#?(<>123ÄÖ*%&§"
@@ -1201,6 +1205,9 @@ Note: Existing content not in ARRAY is kept in file.
 
 *usage:*  jssh_updateDB_async "ARRAY" "filename"
 
+*Note:* `jssh_updateDB` updates new or changed keys/value pairs only, it will not delete an existing key/value pair.
+If you want to delete a existing key/value pair assign the unset value `${JSSJDB__UNSET}`.
+
 *example:* 
 ```bash
 # continued example from writeDB
@@ -1211,18 +1218,30 @@ MYVALUES["newvalue"]="this is new"
 jssh_updateDB "MYVALUES" "${DATADIR:-.}/myvalues"
 
 # show what's written
+cat ${DATADIR:-.}/myvalues".jssh
 ["value1"]	"value1"
 ["loveit"]	"value2"
 ["whynot"]	"value3"
 ["newvalue"]	"this is new"
 
-# now writeDB
-cat "$DBfile"
-jssh_writeDB "MYVALUES" "${DATADIR:-.}/myvalues"
+#######
+# update does not delete key/value pairs
+# uset in bash and update file
+unset MYVALUES["newvalue"]
+jssh_updateDB "MYVALUES" "${DATADIR:-.}/myvalues"
 
-# show what's written, ups!
-cat "$DBfile"
-["newvalue"]	"this is new"
+["value1"]      "value1"
+["loveit"]      "value2"
+["whynot"]      "value3"
+["newvalue"]    "this is new"		# value exists!
+
+# use JSSHDB_UNSET value
+MYVALUES["newvalue"]="${JSSHDB_UNSET}"
+jssh_updateDB "MYVALUES" "${DATADIR:-.}/myvalues"
+
+["value1"]      "value1"
+["loveit"]      "value2"
+["whynot"]      "value3"
 
 ```
 
@@ -1657,5 +1676,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.45-dev-36-gf7897fd
+#### $$VERSION$$ v1.45-dev-41-g192fae8
 
