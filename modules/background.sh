@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117,SC2059
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-46-gc57e927
 
 # will be automatically sourced from bashbot
 
@@ -46,6 +46,10 @@ start_back() {
 	printf '%s\n' "$1:$3:$2" >"${cmdfile}"
 	restart_back "$@"
 }
+# $1 chatid
+# $2 program
+# $3 jobname
+# $4 $5 parameters
 restart_back() {
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1" "back-$3-")"
 	log_update "Start background job CHAT=$1 JOB=${fifo##*/} CMD=${2##*/} $4 $5"
@@ -62,9 +66,9 @@ start_proc() {
 	[ -z "$2" ] && return
 	[ -x "${2%% *}" ] || return 1
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1")"
-	log_update "Start interactive script CHAT=$1 JOB=${fifo##*/} CMD=$2 $3 $4"
 	check_proc "$1" && kill_proc "$1"
 	mkfifo "${fifo}"
+	log_update "Start interactive script CHAT=$1 JOB=${fifo##*/} CMD=$2 $3 $4"
 	nohup bash -c "{ $2 \"$4\" \"$5\" \"${fifo}\" | \"${SCRIPT}\" outproc \"$1\" \"${fifo}\"
 		rm \"${fifo}\"; [ -s \"${fifo}.log\" ] || rm -f \"${fifo}.log\"; }" &>>"${fifo}.log" &
 }
@@ -99,9 +103,11 @@ kill_proc() {
 	fifo="$(procname "$1" "$2")"
 	prid="$(proclist "${fifo}")"
 	fifo="${DATADIR:-.}/${fifo}"
-	log_update "Stop interactive / background CHAT=$1 JOB=${fifo##*/}"
 	# shellcheck disable=SC2086
-	[ -n "${prid}" ] && kill ${prid}
+	if [ -n "${prid}" ]; then
+		log_update "Stop interactive / background CHAT=$1 JOB=${fifo##*/}"
+		kill ${prid}
+	fi
 	[ -s "${fifo}.log" ] || rm -f "${fifo}.log"
 	[ -p "${fifo}" ] && rm -f "${fifo}";
 }

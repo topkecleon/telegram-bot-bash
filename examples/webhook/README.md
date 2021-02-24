@@ -34,7 +34,7 @@ will append `{"test":"me"}` to the file `data-bot-bash/webhook-fifo-<botname>`.
 Now your Apache is ready to forward data to Bashbot. 
 
 
-#### Enable update processing for Bashbot
+#### Webhook update processing for Bashbot
 
 To enable update processing delete the file `data-bot-bash/webhook-fifo-<botname>` after your webhook is working manually.
 All webhook calls are now forwarded to `bin/process_update.sh` for processing.
@@ -42,9 +42,14 @@ All webhook calls are now forwarded to `bin/process_update.sh` for processing.
 Every incoming Telegram update load Bashbot once for processing one command. Even it seems overkill to load
 Bashbot on every incoming update, it's more responsive and create less server load than polling Telegram
 
-If your bot uses `addons` or `BASHBOT_EVENTs` you can't use webhooks as described here.
 
-*Note:* webhook work without running `bashbot.sh start`.
+This webhook works without running `bashbot.sh` and thus has the following limitations:
+ - no startup actions
+ - no backgroundi* and interactive jobs
+ - `addons` and `BASHBOT_EVENTs' are not working
+
+\* workaround for background jobs is to start them in the channel and execute `./bashbot.sh restartback` afterwards.
+
 
 
 #### Enable webhook on Telegram side
@@ -82,5 +87,5 @@ and read updates from the named pipe `data-bot-bash/webhook-fifo-<botname>`, sim
 But the default webhook method is so convincing and responsive that a special high traffic mode is not necessary.
 
 
-#### $$VERSION$$ v1.45-dev-39-g8b18f25
+#### $$VERSION$$ v1.45-dev-46-gc57e927
 
