@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117,SC2059
-#### $$VERSION$$ v1.45-dev-46-gc57e927
+#### $$VERSION$$ v1.45-dev-48-gf4d45d8
 
 # will be automatically sourced from bashbot
 
@@ -125,10 +125,7 @@ inproc() {
 }
 
 # start stop all jobs
-# $1 command
-#	killb*
-#	suspendb*
-#	resumeb*
+# $1 command #	kill suspend resume restart
 job_control() {
 	local BOT ADM content proc CHAT job fifo killall=""
 	BOT="$(getConfigKey "botname")"
@@ -144,20 +141,20 @@ job_control() {
 		fifo="$(procname "${CHAT}" "${job}")" 
 		debug_checks "Execute job_control" "$1" "${FILE##*/}"
 		case "$1" in
-		"resumeb"*|"backgr"*)
+		"resume"*|"restart"*)
 			printf "Restart Job: %s %s\n" "${proc}" " ${fifo##*/}"
 			restart_back "${CHAT}" "${proc}" "${job}"
 			# inform botadmin about stop
 			[ -n "${ADM}" ] && send_normal_message "${ADM}" "Bot ${BOT} restart background jobs ..." &
 			;;
-		"suspendb"*)
+		"suspend"*)
 			printf "Suspend Job: %s %s\n" "${proc}" " ${fifo##*/}"
 			kill_proc "${CHAT}" "${job}"
 			# inform botadmin about stop
 			[ -n "${ADM}" ] && send_normal_message "${ADM}" "Bot ${BOT} suspend background jobs ..." &
 			killall="y"
 			;;
-		"killb"*)
+		"kill"*)
 			printf "Kill Job: %s %s\n" "${proc}" " ${fifo##*/}"
 			kill_proc "${CHAT}" "${job}"
 			rm -f "${FILE}"	# remove job

@@ -50,7 +50,7 @@ Webhook works without running Bashbot and thus has the following limitations:
 
 To run startup actions and `TIMER_EVENTS` run Bashbot with `./bashbot start` even not needed with webhook.
 
-Workaround for running new background jobs is to execute `./bashbot.sh restartback` on the command line after starting a new background job.
+Workaround for running new background jobs is to execute `./bashbot.sh resumeback` on the command line after starting a new background job.
 
 
 #### Enable webhook on Telegram side
@@ -88,5 +88,5 @@ and read updates from the named pipe `data-bot-bash/webhook-fifo-<botname>`, sim
 But the default webhook method is so convincing and responsive that a special high traffic mode is not necessary.
 
 
-#### $$VERSION$$ v1.45-dev-47-gf4323e4
+#### $$VERSION$$ v1.45-dev-48-gf4d45d8
 

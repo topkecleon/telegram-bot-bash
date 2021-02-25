@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-44-g17efeeb
+#### $$VERSION$$ v1.45-dev-48-gf4d45d8
 ##################################################################
 
 # are we running in a terminal?
@@ -912,7 +912,7 @@ if [ -z "${SOURCE}" ]; then
 		exit
 		;;
 	# suspend, resume or kill background jobs
-	"suspendb"*|"resumeb"*|"killb"*)
+	"suspendb"*|"resumeb"*|'restartb'*|"killb"*)
   		_is_function job_control || { printf "${RED}Module background is not available!${NN}"; exit 3; }
 		ME="$(getConfigKey "botname")"
 		job_control "$1"
