@@ -43,13 +43,14 @@ Every incoming Telegram update load Bashbot once for processing one command. Eve
 Bashbot on every incoming update, it's more responsive and create less server load than polling Telegram
 
 
-This webhook works without running `bashbot.sh` and thus has the following limitations:
+Webhook works without running Bashbot and thus has the following limitations:
  - no startup actions
- - no backgroundi* and interactive jobs
- - `addons` and `BASHBOT_EVENTs' are not working
+ - no background and interactive jobs
+ - `addons` and `TIMER_EVENTS` are not working
 
-\* workaround for background jobs is to start them in the channel and execute `./bashbot.sh restartback` afterwards.
+To run startup actions and `TIMER_EVENTS` run Bashbot with `./bashbot start` even not needed with webhook.
 
+Workaround for running new background jobs is to execute `./bashbot.sh restartback` on the command line after starting a new background job.
 
 
 #### Enable webhook on Telegram side
@@ -87,5 +88,5 @@ and read updates from the named pipe `data-bot-bash/webhook-fifo-<botname>`, sim
 But the default webhook method is so convincing and responsive that a special high traffic mode is not necessary.
 
 
-#### $$VERSION$$ v1.45-dev-46-gc57e927
+#### $$VERSION$$ v1.45-dev-47-gf4323e4
 
