@@ -11,7 +11,7 @@
  * @license    http://www.wtfpl.net/txt/copying/ WTFPLv2
  * @since      30.01.2021 20:24
  *
-#### $$VERSION$$ v1.45-dev-28-g9958b5b
+#### $$VERSION$$ v1.45-dev-51-gf7842f4
  ***********************************************************/
 
  // bashbot home dir
@@ -66,7 +66,7 @@
 	if ($data == '') { $data = implode(" ",$_GET); }
  }
  // uncomment to save last received JSON
- // file_put_contents($json_file, $data);
+ // file_put_contents($json_file, str_replace(array("\n", "\r"), '',$data). PHP_EOL));
 
  // prepare for writing
  if ($data == '') {
