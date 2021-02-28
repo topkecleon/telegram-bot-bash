@@ -20,7 +20,7 @@ USAGE='process_update.sh [-h|--help] -w|--watch [-n|--lines n] [file] [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.02.2021 13:14
 #
-#### $$VERSION$$ v1.45-dev-52-g84ff8ce
+#### $$VERSION$$ v1.45-dev-53-g941598d
 #===============================================================================
 
 ####
@@ -62,9 +62,11 @@ tail ${follow} ${lines} "${file}" |\
     while IFS="" read -r input
     do 
 	# read json from stdin and convert update format
-	json='{"result": ['"${input}"']}'
+	# replace any ID named BOTADMIN with ID of bot admin
+	: "${input//\"id\":BOTADMIN,/\"id\":${BOT_ADMIN},}"
+	json='{"result": ['"${_}"']}'
 	UPDATE="$(${JSONSHFILE} -b -n <<<"${json}" 2>/dev/null)"
 
 	# process telegram update
-	"${COMMAND}" "$1"
+	"${COMMAND}" "$2"
     done 
