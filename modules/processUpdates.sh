@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.45-dev-38-g882efa8
+#### $$VERSION$$ v1.45-dev-54-gdda86e3
 ##################################################################
 
 ##############
@@ -301,7 +301,7 @@ start_bot() {
 	log_debug "${DEBUGMSG}"; DEBUGMSG="$1"
 	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x
 	# cleaup old pipes and empty logfiles
-	find "${DATADIR}" -type p -delete
+	find "${DATADIR}" -type p -not -name "webhook-fifo-*" -delete
 	find "${DATADIR}" -size 0 -name "*.log" -delete
 	# load addons on startup
 	for addons in "${ADDONDIR:-.}"/*.sh ; do
@@ -330,7 +330,6 @@ start_bot() {
 	send_normal_message "$(getConfigKey "botadmin")" "Bot $(getConfigKey "botname") started ..." &
 	##########
 	# bot is ready, start processing updates ...
-	get_updates "${DEBUGMSG}"
 }
 
 

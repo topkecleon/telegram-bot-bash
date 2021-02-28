@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-48-gf4d45d8
+#### $$VERSION$$ v1.45-dev-54-gdda86e3
 ##################################################################
 
 # are we running in a terminal?
@@ -830,6 +830,7 @@ if [ -z "${SOURCE}" ]; then
 	# finally starts the read update loop, internal use only
 	"startbot" )
 		_exec_if_function start_bot "$2"
+		_exec_if_function get_updates "$2"
 		debug_checks "end startbot" "$@"
 		exit
 		;;

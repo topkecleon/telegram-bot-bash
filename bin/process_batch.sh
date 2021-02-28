@@ -4,10 +4,11 @@
 #
 #          FILE: bin/process_batch.sh
 #
-USAGE='process_update.sh [-h|--help] -w|--watch [-n|--lines n] [file] [debug]'
+USAGE='process_update.sh [-h|--help] [-s|--startbot] [-w|--watch] [-n|--lines n] [file] [debug]'
 # 
 #   DESCRIPTION: processes last 10 telegram updates in file, one update per line
 #                 
+#                -s --startbot load addons, start TIMER, trigger startup actions
 #                -w --watch watch for new updates added to file
 #                -n --lines read only last "n" lines
 #                file   to read updates from 
@@ -20,7 +21,7 @@ USAGE='process_update.sh [-h|--help] -w|--watch [-n|--lines n] [file] [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.02.2021 13:14
 #
-#### $$VERSION$$ v1.45-dev-53-g941598d
+#### $$VERSION$$ v1.45-dev-54-gdda86e3
 #===============================================================================
 
 ####
@@ -29,6 +30,10 @@ COMMAND="process_multi_updates"
 lines="-n 10"
 
 case "$1" in
+	"-s"|"--startbot")
+		startbot="yes"
+		shift
+		;;
 	"-f"|"--follow")
 		follow="-f"
 		shift
@@ -43,20 +48,29 @@ esac
 source "${0%/*}/bashbot_env.inc.sh" "debug" # debug
 print_help "${1:-nix}"
 
-
 # empty file is webhook
 file="${WEBHOOK}"
 [ -n "$1" ] && file="$1"
 
+# start bot
+if [ -n "${startbot}" ]; then
+	# warn when starting bot without pipe
+	[ -p "${WEBHOOK}" ] || printf "%b\n" "${ORANGE}Warning${NC}: File is not a pipe:${GREY} ${file##*/}${NC}"
+	start_bot "$2"
+fi
+# check file exist
 if [[ ! -r "${file}" || -d "${file}" ]]; then
-	printf "%b\n" "File ${GREY}${file}${NC} is not readable or is a directory."
+	printf "%b\n" "${RED}Error${NC}: File not readable:${GREY} ${file}${NC}."
 	exit 1
 fi
 
 ####
 # ready, do stuff here -----
+
+# kill all sub processes on exit
 trap 'kill $(jobs -p) 2>/dev/null' EXIT HUP QUIT
 
+# use tail to read appended updates
 # shellcheck disable=SC2086,SC2248
 tail ${follow} ${lines} "${file}" |\
     while IFS="" read -r input
