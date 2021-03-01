@@ -1,11 +1,11 @@
 #### [Examples](../README.md)
 
-## Bashtbot webhook example
+## Bashbot webhook example
 
 ### Webhook
 
 Bashbot default mode is to poll Telegram server for updates but Telegram offers webhook as a more efficient method to deliver updates.
-If your server is reachable from the Internet its possible to use the methods described here.
+If your server is reachable from the Internet its possible to use the method described here.
 
 Prerequisite for receiving Telegram unpdates with webhook is a valid SSL certificate, a self signed certificate will not be sufficient.
 
@@ -45,7 +45,7 @@ Incoming Telegram updates are now forwarded to the script `bin/process_update.sh
 On every incoming Telegram update the script calls Bashbot once for processing the update. Even it seems overkill to load
 Bashbot on every incoming update, it's more responsive and create less server load than polling Telegram.
 
-Nevertheles this has some limitations compared to run bashbot in background:
+Nevertheles this has some limitations compared to run bashbot in polling mode:
  - no startup actions
  - no background and interactive jobs
  - `addons` and `TIMER_EVENTS` are not working
@@ -54,17 +54,17 @@ Workaround for running new background jobs is to execute `./bashbot.sh resumebac
 
 #### Full webhook processing
 
-Full webhook processing use an external script to run Bashbot similar like for polling Telegram updates.
-There is no support for running as support for running the script in background, as a service or an other user.
+Full webhook processing use an external script to imitate Bashbot polling mode with webhook.
+There is no support for running the script in background, as a service or an other user.
 
 1. Default webook method must work first!
 2. run `bashbot.sh` to setup bashbot to run with your user id
 2. Create fifo: `mkfifo data-bot-bash/webhook-fifo-botname` and give apache server write access to it
-3. Start script for Bashbot batch mode:\
+3. Start script to imitate Bashbot polling mode:\
 `bin/process-batch.sh --startbot --watch data-bot-bash/webhook-fifo-<botname>`
 
-In batch mode Bashbot read updates from given file instead from Telegram server. `--startbot` run Bashbot staturaup actionsi
-(_e.g. load addons, start TIMER, trigger first run_). `--watch` mean to wait for new updates instead to exit on end of file.
+The script read updates from given file line by line and forward updates to Bashbot update processing. `--startbot` run Bashbot startup actions
+(_e.g. load addons, start TIMER, trigger first run_) and `--watch` mean wait for new updates instead of exit on end of file.
 
 To switch back to default processing delete fifo `data-bot-bash/webhook-fifo-<botname>` and kill `bin/process-batch.sh`.
 
@@ -95,5 +95,5 @@ updates only over secure TLS connections and if a valid SSL certificate chain ex
 `socat` looks like a tool we can use to listen for Telegram updates from bash scripts, let's see ...
 
 
-#### $$VERSION$$ v1.45-dev-56-g0859354
+#### $$VERSION$$ v1.45-dev-57-gb6e90af
 
