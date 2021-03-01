@@ -14,23 +14,22 @@ Prerequisite for receiving Telegram unpdates with webhook is a valid SSL certifi
 
 #### Setup Apache webhook
 
-Prerequisite: An Apache webserver with a valid SLL certificate chain and php enabled.
-Other webserver should work also but they are not testet. 
+Prerequisite: An Apache webserver with a valid SLL certificate chain and php enabled.\
+This should work with other webservers also but it's not testet. 
 
-Prepare Apache to forward webhook to Bashbot: 
+Setup webhook with Apache: 
 
 - install bashbot as described in [Bashbot Installation](../../doc/0_install.md)
 - create file `data-bot-bash/webhook-fifo-<botname>` (_\<botname\> as in `botconfig.jssh`_)
 - run `sudo bashbot.sh init` to setup bashbot to run as same user as Apache (_e.g. www_)
-- go to apache web root and create the directory `telegram/<your_bot_token>`
-- change to the new directory and copy all files from `examples/webhook` to it
-- edit file `BASHBOT_HOME` to contain Bashbot installation directory as first line
-- execute `php index.php` as first test
+- go to apache web root and create the directory `telegram/<your_bot_token>` (_<your_bot_token> as `botconfig.jssh`_)
+- go into the new directory and copy all files from `examples/webhook` to it
+- edit file `BASHBOT_HOME` to contain ithe Bashbot installation directory as first line (_other lines are ignored_)
+- execute `php index.php` to test if script has write access to `data-bot-bash/webhook-fifo-<botname>
 
-From now on every call to `https://<yourservername>/telegram/<your_bot_token>/` will execute
-`index.php` and write received JSON to the file `data-bot-bash/webhook-fifo-<botname>`.
-E.g. the URL `https://<yourservername>/telegram/<your_bot_token>/?json={"test":"me"}`
-will append `{"test":"me"}` to the file `data-bot-bash/webhook-fifo-<botname>`.
+Calling `https://<yourservername>/telegram/<your_bot_token>/` will execute `index.php`
+thus append received data to the file `data-bot-bash/webhook-fifo-<botname>`.
+E.g. `https://<yourservername>/telegram/<your_bot_token>/?json={"test":"me"}` will append `{"test":"me"}`.
 
 Now your Server is ready to receive updates from Telegram. 
 
@@ -42,15 +41,15 @@ This is the testet and supported default method for receiving and processing Tel
 To enable update processing delete the file `data-bot-bash/webhook-fifo-<botname>` after your webhook is working as described above.
 Incoming Telegram updates are now forwarded to the script `bin/process_update.sh` for processing.
 
-On every incoming Telegram update the script calls Bashbot once for processing the update. Even it seems overkill to load
-Bashbot on every incoming update, it's more responsive and create less server load than polling Telegram.
+On every incoming Telegram update the script is executed, source bashbot.sh and forward the update to Bashbot processing.i
+Even it seems overhead to source Bashbot for every update, it's more responsive and create less load than Bashbot polling mode.
 
-Nevertheles this has some limitations compared to run bashbot in polling mode:
+Nevertheles there are some limitations compared to polling mode:
  - no startup actions
- - no background and interactive jobs
+ - no background* and interactive jobs
  - `addons` and `TIMER_EVENTS` are not working
 
-Workaround for running new background jobs is to execute `./bashbot.sh resumeback` after starting a new background job.
+\* Workaround for background jobs is to execute `./bashbot.sh resumeback` if a new background job was started.
 
 #### Full webhook processing
 
@@ -58,13 +57,13 @@ Full webhook processing use an external script to imitate Bashbot polling mode w
 There is no support for running the script in background, as a service or an other user.
 
 1. Default webook method must work first!
-2. run `bashbot.sh` to setup bashbot to run with your user id
-2. Create fifo: `mkfifo data-bot-bash/webhook-fifo-botname` and give apache server write access to it
-3. Start script to imitate Bashbot polling mode:\
+2. run `bashbot.sh init` to setup bashbot to run with your user id
+2. Create a named pipe: `mkfifo data-bot-bash/webhook-fifo-botname` and give the web server write access to it
+3. Start the script to imitate Bashbot polling mode:\
 `bin/process-batch.sh --startbot --watch data-bot-bash/webhook-fifo-<botname>`
 
-The script read updates from given file line by line and forward updates to Bashbot update processing. `--startbot` run Bashbot startup actions
-(_e.g. load addons, start TIMER, trigger first run_) and `--watch` mean wait for new updates instead of exit on end of file.
+The script read updates from given file line by line and forward updates to Bashbot update processing. `--startbot` will run the startup actions
+(_e.g. load addons, start TIMER, trigger first run_) and `--watch` will wait for new updates instead of exit on end of file.
 
 To switch back to default processing delete fifo `data-bot-bash/webhook-fifo-<botname>` and kill `bin/process-batch.sh`.
 
@@ -89,11 +88,11 @@ To stop delivering of Telegram updates via webhook run `bin/any_command.sh delet
 
 #### Bash webhook
 
-A pure bash webhook implementaition is not possible without additional software because Telegram deliver
-updates only over secure TLS connections and if a valid SSL certificate chain exists.
+A pure bash webhook implementation is not possible without extra software because Telegram delivers
+webhook updates only over secure TLS connections with a valid SSL certificate chain.
 
-`socat` looks like a tool we can use to listen for Telegram updates from bash scripts, let's see ...
+`socat` looks like a tool to listen for Telegram updates from bash scripts, let's see ...
 
 
-#### $$VERSION$$ v1.45-dev-57-gb6e90af
+#### $$VERSION$$ v1.45-dev-58-ga473e25
 
