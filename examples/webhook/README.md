@@ -2,48 +2,50 @@
 
 ## Bashtbot webhook example
 
-### Webhooks
+### Webhook
 
-Bashbot default mode is to poll Telegram server for updates but Telegram offers webhook
-as a more efficient method to deliver updates.
-If your server is reachable from the Internet you can use the methods described here.
+Bashbot default mode is to poll Telegram server for updates but Telegram offers webhook as a more efficient method to deliver updates.
+If your server is reachable from the Internet its possible to use the methods described here.
 
-You need a valid SSL certificate or Telegram will refuse to deliever update via webhook.
-A self signed certificate will not be sufficient.
+Prerequisite for receiving Telegram unpdates with webhook is a valid SSL certificate, a self signed certificate will not be sufficient.
+
+*Note:* You need at least sudo rights to setup webhook.
 
 
 #### Setup Apache webhook
 
 Prerequisite: An Apache webserver with a valid SLL certificate chain and php enabled.
+Other webserver should work also but they are not testet. 
 
 Prepare Apache to forward webhook to Bashbot: 
 
 - install bashbot as described in [Bashbot Installation](../../doc/0_install.md)
-- create file `data-bot-bash/webhook-fifo-<botname>` (_<botname> as in `botconfig.jssh`_)
-- run `bashbot.sh init` to setup bashbot to run as same user as Apache (_e.g. www_)
-- go to apache web root and create directory `telegram/<your_bot_token>`
-- copy all files from `examples/webhook` to new directory and change to it
-- write bashbot installation directory as first line to file `BASHBOT_HOME`
-- execute `php index.php`
+- create file `data-bot-bash/webhook-fifo-<botname>` (_\<botname\> as in `botconfig.jssh`_)
+- run `sudo bashbot.sh init` to setup bashbot to run as same user as Apache (_e.g. www_)
+- go to apache web root and create the directory `telegram/<your_bot_token>`
+- change to the new directory and copy all files from `examples/webhook` to it
+- edit file `BASHBOT_HOME` to contain Bashbot installation directory as first line
+- execute `php index.php` as first test
 
-Every call to webhook `https://<yourservername>/telegram/<your_bot_token>/` will execute
-`index.php` and write received JSON to file `data-bot-bash/webhook-fifo-<botname>`.
+From now on every call to `https://<yourservername>/telegram/<your_bot_token>/` will execute
+`index.php` and write received JSON to the file `data-bot-bash/webhook-fifo-<botname>`.
 E.g. the URL `https://<yourservername>/telegram/<your_bot_token>/?json={"test":"me"}`
 will append `{"test":"me"}` to the file `data-bot-bash/webhook-fifo-<botname>`.
 
-Now your Apache is ready to forward data to Bashbot. 
+Now your Server is ready to receive updates from Telegram. 
 
 
 #### Default webhook processing
 
-To enable update processing delete the file `data-bot-bash/webhook-fifo-<botname>` after your webhook is working manually.
-All webhook calls are now forwarded to `bin/process_update.sh` for processing.
+This is the testet and supported default method for receiving and processing Telegram updates over webhook.
 
-Every incoming Telegram update load Bashbot once for processing one command. Even it seems overkill to load
-Bashbot on every incoming update, it's more responsive and create less server load than polling Telegram
+To enable update processing delete the file `data-bot-bash/webhook-fifo-<botname>` after your webhook is working as described above.
+Incoming Telegram updates are now forwarded to the script `bin/process_update.sh` for processing.
 
+On every incoming Telegram update the script calls Bashbot once for processing the update. Even it seems overkill to load
+Bashbot on every incoming update, it's more responsive and create less server load than polling Telegram.
 
-Default webhook has the following limitations:
+Nevertheles this has some limitations compared to run bashbot in background:
  - no startup actions
  - no background and interactive jobs
  - `addons` and `TIMER_EVENTS` are not working
@@ -52,14 +54,17 @@ Workaround for running new background jobs is to execute `./bashbot.sh resumebac
 
 #### Full webhook processing
 
-Use this method in case you need addons, TIMER or interactive scripts with webhook.
+Full webhook processing use an external script to run Bashbot similar like for polling Telegram updates.
+There is no support for running as support for running the script in background, as a service or an other user.
 
 1. Default webook method must work first!
-2. Create fifo: `mkfifo data-bot-bash/webhook-fifo-botname`
-3. Start Bashbot in batch mode: `bin/process-batch.sh --startbot --watch data-bot-bash/webhook-fifo-<botname>`
+2. run `bashbot.sh` to setup bashbot to run with your user id
+2. Create fifo: `mkfifo data-bot-bash/webhook-fifo-botname` and give apache server write access to it
+3. Start script for Bashbot batch mode:\
+`bin/process-batch.sh --startbot --watch data-bot-bash/webhook-fifo-<botname>`
 
-In batch mode Bashbot read updates from given file instead of Telegram server. `--startbot` loads the  addons, start the TIMER and trigger all startup actions.
-`--watch` instructs Bashbot to watch for new updates instead of stop on EOF.
+In batch mode Bashbot read updates from given file instead from Telegram server. `--startbot` run Bashbot staturaup actionsi
+(_e.g. load addons, start TIMER, trigger first run_). `--watch` mean to wait for new updates instead to exit on end of file.
 
 To switch back to default processing delete fifo `data-bot-bash/webhook-fifo-<botname>` and kill `bin/process-batch.sh`.
 
@@ -90,5 +95,5 @@ updates only over secure TLS connections and if a valid SSL certificate chain ex
 `socat` looks like a tool we can use to listen for Telegram updates from bash scripts, let's see ...
 
 
-#### $$VERSION$$ v1.45-dev-55-g5dd24c3
+#### $$VERSION$$ v1.45-dev-56-g0859354
 
