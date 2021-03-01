@@ -5,7 +5,7 @@
 #
 # tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-59-ga9ac7ea
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 
@@ -35,7 +35,8 @@ runas="nobody"
 
 # edit the values of the following lines to fit your config:
 # your bot installation dir
-bashbot="cd /usr/local/telegram-bot-bash; /usr/local/telegram-bot-bash/bashbot.sh"
+bashbotdir="/usr/local/telegram-bot-bash"
+bashbot="cd ${bashbotdir}; ${bashbotdir}/bashbot.sh"
 # your bot name as given to botfather, e.g. mysomething_bot
 name=""
 # set additionl parameter, e.g. debug
