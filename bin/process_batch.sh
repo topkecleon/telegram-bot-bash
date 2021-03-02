@@ -29,12 +29,16 @@ USAGE='process_update.sh [-h|--help] [-s|--startbot] [-w|--watch] [-n|--lines n]
 COMMAND="process_multi_updates"
 lines="-n 10"
 
-case "$1" in
+opt=0
+while [[ "$opt" -lt 5 && "$1" == "-"* ]]
+do
+    (( opt++ )) 
+    case "$1" in
 	"-s"|"--startbot")
 		startbot="yes"
 		shift
 		;;
-	"-f"|"--follow")
+	"-w"|"--watch")
 		follow="-f"
 		shift
 		;;
@@ -42,7 +46,8 @@ case "$1" in
 		lines="-n $2"
 		shift 2
 		;;
-esac
+    esac
+done
 
 # set bashbot environment
 source "${0%/*}/bashbot_env.inc.sh" "debug" # debug
@@ -55,8 +60,9 @@ file="${WEBHOOK}"
 # start bot
 if [ -n "${startbot}" ]; then
 	# warn when starting bot without pipe
-	[ -p "${WEBHOOK}" ] || printf "%b\n" "${ORANGE}Warning${NC}: File is not a pipe:${GREY} ${file##*/}${NC}"
+	[ -p "${file}" ] || printf "%b\n" "${ORANGE}Warning${NC}: File is not a pipe:${GREY} ${file##*/}${NC}"
 	start_bot "$2"
+	printf "${GREEN}Bot start actions done, start reading updates ....${NN}"
 fi
 # check file exist
 if [[ ! -r "${file}" || -d "${file}" ]]; then
@@ -68,7 +74,7 @@ fi
 # ready, do stuff here -----
 
 # kill all sub processes on exit
-trap 'kill $(jobs -p) 2>/dev/null' EXIT HUP QUIT
+trap 'kill $(jobs -p) 2>/dev/null; printf "Bot in batch mode killed!\n"' EXIT HUP QUIT
 
 # use tail to read appended updates
 # shellcheck disable=SC2086,SC2248
