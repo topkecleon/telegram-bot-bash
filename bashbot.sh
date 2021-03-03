@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-69-gb454827
+#### $$VERSION$$ v1.45-dev-73-geb0c227
 ##################################################################
 
 # are we running in a terminal?
@@ -831,7 +831,7 @@ if [ -z "${SOURCE}" ]; then
 		;;
 	# finally starts the read update loop, internal use only
 	"startbot" )
-		_exec_if_function start_bot "$2"
+		_exec_if_function start_bot "$2" "polling mode"
 		_exec_if_function get_updates "$2"
 		debug_checks "end startbot" "$@"
 		exit
@@ -902,7 +902,7 @@ if [ -z "${SOURCE}" ]; then
 			# shellcheck disable=SC2086
 			if kill ${BOTPID}; then
 				# inform botadmin about stop
-				send_normal_message "${BOTADMIN}" "Bot ${ME} stopped ..." &
+				send_normal_message "${BOTADMIN}" "Bot ${ME} polling mode stopped ..." &
 				printf "${GREEN}OK. Bot stopped successfully.${NN}"
 			else
 				printf "${RED}An error occurred while stopping bot.${NN}"

@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.45-dev-55-g5dd24c3
+#### $$VERSION$$ v1.45-dev-73-geb0c227
 ##################################################################
 
 ##############
@@ -327,7 +327,7 @@ start_bot() {
 	# read blocked users
 	jssh_readDB_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
 	# inform botadmin about start
-	send_normal_message "$(getConfigKey "botadmin")" "Bot $(getConfigKey "botname") started ..." &
+	send_normal_message "$(getConfigKey "botadmin")" "Bot ${ME} $2 started ..." &
 	##########
 	# bot is ready, start processing updates ...
 }
