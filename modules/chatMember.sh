@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.45-dev-69-gb454827
+#### $$VERSION$$ v1.45-dev-71-gac16103
 
 # will be automatically sourced from bashbot
 
@@ -149,7 +149,7 @@ user_is_botadmin() {
 	[ -z "$1" ] && return 1
 	[ -z "${BOTADMIN}" ] && return 1
 	[[ "${BOTADMIN}" == "$1" || "${BOTADMIN}" == "$2" ]] && return 0
-	if [ "${BOTADMIN}" = "?" ]; then setConfigKey "botadmin" "${1:-?}"; return 0; fi
+	if [ "${BOTADMIN}" = "?" ]; then setConfigKey "botadmin" "${1:-?}"; BOTADMIN="${1:-?}"; return 0; fi
 	return 1
 }
 
