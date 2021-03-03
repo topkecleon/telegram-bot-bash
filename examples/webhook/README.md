@@ -25,7 +25,7 @@ Setup webhook with Apache:
 - create a directory in web root: `telegram/<your_bot_token>` (_<your_bot_token> as `botconfig.jssh`_)
 - go into the new directory and copy all files from `examples/webhook` to it
 - edit file `BASHBOT_HOME` to contain ithe Bashbot installation directory as first line (_other lines are ignored_)
-- execute `php index.php` to test if script has write access to `data-bot-bash/webhook-fifo-<botname>
+- execute `php index.php` with user id of web server to test write access to `data-bot-bash/webhook-fifo-<botname>
 
 Calling `https://<yourservername>/telegram/<your_bot_token>/` will execute `index.php`
 thus append received data to the file `data-bot-bash/webhook-fifo-<botname>`.
@@ -54,12 +54,13 @@ Nevertheles there are some limitations compared to polling mode:
 #### Full webhook processing
 
 Full webhook processing use an external script to imitate Bashbot polling mode with webhook.
-There is no support for running the script in background, as a service or an other user.
+*Warning:* This method is not much testet and may not work in all cases.
 
 1. Default webook method must work first!
 2. run `bashbot.sh init` to setup bashbot to run with your user id
 2. Create a named pipe: `mkfifo data-bot-bash/webhook-fifo-botname` and give the web server write access to it
-3. Start the script to imitate Bashbot polling mode:\
+3. execute `php index.php` with user id of web server to test write access to `data-bot-bash/webhook-fifo-<botname>
+4. Start the script to imitate Bashbot polling mode:\
 `bin/process-batch.sh --startbot --watch data-bot-bash/webhook-fifo-<botname>`
 
 The script read updates from given file line by line and forward updates to Bashbot update processing. `--startbot` will run the startup actions
@@ -95,5 +96,5 @@ webhook updates only over secure TLS connections with a valid SSL certificate ch
 `socat` looks like a tool to listen for Telegram updates from bash scripts, let's see ...
 
 
-#### $$VERSION$$ v1.45-dev-59-ga9ac7ea
+#### $$VERSION$$ v1.45-dev-63-ge098aee
 
