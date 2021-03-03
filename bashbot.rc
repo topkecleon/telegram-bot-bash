@@ -5,7 +5,7 @@
 #
 # tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.45-dev-65-g859ce92
+#### $$VERSION$$ v1.45-dev-66-gec90ce8
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 # shellcheck disable=SC2250
@@ -57,7 +57,7 @@ case "$1" in
 	RETVAL=$?
 	;;
 'starthook')
-	$runcmd "$webhook $mode" # >/dev/null 2>&1 </dev/null
+	$runcmd "nohup $webhook $mode &>>${bashbotdir}/logs/WEBHOOK.log" # >/dev/null 2>&1 </dev/null
 	sleep 1
 	$0 status
 	RETVAL=$?
