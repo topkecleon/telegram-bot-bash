@@ -21,7 +21,7 @@ USAGE='process_update.sh [-h|--help] [-s|--startbot] [-w|--watch] [-n|--lines n]
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.02.2021 13:14
 #
-#### $$VERSION$$ v1.45-dev-69-gb454827
+#### $$VERSION$$ v1.45-dev-72-g7500ca0
 #===============================================================================
 
 ####
@@ -61,7 +61,7 @@ file="${WEBHOOK}"
 if [ -n "${startbot}" ]; then
 	# warn when starting bot without pipe
 	[ -p "${file}" ] || printf "%b\n" "${ORANGE}Warning${NC}: File is not a pipe:${GREY} ${file##*/}${NC}"
-	start_bot "$2"
+	start_bot "$2" "webhook"
 	printf "${GREEN}Bot start actions done, start reading updates ....${NN}"
 fi
 # check file exist
@@ -74,7 +74,7 @@ fi
 # ready, do stuff here -----
 
 # kill all sub processes on exit
-trap 'kill $(jobs -p) 2>/dev/null; printf "Bot in batch mode killed!\n"' EXIT HUP QUIT
+trap 'kill $(jobs -p) 2>/dev/null; send_normal_message "'"${BOTADMIN}"'" "Bot '"${BOTNAME}"' webhook stopped ..."; printf "Bot in batch mode killed!\n"' EXIT HUP QUIT
 
 # use tail to read appended updates
 # shellcheck disable=SC2086,SC2248

@@ -5,7 +5,7 @@
 #
 # tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.45-dev-66-gec90ce8
+#### $$VERSION$$ v1.45-dev-72-g7500ca0
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 # shellcheck disable=SC2250
@@ -28,21 +28,21 @@ runcmd="echo Dry run:" # not activated until you edit lines below
 # Configuration Section
 
 # edit the next line to fit the user you want to run bashbot, e.g. nobody:
-runas="nobody"
+runas="www"
 
 # uncomment one of the example lines to fit your system 
 # runcmd="su ${runas} -s /bin/bash -c "      # runasuser with *su*
-# runcmd="/usr/sbin/runuser ${runas} -s /bin/bash -c " # runasuser with *runuser*
+runcmd="/usr/sbin/runuser ${runas} -s /bin/bash -c " # runasuser with *runuser*
 
 # edit the values of the following lines to fit your config:
 # your bot name as given to botfather, e.g. mysomething_bot
-name=""
+name="GnadelTest_bot"
 # your bot installation dir
 bashbotdir="/usr/local/github/telegram-bot-bash-develop/DIST/telegram-bot-bash"
 databotdir="${bashbotdir}/data-bot-bash"
 # programs to run
 bashbot="cd ${bashbotdir}; ${bashbotdir}/bashbot.sh"
-webhook="cd ${bashbotdir}; ${bashbotdir}/bin/process_batch.sh --startbot --watch ${databotdir}/webhook-fifo-${name} &"
+webhook="cd ${bashbotdir}; nohup ${bashbotdir}/bin/process_batch.sh --startbot --watch ${databotdir}/webhook-fifo-${name}"
 # set additionl parameter, e.g. debug
 mode=""
 
@@ -57,7 +57,7 @@ case "$1" in
 	RETVAL=$?
 	;;
 'starthook')
-	$runcmd "nohup $webhook $mode &>>${bashbotdir}/logs/WEBHOOK.log" # >/dev/null 2>&1 </dev/null
+	$runcmd "$webhook $mode </dev/null &>>${bashbotdir}/logs/WEBHOOK.log &" # >/dev/null 2>&1 </dev/null
 	sleep 1
 	$0 status
 	RETVAL=$?
