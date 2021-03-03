@@ -15,7 +15,7 @@ USAGE='process_update.sh [-h|--help] [debug] [<file]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 30.01.2021 19:14
 #
-#### $$VERSION$$ v1.45-dev-53-g941598d
+#### $$VERSION$$ v1.45-dev-68-ge6838d1
 #===============================================================================
 
 ####
@@ -33,7 +33,7 @@ print_help "${1:-nix}"
 # read json from stdin and convert update format
 # replace any ID named BOTADMIN with ID of bot admin
 json='{"result": ['"$(cat)"']}'
-json="${json//\"id\":BOTADMIN,/\"id\":${BOT_ADMIN},}"
+json="${json//\"id\":BOTADMIN,/\"id\":${BOTADMIN},}"
 UPDATE="$(${JSONSHFILE} -b -n <<<"${json}" 2>/dev/null)"
 
 # process telegram update

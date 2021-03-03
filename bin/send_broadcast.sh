@@ -28,7 +28,7 @@ USAGE='broadcast_message.sh [-h|--help] [--doit] [--groups|--both|--db=file] [fo
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 16:14
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-68-ge6838d1
 #===============================================================================
 
 ####
@@ -91,7 +91,7 @@ if [ -z "${SENDALL[*]}" ]; then
 fi
 
 	# loop over users
-	printf "${GREEN}Sending broadcast message to ${SENDTO}${GROUPSALSO} of ${BOT_NAME} using database:${NC}${GREY} ${database##*/}"
+	printf "${GREEN}Sending broadcast message to ${SENDTO}${GROUPSALSO} of ${BOTNAME} using database:${NC}${GREY} ${database##*/}"
 
 { 	# dry run
 	[ -z "${DOIT}" ] && printf "${NC}\n${ORANGE}DRY RUN! use --doit as first argument to execute broadcast...${NC}\n"

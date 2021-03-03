@@ -21,7 +21,7 @@ USAGE='any_command.sh [-h|--help] [--force|--reference] bot_command args ...'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 30.01.2021 10:24
 #
-#### $$VERSION$$ v1.45-dev-7-ga9ed559
+#### $$VERSION$$ v1.45-dev-68-ge6838d1
 #===============================================================================
 
 ####
@@ -68,7 +68,7 @@ fi
 # ready, do stuff here -----
 COMMAND="$1"
 if [ "$2" == "BOTADMIN" ]; then
-	ARG1="${BOT_ADMIN}"
+	ARG1="${BOTADMIN}"
 else
 	ARG1="$2"
 fi

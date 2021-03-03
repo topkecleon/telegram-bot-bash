@@ -20,7 +20,7 @@ USAGE='delete_message.sh [-h|--help]  "CHAT[ID]" "MESSAGE[ID]" [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 03.01.2021 15:37
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-68-ge6838d1
 #===============================================================================
 
 ####
@@ -34,7 +34,7 @@ print_help "$1"
 ####
 # ready, do stuff here -----
 if [ "$1" == "BOTADMIN" ]; then
-	CHAT="${BOT_ADMIN}"
+	CHAT="${BOTADMIN}"
 else
 	CHAT="$1"
 fi

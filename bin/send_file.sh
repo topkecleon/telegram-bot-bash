@@ -25,7 +25,7 @@ USAGE='send_file.sh [-h|--help] "CHAT[ID]" "file|URL" "caption ...." [type] [deb
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 25.12.2020 20:24
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-68-ge6838d1
 #===============================================================================
 
 ####
@@ -39,7 +39,7 @@ print_help "$1"
 ####
 # ready, do stuff here -----
 if [ "$1" == "BOTADMIN" ]; then
-	CHAT="${BOT_ADMIN}"
+	CHAT="${BOTADMIN}"
 else
 	CHAT="$1"
 fi

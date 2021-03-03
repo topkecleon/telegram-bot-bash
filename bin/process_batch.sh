@@ -21,7 +21,7 @@ USAGE='process_update.sh [-h|--help] [-s|--startbot] [-w|--watch] [-n|--lines n]
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.02.2021 13:14
 #
-#### $$VERSION$$ v1.45-dev-60-g2415814
+#### $$VERSION$$ v1.45-dev-68-ge6838d1
 #===============================================================================
 
 ####
@@ -83,7 +83,7 @@ tail ${follow} ${lines} "${file}" |\
     do 
 	# read json from stdin and convert update format
 	# replace any ID named BOTADMIN with ID of bot admin
-	: "${input//\"id\":BOTADMIN,/\"id\":${BOT_ADMIN},}"
+	: "${input//\"id\":BOTADMIN,/\"id\":${BOTADMIN},}"
 	json='{"result": ['"${_}"']}'
 	UPDATE="$(${JSONSHFILE} -b -n <<<"${json}" 2>/dev/null)"
 
