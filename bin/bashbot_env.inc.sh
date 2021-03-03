@@ -13,7 +13,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.12.2020 12:27
 #
-#### $$VERSION$$ v1.45-dev-50-g34923dd
+#### $$VERSION$$ v1.45-dev-67-g53e936e
 #===============================================================================
 
 ############
@@ -59,7 +59,8 @@ UPLOADDIR="${BASHBOT_VAR%/bin*}"
 FILE_REGEX="${UPLOADDIR}/.*"
 
 # get and check ADMIN and NAME
-BOT_ADMIN="$(getConfigKey "botadmin")"
+# shellcheck disable=SC2153
+BOT_ADMIN="${BOTADMIN}"
 BOT_NAME="$(getConfigKey "botname")"
 ME="${BOT_NAME}"
 [[ -z "${BOT_ADMIN}" || "${BOT_ADMIN}" == "?" ]] && printf "%s\n" "${ORANGE}Warning: Botadmin not set, send bot command${NC} /start"

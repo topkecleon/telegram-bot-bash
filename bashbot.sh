@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-55-g5dd24c3
+#### $$VERSION$$ v1.45-dev-67-g53e936e
 ##################################################################
 
 # are we running in a terminal?
@@ -358,7 +358,7 @@ declare -rx BOTTOKEN URL ME_URL
 declare -ax CMD
 declare -Ax UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY iBUTTON
 declare -Ax SERVICE NEWMEMBER LEFTMEMBER PINNED MIGRATE
-export res CAPTION ME
+export res CAPTION ME BOTADMIN
 
 
 ###############
@@ -788,6 +788,8 @@ fi
 # source the script with source as param to use functions in other scripts
 # do not execute if read from other scripts
 
+BOTADMIN="$(getConfigKey "botadmin")"
+
 if [ -z "${SOURCE}" ]; then
   ##############
   # internal options only for use from bashbot and developers
@@ -900,7 +902,7 @@ if [ -z "${SOURCE}" ]; then
 			# shellcheck disable=SC2086
 			if kill ${BOTPID}; then
 				# inform botadmin about stop
-				send_normal_message "$(getConfigKey "botadmin")" "Bot ${ME} stopped ..." &
+				send_normal_message "${BOTADMIN}" "Bot ${ME} stopped ..." &
 				printf "${GREEN}OK. Bot stopped successfully.${NN}"
 			else
 				printf "${RED}An error occurred while stopping bot.${NN}"
