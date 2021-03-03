@@ -5,7 +5,7 @@
 #
 # tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.45-dev-62-g4854d0d
+#### $$VERSION$$ v1.45-dev-64-gfff79d6
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 # shellcheck disable=SC2250
@@ -113,7 +113,8 @@ case "$1" in
 	fi  
 	;;
 *)
-	printf "%s\n" "Usage: $0 { start | stop | starthook | restart | reload | restartback | suspendback | resumeback | killback }"
+	printf "%s\n" "Usage: $0 [ start  | stop | restart | starthook |  stophook  | restarthook ]"
+	printf "%s\n" "       $0 [ status | restartback | suspendback  | resumeback | killback ]"
 	RETVAL=1
 	;;
 esac
