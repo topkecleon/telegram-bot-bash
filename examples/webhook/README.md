@@ -67,7 +67,9 @@ The script read updates from given file line by line and forward updates to Bash
 (_e.g. load addons, start TIMER, trigger first run_) and `--watch` will wait for new updates instead of exit on end of file.
 Short form: 'bin/process-batch.sh -s -w'
 
-To switch back to default processing delete fifo `data-bot-bash/webhook-fifo-<botname>` and kill `bin/process-batch.sh`.
+To switch back to default processing delete fifo `data-bot-bash/webhook-fifo-<botname>` and stop `bin/process-batch.sh`.
+
+If full processing seems to work well on the command line, you can use `./bachbot.rc starthook/stophook` to run processing in background.
 
 #### Enable webhook on Telegram side
 
@@ -96,5 +98,5 @@ webhook updates only over secure TLS connections with a valid SSL certificate ch
 `socat` looks like a tool to listen for Telegram updates from bash scripts, let's see ...
 
 
-#### $$VERSION$$ v1.45-dev-64-gfff79d6
+#### $$VERSION$$ v1.45-dev-65-g859ce92
 
