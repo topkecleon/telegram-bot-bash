@@ -13,7 +13,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.45-dev-45-g6b8ad97
+#### $$VERSION$$ v1.45-dev-70-gb78431e
 #######################################################
 # shellcheck disable=SC1117
 
@@ -106,12 +106,12 @@ else
 				"${WELCOME_MSG} ${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]} (@${NEWMEMBER[USERNAME]})"
 			    MYSENTID="${BOTSENT[ID]}"
 			    { sleep 5; delete_message  "${CHAT[ID]}" "${MYSENTID}"; } &
-			[ -n "${REPORT_NEWMEMBER}" ] && send_normal_message "$(getConfigKey "botadmin")"\
+			[ -n "${REPORT_NEWMEMBER}" ] && send_normal_message "${BOTADMIN}"\
 			    "New member: ${CHAT[TITLE]} (${CHAT[ID]}): ${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]} (@${NEWMEMBER[USERNAME]})"
 			fi
 			;;
 		'/_left_chat_member'*)
-			[ -n "${REPORT_LEFTMEMBER}" ] && send_normal_message "$(getConfigKey "botadmin")"\
+			[ -n "${REPORT_LEFTMEMBER}" ] && send_normal_message "${BOTADMIN}"\
 			    "Left member: ${CHAT[TITLE]} (${CHAT[ID]}): ${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]} (@${LEFTMEMBER[USERNAME]})"
 			;;
 		'/_migrate_group'*)
