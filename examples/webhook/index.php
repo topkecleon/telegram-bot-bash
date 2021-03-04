@@ -11,7 +11,7 @@
  * @license    http://www.wtfpl.net/txt/copying/ WTFPLv2
  * @since      30.01.2021 20:24
  *
-#### $$VERSION$$ v1.45-dev-51-gf7842f4
+#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
  ***********************************************************/
 
  // bashbot home dir

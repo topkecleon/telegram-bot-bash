@@ -160,5 +160,5 @@ The second warning is about an unused variable, this is true because in our exam
 #### [Prev Best Practice](5_practice.md)
 #### [Next Functions Reference](6_reference.md)
 
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
 

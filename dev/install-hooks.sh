@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # this has to run once atfer git clone
 # and every time we create new hooks
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
 
 #shellcheck disable=SC1090
 source "${0%/*}/dev.inc.sh"

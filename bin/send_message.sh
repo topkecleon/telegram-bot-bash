@@ -22,7 +22,7 @@ USAGE='send_message.sh [-h|--help] [format] "CHAT[ID]" "message ...." [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 11:34
 #
-#### $$VERSION$$ v1.45-dev-69-gb454827
+#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
 #===============================================================================
 
 ####

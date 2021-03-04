@@ -21,7 +21,7 @@ USAGE='send_dice.sh [-h|--help] "CHAT[ID]" "emoji" [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 07.02.2021 18:45
 #
-#### $$VERSION$$ v1.45-dev-69-gb454827
+#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
 #===============================================================================
 
 ####

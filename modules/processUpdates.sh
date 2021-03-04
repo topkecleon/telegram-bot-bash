@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.45-dev-73-geb0c227
+#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
 ##################################################################
 
 ##############
@@ -288,7 +288,7 @@ process_message() {
 }
 
 #########################
-# main get updates loop, should never terminate
+# bot startup actions, call before start polling or webhook loop
 declare -A BASHBOTBLOCKED
 start_bot() {
 	local DEBUGMSG
@@ -318,21 +318,15 @@ start_bot() {
 		# shellcheck disable=SC2064
 		trap "kill -9 $!; exit" EXIT INT HUP TERM QUIT 
 	fi
-	# cleanup countfile on startup
-	jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
-        [ -f "${COUNTFILE}.jssh.flock" ] && rm -f "${COUNTFILE}.jssh.flock"
-	# store start time and cleanup botconfig on startup
-	jssh_updateKeyDB "startup" "$(_date)" "${BOTCONFIG}"
-        [ -f "${BOTCONFIG}.jssh.flock" ] && rm -f "${BOTCONFIG}.jssh.flock"
+	# cleanup on start
+	bot_cleanup "startup"
 	# read blocked users
 	jssh_readDB_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
 	# inform botadmin about start
 	send_normal_message "$(getConfigKey "botadmin")" "Bot ${ME} $2 started ..." &
-	##########
-	# bot is ready, start processing updates ...
 }
 
-
+# main polling updates loop, should never terminate
 get_updates(){
 	local errsleep="200" DEBUG="$1" OFFSET=0
 	# adaptive sleep defaults

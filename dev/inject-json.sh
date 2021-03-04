@@ -7,7 +7,7 @@
 #
 # Usage: source inject-json.sh
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
 ##############################################################
 
 # download JSON.sh

@@ -10,7 +10,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.45-dev-34-gb1e6e0f
+#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
 #===============================================================================
 
 # include common functions and definitions

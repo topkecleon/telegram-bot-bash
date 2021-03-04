@@ -25,7 +25,7 @@ USAGE='promote_user.sh [-h|--help] "CHAT[ID]" "USER[ID]" "right[:true|false]" ..
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 25.01.2021 22:34
 #
-#### $$VERSION$$ v1.45-dev-69-gb454827
+#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
 #===============================================================================
 
 ####

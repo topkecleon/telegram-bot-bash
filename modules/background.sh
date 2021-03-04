@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117,SC2059
-#### $$VERSION$$ v1.45-dev-69-gb454827
+#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
 
 # will be automatically sourced from bashbot
 
@@ -124,13 +124,15 @@ inproc() {
 	send_interactive "${CHAT[ID]}" "${MESSAGE[0]}"
 }
 
-# start stop all jobs
+# start stop all jobs 
 # $1 command #	kill suspend resume restart
 job_control() {
 	local BOT ADM content proc CHAT job fifo killall=""
 	BOT="$(getConfigKey "botname")"
 	ADM="${BOTADMIN}"
 	debug_checks "Enter job_control" "$1"
+	# cleanup on start
+	[[ "$1" == "re"* ]] && bot_cleanup "startback"
 	for FILE in "${DATADIR:-.}/"*-back.cmd; do
 		[ "${FILE}" = "${DATADIR:-.}/*-back.cmd" ] && printf "${RED}No background processes.${NN}" && break
 		content="$(< "${FILE}")"

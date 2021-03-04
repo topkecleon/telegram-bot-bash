@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-73-geb0c227
+#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
 ##################################################################
 
 # are we running in a terminal?
@@ -747,6 +747,16 @@ event_send() {
 	done
 }
 
+# cleanup activities on startup, called from startbot and resume background jobs
+# $1 action, timestamp for action is saved in config
+bot_cleanup() {
+	# cleanup countfile on startup
+	jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
+        [ -f "${COUNTFILE}.jssh.flock" ] && rm -f "${COUNTFILE}.jssh.flock"
+	# store action time and cleanup botconfig on startup
+	[ -n "$1" ] && jssh_updateKeyDB "$1" "$(_date)" "${BOTCONFIG}"
+        [ -f "${BOTCONFIG}.jssh.flock" ] && rm -f "${BOTCONFIG}.jssh.flock"
+}
 
 # fallback version, full version is in  bin/bashbot_init.in.sh
 # initialize bot environment, user and permissions

@@ -21,7 +21,7 @@ USAGE='process_update.sh [-h|--help] [-s|--startbot] [-w|--watch] [-n|--lines n]
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.02.2021 13:14
 #
-#### $$VERSION$$ v1.45-dev-72-g7500ca0
+#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
 #===============================================================================
 
 ####
