@@ -41,9 +41,10 @@ else
 	exit 1
 fi
 
+# get version strings
 REMOTEVER="$(git ls-remote -t --refs 2>/dev/null | tail -1 | sed -e 's/.*\/v//' -e 's/-.*//')"
 VERSION="$(git describe --tags | sed -e 's/-.*//' -e 's/v//' -e 's/,/./')"
-
+[ -z "${REMOTEVER}" ] && REMOTEVER="${VERSION}"
 
 # LOCAL version must greater than latest REMOTE release version
 printf "Update Version of modified files\n"
