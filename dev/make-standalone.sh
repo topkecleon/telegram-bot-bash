@@ -11,12 +11,14 @@
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.45-dev-81-ga5b2306
+#### $$VERSION$$ v1.45-dev-82-g761aa46
 ###################################################################
 
+incfile="${0%/*}/dev.inc.sh"
 #shellcheck disable=SC1090
-source "${0%/*}/dev.inc.sh"
+[ -f "${incfile}" ] && source "${incfile}"
 [ ! -f "bashbot.sh" ] && printf "bashbot.sh not found in %s\n" " $(pwd)" && exit 1
+[ -z "${BASE_DIR}" ] && BASE_DIR="$(pwd)"
 
 #DISTNAME="telegram-bot-bash"
 DISTDIR="./STANDALONE" 
@@ -24,7 +26,7 @@ DISTMKDIR="data-bot-bash logs bin bin/logs addons"
 DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh dev/obfuscate.sh modules bin scripts LICENSE README.* doc botacl botconfig.jssh addons"
 
 # run pre_commit on files
-[ "$1" != "--notest" ] &&  dev/hooks/pre-commit.sh
+[[ -f ""${incfile}  && "$1" != "--notest" ]] &&  dev/hooks/pre-commit.sh
 
 # create dir for distribution and copy files
 printf "Create directories and copy files\n"
@@ -41,6 +43,7 @@ do
 done
 
 # inject JSON.sh into distribution
+
 # shellcheck disable=SC1090
 source "${BASE_DIR}/dev/inject-json.sh"
 
