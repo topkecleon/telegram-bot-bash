@@ -11,7 +11,7 @@
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
+#### $$VERSION$$ v1.45-dev-81-ga5b2306
 ###################################################################
 
 #shellcheck disable=SC1090
@@ -21,7 +21,7 @@ source "${0%/*}/dev.inc.sh"
 #DISTNAME="telegram-bot-bash"
 DISTDIR="./STANDALONE" 
 DISTMKDIR="data-bot-bash logs bin bin/logs addons"
-DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh dev/obfuscate.sh modules bin scripts LICENSE README.* doc botacl botconfig.jssh $(echo "addons/"*.sh)"
+DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh dev/obfuscate.sh modules bin scripts LICENSE README.* doc botacl botconfig.jssh addons"
 
 # run pre_commit on files
 [ "$1" != "--notest" ] &&  dev/hooks/pre-commit.sh
