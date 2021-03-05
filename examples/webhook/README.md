@@ -21,8 +21,9 @@ Setup webhook with Apache:
 
 - install bashbot as described in [Bashbot Installation](../../doc/0_install.md)
 - create file `data-bot-bash/webhook-fifo-<botname>` (_\<botname\> as in `botconfig.jssh`_)
-- run `sudo bashbot.sh init` to setup bashbot to run as same user as Apache (_e.g. www_)
+- run `sudo bashbot.sh init` to setup bashbot to run as same user as web server (_e.g. www_)
 - create a directory in web root: `telegram/<your_bot_token>` (_<your_bot_token> as `botconfig.jssh`_)
+- give web server access to directory (_e.g.`chown www:www -R telegram`_)
 - go into the new directory and copy all files from `examples/webhook` to it
 - edit file `BASHBOT_HOME` to contain ithe Bashbot installation directory as first line (_other lines are ignored_)
 - execute `php index.php` with user id of web server to test write access to `data-bot-bash/webhook-fifo-<botname>
@@ -60,16 +61,16 @@ Full webhook processing use an external script to imitate Bashbot polling mode w
 2. run `bashbot.sh init` to setup bashbot to run with your user id
 2. Create a named pipe: `mkfifo data-bot-bash/webhook-fifo-botname` and give the web server write access to it
 3. execute `php index.php` with user id of web server to test write access to `data-bot-bash/webhook-fifo-<botname>
-4. Start the script to imitate Bashbot polling mode:\
+4. Start script for Bashbot webhook polling mode:\
 `bin/process-batch.sh --startbot --watch data-bot-bash/webhook-fifo-<botname>`
 
 The script read updates from given file line by line and forward updates to Bashbot update processing. `--startbot` will run the startup actions
 (_e.g. load addons, start TIMER, trigger first run_) and `--watch` will wait for new updates instead of exit on end of file.
 Short form: 'bin/process-batch.sh -s -w'
 
-To switch back to default processing delete fifo `data-bot-bash/webhook-fifo-<botname>` and stop `bin/process-batch.sh`.
+If script works as expected, you may run Bashbot webook polling in background by using `./bachbot.rc starthook/stophook`.
 
-If full processing seems to work well on the command line, you can use `./bachbot.rc starthook/stophook` to run processing in background.
+To switch back to default processing delete fifo `data-bot-bash/webhook-fifo-<botname>` and stop `bin/process-batch.sh`.
 
 #### Enable webhook on Telegram side
 
@@ -98,5 +99,5 @@ webhook updates only over secure TLS connections with a valid SSL certificate ch
 `socat` looks like a tool to listen for Telegram updates from bash scripts, let's see ...
 
 
-#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
+#### $$VERSION$$ v1.45-dev-77-g235f26a
 
