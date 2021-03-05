@@ -21,7 +21,7 @@ USAGE='process_update.sh [-h|--help] [-s|--startbot] [-w|--watch] [-n|--lines n]
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.02.2021 13:14
 #
-#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
+#### $$VERSION$$ v1.45-dev-79-gb1af0f0
 #===============================================================================
 
 ####
@@ -76,6 +76,8 @@ fi
 # kill all sub processes on exit
 trap 'kill $(jobs -p) 2>/dev/null; send_normal_message "'"${BOTADMIN}"'" "Bot '"${BOTNAME}"' webhook stopped ..."; printf "Bot in batch mode killed!\n"' EXIT HUP QUIT
 
+# wait after (first) update to avoid processing to many in parallel
+UPDWAIT="0.5"
 # use tail to read appended updates
 # shellcheck disable=SC2086,SC2248
 tail ${follow} ${lines} "${file}" |\
@@ -89,4 +91,6 @@ tail ${follow} ${lines} "${file}" |\
 
 	# process telegram update
 	"${COMMAND}" "$2"
+	sleep "${UPDWAIT}"
+	UPDWAIT="0.05"
     done 
