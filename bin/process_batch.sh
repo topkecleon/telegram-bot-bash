@@ -21,7 +21,7 @@ USAGE='process_update.sh [-h|--help] [-s|--startbot] [-w|--watch] [-n|--lines n]
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.02.2021 13:14
 #
-#### $$VERSION$$ v1.45-dev-79-gb1af0f0
+#### $$VERSION$$ v1.45-dev-80-g2463866
 #===============================================================================
 
 ####
@@ -60,13 +60,13 @@ file="${WEBHOOK}"
 # start bot
 if [ -n "${startbot}" ]; then
 	# warn when starting bot without pipe
-	[ -p "${file}" ] || printf "%b\n" "${ORANGE}Warning${NC}: File is not a pipe:${GREY} ${file##*/}${NC}"
+	[ -p "${file}" ] || printf "%(%c)T: %b\n" -1 "${ORANGE}Warning${NC}: File is not a pipe:${GREY} ${file##*/}${NC}"
 	start_bot "$2" "webhook"
-	printf "${GREEN}Bot start actions done, start reading updates ....${NN}"
+	printf "%(%c)T: %b\n" -1 "${GREEN}Bot start actions done, start reading updates ....${NN}"
 fi
 # check file exist
 if [[ ! -r "${file}" || -d "${file}" ]]; then
-	printf "%b\n" "${RED}Error${NC}: File not readable:${GREY} ${file}${NC}."
+	printf "%(%c)T: %b\n" -1 "${RED}Error${NC}: File not readable:${GREY} ${file}${NC}."
 	exit 1
 fi
 
@@ -74,7 +74,7 @@ fi
 # ready, do stuff here -----
 
 # kill all sub processes on exit
-trap 'kill $(jobs -p) 2>/dev/null; send_normal_message "'"${BOTADMIN}"'" "Bot '"${BOTNAME}"' webhook stopped ..."; printf "Bot in batch mode killed!\n"' EXIT HUP QUIT
+trap 'kill $(jobs -p) 2>/dev/null; send_normal_message "'"${BOTADMIN}"'" "Bot '"${BOTNAME}"' webhook stopped ..."; printf "%(%c)T: %s\n" -1 "Bot in batch mode killed!\n"' EXIT HUP QUIT
 
 # wait after (first) update to avoid processing to many in parallel
 UPDWAIT="0.5"
