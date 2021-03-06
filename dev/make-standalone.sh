@@ -11,29 +11,43 @@
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.45-dev-82-g761aa46
+#### $$VERSION$$ v1.45-dev-83-g47a032d
 ###################################################################
 
+# include git config and change to base dir
 incfile="${0%/*}/dev.inc.sh"
 #shellcheck disable=SC1090
 [ -f "${incfile}" ] && source "${incfile}"
-[ ! -f "bashbot.sh" ] && printf "bashbot.sh not found in %s\n" " $(pwd)" && exit 1
-[ -z "${BASE_DIR}" ] && BASE_DIR="$(pwd)"
 
+# seems we are not in a dev env
+if [ -z "${BASE_DIR}" ]; then
+	BASE_DIR="$(pwd)"
+	[[ "${BASE_DIR}" == *"/dev" ]] &&  BASE_DIR="${BASE_DIR%/*}"
+	# go to basedir
+	cd "${BASE_DIR}" || exit 1
+fi
+
+# see if if bashbot is in base dir
+[ ! -f "bashbot.sh" ] && printf "bashbot.sh not found in %s\n" " $(pwd)" && exit 1
+
+# run pre_commit if exist
+[[ -f "dev/dev.inc.sh"  && "$1" != "--notest" ]] &&  dev/hooks/pre-commit.sh
+
+# files and dirs to copy
 #DISTNAME="telegram-bot-bash"
 DISTDIR="./STANDALONE" 
-DISTMKDIR="data-bot-bash logs bin bin/logs addons"
-DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh dev/obfuscate.sh modules bin scripts LICENSE README.* doc botacl botconfig.jssh addons"
-
-# run pre_commit on files
-[[ -f ""${incfile}  && "$1" != "--notest" ]] &&  dev/hooks/pre-commit.sh
+DISTMKDIR="data-bot-bash logs bin/logs addons"
+DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh dev/obfuscate.sh modules scripts LICENSE README.* doc botacl botconfig.jssh addons"
+DISTBINFILES="bin/bashbot_env.inc.sh bin/bashbot_stats.sh bin/process_batch.sh bin/process_update.sh bin/send_broadcast.sh bin/send_message.sh"
 
 # create dir for distribution and copy files
 printf "Create directories and copy files\n"
-mkdir -p "${DISTDIR}" 2>/dev/null
-
+mkdir -p "${DISTDIR}/bin" 2>/dev/null
 # shellcheck disable=SC2086
-cp -r ${DISTFILES} "${DISTDIR}" 2>/dev/null
+cp -rp ${DISTFILES} "${DISTDIR}" 2>/dev/null
+# shellcheck disable=SC2086
+cp -p ${DISTBINFILES} "${DISTDIR}/bin" 2>/dev/null
+
 cd "${DISTDIR}" || exit 1
 
 # shellcheck disable=SC2250
@@ -43,7 +57,6 @@ do
 done
 
 # inject JSON.sh into distribution
-
 # shellcheck disable=SC1090
 source "${BASE_DIR}/dev/inject-json.sh"
 
@@ -70,7 +83,7 @@ printf "OK, now lets do the magic ...\n\t... create unified commands.sh\n"
 mv $$commands.sh commands.sh
 rm -f mycommands.sh
 
-printf "\n... create unified bashbot.sh\n"
+printf "\t... create unified bashbot.sh\n"
 
 { 
   # first head of bashbot.sh
