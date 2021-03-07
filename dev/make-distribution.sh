@@ -7,7 +7,7 @@
 #
 # Options: --notest - skip tests
 #
-#### $$VERSION$$ v1.45-dev-83-g47a032d
+#### $$VERSION$$ v1.45-dev-84-gae525c4
 ##############################################################
 
 #shellcheck disable=SC1090
@@ -20,7 +20,7 @@ DISTDIR="./DIST/${DISTNAME}"
 DISTMKDIR="data-bot-bash logs bin bin/logs addons"
 
 DISTFILES="bashbot.sh commands.sh mycommands.sh.clean bin doc examples scripts modules LICENSE README.md README.txt README.html"
-DISTFILESDEV="dev/make-standalone.sh dev/inject-json.sh dev/make-html.sh dev/obfuscate.sh"
+DISTFILESDEV="dev/make-standalone.sh dev/make-standalone.sh.include dev/inject-json.sh dev/make-html.sh dev/obfuscate.sh"
 DISTFILESDIST="mycommands.sh mycommands.conf bashbot.rc $(echo "addons/"*.sh)"
 
 # run tests first!
@@ -40,7 +40,7 @@ mkdir -p "${DISTDIR}" 2>/dev/null
 printf "Copy files\n"
 # shellcheck disable=SC2086
 cp -r ${DISTFILES} "${DISTDIR}"
-mkdir "${DISTDIR}/dev"
+mkdir -p "${DISTDIR}/dev"
 # shellcheck disable=SC2086
 cp ${DISTFILESDEV} "${DISTDIR}/dev"
 cd "${DISTDIR}" || exit 1

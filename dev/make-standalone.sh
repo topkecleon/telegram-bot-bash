@@ -11,7 +11,7 @@
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.45-dev-83-g47a032d
+#### $$VERSION$$ v1.45-dev-84-gae525c4
 ###################################################################
 
 # include git config and change to base dir
@@ -37,8 +37,11 @@ fi
 #DISTNAME="telegram-bot-bash"
 DISTDIR="./STANDALONE" 
 DISTMKDIR="data-bot-bash logs bin/logs addons"
-DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh dev/obfuscate.sh modules scripts LICENSE README.* doc botacl botconfig.jssh addons"
+DISTFILES="bashbot.sh  bashbot.rc commands.sh mycommands.sh modules scripts LICENSE README.* doc botacl botconfig.jssh addons"
 DISTBINFILES="bin/bashbot_env.inc.sh bin/bashbot_stats.sh bin/process_batch.sh bin/process_update.sh bin/send_broadcast.sh bin/send_message.sh"
+
+# add extra files
+DISTFILES+=" $(cat "${BASE_DIR}/dev/${0##*/}.include")"
 
 # create dir for distribution and copy files
 printf "Create directories and copy files\n"

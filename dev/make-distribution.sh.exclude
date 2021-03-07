@@ -1,5 +1,7 @@
+STANDALONE
 data-bot-bash/*
-webhook-fifo
+test
+webhook-fifo*
 JSON.awk
 bashbot.rc
 mycommands.sh
