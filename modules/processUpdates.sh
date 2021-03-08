@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
+#### $$VERSION$$ v1.45-dev-85-g41e6883
 ##################################################################
 
 ##############
@@ -296,9 +296,12 @@ start_bot() {
 	DEBUGMSG="Start BASHBOT updates in Mode \"${1:-normal}\" =========="
 	log_update "${DEBUGMSG}"
 	# redirect to Debug.log
-	# shellcheck disable=SC2153
-	[[ "$1" == *"debug" ]] && exec &>>"${DEBUGLOG}"
-	log_debug "${DEBUGMSG}"; DEBUGMSG="$1"
+	if [[ "$1" == *"debug" ]]; then
+		# shellcheck disable=SC2153
+		exec &>>"${DEBUGLOG}"
+		log_debug "${DEBUGMSG}";
+	fi
+	DEBUGMSG="$1"
 	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x
 	# cleaup old pipes and empty logfiles
 	find "${DATADIR}" -type p -not -name "webhook-fifo-*" -delete

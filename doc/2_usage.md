@@ -127,7 +127,7 @@ bin/send_message.sh "CHAT[ID]" "Hey, I just wanted to let you know that the bot'
 To replace a message already sent to one user or chat run the following command:
 
 ```bash
-bin/send_edit_message.sh "CHAT[ID]" "12345" "Done!"
+bin/edit_message.sh "CHAT[ID]" "12345" "Done!"
 
 ["OK"]  "true"
 ["ID"]  "12345"
@@ -150,9 +150,14 @@ Note: to get help about a script in bin/ run `scriptname.sh --help`
 Evertime a Telegram update is received, you can read incoming data using the following variables:
 In case you need other update values, the array `UPD` contains complete Telegram response.
 
-### Regular Messages
+### Processing Messages
 
-These Variables are always present in regular messages:
+If an update is received from Telegram, the message is pre processed by Bashbot and the following bash variables are set for use in `mycommands.sh`.
+
+These variables are always present if a message is pre processed:
+
+* `${ME}`: Name of your bot
+* `${BOTADMIN}`: User id of bot administrator
 
 * `${MESSAGE}`: Current message text
 * `${MESSAGE[ID]}`: ID of current message
@@ -215,11 +220,10 @@ The following variables are set if the message contains optional parts:
 
 ### Service Messages
 
-Service Messages are regular messages not itended for end users, instead they signal special events to the
-client, e.g. new users.
+Service Messages are updates not itended for end users, instead they signal special events in a chat, e.g. new users.
 
-If a service message is received bashbot sets MESSAGE to the service message type as a command,
-e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user". 
+If a service message is received bashbot pre processing sets `${MESSAGE}` according to the service message type,
+e.g. if a new user joins a chat MESSAGE is set to `/_new_chat_user ...`. 
 
 * `$SERVICE`: This array contains info about received service messages.
     * `${SERVICE}`: "yes" if service message is received
@@ -255,10 +259,17 @@ e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user".
 
 
 ### Inline query messages
-Inline query messages are special messages used for interaction with the user,
-they contain the following variables only:
+Inline query messages are special messages for direct interaction with your bot.
+If an user starts an inline conversation an inline query is sent after each user keystroke.
 
-* `${iQUERY}`: Current inline query
+To receive inline messages you must set `inline=1` in `mycommands.conf` and in botfather.
+THe message contatains all characters so far typed from the user.
+
+An received inline query must be anserwered with `answer_inline_query`, see also (Inline Query)[6_reference.md#inline-query]
+
+If an inline query is received only the following variables are available:
+
+* `${iQUERY}`: Inline message typed so far by user
 * `$iQUERY`: This array contains the ID, First name, last name, username and user id of the sender of the current inline query.
     * `${iQUERY[ID]}`: Inline query ID
     * `${iQUERY[USER_ID]}`: User's id
@@ -266,9 +277,9 @@ they contain the following variables only:
     * `${iQUERY[LAST_NAME]}`: User's last name
 
 
+
 ### Callback button messages
-Callback button messages special messages swedn from callback buttons,
-they contain the following variables only:
+Callback button messages special messages swend from callback buttons, they contain the following variables only:
 
 * `$iBUTTON`: This array contains the ID, First name, last name, username and user id of the user clicked on the button
     * `${iBUTTON[ID]}`: Callback query ID
@@ -286,6 +297,8 @@ they contain the following variables only:
 
 After every `send_xxx` `get_xxx` call the array BOTSENT contains the most important values from Telegram response.
 In case you need other response values , the array `UPD` contains complete Telegram response.
+
+You can use the array values to check if a commands was successful and get returned values from Telegram.
 
 ### BOTSENT array
 
@@ -377,5 +390,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
+#### $$VERSION$$ v1.45-dev-85-g41e6883
 

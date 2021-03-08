@@ -826,7 +826,7 @@ fi
 
 ----
 
-### Inline Queries - answer direct queries to bot
+### Inline Query
 Inline Queries allows users to interact with your bot directly without sending extra commands.
 As an answer to an inline query you can send back one or more results to the Telegram client. 
 The Telegram client will then show the results to the user and let him select one.
@@ -1673,5 +1673,5 @@ The name of your bot is available as bash variable "$ME", there is no need to ca
 #### [Prev Best Practice](5_practice.md)
 #### [Next Notes for Developers](7_develop.md)
 
-#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
+#### $$VERSION$$ v1.45-dev-85-g41e6883
 

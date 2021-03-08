@@ -9,8 +9,7 @@ If your server is reachable from the Internet its possible to use the method des
 
 Prerequisite for receiving Telegram updates with webhook is a valid SSL certificate, a self signed certificate will not be sufficient.
 
-*Note:* You need at least sudo rights to setup webhook.
-
+Webhook processing require special setup on server and Telegram side, therefore it's implemented as separate scripts and you need at least sudo rights to setup.
 
 #### Setup Apache webhook
 
@@ -99,5 +98,5 @@ webhook updates only over secure TLS connections with a valid SSL certificate ch
 `socat` looks like a tool to listen for Telegram updates from bash scripts, let's see ...
 
 
-#### $$VERSION$$ v1.45-dev-77-g235f26a
+#### $$VERSION$$ v1.45-dev-85-g41e6883
 

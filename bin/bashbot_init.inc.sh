@@ -11,7 +11,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.01.2021 13:42
 #
-#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
+#### $$VERSION$$ v1.45-dev-85-g41e6883
 #===============================================================================
 # shellcheck disable=SC2059
 
@@ -76,7 +76,7 @@ bot_init() {
 		[ -n "${INTERACTIVE}" ] && read -r runuser
 	fi
 	# check if mycommands exist
-	if [ ! -r "${BASHBOT_ETC:-.}/mycommands.sh" ]; then
+	if [[ ! -r "${BASHBOT_ETC:-.}/mycommands.sh" && -r ${BASHBOT_ETC:-.}/mycommands.sh.dist ]]; then
 		printf "Mycommands.sh not found, copy ${GREY}<C>lean file, <E>xamples or <N>one${NC} to mycommands.sh? (c/e/N) N\b"
 		read -r ANSWER
 		[[ "${ANSWER}" =~ ^[cC] ]] && cp -f "${BASHBOT_ETC:-.}/mycommands.sh.clean" "${BASHBOT_ETC:-.}/mycommands.sh"
