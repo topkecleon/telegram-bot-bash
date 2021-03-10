@@ -2,7 +2,7 @@
 # file:  run_filename
 # background job to display all new files in WATCHDIR
 #
-#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
+#### $$VERSION$$ v1.5-0-g8adca9b
 
 ######
 # parameters

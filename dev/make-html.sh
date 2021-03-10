@@ -7,7 +7,7 @@
 #
 # Usage: source make-hmtl
 #
-#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
+#### $$VERSION$$ v1.5-0-g8adca9b
 ##############################################################
 
 # check for correct dir

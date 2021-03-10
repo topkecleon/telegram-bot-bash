@@ -30,7 +30,9 @@ Have FUN!
 │
 ├── bashbot.sh           # main bashbot script - DO NOT EDIT!
 ├── commands.sh          # command dispatcher - DO NOT EDIT!
-├── JSON.sh              # bashbots JSON parser, see https://github.com/dominictarr/JSON.sh
+├── JSON.sh              # bashbot JSON parsers
+│   ├── JSON.sh              # sh implementation, https://github.com/dominictarr/JSON.sh
+│   └── JSON.awk.dist        # faster awk version, https://github.com/step-/JSON.awk
 │
 ├── bin                  # ready to use scripts, use `scriptname --help` for help
 │   ├── bashbot_stats.sh         # does what it says ...
@@ -44,7 +46,7 @@ Have FUN!
 │   ├── kickban_user.sh          # kick/unban user from given chat
 │   ├── promote_user.sh          # promote/dente user rights in given chat
 │   │
-│   └── bashbot_env.inc.sh       # sourced from scripts, adapt locations if needed
+│   ├── bashbot_env.inc.sh       # sourced from scripts, adapt locations if needed
 │   └── bashbot_init.inc.sh      # sourced from bashbot.sh init
 │
 ├── scripts              # place your bashbot interactive and background scripts here
@@ -55,15 +57,15 @@ Have FUN!
 ├── modules              # optional functions, sourced by commands.sh
 │   ├── aliases.sh           # to disable modules rename them xxx.sh.off
 │   ├── answerInline.sh
-│   ├── jsshDB.sh            # read and store JSON.sh style JSON, mandatory
 │   ├── background.sh        # interactive and background functions
-│   ├── chatMember.sh
-│   └── sendMessage.sh       # main send message functions, mandatory
+│   ├── chatMember.sh        # manage chat mambers
+│   ├── jsshDB.sh            # read and store JSON.sh style JSON, mandatory
+│   ├── processUpdates.sh    # process updates from telegram, mandatory (run bot)
+│   └── sendMessage.sh       # send message functions, mandatory
 │
 ├── addons               # optional addons, disabled by default
 │   ├── example.sh           # to enable addons change their XXX_ENABLE to true
-│   ├── antiFlood.sh         # simple addon taking actions based on # files and text sent to chat
-│   └── xxxxxage.sh
+│   └── antiFlood.sh         # simple addon taking actions based on # files and text sent to chat
 │
 ├── bashbot.rc           # start/stop script if you run bashbot as service
 │
@@ -390,5 +392,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.45-dev-85-g41e6883
+#### $$VERSION$$ v1.5-0-g8adca9b
 

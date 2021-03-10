@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#### $$VERSION$$ v1.45-dev-78-gc4e2981
+#### $$VERSION$$ v1.5-0-g8adca9b
 # shellcheck disable=SC2016
 #
 # Easy Versioning in git:
@@ -50,7 +50,7 @@ else
 	printf "Update version string in all files? (y/N)\b\b"
 	read -r answer
 	[[ "${answer}" != "y" && "${answer}" != "Y" ]] && exit
-	FILES="$(find ./* -type f)"
+	FILES="$(find ./* -type f ! -path "./DIST/*" ! -path "./STANDALONE/*")"
 fi
 
 # autogenerate REMADME.html REMADE.txt

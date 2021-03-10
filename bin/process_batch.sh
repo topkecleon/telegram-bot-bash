@@ -21,7 +21,7 @@ USAGE='process_update.sh [-h|--help] [-s|--startbot] [-w|--watch] [-n|--lines n]
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.02.2021 13:14
 #
-#### $$VERSION$$ v1.45-dev-84-gae525c4
+#### $$VERSION$$ v1.5-0-g8adca9b
 #===============================================================================
 
 ####
@@ -74,7 +74,7 @@ fi
 # ready, do stuff here -----
 
 # kill all sub processes on exit
-trap 'kill $(jobs -p) 2>/dev/null; send_normal_message "'"${BOTADMIN}"'" "Bot '"${BOTNAME}"' webhook stopped ..."; printf "%(%c)T: %s\n" -1 "Bot in batch mode killed!"' EXIT HUP QUIT
+trap 'kill $(jobs -p) 2>/dev/null; send_normal_message "'"${BOTADMIN}"'" "Bot '"${BOTNAME}"' webhook stopped ..."; printf "%(%c)T: %s\n" -1 "Bot in batch mode stopped!"' EXIT HUP QUIT
 
 # wait after (first) update to avoid processing to many in parallel
 UPDWAIT="0.5"

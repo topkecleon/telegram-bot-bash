@@ -20,7 +20,7 @@ USAGE='kickban_user.sh [-h|--help] [-u|--unban] "CHAT[ID]" "USER[ID]" [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 25.01.2021 20:34
 #
-#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
+#### $$VERSION$$ v1.5-0-g8adca9b
 #===============================================================================
 
 ####

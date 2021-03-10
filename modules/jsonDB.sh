@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.45-dev-75-gfdb2b3a
+#### $$VERSION$$ v1.5-0-g8adca9b
 #
 # source from commands.sh to use jsonDB functions
 #
@@ -358,7 +358,7 @@ Json2Array() {
 	# 		match ["....."]\t and replace \t with = and print     delete `	quote true false            escape not escaped $
 	# shellcheck disable=SC1091,SC1090
 	[ -z "$1" ] || source <( printf "$1"'=( %s )'\
-		 "$(sed -E -n -e '/\["[-0-9a-zA-Z_,."]+"\]\+*\t/ s/\t/=/p' -e 's/`//g' -e 's/=(true|false)/="\1"/' -e 's/([^\]|^)\$/\1\\$/g')" )
+		 "$(sed -E -n -e '/\["[-0-9a-zA-Z_,."]+"\]\+*\t/ s/\t/=/p' -e 's/[`´]//g' -e 's/=(true|false)/="\1"/' -e 's/([^\]|^)\$/\1\\$/g')" )
 }
 # get Config Key from jssh file without jsshDB
 # output ARRAY as JSON.sh style data

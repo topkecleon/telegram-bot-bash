@@ -11,7 +11,7 @@
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.45-dev-85-g41e6883
+#### $$VERSION$$ v1.5-0-g8adca9b
 ###################################################################
 
 # include git config and change to base dir
@@ -54,6 +54,9 @@ cp -rp ${DISTFILES} "${DISTDIR}" 2>/dev/null
 cp -p ${DISTBINFILES} "${DISTDIR}/bin" 2>/dev/null
 
 cd "${DISTDIR}" || exit 1
+
+# remove log files
+find . -name '*.log' -delete
 
 # shellcheck disable=SC2250
 for dir in $DISTMKDIR
