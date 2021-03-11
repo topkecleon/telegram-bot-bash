@@ -145,6 +145,7 @@
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -341,7 +342,7 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>Running a Telegram Bot means it is connected to the public and you never know what's send to your Bot.</p>
 <p>Bash scripts in general are not designed to be bulletproof, so consider this Bot as a proof of concept. Bash programmers often struggle with 'quoting hell' and globbing, see <a href="https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells">Implications of wrong quoting</a>.</p>
 <p>Whenever you are processing input from untrusted sources (messages, files, network) you must be as careful as possible (e.g. set IFS appropriately, disable globbing with <code>set -f</code> and quote everything). In addition remove unused scripts and examples from your Bot (e.g. everything in <code>example/</code>) and disable/remove all unused bot commands.</p>
-<p>It's important to escape or remove <code>$</code> in input from user, files or network (<em>as bashbot does</em>). One of the powerful features of Unix shells is variable and command substitution using <code>${}</code> and <code>$()</code> can lead to remote code execution (RCE) or remote information disclosure (RID) bugs if unescaped <code>$</code> is included in untrusted input (e.g. <code>$$</code> or <code>$(rm -rf /*)</code>).</p>
+<p>It's important to escape or remove <code>$</code> and ` in input from user, files or network (<em>as bashbot does</em>). One of the powerful features of Unix shells is variable and command substitution using <code>${var}</code>, <code>$(cmd)</code> and `cmd` can lead to remote code execution (RCE) or remote information disclosure (RID) bugs if unescaped <code>$</code> or ` is included in untrusted input (e.g. <code>$$</code> or <code>$(rm -rf /*)</code>).</p>
 <p>A powerful tool to improve your scripts is <code>shellcheck</code>. You can <a href="https://www.shellcheck.net/">use it online</a> or <a href="https://github.com/koalaman/shellcheck#installing">install shellcheck locally</a>. Shellcheck is used extensively in bashbot development to ensure a high code quality (e.g. it's not allowed to push changes without passing all shellcheck tests). In addition bashbot has a <a href="doc/7_develop.md">test suite</a> to check if important functionality is working as expected.</p>
 <h3>Use printf whenever possible</h3>
 <p>If you're writing a script that accepts external input (e.g. from the user as arguments or the file system), you shouldn't use echo to display it. <a href="https://unix.stackexchange.com/a/6581">Use printf whenever possible</a>.</p>
@@ -392,6 +393,6 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p>@Gnadelwartz</p>
 <h2>That's it all guys!</h2>
 <p>If you feel that there's something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4>$$VERSION$$ v1.41-0-gad1b91f</h4>
+<h4>$$VERSION$$ v1.5-0-g8adca9b</h4>
 </body>
 </html>

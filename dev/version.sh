@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.5-0-g8adca9b
 # shellcheck disable=SC2016
 #
 # Easy Versioning in git:
@@ -44,8 +44,14 @@ VERSION="$(git describe --tags --long)"
 printf "Update to version %s ...\n" "${VERSION}"
 
 # only regular files, ignore .dot files/dirs, e.g. .git .gitinore in BASEDIR
-FILES="$(find ./* -type f)"
-[ "$1" != "" ] && FILES="$*"
+if [ -n "$1" ]; then
+	FILES="$*"
+else
+	printf "Update version string in all files? (y/N)\b\b"
+	read -r answer
+	[[ "${answer}" != "y" && "${answer}" != "Y" ]] && exit
+	FILES="$(find ./* -type f ! -path "./DIST/*" ! -path "./STANDALONE/*")"
+fi
 
 # autogenerate REMADME.html REMADE.txt
 if [[ "${FILES}" == *"README.md"* ]]; then

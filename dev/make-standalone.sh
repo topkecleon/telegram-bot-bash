@@ -11,28 +11,52 @@
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.5-0-g8adca9b
 ###################################################################
 
+# include git config and change to base dir
+incfile="${0%/*}/dev.inc.sh"
 #shellcheck disable=SC1090
-source "${0%/*}/dev.inc.sh"
+[ -f "${incfile}" ] && source "${incfile}"
+
+# seems we are not in a dev env
+if [ -z "${BASE_DIR}" ]; then
+	BASE_DIR="$(pwd)"
+	[[ "${BASE_DIR}" == *"/dev" ]] &&  BASE_DIR="${BASE_DIR%/*}"
+	# go to basedir
+	cd "${BASE_DIR}" || exit 1
+fi
+
+# see if if bashbot is in base dir
 [ ! -f "bashbot.sh" ] && printf "bashbot.sh not found in %s\n" " $(pwd)" && exit 1
 
+# run pre_commit if exist
+[[ -f "dev/dev.inc.sh"  && "$1" != "--notest" ]] &&  dev/hooks/pre-commit.sh
+
+# files and dirs to copy
 #DISTNAME="telegram-bot-bash"
 DISTDIR="./STANDALONE" 
-DISTMKDIR="data-bot-bash logs bin bin/logs addons"
-DISTFILES="bashbot.sh  bashbot.rc commands.sh  mycommands.sh dev/obfuscate.sh modules bin scripts LICENSE README.* doc botacl botconfig.jssh $(echo "addons/"*.sh)"
+DISTMKDIR="data-bot-bash logs bin/logs addons"
+DISTFILES="bashbot.sh commands.sh mycommands.sh modules scripts LICENSE README.* doc addons"
+DISTBINFILES="bin/bashbot_env.inc.sh bin/bashbot_stats.sh bin/process_batch.sh bin/process_update.sh bin/send_broadcast.sh bin/send_message.sh"
 
-# run pre_commit on files
-[ "$1" != "--notest" ] &&  dev/hooks/pre-commit.sh
+# add extra files, minimum mycommands.conf
+extrafile="${BASE_DIR}/dev/${0##*/}.include"
+[ ! -f "${extrafile}" ] && printf "bashbot.rc\nbotacl\nbotconfig.jssh\nmycommands.conf\ndev/obfuscate.sh\n" >"${extrafile}" 
+DISTFILES+=" $(<"${extrafile}")"
 
 # create dir for distribution and copy files
 printf "Create directories and copy files\n"
-mkdir -p "${DISTDIR}" 2>/dev/null
-
+mkdir -p "${DISTDIR}/bin" 2>/dev/null
 # shellcheck disable=SC2086
-cp -r ${DISTFILES} "${DISTDIR}" 2>/dev/null
+cp -rp ${DISTFILES} "${DISTDIR}" 2>/dev/null
+# shellcheck disable=SC2086
+cp -p ${DISTBINFILES} "${DISTDIR}/bin" 2>/dev/null
+
 cd "${DISTDIR}" || exit 1
+
+# remove log files
+find . -name '*.log' -delete
 
 # shellcheck disable=SC2250
 for dir in $DISTMKDIR
@@ -67,7 +91,7 @@ printf "OK, now lets do the magic ...\n\t... create unified commands.sh\n"
 mv $$commands.sh commands.sh
 rm -f mycommands.sh
 
-printf "\n... create unified bashbot.sh\n"
+printf "\t... create unified bashbot.sh\n"
 
 { 
   # first head of bashbot.sh

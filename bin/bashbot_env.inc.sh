@@ -13,7 +13,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 18.12.2020 12:27
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.5-0-g8adca9b
 #===============================================================================
 
 ############
@@ -21,8 +21,8 @@
 export BASHBOT_HOME BASHBOT_ETC BASHBOT_VAR FILE_REGEX ME
 
 # default: one dir up 
-BASHBOT_HOME="$(cd "${BASH_SOURCE[0]%/*}" >/dev/null 2>&1 && pwd)/../"
-[ "${BASHBOT_HOME}" = "/../" ] && BASHBOT_HOME="../"
+BASHBOT_HOME="$(cd "${BASH_SOURCE[0]%/*}/../" >/dev/null 2>&1 && pwd)"
+[ "${BASHBOT_HOME}" = "" ] && BASHBOT_HOME="../"
 
 # set you own BASHBOT_HOME if different, e.g.
 # BASHBOT_HOME="/usr/local/telegram-bot-bash"
@@ -59,11 +59,14 @@ UPLOADDIR="${BASHBOT_VAR%/bin*}"
 FILE_REGEX="${UPLOADDIR}/.*"
 
 # get and check ADMIN and NAME
-BOT_ADMIN="$(getConfigKey "botadmin")"
-BOT_NAME="$(getConfigKey "botname")"
-ME="${BOT_NAME}"
-[[ -z "${BOT_ADMIN}" || "${BOT_ADMIN}" == "?" ]] && printf "%s\n" "${ORANGE}Warning: Botadmin not set, send bot command${NC} /start"
-[[ -z "${BOT_NAME}"  ]] && printf "%s\n" "${ORANGE}Warning: Botname not set, run bashbot.sh botname"
+BOTNAME="$(getConfigKey "botname")"
+ME="${BOTNAME}"
+[[ -z "${BOTADMIN}" || "${BOTADMIN}" == "?" ]] && printf "%s\n" "${ORANGE}Warning: Botadmin not set, send bot command${NC} /start"
+[[ -z "${BOTNAME}"  ]] && printf "%s\n" "${ORANGE}Warning: Botname not set, run bashbot.sh botname"
+
+# default webhook pipe
+export WEBHOOK="${DATADIR}/webhook-fifo-${ME}"
+
 
 # output command result or Telegram response
 print_result() { jssh_printDB "BOTSENT" | sort -r; }

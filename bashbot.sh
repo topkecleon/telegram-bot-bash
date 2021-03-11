@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.45-dev-26-g82a57a7
+#### $$VERSION$$ v1.5-0-g8adca9b
 ##################################################################
 
 # are we running in a terminal?
@@ -106,7 +106,7 @@ JsonEscape(){
 }
 # clean \ from escaped json string
 # $1 string, output cleaned string
-cleanEscaped(){	# remove "	all \ but  \n\u		\n or \r
+cleanEscape(){	# remove "	all \ but  \n\u		\n or \r
 	sed -E -e 's/\\"/+/g' -e 's/\\([^nu])/\1/g' -e 's/(\r|\n)//g' <<<"$1"
 }
 # check if $1 seems a valid token
@@ -358,7 +358,7 @@ declare -rx BOTTOKEN URL ME_URL
 declare -ax CMD
 declare -Ax UPD BOTSENT USER MESSAGE URLS CONTACT LOCATION CHAT FORWARD REPLYTO VENUE iQUERY iBUTTON
 declare -Ax SERVICE NEWMEMBER LEFTMEMBER PINNED MIGRATE
-export res CAPTION ME
+export res CAPTION ME BOTADMIN
 
 
 ###############
@@ -491,9 +491,8 @@ sendJson(){
 	# compose final json
 	json='{'"${chat} $(iconv -f utf-8 -t utf-8 -c <<<"$2")"'}'
 	if [ -n "${BASHBOTDEBUG}" ] ; then
-		log_update "sendJson (${DETECTED_CURL}) CHAT=${chat#*:} JSON=${2:0:100} URL=${3##*/}"
-		#									mask " and \ , remove newline from json
-		log_message "DEBUG sendJson ==========\n$("${JSONSHFILE}" -b -n  <<<"$(cleanEscaped "${json}")" 2>&1)"
+		log_update "sendJson (${DETECTED_CURL}) CHAT=${chat#*:} JSON=$(cleanEscape "${json:0:100}") URL=${3##*/}"
+		log_message "DEBUG sendJson ==========\n$("${JSONSHFILE}" -b -n  <<<"$(cleanEscape "${json}")" 2>&1)"
 	fi
 	# chat id not a number
 	if [[ "${chat}" == *"NAN\"," ]]; then
@@ -515,8 +514,8 @@ UPLOADDIR="${BASHBOT_UPLOAD:-${DATADIR}/upload}"
 # return final file name or empty string on error
 checkUploadFile() {
 	local err file="$2"
-	[[ "${file}" = *'..'* || "${file}" = '.'* ]] && err=1 	# no directory traversal
-	if [[ "${file}" = '/'* ]] ; then
+	[[ "${file}" == *'..'* || "${file}" == '.'* ]] && err=1 	# no directory traversal
+	if [[ "${file}" == '/'* ]] ; then
 		[[ ! "${file}" =~ ${FILE_REGEX} ]] && err=2	# absolute must match REGEX
 	else
 		file="${UPLOADDIR:-NOUPLOADDIR}/${file}"	# others must be in UPLOADDIR
@@ -537,6 +536,7 @@ checkUploadFile() {
 	    [ -n "${BASHBOTDEBUG}" ] && log_debug "$3: CHAT=$1 FILE=$2 MSG=${BOTSENT[DESCRIPTION]}"
 	    return 1
 	fi
+	printf "%s\n" "${file}"
 }
 
 
@@ -747,6 +747,16 @@ event_send() {
 	done
 }
 
+# cleanup activities on startup, called from startbot and resume background jobs
+# $1 action, timestamp for action is saved in config
+bot_cleanup() {
+	# cleanup countfile on startup
+	jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
+        [ -f "${COUNTFILE}.jssh.flock" ] && rm -f "${COUNTFILE}.jssh.flock"
+	# store action time and cleanup botconfig on startup
+	[ -n "$1" ] && jssh_updateKeyDB "$1" "$(_date)" "${BOTCONFIG}"
+        [ -f "${BOTCONFIG}.jssh.flock" ] && rm -f "${BOTCONFIG}.jssh.flock"
+}
 
 # fallback version, full version is in  bin/bashbot_init.in.sh
 # initialize bot environment, user and permissions
@@ -787,6 +797,8 @@ fi
 
 # source the script with source as param to use functions in other scripts
 # do not execute if read from other scripts
+
+BOTADMIN="$(getConfigKey "botadmin")"
 
 if [ -z "${SOURCE}" ]; then
   ##############
@@ -829,7 +841,8 @@ if [ -z "${SOURCE}" ]; then
 		;;
 	# finally starts the read update loop, internal use only
 	"startbot" )
-		_exec_if_function start_bot "$2"
+		_exec_if_function start_bot "$2" "polling mode"
+		_exec_if_function get_updates "$2"
 		debug_checks "end startbot" "$@"
 		exit
 		;;
@@ -899,7 +912,7 @@ if [ -z "${SOURCE}" ]; then
 			# shellcheck disable=SC2086
 			if kill ${BOTPID}; then
 				# inform botadmin about stop
-				send_normal_message "$(getConfigKey "botadmin")" "Bot ${ME} stopped ..." &
+				send_normal_message "${BOTADMIN}" "Bot ${ME} polling mode stopped ..." &
 				printf "${GREEN}OK. Bot stopped successfully.${NN}"
 			else
 				printf "${RED}An error occurred while stopping bot.${NN}"
@@ -912,7 +925,7 @@ if [ -z "${SOURCE}" ]; then
 		exit
 		;;
 	# suspend, resume or kill background jobs
-	"suspendb"*|"resumeb"*|"killb"*)
+	"suspendb"*|"resumeb"*|'restartb'*|"killb"*)
   		_is_function job_control || { printf "${RED}Module background is not available!${NN}"; exit 3; }
 		ME="$(getConfigKey "botname")"
 		job_control "$1"

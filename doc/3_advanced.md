@@ -302,5 +302,5 @@ Note: If you disable automatic retry, se above, you disable also connection prob
 #### [Prev Getting started](2_usage.md)
 #### [Next Expert Use](4_expert.md)
 
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.5-0-g8adca9b
 

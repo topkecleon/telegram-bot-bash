@@ -11,7 +11,7 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.01.2021 13:42
 #
-#### $$VERSION$$ v1.45-dev-3-g429c230
+#### $$VERSION$$ v1.5-0-g8adca9b
 #===============================================================================
 # shellcheck disable=SC2059
 
@@ -76,7 +76,7 @@ bot_init() {
 		[ -n "${INTERACTIVE}" ] && read -r runuser
 	fi
 	# check if mycommands exist
-	if [ ! -r "${BASHBOT_ETC:-.}/mycommands.sh" ]; then
+	if [[ ! -r "${BASHBOT_ETC:-.}/mycommands.sh" && -r ${BASHBOT_ETC:-.}/mycommands.sh.dist ]]; then
 		printf "Mycommands.sh not found, copy ${GREY}<C>lean file, <E>xamples or <N>one${NC} to mycommands.sh? (c/e/N) N\b"
 		read -r ANSWER
 		[[ "${ANSWER}" =~ ^[cC] ]] && cp -f "${BASHBOT_ETC:-.}/mycommands.sh.clean" "${BASHBOT_ETC:-.}/mycommands.sh"
@@ -116,7 +116,7 @@ bot_init() {
 	if [ -w "bashbot.rc" ]; then
 		printf "Adjust user and botname in bashbot.rc ...\n"
 		sed -i '/^[# ]*runas=/ s|runas=.*$|runas="'"${touser}"'"|' "bashbot.rc"
-		sed -i '/^[# ]*bashbot=/ s|bashbot=.*$|bashbot="cd '"${PWD}"'; '"${PWD}"'/'"${0##*/}"'"|' "bashbot.rc"
+		sed -i '/^[# ]*bashbotdir=/ s|bashbotdir=.*$|bashbotdir="'"${PWD}"'"|' "bashbot.rc"
 		botname="$(getConfigKey "botname")"
 		[ -n "${botname}" ] && sed -i '/^[# ]*name=/ s|name=.*$|name="'"${botname}"'"|' "bashbot.rc"
 		printf "Done.\n"

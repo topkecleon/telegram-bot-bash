@@ -200,10 +200,11 @@ Whenever you are processing input from untrusted sources (messages, files, netwo
 must be as careful as possible (e.g. set IFS appropriately, disable globbing with set -
 f and quote everything). In addition remove unused scripts and examples from your Bot
 (e.g. everything in example/) and disable/remove all unused bot commands.
-It's important to escape or remove $ in input from user, files or network (as bashbot
-does). One of the powerful features of Unix shells is variable and command substitution
-using ${} and $() can lead to remote code execution (RCE) or remote information disclosure
-(RID) bugs if unescaped $ is included in untrusted input (e.g. $$ or $(rm -rf /*)).
+It's important to escape or remove $ and ` in input from user, files or network (as
+bashbot does). One of the powerful features of Unix shells is variable and command
+substitution using ${var}, $(cmd) and `cmd` can lead to remote code execution (RCE) or
+remote information disclosure (RID) bugs if unescaped $ or ` is included in untrusted
+input (e.g. $$ or $(rm -rf /*)).
 A powerful tool to improve your scripts is shellcheck. You can use it online [https://
 www.shellcheck.net/] or install shellcheck locally [https://github.com/koalaman/
 shellcheck#installing]. Shellcheck is used extensively in bashbot development to ensure a
@@ -318,5 +319,5 @@ That's it all guys!
 If you feel that there's something missing or if you found a bug, feel free to submit a
 pull request!
 
-$$VERSION$$ v1.41-0-gad1b91f
+$$VERSION$$ v1.5-0-g8adca9b
 

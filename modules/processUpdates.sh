@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.45-dev-30-g8efbfca
+#### $$VERSION$$ v1.5-0-g8adca9b
 ##################################################################
 
 ##############
@@ -43,18 +43,24 @@ delete_webhook() {
 }
 
 ################
-# processing of updates starts here
+# processing of array of updates starts here
 process_multi_updates() {
 	local max num debug="$1"
+	# get num array elements
 	max="$(grep -F ',"update_id"]'  <<< "${UPDATE}" | tail -1 | cut -d , -f 2 )"
 	# escape bash $ expansion bug
 	UPDATE="${UPDATE//$/\\$}"
+	# convert updates to bash array
 	Json2Array 'UPD' <<<"${UPDATE}"
+	# iterate over array
 	for ((num=0; num<=max; num++)); do
 		process_update "${num}" "${debug}"
 	done
 }
 
+################
+# processing of a single array item of update
+# $1 array index
 process_update() {
 	local num="$1" debug="$2" 
 	pre_process_message "${num}"
@@ -282,7 +288,7 @@ process_message() {
 }
 
 #########################
-# main get updates loop, should never terminate
+# bot startup actions, call before start polling or webhook loop
 declare -A BASHBOTBLOCKED
 start_bot() {
 	local DEBUGMSG
@@ -290,12 +296,15 @@ start_bot() {
 	DEBUGMSG="Start BASHBOT updates in Mode \"${1:-normal}\" =========="
 	log_update "${DEBUGMSG}"
 	# redirect to Debug.log
-	# shellcheck disable=SC2153
-	[[ "$1" == *"debug" ]] && exec &>>"${DEBUGLOG}"
-	log_debug "${DEBUGMSG}"; DEBUGMSG="$1"
+	if [[ "$1" == *"debug" ]]; then
+		# shellcheck disable=SC2153
+		exec &>>"${DEBUGLOG}"
+		log_debug "${DEBUGMSG}";
+	fi
+	DEBUGMSG="$1"
 	[[ "${DEBUGMSG}" == "xdebug"* ]] && set -x
 	# cleaup old pipes and empty logfiles
-	find "${DATADIR}" -type p -delete
+	find "${DATADIR}" -type p -not -name "webhook-fifo-*" -delete
 	find "${DATADIR}" -size 0 -name "*.log" -delete
 	# load addons on startup
 	for addons in "${ADDONDIR:-.}"/*.sh ; do
@@ -312,22 +321,15 @@ start_bot() {
 		# shellcheck disable=SC2064
 		trap "kill -9 $!; exit" EXIT INT HUP TERM QUIT 
 	fi
-	# cleanup countfile on startup
-	jssh_deleteKeyDB "CLEAN_COUNTER_DATABASE_ON_STARTUP" "${COUNTFILE}"
-        [ -f "${COUNTFILE}.jssh.flock" ] && rm -f "${COUNTFILE}.jssh.flock"
-	# store start time and cleanup botconfig on startup
-	jssh_updateKeyDB "startup" "$(_date)" "${BOTCONFIG}"
-        [ -f "${BOTCONFIG}.jssh.flock" ] && rm -f "${BOTCONFIG}.jssh.flock"
+	# cleanup on start
+	bot_cleanup "startup"
 	# read blocked users
 	jssh_readDB_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
 	# inform botadmin about start
-	send_normal_message "$(getConfigKey "botadmin")" "Bot $(getConfigKey "botname") started ..." &
-	##########
-	# bot is ready, start processing updates ...
-	get_updates "${DEBUGMSG}"
+	send_normal_message "$(getConfigKey "botadmin")" "Bot ${ME} $2 started ..." &
 }
 
-
+# main polling updates loop, should never terminate
 get_updates(){
 	local errsleep="200" DEBUG="$1" OFFSET=0
 	# adaptive sleep defaults

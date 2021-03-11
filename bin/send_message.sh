@@ -22,7 +22,7 @@ USAGE='send_message.sh [-h|--help] [format] "CHAT[ID]" "message ...." [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 11:34
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.5-0-g8adca9b
 #===============================================================================
 
 ####
@@ -50,7 +50,7 @@ print_help "$1"
 ####
 # ready, do stuff here -----
 if [ "$1" == "BOTADMIN" ]; then
-	CHAT="${BOT_ADMIN}"
+	CHAT="${BOTADMIN}"
 else
 	CHAT="$1"
 fi

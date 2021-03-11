@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.45-dev-9-g62b6b61
+#### $$VERSION$$ v1.5-0-g8adca9b
 #
 
 # bashbot locale defaults to c.UTF-8, adjust locale in mycommands.sh if needed
@@ -96,10 +96,9 @@ if [ -z "$1" ] || [[ "$1" == *"debug"* ]];then
 	###################
 	# if is bashbot is group admin it get commands sent to other bots
 	# set MEONLY=1 to ignore commands for other bots
-	if [[ "${MEONLY}" != "0" && "${MESSAGE}" == "/"* && "${MESSAGE%% *}" == *"@"* ]]; then
+	if [[ "${MEONLY}" != "0" && "${MESSAGE}" == "/"*"@"* ]]; then
 		# here we have a command with @xyz_bot added, check if it's our bot
-		MYCHECK="${MESSAGE%% *}"
-		[ "${MYCHECK}" != "${MYCHECK%%@${ME}}" ] && return
+		[ "${MESSAGE%%@*}" != "${MESSAGE%%@${ME}}" ] && return
 	fi 
 
 	###################

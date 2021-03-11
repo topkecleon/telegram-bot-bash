@@ -17,7 +17,7 @@ USAGE='bashbot_stats.sh [-h|--help] [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 20:34
 #
-#### $$VERSION$$ v1.40-0-gf9dab50
+#### $$VERSION$$ v1.5-0-g8adca9b
 #===============================================================================
 
 # set bashbot environment
@@ -27,7 +27,7 @@ source "${0%/*}/bashbot_env.inc.sh" "$1"
 ####
 # ready, do stuff here -----
 
-echo -e "${GREEN}Hi I'm ${BOT_NAME}.${NC}"
+echo -e "${GREEN}Hi I'm ${BOTNAME}.${NC}"
 declare -A STATS
 jssh_readDB_async "STATS" "${COUNTFILE}"
 for MSG in ${!STATS[*]}
