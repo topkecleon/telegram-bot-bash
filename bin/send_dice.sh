@@ -9,8 +9,8 @@ USAGE='send_dice.sh [-h|--help] "CHAT[ID]" "emoji" [debug]'
 #   DESCRIPTION: send an animated emoji (dice) to given chat
 # 
 #       OPTIONS: CHAT[ID] - ID number of CHAT or BOTADMIN to send to yourself
-#                emoji - must be one of: “🎲”, “🎯”, “🏀”, “⚽”, or “🎰”
-#                        ":game_die:" ":dart:" ":basketball:" ":soccer:" :slot_machine:"
+#                emoji - must be one of: “🎲”, “🎯”, “🏀”, “⚽” “🎰” "🎳"
+#                        :game_die: :dart: :basketball: :soccer: :slot_machine: :bowling:
 #
 #                -h - display short help
 #                --help -  this help
@@ -21,7 +21,7 @@ USAGE='send_dice.sh [-h|--help] "CHAT[ID]" "emoji" [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 07.02.2021 18:45
 #
-#### $$VERSION$$ v1.5-0-g8adca9b
+#### $$VERSION$$ v1.51-dev-1-g99950e6
 #===============================================================================
 
 ####
