@@ -5,7 +5,7 @@
 #
 # tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.51-dev-5-gf1ea494
+#### $$VERSION$$ v1.51-dev-6-gcbde841
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 # shellcheck disable=SC2250
@@ -46,6 +46,10 @@ webhook="cd ${bashbotdir}; nohup ${bashbotdir}/bin/process_batch.sh --startbot -
 # set additionl parameter, e.g. debug
 mode=""
 
+# select logfile for webhook start stop and script errors
+hooklog="DEBUG"
+hooklog="WEBHOOK"
+
 # END Configuration
 #######################
 
@@ -78,7 +82,7 @@ case "$1" in
 'starthook')
 	[ "${stat}" != "stop" ] && printf "Warning, bot is not stopped: %s\n" "${stat}"
 	printf "Starting bashbot in webhook mode ... "
-	$runcmd "$webhook $mode </dev/null &>>${bashbotdir}/logs/WEBHOOK.log &" # >/dev/null 2>&1 </dev/null
+	$runcmd "$webhook $mode </dev/null &>>${bashbotdir}/logs/${hooklog}.log &" # >/dev/null 2>&1 </dev/null
 	sleep 1
 	$0 status
 	RETVAL=$?
