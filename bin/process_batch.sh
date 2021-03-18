@@ -21,13 +21,14 @@ USAGE='process_update.sh [-h|--help] [-s|--startbot] [-w|--watch] [-n|--lines n]
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.02.2021 13:14
 #
-#### $$VERSION$$ v1.5-0-g8adca9b
+#### $$VERSION$$ v1.51-dev-2-g43cab46
 #===============================================================================
 
 ####
 # parse args
 COMMAND="process_multi_updates"
 lines="-n 10"
+mode="batch"
 
 opt=0
 while [[ "${opt}" -lt 5 && "$1" == "-"* ]]
@@ -40,6 +41,7 @@ do
 		;;
 	"-w"|"--watch")
 		follow="-f"
+		mode="webhook"
 		shift
 		;;
 	"-n"|"--lines")
@@ -61,8 +63,8 @@ file="${WEBHOOK}"
 if [ -n "${startbot}" ]; then
 	# warn when starting bot without pipe
 	[ -p "${file}" ] || printf "%(%c)T: %b\n" -1 "${ORANGE}Warning${NC}: File is not a pipe:${GREY} ${file##*/}${NC}"
-	start_bot "$2" "webhook"
-	printf "%(%c)T: %b\n" -1 "${GREEN}Bot start actions done, start reading updates ....${NC}"
+	start_bot "$2" "${mode}"
+	printf "%(%c)T: %b\n" -1 "${GREEN}Bot start actions done, start ${mode} updates ....${NC}"
 fi
 # check file exist
 if [[ ! -r "${file}" || -d "${file}" ]]; then
@@ -74,7 +76,7 @@ fi
 # ready, do stuff here -----
 
 # kill all sub processes on exit
-trap 'kill $(jobs -p) 2>/dev/null; send_normal_message "'"${BOTADMIN}"'" "Bot '"${BOTNAME}"' webhook stopped ..."; printf "%(%c)T: %s\n" -1 "Bot in batch mode stopped!"' EXIT HUP QUIT
+trap 'printf "%(%c)T: %s\n" -1 "Bot in '"${mode}"' mode stopped!"; kill $(jobs -p) 2>/dev/null; send_normal_message "'"${BOTADMIN}"'" "Bot '"${BOTNAME} ${mode}"' stopped ..."' EXIT HUP QUIT
 
 # wait after (first) update to avoid processing to many in parallel
 UPDWAIT="0.5"
