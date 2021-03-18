@@ -5,7 +5,7 @@
 #
 # tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.51-dev-6-gcbde841
+#### $$VERSION$$ v1.51-dev-7-g721e433
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 # shellcheck disable=SC2250
@@ -38,7 +38,7 @@ runas="nobody"
 # your bot name as given to botfather, e.g. mysomething_bot
 name=""
 # your bot installation dir
-bashbotdir="/usr/local/telegram-bot-bash"
+bashbotdir="/usr/local/github/telegram-bot-bash-develop/DIST/telegram-bot-bash"
 databotdir="${bashbotdir}/data-bot-bash"
 # programs to run
 bashbot="cd ${bashbotdir}; ${bashbotdir}/bashbot.sh"
@@ -54,6 +54,7 @@ hooklog="WEBHOOK"
 #######################
 
 [ -z "${name}" ] && name="unknown"
+FIFO="i${bashbotdir}/data-bot-bash/webhook-fifo-${name}"
 
 # check for bot status
 ps -f -u "${runas}" | grep "${name}" | grep -qF "bashbot.sh startbot"
@@ -75,12 +76,13 @@ fi
 
 case "$1" in
 'start')
-	[ "${stat}" != "stop" ] && printf "Warning, bot is not stopped: %s\n" "${stat}"
+	[ "${stat}" != "stop" ] && printf "Warning, bot is running in mode: %s\n" "${stat}"
 	$runcmd "$bashbot start $mode" # >/dev/null 2>&1 </dev/null
 	RETVAL=$?
 	;;
 'starthook')
-	[ "${stat}" != "stop" ] && printf "Warning, bot is not stopped: %s\n" "${stat}"
+	[ -p "${FIFO}" ] || printf "Warning, webhook pipe not found: %s\n" "${FIFO##*/}"
+	[ "${stat}" != "stop" ] && printf "Warning, bot is running in mode: %s\n" "${stat}"
 	printf "Starting bashbot in webhook mode ... "
 	$runcmd "$webhook $mode </dev/null &>>${bashbotdir}/logs/${hooklog}.log &" # >/dev/null 2>&1 </dev/null
 	sleep 1
@@ -99,9 +101,9 @@ case "$1" in
 	if [ -n "${KILLID}" ]; then
 		$runcmd "kill $(printf "%s" "${KILLID}" | tr -s "\r\n" "  " )"
 		sleep 1
-		$0 status
 	fi
 	RETVAL=$?
+	$0 status
 	;;
 'status')
 	case "${stat}" in
@@ -111,7 +113,7 @@ case "$1" in
 		"webh"*) printf "bashbot (%s) is running in webhook mode\n" "${name}"
 			RETVAL=0
 			;;
-		"stop"*) printf "bashbot (%s) is stopped\n" "${name}"
+		"stop"*) printf "bashbot (%s) is not running\n" "${name}"
 			RETVAL=1
 			;;
 		*)	printf "bashbot (%s) status is %s\n" "${name}" "${stat}"
