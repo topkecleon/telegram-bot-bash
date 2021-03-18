@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.5-0-g8adca9b
+#### $$VERSION$$ v1.51-dev-9-gcbd74a7
 ##################################################################
 
 ##############
@@ -293,7 +293,7 @@ declare -A BASHBOTBLOCKED
 start_bot() {
 	local DEBUGMSG
 	# startup message
-	DEBUGMSG="Start BASHBOT updates in Mode \"${1:-normal}\" =========="
+	DEBUGMSG="BASHBOT startup actions, debug mode set to \"${1:-normal}\" =========="
 	log_update "${DEBUGMSG}"
 	# redirect to Debug.log
 	if [[ "$1" == *"debug" ]]; then
@@ -336,6 +336,7 @@ get_updates(){
 	local nextsleep="100"
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
 	local maxsleep="${BASHBOT_SLEEP:-5000}"
+	printf "%(%c)T: %b\n" -1 "Bot startup actions done, start polling updates ..."
 	while true; do
 		# adaptive sleep in ms rounded to next 0.1 s
 		sleep "$(_round_float "${nextsleep}e-3" "1")"

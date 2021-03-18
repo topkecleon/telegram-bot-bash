@@ -21,7 +21,7 @@ USAGE='process_update.sh [-h|--help] [-s|--startbot] [-w|--watch] [-n|--lines n]
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.02.2021 13:14
 #
-#### $$VERSION$$ v1.51-dev-2-g43cab46
+#### $$VERSION$$ v1.51-dev-9-gcbd74a7
 #===============================================================================
 
 ####
@@ -64,7 +64,7 @@ if [ -n "${startbot}" ]; then
 	# warn when starting bot without pipe
 	[ -p "${file}" ] || printf "%(%c)T: %b\n" -1 "${ORANGE}Warning${NC}: File is not a pipe:${GREY} ${file##*/}${NC}"
 	start_bot "$2" "${mode}"
-	printf "%(%c)T: %b\n" -1 "${GREEN}Bot start actions done, start ${mode} updates ....${NC}"
+	printf "%(%c)T: %b\n" -1 "${GREEN}Bot startup actions done, start ${mode} updates ...${NC}"
 fi
 # check file exist
 if [[ ! -r "${file}" || -d "${file}" ]]; then

@@ -5,7 +5,7 @@
 #
 # tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.51-dev-8-gdedcc00
+#### $$VERSION$$ v1.51-dev-9-gcbd74a7
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 # shellcheck disable=SC2250
@@ -37,12 +37,16 @@ runas="nobody"
 # edit the values of the following lines to fit your config:
 # your bot name as given to botfather, e.g. mysomething_bot
 name=""
+[ -z "${name}" ] && name="unknown"
+
 # your bot installation dir
-bashbotdir="/usr/local/telegram-bot-bash/telegram-bot-bash"
+bashbotdir="/usr/local/telegram-bot-bash"
 databotdir="${bashbotdir}/data-bot-bash"
+FIFO="$databotdir}/webhook-fifo-${name}"
+
 # programs to run
 bashbot="cd ${bashbotdir}; ${bashbotdir}/bashbot.sh"
-webhook="cd ${bashbotdir}; nohup ${bashbotdir}/bin/process_batch.sh --startbot --watch ${databotdir}/webhook-fifo-${name}"
+webhook="cd ${bashbotdir}; nohup ${bashbotdir}/bin/process_batch.sh --startbot --watch ${FIFO}"
 # set additionl parameter, e.g. debug
 mode=""
 
@@ -53,8 +57,6 @@ hooklog="WEBHOOK"
 # END Configuration
 #######################
 
-[ -z "${name}" ] && name="unknown"
-FIFO="i${bashbotdir}/data-bot-bash/webhook-fifo-${name}"
 
 # check for bot status
 ps -f -u "${runas}" | grep "${name}" | grep -qF "bashbot.sh startbot"
@@ -110,7 +112,7 @@ case "$1" in
 		"poll"*) printf "bashbot (%s) is running in poll mode\n" "${name}"
 			RETVAL=0
 			;;
-		"webh"*) printf "bashbot (%s) is running in webhook mode\n" "${name}"
+		"hook"*) printf "bashbot (%s) is running in webhook mode\n" "${name}"
 			RETVAL=0
 			;;
 		"stop"*) printf "bashbot (%s) is not running\n" "${name}"
