@@ -5,7 +5,7 @@
 #
 # tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.51-dev-9-gcbd74a7
+#### $$VERSION$$ v1.51-dev-10-g12157b3
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 # shellcheck disable=SC2250
@@ -42,7 +42,7 @@ name=""
 # your bot installation dir
 bashbotdir="/usr/local/telegram-bot-bash"
 databotdir="${bashbotdir}/data-bot-bash"
-FIFO="$databotdir}/webhook-fifo-${name}"
+FIFO="${databotdir}/webhook-fifo-${name}"
 
 # programs to run
 bashbot="cd ${bashbotdir}; ${bashbotdir}/bashbot.sh"
