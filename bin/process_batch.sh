@@ -21,7 +21,7 @@ USAGE='process_update.sh [-h|--help] [-s|--startbot] [-w|--watch] [-n|--lines n]
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.02.2021 13:14
 #
-#### $$VERSION$$ v1.51-dev-9-gcbd74a7
+#### $$VERSION$$ v1.50-13-g79fc511
 #===============================================================================
 
 ####
@@ -76,7 +76,7 @@ fi
 # ready, do stuff here -----
 
 # kill all sub processes on exit
-trap 'printf "%(%c)T: %s\n" -1 "Bot in '"${mode}"' mode stopped!"; kill $(jobs -p) 2>/dev/null; send_normal_message "'"${BOTADMIN}"'" "Bot '"${BOTNAME} ${mode}"' stopped ..."' EXIT HUP QUIT
+trap 'printf "%(%c)T: %s\n" -1 "Bot in '"${mode}"' mode stopped"; kill $(jobs -p) 2>/dev/null; send_normal_message "'"${BOTADMIN}"'" "Bot '"${BOTNAME} ${mode}"' stopped ..."' EXIT HUP QUIT
 
 # wait after (first) update to avoid processing to many in parallel
 UPDWAIT="0.5"

@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.51-dev-9-gcbd74a7
+#### $$VERSION$$ v1.50-13-g79fc511
 ##################################################################
 
 ##############
@@ -91,6 +91,10 @@ process_update() {
 	        printf "%(%c)T: update received FROM=%s CHAT=%s CMD=%s\n" -1 "${USER[USERNAME]:0:20} (${USER[ID]})"\
 			"${CHAT[USERNAME]:0:20}${CHAT[TITLE]:0:30} (${CHAT[ID]})"\
 			"${MESSAGE:0:30}${CAPTION:0:30}${URLS[*]}" >>"${UPDATELOG}"
+		if [[ -z "${USER[ID]}" || -z "${CHAT[ID]}" ]]; then
+			printf "%(%c)T: IGNORE unknown update type: %s\n" -1 "$(grep '\["result",'"${num}"'.*,"id"\]' <<<"${UPDATE}")" >>"${UPDATELOG}"
+			return 1
+		fi
 	fi
 	#####
 	# process inline and message events
