@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.5-0-g8adca9b
+#### $$VERSION$$ v1.50-14-gf790d73
 ##################################################################
 
 # are we running in a terminal?
@@ -675,25 +675,25 @@ sendJsonResult(){
 	    # timeout, failed connection or blocked
 	    if [ "${BOTSENT[ERROR]}" == "999" ];then
 		# check if default curl and args are OK
-			if ! curl -sL -k -m 2 "${URL}" >/dev/null 2>&1 ; then
-				printf "%(%c)T: BASHBOT IP Address seems blocked!\n" -1
-				# user provided function to recover or notify block
-				if _exec_if_function bashbotBlockRecover; then
-					BASHBOT_RETRY="2"
-					printf "bashbotBlockRecover returned true, retry %s ...\n" "$2"
-					sendJsonRetry "$2" "${BASHBOT_RETRY}" "${@:3}"
-					unset BASHBOT_RETRY
-				fi
-		    return
-			fi
-	        # are not blocked, default curl and args are working
-			if [ -n "${BASHBOT_CURL_ARGS}" ] || [ "${BASHBOT_CURL}" != "curl" ]; then
-				printf "Problem with \"%s %s\"? retry %s with default config ...\n"\
-					"${BASHBOT_CURL}" "${BASHBOT_CURL_ARGS}" "$2"
-				BASHBOT_RETRY="2"; BASHBOT_CURL="curl"; BASHBOT_CURL_ARGS=""
+		if ! curl -sL -k -m 2 "${URL}" >/dev/null 2>&1 ; then
+			printf "%(%c)T: BASHBOT IP Address seems blocked!\n" -1
+			# user provided function to recover or notify block
+			if _exec_if_function bashbotBlockRecover; then
+				BASHBOT_RETRY="2"
+				printf "bashbotBlockRecover returned true, retry %s ...\n" "$2"
 				sendJsonRetry "$2" "${BASHBOT_RETRY}" "${@:3}"
 				unset BASHBOT_RETRY
 			fi
+	       # seems not blocked, try if blockrecover and default curl args working
+		elif [ -n "${BASHBOT_CURL_ARGS}" ] || [ "${BASHBOT_CURL}" != "curl" ]; then
+			printf "Problem with \"%s %s\"? retry %s with default config ...\n"\
+				"${BASHBOT_CURL}" "${BASHBOT_CURL_ARGS}" "$2"
+			BASHBOT_RETRY="2"; BASHBOT_CURL="curl"; BASHBOT_CURL_ARGS=""
+			_exec_if_function bashbotBlockRecover
+			sendJsonRetry "$2" "${BASHBOT_RETRY}" "${@:3}"
+			unset BASHBOT_RETRY
+		fi
+		[ -n "${BOTSENT[ERROR]}" ] && processError "$3" "${BOTSENT[ERROR]}" "$4" "" "${BOTSENT[DESCRIPTION]}" "$5" "$6"
 	    fi
 	fi
 } >>"${ERRORLOG}"
