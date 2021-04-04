@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.51-dev-18-g9b6aba0
+#### $$VERSION$$ v1.51-dev-19-gf7f55ea
 ##################################################################
 
 ##############
@@ -62,7 +62,7 @@ process_multi_updates() {
 # processing of a single array item of update
 # $1 array index
 process_update() {
-	local num="$1" debug="$2" 
+	local chatuser="User" num="$1" debug="$2" 
 	pre_process_message "${num}"
 	# log message on debug
 	[[ -n "${debug}" ]] && log_message "New Message ==========\n$(grep -F '["result",'"${num}" <<<"${UPDATE}")"
@@ -70,11 +70,9 @@ process_update() {
 	# check for users / groups to ignore, inform them ...
 	jssh_updateArray_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
 	if [ -n "${USER[ID]}" ] && [[ -n "${BASHBOTBLOCKED[${USER[ID]}]}" || -n "${BASHBOTBLOCKED[${CHAT[ID]}]}" ]];then
-		if [  -n "${BASHBOTBLOCKED[${USER[ID]}]}" ]; then
-			send_normal_message "${USER[ID]}" "User blocked because: ${BASHBOTBLOCKED[${USER[ID]}]}" &
-		else
-			send_normal_message "${CHAT[ID]}" "Chat blocked because: ${BASHBOTBLOCKED[${CHAT[ID]}]}" &
-		fi
+		[  -n "${BASHBOTBLOCKED[${USER[ID]}]}" ] && chatuser="User"
+		[ "${NOTIFY_BLOCKED_USERS}" == "yes" ] &&\
+			send_normal_message "${CHAT[ID]}" "${chatuser} blocked because: ${BASHBOTBLOCKED[${USER[ID]}]} ${BASHBOTBLOCKED[${CHAT[ID]}]}" &
 		return
 	fi
 
