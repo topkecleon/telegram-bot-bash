@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.51-dev-16-g4c4ba0b
+#### $$VERSION$$ v1.51-dev-18-g9b6aba0
 ##################################################################
 
 ##############
@@ -67,9 +67,16 @@ process_update() {
 	# log message on debug
 	[[ -n "${debug}" ]] && log_message "New Message ==========\n$(grep -F '["result",'"${num}" <<<"${UPDATE}")"
 
-	# check for users / groups to ignore
+	# check for users / groups to ignore, inform them ...
 	jssh_updateArray_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
-	[ -n "${USER[ID]}" ] && [[ -n "${BASHBOTBLOCKED[${USER[ID]}]}" || -n "${BASHBOTBLOCKED[${CHAT[ID]}]}" ]] && return
+	if [ -n "${USER[ID]}" ] && [[ -n "${BASHBOTBLOCKED[${USER[ID]}]}" || -n "${BASHBOTBLOCKED[${CHAT[ID]}]}" ]];then
+		if [  -n "${BASHBOTBLOCKED[${USER[ID]}]}" ]; then
+			send_normal_message "${USER[ID]}" "User blocked because: ${BASHBOTBLOCKED[${USER[ID]}]}" &
+		else
+			send_normal_message "${CHAT[ID]}" "Chat blocked because: ${BASHBOTBLOCKED[${CHAT[ID]}]}" &
+		fi
+		return
+	fi
 
 	# process per message type
 	if [ -n "${iQUERY[ID]}" ]; then
