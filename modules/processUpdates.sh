@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.51-dev-19-gf7f55ea
+#### $$VERSION$$ v1.51-dev-20-ge4c13dd
 ##################################################################
 
 ##############
@@ -62,7 +62,7 @@ process_multi_updates() {
 # processing of a single array item of update
 # $1 array index
 process_update() {
-	local chatuser="User" num="$1" debug="$2" 
+	local chatuser="Chat" num="$1" debug="$2" 
 	pre_process_message "${num}"
 	# log message on debug
 	[[ -n "${debug}" ]] && log_message "New Message ==========\n$(grep -F '["result",'"${num}" <<<"${UPDATE}")"
