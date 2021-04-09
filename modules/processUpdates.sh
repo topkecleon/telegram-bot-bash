@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.51-dev-20-ge4c13dd
+#### $$VERSION$$ v1.51-dev-21-gb097f08
 ##################################################################
 
 ##############
@@ -302,7 +302,7 @@ declare -A BASHBOTBLOCKED
 start_bot() {
 	local DEBUGMSG
 	# startup message
-	DEBUGMSG="BASHBOT startup actions, debug mode set to \"${1:-normal}\" =========="
+	DEBUGMSG="BASHBOT startup actions, mode set to \"${1:-normal}\" =========="
 	log_update "${DEBUGMSG}"
 	# redirect to Debug.log
 	if [[ "$1" == *"debug" ]]; then
