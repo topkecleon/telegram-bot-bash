@@ -6,7 +6,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.5-0-g8adca9b
+#### $$VERSION$$ v1.51-0-g6e66a28
 
 # adjust your language setting here
 # https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment

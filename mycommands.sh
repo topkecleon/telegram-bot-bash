@@ -13,7 +13,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.5-0-g8adca9b
+#### $$VERSION$$ v1.51-0-g6e66a28
 #######################################################
 # shellcheck disable=SC1117
 
@@ -324,7 +324,20 @@ else
     # func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
     bashbotError_403() {
 	log_debug "custom errorProcessing error 403: FUNC=$1 CHAT=$3 USER=${4:-no-user} MSGID=$6 ERTXT=$5"
+	local user="$4"; [[ -z "$4" && -n "$3" ]] && user="$3"
+	if [ -n "${user}" ]; then
+		# block chat/user
+		case "$6" in
+		    *"blocked"*)
+			jssh_insertKeyDB "${user}" "User blocked bot on (LANG=C date)" "${BLOCKEDFILE}";;
+		    *"kicked"*)
+			jssh_insertKeyDB "${user}" "Bot kicked from chat on (LANG=C date)" "${BLOCKEDFILE}";;
+		    *)
+			jssh_insertKeyDB "${user}" "Reason: $6 on (LANG=C date)" "${BLOCKEDFILE}";;
+		esac
+	fi
     }
+
 
     ###########################
     # place your processing functions here --------------

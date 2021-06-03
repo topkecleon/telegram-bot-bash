@@ -10,7 +10,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.5-0-g8adca9b
+#### $$VERSION$$ v1.51-0-g6e66a28
 #######################################################
 # shellcheck disable=SC1117
 
@@ -126,4 +126,17 @@ else
 	done <<<"${result}"
     }
 
+    ###########################
+    # example error processing
+    # called when delete Message failed
+    # func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+    bashbotError_delete_message() {
+	log_debug "custom errorProcessing delete_message: ERR=$2 CHAT=$3 MSGID=$6 ERTXT=$5"
+    }
+
+    # called when error 403 is returned (and no func processing)
+    # func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+    bashbotError_403() {
+	log_debug "custom errorProcessing error 403: FUNC=$1 CHAT=$3 USER=${4:-no-user} MSGID=$6 ERTXT=$5"
+    }
 fi

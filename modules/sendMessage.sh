@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.5-0-g8adca9b
+#### $$VERSION$$ v1.51-0-g6e66a28
 
 # will be automatically sourced from bashbot
 
@@ -333,7 +333,7 @@ send_action() {
 	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2"
 }
 
-# $1 chat $2 emoji “🎲”, “🎯”, “🏀”, “⚽”, “🎰"
+# $1 chat $2 emoji “🎲”, “🎯”, “🏀”, “⚽”, “🎰" "🎳"
 # code: "\ud83c\udfb2" "\ud83c\udfaf" "\ud83c\udfc0" "\u26bd" "\ud83c\udfb0"
 # text: ":game_die:" ":dart:" ":basketball:" ":soccer:" :slot_machine:"
 # $3 reply_to_id
@@ -346,6 +346,7 @@ send_dice() {
 		*🏀*|*basket*|*'dfc0'*|*'DFC0'*)	emoji='\ud83c\udfc0' ;;
 		*⚽*|*soccer*|*'26bd'*|*'26BD'*)	emoji='\u26bd' ;;
 		*🎰*|*slot*  |*'dfb0'*|*'DFB0'*)	emoji='\ud83c\udfb0' ;;
+		*🎳*|*bowl*  |*'dfb3'*|*'DFB3'*)	emoji='\ud83c\udfb3' ;;
 	esac
 	sendJson "$1" '"emoji": "'"${emoji}"'"'"${reply}" "${URL}/sendDice"
 	if [ "${BOTSENT[OK]}" = "true" ]; then

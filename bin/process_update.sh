@@ -15,7 +15,7 @@ USAGE='process_update.sh [-h|--help] [debug] [<file]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 30.01.2021 19:14
 #
-#### $$VERSION$$ v1.5-0-g8adca9b
+#### $$VERSION$$ v1.51-0-g6e66a28
 #===============================================================================
 
 ####

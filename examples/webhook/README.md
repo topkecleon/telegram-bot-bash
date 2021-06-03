@@ -46,15 +46,13 @@ Even it seems overhead to source Bashbot for every update, it's more responsive 
 
 Nevertheles there are some limitations compared to polling mode:
  - no startup actions
- - no background* and interactive jobs
  - `addons` and `TIMER_EVENTS` are not working
 
-\* Workaround for background jobs is to execute `./bashbot.sh resumeback` if a new background job was started.
+Interactive and background jobs are working as of Bashbot Version 1.51.
 
 #### Full webhook processing
 
 Full webhook processing use an external script to imitate Bashbot polling mode with webhook.
-*Warning:* This method is not much testet and may not work in all cases.
 
 1. Default webook method must work first!
 2. run `bashbot.sh init` to setup bashbot to run with your user id
@@ -98,5 +96,5 @@ webhook updates only over secure TLS connections with a valid SSL certificate ch
 `socat` looks like a tool to listen for Telegram updates from bash scripts, let's see ...
 
 
-#### $$VERSION$$ v1.5-0-g8adca9b
+#### $$VERSION$$ v1.51-0-g6e66a28
 

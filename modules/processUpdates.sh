@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.5-0-g8adca9b
+#### $$VERSION$$ v1.51-0-g6e66a28
 ##################################################################
 
 ##############
@@ -62,14 +62,19 @@ process_multi_updates() {
 # processing of a single array item of update
 # $1 array index
 process_update() {
-	local num="$1" debug="$2" 
+	local chatuser="Chat" num="$1" debug="$2" 
 	pre_process_message "${num}"
 	# log message on debug
 	[[ -n "${debug}" ]] && log_message "New Message ==========\n$(grep -F '["result",'"${num}" <<<"${UPDATE}")"
 
-	# check for users / groups to ignore
+	# check for users / groups to ignore, inform them ...
 	jssh_updateArray_async "BASHBOTBLOCKED" "${BLOCKEDFILE}"
-	[ -n "${USER[ID]}" ] && [[ -n "${BASHBOTBLOCKED[${USER[ID]}]}" || -n "${BASHBOTBLOCKED[${CHAT[ID]}]}" ]] && return
+	if [ -n "${USER[ID]}" ] && [[ -n "${BASHBOTBLOCKED[${USER[ID]}]}" || -n "${BASHBOTBLOCKED[${CHAT[ID]}]}" ]];then
+		[  -n "${BASHBOTBLOCKED[${USER[ID]}]}" ] && chatuser="User"
+		[ "${NOTIFY_BLOCKED_USERS}" == "yes" ] &&\
+			send_normal_message "${CHAT[ID]}" "${chatuser} blocked because: ${BASHBOTBLOCKED[${USER[ID]}]} ${BASHBOTBLOCKED[${CHAT[ID]}]}" &
+		return
+	fi
 
 	# process per message type
 	if [ -n "${iQUERY[ID]}" ]; then
@@ -91,6 +96,10 @@ process_update() {
 	        printf "%(%c)T: update received FROM=%s CHAT=%s CMD=%s\n" -1 "${USER[USERNAME]:0:20} (${USER[ID]})"\
 			"${CHAT[USERNAME]:0:20}${CHAT[TITLE]:0:30} (${CHAT[ID]})"\
 			"${MESSAGE:0:30}${CAPTION:0:30}${URLS[*]}" >>"${UPDATELOG}"
+		if [[ -z "${USER[ID]}" || -z "${CHAT[ID]}" ]]; then
+			printf "%(%c)T: IGNORE unknown update type: %s\n" -1 "$(grep '\["result",'"${num}"'.*,"id"\]' <<<"${UPDATE}")" >>"${UPDATELOG}"
+			return 1
+		fi
 	fi
 	#####
 	# process inline and message events
@@ -293,7 +302,7 @@ declare -A BASHBOTBLOCKED
 start_bot() {
 	local DEBUGMSG
 	# startup message
-	DEBUGMSG="Start BASHBOT updates in Mode \"${1:-normal}\" =========="
+	DEBUGMSG="BASHBOT startup actions, mode set to \"${1:-normal}\" =========="
 	log_update "${DEBUGMSG}"
 	# redirect to Debug.log
 	if [[ "$1" == *"debug" ]]; then
@@ -336,6 +345,7 @@ get_updates(){
 	local nextsleep="100"
 	local stepsleep="${BASHBOT_SLEEP_STEP:-100}"
 	local maxsleep="${BASHBOT_SLEEP:-5000}"
+	printf "%(%c)T: %b\n" -1 "Bot startup actions done, start polling updates ..."
 	while true; do
 		# adaptive sleep in ms rounded to next 0.1 s
 		sleep "$(_round_float "${nextsleep}e-3" "1")"
