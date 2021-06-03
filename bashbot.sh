@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.51-dev-16-g4c4ba0b
+#### $$VERSION$$ v1.51-dev-23-g69b1871
 ##################################################################
 
 # are we running in a terminal?
@@ -181,6 +181,7 @@ MODULEDIR="${SCRIPTDIR}/modules"
 exit_source() { exit "$1"; }
 if [[ "${SCRIPT}" != "${REALME}" || "$1" == "source" ]]; then
 	SOURCE="yes"
+	SCRIPT="${REALME}"
 	[ -z "$1" ] && exit_source() { printf "Exit from source ...\n"; return "$1"; }
 fi
 
