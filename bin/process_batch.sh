@@ -4,7 +4,7 @@
 #
 #          FILE: bin/process_batch.sh
 #
-USAGE='process_update.sh [-h|--help] [-s|--startbot] [-w|--watch] [-n|--lines n] [file] [debug]'
+USAGE='process_batch.sh [-h|--help] [-s|--startbot] [-w|--watch] [-n|--lines n] [file] [debug]'
 # 
 #   DESCRIPTION: processes last 10 telegram updates in file, one update per line
 #                 
@@ -21,7 +21,7 @@ USAGE='process_update.sh [-h|--help] [-s|--startbot] [-w|--watch] [-n|--lines n]
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.02.2021 13:14
 #
-#### $$VERSION$$ v1.50-13-g79fc511
+#### $$VERSION$$ v1.51-dev-22-g45efa80
 #===============================================================================
 
 ####
@@ -76,14 +76,14 @@ fi
 # ready, do stuff here -----
 
 # kill all sub processes on exit
-trap 'printf "%(%c)T: %s\n" -1 "Bot in '"${mode}"' mode stopped"; kill $(jobs -p) 2>/dev/null; send_normal_message "'"${BOTADMIN}"'" "Bot '"${BOTNAME} ${mode}"' stopped ..."' EXIT HUP QUIT
+trap 'printf "%(%c)T: %s\n" -1 "Bot in '"${mode}"' mode stopped"; kill $(jobs -p) 2>/dev/null; wait $(jobs -p) 2>/dev/null; send_normal_message "'"${BOTADMIN}"'" "Bot '"${BOTNAME} ${mode}"' stopped ..."' EXIT HUP QUIT
 
 # wait after (first) update to avoid processing to many in parallel
 UPDWAIT="0.5"
 # use tail to read appended updates
 # shellcheck disable=SC2086,SC2248
-tail ${follow} ${lines} "${file}" |\
-    while IFS="" read -r input
+tail ${follow} ${lines} "${file}" 2>/dev/null |\
+    while IFS="" read -r input 2>/dev/null
     do 
 	# read json from stdin and convert update format
 	# replace any ID named BOTADMIN with ID of bot admin

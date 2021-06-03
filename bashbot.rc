@@ -5,7 +5,7 @@
 #
 # tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.51-dev-10-g12157b3
+#### $$VERSION$$ v1.51-dev-22-g45efa80
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 # shellcheck disable=SC2250
@@ -99,9 +99,9 @@ case "$1" in
 'stophook')
 	[ "${stat}" != "hook" ] && printf "Warning, bot is not in webhook mode: %s\n" "${stat}"
 	printf "Stopping bashbot webhook mode ... "
-	KILLID="$(ps -f -u "${runas}" | grep "process_batch.sh --startbot" | sed -E 's/[^0-9]+([0-9]+).*/\1/')"
+	KILLID="$(ps -f -u "${runas}" | grep "process_batch.sh --startbot" | sed -E 's/[^0-9]+([0-9]+).*/\1/' | tr -s "\r\n" "  ")"
 	if [ -n "${KILLID}" ]; then
-		$runcmd "kill $(printf "%s" "${KILLID}" | tr -s "\r\n" "  " )"
+		$runcmd "kill ${KILLID}; wait ${KILLID} 2>/dev/null"
 		sleep 1
 	fi
 	RETVAL=$?
