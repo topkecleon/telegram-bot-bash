@@ -15,7 +15,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.51-dev-25-g52fbb14
+#### $$VERSION$$ v1.51-0-g6e66a28
 #
 
 # bashbot locale defaults to c.UTF-8, adjust locale in mycommands.sh if needed
@@ -48,7 +48,7 @@ Additional commands from mycommands.dist ...
 *• /game*: _throw a die_.
 *• /question*: _Start interactive chat_.
 *• /cancel*: _Cancel any currently running interactive chat_.
-*• /notify*: _Start background job_.
+*• /run_notify*: _Start background job_.
 *• /stop_notify*: _Stop notify background job_.
 Written by Drew (@topkecleon) and KayM (@gnadelwartz).
 Get the code on [GitHub](http://github.com/topkecleon/telegram-bot-bash)
