@@ -8,10 +8,14 @@ USAGE='send_message.sh [-h|--help] [format] "CHAT[ID]" "message ...." [debug]'
 # 
 #   DESCRIPTION: send a message to the given user/group
 # 
-#       OPTIONS: format - normal, markdown, html (optional)
+#       OPTIONS: format - normal, markdown, html, stdin, - (optional)
 #                CHAT[ID] - ID number of CHAT or BOTADMIN to send to yourself
 #                message - message to send in specified format
 #                    if no format is givern send_message() format is used
+#
+#                use format "stdin" to read message from stdin or from a file:
+#                  send_message.sh stdin "CHAT[ID]" <file
+#                  df -h | send_message.sh - "CHAT[ID]"
 #
 #                -h - display short help
 #                --help -  this help
@@ -22,7 +26,7 @@ USAGE='send_message.sh [-h|--help] [format] "CHAT[ID]" "message ...." [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 11:34
 #
-#### $$VERSION$$ v1.51-0-g6e66a28
+#### $$VERSION$$ v1.52-0-g36d8604
 #===============================================================================
 
 ####
@@ -41,6 +45,10 @@ case "$1" in
 		SEND="send_html_message"
 		shift
 		;;
+	"stdin"|"-")
+		FILE="stdin"
+		shift
+		;;
 esac
 
 # set bashbot environment
@@ -56,7 +64,10 @@ else
 fi
 
 # send message in selected format
-"${SEND}" "${CHAT}" "$2"
-
+if [ "${FILE}" = "stdin" ]; then
+	"${SEND}" "${CHAT}" "$(cat)"
+else
+	"${SEND}" "${CHAT}" "$2"
+fi
 # output send message result
 print_result
