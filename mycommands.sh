@@ -13,7 +13,7 @@
 #     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #      Author: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.51-0-g6e66a28
+#### $$VERSION$$ v1.52-dev-0-g783bf30
 #######################################################
 # shellcheck disable=SC1117
 
@@ -327,13 +327,13 @@ else
 	local user="$4"; [[ -z "$4" && -n "$3" ]] && user="$3"
 	if [ -n "${user}" ]; then
 		# block chat/user
-		case "$6" in
+		case "$5" in
 		    *"blocked"*)
-			jssh_insertKeyDB "${user}" "User blocked bot on (LANG=C date)" "${BLOCKEDFILE}";;
+			jssh_insertKeyDB "${user}" "User blocked bot on $(LANG=C date)" "${BLOCKEDFILE}";;
 		    *"kicked"*)
-			jssh_insertKeyDB "${user}" "Bot kicked from chat on (LANG=C date)" "${BLOCKEDFILE}";;
+			jssh_insertKeyDB "${user}" "Bot kicked from chat on $(LANG=C date)" "${BLOCKEDFILE}";;
 		    *)
-			jssh_insertKeyDB "${user}" "Reason: $6 on (LANG=C date)" "${BLOCKEDFILE}";;
+			jssh_insertKeyDB "${user}" "Reason: $6 on $(LANG=C date)" "${BLOCKEDFILE}";;
 		esac
 	fi
     }
