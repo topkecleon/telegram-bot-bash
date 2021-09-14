@@ -1,11 +1,11 @@
 #!/bin/bash
-# file: modules/alaises.sh
+# file: modules/aliases.sh
 # do not edit, this file will be overwritten on update
 
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.51-0-g6e66a28
 #
 # will be automatically sourced from bashbot
 

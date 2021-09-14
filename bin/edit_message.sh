@@ -1,13 +1,14 @@
 #!/bin/bash
+# shellcheck disable=SC1090,SC2034
 #===============================================================================
 #
-#          FILE: bin/send_message.sh
+#          FILE: bin/edit_message.sh
 # 
-#         USAGE: send_edit_message.sh [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "message ...." [debug]
+USAGE='send_edit_message.sh [-h|--help] [format|caption] "CHAT[ID]" "MESSAGE[ID]" "message ...." [debug]'
 # 
 #   DESCRIPTION: replace a message in the given user/group
 # 
-#       OPTIONS: format - normal, markdown, html (optional)
+#       OPTIONS: format - normal, markdown, html or caption for file caption (optional)
 #                CHAT[ID] - ID number of CHAT or BOTADMIN to send to yourself
 #                MESSAGE[ID] - message to replace
 #                message - message to send in specified format
@@ -22,14 +23,14 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 16:52
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.51-0-g6e66a28
 #===============================================================================
 
 ####
 # parse args
 SEND="edit_normal_message"
 case "$1" in
-	"nor*"|"tex*")
+	"nor"*|"tex"*)
 		SEND="edit_normal_message"
 		shift
 		;;
@@ -37,33 +38,24 @@ case "$1" in
 		SEND="edit_markdownv2_message"
 		shift
 		;;
-	"html")
+	"htm"*)
 		SEND="edit_html_message"
 		shift
 		;;
-	'')
-		printf "missing arguments\n"
-		;&
-	"-h"*)
-		printf 'usage: send_edit_message [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "message ..."  [debug]\n'
-		exit 1
-		;;
-	'--h'*)
-		sed -n '3,/###/p' <"$0"
-		exit 1
+	"cap"*)
+		SEND="edit_message_caption"
+		shift
 		;;
 esac
 
-
 # set bashbot environment
-# shellcheck disable=SC1090
-source "${0%/*}/bashbot_env.inc.sh" "$4" # $4 debug
+source "${0%/*}/bashbot_env.inc.sh" "${4:-debug}" # $4 debug
+print_help "$1"
 
-####
 ####
 # ready, do stuff here -----
 if [ "$1" == "BOTADMIN" ]; then
-	CHAT="${BOT_ADMIN}"
+	CHAT="${BOTADMIN}"
 else
 	CHAT="$1"
 fi
@@ -72,5 +64,4 @@ fi
 "${SEND}" "${CHAT}" "$2" "$3"
 
 # output send message result
-jssh_printDB "BOTSENT" | sort -r
-
+print_result

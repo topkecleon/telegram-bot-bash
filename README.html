@@ -6,136 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Bashbot README</title>
   <style>
-    html {
-      line-height: 1.5;
-      font-family: Georgia, serif;
-      font-size: 20px;
-      color: #1a1a1a;
-      background-color: #fdfdfd;
-    }
-    body {
-      margin: 0 auto;
-      max-width: 36em;
-      padding-left: 50px;
-      padding-right: 50px;
-      padding-top: 50px;
-      padding-bottom: 50px;
-      hyphens: auto;
-      word-wrap: break-word;
-      text-rendering: optimizeLegibility;
-      font-kerning: normal;
-    }
-    @media (max-width: 600px) {
-      body {
-        font-size: 0.9em;
-        padding: 1em;
-      }
-    }
-    @media print {
-      body {
-        background-color: transparent;
-        color: black;
-        font-size: 12pt;
-      }
-      p, h2, h3 {
-        orphans: 3;
-        widows: 3;
-      }
-      h2, h3, h4 {
-        page-break-after: avoid;
-      }
-    }
-    p {
-      margin: 1em 0;
-    }
-    a {
-      color: #1a1a1a;
-    }
-    a:visited {
-      color: #1a1a1a;
-    }
-    img {
-      max-width: 100%;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      margin-top: 1.4em;
-    }
-    h5, h6 {
-      font-size: 1em;
-      font-style: italic;
-    }
-    h6 {
-      font-weight: normal;
-    }
-    ol, ul {
-      padding-left: 1.7em;
-      margin-top: 1em;
-    }
-    li > ol, li > ul {
-      margin-top: 0;
-    }
-    blockquote {
-      margin: 1em 0 1em 1.7em;
-      padding-left: 1em;
-      border-left: 2px solid #e6e6e6;
-      color: #606060;
-    }
-    code {
-      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
-      font-size: 85%;
-      margin: 0;
-    }
-    pre {
-      margin: 1em 0;
-      overflow: auto;
-    }
-    pre code {
-      padding: 0;
-      overflow: visible;
-    }
-    .sourceCode {
-     background-color: transparent;
-     overflow: visible;
-    }
-    hr {
-      background-color: #1a1a1a;
-      border: none;
-      height: 1px;
-      margin: 1em 0;
-    }
-    table {
-      margin: 1em 0;
-      border-collapse: collapse;
-      width: 100%;
-      overflow-x: auto;
-      display: block;
-      font-variant-numeric: lining-nums tabular-nums;
-    }
-    table caption {
-      margin-bottom: 0.75em;
-    }
-    tbody {
-      margin-top: 0.5em;
-      border-top: 1px solid #1a1a1a;
-      border-bottom: 1px solid #1a1a1a;
-    }
-    th {
-      border-top: 1px solid #1a1a1a;
-      padding: 0.25em 0.5em 0.25em 0.5em;
-    }
-    td {
-      padding: 0.125em 0.5em 0.25em 0.5em;
-    }
-    header {
-      margin-bottom: 4em;
-      text-align: center;
-    }
-    #TOC li {
-      list-style: none;
-    }
-    #TOC a:not(:hover) {
-      text-decoration: none;
-    }
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     span.underline{text-decoration: underline;}
@@ -204,7 +74,6 @@
     code span.va { color: #19177c; } /* Variable */
     code span.vs { color: #4070a0; } /* VerbatimString */
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
@@ -223,8 +92,8 @@ Written by Drew (@topkecleon) and Kay M (@gnadelwartz).
 <p>Released to the public domain wherever applicable. Elsewhere, consider it released under the <a href="http://www.wtfpl.net/txt/copying/">WTFPLv2</a>.</p>
 <p>Linted by <a href="https://github.com/koalaman/shellcheck">#ShellCheck</a></p>
 <h2>Prerequisites</h2>
-<p>Uses <a href="http://github.com/dominictarr/JSON.sh">JSON.sh</a> and the magic of sed.</p>
-<p>Bashbot is written in bash. It depends on commands typically available in a Linux/Unix Environment. For more concrete information on the common commands provided by recent versions of <a href="https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands">coreutils</a>, <a href="https://en.wikipedia.org/wiki/BusyBox#Commands">busybox</a> or <a href="https://landley.net/toybox/help.html">toybox</a>, see <a href="doc/7_develop.md#common-commands">Developer Notes</a>.</p>
+<p>Uses <a href="http://github.com/dominictarr/JSON.sh">JSON.sh</a>/<a href="https://github.com/step-/JSON.awk">JSON.awk</a> and the magic of sed.</p>
+<p>Bashbot is written in bash. It depends on commands typically available in a Linux/Unix Environment. For more information on commands provided by recent versions of <a href="https://en.wikipedia.org/wiki/List_of_GNU_Core_Utilities_commands">coreutils</a>, <a href="https://en.wikipedia.org/wiki/BusyBox#Commands">busybox</a> or <a href="https://landley.net/toybox/help.html">toybox</a>, see <a href="doc/7_develop.md#common-commands">Developer Notes</a>.</p>
 <p><strong>Note for MacOS and BSD Users:</strong> Bashbot will not run without installing additional software as it uses modern bash and (gnu) grep/sed features. See <a href="doc/0_install.md">Install Bashbot</a>.</p>
 <p><strong>Note for embedded systems:</strong> You need to install a "real" bash as the vanilla installation of busybox or toybox is not sufficient. See <a href="doc/0_install.md">Install Bashbot</a>.</p>
 <p>Bashbot <a href="https://github.com/topkecleon/telegram-bot-bash">Documentation</a> and <a href="https://github.com/topkecleon/telegram-bot-bash/releases">Downloads</a> are available on <a href="https://www.github.com">www.github.com</a>.</p>
@@ -284,63 +153,66 @@ Written by Drew (@topkecleon) and Kay M (@gnadelwartz).
 <li>Setup your environment</li>
 <li>Bashbot test suite</li>
 </ul></li>
-<li><a href="examples/README.md">Examples Directory</a></li>
+<li><a href="examples">Examples Directory</a></li>
+<li><a href="examples/webhook">Webhook Example</a></li>
 </ul>
 <h3>Your very first bashbot in a nutshell</h3>
 <p>To install and run bashbot you need access to a Linux/Unix command line with bash, a <a href="https://telegram.org">Telegram client</a> and a mobile phone <a href="https://telegramguide.com/create-a-telegram-account/">with a Telegram account</a>.</p>
 <p>First you need to <a href="doc/1_firstbot.md">create a new Telegram Bot token</a> for your bot and write it down.</p>
 <p>Now open a Linux/Unix terminal with bash, create a new directory, change to it and install telegram-bot-bash:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create bot dir</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> mybot</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> mybot</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># download latest release with wget or from https://github.com/topkecleon/telegram-bot-bash/releases/latest</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="st">&quot;https://github.com/</span><span class="va">$(</span><span class="fu">wget</span> <span class="at">-q</span> <span class="st">&quot;https://github.com/topkecleon/telegram-bot-bash/releases/latest&quot;</span> <span class="at">-O</span> <span class="at">-</span> <span class="kw">|</span> <span class="fu">egrep</span> <span class="st">&#39;/.*/download/.*/.*tar.gz&#39;</span> <span class="at">-o</span><span class="va">)</span><span class="st">&quot;</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the tar archive and go into bot dir</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> <span class="at">-xzf</span> <span class="pp">*</span>.tar.gz</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> telegram-bot-bash</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize your bot</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Enter your bot token when asked, all other questions can be answered by hitting the \&lt;Return\&gt; key.</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="ex">./bashbot.sh</span> init</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Now start your bot</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="ex">./bashbot.sh</span> start</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ex">Bottoken</span> is valid ...</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="ex">Bot</span> Name: yourbotname_bot</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ex">Session</span> Name: yourbotname_bot-startbot</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="ex">Bot</span> started successfully.</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># create bot dir</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">mkdir</span> mybot</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="bu">cd</span> mybot</span>
+<span id="cb1-4"><a href="#cb1-4"></a></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co"># download latest release with wget or from https://github.com/topkecleon/telegram-bot-bash/releases/latest</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">wget</span> <span class="st">&quot;https://github.com/</span><span class="va">$(</span><span class="fu">wget</span> -q <span class="st">&quot;https://github.com/topkecleon/telegram-bot-bash/releases/latest&quot;</span> -O - <span class="kw">|</span> <span class="fu">egrep</span> <span class="st">&#39;/.*/download/.*/.*tar.gz&#39;</span> -o<span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co"># Extract the tar archive and go into bot dir</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="fu">tar</span> -xzf *.tar.gz</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="bu">cd</span> telegram-bot-bash</span>
+<span id="cb1-11"><a href="#cb1-11"></a></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co"># initialize your bot</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co"># Enter your bot token when asked, all other questions can be answered by hitting the \&lt;Return\&gt; key.</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="ex">./bashbot.sh</span> init</span>
+<span id="cb1-15"><a href="#cb1-15"></a></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co"># Now start your bot</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="ex">./bashbot.sh</span> start</span>
+<span id="cb1-18"><a href="#cb1-18"></a></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="ex">Bottoken</span> is valid ...</span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="ex">Bot</span> Name: yourbotname_bot</span>
+<span id="cb1-21"><a href="#cb1-21"></a><span class="ex">Session</span> Name: yourbotname_bot-startbot</span>
+<span id="cb1-22"><a href="#cb1-22"></a><span class="ex">Bot</span> started successfully.</span></code></pre></div>
 <p>Now open the Telegram App on your mobile phone and start a chat with your bot (<em>your bot's username is shown after 'Bot Name:'</em>):</p>
 <pre><code>/start
 
 You are Botadmin
-*Available commands*:
-*• /start*: _Start bot and get this message_.
-*• /help*: _Get this message_.
-*• /info*: _Get shorter info message about this bot_....
+Available commands:
+  /start: _Start bot and get this message_.
+  /help: _Get this message_.
+  /info: _Get shorter info message about this bot_....
 
 /info
 
 This is bashbot, the Telegram bot written entirely in bash.
-It features background tasks and interactive chats, and can serve as an interface for CLI programs.</code></pre>
+It features background tasks and interactive chats, and can serve as an interface for CLI programs.
+</code></pre>
 <p>For more Information on how to install, customize and use your new bot, read the <a href="#Documentation">Documentation</a>.</p>
 <h3>Log files</h3>
 <p>Bashbot actions are logged to <code>BASHBOT.log</code>. Telegram send/receive errors are logged to <code>ERROR.log</code>. Start bashbot in debug mode to see all messages sent to / received from Telegram, as well as bash command error messages.</p>
 <p>To enable debug mode, start bashbot with debug as third argument: <code>bashbot start debug</code></p>
-<pre><code>├── logs 
-│   ├── BASHBOT.log      # log what your bot is doing ...
-│   ├── ERROR.log        # connection errors from / to Telegram API
-│   │
-│   ├── DEBUG.log        # stdout/stderr of you bot (debug mode enabled)
-│   └── MESSAGE.log      # full text of all message send/received (debug mode enabled)</code></pre>
+<pre><code>|__ logs
+|     |__ BASHBOT.log  # log what your bot is doing ...
+|     |__ ERROR.log    # connection errors from / to Telegram API
+|     |
+|     |__ DEBUG.log    # stdout/stderr of you bot (debug mode enabled)
+|     |__ MESSAGE.log  # full text of all message send/received (debug mode enabled)
+</code></pre>
 <hr />
 <h2>Security Considerations</h2>
 <p>Running a Telegram Bot means it is connected to the public and you never know what's send to your Bot.</p>
 <p>Bash scripts in general are not designed to be bulletproof, so consider this Bot as a proof of concept. Bash programmers often struggle with 'quoting hell' and globbing, see <a href="https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells">Implications of wrong quoting</a>.</p>
 <p>Whenever you are processing input from untrusted sources (messages, files, network) you must be as careful as possible (e.g. set IFS appropriately, disable globbing with <code>set -f</code> and quote everything). In addition remove unused scripts and examples from your Bot (e.g. everything in <code>example/</code>) and disable/remove all unused bot commands.</p>
-<p>It's important to escape or remove <code>$</code> in input from user, files or network (<em>as bashbot does</em>). One of the powerful features of Unix shells is variable and command substitution using <code>${}</code> and<code>$()</code> can lead to remote code execution (RCE) or remote information disclosure (RID) bugs if unescaped <code>$</code> is included in untrusted input (e.g. <code>$$</code> or <code>$(rm -rf /*)</code>).</p>
+<p>It's important to escape or remove <code>$</code> and ` in input from user, files or network (<em>as bashbot does</em>). One of the powerful features of Unix shells is variable and command substitution using <code>${var}</code>, <code>$(cmd)</code> and `cmd` can lead to remote code execution (RCE) or remote information disclosure (RID) bugs if unescaped <code>$</code> or ` is included in untrusted input (e.g. <code>$$</code> or <code>$(rm -rf /*)</code>).</p>
 <p>A powerful tool to improve your scripts is <code>shellcheck</code>. You can <a href="https://www.shellcheck.net/">use it online</a> or <a href="https://github.com/koalaman/shellcheck#installing">install shellcheck locally</a>. Shellcheck is used extensively in bashbot development to ensure a high code quality (e.g. it's not allowed to push changes without passing all shellcheck tests). In addition bashbot has a <a href="doc/7_develop.md">test suite</a> to check if important functionality is working as expected.</p>
 <h3>Use printf whenever possible</h3>
 <p>If you're writing a script that accepts external input (e.g. from the user as arguments or the file system), you shouldn't use echo to display it. <a href="https://unix.stackexchange.com/a/6581">Use printf whenever possible</a>.</p>
@@ -349,8 +221,9 @@ It features background tasks and interactive chats, and can serve as an interfac
 <p><strong>Never run your Bot as root, this is the most dangerous you can do!</strong> Usually the user 'nobody' has almost no rights on Linux/Unix systems. See <a href="doc/4_expert.md">Expert use</a> on how to run your Bot as an other user.</p>
 <h3>Secure your Bot installation</h3>
 <p><strong>Your Bot configuration must not be readable by other users.</strong> Everyone who can read your Bots token is able to act as your Bot and has access to all chats the Bot is in!</p>
-<p>Everyone with read access to your Bot files can extract your Bots data. Especially your Bot config in<code>config.jssh</code> must be protected against other users. No one except you should have write access to the Bot files. The Bot should be restricted to have write access to<code>count.jssh</code> and <code>data-bot-bash</code> only, all other files must be write protected.</p>
-<p>To set access rights for your bashbot installation to a reasonable default run<code>sudo ./bashbot.sh init</code> after every update or change to your installation directory.</p>
+<p>Everyone with read access to your Bot files can extract your Bots data. Especially your Bot config in <code>config.jssh</code> must be protected against other users. No one except you should have write access to the Bot files. The Bot should be restricted to have write access to <code>count.jssh</code>, <code>data-bot-bash/</code> and <code>logs/</code> only, all other files must be write protected.</p>
+<p>To set access rights for your bashbot installation to a reasonable default run <code>sudo ./bashbot.sh init</code> after every update or change to your installation directory.</p>
+<p><em>Note</em>: Keep old log files in a safe place or even better delete them, they are GDPR relevant and <a href="https://github.com/topkecleon/telegram-bot-bash/issues/174">may contain information</a> you don't want to be public.</p>
 <h2>FAQ</h2>
 <h3>Is this Bot insecure?</h3>
 <p>Bashbot is not more (in)secure than a Bot written in another language. We have done our best to make it as secure as possible. But YOU are responsible for the bot commands you wrote and you should know about the risks ...</p>
@@ -364,32 +237,32 @@ It features background tasks and interactive chats, and can serve as an interfac
 <li>no database, not event driven, not object oriented ...</li>
 </ul>
 <h3>Can I have the single bashbot.sh file back?</h3>
-<p>At the beginning bashbot was simply the file<code>bashbot.sh</code> that you could copy everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 'modules/*.sh' and much more.</p>
-<p>Hey no problem, if you are finished with your cool bot, run<code>dev/make-standalone.sh</code> to create a stripped down version of your bot containing only 'bashbot.sh' and 'commands.sh'! For more information see <a href="doc/7_develop.md">Create a stripped down version of your Bot</a>.</p>
+<p>At the beginning bashbot was simply the file <code>bashbot.sh</code> that you could copy everywhere and run the bot. Now we have 'commands.sh', 'mycommands.sh', 'modules/*.sh' and much more.</p>
+<p>Hey no problem, if you are finished with your cool bot, run <code>dev/make-standalone.sh</code> to create a stripped down version of your bot containing only 'bashbot.sh' and 'commands.sh'! For more information see <a href="doc/7_develop.md">Create a stripped down version of your Bot</a>.</p>
 <h3>Can I send messages from CLI and scripts?</h3>
 <p>Of course you can send messages from command line and scripts! Simply install bashbot as <a href="#Your-really-first-bashbot-in-a-nutshell">described here</a>, send the message '/start' to set yourself as botadmin and then stop the bot with <code>./bashbot.sh stop</code>.</p>
 <p>Bashbot provides some ready to use scripts for sending messages from command line in <code>bin/</code> dir, e.g. <code>send_message.sh</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">bin/send_message.sh</span> BOTADMIN <span class="st">&quot;This is my first message send from CLI&quot;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">bin/send_message.sh</span> <span class="at">--help</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1"></a><span class="ex">bin/send_message.sh</span> BOTADMIN <span class="st">&quot;This is my first message send from CLI&quot;</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="ex">bin/send_message.sh</span> --help</span></code></pre></div>
 <p>You can also source bashbot for use in your scripts, for more information see <a href="doc/4_expert.md">Expert Use</a>.</p>
 <h3>Blocked by telegram?</h3>
 <p>This may happen if too many or wrong requests are sent to api.telegram.org, e.g. using a invalid token or invalid API calls. If the block stay for longer time you can ask telegram service to unblock your IP-Address.</p>
 <p>You can check with curl or wget if you are blocked by Telegram:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-m</span> 10  https://api.telegram.org/bot</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#curl: (28) Connection timed out after 10001 milliseconds</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="at">-t</span> 1 <span class="at">-T</span> 10 https://api.telegram.org/bot</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-w</span> 2 api.telegram.org 443 <span class="kw">||</span> <span class="bu">echo</span> <span class="st">&quot;your IP seems blocked by telegram&quot;</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#your IP seems blocked by telegram</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1"></a><span class="ex">curl</span> -m 10  https://api.telegram.org/bot</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="co">#curl: (28) Connection timed out after 10001 milliseconds</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="fu">wget</span> -t 1 -T 10 https://api.telegram.org/bot</span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="co">#Connecting to api.telegram.org (api.telegram.org)|46.38.243.234|:443... failed: Connection timed out.</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="ex">nc</span> -w 2 api.telegram.org 443 <span class="kw">||</span> <span class="bu">echo</span> <span class="st">&quot;your IP seems blocked by telegram&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="co">#your IP seems blocked by telegram</span></span></code></pre></div>
 <p>Bashbot offers the option to recover from broken connections (blocked). Therefore you can provide a function named <code>bashbotBlockRecover()</code> in <code>mycommands.sh</code>, the function is called every time when a broken connection is detected.</p>
 <p>Possible actions are: Check if network is working, change IP-Address or simply wait some time. See <code>mycommnds.sh.dist</code> for an example.</p>
 <hr />
 <p>@Gnadelwartz</p>
 <h2>That's it all guys!</h2>
 <p>If you feel that there's something missing or if you found a bug, feel free to submit a pull request!</p>
-<h4>$$VERSION$$ v1.21-0-gc85af77</h4>
+<h4>$$VERSION$$ v1.51-0-g6e66a28</h4>
 </body>
 </html>

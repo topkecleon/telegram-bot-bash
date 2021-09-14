@@ -7,18 +7,11 @@
 #
 # Options: --notest - skip tests
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.51-0-g6e66a28
 ##############################################################
 
-# magic to ensure that we're always inside the root of our application,
-# no matter from which directory we'll run script
-GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
-if [ "${GIT_DIR}" != "" ] ; then
-	[[ "${GIT_DIR}" != "/"* ]] && GIT_DIR="${PWD}/${GIT_DIR}"
-	cd "${GIT_DIR}/.." || exit 1
-else
-	printf "Sorry, no git repository %s\n" "$(pwd)" && exit 1
-fi
+#shellcheck disable=SC1090
+source "${0%/*}/dev.inc.sh"
 
 VERSION="$(git describe --tags | sed -e 's/-[0-9].*//' -e 's/v//')"
 
@@ -26,8 +19,9 @@ DISTNAME="telegram-bot-bash"
 DISTDIR="./DIST/${DISTNAME}" 
 DISTMKDIR="data-bot-bash logs bin bin/logs addons"
 
-DISTFILES="bashbot.rc bashbot.sh commands.sh mycommands.sh.clean bin doc examples scripts modules LICENSE README.md README.txt README.html"
-DISTFILESDIST="mycommands.sh bashbot.rc $(echo "addons/"*.sh)"
+DISTFILES="bashbot.sh commands.sh mycommands.sh.clean bin doc examples scripts modules LICENSE README.md README.txt README.html"
+DISTFILESDEV="dev/make-standalone.sh dev/inject-json.sh dev/make-html.sh dev/obfuscate.sh"
+DISTFILESDIST="mycommands.sh mycommands.conf bashbot.rc $(echo "addons/"*.sh)"
 
 # run tests first!
 for test in $1 dev/all-test*.sh
@@ -46,6 +40,9 @@ mkdir -p "${DISTDIR}" 2>/dev/null
 printf "Copy files\n"
 # shellcheck disable=SC2086
 cp -r ${DISTFILES} "${DISTDIR}"
+mkdir -p "${DISTDIR}/dev"
+# shellcheck disable=SC2086
+cp ${DISTFILESDEV} "${DISTDIR}/dev"
 cd "${DISTDIR}" || exit 1
 
 printf "Create directories\n"
@@ -60,12 +57,12 @@ printf "Create .dist files\n"
 for file in ${DISTFILESDIST}
 do
 	[ "${file}" = "addons/*.sh" ] && continue
-	cp "${GIT_DIR}/../${file}" "${file}.dist"
+	cp "${BASE_DIR}/${file}" "${file}.dist"
 done
 
 # inject JSON.sh into distribution
 # shellcheck disable=SC1090
-source "${GIT_DIR}/../dev/inject-json.sh"
+source "${BASE_DIR}/dev/inject-json.sh"
 
 # make html doc
 printf "Create html doc\n"
@@ -76,8 +73,8 @@ source "../../dev/make-html.sh"
 cd .. || exit 1
 printf "Create dist archives\n"
 # shellcheck disable=SC2046
-zip -rq - "${DISTNAME}" --exclude $(cat  "${GIT_DIR}/../dev/${0##*/}.exclude") >"${DISTNAME}-${VERSION}.zip"
-tar --exclude-ignore="${GIT_DIR}/../dev/${0##*/}.exclude" -czf "${DISTNAME}-${VERSION}.tar.gz" "${DISTNAME}"
+zip -rq - "${DISTNAME}" --exclude $(cat  "${BASE_DIR}/dev/${0##*/}.exclude") >"${DISTNAME}-${VERSION}.zip"
+tar --exclude-ignore="${BASE_DIR}/dev/${0##*/}.exclude" -czf "${DISTNAME}-${VERSION}.tar.gz" "${DISTNAME}"
 
 printf "%s Done!\n" "$0"
 
@@ -85,4 +82,4 @@ printf "%s Done!\n" "$0"
 ls -ld "${DISTNAME}-${VERSION}".*
 
 # an empty DEBUG.log is created ... :-(
-rm -f "${GIT_DIR}/../test/"*.log
+rm -f "${BASE_DIR}/test/"*.log

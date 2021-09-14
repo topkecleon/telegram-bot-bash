@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.51-0-g6e66a28
 
 ############
 # NOTE: you MUST run install-hooks.sh again when updating this file!
@@ -41,16 +41,17 @@ else
 	exit 1
 fi
 
+# get version strings
 REMOTEVER="$(git ls-remote -t --refs 2>/dev/null | tail -1 | sed -e 's/.*\/v//' -e 's/-.*//')"
 VERSION="$(git describe --tags | sed -e 's/-.*//' -e 's/v//' -e 's/,/./')"
-
+[ -z "${REMOTEVER}" ] && REMOTEVER="${VERSION}"
 
 # LOCAL version must greater than latest REMOTE release version
 printf "Update Version of modified files\n"
 if ! command -v bc &> /dev/null || (( $(printf "%s\n" "${VERSION} >= ${REMOTEVER}" | bc -l) )); then
 	# update version in bashbot files on push
 	set +f
-	[ -f "${LASTPUSH}" ] && LASTFILES="$(find ./* -newer "${LASTPUSH}")"
+	[ -f "${LASTPUSH}" ] && LASTFILES="$(find ./* -newer "${LASTPUSH}" ! -path "./DIST/*" ! -path "./STANDALONE/*")"
 	[ "${LASTFILES}" = "" ] && exit
 	printf " "
 	# shellcheck disable=SC2086
@@ -64,7 +65,7 @@ fi
 
 if command -v codespell &>/dev/null; then
 	printf "Running codespell\n............................\n"
-	codespell -q 3 --skip="*.zip,*gz,*.log,*.html,*.txt,.git*,jsonDB-keyboard" -L "ba"
+	codespell -q 3 --skip="*.zip,*gz,*.log,*.html,*.txt,.git*,jsonDB-keyboard,DIST,STANDALONE" -L "ba"
 	printf "if there are (to many) typo's shown, consider running:\ncodespell -i 3 -w --skip=\"*.log,*.html,*.txt,.git*,examples\" -L \"ba\"\n"
 else
 	printf "consider installing codespell: pip install codespell\n"

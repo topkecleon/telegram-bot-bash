@@ -6,7 +6,11 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117,SC2059
+<<<<<<< HEAD
 #### $$VERSION$$ v1.21-26-g0d3a53a
+=======
+#### $$VERSION$$ v1.51-0-g6e66a28
+>>>>>>> 5205fe39905da125685fb242834159788a616e6b
 
 # will be automatically sourced from bashbot
 
@@ -46,12 +50,16 @@ start_back() {
 	printf '%s\n' "$1:$3:$2" >"${cmdfile}"
 	restart_back "$@"
 }
+# $1 chatid
+# $2 program
+# $3 jobname
+# $4 $5 parameters
 restart_back() {
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1" "back-$3-")"
-	printf "%s: Start background job CHAT=%s JOB=%s CMD=%s\n" "$(date)" "$1" "${fifo##*/}" "${2##*/} $4 $5" >>"${UPDATELOG}"
+	log_update "Start background job CHAT=$1 JOB=${fifo##*/} CMD=${2##*/} $4 $5"
 	check_back "$1" "$3" && kill_proc "$1" "back-$3-"
 	nohup bash -c "{ $2 \"$4\" \"$5\" \"${fifo}\" | \"${SCRIPT}\" outproc \"$1\" \"${fifo}\"; }" &>>"${fifo}.log" &
-	sleep 0.5 # give bg job some time to init
+	sleep 0.5	# give bg job some time to init
 }
 
 
@@ -62,9 +70,13 @@ start_proc() {
 	[ -z "$2" ] && return
 	[ -x "${2%% *}" ] || return 1
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1")"
+<<<<<<< HEAD
 	printf "%s: Start interactive script CHAT=%s JOB=%s CMD=%s\n" "$(date)" "$1" "${fifo##*/}" "$2 $3 $4" >>"${UPDATELOG}"
+=======
+>>>>>>> 5205fe39905da125685fb242834159788a616e6b
 	check_proc "$1" && kill_proc "$1"
 	mkfifo "${fifo}"
+	log_update "Start interactive script CHAT=$1 JOB=${fifo##*/} CMD=$2 $3 $4"
 	nohup bash -c "{ $2 \"$4\" \"$5\" \"${fifo}\" | \"${SCRIPT}\" outproc \"$1\" \"${fifo}\"
 		rm \"${fifo}\"; [ -s \"${fifo}.log\" ] || rm -f \"${fifo}.log\"; }" &>>"${fifo}.log" &
 }
@@ -99,9 +111,15 @@ kill_proc() {
 	fifo="$(procname "$1" "$2")"
 	prid="$(proclist "${fifo}")"
 	fifo="${DATADIR:-.}/${fifo}"
+<<<<<<< HEAD
 	printf "%s: Stop interactive / background CHAT=%s JOB=%s\n" "$(date)" "$1" "${fifo##*/}" >>"${UPDATELOG}"
+=======
+>>>>>>> 5205fe39905da125685fb242834159788a616e6b
 	# shellcheck disable=SC2086
-	[ -n "${prid}" ] && kill ${prid}
+	if [ -n "${prid}" ]; then
+		log_update "Stop interactive / background CHAT=$1 JOB=${fifo##*/}"
+		kill ${prid}
+	fi
 	[ -s "${fifo}.log" ] || rm -f "${fifo}.log"
 	[ -p "${fifo}" ] && rm -f "${fifo}";
 }
@@ -110,7 +128,7 @@ kill_proc() {
 # $2 message
 send_interactive() {
 	local fifo; fifo="${DATADIR:-.}/$(procname "$1")"
-	[ -p "${fifo}" ] && printf '%s\n' "$2" >"${fifo}" & # not blocking!
+	[ -p "${fifo}" ] && printf '%s\n' "$2" >"${fifo}" &	# not blocking!
 }
 
 # old style but may not work because of local checks
@@ -118,16 +136,15 @@ inproc() {
 	send_interactive "${CHAT[ID]}" "${MESSAGE[0]}"
 }
 
-# start stop all jobs
-# $1 command
-#	killb*
-#	suspendb*
-#	resumeb*
+# start stop all jobs 
+# $1 command #	kill suspend resume restart
 job_control() {
 	local BOT ADM content proc CHAT job fifo killall=""
 	BOT="$(getConfigKey "botname")"
-	ADM="$(getConfigKey "botadmin")"
+	ADM="${BOTADMIN}"
 	debug_checks "Enter job_control" "$1"
+	# cleanup on start
+	[[ "$1" == "re"* ]] && bot_cleanup "startback"
 	for FILE in "${DATADIR:-.}/"*-back.cmd; do
 		[ "${FILE}" = "${DATADIR:-.}/*-back.cmd" ] && printf "${RED}No background processes.${NN}" && break
 		content="$(< "${FILE}")"
@@ -138,23 +155,23 @@ job_control() {
 		fifo="$(procname "${CHAT}" "${job}")" 
 		debug_checks "Execute job_control" "$1" "${FILE##*/}"
 		case "$1" in
-		"resumeb"*|"backgr"*)
+		"resume"*|"restart"*)
 			printf "Restart Job: %s %s\n" "${proc}" " ${fifo##*/}"
 			restart_back "${CHAT}" "${proc}" "${job}"
 			# inform botadmin about stop
 			[ -n "${ADM}" ] && send_normal_message "${ADM}" "Bot ${BOT} restart background jobs ..." &
 			;;
-		"suspendb"*)
+		"suspend"*)
 			printf "Suspend Job: %s %s\n" "${proc}" " ${fifo##*/}"
 			kill_proc "${CHAT}" "${job}"
 			# inform botadmin about stop
 			[ -n "${ADM}" ] && send_normal_message "${ADM}" "Bot ${BOT} suspend background jobs ..." &
 			killall="y"
 			;;
-		"killb"*)
+		"kill"*)
 			printf "Kill Job: %s %s\n" "${proc}" " ${fifo##*/}"
 			kill_proc "${CHAT}" "${job}"
-			rm -f "${FILE}" # remove job
+			rm -f "${FILE}"	# remove job
 			# inform botadmin about stop
 			[ -n "${ADM}" ] && send_normal_message "${ADM}" "Bot ${BOT} kill  background jobs ..." &
 			killall="y"

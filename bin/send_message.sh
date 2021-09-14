@@ -1,16 +1,21 @@
 #!/bin/bash
+# shellcheck disable=SC1090,SC2034
 #===============================================================================
 #
 #          FILE: bin/send_message.sh
 # 
-#         USAGE: send_message.sh [-h|--help] [format] "CHAT[ID]" "message ...." [debug]
+USAGE='send_message.sh [-h|--help] [format] "CHAT[ID]" "message ...." [debug]'
 # 
 #   DESCRIPTION: send a message to the given user/group
 # 
-#       OPTIONS: format - normal, markdown, html (optional)
+#       OPTIONS: format - normal, markdown, html, stdin, - (optional)
 #                CHAT[ID] - ID number of CHAT or BOTADMIN to send to yourself
 #                message - message to send in specified format
 #                    if no format is givern send_message() format is used
+#
+#                use format "stdin" to read message from stdin or from a file:
+#                  send_message.sh stdin "CHAT[ID]" <file
+#                  df -h | send_message.sh - "CHAT[ID]"
 #
 #                -h - display short help
 #                --help -  this help
@@ -21,14 +26,14 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 16.12.2020 11:34
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.52-0-g36d8604
 #===============================================================================
 
 ####
 # parse args
 SEND="send_message"
 case "$1" in
-	"nor*"|"tex*")
+	"nor"*|"tex"*)
 		SEND="send_normal_message"
 		shift
 		;;
@@ -40,34 +45,29 @@ case "$1" in
 		SEND="send_html_message"
 		shift
 		;;
-	'')
-		printf "missing arguments\n"
-		;&
-	"-h"*)
-		printf 'usage: send_message [-h|--help] [format] "CHAT[ID]" "message ...." [debug]\n'
-		exit 1
-		;;
-	'--h'*)
-		sed -n '3,/###/p' <"$0"
-		exit 1
+	"stdin"|"-")
+		FILE="stdin"
+		shift
 		;;
 esac
 
 # set bashbot environment
-# shellcheck disable=SC1090
-source "${0%/*}/bashbot_env.inc.sh" "$3" # $3 debug
+source "${0%/*}/bashbot_env.inc.sh" "${3:-debug}" # $3 debug
+print_help "$1"
 
 ####
 # ready, do stuff here -----
 if [ "$1" == "BOTADMIN" ]; then
-	CHAT="${BOT_ADMIN}"
+	CHAT="${BOTADMIN}"
 else
 	CHAT="$1"
 fi
 
 # send message in selected format
-"${SEND}" "${CHAT}" "$2"
-
+if [ "${FILE}" = "stdin" ]; then
+	"${SEND}" "${CHAT}" "$(cat)"
+else
+	"${SEND}" "${CHAT}" "$2"
+fi
 # output send message result
-jssh_printDB "BOTSENT" | sort -r
-
+print_result

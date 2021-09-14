@@ -1,0 +1,27 @@
+["ok"]	true
+["result",0,"update_id"]	123456789
+["result",0,"message","message_id"]	123456789
+["result",0,"message","from","id"]	123456789
+["result",0,"message","from","is_bot"]	false
+["result",0,"message","from","first_name"]	"Kay"
+["result",0,"message","from","last_name"]	"M"
+["result",0,"message","from","username"]	"Gnadelwartz"
+["result",0,"message","from","language_code"]	"de"
+["result",0,"message","chat","id"]	-123456789
+["result",0,"message","chat","title"]	"Testgruppe bot only test"
+["result",0,"message","chat","type"]	"group"
+["result",0,"message","chat","all_members_are_administrators"]	true
+["result",0,"message","date"]	1592372719
+
+["result",0,"message","pinned_message","message_id"]	3022
+["result",0,"message","pinned_message","from","id"]	796814662
+["result",0,"message","pinned_message","from","is_bot"]	true
+["result",0,"message","pinned_message","from","first_name"]	"DealOMat"
+["result",0,"message","pinned_message","from","username"]	"Deal_O_Mat_bot"
+["result",0,"message","pinned_message","chat","id"]	-1001220313778
+["result",0,"message","pinned_message","chat","title"]	"Testgruppe bot only test"
+["result",0,"message","pinned_message","chat","type"]	"supergroup"
+["result",0,"message","pinned_message","date"]	1593121152
+["result",0,"message","pinned_message","text"]	"new pinned Message"
+
+["result",0,"message","new_chat_title"]	"new Testgruppe bot only"

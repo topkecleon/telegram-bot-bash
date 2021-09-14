@@ -5,9 +5,10 @@
 #
 # tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.25-dev-9-g14fa2c7
+#### $$VERSION$$ v1.51-0-g6e66a28
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
+# shellcheck disable=SC2250
 
 #
 ### BEGIN INIT INFO
@@ -31,40 +32,103 @@ runas="nobody"
 
 # uncomment one of the example lines to fit your system 
 # runcmd="su ${runas} -s /bin/bash -c "      # runasuser with *su*
-# runcmd="runuser ${runas} -s /bin/bash -c " # runasuser with *runuser*
+# runcmd="/usr/sbin/runuser ${runas} -s /bin/bash -c " # runasuser with *runuser*
 
 # edit the values of the following lines to fit your config:
-start="cd /usr/local/telegram-bot-bash; /usr/local/telegram-bot-bash/bashbot.sh"	# location of your bashbot.sh script
-name='' 	# your bot name as given to botfather, e.g. mysomething_bot
+# your bot name as given to botfather, e.g. mysomething_bot
+name=""
+[ -z "${name}" ] && name="unknown"
+
+# your bot installation dir
+bashbotdir="/usr/local/telegram-bot-bash"
+databotdir="${bashbotdir}/data-bot-bash"
+FIFO="${databotdir}/webhook-fifo-${name}"
+
+# programs to run
+bashbot="cd ${bashbotdir}; ${bashbotdir}/bashbot.sh"
+webhook="cd ${bashbotdir}; nohup ${bashbotdir}/bin/process_batch.sh --startbot --watch ${FIFO}"
+# set additionl parameter, e.g. debug
+mode=""
+
+# select logfile for webhook start stop and script errors
+hooklog="DEBUG"
+hooklog="WEBHOOK"
 
 # END Configuration
 #######################
 
-[ "${name}" = "" ] && name="${runas}"
+
+# check for bot status
+ps -f -u "${runas}" | grep "${name}" | grep -qF "bashbot.sh startbot"
+if [ "$?" = "0" ]; then
+	# printf "bashbot (%s) is running in poll mode\n" "${name}"
+	stat="poll"
+else
+	ps -f -u "${runas}" | grep "${name}" | grep -qF "process_batch.sh --startbot"
+	if [ "$?" = "0" ]; then
+		#printf "bashbot (%s) is running in webhook mode\n" "${name}"
+		stat="hook"
+	elif [ "${name}" != "unknown" ]; then
+		#printf "bashbot (%s) is stopped\n" "${name}"
+		stat="stop"
+	else
+		stat="unknown"
+	fi
+fi
 
 case "$1" in
 'start')
-	# shellcheck disable=SC2250
-	$runcmd "$start start" # >/dev/null 2>&1 </dev/null
+	[ "${stat}" != "stop" ] && printf "Warning, bot is running in mode: %s\n" "${stat}"
+	$runcmd "$bashbot start $mode" # >/dev/null 2>&1 </dev/null
+	RETVAL=$?
+	;;
+'starthook')
+	[ -p "${FIFO}" ] || printf "Warning, webhook pipe not found: %s\n" "${FIFO##*/}"
+	[ "${stat}" != "stop" ] && printf "Warning, bot is running in mode: %s\n" "${stat}"
+	printf "Starting bashbot in webhook mode ... "
+	$runcmd "$webhook $mode </dev/null &>>${bashbotdir}/logs/${hooklog}.log &" # >/dev/null 2>&1 </dev/null
+	sleep 1
+	$0 status
 	RETVAL=$?
 	;;
 'stop')
-	# shellcheck disable=SC2250
-	$runcmd "$start stop"
+	[ "${stat}" != "poll" ] && printf "Warning, bot is not in poll mode: %s\n" "${stat}"
+	$runcmd "$bashbot stop $mode"
 	RETVAL=$?
 	;;
-'status')
-	ps -f -u "${runas}" | grep "${name}" | grep -qF "bashbot.sh startbot"
-	if [ "$?" = "0" ]; then
-		printf "bashbot (%s) is runningi\n" "${name}"
-		RETVAL=0
-	else
-		printf "bashbot (%s) is stopped\n" "${name}"
-		RETVAL=1
+'stophook')
+	[ "${stat}" != "hook" ] && printf "Warning, bot is not in webhook mode: %s\n" "${stat}"
+	printf "Stopping bashbot webhook mode ... "
+	KILLID="$(ps -f -u "${runas}" | grep "process_batch.sh --startbot" | sed -E 's/[^0-9]+([0-9]+).*/\1/' | tr -s "\r\n" "  ")"
+	if [ -n "${KILLID}" ]; then
+		$runcmd "kill ${KILLID}; wait ${KILLID} 2>/dev/null"
+		sleep 1
 	fi
+	RETVAL=$?
+	$0 status
+	;;
+'status')
+	case "${stat}" in
+		"poll"*) printf "bashbot (%s) is running in poll mode\n" "${name}"
+			RETVAL=0
+			;;
+		"hook"*) printf "bashbot (%s) is running in webhook mode\n" "${name}"
+			RETVAL=0
+			;;
+		"stop"*) printf "bashbot (%s) is not running\n" "${name}"
+			RETVAL=1
+			;;
+		*)	printf "bashbot (%s) status is %s\n" "${name}" "${stat}"
+			RETVAL=2
+			;;
+	esac
 	;;
 'restart'|'reload')
 	$0 stop; $0 start 
+	RETVAL=$?
+	;;
+'restarthook'|'reloadhook')
+	$0 stophook; $0 starthook 
 	RETVAL=$?
 	;;
 'restartback')
@@ -73,7 +137,7 @@ case "$1" in
 	;;
 'suspendback'|'resumeback'|'killback')
 	# shellcheck disable=SC2250
-	$runcmd "$start $1"
+	$runcmd "$bashbot $1 $mode"
 	RETVAL=$?
 	# kill inotifywait from runuser
 	if [ "$1" != "resumeback" ]; then 
@@ -82,7 +146,8 @@ case "$1" in
 	fi  
 	;;
 *)
-	printf "%s\n" "Usage: $0 { start | stop | restart | reload | restartback | suspendback | resumeback | killback }"
+	printf "%s\n" "Usage: $0 [ start  | stop | restart | starthook |  stophook  | restarthook ]"
+	printf "%s\n" "       $0 [ status | restartback | suspendback  | resumeback | killback ]"
 	RETVAL=1
 	;;
 esac

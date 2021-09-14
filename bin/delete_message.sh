@@ -1,9 +1,10 @@
 #!/bin/bash
+# shellcheck disable=SC1090,SC2034
 #===============================================================================
 #
 #          FILE: bin/delete_message.sh
 # 
-#         USAGE: delete_message.sh [-h|--help]  "CHAT[ID]" "MESSAGE[ID]" [debug]
+USAGE='delete_message.sh [-h|--help]  "CHAT[ID]" "MESSAGE[ID]" [debug]'
 # 
 #   DESCRIPTION: delete a message in the given user/group
 # 
@@ -19,36 +20,21 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 03.01.2021 15:37
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.51-0-g6e66a28
 #===============================================================================
 
 ####
 # parse args
 DELETE="delete_message"
-case "$1" in
-	'')
-		printf "missing arguments\n"
-		;&
-	"-h"*)
-		printf 'usage: send_edit_message [-h|--help] [format] "CHAT[ID]" "MESSAGE[ID]" "message ..."  [debug]\n'
-		exit 1
-		;;
-	'--h'*)
-		sed -n '3,/###/p' <"$0"
-		exit 1
-		;;
-esac
-
 
 # set bashbot environment
-# shellcheck disable=SC1090
-source "${0%/*}/bashbot_env.inc.sh" "$3" # $3 debug
+source "${0%/*}/bashbot_env.inc.sh" "${3:-debug}" # $3 debug
+print_help "$1"
 
-####
 ####
 # ready, do stuff here -----
 if [ "$1" == "BOTADMIN" ]; then
-	CHAT="${BOT_ADMIN}"
+	CHAT="${BOTADMIN}"
 else
 	CHAT="$1"
 fi
@@ -59,5 +45,4 @@ fi
 [ "${BOTSENT[OK]}" = "true" ] && BOTSENT[ID]="$2"
 
 # output send message result
-jssh_printDB "BOTSENT" | sort -r
-
+print_result

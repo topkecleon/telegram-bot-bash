@@ -1,6 +1,13 @@
+STANDALONE
 data-bot-bash/*
+test
+webhook-fifo*
 JSON.awk
+bashbot.rc
+mycommands.sh
+mycommands.conf
 awk-patch.sh
+make-standalone.sh.include
 *.jssh*
 botacl
 *.flock

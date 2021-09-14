@@ -19,8 +19,10 @@ Have FUN!
 ```
 .
 ├── mycommands.sh        # THIS is your bot, place logic and commands here!
+├── mycommands.conf      # place your bot config and bot messages here!
 │
-├── mycommands.sh.clean      # copy to "mycommands.sh" if you start developing your bot
+├── mycommands.conf.dist     # copy to "mycommands.conf" if not exist
+├── mycommands.sh.clean      # copy to "mycommands.sh" to start developing a new bot
 ├── mycommands.sh.dist       # example bot, also used for testing bashbot internally 
 │
 ├── count.jssh           # count bashbot usage in jssh key-value store
@@ -28,16 +30,24 @@ Have FUN!
 │
 ├── bashbot.sh           # main bashbot script - DO NOT EDIT!
 ├── commands.sh          # command dispatcher - DO NOT EDIT!
-├── JSON.sh              # bashbots JSON parser, see https://github.com/dominictarr/JSON.sh
+├── JSON.sh              # bashbot JSON parsers
+│   ├── JSON.sh              # sh implementation, https://github.com/dominictarr/JSON.sh
+│   └── JSON.awk.dist        # faster awk version, https://github.com/step-/JSON.awk
 │
 ├── bin                  # ready to use scripts, use `scriptname --help` for help
+│   ├── bashbot_stats.sh         # does what it says ...
+│   ├── send_broadcast.sh        # send message to all known chats
 │   ├── send_message.sh          # send message to given chat
 │   ├── edit_message.sh          # replace given message id in given chat
-│   ├── send_broadcast.sh        # send message to all known chats
 │   ├── send_file.sh             # send file to given chat
-│   ├── bashbot_stats.sh         # does what it says ...
+│   ├── delete_message.sh        # delete given message id in given chat
+│   ├── send_buttons.sh          # send message with attached button
+│   ├── edit_buttons.sh          # attach/edit message buttons
+│   ├── kickban_user.sh          # kick/unban user from given chat
+│   ├── promote_user.sh          # promote/dente user rights in given chat
 │   │
-│   └── bashbot_env.inc.sh       # bashbot location included from scripts, adapt if needed
+│   ├── bashbot_env.inc.sh       # sourced from scripts, adapt locations if needed
+│   └── bashbot_init.inc.sh      # sourced from bashbot.sh init
 │
 ├── scripts              # place your bashbot interactive and background scripts here
 │   └── interactive.sh.clean     # interactive script template for new scripts
@@ -47,15 +57,15 @@ Have FUN!
 ├── modules              # optional functions, sourced by commands.sh
 │   ├── aliases.sh           # to disable modules rename them xxx.sh.off
 │   ├── answerInline.sh
-│   ├── jsshDB.sh            # read and store JSON.sh style JSON, mandatory
 │   ├── background.sh        # interactive and background functions
-│   ├── chatMember.sh
-│   └── sendMessage.sh       # main send message functions, mandatory
+│   ├── chatMember.sh        # manage chat mambers
+│   ├── jsshDB.sh            # read and store JSON.sh style JSON, mandatory
+│   ├── processUpdates.sh    # process updates from telegram, mandatory (run bot)
+│   └── sendMessage.sh       # send message functions, mandatory
 │
 ├── addons               # optional addons, disabled by default
 │   ├── example.sh           # to enable addons change their XXX_ENABLE to true
-│   ├── antiFlood.sh         # simple addon taking actions based on # files and text sent to chat
-│   └── xxxxxage.sh
+│   └── antiFlood.sh         # simple addon taking actions based on # files and text sent to chat
 │
 ├── bashbot.rc           # start/stop script if you run bashbot as service
 │
@@ -88,6 +98,7 @@ Start or Stop your Bot use the following commands:
 ```
 
 ### Scripts in bin/
+Use `script.sh -h` or `script --help` to get short/long help for script.
 
 To count the total number of users and messages run the following command:
 
@@ -118,7 +129,7 @@ bin/send_message.sh "CHAT[ID]" "Hey, I just wanted to let you know that the bot'
 To replace a message already sent to one user or chat run the following command:
 
 ```bash
-bin/send_edit_message.sh "CHAT[ID]" "12345" "Done!"
+bin/edit_message.sh "CHAT[ID]" "12345" "Done!"
 
 ["OK"]  "true"
 ["ID"]  "12345"
@@ -138,11 +149,17 @@ Note: to get help about a script in bin/ run `scriptname.sh --help`
 ----
 
 ## Receive data
-Evertime a Message is received, you can read incoming data using the following variables:
+Evertime a Telegram update is received, you can read incoming data using the following variables:
+In case you need other update values, the array `UPD` contains complete Telegram response.
 
-### Regular Messages
+### Processing Messages
 
-These Variables are always present in regular messages:
+If an update is received from Telegram, the message is pre processed by Bashbot and the following bash variables are set for use in `mycommands.sh`.
+
+These variables are always present if a message is pre processed:
+
+* `${ME}`: Name of your bot
+* `${BOTADMIN}`: User id of bot administrator
 
 * `${MESSAGE}`: Current message text
 * `${MESSAGE[ID]}`: ID of current message
@@ -162,6 +179,8 @@ These Variables are always present in regular messages:
 
 The following variables are set if the message contains optional parts:
 
+* `MESSAGE[CAPTION]`: Picture, Audio, Video, File Captions
+* `MESSAGE[DICE]`: Animated DICE Emoji DICE values is contained in `MESSAGE[RESULT]`
 * `$REPLYTO`: Original message which was replied to
 * `$REPLYTO`: This array contains the First name, last name, username and user id of the ORIGINAL sender of the message REPLIED to.
     * `${REPLYTO[ID]}`: ID of message which was replied to
@@ -175,14 +194,15 @@ The following variables are set if the message contains optional parts:
     * `${FORWARD[FIRST_NAME]}`: Original user's first name
     * `${FORWARD[LAST_NAME]}`: Original user's' last name
     * `${FORWARD[USERNAME]}`: Original user's username
-* `$CAPTION`: Picture, Audio, Video, File Captions
-* `$URLS`: This array contains documents, audio files, voice recordings and stickers as URL.
-    * `${URLS[AUDIO]}`: Audio files
-    * `${URLS[VIDEO]}`: Videos
-    * `${URLS[PHOTO]}`: Photos (maximum quality)
-    * `${URLS[VOICE]}`: Voice recordings
-    * `${URLS[STICKER]}`: Stickers
-    * `${URLS[DOCUMENT]}`: Any other file
+* `$URLS`: This array contains the `path` on Telegram server for files send to chat, e.g. photo, video, audio file.
+    * `${URLS[AUDIO]}`: Path to audio file
+    * `${URLS[VIDEO]}`: Path to video
+    * `${URLS[PHOTO]}`: Path to photo (maximum quality)
+    * `${URLS[VOICE]}`: Path to voice recording
+    * `${URLS[STICKER]}`: Path to sticker
+    * `${URLS[DOCUMENT]}`: Path to any other file
+**Important:** This is NOT a full URL, you must use `download_file "${URLS[xxx]}"` or prefix path with telegram api url for manual download
+(_e.g. `getJson "${URL}/${URLS[xxx]}" >file`_).
 * `$CONTACT`: This array contains info about contacts sent in a chat.
     * `${CONTACT[ID]}`: User id
     * `${CONTACT[NUMBER]}`: Phone number
@@ -202,11 +222,10 @@ The following variables are set if the message contains optional parts:
 
 ### Service Messages
 
-Service Messages are regular messages not itended for end users, instead they signal special events to the
-client, e.g. new users.
+Service Messages are updates not itended for end users, instead they signal special events in a chat, e.g. new users.
 
-If a service message is received bashbot sets MESSAGE to the service message type as a command,
-e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user". 
+If a service message is received bashbot pre processing sets `${MESSAGE}` according to the service message type,
+e.g. if a new user joins a chat MESSAGE is set to `/_new_chat_user ...`. 
 
 * `$SERVICE`: This array contains info about received service messages.
     * `${SERVICE}`: "yes" if service message is received
@@ -228,6 +247,8 @@ e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user".
         * `${MESSAGE}`: /_new_chat_title SENDER TEXT
     * `${SERVICE[NEWPHOTO]}`: New Chat Picture 
         * `${MESSAGE}`: /_new_chat_picture SENDER URL
+**Important:** SERVICE[NEWPHOTO] is NOT a full URL, you must use `download_file "${SERVICE[NEWPHOTO]}"` or prefix path with telegram api url for manual download
+(_e.g. `getJson "${FILEURL}/${SERVICE[NEWPHOTO]}" >file`_).
     * `${SERVICE[PINNED]}`: Pinned MESSAGE ID
         * `${MESSAGE}`: /_new_pinned_message SENDER ID
         * `${PINNED[ID]}`: Id of pinned message
@@ -240,11 +261,17 @@ e.g. if a new user joins a chat MESSAGE is set to "/_new_chat_user".
 
 
 ### Inline query messages
+Inline query messages are special messages for direct interaction with your bot.
+If an user starts an inline conversation an inline query is sent after each user keystroke.
 
-Inline query messages are small, non regular messages used for interaction with the user,
-they contain the following variables only:
+To receive inline messages you must set `inline=1` in `mycommands.conf` and in botfather.
+THe message contatains all characters so far typed from the user.
 
-* `${iQUERY}`: Current inline query
+An received inline query must be anserwered with `answer_inline_query`, see also (Inline Query)[6_reference.md#inline-query]
+
+If an inline query is received only the following variables are available:
+
+* `${iQUERY}`: Inline message typed so far by user
 * `$iQUERY`: This array contains the ID, First name, last name, username and user id of the sender of the current inline query.
     * `${iQUERY[ID]}`: Inline query ID
     * `${iQUERY[USER_ID]}`: User's id
@@ -252,20 +279,43 @@ they contain the following variables only:
     * `${iQUERY[LAST_NAME]}`: User's last name
 
 
-### Send Message Results
 
-BOTSENT is set on every send_xxx action and only valid until next send action. For more on message results see.  
-[Advanced Usage](3_advanced.md)
+### Callback button messages
+Callback button messages special messages swend from callback buttons, they contain the following variables only:
+
+* `$iBUTTON`: This array contains the ID, First name, last name, username and user id of the user clicked on the button
+    * `${iBUTTON[ID]}`: Callback query ID
+    * `${iBUTTON[DATA]`: Data attached to button, hopefully unique
+    * `${iBUTTON[CHAT_ID]`: Chat where button was pressed
+    * `${iBUTTON[MESSAGE_ID]`: Message to which button is attached
+    * `${iBUTTON[MESSAGE]`: Text of message
+    * `${iBUTTON[USER_ID]}`: User's id
+    * `${iBUTTON[FIRST_NAME]}`: User's first name
+    * `${iBUTTON[LAST_NAME]}`: User's last name
+    * `${iBUTTON[USERNAME]}`: User's @username
+
+
+## Send data / get response
+
+After every `send_xxx` `get_xxx` call the array BOTSENT contains the most important values from Telegram response.
+In case you need other response values , the array `UPD` contains complete Telegram response.
+
+You can use the array values to check if a commands was successful and get returned values from Telegram.
+
+### BOTSENT array
 
 * `$BOTSENT`: This array contains the parsed results from the last transmission to telegram.
     * `${BOTSENT[OK]}`: contains the string `true`: after a successful transmission
     * `${BOTSENT[ID]}`: Message ID of sent message, image, file etc., if OK is true
+    * `${BOTSENT[FILE_ID]}`: unique identifier returned for an uploaded file or URL
+    * `${BOTSENT[FILE_TYPE]}`: file type: photo, audio, video, sticker, voice, document
+
 
 
 ## Usage of bashbot functions
 
 #### sending messages
-To send messages use the `send_xxx_message`functions.
+To send messages use the `send_xxx_message` functions.
 To insert line brakes in a message place `\n` in the text. 
 
 To send regular text without any markdown use:
@@ -281,7 +331,7 @@ To send text with html:
 send_html_message "${CHAT[ID]}" "lol <b>bold</b>"
 ```
 
-To forward messages use the `forward`function:
+To forward messages use the `forward` function:
 ```bash
 forward "${CHAT[ID]}" "from_chat_id" "message_id"
 ```
@@ -314,24 +364,25 @@ send_message "${CHAT[ID]}" "lol" "safe"
 
 
 #### Send files, locations, keyboards.
-To send images, videos, voice files, photos etc. use the `send_photo`function (remember to change the safety Regex @ line 14 of command.sh to allow sending files only from certain directories):
+To send local files or URL's (photo, video, voice, sticker, documents) use the `send_file` function.
 ```bash
-send_file "${CHAT[ID]}" "/home/user/doge.jpg" "Lool"
+send_file "${CHAT[ID]}" "/home/user/dog.jpg" "Lool" "photo"
+send_file "${CHAT[ID]}" "https://images-na.ssl-images-amazon.com/images/I/81DQ0FpoSNL._AC_SL1500_.jpg"
 ```
-To send custom keyboards use the `send_keyboard`function:
+To send custom keyboards use the `send_keyboard` function:
 ```bash
 send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" '[ "Yep" , "No" ]' # note the single quotes!
 send_keyboard "${CHAT[ID]}" "Text that will appear in chat?" "[ \\"Yep\\" , \\"No\\" ]" # within double quotes you must escape the inside double quots
 ```
-To send locations use the `send_location`function:
+To send locations use the `send_location` function:
 ```bash
 send_location "${CHAT[ID]}" "Latitude" "Longitude"
 ```
-To send venues use the `send_venue`function:
+To send venues use the `send_venue` function:
 ```bash
 send_venue "${CHAT[ID]}" "Latitude" "Longitude" "Title" "Address" "optional foursquare id"
 ```
-To send a chat action use the `send_action`function.
+To send a chat action use the `send_action` function.
 Allowed values: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for locations.
 ```bash
 send_action "${CHAT[ID]}" "action"
@@ -341,5 +392,5 @@ send_action "${CHAT[ID]}" "action"
 #### [Prev Create Bot](1_firstbot.md)
 #### [Next Advanced Usage](3_advanced.md)
 
-#### $$VERSION$$ v1.21-0-gc85af77
+#### $$VERSION$$ v1.51-0-g6e66a28
 
