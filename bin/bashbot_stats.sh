@@ -1,9 +1,10 @@
 #!/bin/bash
+# shellcheck disable=SC1090,SC2034
 #===============================================================================
 #
 #          FILE: bin/bashbot_stats.sh
 # 
-#         USAGE: bashbot_stats.sh [-h|--help] [debug]
+USAGE='bashbot_stats.sh [-h|--help] [debug]'
 # 
 #   DESCRIPTION: output bashbot user stats
 # 
@@ -16,30 +17,17 @@
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 20:34
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.51-0-g6e66a28
 #===============================================================================
 
-####
-# parse args
-case "$1" in
-	"-h"*)
-		echo "usage: send_message [-h|--help] [debug]"
-		exit 1
-		;;
-	'--h'*)
-		sed -n '3,/###/p' <"$0"
-		exit 1
-		;;
-esac
-
 # set bashbot environment
-# shellcheck disable=SC1090
 source "${0%/*}/bashbot_env.inc.sh" "$1"
+[ -n "$1" ] && print_help "$1"
 
 ####
 # ready, do stuff here -----
 
-echo -e "${GREEN}Hi I'm ${BOT_NAME}.${NC}"
+echo -e "${GREEN}Hi I'm ${BOTNAME}.${NC}"
 declare -A STATS
 jssh_readDB_async "STATS" "${COUNTFILE}"
 for MSG in ${!STATS[*]}

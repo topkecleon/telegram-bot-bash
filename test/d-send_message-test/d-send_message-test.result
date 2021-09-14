@@ -34,10 +34,10 @@ URL:https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/getMe?12345
 chat:123456	JSON:"text":"\# test for new inline button"
 URL:https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/getMe?123456789:BASHBOTTESTSCRIPTbashbottestscript_/sendMessage
 
-chat:123456	JSON:"text":"Text plus keyboard will appear in chat", "reply_markup": {"inline_keyboard": [ [ {"text":"Button Text", "url":"https://www..."}] ]}
+chat:123456	JSON:"text":"Text plus keyboard will appear in chat", "reply_markup": {"inline_keyboard": [ [{"text":"Button Text", "url":"https://www..."}] ]}
 URL:https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/getMe?123456789:BASHBOTTESTSCRIPTbashbottestscript_/sendMessage
 
-chat:123456	JSON:"text":"STABILO 88\/240 Fineliner point 88\n\n[https:\/\/images\-na\.ssl\-images\-amazon\.com\/images\/I\/41oypA3kmHL\.l_SX300\.jpg]\nsecond part of text\nplus newline\.", "reply_markup": {"inline_keyboard": [ [ {"text":"Bei Amazon ansehen \.\.\.", "url":"https://www.amazon.de/dp/B014TN3JYW"}] ]}
+chat:123456	JSON:"text":"STABILO 88\/240 Fineliner point 88\n\n[https:\/\/images\-na\.ssl\-images\-amazon\.com\/images\/I\/41oypA3kmHL\.l_SX300\.jpg]\nsecond part of text\nplus newline\.", "reply_markup": {"inline_keyboard": [ [{"text":"Bei Amazon ansehen \.\.\.", "url":"https://www.amazon.de/dp/B014TN3JYW"}] ]}
 URL:https://my-json-server.typicode.com/topkecleon/telegram-bot-bash/getMe?123456789:BASHBOTTESTSCRIPTbashbottestscript_/sendMessage
 
 chat:123456	JSON:"text":"\# test for sendfile"

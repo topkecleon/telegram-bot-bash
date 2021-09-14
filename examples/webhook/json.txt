@@ -1,0 +1,1 @@
+{"update_id":665220889,"message":{"message_id":760,"from":{"id":BOTADMIN,"is_bot":false,"first_name":"Kay","last_name":"M","username":"KayM","language_code":"de"},"chat":{"id":BOTADMIN,"first_name":"Kay","last_name":"M","username":"KayM","type":"private"},"date":1612029749,"text":"/info","entities":[{"offset":0,"length":5,"type":"bot_command"}]}}

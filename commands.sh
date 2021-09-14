@@ -8,14 +8,14 @@
 # | |__/ / |_| |  | | | | |_| | |__   | |____( (_| | | |__ _ 
 # |_____/ \___/   |_| |_|\___/ \___)  |_______)____|_|\___)_|
 #
-# this file *MUST* not be edited! place your config and commands in
-# the file "mycommands.sh". a clean version is provided as "mycommands.sh.clean"
+# this file *MUST* not edited! place your config in the file "mycommands.conf"
+# and commands in "mycommands.sh", a clean version is provided as "mycommands.sh.clean"
 #
 
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.51-0-g6e66a28
 #
 
 # bashbot locale defaults to c.UTF-8, adjust locale in mycommands.sh if needed
@@ -42,12 +42,16 @@ bashbot_help='
 *• /start*: _Start bot and get this message_.
 *• /help*: _Get this message_.
 *• /info*: _Get shorter info message about this bot_.
-*• /question*: _Start interactive chat (mycommands.dist)_.
-*• /cancel*: _Cancel any currently running interactive chat_.
 *• /kickme*: _You will be autokicked from the group_.
 *• /leavechat*: _The bot will leave the group with this command _.
+Additional commands from mycommands.dist ...
+*• /game*: _throw a die_.
+*• /question*: _Start interactive chat_.
+*• /cancel*: _Cancel any currently running interactive chat_.
+*• /run_notify*: _Start background job_.
+*• /stop_notify*: _Stop notify background job_.
 Written by Drew (@topkecleon) and KayM (@gnadelwartz).
-Get the code in my [GitHub](http://github.com/topkecleon/telegram-bot-bash)
+Get the code on [GitHub](http://github.com/topkecleon/telegram-bot-bash)
 '
 
 # load modules on startup and always on on debug
@@ -66,6 +70,7 @@ fi
 # copy "mycommands.sh.dist" to "mycommands.sh" and change the values there
 # defaults to no inline, all commands  and nonsense home dir
 export INLINE="0"
+export CALLBACK="0"
 export MEONLY="0"
 export FILE_REGEX="${BASHBOT_ETC}/.*"
 
@@ -76,23 +81,26 @@ export FILE_REGEX="${BASHBOT_ETC}/.*"
 
 
 if [ -z "$1" ] || [[ "$1" == *"debug"* ]];then
-    # detect inline commands....
-    # no default commands, all processing is done in myinlines()
-    if [ "${INLINE}" != "0" ] && [ -n "${iQUERY[ID]}" ]; then
-    	# forward iinline query to optional dispatcher
-	_exec_if_function myinlines
+    #################
+    # detect inline and callback query
+    if [ -n "${iQUERY[ID]}" ]; then
+    	# forward inline query to optional dispatcher
+	[ "${INLINE:-0}" != "0" ] &&  _exec_if_function myinlines
 
-    # regular (global) commands ...
-    # your commands are in mycommands() 
+    elif [ -n "${iBUTTON[ID]}" ]; then
+    	# forward inline query to optional dispatcher
+	[ "${CALLBACK:-0}" != "0" ] && _exec_if_function mycallbacks
+
+    #################
+    # regular command
     else
 	
 	###################
 	# if is bashbot is group admin it get commands sent to other bots
 	# set MEONLY=1 to ignore commands for other bots
-	if [[ "${MEONLY}" != "0" && "${MESSAGE}" == "/"* && "${MESSAGE%% *}" == *"@"* ]]; then
+	if [[ "${MEONLY}" != "0" && "${MESSAGE}" == "/"*"@"* ]]; then
 		# here we have a command with @xyz_bot added, check if it's our bot
-		MYCHECK="${MESSAGE%% *}"
-		[ "${MYCHECK}" != "${MYCHECK%%@${ME}}" ] && return
+		[ "${MESSAGE%%@*}" != "${MESSAGE%%@${ME}}" ] && return
 	fi 
 
 	###################
@@ -127,7 +135,7 @@ if [ -z "$1" ] || [[ "$1" == *"debug"* ]];then
 		'/help'*)
 			send_markdown_message "${CHAT[ID]}" "${bashbot_help}"
 			;;
-		'/leavechat'*) # bot leave chat if user is admin in chat
+		'/leavechat'*)	# bot leave chat if user is admin in chat
 			if user_is_admin "${CHAT[ID]}" "${USER[ID]}" || user_is_allowed  "${USER[ID]}" "leave" ; then
 				send_markdown_message "${CHAT[ID]}" "*LEAVING CHAT...*"
    				leave_chat "${CHAT[ID]}"

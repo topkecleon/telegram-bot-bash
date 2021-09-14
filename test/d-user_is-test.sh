@@ -10,7 +10,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.51-0-g6e66a28
 #===============================================================================
 
 # include common functions and definitions
@@ -22,6 +22,9 @@ set +f
 
 cd "${TESTDIR}" || exit 1
 
+# reset BOTADMIN
+printf '["botadmin"]	"?"\n' >>"${ADMINFILE}" # auto mode
+
 # source bashbot.sh function, uncomment if you want to test functions
 # shellcheck source=./bashbot.sh
 source "${TESTDIR}/bashbot.sh" source
@@ -32,8 +35,6 @@ source "${TESTDIR}/commands.sh" source
 
 # first user asking for botadmin will botadmin
 printf "Check \"user_is_botadmin\" ...\n"
-
-printf '["botadmin"]	"?"\n' >>"${ADMINFILE}" # auto mode
 
 printf "BOTADMIN ...\n"
 user_is_botadmin "BOTADMIN" || exit 1 # should never fail

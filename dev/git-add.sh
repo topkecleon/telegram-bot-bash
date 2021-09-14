@@ -3,21 +3,21 @@
 #
 # works together with git pre-push.sh and ADD all changed files since last push
 
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.51-0-g6e66a28
 
-# magic to ensure that we're always inside the root of our application,
-# no matter from which directory we'll run script
-GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
-if [ "${GIT_DIR}" != "" ] ; then
-	cd "${GIT_DIR}/.." || exit 1
-else
-	printf "Sorry, no git repository %s\n" "$(pwd)" && exit 1
+#shellcheck disable=SC1090
+source "${0%/*}/dev.inc.sh"
+
+# check for last commit date
+if [ ! -f "${LASTCOMMIT}" ]; then
+	if ! touch -d "$(git log -1 --format=%cD)" "${LASTCOMMIT}"; then
+		printf "No previous commit found, use \"git add\" instead ... Abort\n"
+		exit
+	fi
 fi
 
-[ ! -f .git/.lastcommit ] && printf "No previous commit or hooks not installed, use \"git add\" instead ... Abort\n" && exit
-
 set +f
-FILES="$(find ./*  -newer .git/.lastcommit| grep -v -e 'DIST\/' -e 'STANDALONE\/' -e 'JSON.sh')"
+FILES="$(find ./*  -newer "${LASTCOMMIT}" | grep -v -e 'DIST\/' -e 'STANDALONE\/' -e 'JSON.sh')"
 set -f
 # FILES="$(find ./* -newer .git/.lastpush)"
 [ "${FILES}" = "" ] && printf "Nothing changed since last commit ...\n" && exit
@@ -31,7 +31,9 @@ for file in ${FILES}
 do
 	[ -d "${file}" ] && continue
 	printf "%s" "${file} "
-	git add "${file}"
 done
 printf " - Done.\n"
+
+# stay with "." for (re)moved files!
+git add .
 

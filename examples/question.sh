@@ -10,7 +10,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.51-0-g6e66a28
 ########################################################################
 
 ######
@@ -28,6 +28,10 @@ export 'LANGUAGE=C.UTF-8'
 
 unset IFS
 # set -f # if you are paranoid use set -f to disable globbing
+
+# kill interactive script if not finished in time, e.g. user away or error
+MAXWAIT="1m"
+{ sleep "${MAXWAIT}"; printf "Stopping Questionnaire after %s, you need to much time to finish ... BYE\n" "${MAXWAIT}"; kill $$; wait 2>/dev/null ;} &
 
 # simple yes/no question, defaults to no
 printf "Hi, hello there\nWould you like some tea (y/n)?\n"

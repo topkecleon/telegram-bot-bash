@@ -10,7 +10,7 @@
 #	LICENSE: WTFPLv2 http://www.wtfpl.net/txt/copying/
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #
-#### $$VERSION$$ v1.25-dev-14-g2fe6d4b
+#### $$VERSION$$ v1.51-0-g6e66a28
 #===============================================================================
 
 # include common functions and definitions
@@ -41,7 +41,7 @@ source <( printf 'UPD=( %s )' "$(sed <<<"${UPDATE}" -E -e 's/\t/=/g' -e 's/=(tru
 printf "Check process_inline ...\n"
 printf "  ... with JsonDecode Bash\n"
 set -x
-{ process_inline "0";  set +x; } >>"${LOGFILE}" 2>&1;
+{ process_inline_query "0";  set +x; } >>"${LOGFILE}" 2>&1;
 
 # output processed input
 print_array "iQUERY" >"${OUTPUTFILE}"

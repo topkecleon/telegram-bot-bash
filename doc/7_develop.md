@@ -11,11 +11,11 @@ If you want to get error messages (and more) start bashbot  `./bashbot.sh startb
 you can the change the level of verbosity of the debug argument: 
 
 ```
-	"debug"		all output is redirected to "DEBUG.log", in addition every incoming message is logged in "MESSAGE.log" and "INLINE.log"
-	"xdebug"	same as debug plus set bash option '-x' to log any executed command in "DEBUG.log"
+	"debug"		all output is redirected to `DEBUG.log`, in addition every incoming message is logged in `MESSAGE.log` and `INLINE.log`
+	"xdebug"	same as debug plus set bash option '-x' to log any executed command in `DEBUG.log`
 ```
 
-Use the command `tail` to watch your bot live, e.g. "tail -f DEBUG.log". To obtain more information place set -x; set +x in your code.
+Use the command `tail` to watch your bot live, e.g. `tail -f DEBUG.log`. To obtain more information place `set -x; ... set +x` around suspected code.
 
 Sometimes it's useful to watch the bot live in the terminal:
 
@@ -147,7 +147,7 @@ This means if you register an every 5 minutes callback first execution may < 5 M
     * x	execute every x minutes
     * -x execute once WITHIN the next x Minutes (next 10 Minutes since start "event")
 
-Note: If you want exact "in x minutes" use "EVENT_TIMER plus x" as time: `-(EVENT_TIMER + x)`
+Note: If you want exact "in x minutes" use "EVENT_TIMER" as reference: `(EVENT_TIMER +x)`
 
 *Example:*
 ```bash
@@ -166,8 +166,8 @@ BASHBOT_EVENT_TIMER["example_every5","5"]="example_every5min"
 # execute once on the next 10 minutes since start "event"
 BASHBOT_EVENT_TIMER["example_10min","-10"]="example_in10min"
 
-# once in exact 10 minutes
-BASHBOT_EVENT_TIMER["example_10min","$(( (EVENT_TIMER+10) * -1 ))"]="example_in10min"
+# once in exact 10 minutes, note the -
+BASHBOT_EVENT_TIMER["example_10min","-$(( EVENT_TIMER+10 ))"]="example_in10min"
 
 ```
 
@@ -252,6 +252,8 @@ data="$(cat file)" -> data="$(<"file")"
 
 DIR="$(dirname $0) -> DIR="${0%/*}"
 
+date -> printf"%(%c)T\n" -1	# 100 times faster!
+
 PROG="($basename $0)" -> PROG="${0##*/}*
 
 ADDME="$ADDME something to add" -> ADDME+=" something to add""
@@ -259,9 +261,38 @@ ADDME="$ADDME something to add" -> ADDME+=" something to add""
 VAR="$(( 1 + 2 ))" -> (( var=1+2 ))
 
 INDEX="$(( ${INDEX} + 1 ))" -> (( INDEX++ ))
-
 ```
 For more examples see [Pure bash bible](https://github.com/dylanaraps/pure-bash-bible)
+
+The special variable `$_` stores the expanded __last__ argument of the previous command.
+This allows a nice optimisation in combination with the no-op command `:`, but be aware of `$_` pitfalls.
+
+```bash
+# $_ example: mkdir plus cd to it
+mkdir "somedir-$$" && cd "$_"	# somedir-1234 (process id)
+
+# manipulate a variable multiple times without storing intermediate results
+foo="1a23_b__x###"
+...
+: "${foo//[0-9]}"	# a_b__x###
+: "${_%%#*}"		# a_b__x
+bar="${_/__x/_c}"	# a_b_c
+
+
+# BE AWARE OF ...
+# pitfall missing quotes: $_ is LAST arg
+: ${SOMEVAR}		# "String in var" $_ -> "var" 
+: $(<"file")		# "Content     of\n  file" $_ -> "file"
+
+# pitfall [ vs. test command
+[ -n "xxx" ] && echo "$_"	# $_ -> "]" 
+test -n "xxx" && echo "$_"	# $_ -> "xxx" 
+
+# pitfall command substitution: globbing and IFS is applied!
+: "$(echo "a* is born")"# $_ -> a* is globbed even quoted!
+: "$(echo "a   b    c")"# $_ -> "a b c"
+: "$(<"file")"		# "Content     of\n  file" $_ -> "Content of file"
+```
 
 #### Prepare a new version
 After some development it may time to create a new version for the users. a new version can be in sub version upgrade, e.g. for fixes and smaller additions or
@@ -356,5 +387,9 @@ fi
 
 #### [Prev Function Reference](6_reference.md)
 
+<<<<<<< HEAD
 #### $$VERSION$$ v1.21-26-g0d3a53a
+=======
+#### $$VERSION$$ v1.51-0-g6e66a28
+>>>>>>> 5205fe39905da125685fb242834159788a616e6b
 

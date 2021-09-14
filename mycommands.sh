@@ -1,98 +1,35 @@
 #!/bin/bash
-#########
+#######################################################
 #
-# files: mycommands.sh.dist
+#        File: mycommands.sh.dist
 #
 # this is an out of the box test and example file to show what's possible in mycommands.sh
 #
 # #### if you start to develop your own bot, use the clean version of this file:
 # #### mycommands.clean
 #
+<<<<<<< HEAD
 # shellcheck disable=SC1117
 #### $$VERSION$$ v1.21-26-g0d3a53a
+=======
+#       Usage: will be executed when a bot command is received 
+>>>>>>> 5205fe39905da125685fb242834159788a616e6b
 #
-
-##########
-# adjust your language setting here, default is C.UTF-8
-# https://github.com/topkecleon/telegram-bot-bash#setting-up-your-environment
-export 'LC_ALL=C.UTF-8'
-export 'LANG=C.UTF-8'
-export 'LANGUAGE=C.UTF-8'
-
-##########
-# in UTF-8 äöü etc. are part of [:alnum:] and ranges (e.g. a-z)
-# for more information see  doc/4_expert.md#Character_classes
-# uncomment next line if you want classic ASCII ranges for [a-z] etc.
-#export LC_COLLATE=C
-
-
-##########
-# edit the following lines to fit your bot usage
-# use ${ME} for current bot name in messages
-# Note: you must escape '_' in botname with two \ in markdown messages!
-export bashbot_info='This is @'"${ME//_/\\\\_}"', the Telegram example bot written entirely in bash.
-Edit commands and messages in mycommands.sh!
-'
-# export bashbot_help='*Available commands*:
-#'
-export res=""
-
-# Set INLINE to 1 in order to receive inline queries.
-# To enable this option in your bot, send the /setinline command to @BotFather.
-export INLINE="0"
-
-# if your bot is group admin it get commands sent to other bots
-# Set MEONLY to 1 to ignore commands sent to other bots
-export MEONLY="0"
-
-# Set to .* to allow sending files from all locations
-# NOTE: this is a regex, not shell globbing! you must use a valid egex,
-# '.' matches any character and '.*' matches all remaining charatcers!
-# additionally you must escape special characters with '\', e.g. '\. \? \[ \*" to match them literally
-export FILE_REGEX="${BASHBOT_ETC}/.*"
-
-# set BASHBOT_RETRY to enable retry in case of recoverable errors, e.g.  throtteling
-# problems with send_xxx message etc are looged to  logs/ERROR.log
-unset BASHBOT_RETRY
-#export BASHBOT_RETRY="yes"
-
-# set value for adaptive sleeping while waiting for uodates in millisconds
-# max slepp between polling updates 10s (default 5s)
-export BASHBOT_SLEEP="10000"
-# add 0.2s if no update available, up to BASHBOT_SLEEP (default 0.1s)
-export BASHBOT_SLEEP_STEP="200"
-
-# if you want to use timer functions, set BASHBOT_START_TIMER to a not empty value
-# default is to not start timer
-unset BASHBOT_START_TIMER
-#export BASHBOT_START_TIMER="yes"
-
-# set to "yes" and give your bot admin privilegs to remove service messages from groups
-export SILENCER="no"
-
-# uncomment to remove keyboards sent from your bot
-# export REMOVEKEYBOARD="yes"
-# export REMOVEKEYBOARD_PRIVATE="yes"
-
-# uncomment to say welcome to new chat members
-# export WELCOME_NEWMEMBER="yes"
-WELCOME_MSG="Welcome"
-
-# uncomment to be informed about new/left chat members
-# export REPORT_NEWMEMBER="yes"
-# export REPORT_LEFTMEMBER="yes"
-
-# messages for admin only commands
-NOTADMIN="Sorry, this command is allowed for admin or owner only"
-NOTBOTADMIN="Sorry, this command is allowed for bot owner only"
-
-########
-# special network setup may require additional ARGS to curl
+#     License: WTFPLv2 http://www.wtfpl.net/txt/copying/
+#      Author: KayM (gnadelwartz), kay@rrr.de
 #
-# example: run bashbot over TOR or SOCKS proxy
-# export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1:9050" # TOR
-# export BASHBOT_CURL_ARGS="--socks5-hostname 127.0.0.1" # regular SOCKS
+#### $$VERSION$$ v1.52-dev-0-g783bf30
+#######################################################
+# shellcheck disable=SC1117
 
+####################
+# Config has moved to bashbot.conf
+# shellcheck source=./commands.sh
+[ -r "${BASHBOT_ETC:-.}/mycommands.conf" ] && source "${BASHBOT_ETC:-.}/mycommands.conf"  "$1"
+
+
+##################
+# let's go ...
 if [ "$1" = "startbot" ];then
     ###################
     # this section is processed on startup
@@ -174,12 +111,12 @@ else
 				"${WELCOME_MSG} ${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]} (@${NEWMEMBER[USERNAME]})"
 			    MYSENTID="${BOTSENT[ID]}"
 			    { sleep 5; delete_message  "${CHAT[ID]}" "${MYSENTID}"; } &
-			[ -n "${REPORT_NEWMEMBER}" ] && send_normal_message "$(getConfigKey "botadmin")"\
+			[ -n "${REPORT_NEWMEMBER}" ] && send_normal_message "${BOTADMIN}"\
 			    "New member: ${CHAT[TITLE]} (${CHAT[ID]}): ${NEWMEMBER[FIRST_NAME]} ${NEWMEMBER[LAST_NAME]} (@${NEWMEMBER[USERNAME]})"
 			fi
 			;;
 		'/_left_chat_member'*)
-			[ -n "${REPORT_LEFTMEMBER}" ] && send_normal_message "$(getConfigKey "botadmin")"\
+			[ -n "${REPORT_LEFTMEMBER}" ] && send_normal_message "${BOTADMIN}"\
 			    "Left member: ${CHAT[TITLE]} (${CHAT[ID]}): ${LEFTMEMBER[FIRST_NAME]} ${LEFTMEMBER[LAST_NAME]} (@${LEFTMEMBER[USERNAME]})"
 			;;
 		'/_migrate_group'*)
@@ -191,9 +128,39 @@ else
 
 	case "${MESSAGE}" in
 		##################
+<<<<<<< HEAD
 		# example commands, replace them with your own
+=======
+		# example commands, replace them by your own
+		'/_dice_re'*) # dice from user received
+			sleep 5
+			local gameresult="*Congratulation ${USER[FIRST_NAME]} ${USER[LAST_NAME]}* you got *${MESSAGE[RESULT]} Points*."
+			[ -z "${FORWARD[UID]}" ] && send_markdownv2_message "${CHAT[ID]}" "${gameresult}"
+			;;
+		'/game'*) # send random dice, edit list to fit your needs
+			send_dice "${CHAT[ID]}" ":$(printf "slot_machine\ngame_die\ndart\nbasketball\nsoccer\nslot_machine"|sort -R|shuf -n 1shuf -n 1):"
+			if [ "${BOTSENT[OK]}" = "true" ]; then
+				local gameresult="*Congratulation ${USER[FIRST_NAME]}* ${USER[LAST_NAME]} you got *${BOTSENT[RESULT]} Points*."
+				sleep 5
+				case "${BOTSENT[RESULT]}" in
+				  1)	gameresult="*Sorry* only *one Point* ...";;
+				  2)	gameresult="*Hey*, 2 Points are *more then one!*";;
+				  5|6)	[[ "${BOTSENT[EMOJI]}" =~ fb0$ ]] || gameresult="*Super! ${BOTSENT[RESULT]} Points!*";;
+				  6*)	gameresult="*JACKPOT! ${BOTSENT[RESULT]} Points!*";;
+				esac
+				send_markdownv2_message "${CHAT[ID]}" "${gameresult}"
+			fi
+			;;
+		'/unpin'*) # unpin all messages if (bot)admin or allowed for user
+			 user_is_allowed "${USER[ID]}" "unpin" "${CHAT[ID]}" &&\
+				unpinall_chat_messages "${CHAT[ID]}"
+			;;
+>>>>>>> 5205fe39905da125685fb242834159788a616e6b
 		'/echo'*) # example echo command
 			send_normal_message "${CHAT[ID]}" "${MESSAGE}"
+			;;
+		'/button'*)# inline button, set CALLBACK=1 for processing callbacks
+			send_inline_buttons "${CHAT[ID]}" "Press Button ..." "   Button   |RANDOM-BUTTON"
 			;;
 		'/question'*) # start interactive questions
 			checkproc 
@@ -240,6 +207,47 @@ else
 			send_markdownv2_mesage "${CHAT[ID]}" "This bot will *not* kick you!"
 			return 1
 			;;
+	esac
+     }
+
+     mycallbacks() {
+	#######################
+	# callbacks from buttons attached to messages will be  processed here
+	# no standard use case for processing callbacks, let's log them for some users and chats
+	case "${iBUTTON[USER_ID]}+${iBUTTON[CHAT_ID]}" in
+	    'USERID1+'*) # do something for all callbacks from USER
+		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBUTTON[USER_ID]}" "${iBUTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\
+				>>"${DATADIR}/${iBUTTON[USER_ID]}.log"
+		answer_callback_query "${iBUTTON[ID]}" "Request has been logged in your user log..."
+		return
+		;;
+	    *'+CHATID1') # do something for all callbacks from CHAT
+		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBUTTON[USER_ID]}" "${iBUTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\
+				>>"${DATADIR}/${iBUTTON[CHAT_ID]}.log"
+		answer_callback_query "${iBUTTON[ID]}" "Request has been logged in chat log..."
+		return
+		;;
+	    'USERID2+CHATID2') # do something only for callbacks form USER in CHAT
+		printf "%s: U=%s C=%s D=%s\n" "$(date)" "${iBUTTON[USER_ID]}" "${iBUTTON[CHAT_ID]}" "${iBUTTON[DATA]}"\
+				>>"${DATADIR}/${iBUTTON[USER_ID]}-${iBUTTON[CHAT_ID]}.log"
+		answer_callback_query "${iBUTTON[ID]}" "Request has been logged in user-chat log..."
+		return
+		;;
+	    *)	# all other callbacks are processed here
+		local callback_answer
+		# your processing here ...
+		# message available?
+		if [[ -n "${iBUTTON[CHAT_ID]}" && -n "${iBUTTON[MESSAGE_ID]}" ]]; then
+			if [ "${iBUTTON[DATA]}" = "RANDOM-BUTTON" ]; then
+			    callback_answer="Button pressed"
+			    edit_inline_buttons "${iBUTTON[CHAT_ID]}" "${iBUTTON[MESSAGE_ID]}" "Button ${RANDOM}|RANDOM-BUTTON"
+			fi
+		else
+			    callback_answer="Button to old, sorry."
+		fi
+		# Telegram needs an ack each callback query, default empty
+		answer_callback_query "${iBUTTON[ID]}" "${callback_answer}"
+		;;
 	esac
      }
 
@@ -301,6 +309,8 @@ else
 	[ -f ".jssh" ] && printf "%s: %s\n" "$1" "Ups, found file \"${PWD:-.}/.jssh\"! =========="
     }
 
+    ###########################
+    # example recover from telegram block function
     # called when bashbot send_xxx command failed because we can not connect to telegram
     # return 0 to retry, return non 0 to give up
     bashbotBlockRecover() {
@@ -311,7 +321,35 @@ else
 	return 1 
     }
 
-    # place your processing functions here
+    ###########################
+    # example error processing
+    # called when delete Message failed
+    # func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+    bashbotError_delete_message() {
+	log_debug "custom errorProcessing delete_message: ERR=$2 CHAT=$3 MSGID=$6 ERTXT=$5"
+    }
+
+    # called when error 403 is returned (and no func processing)
+    # func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+    bashbotError_403() {
+	log_debug "custom errorProcessing error 403: FUNC=$1 CHAT=$3 USER=${4:-no-user} MSGID=$6 ERTXT=$5"
+	local user="$4"; [[ -z "$4" && -n "$3" ]] && user="$3"
+	if [ -n "${user}" ]; then
+		# block chat/user
+		case "$5" in
+		    *"blocked"*)
+			jssh_insertKeyDB "${user}" "User blocked bot on $(LANG=C date)" "${BLOCKEDFILE}";;
+		    *"kicked"*)
+			jssh_insertKeyDB "${user}" "Bot kicked from chat on $(LANG=C date)" "${BLOCKEDFILE}";;
+		    *)
+			jssh_insertKeyDB "${user}" "Reason: $6 on $(LANG=C date)" "${BLOCKEDFILE}";;
+		esac
+	fi
+    }
+
+
+    ###########################
+    # place your processing functions here --------------
 
     # $1 search parameter
     my_image_search(){
@@ -327,3 +365,4 @@ else
     }
 
 fi
+
