@@ -30,7 +30,7 @@ BOTCOMMANDS="-h  help  init  start  stop  status  suspendback  resumeback  killb
 #     8 - curl/wget missing
 #     10 - not bash!
 #
-#### $$VERSION$$ v1.51-0-g6e66a28
+#### $$VERSION$$ v1.52-dev-1-g5205fe3
 ##################################################################
 
 # are we running in a terminal?
@@ -550,14 +550,14 @@ if detect_curl ; then
   # $1 URL, $2 hack: log getJson if not ""
   getJson(){
 	# shellcheck disable=SC2086
-	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" "$1"
+	"${BASHBOT_CURL}" -sL -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}" -K - <<<"url=$1"
   }
   # curl variant for sendJson
   # usage: "JSON" "URL"
   sendJson_do(){
 	# shellcheck disable=SC2086
 	"${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -m "${TIMEOUT}"\
-		-d "$1" -X POST "$2" -H "Content-Type: application/json" | "${JSONSHFILE}" -b -n 2>/dev/null
+		-d "$1" -X POST -K - <<<"url=$2" -H "Content-Type: application/json" | "${JSONSHFILE}" -b -n 2>/dev/null
   }
   #$1 Chat, $2 what, $3 file, $4 URL, $5 caption
   sendUpload() {
@@ -566,11 +566,11 @@ if detect_curl ; then
 		[ -n "${BASHBOTDEBUG}" ] &&\
 			log_update "sendUpload CHAT=$1 WHAT=$2  FILE=$3 CAPT=$5"
 		# shellcheck disable=SC2086
-		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
+		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -K - <<<"url=$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" -F "caption=$5" | "${JSONSHFILE}" -b -n 2>/dev/null )"
 	else
 		# shellcheck disable=SC2086
-		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} "$4" -F "chat_id=$1"\
+		res="$("${BASHBOT_CURL}" -s -k ${BASHBOT_CURL_ARGS} -K - <<<"url=$4" -F "chat_id=$1"\
 			-F "$2=@$3;${3##*/}" | "${JSONSHFILE}" -b -n 2>/dev/null )"
 	fi
 	sendJsonResult "${res}" "sendUpload (curl)" "$@"
@@ -581,14 +581,14 @@ else
   if _exists wget; then
     getJson(){
 	# shellcheck disable=SC2086
-	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - "$1"
+	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - -i <<<"$1"
     }
     # curl variant for sendJson
     # usage: "JSON" "URL"
     sendJson_do(){
 	# shellcheck disable=SC2086
 	wget --no-check-certificate -t 2 -T "${TIMEOUT}" ${BASHBOT_WGET_ARGS} -qO - --post-data="$1" \
-		--header='Content-Type:application/json' "$2" | "${JSONSHFILE}" -b -n 2>/dev/null
+		--header='Content-Type:application/json' -i <<<"$2" | "${JSONSHFILE}" -b -n 2>/dev/null
     }
     sendUpload() {
 	log_error "Sorry, wget does not support file upload"
