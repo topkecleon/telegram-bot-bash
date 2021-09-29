@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.51-0-g6e66a28
+#### $$VERSION$$ v1.52-dev-2-ga2a3927
 
 # will be automatically sourced from bashbot
 
@@ -143,6 +143,12 @@ send_keyboard() {
 	if [ -n "$2" ]; then
 		text="$(JsonEscape "$2")"
 		text='"text":"'"${text//$'\n'/\\n}"'"'
+	fi
+	# text longer than 4096, send text and keyboard separate
+	if [ "${#2}" -gt 4096 ]; then
+		send_normal_message "$1" "$2"
+		send_keyboard "$1" "..." "$3"
+		return
 	fi
 	local one_time=', "one_time_keyboard":true' && [ -n "$4" ] && one_time=""
 	# '"text":"$2", "reply_markup": {"keyboard": [ $3 ], "one_time_keyboard": true}'
