@@ -308,10 +308,10 @@ echo ${BOTSEND[ID]}
 567
 
 # add one button row
-edit_inline_keyboard "${CHAT[ID]}" "567" "button 1|http://rrr.de" "button 2|http://rrr.de"
+edit_inline_buttons "${CHAT[ID]}" "567" "button 1|http://rrr.de" "button 2|http://rrr.de"
 
 # change buttons
-edit_inline_keyboard "${CHAT[ID]}" "567" "Success edit_inline_keyboard|http://rrr.de"
+edit_inline_buttons "${CHAT[ID]}" "567" "Success edit_inline_keyboard|http://rrr.de"
 
 # delete button by replace whole message
 edit_markdownv2_message "${CHAT[ID]}" "*HI* this is a _markdown_ message inline *removed*..."
