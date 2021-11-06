@@ -308,10 +308,10 @@ echo ${BOTSEND[ID]}
 567
 
 # add one button row
-edit_inline_keyboard "${CHAT[ID]}" "567" "button 1|http://rrr.de" "button 2|http://rrr.de"
+edit_inline_buttons "${CHAT[ID]}" "567" "button 1|http://rrr.de" "button 2|http://rrr.de"
 
 # change buttons
-edit_inline_keyboard "${CHAT[ID]}" "567" "Success edit_inline_keyboard|http://rrr.de"
+edit_inline_buttons "${CHAT[ID]}" "567" "Success edit_inline_buttons|http://rrr.de"
 
 # delete button by replace whole message
 edit_markdownv2_message "${CHAT[ID]}" "*HI* this is a _markdown_ message inline *removed*..."
@@ -408,7 +408,7 @@ An URL Button opens the given URL, a CALLBACK button sends an update the bot mus
 send_inline_keyboard "${CHAT[ID]}" "Best Dealz!" '[{"text":"Visit my Shop", "url":"https://dealz.rrr.de"}]'
 
 # send_inline_button
-send_inline_keyboard "${CHAT[ID]}" "message" '[{"text":"button 1", url"":"http://rrr.de"}, {"text":"button 2", "url":"http://rrr.de"} ]'
+send_inline_keyboard "${CHAT[ID]}" "message" '[{"text":"button 1", "url":"http://rrr.de"}, {"text":"button 2", "url":"http://rrr.de"} ]'
 
 # multiple button rows
 send_inline_keyboard "${CHAT[ID]}" "message" '[{"text":"b1", "url":"http://rrr.de"}, {"text":"b2", "url":"http://rrr.de"}], [{"text":"b3", "url":"http://rrr.de"}, "text":"b4", "url":"http://rrr.de"}]'
