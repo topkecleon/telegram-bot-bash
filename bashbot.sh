@@ -245,7 +245,7 @@ DATADIR="${BASHBOT_VAR:-.}/data-bot-bash"
 BLOCKEDFILE="${BASHBOT_VAR:-.}/blocked"
 COUNTFILE="${BASHBOT_VAR:-.}/count"
 
-LOGDIR="${RUNDIR:-.}/logs"
+LOGDIR="${SCRIPTDIR:-.}/logs"
 
 # CREATE botconfig if not exist
 # assume everything already set up correctly if TOKEN is set
