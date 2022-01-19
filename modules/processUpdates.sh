@@ -291,7 +291,7 @@ process_message() {
 	fi
 
 	# split message in command and args
-	[[ "${MESSAGE[0]}" == "/"* ]] && read -r CMD <<<"${MESSAGE[0]}" &&  CMD[0]="${CMD[0]%%@*}"
+	[[ "${MESSAGE[0]}" == "/"* ]] && read -ra CMD <<<"${MESSAGE[0]}" &&  CMD[0]="${CMD[0]%%@*}"
 	# everything went well
 	return 0
 }
