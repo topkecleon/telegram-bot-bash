@@ -5,7 +5,7 @@
 #
 # tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.52-dev-9-gd06c162
+#### $$VERSION$$ v1.52-dev-10-g1ffa890
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 # shellcheck disable=SC2250
@@ -92,12 +92,12 @@ case "$1" in
 	RETVAL=$?
 	;;
 'stop')
-	[ "${stat}" != "poll" ] && printf "Warning, bot is not in poll mode: %s\n" "${stat}"
+	[[ "${stat}" != *"poll"* ]] && printf "Warning, bot is not in poll mode: %s\n" "${stat}"
 	$runcmd "$bashbot stop $mode"
 	RETVAL=$?
 	;;
 'stophook')
-	[ "${stat}" != "hook" ] && printf "Warning, bot is not in webhook mode: %s\n" "${stat}"
+	[[ "${stat}" != *"hook"* ]] && printf "Warning, bot is not in webhook mode: %s\n" "${stat}"
 	printf "Stopping bashbot webhook mode ... "
 	KILLID="$(ps -f -u "${runas}" | grep "process_batch.sh --startbot" | sed -E 's/[^0-9]+([0-9]+).*/\1/' | tr -s "\r\n" "  ")"
 	if [ -n "${KILLID}" ]; then
