@@ -6,7 +6,7 @@
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
 # shellcheck disable=SC1117
-#### $$VERSION$$ v1.51-0-g6e66a28
+#### $$VERSION$$ v1.51-6-g6490f67
 
 # will be automatically sourced from bashbot
 
@@ -266,8 +266,7 @@ fi
 # supports local file, URL and file_id
 # $1 chat, $2 file https::// file_id:// , $3 caption, $4 extension (optional)
 send_file(){
-	local url what num stat media capt file="$2" ext="$4"
-	capt="$(JsonEscape "$3")"
+	local url what num stat media capt="$3" file="$2" ext="$4"
 	if [[ "${file}" =~ ^https*:// ]]; then
 		media="URL"
 	elif [[ "${file}" == file_id://* ]]; then

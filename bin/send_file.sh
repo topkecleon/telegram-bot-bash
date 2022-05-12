@@ -25,7 +25,7 @@ USAGE='send_file.sh [-h|--help] "CHAT[ID]" "file|URL" "caption ...." [type] [deb
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 25.12.2020 20:24
 #
-#### $$VERSION$$ v1.51-0-g6e66a28
+#### $$VERSION$$ v1.51-6-g6490f67
 #===============================================================================
 
 ####
