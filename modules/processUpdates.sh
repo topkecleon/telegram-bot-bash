@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.52-0-g1a83202
+#### $$VERSION$$ v1.52-1-g0dae2db
 ##################################################################
 
 ##############
@@ -291,7 +291,7 @@ process_message() {
 	fi
 
 	# split message in command and args
-	[[ "${MESSAGE[0]}" == "/"* ]] && read -r CMD <<<"${MESSAGE[0]}" &&  CMD[0]="${CMD[0]%%@*}"
+	[[ "${MESSAGE[0]}" == "/"* ]] && read -ra CMD <<<"${MESSAGE[0]}" &&  CMD[0]="${CMD[0]%%@*}"
 	# everything went well
 	return 0
 }

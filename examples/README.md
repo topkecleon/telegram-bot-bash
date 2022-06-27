@@ -60,6 +60,6 @@ plus use of keyboards in private chats. It's an extended version of mycommands.s
 
 **Webhook** contains instructions on how use webhook API to get updates from telegram instead polling Telegram server.
 
-#### $$VERSION$$ v1.52-0-g1a83202
+#### $$VERSION$$ v1.52-1-g0dae2db
 
 
