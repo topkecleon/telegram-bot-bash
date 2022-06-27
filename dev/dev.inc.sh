@@ -5,7 +5,7 @@
 #
 # Description: common stuff for all dev scripts
 #
-#### $$VERSION$$ v1.51-0-g6e66a28
+#### $$VERSION$$ v1.52-0-g1a83202
 #############################################################
 
 # magic to ensure that we're always inside the root of our application,

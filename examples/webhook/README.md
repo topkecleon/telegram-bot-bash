@@ -96,5 +96,5 @@ webhook updates only over secure TLS connections with a valid SSL certificate ch
 `socat` looks like a tool to listen for Telegram updates from bash scripts, let's see ...
 
 
-#### $$VERSION$$ v1.51-0-g6e66a28
+#### $$VERSION$$ v1.52-0-g1a83202
 
