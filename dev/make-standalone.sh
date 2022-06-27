@@ -11,7 +11,7 @@
 #   If you your bot is finished you can use make-standalone.sh to create the
 #    the old all-in-one bashbot:  bashbot.sh and commands.sh only!
 #
-#### $$VERSION$$ v1.51-6-g6490f67
+#### $$VERSION$$ v1.52-1-g0dae2db
 ###################################################################
 
 # include git config and change to base dir

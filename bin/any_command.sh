@@ -21,7 +21,7 @@ USAGE='any_command.sh [-h|--help] [--force|--reference] bot_command args ...'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 30.01.2021 10:24
 #
-#### $$VERSION$$ v1.51-6-g6490f67
+#### $$VERSION$$ v1.52-1-g0dae2db
 #===============================================================================
 
 ####

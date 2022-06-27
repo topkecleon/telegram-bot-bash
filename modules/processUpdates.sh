@@ -4,7 +4,7 @@
 # File: processUpdates.sh 
 # Note: DO NOT EDIT! this file will be overwritten on update
 #
-#### $$VERSION$$ v1.51-6-g6490f67
+#### $$VERSION$$ v1.52-1-g0dae2db
 ##################################################################
 
 ##############

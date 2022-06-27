@@ -5,7 +5,7 @@
 # This file is public domain in the USA and all free countries.
 # Elsewhere, consider it to be WTFPLv2. (wtfpl.net/txt/copying)
 #
-#### $$VERSION$$ v1.51-6-g6490f67
+#### $$VERSION$$ v1.52-1-g0dae2db
 
 # will be automatically sourced from bashbot
 
@@ -73,11 +73,11 @@ chat_member_count() {
 }
 
 kick_chat_member() {
-	sendJson "$1" 'user_id: '"$2"'' "${URL}/kickChatMember"
+	sendJson "$1" '"user_id": '"$2"'' "${URL}/kickChatMember"
 }
 
 unban_chat_member() {
-	sendJson "$1" 'user_id: '"$2"'' "${URL}/unbanChatMember"
+	sendJson "$1" '"user_id": '"$2"'' "${URL}/unbanChatMember"
 }
 
 leave_chat() {

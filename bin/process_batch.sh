@@ -21,7 +21,7 @@ USAGE='process_batch.sh [-h|--help] [-s|--startbot] [-w|--watch] [-n|--lines n] 
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 27.02.2021 13:14
 #
-#### $$VERSION$$ v1.51-6-g6490f67
+#### $$VERSION$$ v1.52-1-g0dae2db
 #===============================================================================
 
 ####

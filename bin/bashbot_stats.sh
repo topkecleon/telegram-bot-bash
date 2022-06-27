@@ -17,7 +17,7 @@ USAGE='bashbot_stats.sh [-h|--help] [debug]'
 #        AUTHOR: KayM (gnadelwartz), kay@rrr.de
 #       CREATED: 23.12.2020 20:34
 #
-#### $$VERSION$$ v1.51-6-g6490f67
+#### $$VERSION$$ v1.52-1-g0dae2db
 #===============================================================================
 
 # set bashbot environment
