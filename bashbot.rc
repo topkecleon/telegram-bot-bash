@@ -5,7 +5,7 @@
 #
 # tested on: ubuntu, opensuse, debian
 #
-#### $$VERSION$$ v1.52-1-g0dae2db
+#### $$VERSION$$ v1.53-dev-0-g4591b35
 # shellcheck disable=SC2009
 # shellcheck disable=SC2181
 # shellcheck disable=SC2250
@@ -47,8 +47,11 @@ FIFO="${databotdir}/webhook-fifo-${name}"
 # programs to run
 bashbot="cd ${bashbotdir}; ${bashbotdir}/bashbot.sh"
 webhook="cd ${bashbotdir}; nohup ${bashbotdir}/bin/process_batch.sh --startbot --watch ${FIFO}"
-# set additionl parameter, e.g. debug
+# set additional parameter, e.g. debug
 mode=""
+backmode=""
+#mode="debug"
+#backmode="debug"
 
 # select logfile for webhook start stop and script errors
 hooklog="DEBUG"
@@ -137,7 +140,7 @@ case "$1" in
 	;;
 'suspendback'|'resumeback'|'killback')
 	# shellcheck disable=SC2250
-	$runcmd "$bashbot $1"
+	$runcmd "$bashbot $1 $backmode"
 	RETVAL=$?
 	# kill inotifywait from runuser
 	if [ "$1" != "resumeback" ]; then 
