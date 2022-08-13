@@ -123,22 +123,22 @@ else
 
 	case "${MESSAGE}" in
 		##################
-		# example commands, replace them by your own
+		# example commands, replace them with your own
 		'/_dice_re'*) # dice from user received
 			sleep 5
-			local gameresult="*Congratulation ${USER[FIRST_NAME]} ${USER[LAST_NAME]}* you got *${MESSAGE[RESULT]} Points*."
+			local gameresult="*Congratulations, ${USER[FIRST_NAME]} ${USER[LAST_NAME]}*, you got *${MESSAGE[RESULT]} points*."
 			[ -z "${FORWARD[UID]}" ] && send_markdownv2_message "${CHAT[ID]}" "${gameresult}"
 			;;
 		'/game'*) # send random dice, edit list to fit your needs
 			send_dice "${CHAT[ID]}" ":$(printf "slot_machine\ngame_die\ndart\nbasketball\nsoccer\nslot_machine"|sort -R|shuf -n 1shuf -n 1):"
 			if [ "${BOTSENT[OK]}" = "true" ]; then
-				local gameresult="*Congratulation ${USER[FIRST_NAME]}* ${USER[LAST_NAME]} you got *${BOTSENT[RESULT]} Points*."
+				local gameresult="*Congratulations, ${USER[FIRST_NAME]} ${USER[LAST_NAME]}*, you got *${BOTSENT[RESULT]} points*."
 				sleep 5
 				case "${BOTSENT[RESULT]}" in
-				  1)	gameresult="*Sorry* only *one Point* ...";;
-				  2)	gameresult="*Hey*, 2 Points are *more then one!*";;
-				  5|6)	[[ "${BOTSENT[EMOJI]}" =~ fb0$ ]] || gameresult="*Super! ${BOTSENT[RESULT]} Points!*";;
-				  6*)	gameresult="*JACKPOT! ${BOTSENT[RESULT]} Points!*";;
+				  1)	gameresult="*Sorry* only *one point* ...";;
+				  2)	gameresult="*Hey*, 2 points are *better than one!*";;
+				  5|6)	[[ "${BOTSENT[EMOJI]}" =~ fb0$ ]] || gameresult="*Super! You got ${BOTSENT[RESULT]} points!*";;
+				  6*)	gameresult="*JACKPOT! ${BOTSENT[RESULT]} points!*";;
 				esac
 				send_markdownv2_message "${CHAT[ID]}" "${gameresult}"
 			fi

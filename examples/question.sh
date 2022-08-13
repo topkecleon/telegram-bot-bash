@@ -31,7 +31,7 @@ unset IFS
 
 # kill interactive script if not finished in time, e.g. user away or error
 MAXWAIT="1m"
-{ sleep "${MAXWAIT}"; printf "Stopping Questionnaire after %s, you need to much time to finish ... BYE\n" "${MAXWAIT}"; kill $$; wait 2>/dev/null ;} &
+{ sleep "${MAXWAIT}"; printf "Stopping questionnaire after %s.  You've taken too much time to finish!  BYE\n" "${MAXWAIT}"; kill $$; wait 2>/dev/null ;} &
 
 # simple yes/no question, defaults to no
 printf "Hi, hello there\nWould you like some tea (y/n)?\n"
@@ -39,15 +39,15 @@ read -r answer <"${INPUT}"
 if [[ ${answer,,} == "y"* ]]; then
 	printf "OK then, here you go: http://www.rivertea.com/blog/wp-content/uploads/2013/12/Green-Tea.jpg\n"
 else
-	printf "OK then, no tea ...\n"
+	printf "OK then, no tea...\n"
 fi
 
 # question with Keyboard, repeating until correct answer given
 until [ "${SUCCESS}" = "y" ] ;do
-	printf 'Do you like Music? mykeyboardstartshere "Yass!" , "No"\n'
+	printf 'Do you like music? mykeyboardstartshere "Yass!" , "No"\n'
 	read -r answer <"${INPUT}"
 	case ${answer,,} in
-		'') printf "empty answer! Try again\n";; 
+		'') printf "Empty answer! Try again\n";; 
 		'yass'*) printf "Goody! mykeyboardendshere\n";SUCCESS=y;;
 		'no'*) printf "Well that's weird. mykeyboardendshere\n";SUCCESS=y;;
 		*) SUCCESS=n;;
