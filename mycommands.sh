@@ -48,7 +48,7 @@ else
 	fi
 
 	##############
-	# a service Message was received
+	# a service message was received
 	# add your own stuff here
 	if [ -n "${SERVICE}" ]; then
 
@@ -94,7 +94,7 @@ else
 			    send_markdownv2_message "${CHAT[ID]}" "*${NOTBOTADMIN}*"; return 1
 			fi
 			;;
-		# will we process edited messages also?
+		# will we also process edited messages?
 		'/_edited_message'*)
 			return 1 # no
 			# but if we do, remove /edited_message
@@ -123,22 +123,22 @@ else
 
 	case "${MESSAGE}" in
 		##################
-		# example commands, replace them by your own
+		# example commands, replace them with your own
 		'/_dice_re'*) # dice from user received
 			sleep 5
-			local gameresult="*Congratulation ${USER[FIRST_NAME]} ${USER[LAST_NAME]}* you got *${MESSAGE[RESULT]} Points*."
+			local gameresult="*Congratulations*, ${USER[FIRST_NAME]} ${USER[LAST_NAME]}, you got *${MESSAGE[RESULT]} points*."
 			[ -z "${FORWARD[UID]}" ] && send_markdownv2_message "${CHAT[ID]}" "${gameresult}"
 			;;
 		'/game'*) # send random dice, edit list to fit your needs
 			send_dice "${CHAT[ID]}" ":$(printf "slot_machine\ngame_die\ndart\nbasketball\nsoccer\nslot_machine"|sort -R|shuf -n 1shuf -n 1):"
 			if [ "${BOTSENT[OK]}" = "true" ]; then
-				local gameresult="*Congratulation ${USER[FIRST_NAME]}* ${USER[LAST_NAME]} you got *${BOTSENT[RESULT]} Points*."
+				local gameresult="*Congratulations*, ${USER[FIRST_NAME]} ${USER[LAST_NAME]}, you got *${BOTSENT[RESULT]} points*."
 				sleep 5
 				case "${BOTSENT[RESULT]}" in
-				  1)	gameresult="*Sorry* only *one Point* ...";;
-				  2)	gameresult="*Hey*, 2 Points are *more then one!*";;
-				  5|6)	[[ "${BOTSENT[EMOJI]}" =~ fb0$ ]] || gameresult="*Super! ${BOTSENT[RESULT]} Points!*";;
-				  6*)	gameresult="*JACKPOT! ${BOTSENT[RESULT]} Points!*";;
+				  1)	gameresult="*Sorry!* only *one point* ...";;
+				  2)	gameresult="*Hey*, 2 points are *better than one!*";;
+				  4|5)	[[ "${BOTSENT[EMOJI]}" =~ fb0$ ]] || gameresult="*Super!* You got ${BOTSENT[RESULT]} points.";;
+				  6*)	gameresult="*JACKPOT!* ${BOTSENT[RESULT]} points!";;
 				esac
 				send_markdownv2_message "${CHAT[ID]}" "${gameresult}"
 			fi
@@ -292,7 +292,7 @@ else
 	esac
      }
 
-    # debug function called on start, stop of bot, interactive and  background processes
+    # debug function called on start, stop of bot, interactive and background processes
     # if your bot was started with debug as second argument
     # $1 current date, $2 from where the function was called, $3 ... $n optional information
     my_debug_checks() {
@@ -314,7 +314,7 @@ else
 
     ###########################
     # example error processing
-    # called when delete Message failed
+    # called when delete message failed
     # func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
     bashbotError_delete_message() {
 	log_debug "custom errorProcessing delete_message: ERR=$2 CHAT=$3 MSGID=$6 ERTXT=$5"
