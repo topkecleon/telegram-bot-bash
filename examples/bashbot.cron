@@ -23,13 +23,14 @@ MAILTO=root
 # │ │ │ │ ┌───────────── day of the week (0 - 6) (Sunday to Saturday;
 # │ │ │ │ │                                   7 is also Sunday on some systems)
 # │ │ │ │ │
-# │ │ │ │ │
+# │ │ │ │ │   ┌───────────── run as user (must be omited in users crontab
+# │ │ │ │ │   |
 # * * * * *  USER command to execute
 # * * * * *  root  echo "run every minute!"
 
 # run as www every day at 0:00 plus random sleep between 0-3h
-  0 0 * * * nobody sleep "$((RANDOM \% 180 ))m" ; /usr/local/telegram-bot-bash/bashbot.sh start	# (re)start bot
-  0 0 * * * nobody sleep "$((RANDOM \% 180 ))m" ; /usr/local/telegram-bot-bash/bashbot.sh resumeback	# (re)start background jobs
+  0 0 * * * nobody sleep "$((RANDOM \% 180 ))m" ; /usr/local/telegram-bot-bash/bashbot.rc start	# (re)start bot
+  0 0 * * * nobody sleep "$((RANDOM \% 180 ))m" ; /usr/local/telegram-bot-bash/bashbot.rc resumeback	# (re)start background jobs
 
 # run as www on 24 of Dec, 12:00
   0 12 24 12 * nobody /usr/local/telegram-bot-bash/bashbot.sh broadcast "X-Mas shopping is over!"	# broadcast a message
