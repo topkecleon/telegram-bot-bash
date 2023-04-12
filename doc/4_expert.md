@@ -154,8 +154,9 @@ To use bashbot as a system service include a working `bashbot.rc` in your init s
 An example crontab is provided in `examples/bashbot.cron`.
 
 - If you are running bashbot with your user-ID, copy the examples lines to your crontab and remove username `nobody`.
-- if you run bashbot as an other user or a system service edit `examples/bashbot.cron` to fit your needs and replace username `nobody` with the username you want to run bashbot. Copy the modified file to `/etc/cron.d/bashbot`
+- if you run bashbot as an other user or a system service edit `examples/bashbot.cron` to fit your needs and replace username `nobody` with the username you want to run bashbot. Insert the modified lines to systm crontab file or copy to `/etc/cron.d/bashbot`
 
+**Warning:** You must use `contab -e` command to modify sytem and user crontabs, see [Cron How-To](https://help.ubuntu.com/community/CronHowto) 
 
 ### Use bashbot from CLI and scripts
 You can use bashbot to send *messages*, *locations*, *venues*, *pictures* etc. from command line and scripts
