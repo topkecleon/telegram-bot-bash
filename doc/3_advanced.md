@@ -85,7 +85,7 @@ commands.sh send user input as TEXT   |   script reads TEXT  |   bashbot.sh reci
 ```
 
 In case you want to process any other data then message TEXT, I recommend to switch to a more advanced bot framework.
-In Bashbot you are on your own to implement methods for includeíng additional information in message TEXT before message sent to the script (only recommended for advanced bash experts).
+In Bashbot you are on your own to implement methods for forwarding additional information in message TEXT sent to the script (only recommended for advanced bash experts).
 
 #### Example script
 
