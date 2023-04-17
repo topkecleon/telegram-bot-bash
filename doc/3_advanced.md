@@ -78,14 +78,13 @@ Interactive chats are simple Bash scripts, reading user input as TEXT and output
 To create a new interactive chat script copy `scripts/interactive.sh.clean` to e.g. `scripts/mynewinteractive.sh`, make it executable
 and then use `start_proc` function from your bot, it's possible to pass two arguments. You find more examples for interactive scripts in 'examples'
 
-**Important**: Script run in a [pipeline](https://www.geeksforgeeks.org/piping-in-unix-or-linux/), it's **not possible** to use bashbot functions and variables!
+**Important**: The script runs standalone in a [pipeline](https://www.geeksforgeeks.org/piping-in-unix-or-linux/), it's **not possible** to use bashbot functions and variables!
 
 ```bash
 mycommands.sh send user input as TEXT   |   script reads TEXT  |   bashbot.sh reads output as formated TEXT (see below) 
 ```
 
-In case you want to process any other data then message TEXT you must extraxt that information in `mycommnds.sh` and insert in message
-before [sent to script]() (only recommended for bash experts):
+In case you want to process any other data then message TEXT I recommend to switch to a more advanced bot framework. In bashbot you must extraxt that information in `mycommnds.sh` and insert in message TEXT  before it's sent to the script (only recommended for advanced bash experts).
 
 #### Example script
 
