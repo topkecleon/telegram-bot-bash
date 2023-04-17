@@ -75,9 +75,10 @@ You must use the function `user_is_allowed` to check if a user has the capabilit
 ### Interactive Chats
 Interactive chats are short running scripts, reading user input and echo data to the user.
 
-**Note**: Inmteractive chats are simple scripts, reading and writing from/to a pipe. It's **not possible** to use bashbot functions adn variables!
+**Important**: Interactive chats are simple scripts reading/writing from/to a pipe.
+**It's not possible to use bashbot functions and variables!**
 
-user input sent as TEXT **->** script reads TEXT and print TEXT **->** Text sent to user with [simple formatting]() 
+ user input as **TEXT**   **|**   script reads **TEXT**  **|**  script output sent to user [simple formatting]() 
 
 To create a new interactive chat script copy `scripts/interactive.sh.clean` to e.g. `scripts/mynewinteractive.sh`, make it executable
 and then use `start_proc` function from your bot, it's possible to pass two arguments. You find more examples for interactive scripts in 'examples'
@@ -88,7 +89,7 @@ and then use `start_proc` function from your bot, it's possible to pass two argu
 
 *usage*: check_prog chat_id
 
-**IMPORTANT:** Scripts must read user input from '$3' instead of stdin!
+**Note:** Scripts must read user input from '$3' instead of stdin!
 
 ```bash
 #!/bin/bash
