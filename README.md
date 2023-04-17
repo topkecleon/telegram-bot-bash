@@ -14,7 +14,7 @@ Linted by [#ShellCheck](https://github.com/koalaman/shellcheck)
 **Bashbot** is created by old-fashioned shell hackers to show that it's possible to write a bot in Bash.
 
 It is designed for **simple** use cases and easily integrates with Linux tasks.
-For bots serving many users or heavy workload, I strongly recommend using a specialized bot framework.
+For bots that serve a lot of users or a heavy workload, I strongly recommend using a dedicated bot framework.
 
 ---
 
