@@ -75,20 +75,26 @@ You must use the function `user_is_allowed` to check if a user has the capabilit
 ### Interactive Chats
 Interactive chats are simple Bash scripts, reading user input as TEXT and output TEXT to the user.
 
-**Important**: Scripts run as seperate programs in a [pipeline](https://www.geeksforgeeks.org/piping-in-unix-or-linux/), it's **not possible** to use bashbot functions and variables!
+To create a new interactive chat script copy `scripts/interactive.sh.clean` to e.g. `scripts/mynewinteractive.sh`, make it executable
+and then use `start_proc` function from your bot, it's possible to pass two arguments. You find more examples for interactive scripts in 'examples'
+
+**Important**: Script run in a [pipeline](https://www.geeksforgeeks.org/piping-in-unix-or-linux/), it's **not possible** to use bashbot functions and variables!
 
 ```bash
 mycommands.sh send user input as TEXT   |   script reads TEXT  |   bashbot.sh reads output as formated TEXT (see below) 
 ```
 
-To create a new interactive chat script copy `scripts/interactive.sh.clean` to e.g. `scripts/mynewinteractive.sh`, make it executable
-and then use `start_proc` function from your bot, it's possible to pass two arguments. You find more examples for interactive scripts in 'examples'
+In case you want to process any other data then message TEXT you must extraxt that information in `mycommnds.sh` and insert in message
+before [sent to script]() (only recommended for bash experts):
+
+#### Example script
 
 *usage*: start_proc chat_id script arg1 arg2
 
 *usage*: kill_proc chat_id
 
 *usage*: check_prog chat_id
+
 
 **Note:** Scripts must read user input from '$3' instead of stdin!
 
