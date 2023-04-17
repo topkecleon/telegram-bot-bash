@@ -10,11 +10,13 @@ Elsewhere, consider it released under the [WTFPLv2](http://www.wtfpl.net/txt/cop
 
 Linted by [#ShellCheck](https://github.com/koalaman/shellcheck)
 
+---
+**Bashbot** is created by old-fashioned shell hackers to show that it's possible to write a bot in Bash.
 
-Bashbot is created by old-fashioned shell hackers to show that it's possible to write a bot in Bash.
+It is designed for **simple** use cases and easily integrates with Linux tasks.
+For bots serving many users or heavy workload, I strongly recommend using a specialized bot framework.
 
-It is designed for simple use cases and easily integrates with Linux tasks.
-For bots with many users or heavy workload, I strongly recommend using a specialized bot framework.
+---
 
 ## Prerequisites
 Uses [JSON.sh](http://github.com/dominictarr/JSON.sh)/[JSON.awk](https://github.com/step-/JSON.awk) and the magic of sed.
