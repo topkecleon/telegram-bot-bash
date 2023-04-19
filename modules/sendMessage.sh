@@ -41,6 +41,27 @@ send_normal_message() {
 	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2"
 }
 
+#
+# I haven't tested this one as much as I have tested the html topic message.
+#
+send_normal_topic_message() {
+	local len text; text="$(JsonEscape "$2")"image.png
+	until [ -z "${text}" ]; do
+		if [ "${#text}" -le 4096 ]; then
+			sendJson "$1" '"text":"'"${text}"'", "message_thread_id":'"$3" "${MSG_URL}"
+			break
+		else
+			len=4095
+			[ "${text:4095:2}" != "\n" ] &&\
+				len="${text:0:4096}" && len="${len%\\n*}" && len="${#len}"
+			sendJson "$1" '"text":"'"${text:0:${len}}"'"'  '"message_thread_id":"'"${3}"'"' "${MSG_URL}"
+			text="${text:$((len+2))}"
+		fi
+	done
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2"
+}
+
 # $1 CHAT $2 message
 send_markdown_message() {
 	_format_message_url "$1" "$2" ',"parse_mode":"markdown"' "${MSG_URL}"
@@ -61,6 +82,17 @@ send_html_message() {
 	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
 	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2"
 }
+
+#
+# Send html message to specific topic within a topics group, I use this one a bit more than the other,
+# Both worked in my use cases, your use cases may expose my lack of understanding when I made this.
+#
+send_html_topic_message() {
+	_format_message_url "$1" "$2" ",\"parse_mode\":\"html\", \"message_thread_id\":$3\"" "${MSG_URL}"
+	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
+	[ -n "${BOTSENT[ERROR]}" ] && processError "${FUNCNAME[0]}" "${BOTSENT[ERROR]}" "$1" "" "${BOTSENT[DESCRIPTION]}" "$2"
+}
+
 
 # $1 CHAT $2 msg-id $3 message
 edit_normal_message() {
@@ -119,6 +151,14 @@ _format_message_url(){
 	done
 }
 
+_format_message_url_thread(){
+	local text; text="$(JsonEscape "$2")"
+	[ "${#text}" -ge 4096 ] && log_error "Warning: html/markdown message longer than 4096 characters, message is rejected if formatting crosses 4096 border."
+	until [ -z "${text}" ]; do
+		sendJson "$1" '"text":"'"${text:0:4096}"'"'"$3"'' "$4"
+		text="${text:4096}"
+	done
+}
 # internal function, send/edit markdownv2 message with URL
 # $1 CHAT $2 message $3 action $4 URL
 _markdownv2_message_url() {
@@ -234,7 +274,7 @@ answer_callback_query() {
 	sendJson "" '"callback_query_id": "'"$1"'","text":"'"$2${alert}"'"' "${URL}/answerCallbackQuery"
 }
 
-# $1 chat, $2 file_id on telegram server 
+# $1 chat, $2 file_id on telegram server
 send_sticker() {
 	sendJson "$1" '"sticker": "'"$2"'"' "${URL}/sendSticker"
 	# func="$1" err="$2" chat="$3" user="$4" emsg="$5" remaining args
@@ -242,14 +282,14 @@ send_sticker() {
 }
 
 
-# only curl can send files ... 
+# only curl can send files ...
 if detect_curl ; then
   # there are no checks if URL or ID exists
   # $1 chat $3 ... $n URL or ID
   send_album(){
 	[ -z "$1" ] && return 1
 	[ -z "$3" ] && return 2	# minimum 2 files
-	local CHAT JSON IMAGE; CHAT="$1"; shift 
+	local CHAT JSON IMAGE; CHAT="$1"; shift
 	for IMAGE in "$@"
 	do
 		[ -n "${JSON}" ] && JSON+=","
@@ -469,4 +509,3 @@ send_text_mode() {
 			;;
 	esac
 }
-
